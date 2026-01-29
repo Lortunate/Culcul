@@ -1,0 +1,180 @@
+{
+  "nav": {
+    "home": "Home",
+    "moments": "Dynamic",
+    "subscription": "Subscription",
+    "mine": "Mine"
+  },
+  "home": {
+    "tabs": {
+      "live": "Live",
+      "recommend": "Recommend",
+      "hot": "Hot",
+      "anime": "Anime",
+      "cinema": "Cinema",
+      "new_journey": "New Journey"
+    },
+    "search_hint": "Search videos..."
+  },
+  "moments": {
+    "title": "Dynamic",
+    "tabs": {
+      "all": "All",
+      "video": "Video",
+      "comprehensive": "Comprehensive"
+    },
+    "empty": "$tab dynamic not implemented"
+  },
+  "subscription": {
+    "title": "Subscription",
+    "tabs": {
+      "video": "Video",
+      "anime": "Anime",
+      "series": "Series"
+    },
+    "empty": "$tab subscription not implemented"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "General",
+    "change_language": "Change Language",
+    "chinese": "Simplified Chinese",
+    "english": "English",
+    "appearance": "Appearance",
+    "dark_mode": "Dark Mode",
+    "light_mode": "Light Mode",
+    "cache": "Cache Management",
+    "clear_cache": "Clear Cache",
+    "user_agreement": "User Agreement",
+    "privacy_policy": "Privacy Policy",
+    "about": "About",
+    "version": "Version"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "account_login": "Account Login",
+    "sms_login": "SMS Login",
+    "qr_login": "QR Login",
+    "username": "Account",
+    "username_hint": "Phone/Email",
+    "password": "Password",
+    "phone": "Phone Number",
+    "sms_code": "SMS Code",
+    "get_code": "Get Code",
+    "get_code_retry": "Retry ($seconds s)",
+    "qr_hint": "Please use Cilixili app to scan",
+    "qr_refresh": "Refresh QR Code",
+    "subtitle": "Third-party lightweight client"
+  },
+  "profile": {
+    "login": "Login",
+    "not_logged_in": "Not Logged In",
+    "login_hint": "Tap to login for more features",
+    "stats": {
+      "dynamic": "Dynamic",
+      "following": "Following",
+      "followers": "Followers"
+    },
+    "menu": {
+      "history": "History",
+      "download": "Downloads",
+      "collection": "Collections",
+      "later": "Watch Later",
+      "theme": "Appearance",
+      "creative_center": "Creator Center",
+      "orders": "Orders",
+      "customer_service": "Customer Service"
+    }
+  },
+  "search": {
+    "placeholder": "Everyone is searching: Cilixili",
+    "button": "Search",
+    "history": "Search History",
+    "hot_search": "Hot Search",
+    "clear_history": "Clear History",
+    "suggestion": "Suggestions",
+    "no_result": "No results found",
+    "trending": "Trending Now"
+  },
+  "video": {
+    "tabs": {
+      "info": "Info",
+      "comment": "Comment"
+    },
+    "recommend": "Recommendations",
+    "comment_empty": "Comments coming soon...",
+    "comment_count": "$count comments",
+    "comment_sort_hot": "Hot",
+    "comment_sort_time": "Newest",
+    "all_comments": "All Comments",
+    "comment_detail": "Comment Detail",
+    "related_replies": "Related Replies",
+    "replies": "View all $count replies",
+    "load_failed": "Failed to load video",
+    "tags": "Tags",
+    "no_desc": "No description",
+    "expand_all": "Expand All",
+    "quality": {
+      "p4k": "4K Ultra HD",
+      "p1080": "1080P Full HD",
+      "p720": "720P HD",
+      "p480": "480P SD",
+      "p360": "360P",
+      "p240": "240P",
+      "p144": "144P"
+    },
+    "playback": {
+      "speed": "Speed",
+      "quality": "Quality",
+      "danmaku": "Danmaku",
+      "full_screen": "Full Screen",
+      "retry": "Retry Playback"
+    },
+    "actions": {
+      "like": "Like",
+      "unlike": "Dislike",
+      "coin": "Coin",
+      "favorite": "Collect",
+      "share": "Share",
+      "followed": "Followed",
+      "follow": "Follow",
+      "reply": "Reply"
+    },
+    "parts": "Video Parts",
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "comment_hint": "Write a friendly comment"
+  },
+  "common": {
+    "no_content": "No content available",
+    "coming_soon": "$tab Content Coming Soon",
+    "loading": "Loading...",
+    "error": "Error occurred",
+    "retry": "Retry",
+    "refresh": "Refresh",
+    "load_more": "Load More",
+    "no_more": "No more content",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "view_count": "$count views",
+    "danmaku_count": "$count danmaku"
+  },
+  "error": {
+    "connection_timeout": "Connection Timeout",
+    "send_timeout": "Send Timeout",
+    "receive_timeout": "Receive Timeout",
+    "bad_response": "Server Error: $code",
+    "cancel": "Request Canceled",
+    "network": "Network Error"
+  },
+  "format": {
+    "hundred_million": "100M",
+    "ten_thousand": "10K",
+    "hours_ago": "$hours h ago",
+    "minutes_ago": "$minutes m ago",
+    "just_now": "just now"
+  }
+}

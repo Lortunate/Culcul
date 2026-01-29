@@ -1,0 +1,180 @@
+{
+  "nav": {
+    "home": "首页",
+    "moments": "动态",
+    "subscription": "订阅",
+    "mine": "我的"
+  },
+  "home": {
+    "tabs": {
+      "live": "直播",
+      "recommend": "推荐",
+      "hot": "热门",
+      "anime": "动画",
+      "cinema": "影视",
+      "new_journey": "新征程"
+    },
+    "search_hint": "搜索视频..."
+  },
+  "moments": {
+    "title": "动态",
+    "tabs": {
+      "all": "全部",
+      "video": "视频",
+      "comprehensive": "综合"
+    },
+    "empty": "$tab 动态暂未实现"
+  },
+  "subscription": {
+    "title": "订阅",
+    "tabs": {
+      "video": "视频",
+      "anime": "追番",
+      "series": "追剧"
+    },
+    "empty": "$tab 订阅内容暂未实现"
+  },
+  "settings": {
+    "title": "设置",
+    "language": "通用设置",
+    "change_language": "切换语言",
+    "chinese": "简体中文",
+    "english": "English",
+    "appearance": "外观设置",
+    "dark_mode": "深色模式",
+    "light_mode": "浅色模式",
+    "cache": "缓存管理",
+    "clear_cache": "清理缓存",
+    "user_agreement": "用户协议",
+    "privacy_policy": "隐私政策",
+    "about": "关于",
+    "version": "当前版本"
+  },
+  "auth": {
+    "login": "登录",
+    "logout": "退出登录",
+    "account_login": "账号登录",
+    "sms_login": "验证码登录",
+    "qr_login": "二维码登录",
+    "username": "账号",
+    "username_hint": "手机号/邮箱",
+    "password": "密码",
+    "phone": "手机号",
+    "sms_code": "验证码",
+    "get_code": "获取验证码",
+    "get_code_retry": "重新获取($seconds s)",
+    "qr_hint": "请使用 Cilixili 客户端扫码登录",
+    "qr_refresh": "刷新二维码",
+    "subtitle": "第三方轻量化客户端"
+  },
+  "profile": {
+    "login": "登录",
+    "not_logged_in": "未登录",
+    "login_hint": "点击登录体验更多功能",
+    "stats": {
+      "dynamic": "动态",
+      "following": "关注",
+      "followers": "粉丝"
+    },
+    "menu": {
+      "history": "历史记录",
+      "download": "离线缓存",
+      "collection": "我的收藏",
+      "later": "稍后再看",
+      "theme": "个性装扮",
+      "creative_center": "创作中心",
+      "orders": "会员购订单",
+      "customer_service": "联系客服"
+    }
+  },
+  "search": {
+    "placeholder": "大家都在搜：Cilixili",
+    "button": "搜索",
+    "history": "搜索历史",
+    "hot_search": "热搜榜",
+    "clear_history": "清空历史",
+    "suggestion": "搜索建议",
+    "no_result": "没有找到相关内容",
+    "trending": "大家都在搜"
+  },
+  "video": {
+    "tabs": {
+      "info": "简介",
+      "comment": "评论"
+    },
+    "recommend": "推荐视频",
+    "comment_empty": "评论区建设中...",
+    "comment_count": "$count 条评论",
+    "comment_sort_hot": "按热度",
+    "comment_sort_time": "按时间",
+    "all_comments": "全部评论",
+    "comment_detail": "评论详情",
+    "related_replies": "相关回复",
+    "replies": "查看全部 $count 条回复",
+    "load_failed": "视频加载失败",
+    "tags": "标签",
+    "no_desc": "暂无简介",
+    "expand_all": "展开全部",
+    "quality": {
+      "p4k": "4K 超清",
+      "p1080": "1080P 高清",
+      "p720": "720P 高清",
+      "p480": "480P 清晰",
+      "p360": "360P 流畅",
+      "p240": "240P 流畅",
+      "p144": "144P 极速"
+    },
+    "playback": {
+      "speed": "倍速",
+      "quality": "清晰度",
+      "danmaku": "弹幕",
+      "full_screen": "全屏",
+      "retry": "重试播放"
+    },
+    "actions": {
+      "like": "点赞",
+      "unlike": "不喜欢",
+      "coin": "投币",
+      "favorite": "收藏",
+      "share": "分享",
+      "followed": "已关注",
+      "follow": "关注",
+      "reply": "回复"
+    },
+    "parts": "视频分段",
+    "expand": "展开",
+    "collapse": "收起",
+    "comment_hint": "发个友善的评论"
+  },
+  "common": {
+    "no_content": "暂无内容",
+    "coming_soon": "$tab 内容暂未实现",
+    "loading": "加载中...",
+    "error": "出错了",
+    "retry": "重试",
+    "refresh": "刷新",
+    "load_more": "加载更多",
+    "no_more": "没有更多了",
+    "cancel": "取消",
+    "confirm": "确定",
+    "save": "保存",
+    "delete": "删除",
+    "view_count": "$count次播放",
+    "danmaku_count": "$count弹幕"
+  },
+  "error": {
+    "connection_timeout": "连接超时",
+    "send_timeout": "请求超时",
+    "receive_timeout": "响应超时",
+    "bad_response": "服务器响应错误: $code",
+    "cancel": "请求取消",
+    "network": "网络连接异常"
+  },
+  "format": {
+    "hundred_million": "亿",
+    "ten_thousand": "万",
+    "hours_ago": "$hours小时前",
+    "minutes_ago": "$minutes分钟前",
+    "just_now": "刚刚"
+  }
+}
