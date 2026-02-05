@@ -1,0 +1,205 @@
+import 'package:culcul/core/router/router.dart';
+import 'package:culcul/core/utils/format_utils.dart';
+import 'package:culcul/data/models/notification/reply_model.dart';
+import 'package:culcul/ui/pages/notification/notification_list_page.dart';
+import 'package:culcul/ui/widgets/index.dart';
+import 'package:flutter/material.dart';
+import 'package:culcul/shared/extensions/format_extensions.dart';
+
+class NotificationItemWidget extends StatelessWidget {
+  final ReplyItem item;
+  final NotificationType type;
+
+  const NotificationItemWidget({
+    super.key,
+    required this.item,
+    required this.type,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final user = item.user ?? item.users?.firstOrNull;
+    final detail = item.item;
+
+    if (user == null) return const SizedBox.shrink();
+
+    final time = DateTime.fromMillisecondsSinceEpoch(
+      (item.replyTime ?? item.likeTime ?? 0) * 1000,
+    );
+
+    return InkWell(
+      onTap: () => _handleTap(context, detail),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Avatar
+            GestureDetector(
+              onTap: () {
+                if (user.mid != 0) {
+                  UserProfileRoute(mid: user.mid).push(context);
+                }
+              },
+              child: AppAvatar(
+                url: user.avatar,
+                size: 40,
+              ),
+            ),
+            const SizedBox(width: 12),
+            // Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header: Name + Action + Time
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          user.nickname,
+                          style: theme.textTheme.titleSmall?.copyWith(
+                            color: colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        _getActionText(),
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: colorScheme.outline,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        time.toSimpleDate(),
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: colorScheme.outline,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  // Main Content (Reply message or "Liked your comment")
+                  if (type != NotificationType.like) ...[
+                    Text(
+                      detail.message.isNotEmpty
+                          ? detail.message
+                          : detail.targetReplyContent,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurface,
+                        height: 1.5,
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                  // Source/Quote Context
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: colorScheme.surfaceContainerHighest.withValues(
+                        alpha: 0.3,
+                      ),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            _getSourceText(detail),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        if (detail.image.isNotEmpty) ...[
+                          const SizedBox(width: 8),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: AppNetworkImage(
+                              url: detail.image,
+                              width: 40,
+                              height: 40,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _handleTap(BuildContext context, ReplyItemDetail detail) {
+    final uri = detail.uri;
+
+    // 1. Try URI parsing
+    if (uri.isNotEmpty) {
+      final bvidMatch = RegExp(r'BV[a-zA-Z0-9]+').firstMatch(uri);
+      if (bvidMatch != null) {
+        VideoDetailRoute(bvid: bvidMatch.group(0)!).push(context);
+        return;
+      }
+
+      // Handle av...
+      final avidMatch = RegExp(r'av(\d+)').firstMatch(uri);
+      if (avidMatch != null) {
+        VideoDetailRoute(bvid: 'av${avidMatch.group(1)}').push(context);
+        return;
+      }
+    }
+
+    // 2. Fallback to business/subject id
+    if (detail.business == 'archive' || detail.type == 'video') {
+      VideoDetailRoute(bvid: 'av${detail.subjectId}').push(context);
+      return;
+    }
+
+    // TODO: Dynamic detail, Article detail, etc.
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Unable to navigate to content: ${detail.type} ${detail.subjectId}',
+        ),
+      ),
+    );
+  }
+
+  String _getActionText() {
+    switch (type) {
+      case NotificationType.like:
+        return '赞了我的评论';
+      case NotificationType.at:
+        return '@了我';
+      case NotificationType.reply:
+        return '回复了我';
+      case NotificationType.system:
+        return '系统通知';
+    }
+  }
+
+  String _getSourceText(ReplyItemDetail detail) {
+    if (detail.sourceContent.isNotEmpty) {
+      return detail.sourceContent;
+    }
+    if (detail.title.isNotEmpty) {
+      return detail.title;
+    }
+    return '相关内容';
+  }
+}

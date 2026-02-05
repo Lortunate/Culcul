@@ -1,0 +1,17 @@
+import 'package:culcul/core/errors/exceptions.dart';
+import 'package:culcul/data/models/comment_model.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'dynamic_comment_state.freezed.dart';
+
+@freezed
+abstract class DynamicCommentState with _$DynamicCommentState {
+  const factory DynamicCommentState({
+    @Default([]) List<CommentItem> comments,
+    @Default(true) bool isLoading,
+    @Default(false) bool hasMore,
+    @Default(1) int page,
+    @Default(1) int sort, // 0: time, 1: like (hot)
+    AppException? error,
+  }) = _DynamicCommentState;
+}

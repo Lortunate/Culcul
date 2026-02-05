@@ -2,7 +2,7 @@
   "nav": {
     "home": "Home",
     "moments": "Dynamic",
-    "subscription": "Subscription",
+    "ranking": "Ranking",
     "mine": "Mine"
   },
   "home": {
@@ -25,14 +25,8 @@
     },
     "empty": "$tab dynamic not implemented"
   },
-  "subscription": {
-    "title": "Subscription",
-    "tabs": {
-      "video": "Video",
-      "anime": "Anime",
-      "series": "Series"
-    },
-    "empty": "$tab subscription not implemented"
+  "ranking": {
+    "title": "Ranking"
   },
   "settings": {
     "title": "Settings",
@@ -41,6 +35,7 @@
     "chinese": "Simplified Chinese",
     "english": "English",
     "appearance": "Appearance",
+    "system_mode": "Follow System",
     "dark_mode": "Dark Mode",
     "light_mode": "Light Mode",
     "cache": "Cache Management",
@@ -63,8 +58,16 @@
     "sms_code": "SMS Code",
     "get_code": "Get Code",
     "get_code_retry": "Retry ($seconds s)",
-    "qr_hint": "Please use Cilixili app to scan",
+    "qr_hint": "Please use culcul app to scan",
     "qr_refresh": "Refresh QR Code",
+    "qr_status": {
+      "loading": "Loading...",
+      "success": "Login Successful",
+      "scanned": "Scanned. Please confirm on phone.",
+      "expired": "QR Code Expired",
+      "error": "Error loading QR Code"
+    },
+    "sms_sent": "SMS Code sent",
     "subtitle": "Third-party lightweight client"
   },
   "profile": {
@@ -76,19 +79,33 @@
       "following": "Following",
       "followers": "Followers"
     },
+    "vip": {
+      "premium": "Premium",
+      "annual_premium": "Annual Premium"
+    },
     "menu": {
       "history": "History",
-      "download": "Downloads",
-      "collection": "Collections",
+      "download": "Download",
+      "collection": "My Favorites",
       "later": "Watch Later",
-      "theme": "Appearance",
-      "creative_center": "Creator Center",
+      "theme": "Theme",
+      "creative_center": "Creative Center",
       "orders": "Orders",
       "customer_service": "Customer Service"
     }
   },
+  "fav": {
+    "title": "My Favorites",
+    "created": "Created",
+    "collected": "Collected",
+    "private": "Private",
+    "public": "Public",
+    "play": "Play",
+    "count": "$count items",
+    "search_hint": "Search favorites"
+  },
   "search": {
-    "placeholder": "Everyone is searching: Cilixili",
+    "placeholder": "Everyone is searching: culcul",
     "button": "Search",
     "history": "Search History",
     "hot_search": "Hot Search",
@@ -160,7 +177,15 @@
     "save": "Save",
     "delete": "Delete",
     "view_count": "$count views",
-    "danmaku_count": "$count danmaku"
+    "danmaku_count": "$count danmaku",
+    "pull_down_to_refresh": "Pull down to refresh",
+    "release_to_refresh": "Release to refresh",
+    "refresh_completed": "Refresh completed",
+    "refresh_failed": "Refresh failed",
+    "pull_up_to_load_more": "Pull up to load more",
+    "release_to_load_more": "Release to load more",
+    "load_failed": "Load failed",
+    "no_more_content": "No more content"
   },
   "error": {
     "connection_timeout": "Connection Timeout",
@@ -176,5 +201,19 @@
     "hours_ago": "$hours h ago",
     "minutes_ago": "$minutes m ago",
     "just_now": "just now"
+  },
+  "to_view": {
+    "title": "Watch Later",
+    "clear_all": "Clear All",
+    "clear_all_confirm": "Are you sure to clear watch later list?"
+  },
+  "subscription": {
+    "title": "Subscription",
+    "tabs": {
+      "video": "Video",
+      "anime": "Anime",
+      "series": "Series"
+    },
+    "empty": "No content in $tab"
   }
 }

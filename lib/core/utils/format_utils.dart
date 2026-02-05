@@ -1,9 +1,20 @@
-import 'package:cilixili/i18n/strings.g.dart';
+import 'package:culcul/i18n/strings.g.dart';
 
 class FormatUtils {
   FormatUtils._();
 
-  /// Formats large numbers into a readable string (e.g., 1.2万, 1.5亿).
+  static String stripHtmlTags(String htmlString) {
+    return htmlString.replaceAll(RegExp(r'<[^>]*>'), '');
+  }
+
+  static String formatImageUrl(String? url) {
+    if (url == null || url.isEmpty) return '';
+    if (url.startsWith('//')) {
+      return 'https:$url';
+    }
+    return url;
+  }
+
   static String formatNumber(int num) {
     final isZh = t.format.ten_thousand == '万';
     if (isZh) {
@@ -24,7 +35,17 @@ class FormatUtils {
     return num.toString();
   }
 
-  /// Formats seconds into HH:MM:SS or MM:SS format.
+  static String formatAnyNumber(dynamic value) {
+    if (value == null) return '0';
+    if (value is int) return formatNumber(value);
+    if (value is String) {
+      final intValue = int.tryParse(value);
+      if (intValue != null) return formatNumber(intValue);
+      return value;
+    }
+    return value.toString();
+  }
+
   static String formatDuration(int seconds) {
     final d = Duration(seconds: seconds);
     final hours = d.inHours;
@@ -36,7 +57,21 @@ class FormatUtils {
     return '${minutes.toString().padLeft(2, '0')}:${sec.toString().padLeft(2, '0')}';
   }
 
-  /// Formats a timestamp into a relative time string (e.g., 刚刚, 5分钟前, 10-24).
+  static int parseDurationString(String? duration) {
+    if (duration == null || duration.isEmpty) return 0;
+    final parts = duration.split(':');
+    try {
+      if (parts.length == 2) {
+        return int.parse(parts[0]) * 60 + int.parse(parts[1]);
+      } else if (parts.length == 3) {
+        return int.parse(parts[0]) * 3600 +
+            int.parse(parts[1]) * 60 +
+            int.parse(parts[2]);
+      }
+    } catch (_) {}
+    return 0;
+  }
+
   static String formatTimestamp(int timestamp) {
     final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
     final now = DateTime.now();

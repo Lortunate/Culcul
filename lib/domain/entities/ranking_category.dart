@@ -1,0 +1,65 @@
+class RankingCategory {
+  final String name;
+  final int? rid;
+
+  const RankingCategory({required this.name, this.rid});
+}
+
+final rankingCategories = [
+  const RankingCategory(name: '全站', rid: null),
+  const RankingCategory(name: '动画', rid: 1),
+  const RankingCategory(name: '番剧', rid: 13),
+  const RankingCategory(name: '国创', rid: 167),
+  const RankingCategory(name: '音乐', rid: 3),
+  const RankingCategory(name: '舞蹈', rid: 129),
+  const RankingCategory(name: '游戏', rid: 4),
+  const RankingCategory(name: '知识', rid: 36),
+  const RankingCategory(name: '科技', rid: 188),
+  const RankingCategory(name: '运动', rid: 234),
+  const RankingCategory(name: '汽车', rid: 223),
+  const RankingCategory(name: '生活', rid: 160),
+  const RankingCategory(name: '美食', rid: 211),
+  const RankingCategory(name: '动物圈', rid: 217),
+  const RankingCategory(name: '鬼畜', rid: 119),
+  const RankingCategory(name: '时尚', rid: 155),
+  const RankingCategory(name: '资讯', rid: 202),
+  const RankingCategory(name: '娱乐', rid: 5),
+  const RankingCategory(name: '影视', rid: 181),
+  const RankingCategory(name: '纪录片', rid: 177),
+  const RankingCategory(name: '电影', rid: 23),
+  const RankingCategory(name: '电视剧', rid: 11),
+];
+
+final rankingCategoriesV2 = [
+  const RankingCategory(name: '全站', rid: null),
+  const RankingCategory(name: '动画', rid: 1005),
+  const RankingCategory(name: '游戏', rid: 1008),
+  const RankingCategory(name: '鬼畜', rid: 1007),
+  const RankingCategory(name: '音乐', rid: 1003),
+  const RankingCategory(name: '舞蹈', rid: 1004),
+  const RankingCategory(name: '影视', rid: 1001),
+  const RankingCategory(name: '娱乐', rid: 1002),
+  const RankingCategory(name: '知识', rid: 1010),
+  const RankingCategory(name: '科技数码', rid: 1012),
+  const RankingCategory(name: '资讯', rid: 1009),
+  const RankingCategory(name: '美食', rid: 1020),
+  const RankingCategory(name: '小剧场', rid: 1021),
+  const RankingCategory(name: '汽车', rid: 1013),
+  const RankingCategory(name: '时尚美妆', rid: 1014),
+  const RankingCategory(name: '体育运动', rid: 1018),
+  const RankingCategory(name: '动物', rid: 1024),
+  const RankingCategory(name: 'vlog', rid: 1029),
+  const RankingCategory(name: '绘画', rid: 1006),
+  const RankingCategory(name: '人工智能', rid: 1011),
+  const RankingCategory(name: '家装房产', rid: 1015),
+  const RankingCategory(name: '户外潮流', rid: 1016),
+  const RankingCategory(name: '健身', rid: 1017),
+  const RankingCategory(name: '手工', rid: 1019),
+  const RankingCategory(name: '旅游出行', rid: 1022),
+  const RankingCategory(name: '三农', rid: 1023),
+  const RankingCategory(name: '亲子', rid: 1025),
+  const RankingCategory(name: '健康', rid: 1026),
+  const RankingCategory(name: '情感', rid: 1027),
+  const RankingCategory(name: '生活兴趣', rid: 1030),
+  const RankingCategory(name: '生活经验', rid: 1031),
+];

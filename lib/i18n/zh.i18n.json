@@ -2,7 +2,7 @@
   "nav": {
     "home": "首页",
     "moments": "动态",
-    "subscription": "订阅",
+    "ranking": "排行榜",
     "mine": "我的"
   },
   "home": {
@@ -25,14 +25,8 @@
     },
     "empty": "$tab 动态暂未实现"
   },
-  "subscription": {
-    "title": "订阅",
-    "tabs": {
-      "video": "视频",
-      "anime": "追番",
-      "series": "追剧"
-    },
-    "empty": "$tab 订阅内容暂未实现"
+  "ranking": {
+    "title": "排行榜"
   },
   "settings": {
     "title": "设置",
@@ -41,6 +35,7 @@
     "chinese": "简体中文",
     "english": "English",
     "appearance": "外观设置",
+    "system_mode": "跟随系统",
     "dark_mode": "深色模式",
     "light_mode": "浅色模式",
     "cache": "缓存管理",
@@ -63,8 +58,16 @@
     "sms_code": "验证码",
     "get_code": "获取验证码",
     "get_code_retry": "重新获取($seconds s)",
-    "qr_hint": "请使用 Cilixili 客户端扫码登录",
+    "qr_hint": "请使用 culcul 客户端扫码登录",
     "qr_refresh": "刷新二维码",
+    "qr_status": {
+      "loading": "加载中...",
+      "success": "登录成功",
+      "scanned": "已扫描，请在手机上确认",
+      "expired": "二维码已过期",
+      "error": "加载二维码失败"
+    },
+    "sms_sent": "验证码已发送",
     "subtitle": "第三方轻量化客户端"
   },
   "profile": {
@@ -75,6 +78,10 @@
       "dynamic": "动态",
       "following": "关注",
       "followers": "粉丝"
+    },
+    "vip": {
+      "premium": "大会员",
+      "annual_premium": "年度大会员"
     },
     "menu": {
       "history": "历史记录",
@@ -87,8 +94,18 @@
       "customer_service": "联系客服"
     }
   },
+  "fav": {
+    "title": "我的收藏",
+    "created": "创建的",
+    "collected": "收藏的",
+    "private": "私密",
+    "public": "公开",
+    "play": "播放",
+    "count": "共 $count 个内容",
+    "search_hint": "搜索收藏内容"
+  },
   "search": {
-    "placeholder": "大家都在搜：Cilixili",
+    "placeholder": "大家都在搜：culcul",
     "button": "搜索",
     "history": "搜索历史",
     "hot_search": "热搜榜",
@@ -160,7 +177,15 @@
     "save": "保存",
     "delete": "删除",
     "view_count": "$count次播放",
-    "danmaku_count": "$count弹幕"
+    "danmaku_count": "$count条弹幕",
+    "pull_down_to_refresh": "下拉可以刷新",
+    "release_to_refresh": "松开立即刷新",
+    "refresh_completed": "刷新成功",
+    "refresh_failed": "刷新失败",
+    "pull_up_to_load_more": "上拉加载更多",
+    "release_to_load_more": "松开加载更多",
+    "load_failed": "加载失败",
+    "no_more_content": "没有更多内容了"
   },
   "error": {
     "connection_timeout": "连接超时",
@@ -176,5 +201,19 @@
     "hours_ago": "$hours小时前",
     "minutes_ago": "$minutes分钟前",
     "just_now": "刚刚"
+  },
+  "to_view": {
+    "title": "稍后再看",
+    "clear_all": "清空稍后再看",
+    "clear_all_confirm": "确定要清空稍后再看列表吗？"
+  },
+  "subscription": {
+    "title": "订阅",
+    "tabs": {
+      "video": "视频",
+      "anime": "番剧",
+      "series": "影视"
+    },
+    "empty": "$tab 暂无内容"
   }
 }
