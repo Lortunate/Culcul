@@ -82,7 +82,10 @@ class HomeRoute extends GoRouteData with $HomeRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return FadeTransitionPage(key: state.pageKey, child: build(context, state));
+    return SlideFromRightTransitionPage(
+      key: state.pageKey,
+      child: build(context, state),
+    );
   }
 }
 
@@ -96,7 +99,10 @@ class DynamicRoute extends GoRouteData with $DynamicRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return FadeTransitionPage(key: state.pageKey, child: build(context, state));
+    return SlideFromRightTransitionPage(
+      key: state.pageKey,
+      child: build(context, state),
+    );
   }
 }
 
@@ -137,7 +143,10 @@ class RankingRoute extends GoRouteData with $RankingRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return FadeTransitionPage(key: state.pageKey, child: build(context, state));
+    return SlideFromRightTransitionPage(
+      key: state.pageKey,
+      child: build(context, state),
+    );
   }
 }
 
@@ -151,7 +160,10 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return FadeTransitionPage(key: state.pageKey, child: build(context, state));
+    return SlideFromRightTransitionPage(
+      key: state.pageKey,
+      child: build(context, state),
+    );
   }
 }
 
@@ -186,7 +198,7 @@ class VideoDetailRoute extends GoRouteData with $VideoDetailRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
+    return SlideFromBottomTransitionPage(
       key: state.pageKey,
       child: build(context, state),
     );
@@ -206,7 +218,7 @@ class LiveRoomRoute extends GoRouteData with $LiveRoomRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
+    return SlideFromBottomTransitionPage(
       key: state.pageKey,
       child: build(context, state),
     );
@@ -238,12 +250,19 @@ class CommentReplyRoute extends GoRouteData with $CommentReplyRoute {
         upperMid: map['upperMid'] as int?,
       );
     }
-    return CommentReplyPage(oid: oid, rootId: rootId, comment: $extra as CommentItem);
+    return CommentReplyPage(
+      oid: oid,
+      rootId: rootId,
+      comment: $extra as CommentItem,
+    );
   }
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return FadeTransitionPage(key: state.pageKey, child: build(context, state));
+    return SlideFromRightTransitionPage(
+      key: state.pageKey,
+      child: build(context, state),
+    );
   }
 }
 
@@ -379,10 +398,7 @@ class LoginRoute extends GoRouteData with $LoginRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromBottomTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return FadeTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -445,6 +461,14 @@ class ReplyNotificationRoute extends GoRouteData with $ReplyNotificationRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const NotificationListPage(type: NotificationType.reply);
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return SlideFromRightTransitionPage(
+      key: state.pageKey,
+      child: build(context, state),
+    );
+  }
 }
 
 class AtNotificationRoute extends GoRouteData with $AtNotificationRoute {
@@ -452,6 +476,14 @@ class AtNotificationRoute extends GoRouteData with $AtNotificationRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const NotificationListPage(type: NotificationType.at);
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return SlideFromRightTransitionPage(
+      key: state.pageKey,
+      child: build(context, state),
+    );
+  }
 }
 
 class LikeNotificationRoute extends GoRouteData with $LikeNotificationRoute {
@@ -459,13 +491,30 @@ class LikeNotificationRoute extends GoRouteData with $LikeNotificationRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const NotificationListPage(type: NotificationType.like);
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return SlideFromRightTransitionPage(
+      key: state.pageKey,
+      child: build(context, state),
+    );
+  }
 }
 
-class SystemNotificationRoute extends GoRouteData with $SystemNotificationRoute {
+class SystemNotificationRoute extends GoRouteData
+    with $SystemNotificationRoute {
   const SystemNotificationRoute();
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       const SystemNotificationPage();
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return SlideFromRightTransitionPage(
+      key: state.pageKey,
+      child: build(context, state),
+    );
+  }
 }
 
 class ChatRoute extends GoRouteData with $ChatRoute {
@@ -488,6 +537,14 @@ class ChatRoute extends GoRouteData with $ChatRoute {
     sessionType: sessionType ?? 1,
     avatarUrl: avatarUrl,
   );
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return SlideFromBottomTransitionPage(
+      key: state.pageKey,
+      child: build(context, state),
+    );
+  }
 }
 
 @TypedGoRoute<ScannerRoute>(path: '/scan')

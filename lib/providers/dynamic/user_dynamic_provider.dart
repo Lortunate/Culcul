@@ -21,10 +21,15 @@ class UserDynamicNotifier extends _$UserDynamicNotifier {
 
   Future<List<DynamicPost>> _fetchFeed() async {
     final repository = ref.read(dynamicRepositoryProvider);
-    final feed = await repository.getUserFeed(hostMid: _hostMid, offset: _offset);
-    _offset = feed.offset;
-    _hasMore = feed.hasMore;
-    return feed.items;
+    final result = await repository.getUserFeed(hostMid: _hostMid, offset: _offset);
+    return result.when(
+      success: (feed) {
+        _offset = feed.offset;
+        _hasMore = feed.hasMore;
+        return feed.items;
+      },
+      failure: (e) => throw e,
+    );
   }
 
   Future<void> loadMore() async {
@@ -80,9 +85,8 @@ class UserDynamicNotifier extends _$UserDynamicNotifier {
     newItems[index] = newItem;
     state = AsyncData(newItems);
 
-    try {
-      await ref.read(dynamicRepositoryProvider).likeDynamic(id, !isLiked);
-    } catch (e) {
+    final result = await ref.read(dynamicRepositoryProvider).likeDynamic(id, !isLiked);
+    if (result.isFailure) {
       // Revert
       state = oldState;
     }

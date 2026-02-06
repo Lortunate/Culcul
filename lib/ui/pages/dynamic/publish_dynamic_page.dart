@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:culcul/core/providers/api_provider.dart';
+import 'package:culcul/core/types/result.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:culcul/providers/dynamic/dynamic_provider.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/emoji_picker.dart';
+import 'package:culcul/ui/pages/dynamic/widgets/topic_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -64,6 +66,22 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
     );
   }
 
+  void _showTopicPicker() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return TopicPicker(
+          onTopicSelected: (topic) {
+            _insertText('#$topic# ');
+            Navigator.pop(context);
+          },
+        );
+      },
+    );
+  }
+
   void _insertText(String text) {
     if (!_controller.selection.isValid) {
       _controller.text += text;
@@ -93,15 +111,23 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
       final List<DynamicUploadImageData> uploadedImages = [];
       if (_images.isNotEmpty) {
         for (var img in _images) {
-          final data = await ref.read(dynamicRepositoryProvider).uploadImage(img);
-          uploadedImages.add(data);
+          final result = await ref.read(dynamicRepositoryProvider).uploadImage(img);
+          result.when(
+            success: (data) => uploadedImages.add(data),
+            failure: (e) => throw e,
+          );
         }
       }
 
-      await ref.read(dynamicRepositoryProvider).publishDynamic(
+      final result = await ref.read(dynamicRepositoryProvider).publishDynamic(
             content: _controller.text,
             images: uploadedImages,
           );
+
+      result.when(
+        success: (_) {},
+        failure: (e) => throw e,
+      );
 
       if (mounted) {
         Navigator.pop(context);
@@ -335,7 +361,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
               const SizedBox(width: 24),
               _ToolbarAction(
                 icon: Icons.tag,
-                onTap: () => _insertText('#'),
+                onTap: _showTopicPicker,
               ),
               const SizedBox(width: 24),
               _ToolbarAction(

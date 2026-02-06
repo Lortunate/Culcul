@@ -95,6 +95,18 @@ abstract class SearchResultItem with _$SearchResultItem {
     @JsonKey(name: 'pub_time') int? pubTime,
   }) = SearchArticleModel;
 
+  @FreezedUnionValue('topic')
+  const factory SearchResultItem.topic({
+    String? type,
+    String? title,
+    String? description,
+    String? cover,
+    @JsonKey(name: 'tp_id') int? tpId,
+    @JsonKey(name: 'arcurl') String? arcurl,
+    String? author,
+    int? update,
+  }) = SearchTopicModel;
+
   factory SearchResultItem.fromJson(Map<String, dynamic> json) =>
       _$SearchResultItemFromJson(json);
 }

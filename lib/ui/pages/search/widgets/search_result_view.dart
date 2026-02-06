@@ -2,6 +2,7 @@ import 'package:culcul/data/models/search_result.dart';
 import 'package:culcul/providers/search/search_provider.dart';
 import 'package:culcul/ui/pages/search/widgets/items/search_article_item.dart';
 import 'package:culcul/ui/pages/search/widgets/items/search_bangumi_item.dart';
+import 'package:culcul/ui/pages/search/widgets/items/search_topic_item.dart';
 import 'package:culcul/ui/pages/search/widgets/items/search_user_item.dart';
 import 'package:culcul/ui/pages/search/widgets/items/search_video_item.dart';
 import 'package:culcul/ui/pages/search/widgets/search_result_skeleton.dart';
@@ -123,6 +124,7 @@ class _SearchResultList extends HookConsumerWidget {
                       user: (u) => SearchUserItem(item: u),
                       bangumi: (b) => SearchBangumiItem(item: b),
                       article: (a) => SearchArticleItem(item: a),
+                      topic: (t) => SearchTopicItem(item: t),
                     );
                   },
                 ),

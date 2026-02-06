@@ -34,6 +34,19 @@ abstract class DynamicApi {
         'itemOpusStyle,listOnlyfans,opusBigCover,onlyfansVote,decorationCard,onlyfansAssetsV2,forwardListHidden,ugcDelete',
   });
 
+  @GET('/x/polymer/web-dynamic/v1/feed/topic')
+  @Headers({'x-bili-wbi': 'true'})
+  Future<DynamicResponse> getTopicFeed({
+    @Query('topic_id') required int topicId,
+    @Query('offset') String? offset,
+    @Query('sort_by') int sortBy = 0,
+    @Query('page_size') int pageSize = 20,
+    @Query('timezone_offset') int timezoneOffset = -480,
+    @Query('features')
+    String features =
+        'itemOpusStyle,listOnlyfans,opusBigCover,onlyfansVote,decorationCard,onlyfansAssetsV2,forwardListHidden,ugcDelete',
+  });
+
   @GET('/x/v2/reply')
   Future<ApiResponse<CommentResponse>> getComments(
     @Queries() Map<String, dynamic> queries,

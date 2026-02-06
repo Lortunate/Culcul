@@ -1,5 +1,6 @@
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/router/router.dart';
+import 'package:culcul/core/types/result.dart';
 import 'package:culcul/domain/entities/dynamic_post.dart';
 import 'package:culcul/providers/dynamic/dynamic_comment_controller.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/dynamic_comments_view.dart';
@@ -38,23 +39,25 @@ class _DynamicDetailPageState extends ConsumerState<DynamicDetailPage> {
   }
 
   Future<void> _loadDetail() async {
-    try {
-      final post = await ref
-          .read(dynamicRepositoryProvider)
-          .getDetail(widget.dynamicId);
-      if (mounted) {
-        setState(() {
-          _post = post;
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() {
-          _error = e.toString();
-          _isLoading = false;
-        });
-      }
+    final result = await ref
+        .read(dynamicRepositoryProvider)
+        .getDetail(widget.dynamicId);
+    
+    if (mounted) {
+      result.when(
+        success: (post) {
+          setState(() {
+            _post = post;
+            _isLoading = false;
+          });
+        },
+        failure: (e) {
+          setState(() {
+            _error = e.toString();
+            _isLoading = false;
+          });
+        },
+      );
     }
   }
 
@@ -295,34 +298,33 @@ class _DynamicDetailPageState extends ConsumerState<DynamicDetailPage> {
 
   Future<void> _handleLike(BuildContext context) async {
     if (_post == null) return;
-    try {
-      final newStatus = !_post!.isLiked;
-      // Optimistic update
-      setState(() {
-        _post = _post!.copyWith(
-          isLiked: newStatus,
-          likeCount: _post!.likeCount + (newStatus ? 1 : -1),
-        );
-      });
+    
+    final newStatus = !_post!.isLiked;
+    // Optimistic update
+    setState(() {
+      _post = _post!.copyWith(
+        isLiked: newStatus,
+        likeCount: _post!.likeCount + (newStatus ? 1 : -1),
+      );
+    });
       
-      await ref.read(dynamicRepositoryProvider).likeDynamic(
-            _post!.id,
-            newStatus,
+    final result = await ref.read(dynamicRepositoryProvider).likeDynamic(
+          _post!.id,
+          newStatus,
+        );
+        
+    if (result.isFailure && mounted) {
+       // Revert
+       final oldStatus = !newStatus;
+       setState(() {
+          _post = _post!.copyWith(
+            isLiked: oldStatus,
+            likeCount: _post!.likeCount + (oldStatus ? 1 : -1),
           );
-    } catch (e) {
-      // Revert
-      if (mounted) {
-         final newStatus = !_post!.isLiked;
-         setState(() {
-            _post = _post!.copyWith(
-              isLiked: newStatus,
-              likeCount: _post!.likeCount + (newStatus ? 1 : -1),
-            );
-         });
-         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text('操作失败: $e')),
-         );
-      }
+       });
+       ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(content: Text('操作失败: ${(result as Failure).exception}')),
+       );
     }
   }
 }

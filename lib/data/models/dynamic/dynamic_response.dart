@@ -168,12 +168,191 @@ class ModuleDynamic {
   final ModuleDesc? desc;
   final ModuleMajor? major;
   final ModuleTopic? topic;
+  final ModuleAdditional? additional;
 
-  ModuleDynamic({this.desc, this.major, this.topic});
+  ModuleDynamic({this.desc, this.major, this.topic, this.additional});
 
   factory ModuleDynamic.fromJson(Map<String, dynamic> json) =>
       _$ModuleDynamicFromJson(json);
   Map<String, dynamic> toJson() => _$ModuleDynamicToJson(this);
+}
+
+@JsonSerializable()
+class ModuleAdditional {
+  final String type;
+  final AdditionalCommon? common;
+  final AdditionalReserve? reserve;
+  final AdditionalGoods? goods;
+  final AdditionalVote? vote;
+  final AdditionalUgc? ugc;
+
+  ModuleAdditional({
+    required this.type,
+    this.common,
+    this.reserve,
+    this.goods,
+    this.vote,
+    this.ugc,
+  });
+
+  factory ModuleAdditional.fromJson(Map<String, dynamic> json) =>
+      _$ModuleAdditionalFromJson(json);
+  Map<String, dynamic> toJson() => _$ModuleAdditionalToJson(this);
+}
+
+@JsonSerializable()
+class AdditionalCommon {
+  final String title;
+  final String? desc1;
+  final String? desc2;
+  final String cover;
+  @JsonKey(name: 'jump_url')
+  final String jumpUrl;
+  @JsonKey(name: 'sub_type')
+  final String subType;
+  @JsonKey(name: 'head_text')
+  final String? headText;
+
+  AdditionalCommon({
+    required this.title,
+    this.desc1,
+    this.desc2,
+    required this.cover,
+    required this.jumpUrl,
+    required this.subType,
+    this.headText,
+  });
+
+  factory AdditionalCommon.fromJson(Map<String, dynamic> json) =>
+      _$AdditionalCommonFromJson(json);
+  Map<String, dynamic> toJson() => _$AdditionalCommonToJson(this);
+}
+
+@JsonSerializable()
+class AdditionalReserve {
+  final String title;
+  @JsonKey(name: 'jump_url')
+  final String jumpUrl;
+  @JsonKey(name: 'reserve_total')
+  final int reserveTotal;
+  final int state; // 0: unreserved?, 1: reserved? - Check docs. actually status in button. 
+  // Docs say: state 0.
+  // Docs say desc1, desc2 are objects. 
+  final ReserveDesc? desc1;
+  final ReserveDesc? desc2;
+
+  AdditionalReserve({
+    required this.title,
+    required this.jumpUrl,
+    required this.reserveTotal,
+    required this.state,
+    this.desc1,
+    this.desc2,
+  });
+
+  factory AdditionalReserve.fromJson(Map<String, dynamic> json) =>
+      _$AdditionalReserveFromJson(json);
+  Map<String, dynamic> toJson() => _$AdditionalReserveToJson(this);
+}
+
+@JsonSerializable()
+class ReserveDesc {
+  final String text;
+  final int style;
+
+  ReserveDesc({required this.text, required this.style});
+
+  factory ReserveDesc.fromJson(Map<String, dynamic> json) =>
+      _$ReserveDescFromJson(json);
+  Map<String, dynamic> toJson() => _$ReserveDescToJson(this);
+}
+
+@JsonSerializable()
+class AdditionalGoods {
+  @JsonKey(name: 'head_text')
+  final String headText;
+  final List<GoodsItem> items;
+  @JsonKey(name: 'jump_url')
+  final String jumpUrl;
+
+  AdditionalGoods({
+    required this.headText,
+    required this.items,
+    required this.jumpUrl,
+  });
+
+  factory AdditionalGoods.fromJson(Map<String, dynamic> json) =>
+      _$AdditionalGoodsFromJson(json);
+  Map<String, dynamic> toJson() => _$AdditionalGoodsToJson(this);
+}
+
+@JsonSerializable()
+class GoodsItem {
+  final String name;
+  final String price;
+  final String cover;
+  @JsonKey(name: 'jump_url')
+  final String jumpUrl;
+
+  GoodsItem({
+    required this.name,
+    required this.price,
+    required this.cover,
+    required this.jumpUrl,
+  });
+
+  factory GoodsItem.fromJson(Map<String, dynamic> json) =>
+      _$GoodsItemFromJson(json);
+  Map<String, dynamic> toJson() => _$GoodsItemToJson(this);
+}
+
+@JsonSerializable()
+class AdditionalVote {
+  final String desc;
+  @JsonKey(name: 'end_time')
+  final int endTime;
+  @JsonKey(name: 'join_num')
+  final int joinNum;
+  @JsonKey(name: 'vote_id')
+  final int voteId;
+  final int choice_cnt;
+  final int status;
+
+  AdditionalVote({
+    required this.desc,
+    required this.endTime,
+    required this.joinNum,
+    required this.voteId,
+    required this.choice_cnt,
+    required this.status,
+  });
+
+  factory AdditionalVote.fromJson(Map<String, dynamic> json) =>
+      _$AdditionalVoteFromJson(json);
+  Map<String, dynamic> toJson() => _$AdditionalVoteToJson(this);
+}
+
+@JsonSerializable()
+class AdditionalUgc {
+  final String title;
+  final String cover;
+  @JsonKey(name: 'desc_second')
+  final String descSecond;
+  final String duration;
+  @JsonKey(name: 'jump_url')
+  final String jumpUrl;
+
+  AdditionalUgc({
+    required this.title,
+    required this.cover,
+    required this.descSecond,
+    required this.duration,
+    required this.jumpUrl,
+  });
+
+  factory AdditionalUgc.fromJson(Map<String, dynamic> json) =>
+      _$AdditionalUgcFromJson(json);
+  Map<String, dynamic> toJson() => _$AdditionalUgcToJson(this);
 }
 
 @JsonSerializable()

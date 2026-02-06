@@ -131,7 +131,7 @@ class DynamicRepository {
     if (post.type == 'DYNAMIC_TYPE_AV') {
       if (post.video != null) {
         // Use AID as oid, type 1
-        return {'oid': int.tryParse(post.video!.aid) ?? 0, 'type': 1};
+        return {'oid': int.tryParse(post.video!.aid ?? '') ?? 0, 'type': 1};
       }
     } else if (post.type == 'DYNAMIC_TYPE_DRAW' ||
         post.type == 'DYNAMIC_TYPE_WORD' ||
@@ -156,116 +156,186 @@ class DynamicRepository {
 
   // Replaced by getFeed using DynamicMapper
 
-  Future<DynamicFeed> getFeed({
+  Future<Result<DynamicFeed, AppException>> getFeed({
     String type = 'all',
     String? offset,
     int page = 1,
   }) async {
-    final response = await _api.getDynamicFeed(
-      type: type,
-      offset: offset,
-      page: page,
-    );
+    try {
+      final response = await _api.getDynamicFeed(
+        type: type,
+        offset: offset,
+        page: page,
+      );
 
-    if (response.data == null) {
-      throw Exception('No data');
+      if (response.data == null) {
+        return Failure(ServerException('No data', code: response.code));
+      }
+
+      final data = response.data!;
+
+      return Success(DynamicFeed(
+        hasMore: data.hasMore,
+        offset: data.offset,
+        items: data.items.map((item) => DynamicMapper.mapToEntity(item)).toList(),
+      ));
+    } on DioException catch (e) {
+      return Failure(dioExceptionToAppException(e));
+    } catch (e) {
+      return Failure(UnknownException(e.toString(), cause: e));
     }
-
-    final data = response.data!;
-
-    return DynamicFeed(
-      hasMore: data.hasMore,
-      offset: data.offset,
-      items: data.items.map((item) => DynamicMapper.mapToEntity(item)).toList(),
-    );
   }
 
-  Future<DynamicFeed> getUserFeed({
+  Future<Result<DynamicFeed, AppException>> getUserFeed({
     required int hostMid,
     String? offset,
   }) async {
-    final response = await _api.getSpaceDynamicFeed(
-      hostMid: hostMid,
-      offset: offset,
-    );
+    try {
+      final response = await _api.getSpaceDynamicFeed(
+        hostMid: hostMid,
+        offset: offset,
+      );
 
-    if (response.data == null) {
-      throw Exception('No data');
+      if (response.data == null) {
+        return Failure(ServerException('No data', code: response.code));
+      }
+
+      final data = response.data!;
+
+      return Success(DynamicFeed(
+        hasMore: data.hasMore,
+        offset: data.offset,
+        items: data.items.map((item) => DynamicMapper.mapToEntity(item)).toList(),
+      ));
+    } on DioException catch (e) {
+      return Failure(dioExceptionToAppException(e));
+    } catch (e) {
+      return Failure(UnknownException(e.toString(), cause: e));
     }
-
-    final data = response.data!;
-
-    return DynamicFeed(
-      hasMore: data.hasMore,
-      offset: data.offset,
-      items: data.items.map((item) => DynamicMapper.mapToEntity(item)).toList(),
-    );
   }
 
-  Future<DynamicPost> getDetail(String id) async {
-    final response = await _api.getDynamicDetail(id: id);
-    if (response.data == null) {
-      throw Exception('Dynamic not found');
+  Future<Result<DynamicFeed, AppException>> getTopicFeed({
+    required int topicId,
+    String? offset,
+    int sortBy = 0,
+  }) async {
+    try {
+      final response = await _api.getTopicFeed(
+        topicId: topicId,
+        offset: offset,
+        sortBy: sortBy,
+      );
+
+      if (response.data == null) {
+        return Failure(ServerException('No data', code: response.code));
+      }
+
+      final data = response.data!;
+
+      return Success(DynamicFeed(
+        hasMore: data.hasMore,
+        offset: data.offset,
+        items: data.items.map((item) => DynamicMapper.mapToEntity(item)).toList(),
+      ));
+    } on DioException catch (e) {
+      return Failure(dioExceptionToAppException(e));
+    } catch (e) {
+      return Failure(UnknownException(e.toString(), cause: e));
     }
-    return DynamicMapper.mapToEntity(response.data!.item);
   }
 
-  Future<void> likeDynamic(String id, bool like) async {
-    final csrf = await _getCsrfToken();
-    await _api.likeDynamic(
-      body: {
-        'dyn_id_str': id,
-        'up': like ? 1 : 2,
-      },
-      csrf: csrf ?? '',
-    );
+  Future<Result<DynamicPost, AppException>> getDetail(String id) async {
+    try {
+      final response = await _api.getDynamicDetail(id: id);
+      if (response.data == null) {
+        return Failure(ServerException('Dynamic not found', code: response.code));
+      }
+      return Success(DynamicMapper.mapToEntity(response.data!.item));
+    } on DioException catch (e) {
+      return Failure(dioExceptionToAppException(e));
+    } catch (e) {
+      return Failure(UnknownException(e.toString(), cause: e));
+    }
   }
 
-  Future<DynamicUploadImageData> uploadImage(File file) async {
-    final csrf = await _getCsrfToken();
-    final response = await _api.uploadImage(file: file, csrf: csrf ?? '');
-    if (response.data == null) throw Exception('Upload failed');
-    return response.data!;
+  Future<Result<void, AppException>> likeDynamic(String id, bool like) async {
+    try {
+      final csrf = await _getCsrfToken();
+      await _api.likeDynamic(
+        body: {
+          'dyn_id_str': id,
+          'up': like ? 1 : 2,
+        },
+        csrf: csrf ?? '',
+      );
+      return const Success(null);
+    } on DioException catch (e) {
+      return Failure(dioExceptionToAppException(e));
+    } catch (e) {
+      return Failure(UnknownException(e.toString(), cause: e));
+    }
   }
 
-  Future<void> publishDynamic({
+  Future<Result<DynamicUploadImageData, AppException>> uploadImage(File file) async {
+    try {
+      final csrf = await _getCsrfToken();
+      final response = await _api.uploadImage(file: file, csrf: csrf ?? '');
+      if (response.data == null) {
+        return Failure(ServerException('Upload failed', code: response.code));
+      }
+      return Success(response.data!);
+    } on DioException catch (e) {
+      return Failure(dioExceptionToAppException(e));
+    } catch (e) {
+      return Failure(UnknownException(e.toString(), cause: e));
+    }
+  }
+
+  Future<Result<void, AppException>> publishDynamic({
     required String content,
     List<DynamicUploadImageData> images = const [],
   }) async {
-    final csrf = await _getCsrfToken();
+    try {
+      final csrf = await _getCsrfToken();
 
-    // Construct dyn_req
-    final List<Map<String, dynamic>> contents = [];
-    contents.add({
-      'raw_text': content,
-      'type': 1,
-      'biz_id': '',
-    });
-
-    final List<Map<String, dynamic>> pics = [];
-    for (var img in images) {
-      pics.add({
-        'img_src': img.imageUrl,
-        'img_width': img.width,
-        'img_height': img.height,
+      // Construct dyn_req
+      final List<Map<String, dynamic>> contents = [];
+      contents.add({
+        'raw_text': content,
+        'type': 1,
+        'biz_id': '',
       });
+
+      final List<Map<String, dynamic>> pics = [];
+      for (var img in images) {
+        pics.add({
+          'img_src': img.imageUrl,
+          'img_width': img.width,
+          'img_height': img.height,
+        });
+      }
+
+      final Map<String, dynamic> dynReq = {
+        'content': {
+          'contents': contents,
+        },
+        'scene': images.isNotEmpty ? 2 : 1, // 1: text, 2: image
+      };
+
+      if (images.isNotEmpty) {
+        dynReq['pics'] = pics;
+      }
+
+      await _api.createDynamic(
+        csrf: csrf ?? '',
+        body: {'dyn_req': dynReq},
+      );
+      return const Success(null);
+    } on DioException catch (e) {
+      return Failure(dioExceptionToAppException(e));
+    } catch (e) {
+      return Failure(UnknownException(e.toString(), cause: e));
     }
-
-    final Map<String, dynamic> dynReq = {
-      'content': {
-        'contents': contents,
-      },
-      'scene': images.isNotEmpty ? 2 : 1, // 1: text, 2: image
-    };
-
-    if (images.isNotEmpty) {
-      dynReq['pics'] = pics;
-    }
-
-    await _api.createDynamic(
-      csrf: csrf ?? '',
-      body: {'dyn_req': dynReq},
-    );
   }
 
   // Methods moved to DynamicMapper

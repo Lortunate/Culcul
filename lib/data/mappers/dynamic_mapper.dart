@@ -25,10 +25,93 @@ class DynamicMapper {
       video: _mapVideoContent(dynamicModule.major),
       orig: item.orig != null ? mapToEntity(item.orig!) : null,
       topicName: dynamicModule.topic?.name,
+      topicId: _extractTopicId(dynamicModule.topic?.jumpUrl),
       linkCard: _mapLinkCard(dynamicModule.major),
       commentId: item.basic?.commentIdStr,
       commentType: item.basic?.commentType,
+      additional: _mapAdditional(dynamicModule.additional),
     );
+  }
+
+  static int? _extractTopicId(String? url) {
+    if (url == null) return null;
+    try {
+      final uri = Uri.parse(url);
+      final topicIdStr = uri.queryParameters['topic_id'];
+      if (topicIdStr != null) {
+        return int.tryParse(topicIdStr);
+      }
+    } catch (e) {
+      // ignore
+    }
+    return null;
+  }
+
+  static DynamicAdditional? _mapAdditional(ModuleAdditional? additional) {
+    if (additional == null) return null;
+
+    if (additional.type == 'ADDITIONAL_TYPE_COMMON' && additional.common != null) {
+      return DynamicAdditional(
+        type: additional.type,
+        title: additional.common!.title,
+        cover: additional.common!.cover,
+        desc1: additional.common!.desc1,
+        desc2: additional.common!.desc2,
+        jumpUrl: additional.common!.jumpUrl,
+        headText: additional.common!.headText,
+      );
+    }
+
+    if (additional.type == 'ADDITIONAL_TYPE_RESERVE' && additional.reserve != null) {
+      return DynamicAdditional(
+        type: additional.type,
+        title: additional.reserve!.title,
+        jumpUrl: additional.reserve!.jumpUrl,
+        reserveTotal: additional.reserve!.reserveTotal,
+        state: additional.reserve!.state,
+        desc1: additional.reserve!.desc1?.text,
+        desc2: additional.reserve!.desc2?.text,
+      );
+    }
+
+    if (additional.type == 'ADDITIONAL_TYPE_GOODS' && additional.goods != null) {
+      return DynamicAdditional(
+        type: additional.type,
+        headText: additional.goods!.headText,
+        jumpUrl: additional.goods!.jumpUrl,
+        goodsItems: additional.goods!.items
+            .map((e) => DynamicGoodsItem(
+                  name: e.name,
+                  price: e.price,
+                  cover: e.cover,
+                  jumpUrl: e.jumpUrl,
+                ))
+            .toList(),
+      );
+    }
+
+    if (additional.type == 'ADDITIONAL_TYPE_VOTE' && additional.vote != null) {
+      return DynamicAdditional(
+        type: additional.type,
+        title: additional.vote!.desc,
+        voteJoinNum: additional.vote!.joinNum,
+        voteId: additional.vote!.voteId,
+        voteChoiceCnt: additional.vote!.choice_cnt,
+        voteStatus: additional.vote!.status,
+      );
+    }
+
+    if (additional.type == 'ADDITIONAL_TYPE_UGC' && additional.ugc != null) {
+      return DynamicAdditional(
+        type: additional.type,
+        title: additional.ugc!.title,
+        cover: additional.ugc!.cover,
+        desc2: additional.ugc!.descSecond,
+        jumpUrl: additional.ugc!.jumpUrl,
+      );
+    }
+
+    return null;
   }
 
   static DynamicVideoContent? _mapVideoContent(ModuleMajor? major) {

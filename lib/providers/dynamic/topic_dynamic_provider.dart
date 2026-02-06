@@ -1,19 +1,18 @@
-// ignore_for_file: invalid_use_of_internal_member
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/domain/entities/dynamic_post.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'dynamic_provider.g.dart';
+part 'topic_dynamic_provider.g.dart';
 
-@Riverpod(keepAlive: true)
-class DynamicNotifier extends _$DynamicNotifier {
+@riverpod
+class TopicDynamicNotifier extends _$TopicDynamicNotifier {
   String? _offset;
   bool _hasMore = true;
-  String _type = 'all';
+  late int _topicId;
 
   @override
-  Future<List<DynamicPost>> build({String type = 'all'}) async {
-    _type = type;
+  Future<List<DynamicPost>> build({required int topicId}) async {
+    _topicId = topicId;
     _offset = null;
     _hasMore = true;
     return _fetchFeed();
@@ -21,16 +20,14 @@ class DynamicNotifier extends _$DynamicNotifier {
 
   Future<List<DynamicPost>> _fetchFeed() async {
     final repository = ref.read(dynamicRepositoryProvider);
-    final result = await repository.getFeed(type: _type, offset: _offset);
+    final result = await repository.getTopicFeed(topicId: _topicId, offset: _offset);
     return result.when(
       success: (feed) {
         _offset = feed.offset;
         _hasMore = feed.hasMore;
         return feed.items;
       },
-      failure: (e) {
-        throw e;
-      },
+      failure: (e) => throw e,
     );
   }
 
