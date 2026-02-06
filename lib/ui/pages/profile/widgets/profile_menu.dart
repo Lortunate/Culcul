@@ -20,7 +20,7 @@ class ProfileMenu extends ConsumerWidget {
         delegate: SliverChildListDelegate([
           Container(
             decoration: BoxDecoration(
-              color: colorScheme.surfaceContainerLow,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(16),
             ),
             clipBehavior: Clip.antiAlias,

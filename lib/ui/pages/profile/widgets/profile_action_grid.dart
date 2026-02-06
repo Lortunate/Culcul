@@ -18,7 +18,7 @@ class ProfileActionGrid extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 20),
           decoration: BoxDecoration(
-            color: colorScheme.surfaceContainerLow,
+            color: colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
           ),
           child: Row(

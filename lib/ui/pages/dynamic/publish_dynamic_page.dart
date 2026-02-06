@@ -46,31 +46,42 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
   void _showEmojiPicker() {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Colors.transparent,
       builder: (context) {
-        return EmojiPicker(
-          onEmojiSelected: (text) {
-            if (!_controller.selection.isValid) {
-              _controller.text += text;
-              _controller.selection = TextSelection.fromPosition(TextPosition(offset: _controller.text.length));
-            } else {
-              final textSelection = _controller.selection;
-              final newText = _controller.text.replaceRange(
-                textSelection.start,
-                textSelection.end,
-                text,
-              );
-              final myTextLength = text.length;
-              _controller.text = newText;
-              _controller.selection = textSelection.copyWith(
-                baseOffset: textSelection.start + myTextLength,
-                extentOffset: textSelection.start + myTextLength,
-              );
-            }
-            Navigator.pop(context);
-          },
+        return Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          child: EmojiPicker(
+            onEmojiSelected: (text) {
+              _insertText(text);
+              Navigator.pop(context);
+            },
+          ),
         );
       },
     );
+  }
+
+  void _insertText(String text) {
+    if (!_controller.selection.isValid) {
+      _controller.text += text;
+      _controller.selection = TextSelection.fromPosition(TextPosition(offset: _controller.text.length));
+    } else {
+      final textSelection = _controller.selection;
+      final newText = _controller.text.replaceRange(
+        textSelection.start,
+        textSelection.end,
+        text,
+      );
+      final myTextLength = text.length;
+      _controller.text = newText;
+      _controller.selection = textSelection.copyWith(
+        baseOffset: textSelection.start + myTextLength,
+        extentOffset: textSelection.start + myTextLength,
+      );
+    }
   }
 
   Future<void> _publish() async {
@@ -80,9 +91,11 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
 
     try {
       final List<DynamicUploadImageData> uploadedImages = [];
-      for (var img in _images) {
-        final data = await ref.read(dynamicRepositoryProvider).uploadImage(img);
-        uploadedImages.add(data);
+      if (_images.isNotEmpty) {
+        for (var img in _images) {
+          final data = await ref.read(dynamicRepositoryProvider).uploadImage(img);
+          uploadedImages.add(data);
+        }
       }
 
       await ref.read(dynamicRepositoryProvider).publishDynamic(
@@ -108,94 +121,140 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
     }
   }
 
+  Future<bool> _onWillPop() async {
+    if (_controller.text.isNotEmpty || _images.isNotEmpty) {
+      final result = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('提示'),
+          content: const Text('确定要放弃编辑吗？'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('取消'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('放弃'),
+            ),
+          ],
+        ),
+      );
+      return result ?? false;
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final isPostable = _controller.text.trim().isNotEmpty || _images.isNotEmpty;
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => Navigator.maybePop(context),
-        ),
-        title: const Text('发布动态', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
-        centerTitle: true,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: TextButton(
-              onPressed: _isPublishing || (_controller.text.isEmpty && _images.isEmpty) 
-                  ? null 
-                  : _publish,
-              style: TextButton.styleFrom(
-                backgroundColor: _isPublishing || (_controller.text.isEmpty && _images.isEmpty)
-                    ? colorScheme.surfaceContainerHighest
-                    : colorScheme.primary,
-                foregroundColor: _isPublishing || (_controller.text.isEmpty && _images.isEmpty)
-                    ? colorScheme.onSurfaceVariant
-                    : colorScheme.onPrimary,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                minimumSize: const Size(60, 32),
-              ),
-              child: _isPublishing
-                  ? SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                    )
-                  : const Text('发布'),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (didPop) return;
+        final shouldPop = await _onWillPop();
+        if (shouldPop && context.mounted) {
+          Navigator.pop(context);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        appBar: AppBar(
+          backgroundColor: theme.scaffoldBackgroundColor,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () async {
+              if (await _onWillPop() && context.mounted) {
+                Navigator.pop(context);
+              }
+            },
+          ),
+          title: Text(
+            '发布动态',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
             ),
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                TextField(
-                  controller: _controller,
-                  focusNode: _focusNode,
-                  maxLines: null,
-                  minLines: 3,
-                  decoration: const InputDecoration(
-                    hintText: '分享你的新鲜事...',
-                    border: InputBorder.none,
-                    isDense: true,
+          centerTitle: true,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: TextButton(
+                onPressed: _isPublishing || !isPostable ? null : _publish,
+                style: TextButton.styleFrom(
+                  backgroundColor: _isPublishing || !isPostable
+                      ? colorScheme.surfaceContainerHighest
+                      : colorScheme.primary,
+                  foregroundColor: _isPublishing || !isPostable
+                      ? colorScheme.onSurfaceVariant
+                      : colorScheme.onPrimary,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  onChanged: (_) => setState(() {}),
                 ),
-                const SizedBox(height: 16),
-                if (_images.isNotEmpty)
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 8,
-                      mainAxisSpacing: 8,
-                    ),
-                    itemCount: _images.length + (_images.length < 9 ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index == _images.length) {
-                        return _buildAddImageButton(colorScheme);
-                      }
-                      return _buildImageItem(index, colorScheme);
-                    },
-                  )
-                else if (_images.isEmpty)
-                   const SizedBox.shrink(),
-              ],
+                child: _isPublishing
+                    ? SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      )
+                    : const Text('发布', style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
             ),
-          ),
-          _buildBottomToolbar(colorScheme),
-        ],
+          ],
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                children: [
+                  TextField(
+                    controller: _controller,
+                    focusNode: _focusNode,
+                    maxLines: null,
+                    minLines: 5,
+                    style: theme.textTheme.bodyLarge?.copyWith(fontSize: 16),
+                    decoration: const InputDecoration(
+                      hintText: '分享你的新鲜事...',
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    onChanged: (_) => setState(() {}),
+                  ),
+                  const SizedBox(height: 12),
+                  if (_images.isNotEmpty)
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                      ),
+                      itemCount: _images.length + (_images.length < 9 ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == _images.length) {
+                          return _buildAddImageButton(colorScheme);
+                        }
+                        return _buildImageItem(index, colorScheme);
+                      },
+                    ),
+                ],
+              ),
+            ),
+            _buildBottomToolbar(colorScheme),
+          ],
+        ),
       ),
     );
   }
@@ -205,7 +264,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
       children: [
         Positioned.fill(
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
             child: Image.file(
               _images[index],
               fit: BoxFit.cover,
@@ -223,7 +282,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
                 color: Colors.black.withOpacity(0.5),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.close, size: 14, color: Colors.white),
+              child: const Icon(Icons.close, size: 16, color: Colors.white),
             ),
           ),
         ),
@@ -234,13 +293,13 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
   Widget _buildAddImageButton(ColorScheme colorScheme) {
     return InkWell(
       onTap: _pickImage,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(Icons.add, color: colorScheme.onSurfaceVariant),
+        child: Icon(Icons.add, size: 32, color: colorScheme.onSurfaceVariant),
       ),
     );
   }
@@ -248,41 +307,49 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
   Widget _buildBottomToolbar(ColorScheme colorScheme) {
     return Container(
       padding: EdgeInsets.only(
-        left: 16, 
-        right: 16, 
-        top: 8, 
-        bottom: MediaQuery.of(context).padding.bottom + 8
+        left: 20,
+        right: 20,
+        top: 12,
+        bottom: MediaQuery.of(context).padding.bottom + 12,
       ),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
-        border: Border(top: BorderSide(color: colorScheme.outlineVariant.withOpacity(0.5))),
+        border: Border(
+          top: BorderSide(color: colorScheme.outlineVariant.withOpacity(0.2)),
+        ),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _ToolbarAction(
-            icon: Icons.image_outlined, 
-            onTap: _pickImage,
+          Row(
+            children: [
+              _ToolbarAction(
+                icon: Icons.image_outlined,
+                onTap: _pickImage,
+              ),
+              const SizedBox(width: 24),
+              _ToolbarAction(
+                icon: Icons.alternate_email,
+                onTap: () => _insertText('@'),
+              ),
+              const SizedBox(width: 24),
+              _ToolbarAction(
+                icon: Icons.tag,
+                onTap: () => _insertText('#'),
+              ),
+              const SizedBox(width: 24),
+              _ToolbarAction(
+                icon: Icons.sentiment_satisfied_alt,
+                onTap: _showEmojiPicker,
+              ),
+            ],
           ),
-          const SizedBox(width: 24),
-          _ToolbarAction(
-            icon: Icons.alternate_email, 
-            onTap: () {
-               _controller.text += '@';
-               _controller.selection = TextSelection.fromPosition(TextPosition(offset: _controller.text.length));
-            },
-          ),
-          const SizedBox(width: 24),
-          _ToolbarAction(
-            icon: Icons.tag, 
-            onTap: () {
-              _controller.text += '#';
-               _controller.selection = TextSelection.fromPosition(TextPosition(offset: _controller.text.length));
-            },
-          ),
-          const SizedBox(width: 24),
-          _ToolbarAction(
-            icon: Icons.sentiment_satisfied_alt, 
-            onTap: _showEmojiPicker,
+          Text(
+            '${_controller.text.length}字',
+            style: TextStyle(
+              color: colorScheme.outline,
+              fontSize: 12,
+            ),
           ),
         ],
       ),
@@ -298,9 +365,17 @@ class _ToolbarAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
-      child: Icon(icon, size: 28, color: Theme.of(context).colorScheme.onSurfaceVariant),
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Icon(
+          icon,
+          size: 26,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
+      ),
     );
   }
 }

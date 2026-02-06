@@ -1,5 +1,6 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/providers/auth/auth_provider.dart';
+import 'package:culcul/ui/pages/dynamic/publish_dynamic_page.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/dynamic_list_view.dart';
 import 'package:culcul/ui/widgets/app_tab_bar.dart';
 import 'package:culcul/ui/widgets/guest_view.dart';
@@ -39,7 +40,14 @@ class DynamicPage extends HookConsumerWidget {
           if (authState.isLoggedIn)
             IconButton(
               icon: const Icon(Icons.edit_note_rounded, size: 24),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).push(
+                  MaterialPageRoute(
+                    builder: (context) => const PublishDynamicPage(),
+                    fullscreenDialog: true,
+                  ),
+                );
+              },
             ),
           IconButton(
             icon: const Icon(Icons.search_rounded, size: 24),

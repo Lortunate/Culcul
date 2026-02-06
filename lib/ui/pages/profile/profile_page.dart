@@ -22,17 +22,20 @@ class ProfilePage extends HookConsumerWidget {
       );
     }
 
-    return const Scaffold(
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      backgroundColor: colorScheme.surfaceContainerLow,
       body: CustomScrollView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         slivers: [
-          ProfileAppBar(),
-          SliverToBoxAdapter(child: SizedBox(height: 16)),
-          ProfileStats(),
-          SliverToBoxAdapter(child: SizedBox(height: 16)),
-          ProfileActionGrid(),
-          SliverToBoxAdapter(child: SizedBox(height: 16)),
-          ProfileMenu(),
+          const ProfileAppBar(),
+          const ProfileStats(),
+          const SliverToBoxAdapter(child: SizedBox(height: 12)),
+          const ProfileActionGrid(),
+          const SliverToBoxAdapter(child: SizedBox(height: 12)),
+          const ProfileMenu(),
+          const SliverToBoxAdapter(child: SizedBox(height: 24)),
         ],
       ),
     );

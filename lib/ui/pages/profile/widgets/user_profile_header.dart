@@ -20,7 +20,7 @@ class UserProfileHeader extends ConsumerWidget {
     final t = Translations.of(context);
 
     return SliverAppBar(
-      expandedHeight: 240,
+      expandedHeight: 180,
       pinned: true,
       stretch: true,
       backgroundColor: colorScheme.surface,
@@ -40,31 +40,14 @@ class UserProfileHeader extends ConsumerWidget {
       ],
       flexibleSpace: FlexibleSpaceBar(
         stretchModes: const [StretchMode.zoomBackground],
-        background: Stack(
-          children: [
-            // Background Gradient
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      colorScheme.primaryContainer.withValues(alpha: 0.2),
-                      colorScheme.surface,
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            // Content
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
-              alignment: Alignment.bottomLeft,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+        background: Container(
+          color: colorScheme.surface,
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+          alignment: Alignment.bottomLeft,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
@@ -195,8 +178,6 @@ class UserProfileHeader extends ConsumerWidget {
                 ],
               ),
             ),
-          ],
-        ),
       ),
     );
   }

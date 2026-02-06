@@ -262,4 +262,32 @@ class VideoRepository {
       return Failure(UnknownException(e.toString(), cause: e));
     }
   }
+
+  Future<Result<void, AppException>> reportVideoProgress({
+    required int aid,
+    required int cid,
+    required int progress,
+    String platform = 'android',
+    int type = 3,
+  }) async {
+    try {
+      final response = await api.reportVideoProgress(
+        aid,
+        cid,
+        progress,
+        platform,
+        type,
+      );
+      if (response.code == 0) {
+        return const Success(null);
+      } else {
+        return Failure(ServerException(response.message, code: response.code));
+      }
+    } on DioException catch (e) {
+      return Failure(dioExceptionToAppException(e));
+    } catch (e) {
+      if (e is AppException) return Failure(e);
+      return Failure(UnknownException(e.toString(), cause: e));
+    }
+  }
 }

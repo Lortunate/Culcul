@@ -87,4 +87,15 @@ abstract class VideoApi {
     @Field('message') String message,
     @Field('type') int type,
   );
+
+  @POST('/x/v2/history/report')
+  @FormUrlEncoded()
+  @Headers({'x-bili-csrf': 'true'})
+  Future<ApiResponse<void>> reportVideoProgress(
+    @Field('aid') int aid,
+    @Field('cid') int cid,
+    @Field('progress') int progress,
+    @Field('platform') String platform,
+    @Field('type') int type,
+  );
 }

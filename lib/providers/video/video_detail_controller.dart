@@ -199,6 +199,18 @@ class VideoDetailController extends _$VideoDetailController {
     state = state.copyWith(playbackSpeed: speed);
   }
 
+  Future<void> reportProgress(int progress) async {
+    final detail = state.videoDetail;
+    if (detail == null) return;
+    
+    final repo = ref.read(videoRepositoryProvider);
+    await repo.reportVideoProgress(
+      aid: detail.aid,
+      cid: state.currentCid,
+      progress: progress,
+    );
+  }
+
   Future<void> toggleFollow() async {
     final detail = state.videoDetail;
     if (detail == null) return;

@@ -35,12 +35,11 @@ class ProfileStats extends ConsumerWidget {
 
     return SliverToBoxAdapter(
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerLow,
-          borderRadius: BorderRadius.circular(16),
+          color: colorScheme.surface,
+          borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
         ),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -51,6 +50,11 @@ class ProfileStats extends ConsumerWidget {
                 // TODO: Dynamic page
               },
             ),
+            Container(
+              height: 14,
+              width: 1,
+              color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+            ),
             _StatItem(
               count: followingCount,
               label: t.profile.stats.following,
@@ -59,6 +63,11 @@ class ProfileStats extends ConsumerWidget {
                   FollowingsRoute(vmid: vmid).push(context);
                 }
               },
+            ),
+            Container(
+              height: 14,
+              width: 1,
+              color: colorScheme.outlineVariant.withValues(alpha: 0.5),
             ),
             _StatItem(
               count: followersCount,
@@ -90,23 +99,25 @@ class _StatItem extends StatelessWidget {
 
     return AppClickable(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(8),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         child: Column(
           children: [
             Text(
               count,
               style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w600,
                 color: colorScheme.onSurface,
+                fontSize: 18,
               ),
             ),
             const SizedBox(height: 2),
             Text(
               label,
-              style: theme.textTheme.labelSmall?.copyWith(
+              style: theme.textTheme.labelMedium?.copyWith(
                 color: colorScheme.onSurfaceVariant,
+                fontSize: 12,
               ),
             ),
           ],

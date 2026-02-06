@@ -4,6 +4,7 @@ import 'package:culcul/providers/video/danmaku_settings_provider.dart';
 import 'package:culcul/providers/video/player_controller.dart';
 import 'package:culcul/providers/video/subtitle_controller.dart';
 import 'package:culcul/providers/video/video_detail_controller.dart';
+import 'package:culcul/ui/pages/video/hooks/use_video_progress.dart';
 import 'package:culcul/ui/pages/video/video_listen_page.dart';
 import 'package:culcul/ui/pages/video/widgets/controls/player_constants.dart';
 import 'package:culcul/ui/pages/video/widgets/controls/speed_indicator.dart';
@@ -98,6 +99,9 @@ class VideoPlayerView extends HookConsumerWidget {
       player.setRate(state.playbackSpeed);
       return null;
     }, [state.playbackSpeed]);
+
+    // Report progress
+    useVideoProgressReport(ref, bvid, player, playerState.isPlaying);
 
     // Listen to video dimensions for aspect ratio
     final videoWidth = useState(player.state.width ?? 0);

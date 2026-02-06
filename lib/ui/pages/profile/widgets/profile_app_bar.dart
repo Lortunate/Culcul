@@ -20,7 +20,7 @@ class ProfileAppBar extends ConsumerWidget {
     final colorScheme = theme.colorScheme;
 
     return SliverAppBar(
-      expandedHeight: 200,
+      expandedHeight: 140,
       pinned: true,
       stretch: true,
       backgroundColor: colorScheme.surface,
@@ -39,181 +39,102 @@ class ProfileAppBar extends ConsumerWidget {
       ],
       flexibleSpace: FlexibleSpaceBar(
         stretchModes: const [StretchMode.zoomBackground],
-        background: Stack(
-          children: [
-            // Background Gradient
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      colorScheme.primaryContainer.withValues(alpha: 0.2),
-                      colorScheme.surface,
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            // Decorative Element (Optional - subtle circle in background)
-            Positioned(
-              right: -50,
-              top: -50,
-              child: Container(
-                width: 200,
-                height: 200,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: colorScheme.primary.withValues(alpha: 0.05),
-                ),
-              ),
-            ),
-            
-            // Content
-            Container(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-              alignment: Alignment.bottomLeft,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start, // Align to top of avatar
-                mainAxisAlignment: MainAxisAlignment.end, // Align bottom
-                children: [
-                  // Avatar Section
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4), // Slight visual alignment
-                    child: Hero(
-                      tag: 'profile_avatar',
-                      child: Container(
-                        padding: const EdgeInsets.all(3),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: profile?.vipStatus == 1
-                                ? const Color(0xFFFB7299)
-                                : colorScheme.surface,
-                            width: 2,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: colorScheme.shadow.withValues(alpha: 0.1),
-                              blurRadius: 16,
-                              offset: const Offset(0, 6),
-                            ),
-                          ],
-                        ),
-                        child: AppAvatar(
-                          url: profile?.avatarUrl ?? user?.avatarUrl,
-                          size: 76,
-                        ),
-                      ),
+        background: Container(
+          color: colorScheme.surface,
+          padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
+          alignment: Alignment.bottomLeft,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // Avatar Section
+              Hero(
+                tag: 'profile_avatar',
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: profile?.vipStatus == 1
+                          ? const Color(0xFFFB7299)
+                          : colorScheme.surfaceContainerHighest,
+                      width: 2,
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  
-                  // Info Section
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  child: AppAvatar(
+                    url: profile?.avatarUrl ?? user?.avatarUrl,
+                    size: 80,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 20),
+              
+              // Info Section
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Row 1: Username & VIP
+                    Row(
                       children: [
-                        // Row 1: Username & VIP
-                        Row(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                profile?.username ?? user?.username ?? '',
-                                style: theme.textTheme.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 20,
-                                  color: (profile?.vipStatus == 1)
-                                      ? const Color(0xFFFB7299)
-                                      : colorScheme.onSurface,
-                                  letterSpacing: -0.5,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            if (profile?.vipStatus == 1) ...[
-                              const SizedBox(width: 6),
-                              _VipTag(type: profile!.vipType),
-                            ],
-                          ],
-                        ),
-                        
-                        // Row 2: Bio (Sign)
-                        if (profile?.bio != null && profile!.bio!.isNotEmpty) ...[
-                          const SizedBox(height: 6),
-                          Text(
-                            profile.bio!,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                              fontSize: 12,
+                        Flexible(
+                          child: Text(
+                            profile?.username ?? user?.username ?? '',
+                            style: theme.textTheme.headlineSmall?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: (profile?.vipStatus == 1)
+                                  ? const Color(0xFFFB7299)
+                                  : colorScheme.onSurface,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
-                        ],
-
-                        if (profile != null) ...[
-                          const SizedBox(height: 10),
-                          
-                          // Row 3: Level & Exp
-                          Row(
-                            children: [
-                              _LevelTag(level: profile.level),
-                              if (profile.currentExp != null &&
-                                  profile.currentMinExp != null) ...[
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: _ExpBar(
-                                    current: profile.currentExp!,
-                                    next: profile.nextExp,
-                                    min: profile.currentMinExp!,
-                                  ),
-                                ),
-                              ] else 
-                                const Spacer(),
-                            ],
-                          ),
-
-                          const SizedBox(height: 12),
-
-                          // Row 4: Assets (Coins & BCoins)
-                          Row(
-                            children: [
-                              if (profile.coins != null) ...[
-                                _AssetItem(
-                                  icon: Icons.monetization_on_rounded,
-                                  value: profile.coins!.toStringAsFixed(1),
-                                  color: const Color(0xFF23ADE5),
-                                  label: '硬币',
-                                ),
-                              ],
-                              if (profile.coins != null && profile.bCoins != null)
-                                Container(
-                                  height: 10,
-                                  width: 1,
-                                  margin: const EdgeInsets.symmetric(horizontal: 12),
-                                  color: colorScheme.outlineVariant,
-                                ),
-                              if (profile.bCoins != null)
-                                _AssetItem(
-                                  icon: Icons.copyright_rounded,
-                                  value: profile.bCoins!.toStringAsFixed(0),
-                                  color: const Color(0xFFF3CB2D),
-                                  label: 'B币',
-                                ),
-                            ],
-                          ),
+                        ),
+                        if (profile?.vipStatus == 1) ...[
+                          const SizedBox(width: 8),
+                          _VipTag(type: profile!.vipType),
                         ],
                       ],
                     ),
-                  ),
-                ],
+                    
+                    const SizedBox(height: 8),
+
+                    // Row 2: Level & Exp
+                    if (profile != null)
+                      Row(
+                        children: [
+                          _LevelTag(level: profile.level),
+                          if (profile.currentExp != null &&
+                              profile.currentMinExp != null) ...[
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _ExpBar(
+                                current: profile.currentExp!,
+                                next: profile.nextExp,
+                                min: profile.currentMinExp!,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    
+                    // Row 3: Bio
+                    if (profile?.bio != null && profile!.bio!.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        profile.bio!,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
