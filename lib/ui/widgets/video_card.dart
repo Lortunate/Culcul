@@ -1,5 +1,6 @@
 import 'package:culcul/data/models/index.dart';
-import 'package:culcul/ui/widgets/app_clickable.dart';
+import 'package:culcul/ui/pages/home/widgets/video_more_bottom_sheet.dart';
+import 'package:culcul/ui/widgets/app_card_container.dart';
 import 'package:culcul/ui/widgets/app_tag.dart';
 import 'package:culcul/ui/widgets/video_thumbnail.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +14,17 @@ class VideoCard extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return VideoCardContainer(
+    return AppCardContainer(
       onTap: onTap,
+      onLongPress: () {
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          barrierColor: Colors.transparent,
+          isScrollControlled: true,
+          builder: (context) => VideoMoreBottomSheet(video: video),
+        );
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -26,48 +36,7 @@ class VideoCard extends HookConsumerWidget {
   }
 }
 
-class VideoCardContainer extends StatelessWidget {
-  final Widget child;
-  final VoidCallback? onTap;
-  final double borderRadius;
-
-  const VideoCardContainer({
-    super.key,
-    required this.child,
-    this.onTap,
-    this.borderRadius = 12,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return RepaintBoundary(
-      child: Container(
-        decoration: BoxDecoration(
-          color: colorScheme.surface,
-          borderRadius: BorderRadius.circular(borderRadius),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(
-                alpha: theme.brightness == Brightness.dark ? 0.2 : 0.05,
-              ),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: AppClickable(
-          onTap: onTap,
-          haptic: true,
-          borderRadius: BorderRadius.circular(borderRadius),
-          child: child,
-        ),
-      ),
-    );
-  }
-}
+// VideoCardContainer class removed as it is replaced by AppCardContainer
 
 class _VideoThumbnail extends StatelessWidget {
   final VideoModel video;

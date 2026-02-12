@@ -25,19 +25,23 @@ class PlayerSettingsSheet extends ConsumerWidget {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     final danmakuSettings = ref.watch(danmakuSettingsControllerProvider);
-    final danmakuNotifier = ref.read(danmakuSettingsControllerProvider.notifier);
-    
+    final danmakuNotifier = ref.read(
+      danmakuSettingsControllerProvider.notifier,
+    );
+
     final videoDetailState = ref.watch(videoDetailControllerProvider(bvid));
-    final videoDetailNotifier = ref.read(videoDetailControllerProvider(bvid).notifier);
+    final videoDetailNotifier = ref.read(
+      videoDetailControllerProvider(bvid).notifier,
+    );
 
     // Calculate quality labels
     final qualityLabels = <int, String>{};
     if (videoDetailState.playUrl != null) {
-        final qualities = videoDetailState.playUrl!.acceptQuality;
-        final descs = videoDetailState.playUrl!.acceptDescription;
-        for (int i = 0; i < qualities.length && i < descs.length; i++) {
-            qualityLabels[qualities[i]] = descs[i];
-        }
+      final qualities = videoDetailState.playUrl!.acceptQuality;
+      final descs = videoDetailState.playUrl!.acceptDescription;
+      for (int i = 0; i < qualities.length && i < descs.length; i++) {
+        qualityLabels[qualities[i]] = descs[i];
+      }
     }
 
     // More compact side panel
@@ -80,23 +84,29 @@ class PlayerSettingsSheet extends ConsumerWidget {
                         children: [
                           // Danmaku Settings
                           _buildDanmakuSection(
-                              danmakuSettings, danmakuNotifier, colorScheme),
+                            danmakuSettings,
+                            danmakuNotifier,
+                            colorScheme,
+                          ),
                           const SizedBox(height: 32),
                           _buildSectionTitle('播放速度'),
                           const SizedBox(height: 16),
                           _buildSpeedOptions(
-                            colorScheme, 
-                            videoDetailState.playbackSpeed, 
+                            colorScheme,
+                            videoDetailState.playbackSpeed,
                             (s) {
-                                videoDetailNotifier.setPlaybackSpeed(s);
-                                ref.read(playerControllerProvider.notifier).player.setRate(s);
-                            }
+                              videoDetailNotifier.setPlaybackSpeed(s);
+                              ref
+                                  .read(playerControllerProvider.notifier)
+                                  .player
+                                  .setRate(s);
+                            },
                           ),
                           const SizedBox(height: 32),
                           _buildSectionTitle('清晰度'),
                           const SizedBox(height: 16),
                           _buildQualityOptions(
-                            colorScheme, 
+                            colorScheme,
                             videoDetailState.selectedQuality,
                             videoDetailState.availableQualities,
                             qualityLabels,
@@ -336,7 +346,10 @@ class PlayerSettingsSheet extends ConsumerWidget {
     );
   }
 
-  Widget _buildSleepTimerOptions(ColorScheme colorScheme, BuildContext context) {
+  Widget _buildSleepTimerOptions(
+    ColorScheme colorScheme,
+    BuildContext context,
+  ) {
     final options = [
       null,
       const Duration(minutes: 15),
@@ -355,7 +368,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
       children: options.map((duration) {
         final isOff = duration == null;
         final bool selected = isOff ? sleepTimerTarget == null : false;
-        
+
         return _CompactOptionChip(
           label: getLabel(duration),
           isSelected: selected,
@@ -421,10 +434,14 @@ class _CompactOptionChip extends StatelessWidget {
           curve: Curves.easeOutQuad,
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
           decoration: BoxDecoration(
-            color: isSelected ? colorScheme.primary : Colors.white.withValues(alpha: 0.08),
+            color: isSelected
+                ? colorScheme.primary
+                : Colors.white.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: isSelected ? Colors.transparent : Colors.white.withValues(alpha: 0.1),
+              color: isSelected
+                  ? Colors.transparent
+                  : Colors.white.withValues(alpha: 0.1),
               width: 1,
             ),
           ),
@@ -466,7 +483,9 @@ class _ModernFilterChip extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: isSelected ? colorScheme.primary.withValues(alpha: 0.2) : Colors.transparent,
+            color: isSelected
+                ? colorScheme.primary.withValues(alpha: 0.2)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isSelected ? colorScheme.primary : Colors.white24,

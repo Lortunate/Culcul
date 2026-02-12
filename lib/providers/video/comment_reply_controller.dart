@@ -1,5 +1,5 @@
 import 'package:culcul/core/types/result.dart';
-import 'package:culcul/data/models/comment_model.dart';
+import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/providers/video/comment_reply_state.dart';
 import 'package:culcul/repositories/video_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -108,12 +108,7 @@ class CommentReplyController extends _$CommentReplyController {
     }
   }
 
-  Future<void> addReply(
-    int oid,
-    int root,
-    int parent,
-    String message,
-  ) async {
+  Future<void> addReply(int oid, int root, int parent, String message) async {
     final repo = ref.read(videoRepositoryProvider);
     final result = await repo.addReply(
       oid: oid,

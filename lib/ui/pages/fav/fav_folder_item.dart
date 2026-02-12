@@ -17,9 +17,7 @@ class FavFolderItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: colorScheme.surface,
-        ),
+        decoration: BoxDecoration(color: colorScheme.surface),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -108,11 +106,12 @@ class FavFolderItem extends StatelessWidget {
                                     const SizedBox(width: 2),
                                     Text(
                                       '私密',
-                                      style: theme.textTheme.labelSmall?.copyWith(
-                                        color: colorScheme.onSurfaceVariant,
-                                        fontSize: 10,
-                                        height: 1,
-                                      ),
+                                      style: theme.textTheme.labelSmall
+                                          ?.copyWith(
+                                            color: colorScheme.onSurfaceVariant,
+                                            fontSize: 10,
+                                            height: 1,
+                                          ),
                                     ),
                                   ],
                                 ),

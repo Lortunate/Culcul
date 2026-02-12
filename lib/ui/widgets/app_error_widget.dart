@@ -64,7 +64,9 @@ class AppErrorWidget extends StatelessWidget {
                           children: [
                             Text(
                               'Error: $error',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             if (stackTrace != null) ...[
                               const SizedBox(height: 8),
@@ -93,7 +95,10 @@ class AppErrorWidget extends StatelessWidget {
                     ),
                   );
                 },
-                child: const Text('View Details', style: TextStyle(fontSize: 12)),
+                child: const Text(
+                  'View Details',
+                  style: TextStyle(fontSize: 12),
+                ),
               ),
             ],
             if (onRetry != null) ...[

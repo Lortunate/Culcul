@@ -8,7 +8,7 @@ import 'package:easy_refresh/easy_refresh.dart';
 class MyNotifier extends Notifier<AsyncValue<List<String>>> {
   @override
   AsyncValue<List<String>> build() => const AsyncValue.data(['Item 1']);
-  
+
   void setState(AsyncValue<List<String>> newState) {
     state = newState;
   }
@@ -16,7 +16,9 @@ class MyNotifier extends Notifier<AsyncValue<List<String>>> {
 
 void main() {
   testWidgets('SmartPagingView transitions do not crash', (tester) async {
-    final provider = NotifierProvider<MyNotifier, AsyncValue<List<String>>>(MyNotifier.new);
+    final provider = NotifierProvider<MyNotifier, AsyncValue<List<String>>>(
+      MyNotifier.new,
+    );
     final container = ProviderContainer();
     addTearDown(container.dispose);
 
@@ -60,7 +62,9 @@ void main() {
     expect(find.byType(EasyRefresh), findsNothing);
 
     // Switch back to data
-    container.read(provider.notifier).setState(const AsyncValue.data(['Item 2']));
+    container
+        .read(provider.notifier)
+        .setState(const AsyncValue.data(['Item 2']));
     await tester.pumpAndSettle();
 
     // Should be back to Data

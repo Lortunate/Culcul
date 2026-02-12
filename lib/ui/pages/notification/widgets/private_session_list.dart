@@ -1,4 +1,3 @@
-import 'package:culcul/data/models/notification/private_message_model.dart';
 import 'package:culcul/providers/notification/private_session_provider.dart';
 import 'package:culcul/ui/pages/notification/widgets/notification_skeletons.dart';
 import 'package:culcul/ui/pages/notification/widgets/private_session_item.dart';
@@ -11,16 +10,16 @@ class PrivateSessionList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final sessionListAsync = ref.watch(privateSessionListProvider());
+    final sessionListAsync = ref.watch(privateSessionListProvider);
 
     return sessionListAsync.when(
       data: (sessions) {
         return EasyRefresh(
           onRefresh: () async {
-            return ref.refresh(privateSessionListProvider().future);
+            return ref.refresh(privateSessionListProvider.future);
           },
           onLoad: () async {
-            await ref.read(privateSessionListProvider().notifier).loadMore();
+            await ref.read(privateSessionListProvider.notifier).loadMore();
           },
           child: sessions.isEmpty
               ? LayoutBuilder(
@@ -46,7 +45,7 @@ class PrivateSessionList extends ConsumerWidget {
       },
       error: (e, s) => EasyRefresh(
         onRefresh: () async {
-          return ref.refresh(privateSessionListProvider().future);
+          return ref.refresh(privateSessionListProvider.future);
         },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -60,7 +59,7 @@ class PrivateSessionList extends ConsumerWidget {
                   const SizedBox(height: 8),
                   ElevatedButton(
                     onPressed: () {
-                      ref.invalidate(privateSessionListProvider());
+                      ref.invalidate(privateSessionListProvider);
                     },
                     child: const Text('重试'),
                   ),

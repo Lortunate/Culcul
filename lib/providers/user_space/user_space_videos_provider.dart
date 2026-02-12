@@ -1,6 +1,6 @@
 import 'package:culcul/core/providers/api_provider.dart';
+import 'package:culcul/core/types/result.dart';
 import 'package:culcul/data/models/user/user_space_video_model.dart';
-import 'package:culcul/repositories/profile_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_space_videos_provider.g.dart';
@@ -13,7 +13,10 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier {
   String _order = 'pubdate';
 
   @override
-  Future<List<UserSpaceVideoModel>> build(int mid, {String order = 'pubdate'}) async {
+  Future<List<UserSpaceVideoModel>> build(
+    int mid, {
+    String order = 'pubdate',
+  }) async {
     _mid = mid;
     _order = order;
     _page = 1;
@@ -23,17 +26,23 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier {
 
   Future<List<UserSpaceVideoModel>> _fetchVideos() async {
     final repository = ref.read(profileRepositoryProvider);
-    final videos = await repository.getSpaceVideos(
+    final result = await repository.getSpaceVideos(
       mid: _mid,
       page: _page,
       order: _order,
     );
-    if (videos.length < 30) {
-      _hasMore = false;
-    } else {
-      _page++;
-    }
-    return videos;
+
+    return switch (result) {
+      Success(value: final videos) => () {
+        if (videos.length < 30) {
+          _hasMore = false;
+        } else {
+          _page++;
+        }
+        return videos;
+      }(),
+      Failure(exception: final e) => throw e,
+    };
   }
 
   Future<void> loadMore() async {
@@ -42,7 +51,9 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier {
     final oldState = state;
     if (oldState.asData?.value == null) return;
 
-    state = AsyncLoading<List<UserSpaceVideoModel>>().copyWithPrevious(oldState);
+    state = AsyncLoading<List<UserSpaceVideoModel>>().copyWithPrevious(
+      oldState,
+    );
 
     try {
       final newItems = await _fetchVideos();
@@ -55,7 +66,10 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier {
 
       state = AsyncData([...previousItems, ...uniqueNewItems]);
     } catch (e, st) {
-      state = AsyncError<List<UserSpaceVideoModel>>(e, st).copyWithPrevious(oldState);
+      state = AsyncError<List<UserSpaceVideoModel>>(
+        e,
+        st,
+      ).copyWithPrevious(oldState);
     }
   }
 

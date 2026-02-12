@@ -1,4 +1,5 @@
 import 'package:culcul/providers/auth/auth_provider.dart';
+import 'package:culcul/core/extensions/auth_extension.dart';
 import 'package:culcul/providers/toview/toview_provider.dart';
 import 'package:culcul/ui/pages/toview/to_view_item.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
@@ -37,7 +38,7 @@ class ToViewPage extends ConsumerWidget {
                       ),
                       TextButton(
                         onPressed: () {
-                          ref.read(toViewListProvider.notifier).clearToView();
+                          ref.read(toViewListProvider.notifier).clear();
                           Navigator.of(context).pop();
                         },
                         child: Text(t.common.confirm),
@@ -80,7 +81,7 @@ class ToViewPage extends ConsumerWidget {
                         onDismissed: (direction) {
                           ref
                               .read(toViewListProvider.notifier)
-                              .deleteToView(item.aid!);
+                              .delete(item.aid!);
                         },
                         child: ToViewItem(
                           item: item,

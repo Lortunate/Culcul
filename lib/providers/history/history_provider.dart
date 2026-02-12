@@ -1,5 +1,5 @@
+import 'package:culcul/core/types/result.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:culcul/repositories/history_repository.dart';
 import '../../data/models/history/history_model.dart';
 import '../../core/providers/api_provider.dart';
 
@@ -14,7 +14,11 @@ class HistoryList extends _$HistoryList {
 
   Future<List<HistoryItem>> _fetchHistory() async {
     final repository = ref.read(historyRepositoryProvider);
-    final response = await repository.getHistoryCursor();
-    return response.list;
+    final result = await repository.getHistoryCursor();
+    
+    return switch (result) {
+      Success(value: final data) => data.list,
+      Failure(exception: final e) => throw e,
+    };
   }
 }

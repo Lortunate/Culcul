@@ -10,7 +10,9 @@ class AppComponentTheme {
   static AppBarTheme appBar(bool isDark) {
     final surface = isDark ? AppColors.darkSurface : AppColors.surface;
     final text = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
-    final overlayStyle = isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark;
+    final overlayStyle = isDark
+        ? SystemUiOverlayStyle.light
+        : SystemUiOverlayStyle.dark;
 
     return AppBarTheme(
       backgroundColor: surface,
@@ -32,8 +34,10 @@ class AppComponentTheme {
   }
 
   static TabBarThemeData tabBar(bool isDark) {
-    final unselectedLabel = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
-    
+    final unselectedLabel = isDark
+        ? AppColors.darkTextSecondary
+        : AppColors.textSecondary;
+
     return TabBarThemeData(
       labelColor: AppColors.primary,
       unselectedLabelColor: unselectedLabel,
@@ -50,20 +54,30 @@ class AppComponentTheme {
       indicatorSize: TabBarIndicatorSize.label,
       indicatorColor: AppColors.primary,
       dividerColor: Colors.transparent,
-      overlayColor: WidgetStateProperty.all(AppColors.primary.withValues(alpha: 0.1)),
+      overlayColor: WidgetStateProperty.all(
+        AppColors.primary.withValues(alpha: 0.1),
+      ),
     );
   }
 
   static BottomNavigationBarThemeData bottomNavBar(bool isDark) {
     final surface = isDark ? AppColors.darkSurface : AppColors.surface;
-    final unselectedItem = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
+    final unselectedItem = isDark
+        ? AppColors.darkTextSecondary
+        : AppColors.textSecondary;
 
     return BottomNavigationBarThemeData(
       backgroundColor: surface,
       selectedItemColor: AppColors.primary,
       unselectedItemColor: unselectedItem,
-      selectedLabelStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.w500),
-      unselectedLabelStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.w400),
+      selectedLabelStyle: const TextStyle(
+        fontSize: 10,
+        fontWeight: FontWeight.w500,
+      ),
+      unselectedLabelStyle: const TextStyle(
+        fontSize: 10,
+        fontWeight: FontWeight.w400,
+      ),
       type: BottomNavigationBarType.fixed,
       elevation: 0,
       showSelectedLabels: true,
@@ -101,8 +115,10 @@ class AppComponentTheme {
   }
 
   static TextButtonThemeData textButton(bool isDark) {
-    final color = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
-    
+    final color = isDark
+        ? AppColors.darkTextSecondary
+        : AppColors.textSecondary;
+
     return TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: color,
@@ -150,11 +166,7 @@ class AppComponentTheme {
 
   static DividerThemeData divider(bool isDark) {
     final color = isDark ? AppColors.darkDivider : AppColors.divider;
-    
-    return DividerThemeData(
-      color: color,
-      thickness: 0.5,
-      space: 1,
-    );
+
+    return DividerThemeData(color: color, thickness: 0.5, space: 1);
   }
 }

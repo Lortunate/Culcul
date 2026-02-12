@@ -1,11 +1,13 @@
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/types/result.dart';
+import 'package:culcul/core/utils/result_utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:culcul/repositories/video_repository.dart';
+import 'package:culcul/repositories/relation_repository.dart';
 import 'package:culcul/providers/video/video_detail_state.dart';
 import 'package:culcul/data/models/index.dart';
-import 'package:culcul/utils/share_utils.dart';
+import 'package:culcul/core/utils/share_utils.dart';
 
 part 'video_detail_controller.g.dart';
 
@@ -24,9 +26,6 @@ class VideoDetailController extends _$VideoDetailController {
     final detailResult = await repo.fetchVideoView(bvid);
 
     switch (detailResult) {
-      case Failure(exception: final e):
-        state = state.copyWith(isLoading: false, error: e);
-        return;
       case Success(value: final detail):
         int cid = 0;
         if (detail.pages.isNotEmpty) {
@@ -35,15 +34,17 @@ class VideoDetailController extends _$VideoDetailController {
 
         state = state.copyWith(videoDetail: detail, currentCid: cid);
 
-        _fetchRelatedVideos();
-        _fetchVideoTags();
-        _fetchComments(detail.aid);
+        // Fetch other data in parallel
+        await Future.wait([
+          _fetchRelatedVideos(),
+          _fetchVideoTags(),
+          _fetchComments(detail.aid),
+          if (cid != 0) _fetchPlayUrl(detail.aid, cid),
+        ]);
 
-        if (cid != 0) {
-          await _fetchPlayUrl(detail.aid, cid);
-        } else {
-          state = state.copyWith(isLoading: false);
-        }
+        state = state.copyWith(isLoading: false);
+      case Failure(exception: final e):
+        state = state.copyWith(isLoading: false, error: e);
     }
   }
 
@@ -202,7 +203,7 @@ class VideoDetailController extends _$VideoDetailController {
   Future<void> reportProgress(int progress) async {
     final detail = state.videoDetail;
     if (detail == null) return;
-    
+
     final repo = ref.read(videoRepositoryProvider);
     await repo.reportVideoProgress(
       aid: detail.aid,
@@ -219,17 +220,19 @@ class VideoDetailController extends _$VideoDetailController {
     final act = isFollowed ? 2 : 1; // 1 follow, 2 unfollow
 
     // Optimistic update
-    final newReqUser = detail.reqUser?.copyWith(attention: isFollowed ? 0 : 1) ??
+    final newReqUser =
+        detail.reqUser?.copyWith(attention: isFollowed ? 0 : 1) ??
         ReqUser(attention: isFollowed ? 0 : 1);
 
-    state = state.copyWith(
-      videoDetail: detail.copyWith(reqUser: newReqUser),
+    state = state.copyWith(videoDetail: detail.copyWith(reqUser: newReqUser));
+
+    final relationRepo = ref.read(relationRepositoryProvider);
+    final result = await relationRepo.modifyRelation(
+      fid: detail.owner.mid,
+      act: act,
     );
 
-    try {
-      final relationRepo = ref.read(relationRepositoryProvider);
-      await relationRepo.modifyRelation(fid: detail.owner.mid, act: act);
-    } catch (e) {
+    if (result is Failure) {
       // Revert
       state = state.copyWith(videoDetail: detail);
       // TODO: Show error
@@ -261,12 +264,7 @@ class VideoDetailController extends _$VideoDetailController {
     await repo.hateComment(oid: oid, rpid: rpid, action: 1);
   }
 
-  Future<void> addReply(
-    int oid,
-    int root,
-    int parent,
-    String message,
-  ) async {
+  Future<void> addReply(int oid, int root, int parent, String message) async {
     final repo = ref.read(videoRepositoryProvider);
     final result = await repo.addReply(
       oid: oid,

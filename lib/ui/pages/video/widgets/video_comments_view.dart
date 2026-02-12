@@ -1,26 +1,24 @@
 import 'package:culcul/core/router/router.dart';
 import 'package:culcul/providers/video/video_detail_controller.dart';
-import 'package:culcul/providers/video/video_detail_state.dart';
 import 'package:culcul/ui/pages/video/widgets/comment_item.dart';
 import 'package:culcul/data/models/index.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class VideoCommentsView extends StatelessWidget {
+class VideoCommentsView extends ConsumerWidget {
   final String bvid;
-  final VideoDetailState state;
-  final VideoDetailController notifier;
 
   const VideoCommentsView({
     super.key,
     required this.bvid,
-    required this.state,
-    required this.notifier,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(videoDetailControllerProvider(bvid));
+    final notifier = ref.read(videoDetailControllerProvider(bvid).notifier);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
@@ -44,10 +42,7 @@ class VideoCommentsView extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              Icon(
-                Icons.refresh,
-                color: colorScheme.primary,
-              ),
+              Icon(Icons.refresh, color: colorScheme.primary),
             ],
           ),
         ),
@@ -103,10 +98,7 @@ class VideoCommentsView extends StatelessWidget {
                 bvid: bvid,
                 oid: state.videoDetail!.aid,
                 rootId: comment.rpid,
-                $extra: {
-                  'comment': comment,
-                  'upperMid': upperMid,
-                },
+                $extra: {'comment': comment, 'upperMid': upperMid},
               ).push(context);
             },
           );

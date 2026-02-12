@@ -1,5 +1,6 @@
-import 'package:culcul/ui/widgets/app_clickable.dart';
-import 'package:culcul/ui/widgets/video_card.dart';
+import 'package:culcul/core/utils/format_utils.dart';
+import 'package:culcul/ui/widgets/app_card_container.dart';
+import 'package:culcul/ui/widgets/icon_text.dart';
 import 'package:culcul/ui/widgets/video_thumbnail.dart';
 import 'package:flutter/material.dart';
 
@@ -19,8 +20,11 @@ class VideoListCard extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final Widget? overlay; // Overlay on thumbnail (e.g. Rank)
   final Widget? middleContent; // Between title and footer
-  final Widget? leading; // Custom leading widget (overrides coverUrl/VideoThumbnail)
+  final Widget?
+  leading; // Custom leading widget (overrides coverUrl/VideoThumbnail)
   final Widget? trailing; // Custom trailing widget
+  final VoidCallback? onLongPress;
+  final bool showDefaultStats;
 
   const VideoListCard({
     super.key,
@@ -41,14 +45,32 @@ class VideoListCard extends StatelessWidget {
     this.middleContent,
     this.leading,
     this.trailing,
+    this.onLongPress,
+    this.showDefaultStats = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final statsWidgets = <Widget>[
+      if (stats != null) ...stats!
+      else if (showDefaultStats) ...[
+        if (viewCount != null)
+          IconText(
+            icon: Icons.play_circle_outline_rounded,
+            text: FormatUtils.formatNumber(viewCount!),
+          ),
+        if (danmakuCount != null)
+          IconText(
+            icon: Icons.list_alt_rounded,
+            text: FormatUtils.formatNumber(danmakuCount!),
+          ),
+      ],
+    ];
 
-    return VideoCardContainer(
+    return AppCardContainer(
       onTap: onTap,
+      onLongPress: onLongPress,
       child: Padding(
         padding: padding,
         child: SizedBox(
@@ -66,8 +88,9 @@ class VideoListCard extends StatelessWidget {
                       VideoThumbnail(
                         url: coverUrl,
                         duration: duration ?? 0,
-                        viewCount: viewCount,
-                        danmakuCount: danmakuCount,
+                        // Don't show stats on thumbnail in list view to avoid duplication
+                        viewCount: null,
+                        danmakuCount: null,
                         borderRadius: 8,
                         aspectRatio: aspectRatio,
                         width: thumbnailWidth,
@@ -100,25 +123,21 @@ class VideoListCard extends StatelessWidget {
                     const Spacer(),
                     if (author != null) ...[
                       author!,
-                      if (stats != null && stats!.isNotEmpty)
-                        const SizedBox(height: 2),
+                      if (statsWidgets.isNotEmpty) const SizedBox(height: 2),
                     ],
-                    if (stats != null && stats!.isNotEmpty)
+                    if (statsWidgets.isNotEmpty)
                       Row(
                         children: [
-                          for (int i = 0; i < stats!.length; i++) ...[
+                          for (int i = 0; i < statsWidgets.length; i++) ...[
                             if (i > 0) const SizedBox(width: 12),
-                            stats![i],
+                            statsWidgets[i],
                           ],
                         ],
                       ),
                   ],
                 ),
               ),
-              if (trailing != null) ...[
-                const SizedBox(width: 12),
-                trailing!,
-              ],
+              if (trailing != null) ...[const SizedBox(width: 12), trailing!],
             ],
           ),
         ),

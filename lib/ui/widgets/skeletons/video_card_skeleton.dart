@@ -1,5 +1,5 @@
+import 'package:culcul/ui/widgets/app_card_container.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
-import 'package:culcul/ui/widgets/video_card.dart';
 import 'package:flutter/material.dart';
 
 class VideoCardSkeleton extends StatelessWidget {
@@ -7,7 +7,7 @@ class VideoCardSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return VideoCardContainer(
+    return AppCardContainer(
       child: AppShimmer(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

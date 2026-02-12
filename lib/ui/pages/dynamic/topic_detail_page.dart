@@ -1,4 +1,5 @@
 import 'package:culcul/providers/dynamic/topic_dynamic_provider.dart';
+import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/dynamic_post_card.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';
@@ -24,9 +25,7 @@ class TopicDetailPage extends HookConsumerWidget {
     final notifier = ref.read(provider.notifier);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(topicName),
-      ),
+      appBar: AppBar(title: Text(topicName)),
       body: Builder(
         builder: (context) {
           if (state.isLoading && !state.hasValue) {
@@ -45,8 +44,8 @@ class TopicDetailPage extends HookConsumerWidget {
           final items = state.value ?? [];
 
           return EasyRefresh(
-            header: const AppRefreshHeader(),
-            footer: const AppLoadFooter(),
+            header: AppRefreshHeader(),
+            footer: AppLoadFooter(),
             onRefresh: () async {
               await notifier.refresh();
             },
@@ -73,7 +72,8 @@ class TopicDetailPage extends HookConsumerWidget {
                       final post = items[index];
                       return DynamicPostCard(
                         post: post,
-                        onLike: (post) => notifier.toggleLike(post.id, post.isLiked),
+                        onLike: (post) =>
+                            notifier.toggleLike(post.id, post.isLiked),
                       );
                     },
                   ),

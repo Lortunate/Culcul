@@ -1,158 +1,82 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'fav_resource_model.freezed.dart';
 part 'fav_resource_model.g.dart';
 
-@JsonSerializable()
-class FavResourceModel {
-  @JsonKey(name: 'id')
-  final int id;
-  @JsonKey(name: 'type')
-  final int type;
-  @JsonKey(name: 'title')
-  final String title;
-  @JsonKey(name: 'cover')
-  final String cover;
-  @JsonKey(name: 'intro')
-  final String intro;
-  @JsonKey(name: 'page')
-  final int page;
-  @JsonKey(name: 'duration')
-  final int duration;
-  @JsonKey(name: 'upper')
-  final FavUpperModel upper;
-  @JsonKey(name: 'attr')
-  final int attr;
-  @JsonKey(name: 'cnt_info')
-  final FavCntInfoModel cntInfo;
-  @JsonKey(name: 'link')
-  final String link;
-  @JsonKey(name: 'ctime')
-  final int ctime;
-  @JsonKey(name: 'pubtime')
-  final int pubtime;
-  @JsonKey(name: 'fav_time')
-  final int favTime;
-  @JsonKey(name: 'bv_id')
-  final String? bvId;
-  @JsonKey(name: 'bvid')
-  final String? bvid;
-
-  FavResourceModel({
-    required this.id,
-    required this.type,
-    required this.title,
-    required this.cover,
-    required this.intro,
-    required this.page,
-    required this.duration,
-    required this.upper,
-    required this.attr,
-    required this.cntInfo,
-    required this.link,
-    required this.ctime,
-    required this.pubtime,
-    required this.favTime,
-    this.bvId,
-    this.bvid,
-  });
+@freezed
+abstract class FavResourceModel with _$FavResourceModel {
+  const factory FavResourceModel({
+    @JsonKey(name: 'id') required int id,
+    @JsonKey(name: 'type') required int type,
+    @JsonKey(name: 'title') required String title,
+    @JsonKey(name: 'cover') required String cover,
+    @JsonKey(name: 'intro') required String intro,
+    @JsonKey(name: 'page') required int page,
+    @JsonKey(name: 'duration') required int duration,
+    @JsonKey(name: 'upper') required FavUpperModel upper,
+    @JsonKey(name: 'attr') required int attr,
+    @JsonKey(name: 'cnt_info') required FavCntInfoModel cntInfo,
+    @JsonKey(name: 'link') required String link,
+    @JsonKey(name: 'ctime') required int ctime,
+    @JsonKey(name: 'pubtime') required int pubtime,
+    @JsonKey(name: 'fav_time') required int favTime,
+    @JsonKey(name: 'bv_id') String? bvId,
+    @JsonKey(name: 'bvid') String? bvid,
+  }) = _FavResourceModel;
 
   factory FavResourceModel.fromJson(Map<String, dynamic> json) =>
       _$FavResourceModelFromJson(json);
-
-  Map<String, dynamic> toJson() => _$FavResourceModelToJson(this);
 }
 
-@JsonSerializable()
-class FavUpperModel {
-  @JsonKey(name: 'mid')
-  final int mid;
-  @JsonKey(name: 'name')
-  final String name;
-  @JsonKey(name: 'face')
-  final String face;
-
-  FavUpperModel({required this.mid, required this.name, required this.face});
+@freezed
+abstract class FavUpperModel with _$FavUpperModel {
+  const factory FavUpperModel({
+    @JsonKey(name: 'mid') required int mid,
+    @JsonKey(name: 'name') required String name,
+    @JsonKey(name: 'face') required String face,
+  }) = _FavUpperModel;
 
   factory FavUpperModel.fromJson(Map<String, dynamic> json) =>
       _$FavUpperModelFromJson(json);
-
-  Map<String, dynamic> toJson() => _$FavUpperModelToJson(this);
 }
 
-@JsonSerializable()
-class FavCntInfoModel {
-  @JsonKey(name: 'collect')
-  final int collect;
-  @JsonKey(name: 'play')
-  final int play;
-  @JsonKey(name: 'danmaku')
-  final int danmaku;
-
-  FavCntInfoModel({
-    required this.collect,
-    required this.play,
-    required this.danmaku,
-  });
+@freezed
+abstract class FavCntInfoModel with _$FavCntInfoModel {
+  const factory FavCntInfoModel({
+    @JsonKey(name: 'collect') required int collect,
+    @JsonKey(name: 'play') required int play,
+    @JsonKey(name: 'danmaku') required int danmaku,
+  }) = _FavCntInfoModel;
 
   factory FavCntInfoModel.fromJson(Map<String, dynamic> json) =>
       _$FavCntInfoModelFromJson(json);
-
-  Map<String, dynamic> toJson() => _$FavCntInfoModelToJson(this);
 }
 
-@JsonSerializable()
-class FavResourceListResponse {
-  @JsonKey(name: 'info')
-  final FavFolderInfoModel info;
-  @JsonKey(name: 'medias')
-  final List<FavResourceModel>? medias;
-  @JsonKey(name: 'has_more')
-  final bool hasMore;
-
-  FavResourceListResponse({
-    required this.info,
-    this.medias,
-    required this.hasMore,
-  });
+@freezed
+abstract class FavResourceListResponse with _$FavResourceListResponse {
+  const factory FavResourceListResponse({
+    @JsonKey(name: 'info') required FavFolderInfoModel info,
+    @JsonKey(name: 'medias') List<FavResourceModel>? medias,
+    @JsonKey(name: 'has_more') required bool hasMore,
+  }) = _FavResourceListResponse;
 
   factory FavResourceListResponse.fromJson(Map<String, dynamic> json) =>
       _$FavResourceListResponseFromJson(json);
-
-  Map<String, dynamic> toJson() => _$FavResourceListResponseToJson(this);
 }
 
-@JsonSerializable()
-class FavFolderInfoModel {
-  @JsonKey(name: 'id')
-  final int id;
-  @JsonKey(name: 'fid')
-  final int fid;
-  @JsonKey(name: 'mid')
-  final int mid;
-  @JsonKey(name: 'attr')
-  final int attr;
-  @JsonKey(name: 'title')
-  final String title;
-  @JsonKey(name: 'cover')
-  final String cover;
-  @JsonKey(name: 'upper')
-  final FavUpperModel upper;
-  @JsonKey(name: 'media_count')
-  final int mediaCount;
-
-  FavFolderInfoModel({
-    required this.id,
-    required this.fid,
-    required this.mid,
-    required this.attr,
-    required this.title,
-    required this.cover,
-    required this.upper,
-    required this.mediaCount,
-  });
+@freezed
+abstract class FavFolderInfoModel with _$FavFolderInfoModel {
+  const factory FavFolderInfoModel({
+    @JsonKey(name: 'id') required int id,
+    @JsonKey(name: 'fid') required int fid,
+    @JsonKey(name: 'mid') required int mid,
+    @JsonKey(name: 'attr') required int attr,
+    @JsonKey(name: 'title') required String title,
+    @JsonKey(name: 'cover') required String cover,
+    @JsonKey(name: 'upper') required FavUpperModel upper,
+    @JsonKey(name: 'media_count') required int mediaCount,
+  }) = _FavFolderInfoModel;
 
   factory FavFolderInfoModel.fromJson(Map<String, dynamic> json) =>
       _$FavFolderInfoModelFromJson(json);
-
-  Map<String, dynamic> toJson() => _$FavFolderInfoModelToJson(this);
 }

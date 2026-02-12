@@ -1,7 +1,6 @@
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/router/router.dart';
 import 'package:culcul/data/models/relation/relation_model.dart';
-import 'package:culcul/repositories/profile_repository.dart';
 import 'package:culcul/ui/widgets/follow_button.dart';
 import 'package:culcul/ui/widgets/index.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +36,8 @@ class _RelationUserItemState extends ConsumerState<RelationUserItem> {
   @override
   Widget build(BuildContext context) {
     return UserListTile(
-      onTap: widget.onTap ??
+      onTap:
+          widget.onTap ??
           () {
             UserProfileRoute(mid: widget.user.mid).push(context);
           },
@@ -87,19 +87,18 @@ class _RelationUserItemState extends ConsumerState<RelationUserItem> {
     });
 
     try {
-      await ref.read(profileRepositoryProvider).modifyRelation(
-            mid: widget.user.mid,
-            isFollow: newStatus,
-          );
+      await ref
+          .read(profileRepositoryProvider)
+          .modifyRelation(mid: widget.user.mid, isFollow: newStatus);
     } catch (e) {
       // Revert on error
       if (mounted) {
         setState(() {
           _attribute = widget.user.attribute;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('操作失败: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('操作失败: $e')));
       }
     }
   }

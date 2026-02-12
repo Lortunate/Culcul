@@ -1,5 +1,6 @@
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/domain/entities/dynamic_post.dart';
+import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
+import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'topic_dynamic_provider.g.dart';
@@ -11,16 +12,19 @@ class TopicDynamicNotifier extends _$TopicDynamicNotifier {
   late int _topicId;
 
   @override
-  Future<List<DynamicPost>> build({required int topicId}) async {
+  Future<List<DynamicItem>> build({required int topicId}) async {
     _topicId = topicId;
     _offset = null;
     _hasMore = true;
     return _fetchFeed();
   }
 
-  Future<List<DynamicPost>> _fetchFeed() async {
+  Future<List<DynamicItem>> _fetchFeed() async {
     final repository = ref.read(dynamicRepositoryProvider);
-    final result = await repository.getTopicFeed(topicId: _topicId, offset: _offset);
+    final result = await repository.getTopicFeed(
+      topicId: _topicId,
+      offset: _offset,
+    );
     return result.when(
       success: (feed) {
         _offset = feed.offset;
@@ -37,32 +41,32 @@ class TopicDynamicNotifier extends _$TopicDynamicNotifier {
     final oldState = state;
     if (oldState.asData?.value == null) return;
 
-    state = AsyncLoading<List<DynamicPost>>().copyWithPrevious(oldState);
+    state = AsyncLoading<List<DynamicItem>>().copyWithPrevious(oldState);
 
     try {
       final newItems = await _fetchFeed();
 
-      final previousItems = oldState.asData!.value;
-      final existingIds = previousItems.map((e) => e.id).toSet();
+      final List<DynamicItem> previousItems = oldState.asData!.value;
+      final existingIds = previousItems.map((e) => e.idStr).toSet();
       final uniqueNewItems = newItems
-          .where((e) => !existingIds.contains(e.id))
+          .where((e) => !existingIds.contains(e.idStr))
           .toList();
 
       state = AsyncData([...previousItems, ...uniqueNewItems]);
     } catch (e, st) {
-      state = AsyncError<List<DynamicPost>>(e, st).copyWithPrevious(oldState);
+      state = AsyncError<List<DynamicItem>>(e, st).copyWithPrevious(oldState);
     }
   }
 
   Future<void> refresh() async {
     _offset = null;
     _hasMore = true;
-    state = AsyncLoading<List<DynamicPost>>().copyWithPrevious(state);
+    state = AsyncLoading<List<DynamicItem>>().copyWithPrevious(state);
     try {
       final items = await _fetchFeed();
       state = AsyncData(items);
     } catch (e, st) {
-      state = AsyncError<List<DynamicPost>>(e, st).copyWithPrevious(state);
+      state = AsyncError<List<DynamicItem>>(e, st).copyWithPrevious(state);
     }
   }
 
@@ -70,24 +74,37 @@ class TopicDynamicNotifier extends _$TopicDynamicNotifier {
     final oldState = state;
     if (oldState.asData?.value == null) return;
 
-    final items = oldState.asData!.value;
-    final index = items.indexWhere((element) => element.id == id);
+    final List<DynamicItem> items = oldState.asData!.value;
+    final index = items.indexWhere((element) => element.idStr == id);
     if (index == -1) return;
 
     final item = items[index];
-    final newItem = item.copyWith(
-      isLiked: !isLiked,
-      likeCount: isLiked ? item.likeCount - 1 : item.likeCount + 1,
+    
+    // Deep copy update logic
+    final newLikeCount = isLiked ? item.likeCount - 1 : item.likeCount + 1;
+    final newStatus = !isLiked;
+    
+    final newStatLike = item.modules.moduleStat?.like.copyWith(
+      count: newLikeCount,
+      status: newStatus,
     );
+    
+    if (item.modules.moduleStat != null && newStatLike != null) {
+      final newModuleStat = item.modules.moduleStat!.copyWith(like: newStatLike);
+      final newModules = item.modules.copyWith(moduleStat: newModuleStat);
+      final newItem = item.copyWith(modules: newModules);
 
-    final newItems = List<DynamicPost>.from(items);
-    newItems[index] = newItem;
-    state = AsyncData(newItems);
+      final newItems = List<DynamicItem>.from(items);
+      newItems[index] = newItem;
+      state = AsyncData(newItems);
 
-    final result = await ref.read(dynamicRepositoryProvider).likeDynamic(id, !isLiked);
-    if (result.isFailure) {
-      // Revert
-      state = oldState;
+      final result = await ref
+          .read(dynamicRepositoryProvider)
+          .likeDynamic(id, !isLiked);
+      if (result.isFailure) {
+        // Revert
+        state = oldState;
+      }
     }
   }
 }

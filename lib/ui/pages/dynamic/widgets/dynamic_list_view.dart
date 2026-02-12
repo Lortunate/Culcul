@@ -1,4 +1,5 @@
 import 'package:culcul/providers/dynamic/dynamic_provider.dart';
+import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/dynamic_post_card.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/recently_followed_widget.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
@@ -15,7 +16,7 @@ class DynamicListView extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final provider = dynamicProvider(type: type);
+    final provider = dynamicProvider(type);
     final state = ref.watch(provider);
     final notifier = ref.read(provider.notifier);
 
@@ -25,18 +26,15 @@ class DynamicListView extends HookConsumerWidget {
 
     if (state.hasError && !state.hasValue) {
       return Center(
-        child: AppErrorWidget(
-          error: state.error!,
-          onRetry: notifier.refresh,
-        ),
+        child: AppErrorWidget(error: state.error!, onRetry: notifier.refresh),
       );
     }
 
     final items = state.value ?? [];
 
     return EasyRefresh(
-      header: const AppRefreshHeader(),
-      footer: const AppLoadFooter(),
+      header: AppRefreshHeader(),
+      footer: AppLoadFooter(),
       onRefresh: () async {
         await notifier.refresh();
         if (ref.read(provider).hasError) {
@@ -73,7 +71,8 @@ class DynamicListView extends HookConsumerWidget {
                   final post = items[index - 1];
                   return DynamicPostCard(
                     post: post,
-                    onLike: (post) => notifier.toggleLike(post.id, post.isLiked),
+                    onLike: (post) =>
+                        notifier.toggleLike(post.id, post.isLiked),
                   );
                 }
                 return DynamicPostCard(

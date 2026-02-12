@@ -1,6 +1,6 @@
 import 'package:culcul/core/router/router.dart';
-import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/data/models/notification/reply_model.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/pages/notification/notification_list_page.dart';
 import 'package:culcul/ui/widgets/index.dart';
 import 'package:flutter/material.dart';
@@ -43,10 +43,7 @@ class NotificationItemWidget extends StatelessWidget {
                   UserProfileRoute(mid: user.mid).push(context);
                 }
               },
-              child: AppAvatar(
-                url: user.avatar,
-                size: 40,
-              ),
+              child: AppAvatar(url: user.avatar, size: 40),
             ),
             const SizedBox(width: 12),
             // Content
@@ -174,7 +171,7 @@ class NotificationItemWidget extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'Unable to navigate to content: ${detail.type} ${detail.subjectId}',
+          t.notification.navigation_error(type: detail.type, id: detail.subjectId.toString()),
         ),
       ),
     );
@@ -183,13 +180,13 @@ class NotificationItemWidget extends StatelessWidget {
   String _getActionText() {
     switch (type) {
       case NotificationType.like:
-        return '赞了我的评论';
+        return t.notification.types.like;
       case NotificationType.at:
-        return '@了我';
+        return t.notification.types.at;
       case NotificationType.reply:
-        return '回复了我';
+        return t.notification.types.reply;
       case NotificationType.system:
-        return '系统通知';
+        return t.notification.types.system;
     }
   }
 
@@ -200,6 +197,6 @@ class NotificationItemWidget extends StatelessWidget {
     if (detail.title.isNotEmpty) {
       return detail.title;
     }
-    return '相关内容';
+    return t.notification.related_content;
   }
 }

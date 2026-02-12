@@ -2,8 +2,8 @@ import 'package:culcul/core/providers/storage_provider.dart';
 import 'package:culcul/core/providers/cookie_jar_provider.dart';
 import 'package:culcul/data/api/auth_api.dart';
 import 'package:culcul/data/api/weekly_api.dart';
-import 'package:culcul/data/api/subscription_api.dart';
-import 'package:culcul/repositories/subscription_repository.dart';
+import 'package:culcul/repositories/weekly_repository.dart';
+
 import 'package:culcul/data/api/relation_api.dart';
 import 'package:culcul/repositories/relation_repository.dart';
 import 'package:culcul/data/api/fav_api.dart';
@@ -28,7 +28,6 @@ import 'package:culcul/repositories/dynamic_repository.dart';
 import 'package:culcul/repositories/notification_repository.dart';
 import 'package:culcul/repositories/profile_repository.dart';
 import 'package:culcul/repositories/ranking_repository.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:culcul/data/api/emote_api.dart';
@@ -59,14 +58,11 @@ WeeklyApi weeklyApi(Ref ref) {
 }
 
 @riverpod
-SubscriptionApi subscriptionApi(Ref ref) {
-  return SubscriptionApi(ref.watch(dioClientProvider));
+WeeklyRepository weeklyRepository(Ref ref) {
+  return WeeklyRepository(ref.watch(weeklyApiProvider));
 }
 
-@riverpod
-SubscriptionRepository subscriptionRepository(Ref ref) {
-  return SubscriptionRepository(ref.watch(subscriptionApiProvider));
-}
+
 
 @riverpod
 VideoApi videoApi(Ref ref) {
@@ -85,9 +81,7 @@ RankingApi rankingApi(Ref ref) {
 
 @riverpod
 RankingRepository rankingRepository(Ref ref) {
-  return RankingRepository(
-    ref.watch(rankingApiProvider),
-  );
+  return RankingRepository(ref.watch(rankingApiProvider));
 }
 
 @riverpod
@@ -97,9 +91,7 @@ ProfileApi profileApi(Ref ref) {
 
 @riverpod
 ProfileRepository profileRepository(Ref ref) {
-  return ProfileRepository(
-    ref.watch(profileApiProvider),
-  );
+  return ProfileRepository(api: ref.watch(profileApiProvider));
 }
 
 @riverpod
@@ -122,9 +114,7 @@ NotificationApi notificationApi(Ref ref) {
 
 @riverpod
 NotificationRepository notificationRepository(Ref ref) {
-  return NotificationRepository(
-    ref.watch(notificationApiProvider),
-  );
+  return NotificationRepository(ref.watch(notificationApiProvider));
 }
 
 @riverpod
@@ -174,7 +164,10 @@ DanmakuApi danmakuApi(Ref ref) {
 
 @riverpod
 DanmakuRepository danmakuRepository(Ref ref) {
-  return DanmakuRepository(ref.watch(danmakuApiProvider));
+  return DanmakuRepository(
+    ref.watch(danmakuApiProvider),
+    ref.watch(dioClientProvider),
+  );
 }
 
 @riverpod

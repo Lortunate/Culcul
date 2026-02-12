@@ -33,6 +33,19 @@ class PlayerTheme {
     ],
   );
 
+  static const TextStyle subtitleStyle = TextStyle(
+    color: Colors.white,
+    fontSize: 16,
+    height: 1.2,
+    fontWeight: FontWeight.w600,
+    shadows: [
+      Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black),
+      Shadow(offset: Offset(0, -1), blurRadius: 2, color: Colors.black),
+      Shadow(offset: Offset(1, 0), blurRadius: 2, color: Colors.black),
+      Shadow(offset: Offset(-1, 0), blurRadius: 2, color: Colors.black),
+    ],
+  );
+
   // Slider Theme
   static SliderThemeData get sliderTheme => SliderThemeData(
     trackHeight: 3,

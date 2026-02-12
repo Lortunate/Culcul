@@ -1,64 +1,107 @@
+import 'package:culcul/core/router/router.dart';
 import 'package:culcul/data/models/fav/index.dart';
 import 'package:culcul/providers/fav/fav_provider.dart';
 import 'package:culcul/ui/pages/fav/fav_folder_item.dart';
-import 'package:culcul/ui/widgets/index.dart';
+import 'package:culcul/ui/widgets/app_shimmer.dart';
+import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 enum FavFolderType { created, collected }
 
-class FavFolderList extends ConsumerWidget {
+class FavFolderList extends HookConsumerWidget {
   final FavFolderType type;
 
   const FavFolderList({super.key, required this.type});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final asyncValue = type == FavFolderType.created
-        ? ref.watch(favCreatedFoldersProvider)
-        : ref.watch(favCollectedFoldersProvider);
+    final AsyncValue<List<FavFolderModel>> asyncValue;
+    final dynamic provider;
+    Future<void> Function()? onLoadMore;
+
+    if (type == FavFolderType.created) {
+      provider = favCreatedFoldersProvider;
+      asyncValue = ref.watch(favCreatedFoldersProvider);
+      onLoadMore = null;
+    } else {
+      provider = favCollectedFoldersProvider;
+      asyncValue = ref.watch(favCollectedFoldersProvider);
+      onLoadMore = () =>
+          ref.read(favCollectedFoldersProvider.notifier).loadMore();
+    }
 
     return SmartPagingView<FavFolderModel>(
+      provider: provider,
       asyncValue: asyncValue,
-      provider: type == FavFolderType.created
-          ? favCreatedFoldersProvider
-          : favCollectedFoldersProvider,
-      skeleton: const SizedBox(), // TODO: Add skeleton
       onRefresh: () async {
-        if (type == FavFolderType.created) {
-          return ref.refresh(favCreatedFoldersProvider.future);
-        } else {
-          return ref.refresh(favCollectedFoldersProvider.future);
-        }
+        return ref.refresh(
+          type == FavFolderType.created
+              ? favCreatedFoldersProvider.future
+              : favCollectedFoldersProvider.future,
+        );
       },
-      onLoadMore: () async {
-        if (type == FavFolderType.collected) {
-          await ref.read(favCollectedFoldersProvider.notifier).loadMore();
-        }
-      },
+      onLoadMore: onLoadMore,
       builder: (context, list) {
-        if (list.isEmpty) {
-          return const Center(child: Text('No favorites'));
-        }
         return ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           itemCount: list.length,
-          separatorBuilder: (_, __) => const Divider(
-            height: 1,
-            indent: 106, // 16 padding + 90 cover
-            endIndent: 16,
-            thickness: 0.5,
-          ),
+          separatorBuilder: (context, index) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
-            final folder = list[index];
+            final item = list[index];
             return FavFolderItem(
-              item: folder,
+              item: item,
               onTap: () {
-                context.push('/fav/detail/${folder.id}');
+                FavoriteDetailRoute(
+                  mediaId: item.id,
+                  title: item.title,
+                  mid: item.mid,
+                ).push(context);
               },
             );
           },
+        );
+      },
+      skeleton: const _Skeleton(),
+    );
+  }
+}
+
+class _Skeleton extends StatelessWidget {
+  const _Skeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      padding: const EdgeInsets.all(16),
+      itemCount: 10,
+      separatorBuilder: (context, index) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        return AppShimmer(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 88,
+                height: 88,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(6),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(height: 16, color: Colors.white),
+                    const SizedBox(height: 8),
+                    Container(height: 14, width: 100, color: Colors.white),
+                  ],
+                ),
+              ),
+            ],
+          ),
         );
       },
     );

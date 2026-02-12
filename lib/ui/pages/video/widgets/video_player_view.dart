@@ -1,26 +1,16 @@
-import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/providers/video/danmaku_settings_provider.dart';
 import 'package:culcul/providers/video/player_controller.dart';
-import 'package:culcul/providers/video/subtitle_controller.dart';
 import 'package:culcul/providers/video/video_detail_controller.dart';
+import 'package:culcul/ui/pages/video/hooks/use_player_setup.dart';
 import 'package:culcul/ui/pages/video/hooks/use_video_progress.dart';
-import 'package:culcul/ui/pages/video/video_listen_page.dart';
-import 'package:culcul/ui/pages/video/widgets/controls/player_constants.dart';
-import 'package:culcul/ui/pages/video/widgets/controls/speed_indicator.dart';
-import 'package:culcul/ui/pages/video/widgets/player_controls.dart';
 import 'package:culcul/ui/pages/video/widgets/danmaku_layer.dart';
+import 'package:culcul/ui/pages/video/widgets/player_controls.dart';
 import 'package:culcul/ui/pages/video/widgets/player_gestures.dart';
 import 'package:culcul/ui/pages/video/widgets/subtitle_overlay.dart';
-import 'package:culcul/ui/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:screen_brightness/screen_brightness.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
 
 class VideoPlayerView extends HookConsumerWidget {
   final String bvid;
@@ -34,98 +24,40 @@ class VideoPlayerView extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final t = Translations.of(context);
     final state = ref.watch(videoDetailControllerProvider(bvid));
 
     final playerController = ref.watch(playerControllerProvider.notifier);
-    final playerState = ref.watch(playerControllerProvider);
+    final isFullscreen = ref.watch(
+      playerControllerProvider.select((s) => s.isFullscreen),
+    );
+    final isLocked = ref.watch(
+      playerControllerProvider.select((s) => s.isLocked),
+    );
+    final isPlaying = ref.watch(
+      playerControllerProvider.select((s) => s.isPlaying),
+    );
+
     final player = playerController.player;
     final controller = playerController.videoController;
 
-    final brightness = useState(0.5);
     final seekOffset = useState<Duration?>(null);
     final isSpeedingUp = useState(false);
 
-    final lastLoadedCid = useRef<int?>(null);
-    final lastPlayUrl = useRef<String?>(null);
+    final playerSetup = usePlayerSetup(ref, bvid, player, state);
+    final brightness = playerSetup.brightness;
 
-    // Wakelock
-    useEffect(() {
-      WakelockPlus.enable();
-      return () => WakelockPlus.disable();
-    }, []);
+    useVideoProgressReport(ref, bvid, player, isPlaying);
 
-    // Initialize brightness
-    useEffect(() {
-      ScreenBrightness().current.then((val) {
-        brightness.value = val;
-      }).catchError((e) {
-        debugPrint('Failed to get brightness: $e');
-      });
-      return null;
-    }, []);
-
-    // Player initialization and quality switching logic
-    useEffect(() {
-      if (state.playUrl != null && state.playUrl!.durl.isNotEmpty) {
-        final url = state.playUrl!.durl.first.url;
-
-        if (lastPlayUrl.value == url) return null;
-
-        final bool isQualitySwitch =
-            lastLoadedCid.value == state.currentCid &&
-            lastPlayUrl.value != null;
-
-        Future.microtask(() async {
-          await playerController.loadVideo(
-            url,
-            httpHeaders: {
-              'Referer': ApiConstants.referer,
-              'User-Agent': ApiConstants.userAgent,
-            },
-            isQualitySwitch: isQualitySwitch,
-          );
-          
-          player.setRate(state.playbackSpeed);
-
-          lastLoadedCid.value = state.currentCid;
-          lastPlayUrl.value = url;
-        });
-      }
-      return null;
-    }, [state.playUrl]);
-
-    useEffect(() {
-      player.setRate(state.playbackSpeed);
-      return null;
-    }, [state.playbackSpeed]);
-
-    // Report progress
-    useVideoProgressReport(ref, bvid, player, playerState.isPlaying);
-
-    // Listen to video dimensions for aspect ratio
-    final videoWidth = useState(player.state.width ?? 0);
-    final videoHeight = useState(player.state.height ?? 0);
-
-    useEffect(() {
-       final sub = player.stream.videoParams.listen((_) {
-          videoWidth.value = player.state.width ?? 0;
-          videoHeight.value = player.state.height ?? 0;
-       });
-       return sub.cancel;
-    }, []);
-
-    // Listen to volume changes for gesture feedback
     final volumeSnapshot = useStream(player.stream.volume);
     final currentVolume = volumeSnapshot.data ?? player.state.volume;
 
     double aspectRatio = 16 / 9;
-    if (videoWidth.value != 0 && videoHeight.value != 0) {
-      aspectRatio = videoWidth.value / videoHeight.value;
+    if (playerSetup.videoWidth != 0 && playerSetup.videoHeight != 0) {
+      aspectRatio = playerSetup.videoWidth / playerSetup.videoHeight;
     }
 
     return AspectRatio(
-      aspectRatio: playerState.isFullscreen
+      aspectRatio: isFullscreen
           ? MediaQuery.of(context).size.aspectRatio
           : aspectRatio,
       child: Container(
@@ -133,13 +65,13 @@ class VideoPlayerView extends HookConsumerWidget {
         child: Stack(
           children: [
             PlayerGestures(
-              isLocked: playerState.isLocked,
+              isLocked: isLocked,
               volume: currentVolume,
               brightness: brightness.value,
               onTap: playerController.toggleControls,
               onDoubleTap: playerController.playOrPause,
               onLongPressStart: () {
-                if (playerState.isPlaying) {
+                if (player.state.playing) {
                   isSpeedingUp.value = true;
                   player.setRate(2.0);
                 }
@@ -150,10 +82,12 @@ class VideoPlayerView extends HookConsumerWidget {
               },
               onVerticalDragUpdate: (delta, isLeft) {
                 if (isLeft) {
-                  final newBrightness = (brightness.value + delta / 200)
-                      .clamp(0.0, 1.0);
+                  final newBrightness = (brightness.value + delta / 200).clamp(
+                    0.0,
+                    1.0,
+                  );
                   brightness.value = newBrightness;
-                  ScreenBrightness().setScreenBrightness(newBrightness);
+                  ScreenBrightness().setApplicationScreenBrightness(newBrightness);
                 } else {
                   final newVolume = (currentVolume + delta / 2).clamp(
                     0.0,
@@ -168,11 +102,11 @@ class VideoPlayerView extends HookConsumerWidget {
               },
               onDragEnd: () {
                 if (seekOffset.value != null) {
-                  var targetPos = playerState.position + seekOffset.value!;
+                  var targetPos = player.state.position + seekOffset.value!;
                   if (targetPos < Duration.zero) {
                     targetPos = Duration.zero;
-                  } else if (targetPos > playerState.duration) {
-                    targetPos = playerState.duration;
+                  } else if (targetPos > player.state.duration) {
+                    targetPos = player.state.duration;
                   }
                   playerController.seek(targetPos);
                   seekOffset.value = null;
@@ -190,45 +124,19 @@ class VideoPlayerView extends HookConsumerWidget {
                 ],
               ),
             ),
-            if (isSpeedingUp.value) const SpeedIndicator(),
-            PlayerControlsOverlay(
-              bvid: bvid,
-              onToggleFullscreen: onToggleFullscreen,
-              onClose: () {
-                 if (playerState.isFullscreen) {
-                   onToggleFullscreen();
-                 } else {
-                   context.pop();
-                 }
-              },
-              onListen: () => Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => VideoListenPage(bvid: bvid),
-                ),
+            Positioned.fill(
+              child: PlayerControlsOverlay(
+                bvid: bvid,
+                onToggleFullscreen: onToggleFullscreen,
+                onClose: () {
+                  if (isFullscreen) {
+                    onToggleFullscreen();
+                  } else {
+                    Navigator.of(context).pop();
+                  }
+                },
               ),
             ),
-            if (state.isLoading || playerState.isBuffering)
-              Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const CircularProgressIndicator(
-                      color: AppColors.primary,
-                      strokeWidth: 3,
-                    ),
-                    if (state.isLoading) ...[
-                      const SizedBox(height: 12),
-                      Text(
-                        t.common.loading,
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
           ],
         ),
       ),

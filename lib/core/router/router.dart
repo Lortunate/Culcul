@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'package:culcul/data/models/comment_model.dart';
+import 'package:culcul/data/models/comment/comment_model.dart';
 import '../../ui/pages/auth/login_page.dart';
 import '../../ui/pages/dynamic/dynamic_page.dart';
 import '../../ui/pages/dynamic/dynamic_detail_page.dart';

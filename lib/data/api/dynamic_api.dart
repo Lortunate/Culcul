@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:culcul/data/models/response/api_response.dart';
-import 'package:culcul/data/models/comment_model.dart';
+import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
@@ -13,7 +13,7 @@ abstract class DynamicApi {
 
   @GET('/x/polymer/web-dynamic/v1/feed/all')
   @Headers({'x-bili-wbi': 'true'})
-  Future<DynamicResponse> getDynamicFeed({
+  Future<ApiResponse<DynamicData>> getDynamicFeed({
     @Query('type') String type = 'all',
     @Query('offset') String? offset,
     @Query('timezone_offset') int timezoneOffset = -480,
@@ -25,7 +25,7 @@ abstract class DynamicApi {
 
   @GET('/x/polymer/web-dynamic/v1/feed/space')
   @Headers({'x-bili-wbi': 'true'})
-  Future<DynamicResponse> getSpaceDynamicFeed({
+  Future<ApiResponse<DynamicData>> getSpaceDynamicFeed({
     @Query('host_mid') required int hostMid,
     @Query('offset') String? offset,
     @Query('timezone_offset') int timezoneOffset = -480,
@@ -36,7 +36,7 @@ abstract class DynamicApi {
 
   @GET('/x/polymer/web-dynamic/v1/feed/topic')
   @Headers({'x-bili-wbi': 'true'})
-  Future<DynamicResponse> getTopicFeed({
+  Future<ApiResponse<DynamicData>> getTopicFeed({
     @Query('topic_id') required int topicId,
     @Query('offset') String? offset,
     @Query('sort_by') int sortBy = 0,
@@ -48,9 +48,13 @@ abstract class DynamicApi {
   });
 
   @GET('/x/v2/reply')
-  Future<ApiResponse<CommentResponse>> getComments(
-    @Queries() Map<String, dynamic> queries,
-  );
+  Future<ApiResponse<CommentResponse>> getComments({
+    @Query('oid') required int oid,
+    @Query('type') required int type,
+    @Query('sort') int sort = 1,
+    @Query('pn') int pn = 1,
+    @Query('ps') int ps = 20,
+  });
 
   @POST('/x/v2/reply/add')
   @FormUrlEncoded()
@@ -75,7 +79,7 @@ abstract class DynamicApi {
 
   @GET('/x/polymer/web-dynamic/v1/detail')
   @Headers({'x-bili-wbi': 'true'})
-  Future<DynamicDetailResponse> getDynamicDetail({
+  Future<ApiResponse<DynamicDetailData>> getDynamicDetail({
     @Query('id') required String id,
     @Query('features')
     String features =
@@ -84,20 +88,20 @@ abstract class DynamicApi {
   });
 
   @POST('/x/dynamic/feed/dyn/thumb')
-  Future<void> likeDynamic({
+  Future<ApiResponse<void>> likeDynamic({
     @Body() required Map<String, dynamic> body,
     @Query('csrf') required String csrf,
   });
 
   @POST('/x/dynamic/feed/create/dyn')
-  Future<DynamicPublishResponse> createDynamic({
+  Future<ApiResponse<DynamicPublishData>> createDynamic({
     @Query('csrf') required String csrf,
     @Body() required Map<String, dynamic> body,
   });
 
   @POST('/x/dynamic/feed/draw/upload_bfs')
   @MultiPart()
-  Future<DynamicUploadImageResponse> uploadImage({
+  Future<ApiResponse<DynamicUploadImageData>> uploadImage({
     @Part(name: 'file_up') required File file,
     @Part(name: 'category') String category = 'daily',
     @Part(name: 'csrf') required String csrf,

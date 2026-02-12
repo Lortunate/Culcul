@@ -1,7 +1,8 @@
 // ignore_for_file: invalid_use_of_internal_member
+import 'package:culcul/core/errors/exceptions.dart';
+import 'package:culcul/core/types/result.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../core/mixins/paging_mixin.dart';
-import 'package:culcul/repositories/relation_repository.dart';
 import '../../data/models/relation/relation_model.dart';
 import '../../core/providers/api_provider.dart';
 
@@ -22,9 +23,14 @@ class Followings extends _$Followings with PagingMixin<RelationUser> {
   @override
   Future<List<RelationUser>> fetchItems(int page) async {
     final repository = ref.read(relationRepositoryProvider);
-    final response = await repository.getFollowings(_vmid, pn: page);
-    hasMore = response.list.length >= 50;
-    return response.list;
+    final result = await repository.getFollowings(_vmid, pn: page);
+    return switch (result) {
+      Success(value: final data) => () {
+        hasMore = data.list.length >= 50;
+        return data.list;
+      }(),
+      Failure(exception: final e) => throw e,
+    };
   }
 
   Future<void> loadMore() async {
@@ -62,9 +68,14 @@ class Followers extends _$Followers with PagingMixin<RelationUser> {
   @override
   Future<List<RelationUser>> fetchItems(int page) async {
     final repository = ref.read(relationRepositoryProvider);
-    final response = await repository.getFollowers(_vmid, pn: page);
-    hasMore = response.list.length >= 50;
-    return response.list;
+    final result = await repository.getFollowers(_vmid, pn: page);
+    return switch (result) {
+      Success(value: final data) => () {
+        hasMore = data.list.length >= 50;
+        return data.list;
+      }(),
+      Failure(exception: final e) => throw e,
+    };
   }
 
   Future<void> loadMore() async {

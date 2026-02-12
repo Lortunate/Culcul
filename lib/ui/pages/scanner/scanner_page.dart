@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:go_router/go_router.dart';
-import 'package:culcul/i18n/strings.g.dart';
 
 class ScannerPage extends StatefulWidget {
   const ScannerPage({super.key});

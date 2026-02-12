@@ -35,16 +35,14 @@ class CsrfInterceptor extends Interceptor {
         }
 
         if (options.method.toUpperCase() == 'POST') {
-          if (options.data == null) {
-            options.data = <String, dynamic>{};
-          }
+          options.data ??= <String, dynamic>{};
 
           if (options.data is Map) {
             options.data = Map<String, dynamic>.from(options.data as Map);
             options.data['csrf'] = csrf;
             options.data['csrf_token'] = csrf;
           } else if (options.data is FormData) {
-             (options.data as FormData).fields.add(MapEntry('csrf', csrf));
+            (options.data as FormData).fields.add(MapEntry('csrf', csrf));
           }
         } else {
           options.queryParameters['csrf'] = csrf;

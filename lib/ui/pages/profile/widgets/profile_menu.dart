@@ -1,4 +1,3 @@
-import 'package:culcul/core/router/router.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/providers/auth/auth_provider.dart';
 import 'package:culcul/ui/widgets/app_clickable.dart';

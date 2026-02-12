@@ -1,4 +1,5 @@
 import 'package:culcul/providers/dynamic/user_dynamic_provider.dart';
+import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/dynamic_post_card.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
 import 'package:culcul/ui/widgets/skeletons/dynamic_skeleton.dart';
@@ -23,23 +24,20 @@ class UserDynamicTab extends ConsumerWidget {
           key: PageStorageKey<String>('user_dynamic_tab_$mid'),
           slivers: [
             SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  if (index == items.length) {
-                    notifier.loadMore();
-                    return const Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  }
-                  final item = items[index];
-                  return DynamicPostCard(
-                    post: item,
-                    onLike: (post) => notifier.toggleLike(post.id, post.isLiked),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                if (index == items.length) {
+                  notifier.loadMore();
+                  return const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(child: CircularProgressIndicator()),
                   );
-                },
-                childCount: items.length + 1,
-              ),
+                }
+                final item = items[index];
+                return DynamicPostCard(
+                  post: item,
+                  onLike: (post) => notifier.toggleLike(post.id, post.isLiked),
+                );
+              }, childCount: items.length + 1),
             ),
           ],
         );
@@ -49,9 +47,7 @@ class UserDynamicTab extends ConsumerWidget {
         slivers: [
           SliverList(
             delegate: SliverChildBuilderDelegate(
-              (context, index) => const AppShimmer(
-                child: DynamicSkeleton(),
-              ),
+              (context, index) => const AppShimmer(child: DynamicSkeleton()),
               childCount: 5,
             ),
           ),

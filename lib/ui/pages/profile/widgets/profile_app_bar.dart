@@ -1,8 +1,10 @@
 import 'package:culcul/core/router/router.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/providers/auth/auth_provider.dart';
+import 'package:culcul/core/extensions/auth_extension.dart';
 import 'package:culcul/providers/profile/profile_provider.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
+import 'package:culcul/ui/widgets/user_tags.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -55,7 +57,7 @@ class ProfileAppBar extends ConsumerWidget {
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: profile?.vipStatus == 1
-                          ? const Color(0xFFFB7299)
+                          ? colorScheme.primary
                           : colorScheme.surfaceContainerHighest,
                       width: 2,
                     ),
@@ -67,7 +69,7 @@ class ProfileAppBar extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 20),
-              
+
               // Info Section
               Expanded(
                 child: Column(
@@ -83,7 +85,7 @@ class ProfileAppBar extends ConsumerWidget {
                             style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: (profile?.vipStatus == 1)
-                                  ? const Color(0xFFFB7299)
+                                  ? colorScheme.primary
                                   : colorScheme.onSurface,
                             ),
                             maxLines: 1,
@@ -92,18 +94,18 @@ class ProfileAppBar extends ConsumerWidget {
                         ),
                         if (profile?.vipStatus == 1) ...[
                           const SizedBox(width: 8),
-                          _VipTag(type: profile!.vipType),
+                          VipTag(type: profile!.vipType, showShadow: true),
                         ],
                       ],
                     ),
-                    
+
                     const SizedBox(height: 8),
 
                     // Row 2: Level & Exp
                     if (profile != null)
                       Row(
                         children: [
-                          _LevelTag(level: profile.level),
+                          LevelTag(level: profile.level),
                           if (profile.currentExp != null &&
                               profile.currentMinExp != null) ...[
                             const SizedBox(width: 12),
@@ -117,7 +119,7 @@ class ProfileAppBar extends ConsumerWidget {
                           ],
                         ],
                       ),
-                    
+
                     // Row 3: Bio
                     if (profile?.bio != null && profile!.bio!.isNotEmpty) ...[
                       const SizedBox(height: 8),
@@ -170,7 +172,7 @@ class _AssetItem extends StatelessWidget {
             fontWeight: FontWeight.w700,
             color: theme.colorScheme.onSurface,
             fontSize: 14,
-            fontFamily: 'Roboto', 
+            fontFamily: 'Roboto',
           ),
         ),
         const SizedBox(width: 2),
@@ -192,22 +194,18 @@ class _ExpBar extends StatelessWidget {
   final int? next;
   final int min;
 
-  const _ExpBar({
-    required this.current,
-    this.next,
-    required this.min,
-  });
+  const _ExpBar({required this.current, this.next, required this.min});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     double progress = 0.0;
     if (next != null && next! > min) {
       progress = (current - min) / (next! - min);
     } else if (next == null) {
-       progress = 1.0;
+      progress = 1.0;
     }
     progress = progress.clamp(0.0, 1.0);
 
@@ -249,88 +247,3 @@ class _ExpBar extends StatelessWidget {
   }
 }
 
-class _VipTag extends StatelessWidget {
-  final int type;
-  const _VipTag({required this.type});
-
-  @override
-  Widget build(BuildContext context) {
-    final t = Translations.of(context);
-    final isYear = type == 2;
-    final color = const Color(0xFFFB7299);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(4),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.3),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Text(
-        isYear ? t.profile.vip.annual_premium : t.profile.vip.premium,
-        style: const TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-          height: 1.1,
-        ),
-      ),
-    );
-  }
-}
-
-class _LevelTag extends StatelessWidget {
-  final int level;
-  const _LevelTag({required this.level});
-
-  @override
-  Widget build(BuildContext context) {
-    final Color levelColor;
-    switch (level) {
-      case 0:
-      case 1:
-        levelColor = const Color(0xFFBFBFBF);
-        break;
-      case 2:
-        levelColor = const Color(0xFF95DDB2);
-        break;
-      case 3:
-        levelColor = const Color(0xFF92D1E5);
-        break;
-      case 4:
-        levelColor = const Color(0xFFFFB37C);
-        break;
-      case 5:
-        levelColor = const Color(0xFFFF6C00);
-        break;
-      case 6:
-        levelColor = const Color(0xFFFF0000);
-        break;
-      default:
-        levelColor = const Color(0xFFBFBFBF);
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
-      decoration: BoxDecoration(
-        border: Border.all(color: levelColor, width: 1.5),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text(
-        'LV$level',
-        style: TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w900,
-          color: levelColor,
-          fontStyle: FontStyle.italic,
-        ),
-      ),
-    );
-  }
-}

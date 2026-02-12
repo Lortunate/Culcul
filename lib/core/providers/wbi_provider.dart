@@ -8,10 +8,70 @@ import 'package:culcul/data/network/dio_client.dart';
 
 // Mixin key encoding table
 const _mixinKeyEncTab = [
-  46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35, 27, 43, 5, 49,
-  33, 9, 42, 19, 29, 28, 14, 39, 12, 38, 41, 13, 37, 48, 7, 16, 24, 55, 40,
-  61, 26, 17, 0, 1, 60, 51, 30, 4, 22, 25, 54, 21, 56, 59, 6, 63, 57, 62, 11,
-  36, 20, 34, 44, 52
+  46,
+  47,
+  18,
+  2,
+  53,
+  8,
+  23,
+  32,
+  15,
+  50,
+  10,
+  31,
+  58,
+  3,
+  45,
+  35,
+  27,
+  43,
+  5,
+  49,
+  33,
+  9,
+  42,
+  19,
+  29,
+  28,
+  14,
+  39,
+  12,
+  38,
+  41,
+  13,
+  37,
+  48,
+  7,
+  16,
+  24,
+  55,
+  40,
+  61,
+  26,
+  17,
+  0,
+  1,
+  60,
+  51,
+  30,
+  4,
+  22,
+  25,
+  54,
+  21,
+  56,
+  59,
+  6,
+  63,
+  57,
+  62,
+  11,
+  36,
+  20,
+  34,
+  44,
+  52,
 ];
 
 class WbiHelper {
@@ -33,7 +93,7 @@ class WbiHelper {
 
     try {
       final response = await _dio.get(ApiConstants.nav);
-      
+
       final data = response.data;
       if (data == null) {
         throw Exception('Nav response is null');
@@ -41,10 +101,12 @@ class WbiHelper {
 
       // Check for API error code
       if (data is Map && data['code'] != 0) {
-        debugPrint('Nav API error: code=${data['code']}, message=${data['message']}');
+        debugPrint(
+          'Nav API error: code=${data['code']}, message=${data['message']}',
+        );
         // If risk control (-352), we might need to handle it or use fallback
         if (data['code'] == -352) {
-             throw Exception('Nav API risk control (-352)');
+          throw Exception('Nav API risk control (-352)');
         }
       }
 
@@ -97,28 +159,28 @@ class WbiHelper {
 
     final mixinKey = _getMixinKey(_imgKey! + _subKey!);
     final currTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    
+
     final newParams = Map<String, dynamic>.from(params);
     newParams['wts'] = currTime;
 
     final sortedKeys = newParams.keys.toList()..sort();
     final queryList = <String>[];
-    
+
     for (final key in sortedKeys) {
       final value = newParams[key];
       if (value == null) continue;
-      
+
       String valStr = value.toString();
       // Remove specific characters: !'()*
       valStr = valStr.replaceAll(RegExp(r"[!'()*]"), '');
-      
+
       newParams[key] = valStr;
       queryList.add('$key=${Uri.encodeComponent(valStr)}');
     }
-    
+
     final query = queryList.join('&');
     final wbiSign = md5.convert(utf8.encode(query + mixinKey)).toString();
-    
+
     newParams['w_rid'] = wbiSign;
     return newParams;
   }

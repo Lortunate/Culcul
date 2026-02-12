@@ -1,3 +1,4 @@
+import 'package:culcul/core/utils/list_utils.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 mixin PagingMixin<T> {
@@ -26,17 +27,14 @@ mixin PagingMixin<T> {
         return;
       }
 
-      final existingIds = previousItems.map(getId).toSet();
-      final uniqueNewItems = newItems
-          .where((e) => !existingIds.contains(getId(e)))
-          .toList();
+      final mergedItems = ListUtils.mergeUnique(
+        previousItems,
+        newItems,
+        idGetter: getId,
+      );
 
       page = nextPage;
-      if (uniqueNewItems.isNotEmpty) {
-        updateState(AsyncValue.data([...previousItems, ...uniqueNewItems]));
-      } else {
-        updateState(AsyncValue.data(previousItems));
-      }
+      updateState(AsyncValue.data(mergedItems));
     } catch (e, st) {
       updateState(
         AsyncValue<List<T>>.error(e, st).copyWithPrevious(currentState),

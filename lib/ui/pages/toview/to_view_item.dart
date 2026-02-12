@@ -18,12 +18,12 @@ class ToViewItem extends StatelessWidget {
       onTap: onTap,
       coverUrl: item.pic ?? '',
       title: item.title ?? '',
-      duration: (item.progress ?? 0) > 0 ? 0 : (item.duration ?? 0),
+      duration: item.hasProgress ? 0 : (item.duration ?? 0),
       thumbnailWidth: 140,
       aspectRatio: 140 / 88,
       height: 88,
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-      overlay: (item.progress ?? 0) > 0
+      overlay: item.hasProgress
           ? Positioned(
               left: 0,
               right: 0,
@@ -34,9 +34,7 @@ class ToViewItem extends StatelessWidget {
                   bottomRight: Radius.circular(6),
                 ),
                 child: LinearProgressIndicator(
-                  value:
-                      (item.progress ?? 0) /
-                      ((item.duration ?? 0) == 0 ? 1 : (item.duration ?? 1)),
+                  value: item.progressRatio,
                   minHeight: 3,
                   backgroundColor: Colors.transparent,
                   valueColor: const AlwaysStoppedAnimation<Color>(
@@ -48,7 +46,7 @@ class ToViewItem extends StatelessWidget {
           : null,
       middleContent: Row(
         children: [
-          if ((item.progress ?? 0) > 0) ...[
+          if (item.hasProgress) ...[
             Icon(Icons.history, size: 14, color: colorScheme.onSurfaceVariant),
             const SizedBox(width: 4),
             Expanded(

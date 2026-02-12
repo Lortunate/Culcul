@@ -1,5 +1,5 @@
 import 'package:easy_refresh/easy_refresh.dart';
-import 'package:culcul/data/models/comment_model.dart';
+import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/providers/video/comment_reply_controller.dart';
 import 'package:culcul/ui/pages/video/widgets/bottom_input_bar.dart';
 import 'package:culcul/ui/pages/video/widgets/comment_item.dart';
@@ -111,7 +111,8 @@ class CommentReplyPage extends HookConsumerWidget {
                             rootComment.oid,
                             rootComment.rpid,
                           ),
-                          onReply: () => _showReplySheet(context, rootComment, controller),
+                          onReply: () =>
+                              _showReplySheet(context, rootComment, controller),
                         ),
                         Divider(
                           height: 1,
@@ -159,7 +160,8 @@ class CommentReplyPage extends HookConsumerWidget {
                             reply.oid,
                             reply.rpid,
                           ),
-                          onReply: () => _showReplySheet(context, reply, controller),
+                          onReply: () =>
+                              _showReplySheet(context, reply, controller),
                         );
                       }, childCount: state.replies.length),
                     ),

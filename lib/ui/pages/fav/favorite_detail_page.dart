@@ -1,5 +1,6 @@
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/providers/auth/auth_provider.dart';
+import 'package:culcul/core/extensions/auth_extension.dart';
 import 'package:culcul/providers/fav/fav_provider.dart';
 import 'package:culcul/ui/pages/fav/fav_resource_item.dart';
 import 'package:culcul/ui/pages/fav/widgets/fav_folder_dialog.dart';
@@ -51,7 +52,9 @@ class FavoriteDetailPage extends HookConsumerWidget {
                       // Batch delete
                       final resources = selectedItems.value.join(',');
                       try {
-                        await ref.read(favRepositoryProvider).batchDelResource(
+                        await ref
+                            .read(favRepositoryProvider)
+                            .batchDelResource(
                               resources: resources,
                               mediaId: mediaId,
                             );
@@ -79,8 +82,10 @@ class FavoriteDetailPage extends HookConsumerWidget {
             PopupMenuButton<String>(
               onSelected: (value) async {
                 if (value == 'edit') {
-                  final createdFolders =
-                      ref.read(favCreatedFoldersProvider).asData?.value;
+                  final createdFolders = ref
+                      .read(favCreatedFoldersProvider)
+                      .asData
+                      ?.value;
                   final folder = createdFolders
                       ?.where((f) => f.id == mediaId)
                       .firstOrNull;
@@ -92,7 +97,9 @@ class FavoriteDetailPage extends HookConsumerWidget {
 
                   if (result != null) {
                     try {
-                      await ref.read(favRepositoryProvider).editFolder(
+                      await ref
+                          .read(favRepositoryProvider)
+                          .editFolder(
                             mediaId: mediaId,
                             title: result['title']! as String,
                             intro: result['intro'] as String?,
@@ -115,14 +122,17 @@ class FavoriteDetailPage extends HookConsumerWidget {
                     builder: (context) => AlertDialog(
                       title: const Text('Delete Folder'),
                       content: const Text(
-                          'Are you sure you want to delete this folder?'),
+                        'Are you sure you want to delete this folder?',
+                      ),
                       actions: [
                         TextButton(
-                            onPressed: () => Navigator.pop(context, false),
-                            child: const Text('Cancel')),
+                          onPressed: () => Navigator.pop(context, false),
+                          child: const Text('Cancel'),
+                        ),
                         TextButton(
-                            onPressed: () => Navigator.pop(context, true),
-                            child: const Text('Delete')),
+                          onPressed: () => Navigator.pop(context, true),
+                          child: const Text('Delete'),
+                        ),
                       ],
                     ),
                   );
@@ -148,11 +158,16 @@ class FavoriteDetailPage extends HookConsumerWidget {
               itemBuilder: (context) => [
                 const PopupMenuItem(value: 'edit', child: Text('Edit Info')),
                 const PopupMenuItem(
-                    value: 'manage', child: Text('Manage Resources')),
+                  value: 'manage',
+                  child: Text('Manage Resources'),
+                ),
                 const PopupMenuItem(
-                    value: 'delete',
-                    child: Text('Delete Folder',
-                        style: TextStyle(color: Colors.red))),
+                  value: 'delete',
+                  child: Text(
+                    'Delete Folder',
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
               ],
             ),
         ],
@@ -163,8 +178,8 @@ class FavoriteDetailPage extends HookConsumerWidget {
           final info = state.info;
 
           return EasyRefresh(
-            header: const AppRefreshHeader(),
-            footer: const AppLoadFooter(),
+            header: AppRefreshHeader(),
+            footer: AppLoadFooter(),
             onRefresh: () async {
               return ref.refresh(provider.future);
             },
@@ -212,9 +227,10 @@ class FavoriteDetailPage extends HookConsumerWidget {
                                     const SizedBox(width: 8),
                                     Text(
                                       info.upper.name,
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: colorScheme.onSurfaceVariant,
-                                      ),
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                            color: colorScheme.onSurfaceVariant,
+                                          ),
                                     ),
                                   ],
                                 ),
@@ -243,56 +259,54 @@ class FavoriteDetailPage extends HookConsumerWidget {
                   )
                 else
                   SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        final item = items[index];
-                        return Column(
-                          children: [
-                            Row(
-                              children: [
-                                if (isSelectionMode.value)
-                                  Checkbox(
-                                    value:
-                                        selectedItems.value.contains(item.id),
-                                    onChanged: (value) {
-                                      final newSet =
-                                          Set<int>.from(selectedItems.value);
-                                      if (value == true) {
-                                        newSet.add(item.id);
-                                      } else {
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final item = items[index];
+                      return Column(
+                        children: [
+                          Row(
+                            children: [
+                              if (isSelectionMode.value)
+                                Checkbox(
+                                  value: selectedItems.value.contains(item.id),
+                                  onChanged: (value) {
+                                    final newSet = Set<int>.from(
+                                      selectedItems.value,
+                                    );
+                                    if (value == true) {
+                                      newSet.add(item.id);
+                                    } else {
+                                      newSet.remove(item.id);
+                                    }
+                                    selectedItems.value = newSet;
+                                  },
+                                ),
+                              Expanded(
+                                child: FavResourceItem(
+                                  item: item,
+                                  onTap: () {
+                                    if (isSelectionMode.value) {
+                                      final newSet = Set<int>.from(
+                                        selectedItems.value,
+                                      );
+                                      if (newSet.contains(item.id)) {
                                         newSet.remove(item.id);
+                                      } else {
+                                        newSet.add(item.id);
                                       }
                                       selectedItems.value = newSet;
-                                    },
-                                  ),
-                                Expanded(
-                                  child: FavResourceItem(
-                                    item: item,
-                                    onTap: () {
-                                      if (isSelectionMode.value) {
-                                        final newSet =
-                                            Set<int>.from(selectedItems.value);
-                                        if (newSet.contains(item.id)) {
-                                          newSet.remove(item.id);
-                                        } else {
-                                          newSet.add(item.id);
-                                        }
-                                        selectedItems.value = newSet;
-                                      } else {
-                                        // TODO: Navigate to video detail
-                                        // context.push('/video/${item.bvid}');
-                                      }
-                                    },
-                                  ),
+                                    } else {
+                                      // TODO: Navigate to video detail
+                                      // context.push('/video/${item.bvid}');
+                                    }
+                                  },
                                 ),
-                              ],
-                            ),
-                            const Divider(height: 1, indent: 16, endIndent: 16),
-                          ],
-                        );
-                      },
-                      childCount: items.length,
-                    ),
+                              ),
+                            ],
+                          ),
+                          const Divider(height: 1, indent: 16, endIndent: 16),
+                        ],
+                      );
+                    }, childCount: items.length),
                   ),
               ],
             ),
@@ -319,11 +333,8 @@ class _Skeleton extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: 12),
       itemCount: 10,
-      separatorBuilder: (context, index) => const Divider(
-        height: 1,
-        indent: 16,
-        endIndent: 16,
-      ),
+      separatorBuilder: (context, index) =>
+          const Divider(height: 1, indent: 16, endIndent: 16),
       itemBuilder: (context, index) {
         return AppShimmer(
           child: Padding(

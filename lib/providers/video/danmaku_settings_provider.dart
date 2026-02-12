@@ -17,6 +17,7 @@ abstract class DanmakuSettings with _$DanmakuSettings {
     @Default(true) bool showScroll,
     @Default(true) bool showColor,
     @Default(true) bool isEnabled,
+    @Default(true) bool enableAiMask,
     @Default(0.0) double strokeWidth,
   }) = _DanmakuSettings;
 }
@@ -62,6 +63,10 @@ class DanmakuSettingsController extends _$DanmakuSettingsController {
 
   void toggleEnabled() {
     state = state.copyWith(isEnabled: !state.isEnabled);
+  }
+
+  void toggleAiMask() {
+    state = state.copyWith(enableAiMask: !state.enableAiMask);
   }
 
   void setEnabled(bool value) {

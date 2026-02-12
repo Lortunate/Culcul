@@ -1,5 +1,5 @@
+import 'package:culcul/ui/widgets/app_card_container.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
-import 'package:culcul/ui/widgets/video_card.dart';
 import 'package:flutter/material.dart';
 
 class VideoListSkeleton extends StatelessWidget {
@@ -18,7 +18,7 @@ class VideoListSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return VideoCardContainer(
+    return AppCardContainer(
       child: Padding(
         padding: padding,
         child: SizedBox(

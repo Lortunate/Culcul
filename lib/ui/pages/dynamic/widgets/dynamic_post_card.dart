@@ -1,13 +1,17 @@
 import 'package:culcul/core/router/router.dart';
-import 'package:culcul/domain/entities/dynamic_post.dart';
+import 'package:culcul/core/utils/format_utils.dart';
+import 'package:culcul/core/utils/share_utils.dart';
+import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
+import 'package:culcul/data/models/dynamic/dynamic_response.dart';
+import 'package:culcul/data/models/dynamic/dynamic_view_models.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/dynamic_content_widget.dart';
 import 'package:culcul/ui/widgets/index.dart';
-import 'package:culcul/utils/share_utils.dart';
 import 'package:flutter/material.dart';
 
 class DynamicPostCard extends StatelessWidget {
-  final DynamicPost post;
-  final Function(DynamicPost)? onLike;
+  final DynamicItem post;
+  final Function(DynamicItem)? onLike;
 
   const DynamicPostCard({super.key, required this.post, this.onLike});
 
@@ -29,7 +33,12 @@ class DynamicPostCard extends StatelessWidget {
           DynamicDetailRoute(id: post.id).push(context);
         },
         child: Padding(
-          padding: const EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 4),
+          padding: const EdgeInsets.only(
+            top: 16,
+            left: 16,
+            right: 16,
+            bottom: 4,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -48,7 +57,7 @@ class DynamicPostCard extends StatelessWidget {
   Widget _buildHeader(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return GestureDetector(
       onTap: () {
         UserProfileRoute(mid: post.authorMid).push(context);
@@ -66,16 +75,18 @@ class DynamicPostCard extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
-                    color: post.authorName == '哔哩哔哩番剧' || post.authorName == '哔哩哔哩漫画' 
-                        ? const Color(0xFFFB7299) 
+                    color:
+                        post.authorName == '哔哩哔哩番剧' ||
+                            post.authorName == '哔哩哔哩漫画'
+                        ? colorScheme.primary
                         : colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   post.timeText,
-                  style: const TextStyle(
-                    color: Color(0xFF9499A0),
+                  style: TextStyle(
+                    color: colorScheme.onSurfaceVariant,
                     fontSize: 12,
                   ),
                 ),
@@ -83,7 +94,11 @@ class DynamicPostCard extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.more_vert, size: 20, color: Color(0xFF9499A0)),
+            icon: Icon(
+              Icons.more_vert,
+              size: 20,
+              color: colorScheme.onSurfaceVariant,
+            ),
             onPressed: () {},
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
@@ -101,13 +116,13 @@ class DynamicPostCard extends StatelessWidget {
       children: [
         Expanded(
           child: _buildStat(
-            context, 
-            Icons.reply_rounded, 
-            post.forwardCount, 
-            '转发', 
+            context,
+            Icons.reply_rounded,
+            post.forwardCount,
+            t.moments.actions.forward,
             () async {
               await ShareUtils.shareDynamic(post.id, post.description ?? '');
-            }
+            },
           ),
         ),
         Expanded(
@@ -115,7 +130,7 @@ class DynamicPostCard extends StatelessWidget {
             context,
             Icons.chat_bubble_outline_rounded,
             post.commentCount,
-            '评论',
+            t.moments.actions.comment,
             () {
               DynamicDetailRoute(id: post.id).push(context);
             },
@@ -126,17 +141,17 @@ class DynamicPostCard extends StatelessWidget {
             context,
             post.isLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined,
             post.likeCount,
-            '点赞',
+            t.moments.actions.like,
             () {
               if (onLike != null) {
                 onLike!(post);
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('点赞功能开发中')),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(t.moments.like_coming_soon)));
               }
             },
-            color: post.isLiked ? const Color(0xFFFB7299) : null,
+            color: post.isLiked ? Theme.of(context).colorScheme.primary : null,
           ),
         ),
       ],
@@ -151,7 +166,7 @@ class DynamicPostCard extends StatelessWidget {
     VoidCallback onTap, {
     Color? color,
   }) {
-    final contentColor = color ?? const Color(0xFF9499A0);
+    final contentColor = color ?? Theme.of(context).colorScheme.onSurfaceVariant;
 
     return InkWell(
       onTap: onTap,
@@ -161,11 +176,7 @@ class DynamicPostCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 22,
-              color: contentColor,
-            ),
+            Icon(icon, size: 22, color: contentColor),
             const SizedBox(width: 6),
             Text(
               count > 0 ? _formatCount(count) : defaultText,
@@ -182,9 +193,6 @@ class DynamicPostCard extends StatelessWidget {
   }
 
   String _formatCount(int count) {
-    if (count > 10000) {
-      return '${(count / 10000).toStringAsFixed(1)}万';
-    }
-    return count.toString();
+    return FormatUtils.formatNumber(count);
   }
 }

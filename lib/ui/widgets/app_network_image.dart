@@ -42,9 +42,11 @@ class AppNetworkImage extends StatelessWidget {
     }
 
     final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
-    final int? cacheW = memCacheWidth ??
+    final int? cacheW =
+        memCacheWidth ??
         (width != null ? (width! * devicePixelRatio).toInt() : null);
-    final int? cacheH = memCacheHeight ??
+    final int? cacheH =
+        memCacheHeight ??
         (height != null ? (height! * devicePixelRatio).toInt() : null);
 
     return ExtendedImage.network(

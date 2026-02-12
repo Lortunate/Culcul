@@ -1,6 +1,7 @@
 import 'dart:async';
+import 'package:culcul/core/types/result.dart';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/data/models/search_result.dart';
+import 'package:culcul/data/models/search/search_result.dart';
 import 'package:culcul/repositories/search_repository.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
@@ -30,17 +31,19 @@ class TopicPicker extends HookConsumerWidget {
 
       isLoading.value = true;
       try {
-        final result = await ref.read(searchRepositoryProvider).fetchSearchAll(
-              keyword: keyword,
-              searchType: 'topic',
-            );
-        
-        if (result != null) {
-          final topics = result.result
-              .map((e) => e.mapOrNull(topic: (t) => t))
-              .whereType<SearchTopicModel>()
-              .toList();
-          searchResults.value = topics;
+        final result = await ref
+            .read(searchRepositoryProvider)
+            .fetchSearchAll(keyword: keyword, searchType: 'topic');
+
+        switch (result) {
+          case Success(value: final data):
+            final topics = data.result
+                .map((e) => e.mapOrNull(topic: (t) => t))
+                .whereType<SearchTopicModel>()
+                .toList();
+            searchResults.value = topics;
+          case Failure():
+            break;
         }
       } catch (e) {
         debugPrint('Search topic error: $e');
@@ -83,12 +86,16 @@ class TopicPicker extends HookConsumerWidget {
                       hintText: '搜索话题',
                       prefixIcon: const Icon(Icons.search),
                       filled: true,
-                      fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                      fillColor: colorScheme.surfaceContainerHighest.withValues(
+                        alpha: 0.5,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(24),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                      ),
                       isDense: true,
                     ),
                     onChanged: onSearchChanged,
@@ -107,53 +114,57 @@ class TopicPicker extends HookConsumerWidget {
             child: isLoading.value
                 ? const Center(child: CircularProgressIndicator())
                 : searchResults.value.isEmpty
-                    ? Center(
-                        child: Text(
-                          searchKeyword.value.isEmpty ? '输入关键词搜索话题' : '未找到相关话题',
-                          style: TextStyle(color: colorScheme.onSurfaceVariant),
+                ? Center(
+                    child: Text(
+                      searchKeyword.value.isEmpty ? '输入关键词搜索话题' : '未找到相关话题',
+                      style: TextStyle(color: colorScheme.onSurfaceVariant),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: searchResults.value.length,
+                    itemBuilder: (context, index) {
+                      final topic = searchResults.value[index];
+                      return ListTile(
+                        leading: topic.cover != null
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: AppNetworkImage(
+                                  url: topic.cover!,
+                                  width: 40,
+                                  height: 40,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: colorScheme.primaryContainer,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Icon(
+                                  Icons.tag,
+                                  color: colorScheme.onPrimaryContainer,
+                                ),
+                              ),
+                        title: Text(
+                          FormatUtils.stripHtmlTags(topic.title ?? ''),
                         ),
-                      )
-                    : ListView.builder(
-                        itemCount: searchResults.value.length,
-                        itemBuilder: (context, index) {
-                          final topic = searchResults.value[index];
-                          return ListTile(
-                            leading: topic.cover != null
-                                ? ClipRRect(
-                                    borderRadius: BorderRadius.circular(4),
-                                    child: AppNetworkImage(
-                                      url: topic.cover!,
-                                      width: 40,
-                                      height: 40,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                                : Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: colorScheme.primaryContainer,
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: Icon(
-                                      Icons.tag,
-                                      color: colorScheme.onPrimaryContainer,
-                                    ),
-                                  ),
-                            title: Text(FormatUtils.stripHtmlTags(topic.title ?? '')),
-                            subtitle: topic.description != null
-                                ? Text(
-                                    FormatUtils.stripHtmlTags(topic.description!),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  )
-                                : null,
-                            onTap: () {
-                              onTopicSelected(FormatUtils.stripHtmlTags(topic.title ?? ''));
-                            },
+                        subtitle: topic.description != null
+                            ? Text(
+                                FormatUtils.stripHtmlTags(topic.description!),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              )
+                            : null,
+                        onTap: () {
+                          onTopicSelected(
+                            FormatUtils.stripHtmlTags(topic.title ?? ''),
                           );
                         },
-                      ),
+                      );
+                    },
+                  ),
           ),
         ],
       ),

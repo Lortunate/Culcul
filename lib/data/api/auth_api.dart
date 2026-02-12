@@ -12,6 +12,9 @@ abstract class AuthApi {
   @GET(ApiConstants.captcha)
   Future<ApiResponse<dynamic>> getCaptcha();
 
+  @GET('/web/generic/country/list')
+  Future<ApiResponse<dynamic>> getCountryList();
+
   @POST(ApiConstants.smsSend)
   @FormUrlEncoded()
   Future<ApiResponse<dynamic>> sendSms(

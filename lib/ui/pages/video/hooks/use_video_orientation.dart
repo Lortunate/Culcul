@@ -32,12 +32,15 @@ VoidCallback useVideoOrientation(
             break;
           }
         }
-        
-        if (currentPage != null && currentPage.dimension.width > 0 && currentPage.dimension.height > 0) {
+
+        if (currentPage != null &&
+            currentPage.dimension.width > 0 &&
+            currentPage.dimension.height > 0) {
           width = currentPage.dimension.width;
           height = currentPage.dimension.height;
           rotate = currentPage.dimension.rotate;
-        } else if (videoDetail.dimension.width > 0 && videoDetail.dimension.height > 0) {
+        } else if (videoDetail.dimension.width > 0 &&
+            videoDetail.dimension.height > 0) {
           // Fallback to video detail dimension
           width = videoDetail.dimension.width;
           height = videoDetail.dimension.height;
@@ -50,16 +53,16 @@ VoidCallback useVideoOrientation(
         width = playerController.player.state.width ?? 0;
         height = playerController.player.state.height ?? 0;
         // Player state dimensions are usually already rotated by the player engine if needed
-        rotate = 0; 
+        rotate = 0;
       }
-      
+
       // Handle rotation for API dimensions
       if (rotate == 90 || rotate == 270) {
         final temp = width;
         width = height;
         height = temp;
       }
-      
+
       // Default to landscape if dimensions are not available or video is landscape
       final isLandscape = (width == 0 || height == 0) || (width >= height);
 

@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:culcul/ui/theme/app_colors.dart';
 import 'package:culcul/providers/video/player_controller.dart';
 import 'package:culcul/providers/video/video_detail_controller.dart';
-import 'package:culcul/ui/pages/video/widgets/controls/player_constants.dart';
 import 'package:culcul/ui/pages/video/widgets/controls/player_settings_sheet.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +28,6 @@ class VideoListenPage extends ConsumerWidget {
     final state = ref.watch(videoDetailControllerProvider(bvid));
     final playerState = ref.watch(playerControllerProvider);
     final playerController = ref.read(playerControllerProvider.notifier);
-    final theme = Theme.of(context);
 
     final detail = state.videoDetail;
 

@@ -12,19 +12,13 @@ void showSidePanel(BuildContext context, Widget child) {
       barrierColor: Colors.black45,
       transitionDuration: const Duration(milliseconds: 250),
       pageBuilder: (context, animation, secondaryAnimation) {
-        return Align(
-          alignment: Alignment.centerRight,
-          child: child,
-        );
+        return Align(alignment: Alignment.centerRight, child: child);
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return SlideTransition(
           position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
               .animate(
-                CurvedAnimation(
-                  parent: animation,
-                  curve: Curves.easeOutQuart,
-                ),
+                CurvedAnimation(parent: animation, curve: Curves.easeOutQuart),
               ),
           child: child,
         );

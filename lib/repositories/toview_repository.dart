@@ -1,25 +1,43 @@
+import 'package:culcul/core/errors/exceptions.dart';
+import 'package:culcul/core/providers/api_provider.dart';
+import 'package:culcul/core/repositories/base_repository.dart';
+import 'package:culcul/core/types/result.dart';
 import 'package:culcul/data/api/toview_api.dart';
 import 'package:culcul/data/models/toview/to_view_model.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-class ToViewRepository {
+part 'toview_repository.g.dart';
+
+@riverpod
+ToViewRepository toViewRepository(Ref ref) {
+  return ToViewRepository(ref.watch(toViewApiProvider));
+}
+
+class ToViewRepository extends BaseRepository {
   final ToViewApi _api;
 
   ToViewRepository(this._api);
 
-  Future<ToViewListResponse> getToViewList() async {
-    final response = await _api.getToViewList();
-    return response.data ?? ToViewListResponse(count: 0, list: []);
+  Future<Result<ToViewListResponse, AppException>> getToViewList() async {
+    final result = await safeApiCall(() => _api.getToViewList());
+    return switch (result) {
+      Success(value: final data) => Success(data),
+      Failure(exception: final e) => 
+        (e is ServerException && e.code == 0 && e.message == 'No Data')
+          ? Success(ToViewListResponse(count: 0, list: []))
+          : Failure(e),
+    };
   }
 
-  Future<void> addToView({required int aid}) {
-    return _api.addToView(aid);
+  Future<Result<void, AppException>> addToView({required int aid}) {
+    return safeCall(() => _api.addToView(aid));
   }
 
-  Future<void> deleteToView({required int aid}) {
-    return _api.deleteToView(aid);
+  Future<Result<void, AppException>> deleteToView({required int aid}) {
+    return safeCall(() => _api.deleteToView(aid));
   }
 
-  Future<void> clearToView() {
-    return _api.clearToView();
+  Future<Result<void, AppException>> clearToView() {
+    return safeCall(() => _api.clearToView());
   }
 }

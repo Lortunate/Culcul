@@ -1,5 +1,3 @@
- 
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'danmaku_controller.dart';
@@ -59,11 +57,9 @@ class _DanmakuViewState extends State<DanmakuView>
       onClear: _clear,
     );
 
-    widget.createdController(_controller);
-
     _ticker = createTicker(_onTick);
-    // Start automatically if not managed externally, but usually controller calls resume
-    // We'll wait for resume call.
+
+    widget.createdController(_controller);
   }
 
   @override
@@ -86,6 +82,11 @@ class _DanmakuViewState extends State<DanmakuView>
     _lastFrameTime = currentMs;
 
     if (_viewWidth == 0 || _viewHeight == 0) return;
+
+    // Optimization: Skip processing if idle
+    if (_activeItems.isEmpty && _waitingItems.isEmpty) {
+      return;
+    }
 
     // 1. Process waiting items
     if (_waitingItems.isNotEmpty) {
@@ -173,37 +174,25 @@ class _DanmakuViewState extends State<DanmakuView>
     final fontSize = _option.fontSize;
     final color = item.color.withValues(alpha: item.color.a * _option.opacity);
 
-    // Shadows for stroke effect
-    final shadows = _option.borderText
-        ? [
-            Shadow(
-              offset: const Offset(-1, -1),
-              color: Colors.black,
-              blurRadius: 0,
-            ),
-            Shadow(
-              offset: const Offset(1, -1),
-              color: Colors.black,
-              blurRadius: 0,
-            ),
-            Shadow(
-              offset: const Offset(1, 1),
-              color: Colors.black,
-              blurRadius: 0,
-            ),
-            Shadow(
-              offset: const Offset(-1, 1),
-              color: Colors.black,
-              blurRadius: 0,
-            ),
-            // Add a soft shadow for depth
-            const Shadow(
-              offset: Offset(1, 1),
-              color: Colors.black45,
-              blurRadius: 2,
-            ),
-          ]
-        : <Shadow>[];
+    TextPainter? strokePainter;
+    if (_option.borderText) {
+      strokePainter = TextPainter(
+        text: TextSpan(
+          text: item.text,
+          style: TextStyle(
+            fontSize: fontSize,
+            foreground: Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = _option.strokeWidth
+              ..color = Colors.black,
+            fontWeight: _option.fontWeight,
+            fontFamily: 'PingFang SC',
+            height: 1.1,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+    }
 
     final textSpan = TextSpan(
       text: item.text,
@@ -211,8 +200,7 @@ class _DanmakuViewState extends State<DanmakuView>
         fontSize: fontSize,
         color: color,
         fontWeight: _option.fontWeight,
-        fontFamily: 'PingFang SC', // Common for CJK, or let system decide
-        shadows: shadows,
+        fontFamily: 'PingFang SC',
         height: 1.1, // Tighter line height
       ),
     );
@@ -226,7 +214,8 @@ class _DanmakuViewState extends State<DanmakuView>
     // Distance = Screen Width + Text Width
     // Time = Duration
     // V = D / T
-    final distance = _viewWidth + textPainter.width;
+    final width = strokePainter?.width ?? textPainter.width;
+    final distance = _viewWidth + width;
     final durationMs = _option.duration * 1000;
     final velocity = distance / durationMs; // pixels / ms
 
@@ -234,10 +223,11 @@ class _DanmakuViewState extends State<DanmakuView>
         id: UniqueKey().toString(),
         text: item.text,
         textPainter: textPainter,
+        strokePainter: strokePainter,
         type: item.type,
         creationTime: _lastFrameTime, // Will be updated on layout
       )
-      ..width = textPainter.width
+      ..width = width
       ..height = textPainter.height
       ..velocity = velocity;
   }
@@ -434,12 +424,14 @@ class _DanmakuViewState extends State<DanmakuView>
         _viewWidth = constraints.maxWidth;
         _viewHeight = constraints.maxHeight;
 
-        return CustomPaint(
-          painter: DanmakuPainter(
-            items: _activeItems,
-            opacity: _option.opacity,
+        return RepaintBoundary(
+          child: CustomPaint(
+            painter: DanmakuPainter(
+              items: _activeItems,
+              opacity: _option.opacity,
+            ),
+            size: Size.infinite,
           ),
-          size: Size.infinite,
         );
       },
     );

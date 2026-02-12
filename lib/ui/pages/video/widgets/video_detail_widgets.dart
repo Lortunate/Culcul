@@ -1,13 +1,11 @@
 import 'package:culcul/core/router/router.dart';
 import 'package:culcul/providers/auth/auth_provider.dart';
 import 'package:culcul/shared/extensions/format_extensions.dart';
-import 'package:culcul/data/models/video_model.dart';
 import 'package:culcul/data/models/index.dart';
 import 'package:culcul/data/models/extensions/video_mapping.dart';
 import 'package:culcul/providers/video/video_detail_controller.dart';
 import 'package:culcul/providers/video/video_detail_state.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/follow_button.dart';
 import 'package:culcul/ui/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -67,82 +65,14 @@ class UploaderSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Row(
-      children: [
-        AppAvatar(
-          url: owner.face,
-          size: 34,
-          onTap: () => UserProfileRoute(mid: owner.mid).push(context),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: GestureDetector(
-            onTap: () => UserProfileRoute(mid: owner.mid).push(context),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  owner.name,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.primary,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '12.5万粉丝 · 168视频',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        FollowButton(isFollowed: isFollowed, onTap: onToggleFollow),
-      ],
-    );
-  }
-}
-
-class FollowButton extends ConsumerWidget {
-  final bool isFollowed;
-  final VoidCallback onTap;
-
-  const FollowButton({super.key, required this.isFollowed, required this.onTap});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final authState = ref.watch(authProvider);
-
-    return FilledButton(
-      onPressed: () {
-        if (!authState.isLoggedIn) {
-          context.push('/login');
-          return;
-        }
-        onTap();
-      },
-      style: FilledButton.styleFrom(
-        backgroundColor: isFollowed
-            ? colorScheme.surfaceContainerHighest
-            : colorScheme.primary,
-        foregroundColor:
-            isFollowed ? colorScheme.onSurfaceVariant : colorScheme.onPrimary,
-        elevation: 0,
-        minimumSize: const Size(56, 28),
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        visualDensity: VisualDensity.compact,
-      ),
-      child: Text(
-        isFollowed ? '已关注' : '+ 关注',
-        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-      ),
+    return UserListTile(
+      avatarUrl: owner.face,
+      name: owner.name,
+      subtitle: '12.5万粉丝 · 168视频',
+      avatarSize: 34,
+      padding: EdgeInsets.zero,
+      onTap: () => UserProfileRoute(mid: owner.mid).push(context),
+      trailing: FollowButton(isFollowed: isFollowed, onTap: onToggleFollow),
     );
   }
 }
@@ -331,7 +261,8 @@ class VideoActionsRow extends ConsumerWidget {
           ActionButton(
             icon: Icons.share_outlined,
             label: d.stat.share.formatNumber,
-            onTap: () => notifier.share(), // Share usually doesn't require login
+            onTap: () =>
+                notifier.share(), // Share usually doesn't require login
           ),
         ],
       ),
@@ -468,47 +399,6 @@ class VideoPartsSection extends StatelessWidget {
               );
             },
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class RecommendationsSection extends StatelessWidget {
-  final List<RelatedVideo> videos;
-
-  const RecommendationsSection({super.key, required this.videos});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final t = Translations.of(context);
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-          child: Text(
-            t.video.recommend,
-            style: theme.textTheme.labelLarge?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 10,
-            childAspectRatio: 0.95,
-          ),
-          itemCount: videos.length,
-          itemBuilder: (context, index) =>
-              RecommendationItem(video: videos[index]),
         ),
       ],
     );

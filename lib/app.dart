@@ -1,4 +1,5 @@
 import 'package:culcul/core/router/router.dart';
+import 'package:culcul/core/utils/toast_utils.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/providers/settings/settings_provider.dart';
 import 'package:culcul/ui/theme/app_theme.dart';
@@ -16,6 +17,7 @@ class culculApp extends HookConsumerWidget {
 
     return MaterialApp.router(
       title: 'Culcul',
+      scaffoldMessengerKey: globalScaffoldMessengerKey,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
       themeMode: themeMode,

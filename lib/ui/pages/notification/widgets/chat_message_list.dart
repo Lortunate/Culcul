@@ -41,9 +41,7 @@ class _ChatMessageListState extends State<ChatMessageList> {
             return SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: ConstrainedBox(
-                constraints: BoxConstraints(
-                  minHeight: constraints.maxHeight,
-                ),
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: const Center(child: Text('暂无消息')),
               ),
             );
@@ -91,7 +89,9 @@ class _ChatMessageListState extends State<ChatMessageList> {
               ChatMessageItem(
                 message: message,
                 isSelf: isSelf,
-                avatarUrl: isSelf ? widget.selfAvatarUrl : widget.otherAvatarUrl,
+                avatarUrl: isSelf
+                    ? widget.selfAvatarUrl
+                    : widget.otherAvatarUrl,
                 emojiMap: widget.emojiMap,
                 onAvatarTap: () {
                   if (!isSelf) {

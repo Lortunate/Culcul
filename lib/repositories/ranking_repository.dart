@@ -1,41 +1,20 @@
+import 'package:culcul/core/errors/exceptions.dart';
+import 'package:culcul/core/repositories/base_repository.dart';
+import 'package:culcul/core/types/result.dart';
 import 'package:culcul/data/api/ranking_api.dart';
-import 'package:culcul/domain/entities/video_ranking.dart';
+import 'package:culcul/data/models/video/video_model.dart';
 
-class RankingRepository {
+class RankingRepository extends BaseRepository {
   final RankingApi _api;
 
   RankingRepository(this._api);
 
-  Future<List<VideoItem>> getRanking({int? rid}) async {
-    final queryParameters = <String, dynamic>{};
+  Future<Result<List<VideoModel>, AppException>> getRanking({int? rid}) async {
+    final result = await safeApiCall(() => _api.fetchRanking(rid: rid));
 
-    if (rid != null) {
-      queryParameters['rid'] = rid;
-    }
-
-    final response = await _api.fetchRanking(queryParameters);
-
-    if (response.isSuccess && response.data != null) {
-      final rankingResponse = response.data!;
-      return rankingResponse.list.asMap().entries.map((entry) {
-        final index = entry.key;
-        final item = entry.value;
-        return VideoItem(
-          id: item.bvid,
-          coverUrl: item.pic,
-          title: item.title,
-          upName: item.owner.name,
-          playCount: item.stat.view,
-          likeCount: item.stat.like,
-          danmakuCount: item.stat.danmaku,
-          rank: index + 1,
-          pts: null,
-        );
-      }).toList();
-    } else {
-      throw Exception(
-        'API Error: code=${response.code}, message=${response.message}',
-      );
-    }
+    return switch (result) {
+      Success(value: final data) => Success(data.list),
+      Failure(exception: final e) => Failure(e),
+    };
   }
 }

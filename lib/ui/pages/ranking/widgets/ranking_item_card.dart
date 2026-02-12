@@ -1,16 +1,16 @@
 import 'package:culcul/core/router/router.dart';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/domain/entities/video_ranking.dart';
+import 'package:culcul/data/models/video/video_model.dart';
 import 'package:culcul/ui/pages/ranking/widgets/rank_badge.dart';
 import 'package:culcul/ui/widgets/index.dart';
 import 'package:flutter/material.dart';
 
 class RankingItemCard extends StatelessWidget {
-  final VideoItem videoItem;
+  final VideoModel video;
   final int rank;
 
   const RankingItemCard({
-    required this.videoItem,
+    required this.video,
     required this.rank,
     super.key,
   });
@@ -23,18 +23,15 @@ class RankingItemCard extends StatelessWidget {
     return VideoListCard(
       // Standard list item padding
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      onTap: () => VideoDetailRoute(bvid: videoItem.id).push(context),
-      coverUrl: videoItem.coverUrl,
-      title: videoItem.title,
+      onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
+      coverUrl: video.pic,
+      title: video.title,
+      duration: video.duration,
       thumbnailWidth: 140,
       aspectRatio: 140 / 88,
       height: 88,
       // Rank Badge on top-left of the thumbnail
-      overlay: Positioned(
-        top: 0,
-        left: 0,
-        child: RankBadge(rank: rank),
-      ),
+      overlay: Positioned(top: 0, left: 0, child: RankBadge(rank: rank)),
       // Use author slot for UP name
       author: Row(
         children: [
@@ -46,7 +43,7 @@ class RankingItemCard extends StatelessWidget {
           const SizedBox(width: 4),
           Expanded(
             child: Text(
-              videoItem.upName,
+              video.owner.name,
               style: theme.textTheme.labelSmall?.copyWith(
                 color: colorScheme.onSurfaceVariant,
               ),
@@ -60,11 +57,11 @@ class RankingItemCard extends StatelessWidget {
       stats: [
         IconText(
           icon: Icons.play_circle_outline_rounded,
-          text: FormatUtils.formatNumber(videoItem.playCount),
+          text: FormatUtils.formatNumber(video.stat.view),
         ),
         IconText(
           icon: Icons.list_alt_rounded,
-          text: FormatUtils.formatNumber(videoItem.danmakuCount),
+          text: FormatUtils.formatNumber(video.stat.danmaku),
         ),
       ],
     );

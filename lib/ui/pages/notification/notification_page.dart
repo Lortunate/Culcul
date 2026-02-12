@@ -1,5 +1,6 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/providers/auth/auth_provider.dart';
+import 'package:culcul/core/extensions/auth_extension.dart';
 import 'package:culcul/ui/pages/notification/widgets/notification_category_grid.dart';
 import 'package:culcul/ui/pages/notification/widgets/private_session_list.dart';
 import 'package:culcul/ui/widgets/guest_view.dart';
@@ -16,7 +17,7 @@ class NotificationPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('消息'),
+        title: Text(t.notification.title),
         centerTitle: true,
         scrolledUnderElevation: 0,
         actions: [

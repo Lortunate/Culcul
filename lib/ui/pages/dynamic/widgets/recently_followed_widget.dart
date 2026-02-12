@@ -24,9 +24,9 @@ class RecentlyFollowedWidget extends HookConsumerWidget {
                 padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
                 child: Text(
                   '最近关注',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ),
               SizedBox(
@@ -35,7 +35,8 @@ class RecentlyFollowedWidget extends HookConsumerWidget {
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: users.length,
-                  separatorBuilder: (context, index) => const SizedBox(width: 12),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 12),
                   itemBuilder: (context, index) {
                     final user = users[index];
                     return _UserItem(user: user);
@@ -83,9 +84,7 @@ class _UserItem extends StatelessWidget {
           width: 64,
           child: Text(
             user.uname,
-            style: theme.textTheme.bodySmall?.copyWith(
-              fontSize: 11,
-            ),
+            style: theme.textTheme.bodySmall?.copyWith(fontSize: 11),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,

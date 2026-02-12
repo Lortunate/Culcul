@@ -1,14 +1,10 @@
-import 'dart:io';
+import 'package:culcul/core/services/media_service.dart';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/theme/app_colors.dart';
-import 'package:dio/dio.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:gal/gal.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class ImagePreviewPage extends StatefulWidget {
+class ImagePreviewPage extends ConsumerStatefulWidget {
   final List<String> imageUrls;
   final int initialIndex;
 
@@ -19,10 +15,10 @@ class ImagePreviewPage extends StatefulWidget {
   });
 
   @override
-  State<ImagePreviewPage> createState() => _ImagePreviewPageState();
+  ConsumerState<ImagePreviewPage> createState() => _ImagePreviewPageState();
 }
 
-class _ImagePreviewPageState extends State<ImagePreviewPage> {
+class _ImagePreviewPageState extends ConsumerState<ImagePreviewPage> {
   late int _currentIndex;
 
   @override
@@ -35,30 +31,23 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
     try {
       // Show loading
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('正在保存...')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('正在保存...')));
       }
 
-      final formattedUrl = FormatUtils.formatImageUrl(url);
-      final tempDir = await getTemporaryDirectory();
-      final fileName = formattedUrl.split('/').last;
-      final savePath = '${tempDir.path}/$fileName';
+      await ref.read(mediaServiceProvider).saveImage(url);
 
-      await Dio().download(formattedUrl, savePath);
-
-      await Gal.putImage(savePath);
-      
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('保存成功')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('保存成功')));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('保存失败: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('保存失败: $e')));
       }
     }
   }
@@ -71,7 +60,9 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
         children: [
           ExtendedImageGesturePageView.builder(
             itemCount: widget.imageUrls.length,
-            controller: ExtendedPageController(initialPage: widget.initialIndex),
+            controller: ExtendedPageController(
+              initialPage: widget.initialIndex,
+            ),
             onPageChanged: (index) {
               setState(() {
                 _currentIndex = index;
@@ -145,7 +136,11 @@ class _ImagePreviewPageState extends State<ImagePreviewPage> {
             bottom: MediaQuery.of(context).padding.bottom + 20,
             right: 20,
             child: IconButton(
-              icon: const Icon(Icons.download_rounded, color: Colors.white, size: 28),
+              icon: const Icon(
+                Icons.download_rounded,
+                color: Colors.white,
+                size: 28,
+              ),
               onPressed: () => _saveImage(widget.imageUrls[_currentIndex]),
             ),
           ),

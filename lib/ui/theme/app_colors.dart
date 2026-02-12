@@ -15,7 +15,7 @@ class AppColors {
   static const Color surface = Colors.white;
   static const Color background = Color(0xFFF2F3F5);
   static const Color card = Colors.white;
-  
+
   static const Color textPrimary = Color(0xFF18191C);
   static const Color textSecondary = Color(0xFF61666D);
   static const Color textTertiary = Color(0xFF9499A0);
@@ -23,11 +23,11 @@ class AppColors {
 
   static const Color border = Color(0xFFE3E5E7);
   static const Color divider = Color(0xFFF1F2F3);
-  
+
   static const Color darkSurface = Color(0xFF181818);
   static const Color darkBackground = Color(0xFF0A0A0A);
   static const Color darkCard = Color(0xFF1F1F1F);
-  
+
   static const Color darkTextPrimary = Color(0xFFE8EAED);
   static const Color darkTextSecondary = Color(0xFFA1A6B3);
   static const Color darkTextTertiary = Color(0xFF767C85);
@@ -38,4 +38,5 @@ class AppColors {
 
   static const Color splashColor = Color(0x1A7C4DFF);
   static const Color highlightColor = Color(0x00000000);
+
 }

@@ -28,24 +28,22 @@ class HomePopular extends _$HomePopular with PagingMixin<VideoModel> {
   }
 
   Future<void> refresh() async {
-    final oldState = state;
-    state = AsyncLoading<List<VideoModel>>().copyWithPrevious(oldState);
-    try {
+    state = AsyncLoading<List<VideoModel>>().copyWithPrevious(state);
+    
+    state = await AsyncValue.guard(() async {
       final result = await ref
           .read(homeRepositoryProvider)
           .fetchPopular(page: 1, forceRefresh: true);
-      switch (result) {
-        case Success(value: final list):
+          
+      return switch (result) {
+        Success(value: final list) => () {
           page = 1;
           hasMore = true;
-          state = AsyncValue.data(list);
-        case Failure(exception: final e):
-          state = AsyncValue<List<VideoModel>>.error(e, StackTrace.current)
-              .copyWithPrevious(oldState);
-      }
-    } catch (e, st) {
-      state = AsyncValue<List<VideoModel>>.error(e, st).copyWithPrevious(oldState);
-    }
+          return list;
+        }(),
+        Failure(exception: final e) => throw e,
+      };
+    });
   }
 
   Future<void> loadMore() async {

@@ -19,11 +19,7 @@ class DynamicSkeleton extends StatelessWidget {
             // Header
             Row(
               children: [
-                const AppShimmerBox(
-                  width: 40,
-                  height: 40,
-                  borderRadius: 20,
-                ),
+                const AppShimmerBox(width: 40, height: 40, borderRadius: 20),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(

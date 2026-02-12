@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:audio_session/audio_session.dart';
+import 'package:audio_service/audio_service.dart';
+import 'package:culcul/core/services/audio_handler.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -39,7 +39,8 @@ class PlayerController extends _$PlayerController {
   @override
   PlayerUiState build() {
     _mounted = true;
-    player = Player();
+    final audioHandler = ref.watch(audioHandlerProvider);
+    player = audioHandler.player;
     videoController = VideoController(player);
     ref.onDispose(() {
       _mounted = false;
@@ -48,13 +49,6 @@ class PlayerController extends _$PlayerController {
       for (final s in _subscriptions) {
         s.cancel();
       }
-      player.dispose();
-    });
-
-    // Initialize AudioSession
-    Future.microtask(() async {
-      final session = await AudioSession.instance;
-      await session.configure(const AudioSessionConfiguration.music());
     });
 
     // Initialize the timer to hide controls
@@ -132,15 +126,28 @@ class PlayerController extends _$PlayerController {
     Map<String, String>? httpHeaders,
     bool isQualitySwitch = false,
     bool autoPlay = true,
+    String? title,
+    String? artist,
+    String? coverUrl,
   }) async {
     final media = Media(url, httpHeaders: httpHeaders);
-    
+
+    if (!isQualitySwitch) {
+      final audioHandler = ref.read(audioHandlerProvider);
+      await audioHandler.updateMediaItem(MediaItem(
+        id: url,
+        title: title ?? 'Unknown',
+        artist: artist,
+        artUri: coverUrl != null ? Uri.parse(coverUrl) : null,
+      ));
+    }
+
     if (isQualitySwitch) {
       final currentPos = state.position;
       final wasPlaying = state.isPlaying;
-      
+
       await player.open(media, play: false);
-      
+
       // Wait for duration to be available if needed
       if (player.state.duration == Duration.zero) {
         try {
@@ -149,7 +156,7 @@ class PlayerController extends _$PlayerController {
               .timeout(const Duration(seconds: 2));
         } catch (_) {}
       }
-      
+
       await player.seek(currentPos);
       if (wasPlaying) {
         await player.play();

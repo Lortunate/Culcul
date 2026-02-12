@@ -1,3 +1,4 @@
+import 'package:culcul/ui/widgets/app_card_container.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
 import 'package:flutter/material.dart';
 
@@ -6,39 +7,43 @@ class LiveCardSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Cover
-        const AspectRatio(
-          aspectRatio: 16 / 9,
-          child: AppShimmerBox(borderRadius: 12), // Matched radius
-        ),
-        const SizedBox(height: 8),
-        // Title line 1
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8), // Matched padding
-          child: AppShimmerBox(height: 14, width: double.infinity),
-        ),
-        const SizedBox(height: 6),
-        // User Info Row
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8), // Matched padding
-          child: Row(
-            children: [
-              const AppShimmerBox(
-                width: 20, // Matched size
-                height: 20,
-                borderRadius: 10,
-              ),
-              const SizedBox(width: 6),
-              const Expanded(
-                child: AppShimmerBox(height: 12),
-              ),
-            ],
+    return AppCardContainer(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Cover
+          const AspectRatio(
+            aspectRatio: 16 / 9,
+            child: AppShimmerBox(borderRadius: 12),
           ),
-        ),
-      ],
+          // Content
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title
+                const AppShimmerBox(height: 14, width: double.infinity),
+                const SizedBox(height: 6),
+                const AppShimmerBox(height: 14, width: 80),
+                const SizedBox(height: 10),
+                // User Info
+                Row(
+                  children: const [
+                    AppShimmerBox(
+                      width: 20,
+                      height: 20,
+                      borderRadius: 10,
+                    ),
+                    SizedBox(width: 6),
+                    Expanded(child: AppShimmerBox(height: 12)),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

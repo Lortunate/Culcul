@@ -2,7 +2,6 @@ import 'package:culcul/data/models/notification/system_notification_model.dart';
 import 'package:culcul/providers/notification/system_notification_provider.dart';
 import 'package:culcul/shared/extensions/format_extensions.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
-import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -15,9 +14,7 @@ class SystemNotificationPage extends ConsumerWidget {
     final state = ref.watch(systemNotificationListProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('系统通知'),
-      ),
+      appBar: AppBar(title: const Text('系统通知')),
       body: state.when(
         data: (items) {
           if (items.isEmpty) {
@@ -87,10 +84,7 @@ class _SystemNotificationCard extends StatelessWidget {
                 const SizedBox(height: 8),
               ],
               if (item.text != null)
-                Text(
-                  item.text!,
-                  style: theme.textTheme.bodyMedium,
-                ),
+                Text(item.text!, style: theme.textTheme.bodyMedium),
               const SizedBox(height: 12),
               Row(
                 children: [

@@ -16,4 +16,12 @@ abstract class DanmakuApi {
     @Query('pid') required int pid,
     @Query('segment_index') required int segmentIndex,
   });
+
+  @GET('/x/v2/dm/web/view')
+  @DioResponseType(ResponseType.bytes)
+  Future<List<int>> fetchDanmakuView({
+    @Query('type') int type = 1,
+    @Query('oid') required int oid,
+    @Query('pid') required int pid,
+  });
 }

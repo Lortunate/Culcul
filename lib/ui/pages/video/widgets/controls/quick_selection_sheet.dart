@@ -22,7 +22,7 @@ class QuickSelectionSheet<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     // Panel width for side menu (landscape)
     const double panelWidth = 280.0;
-    
+
     return Container(
       width: isBottomSheet ? double.infinity : panelWidth,
       constraints: BoxConstraints(
@@ -46,7 +46,7 @@ class QuickSelectionSheet<T> extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (isBottomSheet) 
+                  if (isBottomSheet)
                     Center(
                       child: Container(
                         margin: const EdgeInsets.symmetric(vertical: 16),
@@ -70,14 +70,16 @@ class QuickSelectionSheet<T> extends StatelessWidget {
                         ),
                       ),
                     ),
-                  
+
                   Flexible(
                     child: ListView.builder(
                       padding: EdgeInsets.fromLTRB(
-                        16, 
-                        isBottomSheet ? 8 : 8, 
-                        16, 
-                        isBottomSheet ? MediaQuery.of(context).padding.bottom + 16 : 16
+                        16,
+                        isBottomSheet ? 8 : 8,
+                        16,
+                        isBottomSheet
+                            ? MediaQuery.of(context).padding.bottom + 16
+                            : 16,
                       ),
                       shrinkWrap: true,
                       itemCount: items.length,
@@ -85,7 +87,7 @@ class QuickSelectionSheet<T> extends StatelessWidget {
                         final item = items[index];
                         final isSelected = item == selectedItem;
                         final colorScheme = Theme.of(context).colorScheme;
-                        
+
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4),
                           child: InkWell(
@@ -94,17 +96,28 @@ class QuickSelectionSheet<T> extends StatelessWidget {
                               // Close after selection? Usually yes for quick actions
                               // But let the parent handle closing if needed, or we pop here
                               // Typically we want to pop.
-                              Navigator.of(context).pop(); 
+                              Navigator.of(context).pop();
                             },
                             borderRadius: BorderRadius.circular(12),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 12,
+                                horizontal: 16,
+                              ),
                               decoration: BoxDecoration(
-                                color: isSelected ? colorScheme.primary.withValues(alpha: 0.15) : Colors.transparent,
+                                color: isSelected
+                                    ? colorScheme.primary.withValues(
+                                        alpha: 0.15,
+                                      )
+                                    : Colors.transparent,
                                 borderRadius: BorderRadius.circular(12),
-                                border: isSelected 
-                                  ? Border.all(color: colorScheme.primary.withValues(alpha: 0.5))
-                                  : null,
+                                border: isSelected
+                                    ? Border.all(
+                                        color: colorScheme.primary.withValues(
+                                          alpha: 0.5,
+                                        ),
+                                      )
+                                    : null,
                               ),
                               child: Row(
                                 children: [
@@ -112,9 +125,13 @@ class QuickSelectionSheet<T> extends StatelessWidget {
                                     child: Text(
                                       labelBuilder(item),
                                       style: TextStyle(
-                                        color: isSelected ? colorScheme.primary : Colors.white70,
+                                        color: isSelected
+                                            ? colorScheme.primary
+                                            : Colors.white70,
                                         fontSize: 15,
-                                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                                        fontWeight: isSelected
+                                            ? FontWeight.w600
+                                            : FontWeight.w500,
                                       ),
                                     ),
                                   ),

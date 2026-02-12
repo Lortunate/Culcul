@@ -4,10 +4,18 @@ extension FormatIntExtension on int {
   String get formatNumber => FormatUtils.formatNumber(this);
   String get formatDuration => FormatUtils.formatDuration(this);
   String formatTimestamp() => FormatUtils.formatTimestamp(this);
+  String get formatFileSize => FormatUtils.formatFileSize(this);
+
+  /// Convenience method to format timestamp using timeago
+  String get timeAgo => FormatUtils.formatTimestamp(this);
 }
 
 extension FormatStringExtension on String {
   int get parseDuration => FormatUtils.parseDurationString(this);
+  String get capitalize => FormatUtils.capitalize(this);
+  String truncate(int maxLength, {String suffix = '...'}) =>
+      FormatUtils.truncate(this, maxLength, suffix: suffix);
+  String get camelCaseToTitle => FormatUtils.camelCaseToTitle(this);
 }
 
 extension FormatOptionalStringExtension on String? {

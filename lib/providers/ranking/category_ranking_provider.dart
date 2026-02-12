@@ -1,17 +1,17 @@
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/domain/entities/video_ranking.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:culcul/core/types/result.dart';
+import 'package:culcul/data/models/video/video_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'category_ranking_provider.g.dart';
 
 @riverpod
-Future<List<VideoItem>> categoryRankingList(Ref ref, {int? rid}) async {
+Future<List<VideoModel>> categoryRankingList(Ref ref, {int? rid}) async {
   final repository = ref.watch(rankingRepositoryProvider);
-
-  try {
-    return await repository.getRanking(rid: rid);
-  } catch (e) {
-    throw Exception('Failed to load ranking: $e');
-  }
+  final result = await repository.getRanking(rid: rid);
+  
+  return switch (result) {
+    Success(value: final list) => list,
+    Failure(exception: final e) => throw e,
+  };
 }

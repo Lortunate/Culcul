@@ -41,17 +41,19 @@ class VideoThumbnail extends StatelessWidget {
                 url: url,
                 width: width,
                 height: height,
-                memCacheWidth: memCacheWidth ??
+                memCacheWidth:
+                    memCacheWidth ??
                     (constraints.maxWidth.isFinite
                         ? (constraints.maxWidth *
-                                MediaQuery.of(context).devicePixelRatio)
-                            .toInt()
+                                  MediaQuery.of(context).devicePixelRatio)
+                              .toInt()
                         : null),
-                memCacheHeight: memCacheHeight ??
+                memCacheHeight:
+                    memCacheHeight ??
                     (constraints.maxHeight.isFinite
                         ? (constraints.maxHeight *
-                                MediaQuery.of(context).devicePixelRatio)
-                            .toInt()
+                                  MediaQuery.of(context).devicePixelRatio)
+                              .toInt()
                         : null),
                 borderRadius: borderRadius,
                 fit: BoxFit.cover,

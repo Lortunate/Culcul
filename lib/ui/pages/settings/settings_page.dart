@@ -93,6 +93,8 @@ class SettingsPage extends HookConsumerWidget {
     switch (locale) {
       case AppLocale.zh:
         return t.settings.chinese;
+      case AppLocale.zhHant:
+        return t.settings.traditional_chinese;
       case AppLocale.en:
         return t.settings.english;
     }

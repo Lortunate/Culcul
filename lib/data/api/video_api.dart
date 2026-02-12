@@ -1,7 +1,4 @@
 import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/data/models/response/api_response.dart';
-import 'package:culcul/data/models/feed_response.dart';
-import 'package:culcul/data/models/popular_response.dart';
 import 'package:culcul/data/models/index.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
@@ -14,14 +11,20 @@ abstract class VideoApi {
 
   @GET(ApiConstants.feedRcmd)
   @Headers({'x-bili-wbi': 'true'})
-  Future<ApiResponse<FeedResponse>> fetchRecommend(
-    @Queries() Map<String, dynamic> queries,
-  );
+  Future<ApiResponse<FeedResponse>> fetchRecommend({
+    @Query('fresh_type') int freshType = 4,
+    @Query('ps') int ps = 20,
+    @Query('fresh_idx') int freshIdx = 1,
+    @Query('fresh_idx_1h') int freshIdx1h = 1,
+    @Query('force_refresh') bool? forceRefresh,
+  });
 
   @GET(ApiConstants.popular)
-  Future<ApiResponse<PopularResponse>> fetchPopular(
-    @Queries() Map<String, dynamic> queries,
-  );
+  Future<ApiResponse<PopularResponse>> fetchPopular({
+    @Query('pn') int pn = 1,
+    @Query('ps') int ps = 20,
+    @Query('force_refresh') bool? forceRefresh,
+  });
 
   @GET(ApiConstants.videoView)
   @Headers({'x-bili-wbi': 'true'})
@@ -36,7 +39,19 @@ abstract class VideoApi {
   @GET(ApiConstants.videoPlayUrl)
   @Headers({'x-bili-wbi': 'true'})
   Future<ApiResponse<PlayUrl>> fetchVideoPlayUrl(
-    @Queries() Map<String, dynamic> queries,
+    @Query('avid') int aid,
+    @Query('cid') int cid,
+    @Query('qn') int qn,
+    @Query('fnval') int fnval,
+    @Query('fnver') int fnver,
+    @Query('fourk') int fourk,
+  );
+
+  @GET(ApiConstants.playerInfo)
+  @Headers({'x-bili-wbi': 'true'})
+  Future<ApiResponse<PlayerInfo>> fetchPlayerInfo(
+    @Query('aid') int aid,
+    @Query('cid') int cid,
   );
 
   @GET(ApiConstants.related)
@@ -45,19 +60,27 @@ abstract class VideoApi {
     @Query('bvid') String bvid,
   );
 
-  @GET('/x/v2/reply')
+  @GET(ApiConstants.reply)
   @Headers({'x-bili-wbi': 'true'})
   Future<ApiResponse<CommentResponse>> fetchComments(
-    @Queries() Map<String, dynamic> queries,
+    @Query('oid') int oid,
+    @Query('type') int type,
+    @Query('sort') int sort,
+    @Query('ps') int ps,
+    @Query('pn') int pn,
   );
 
-  @GET('/x/v2/reply/reply')
+  @GET(ApiConstants.replyReply)
   @Headers({'x-bili-wbi': 'true'})
   Future<ApiResponse<CommentResponse>> fetchReply(
-    @Queries() Map<String, dynamic> queries,
+    @Query('oid') int oid,
+    @Query('root') int root,
+    @Query('type') int type,
+    @Query('ps') int ps,
+    @Query('pn') int pn,
   );
 
-  @POST('/x/v2/reply/action')
+  @POST(ApiConstants.replyAction)
   @FormUrlEncoded()
   @Headers({'x-bili-csrf': 'true'})
   Future<ApiResponse<void>> actionComment(
@@ -67,7 +90,7 @@ abstract class VideoApi {
     @Field('type') int type,
   );
 
-  @POST('/x/v2/reply/hate')
+  @POST(ApiConstants.replyHate)
   @FormUrlEncoded()
   @Headers({'x-bili-csrf': 'true'})
   Future<ApiResponse<void>> hateComment(
@@ -77,7 +100,7 @@ abstract class VideoApi {
     @Field('type') int type,
   );
 
-  @POST('/x/v2/reply/add')
+  @POST(ApiConstants.replyAdd)
   @FormUrlEncoded()
   @Headers({'x-bili-csrf': 'true'})
   Future<ApiResponse<CommentItem>> addReply(
@@ -88,7 +111,7 @@ abstract class VideoApi {
     @Field('type') int type,
   );
 
-  @POST('/x/v2/history/report')
+  @POST(ApiConstants.historyReport)
   @FormUrlEncoded()
   @Headers({'x-bili-csrf': 'true'})
   Future<ApiResponse<void>> reportVideoProgress(

@@ -1,3 +1,4 @@
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/providers/auth/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -35,18 +36,32 @@ class FollowButton extends ConsumerWidget {
       style: FilledButton.styleFrom(
         backgroundColor: isFollowed
             ? colorScheme.surfaceContainerHighest
-            : const Color(0xFFFB7299), // Bilibili Pink for follow action
-        foregroundColor:
-            isFollowed ? colorScheme.onSurfaceVariant : Colors.white,
+            : colorScheme.primary,
+        foregroundColor: isFollowed
+            ? colorScheme.onSurfaceVariant
+            : colorScheme.onPrimary,
         elevation: 0,
-        minimumSize: Size(width ?? 56, height ?? 28),
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        minimumSize: Size(width ?? 56, height ?? 32),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
         visualDensity: VisualDensity.compact,
       ),
-      child: Text(
-        text ?? (isFollowed ? '已关注' : '+ 关注'),
-        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 300),
+        transitionBuilder: (Widget child, Animation<double> animation) {
+          return FadeTransition(
+            opacity: animation,
+            child: ScaleTransition(scale: animation, child: child),
+          );
+        },
+        child: Text(
+          text ??
+              (isFollowed
+                  ? t.video.actions.followed
+                  : '+ ${t.video.actions.follow}'),
+          key: ValueKey<bool>(isFollowed),
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }

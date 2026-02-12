@@ -1,3 +1,4 @@
+import 'package:culcul/core/constants/api_constants.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 import '../models/response/api_response.dart';
@@ -9,7 +10,7 @@ part 'history_api.g.dart';
 abstract class HistoryApi {
   factory HistoryApi(Dio dio, {String baseUrl}) = _HistoryApi;
 
-  @GET('/x/web-interface/history/cursor')
+  @GET(ApiConstants.historyCursor)
   @Headers({'x-bili-wbi': 'true'})
   Future<ApiResponse<HistoryResponseData>> getHistoryCursor(
     @Query('max') int max,

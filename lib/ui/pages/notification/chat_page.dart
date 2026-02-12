@@ -1,11 +1,11 @@
 import 'dart:io';
-import 'package:culcul/ui/pages/notification/providers/chat_provider.dart';
+import 'package:culcul/providers/notification/chat_provider.dart';
 import 'package:culcul/providers/auth/auth_provider.dart';
+import 'package:culcul/core/extensions/auth_extension.dart';
 import 'package:culcul/providers/profile/profile_provider.dart';
 import 'package:culcul/ui/pages/notification/widgets/chat_input.dart';
 import 'package:culcul/ui/pages/notification/widgets/chat_message_list.dart';
 import 'package:culcul/ui/pages/notification/widgets/notification_skeletons.dart';
-import 'package:culcul/data/models/notification/private_message_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

@@ -12,4 +12,5 @@ class StorageKeys {
   static const String user = 'auth_user';
   static const String settings = 'app_settings';
   static const String searchHistory = 'search_history';
+  static const String refreshToken = 'auth_refresh_token';
 }

@@ -78,10 +78,7 @@ class _RelationUserListState extends State<RelationUserList> {
                 const Divider(height: 1, indent: 72, endIndent: 0),
             itemBuilder: (context, index) {
               final item = list[index];
-              return RelationUserItem(
-                user: item,
-                onTap: () {},
-              );
+              return RelationUserItem(user: item);
             },
           ),
         );

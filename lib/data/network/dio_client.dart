@@ -5,6 +5,7 @@ import 'package:culcul/core/utils/json_compute.dart';
 import 'package:culcul/data/network/interceptors/cache_interceptor.dart';
 import 'package:culcul/data/network/interceptors/csrf_interceptor.dart';
 import 'package:culcul/data/network/interceptors/retry_interceptor.dart';
+import 'package:culcul/data/network/interceptors/token_interceptor.dart';
 import 'package:culcul/data/network/interceptors/wbi_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
@@ -29,8 +30,8 @@ Dio _createBaseDio(Ref ref) {
     ),
   );
 
-  // Use background isolate for JSON decoding
-  dio.transformer = BackgroundTransformer()..jsonDecodeCallback = jsonDecodeCompute;
+  dio.transformer = BackgroundTransformer()
+    ..jsonDecodeCallback = jsonDecodeCompute;
 
   final cookieJar = ref.read(cookieJarProvider);
   dio.interceptors.add(CookieManager(cookieJar));
@@ -82,14 +83,8 @@ Dio dioClient(Ref ref) {
   dio.interceptors.add(WbiInterceptor(ref));
 
   _addLogInterceptor(dio);
-  
-  dio.interceptors.add(
-    InterceptorsWrapper(
-      onError: (DioException e, handler) {
-        return handler.next(e);
-      },
-    ),
-  );
+
+  dio.interceptors.add(TokenInterceptor(ref));
 
   return dio;
 }

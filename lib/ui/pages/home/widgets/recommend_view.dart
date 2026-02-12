@@ -1,9 +1,7 @@
 import 'package:culcul/core/router/router.dart';
 import 'package:culcul/providers/home/home_recommend_provider.dart';
 import 'package:culcul/ui/pages/home/logic/home_scroll_manager.dart';
-import 'package:culcul/ui/pages/home/widgets/recommend_skeleton.dart';
 import 'package:culcul/ui/widgets/index.dart';
-import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -21,26 +19,33 @@ class RecommendView extends HookConsumerWidget {
 
     useHomeScrollManager(ref, scrollController, refreshController, 1);
 
+    const padding = EdgeInsets.all(12);
+    const gridDelegate = SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
+      childAspectRatio: 0.94,
+    );
+
     return SmartPagingView(
       provider: homeRecommendProvider,
       asyncValue: recommendAsync,
       controller: refreshController,
       onRefresh: () => ref.read(homeRecommendProvider.notifier).refresh(),
       onLoadMore: () => ref.read(homeRecommendProvider.notifier).loadMore(),
-      skeleton: const RecommendSkeleton(),
+      skeleton: const GridSkeletonView(
+        itemSkeleton: VideoCardSkeleton(),
+        gridDelegate: gridDelegate,
+        padding: padding,
+      ),
       builder: (context, items) => CustomScrollView(
         controller: scrollController,
         cacheExtent: 1500,
         slivers: [
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(8, 8, 8, 12),
+            padding: padding,
             sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
-                childAspectRatio: 0.88,
-              ),
+              gridDelegate: gridDelegate,
               delegate: SliverChildBuilderDelegate((context, index) {
                 final video = items[index];
                 return VideoCard(

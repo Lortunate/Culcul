@@ -2,7 +2,8 @@ import 'package:culcul/providers/user_space/user_space_provider.dart';
 import 'package:culcul/ui/pages/profile/tabs/user_dynamic_tab.dart';
 import 'package:culcul/ui/pages/profile/tabs/user_home_tab.dart';
 import 'package:culcul/ui/pages/profile/tabs/user_video_tab.dart';
-import 'package:culcul/ui/pages/profile/widgets/user_profile_header.dart';
+import 'package:culcul/ui/pages/profile/widgets/user_profile_app_bar.dart';
+import 'package:culcul/ui/pages/profile/widgets/user_profile_info.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -14,7 +15,8 @@ class UserProfilePage extends ConsumerStatefulWidget {
   ConsumerState<UserProfilePage> createState() => _UserProfilePageState();
 }
 
-class _UserProfilePageState extends ConsumerState<UserProfilePage> with SingleTickerProviderStateMixin {
+class _UserProfilePageState extends ConsumerState<UserProfilePage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -37,7 +39,10 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> with SingleTi
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) {
           return [
-            UserProfileHeader(profile: profileAsync.value),
+            UserProfileAppBar(profile: profileAsync.value),
+            SliverToBoxAdapter(
+              child: UserProfileInfo(profile: profileAsync.value),
+            ),
             SliverPersistentHeader(
               delegate: _SliverTabBarDelegate(
                 TabBar(
@@ -48,8 +53,13 @@ class _UserProfilePageState extends ConsumerState<UserProfilePage> with SingleTi
                     Tab(text: '投稿'),
                   ],
                   labelColor: Theme.of(context).colorScheme.primary,
+                  labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                   unselectedLabelColor: Theme.of(context).colorScheme.onSurfaceVariant,
+                  unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
                   indicatorColor: Theme.of(context).colorScheme.primary,
+                  indicatorSize: TabBarIndicatorSize.label,
+                  indicatorWeight: 3,
+                  dividerColor: Colors.transparent,
                 ),
               ),
               pinned: true,
@@ -80,7 +90,11 @@ class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => _tabBar.preferredSize.height;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
       child: _tabBar,

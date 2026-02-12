@@ -1,5 +1,6 @@
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/providers/api_provider.dart';
+import 'package:culcul/core/repositories/base_repository.dart';
 import 'package:culcul/core/types/result.dart';
 import 'package:culcul/data/api/live_api.dart';
 import 'package:culcul/data/models/live/index.dart';
@@ -13,124 +14,107 @@ LiveRepository liveRepository(Ref ref) {
   return LiveRepository(ref.watch(liveApiProvider));
 }
 
-class LiveRepository {
+class LiveRepository extends BaseRepository {
   final LiveApi _api;
 
   LiveRepository(this._api);
 
-  Future<Result<LiveRoomDetailModel, Exception>> getRoomInfo(int roomId) async {
-    try {
-      final response = await _api.getRoomInfo(roomId);
-      if (response.code == 0 && response.data != null) {
-        return Success(response.data!);
-      } else {
-        return Failure(ServerException(
-          response.message,
-          code: response.code,
-        ));
-      }
-    } on DioException catch (e) {
-      return Failure(dioExceptionToAppException(e));
-    } catch (e) {
-      return Failure(UnknownException(e.toString()));
-    }
+  Future<Result<LiveRoomDetailModel, AppException>> getRoomInfo(
+    int roomId,
+  ) async {
+    return safeApiCall(() => _api.getRoomInfo(roomId));
   }
 
-  Future<Result<LivePlayUrlModel, Exception>> getPlayUrl({
+  Future<Result<LivePlayUrlModel, AppException>> getPlayUrl({
     required int roomId,
     int? qn,
     String platform = 'web',
   }) async {
-    try {
-      final response = await _api.getPlayUrl(
+    return safeApiCall(
+      () => _api.getPlayUrl(roomId: roomId, qn: qn, platform: platform),
+    );
+  }
+
+  Future<Result<LiveDanmakuConfigModel, AppException>> getDanmakuConfig(
+    int roomId,
+  ) async {
+    return safeApiCall(() => _api.getDanmakuConfig(roomId));
+  }
+
+  Future<Result<LiveHistoryDanmakuModel, AppException>> getHistoryDanmaku(
+    int roomId,
+  ) async {
+    return safeApiCall(() => _api.getHistoryDanmaku(roomId));
+  }
+
+  Future<Result<LiveDanmuInfoModel, AppException>> getDanmuInfo(
+    int roomId,
+  ) async {
+    return safeApiCall(() => _api.getDanmuInfo(roomId, 0));
+  }
+
+  Future<Result<List<LiveRoomModel>, AppException>> fetchRecommendList({
+    int page = 1,
+    int pageSize = 30,
+  }) async {
+    final result = await safeApiCall(
+      () => _api.getRecommendList(page: page, pageSize: pageSize),
+    );
+
+    return switch (result) {
+      Success(value: final data) => Success(data.roomList),
+      Failure(exception: final e) => Failure(e),
+    };
+  }
+
+  Future<Result<LiveAnchorInfoModel, AppException>> getAnchorInfo(
+    int uid,
+  ) async {
+    return safeApiCall(() => _api.getAnchorInfo(uid));
+  }
+
+  Future<Result<LiveGoldRankModel, AppException>> getOnlineGoldRank({
+    required int ruid,
+    required int roomId,
+    int page = 1,
+    int pageSize = 20,
+  }) async {
+    return safeApiCall(
+      () => _api.getOnlineGoldRank(
+        ruid: ruid,
         roomId: roomId,
-        qn: qn,
-        platform: platform,
-      );
-      if (response.code == 0 && response.data != null) {
-        return Success(response.data!);
-      } else {
-        return Failure(ServerException(
-          response.message,
-          code: response.code,
-        ));
-      }
-    } on DioException catch (e) {
-      return Failure(dioExceptionToAppException(e));
-    } catch (e) {
-      return Failure(UnknownException(e.toString()));
-    }
+        page: page,
+        pageSize: pageSize,
+      ),
+    );
   }
 
-  Future<Result<LiveDanmakuConfigModel, Exception>> getDanmakuConfig(int roomId) async {
-    try {
-      final response = await _api.getDanmakuConfig(roomId);
-      if (response.code == 0 && response.data != null) {
-        return Success(response.data!);
-      } else {
-        return Failure(ServerException(
-          response.message,
-          code: response.code,
-        ));
-      }
-    } on DioException catch (e) {
-      return Failure(dioExceptionToAppException(e));
-    } catch (e) {
-      return Failure(UnknownException(e.toString()));
-    }
+  Future<Result<LiveGuardListModel, AppException>> getGuardList({
+    required int ruid,
+    required int roomId,
+    int page = 1,
+    int pageSize = 20,
+  }) async {
+    return safeApiCall(
+      () => _api.getGuardList(
+        ruid: ruid,
+        roomId: roomId,
+        page: page,
+        pageSize: pageSize,
+      ),
+    );
   }
 
-  Future<Result<LiveHistoryDanmakuModel, Exception>> getHistoryDanmaku(int roomId) async {
-    try {
-      final response = await _api.getHistoryDanmaku(roomId);
-      if (response.code == 0 && response.data != null) {
-        return Success(response.data!);
-      } else {
-        return Failure(ServerException(
-          response.message,
-          code: response.code,
-        ));
-      }
-    } on DioException catch (e) {
-      return Failure(dioExceptionToAppException(e));
-    } catch (e) {
-      return Failure(UnknownException(e.toString()));
-    }
-  }
-
-  Future<Result<LiveDanmuInfoModel, Exception>> getDanmuInfo(int roomId) async {
-    try {
-      final response = await _api.getDanmuInfo(roomId, 0);
-      if (response.code == 0 && response.data != null) {
-        return Success(response.data!);
-      } else {
-        return Failure(ServerException(
-          response.message,
-          code: response.code,
-        ));
-      }
-    } on DioException catch (e) {
-      return Failure(dioExceptionToAppException(e));
-    } catch (e) {
-      return Failure(UnknownException(e.toString()));
-    }
-  }
-
-  Future<Result<List<LiveRoomModel>, Exception>> fetchRecommendList() async {
-    try {
-      final response = await _api.getRecommendList();
-      if (response.code == 0 && response.data != null) {
-        return Success(response.data!.roomList);
-      } else {
-        return Failure(ServerException(
-          response.message,
-          code: response.code,
-        ));
-      }
-    } on DioException catch (e) {
-      return Failure(dioExceptionToAppException(e));
-    } catch (e) {
-      return Failure(UnknownException(e.toString()));
-    }
+  Future<Result<void, AppException>> sendDanmaku({
+    required int roomId,
+    required String msg,
+  }) async {
+    return safeVoidApiCall(
+      () => _api.sendDanmaku(
+        msg: msg,
+        roomId: roomId,
+        rnd: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      ),
+    );
   }
 }

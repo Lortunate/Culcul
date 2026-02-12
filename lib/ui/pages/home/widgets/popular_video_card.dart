@@ -1,5 +1,5 @@
-import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/data/models/index.dart';
+import 'package:culcul/ui/pages/home/widgets/video_more_bottom_sheet.dart';
 
 import 'package:culcul/ui/widgets/index.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +17,16 @@ class PopularVideoCard extends StatelessWidget {
 
     return VideoListCard(
       onTap: onTap,
+      padding: const EdgeInsets.all(10),
+      onLongPress: () {
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: Colors.transparent,
+          barrierColor: Colors.transparent,
+          isScrollControlled: true,
+          builder: (context) => VideoMoreBottomSheet(video: video),
+        );
+      },
       height: 100,
       thumbnailWidth: 160,
       coverUrl: video.pic,
@@ -47,16 +57,7 @@ class PopularVideoCard extends StatelessWidget {
           ),
         ],
       ),
-      stats: [
-        IconText(
-          icon: Icons.play_circle_outline_rounded,
-          text: FormatUtils.formatNumber(video.stat.view),
-        ),
-        IconText(
-          icon: Icons.list_alt_rounded,
-          text: FormatUtils.formatNumber(video.stat.danmaku),
-        ),
-      ],
+      showDefaultStats: true,
     );
   }
 }

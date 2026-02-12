@@ -1,0 +1,264 @@
+{
+  "nav": {
+    "home": "首頁",
+    "moments": "動態",
+    "ranking": "排行榜",
+    "mine": "我的"
+  },
+  "home": {
+    "tabs": {
+      "live": "直播",
+      "recommend": "推薦",
+      "hot": "熱門",
+      "anime": "動畫",
+      "cinema": "影視",
+      "new_journey": "新征程"
+    },
+    "search_hint": "搜尋影片..."
+  },
+  "moments": {
+    "title": "動態",
+    "tabs": {
+      "all": "全部",
+      "video": "影片",
+      "comprehensive": "綜合"
+    },
+    "actions": {
+      "forward": "轉發",
+      "comment": "評論",
+      "like": "讚"
+    },
+    "like_coming_soon": "按讚功能開發中",
+    "empty": "$tab 動態暫未實現"
+  },
+  "ranking": {
+    "title": "排行榜"
+  },
+  "settings": {
+    "title": "設定",
+    "language": "通用設定",
+    "change_language": "切換語言",
+    "chinese": "簡體中文",
+    "traditional_chinese": "繁體中文",
+    "english": "English",
+    "appearance": "外觀設定",
+    "system_mode": "跟隨系統",
+    "dark_mode": "深色模式",
+    "light_mode": "淺色模式",
+    "cache": "快取管理",
+    "clear_cache": "清理快取",
+    "user_agreement": "使用者協議",
+    "privacy_policy": "隱私權政策",
+    "about": "關於",
+    "version": "目前版本"
+  },
+  "auth": {
+    "login": "登入",
+    "logout": "登出",
+    "account_login": "帳號登入",
+    "sms_login": "驗證碼登入",
+    "qr_login": "QR Code 登入",
+    "username": "帳號",
+    "username_hint": "手機號碼/電子信箱",
+    "password": "密碼",
+    "phone": "手機號碼",
+    "sms_code": "驗證碼",
+    "get_code": "獲取驗證碼",
+    "get_code_retry": "重新獲取($seconds s)",
+    "qr_hint": "請使用 culcul 客戶端掃描登入",
+    "qr_refresh": "重新整理 QR Code",
+    "qr_status": {
+      "loading": "載入中...",
+      "success": "登入成功",
+      "scanned": "已掃描，請在手機上確認",
+      "expired": "QR Code 已過期",
+      "error": "載入 QR Code 失敗"
+    },
+    "sms_sent": "驗證碼已發送",
+    "subtitle": "第三方輕量化客戶端"
+  },
+  "profile": {
+    "login": "登入",
+    "not_logged_in": "未登入",
+    "login_hint": "點擊登入體驗更多功能",
+    "stats": {
+      "dynamic": "動態",
+      "following": "關注",
+      "followers": "粉絲",
+      "likes": "獲讚"
+    },
+    "actions": {
+      "message": "私訊"
+    },
+    "vip": {
+      "premium": "大會員",
+      "annual_premium": "年度大會員"
+    },
+    "menu": {
+      "history": "歷史記錄",
+      "download": "離線快取",
+      "collection": "我的收藏",
+      "later": "稍後再看",
+      "theme": "個人裝扮",
+      "creative_center": "創作中心",
+      "orders": "會員購訂單",
+      "customer_service": "聯繫客服"
+    }
+  },
+  "fav": {
+    "title": "我的收藏",
+    "created": "創建的",
+    "collected": "收藏的",
+    "private": "私密",
+    "public": "公開",
+    "play": "播放",
+    "count": "共 $count 個內容",
+    "search_hint": "搜尋收藏內容"
+  },
+  "search": {
+    "placeholder": "大家都在搜：culcul",
+    "button": "搜尋",
+    "history": "搜尋歷史",
+    "hot_search": "熱搜榜",
+    "clear_history": "清空歷史",
+    "suggestion": "搜尋建議",
+    "no_result": "沒有找到相關內容",
+    "trending": "大家都在搜"
+  },
+  "video": {
+    "tabs": {
+      "info": "簡介",
+      "comment": "評論"
+    },
+    "recommend": "推薦影片",
+    "comment_empty": "評論區建設中...",
+    "comment_count": "$count 條評論",
+    "comment_sort_hot": "按熱度",
+    "comment_sort_time": "按時間",
+    "all_comments": "全部評論",
+    "comment_detail": "評論詳情",
+    "related_replies": "相關回覆",
+    "replies": "查看全部 $count 條回覆",
+    "load_failed": "影片載入失敗",
+    "tags": "標籤",
+    "no_desc": "暫無簡介",
+    "expand_all": "展開全部",
+    "quality": {
+      "p4k": "4K 超清",
+      "p1080": "1080P 高清",
+      "p720": "720P 高清",
+      "p480": "480P 清晰",
+      "p360": "360P 流暢",
+      "p240": "240P 流暢",
+      "p144": "144P 極速"
+    },
+    "playback": {
+      "speed": "倍速",
+      "quality": "畫質",
+      "danmaku": "彈幕",
+      "full_screen": "全螢幕",
+      "retry": "重試播放"
+    },
+    "actions": {
+      "like": "讚",
+      "unlike": "不喜歡",
+      "coin": "投幣",
+      "favorite": "收藏",
+      "share": "分享",
+      "followed": "已關注",
+      "follow": "關注",
+      "reply": "回覆"
+    },
+    "reply_to": "回覆 @$name : ",
+    "parts": "影片分段",
+    "expand": "展開",
+    "collapse": "收起",
+    "comment_hint": "發個友善的評論"
+  },
+  "common": {
+    "no_content": "暫無內容",
+    "coming_soon": "$tab 內容暫未實現",
+    "loading": "載入中...",
+    "error": "出錯了",
+    "retry": "重試",
+    "refresh": "重新整理",
+    "load_more": "載入更多",
+    "no_more": "沒有更多了",
+    "cancel": "取消",
+    "confirm": "確定",
+    "save": "保存",
+    "delete": "刪除",
+    "view_count": "$count次播放",
+    "danmaku_count": "$count條彈幕",
+    "pull_down_to_refresh": "下拉可以重新整理",
+    "release_to_refresh": "鬆開立即重新整理",
+    "refresh_completed": "重新整理成功",
+    "refresh_failed": "重新整理失敗",
+    "pull_up_to_load_more": "上拉載入更多",
+    "release_to_load_more": "鬆開載入更多",
+    "load_failed": "載入失敗",
+    "load_completed": "載入完成",
+    "no_more_content": "沒有更多內容了",
+    "up": "UP"
+  },
+  "error": {
+    "connection_timeout": "連線逾時",
+    "send_timeout": "請求逾時",
+    "receive_timeout": "回應逾時",
+    "bad_response": "伺服器回應錯誤: $code",
+    "cancel": "請求取消",
+    "network": "網路連線異常"
+  },
+  "format": {
+    "hundred_million": "億",
+    "ten_thousand": "萬",
+    "hours_ago": "$hours小時前",
+    "minutes_ago": "$minutes分鐘前",
+    "just_now": "剛剛"
+  },
+  "to_view": {
+    "title": "稍後再看",
+    "clear_all": "清空稍後再看",
+    "clear_all_confirm": "確定要清空稍後再看列表嗎？"
+  },
+  "subscription": {
+    "title": "訂閱",
+    "tabs": {
+      "video": "影片",
+      "anime": "番劇",
+      "series": "影視"
+    },
+    "empty": "$tab 暫無內容"
+  },
+  "notification": {
+    "title": "訊息",
+    "types": {
+      "like": "讚了我的評論",
+      "at": "@了我",
+      "reply": "回覆了我",
+      "system": "系統通知"
+    },
+    "related_content": "相關內容",
+    "navigation_error": "無法跳轉到內容: $type $id",
+    "chat": {
+      "message_withdrawn": "訊息已撤回",
+      "unsupported_type": "[不支援的訊息類型: $type]"
+    }
+  },
+  "live": {
+    "header": {
+      "online": "$count人看過",
+      "guard": "$count人艦隊"
+    },
+    "tags": {
+      "hot": "熱門榜",
+      "popularity": "人氣榜",
+      "more_play": "更多幫玩"
+    },
+    "danmaku": {
+      "system_notice": "系統提示",
+      "system_notice_colon": "系統提示:",
+      "admin": "房管"
+    }
+  }
+}

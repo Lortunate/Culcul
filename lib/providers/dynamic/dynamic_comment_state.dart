@@ -1,5 +1,5 @@
 import 'package:culcul/core/errors/exceptions.dart';
-import 'package:culcul/data/models/comment_model.dart';
+import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'dynamic_comment_state.freezed.dart';

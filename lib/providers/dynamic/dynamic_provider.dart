@@ -1,96 +1,106 @@
-// ignore_for_file: invalid_use_of_internal_member
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/domain/entities/dynamic_post.dart';
+import 'package:culcul/core/types/result.dart';
+import 'package:culcul/core/utils/list_utils.dart';
+import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
+import 'package:culcul/data/models/dynamic/dynamic_response.dart';
+import 'package:culcul/repositories/dynamic_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'dynamic_provider.g.dart';
 
-@Riverpod(keepAlive: true)
+@riverpod
 class DynamicNotifier extends _$DynamicNotifier {
-  String? _offset;
+  String _offset = '';
   bool _hasMore = true;
-  String _type = 'all';
+  late String _type;
 
   @override
-  Future<List<DynamicPost>> build({String type = 'all'}) async {
+  AsyncValue<List<DynamicItem>> build(String type) {
     _type = type;
-    _offset = null;
+    _offset = '';
     _hasMore = true;
-    return _fetchFeed();
-  }
-
-  Future<List<DynamicPost>> _fetchFeed() async {
-    final repository = ref.read(dynamicRepositoryProvider);
-    final result = await repository.getFeed(type: _type, offset: _offset);
-    return result.when(
-      success: (feed) {
-        _offset = feed.offset;
-        _hasMore = feed.hasMore;
-        return feed.items;
-      },
-      failure: (e) {
-        throw e;
-      },
-    );
+    // We cannot call async _fetchFeed directly in sync build if we want to return loading.
+    // But we can fire it.
+    _fetchFeed();
+    return const AsyncValue.loading();
   }
 
   Future<void> loadMore() async {
-    if (!_hasMore || state.isLoading) return;
-
-    final oldState = state;
-    if (oldState.asData?.value == null) return;
-
-    state = AsyncLoading<List<DynamicPost>>().copyWithPrevious(oldState);
-
-    try {
-      final newItems = await _fetchFeed();
-
-      final previousItems = oldState.asData!.value;
-      final existingIds = previousItems.map((e) => e.id).toSet();
-      final uniqueNewItems = newItems
-          .where((e) => !existingIds.contains(e.id))
-          .toList();
-
-      state = AsyncData([...previousItems, ...uniqueNewItems]);
-    } catch (e, st) {
-      state = AsyncError<List<DynamicPost>>(e, st).copyWithPrevious(oldState);
-    }
+    if (state.isLoading || !_hasMore) return;
+    await _fetchFeed();
   }
 
   Future<void> refresh() async {
-    _offset = null;
+    _offset = '';
     _hasMore = true;
-    state = AsyncLoading<List<DynamicPost>>().copyWithPrevious(state);
-    try {
-      final items = await _fetchFeed();
-      state = AsyncData(items);
-    } catch (e, st) {
-      state = AsyncError<List<DynamicPost>>(e, st).copyWithPrevious(state);
+    state = const AsyncValue.loading();
+    await _fetchFeed();
+  }
+
+  Future<void> _fetchFeed() async {
+    if (!_hasMore) return;
+
+    final repo = ref.read(dynamicRepositoryProvider);
+    final result = await repo.getFeed(type: _type, offset: _offset);
+
+    // Use ResultUtils to handle the result
+    switch (result) {
+      case Success(value: final data):
+        _hasMore = data.hasMore;
+        _offset = data.offset;
+
+        final newItems = data.items;
+        
+        if (state.value != null && _offset.isNotEmpty) {
+           final mergedItems = ListUtils.mergeUnique(
+             state.value!, 
+             newItems, 
+             idGetter: (item) => item.idStr
+           );
+           state = AsyncValue.data(mergedItems);
+        } else {
+           state = AsyncValue.data(newItems);
+        }
+        
+      case Failure(exception: final error):
+        if (state.value == null) {
+          state = AsyncValue.error(error, StackTrace.current);
+        } else {
+          // Toast?
+        }
     }
   }
 
-  Future<void> toggleLike(String id, bool isLiked) async {
-    final oldState = state;
-    if (oldState.asData?.value == null) return;
+  Future<void> toggleLike(String dynamicId, bool isLiked) async {
+    final currentList = state.asData?.value;
+    if (currentList == null) return;
 
-    final items = oldState.asData!.value;
-    final index = items.indexWhere((element) => element.id == id);
+    final index = currentList.indexWhere((e) => e.idStr == dynamicId);
     if (index == -1) return;
 
-    final item = items[index];
-    final newItem = item.copyWith(
-      isLiked: !isLiked,
-      likeCount: isLiked ? item.likeCount - 1 : item.likeCount + 1,
-    );
+    final item = currentList[index];
+    
+    // Optimistic update using the extension method
+    final newItem = item.copyWithLike(!isLiked);
+    
+    final newList = List<DynamicItem>.from(currentList);
+    newList[index] = newItem;
+    state = AsyncValue.data(newList);
 
-    final newItems = List<DynamicPost>.from(items);
-    newItems[index] = newItem;
-    state = AsyncData(newItems);
+    final repo = ref.read(dynamicRepositoryProvider);
+    final result = await repo.likeDynamic(dynamicId, !isLiked);
 
-    final result = await ref.read(dynamicRepositoryProvider).likeDynamic(id, !isLiked);
-    if (result.isFailure) {
-      // Revert
-      state = oldState;
+    if (result is Failure) {
+      // Revert if failed
+      if (state.value != null) {
+        final revertList = List<DynamicItem>.from(state.value!);
+        // Check index again in case list changed
+        final revertIndex = revertList.indexWhere((e) => e.idStr == dynamicId);
+        if (revertIndex != -1) {
+          revertList[revertIndex] = item;
+          state = AsyncValue.data(revertList);
+        }
+      }
     }
   }
 }

@@ -5,9 +5,17 @@ import 'package:culcul/providers/auth/auth_provider.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+enum QrLoginStatus {
+  loading,
+  success,
+  scanned,
+  expired,
+  error,
+}
+
 class UseQrLoginResult {
   final String? qrUrl;
-  final String status;
+  final QrLoginStatus status;
   final int statusCode;
   final Future<void> Function() refresh;
 
@@ -20,10 +28,8 @@ class UseQrLoginResult {
 }
 
 UseQrLoginResult useQrLogin(WidgetRef ref) {
-  final context = useContext();
-  final t = Translations.of(context);
   final qrUrl = useState<String?>(null);
-  final status = useState<String>(t.auth.qr_status.loading);
+  final status = useState<QrLoginStatus>(QrLoginStatus.loading);
   final statusCode = useState<int>(0);
   final timerRef = useRef<Timer?>(null);
 
@@ -36,24 +42,24 @@ UseQrLoginResult useQrLogin(WidgetRef ref) {
         statusCode.value = code;
 
         if (code == 0) {
-          status.value = t.auth.qr_status.success;
+          status.value = QrLoginStatus.success;
           timer.cancel();
           ref.read(authProvider.notifier).refreshUser();
         } else if (code == 86101) {
-          status.value = t.auth.qr_status.loading;
+          status.value = QrLoginStatus.loading;
         } else if (code == 86090) {
-          status.value = t.auth.qr_status.scanned;
+          status.value = QrLoginStatus.scanned;
         } else if (code == 86038) {
-          status.value = t.auth.qr_status.expired;
+          status.value = QrLoginStatus.expired;
           timer.cancel();
         }
       } catch (_) {}
     });
-  }, [t]);
+  }, []);
 
   final refresh = useCallback(() async {
     statusCode.value = 0;
-    status.value = t.auth.qr_status.loading;
+    status.value = QrLoginStatus.loading;
     qrUrl.value = null;
     timerRef.value?.cancel();
 
@@ -64,9 +70,9 @@ UseQrLoginResult useQrLogin(WidgetRef ref) {
         startPolling(data['qrcode_key']);
       }
     } catch (e) {
-      status.value = t.auth.qr_status.error;
+      status.value = QrLoginStatus.error;
     }
-  }, [t, startPolling]);
+  }, [startPolling]);
 
   useEffect(() {
     refresh();

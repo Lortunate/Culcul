@@ -37,7 +37,9 @@ class ProfileStats extends ConsumerWidget {
       child: Container(
         decoration: BoxDecoration(
           color: colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
+          borderRadius: const BorderRadius.vertical(
+            bottom: Radius.circular(24),
+          ),
         ),
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
         child: Row(

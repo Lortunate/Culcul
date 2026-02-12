@@ -5,6 +5,7 @@ class RenderDanmakuItem {
   final String id;
   final String text;
   final TextPainter textPainter;
+  final TextPainter? strokePainter; // Optimized stroke rendering
   final DanmakuItemType type;
   int creationTime; // ms
 
@@ -19,6 +20,7 @@ class RenderDanmakuItem {
     required this.id,
     required this.text,
     required this.textPainter,
+    this.strokePainter,
     required this.type,
     required this.creationTime,
   });
@@ -26,6 +28,7 @@ class RenderDanmakuItem {
   void measure() {
     if (isMeasure) return;
     textPainter.layout();
+    strokePainter?.layout();
     width = textPainter.width;
     height = textPainter.height;
     isMeasure = true;
@@ -46,7 +49,15 @@ class DanmakuPainter extends CustomPainter {
       // Skip if off-screen (though controller should handle this)
       if (item.x > size.width || item.x + item.width < 0) continue;
 
-      item.textPainter.paint(canvas, Offset(item.x, item.y));
+      final offset = Offset(item.x, item.y);
+
+      // Draw stroke first if available
+      if (item.strokePainter != null) {
+        item.strokePainter!.paint(canvas, offset);
+      }
+
+      // Draw text
+      item.textPainter.paint(canvas, offset);
     }
   }
 

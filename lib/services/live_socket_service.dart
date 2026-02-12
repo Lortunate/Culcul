@@ -108,7 +108,7 @@ class LiveSocketService {
       final packetLength = header.getUint32(0);
       final protocolVer = header.getUint16(6);
       final operation = header.getUint32(8);
-      
+
       if (offset + packetLength > data.length) break;
 
       final body = data.sublist(offset + 16, offset + packetLength);
@@ -116,13 +116,13 @@ class LiveSocketService {
       switch (operation) {
         case 5: // Notification
           if (protocolVer == 2) {
-             // Zlib compressed
-             try {
-               final uncompressed = zlib.decode(body);
-               _handleMessage(uncompressed); // Recursive for uncompressed batch
-             } catch (e) {
-               debugPrint('Failed to decompress zlib body: $e');
-             }
+            // Zlib compressed
+            try {
+              final uncompressed = zlib.decode(body);
+              _handleMessage(uncompressed); // Recursive for uncompressed batch
+            } catch (e) {
+              debugPrint('Failed to decompress zlib body: $e');
+            }
           } else if (protocolVer == 0) {
             // JSON
             try {
@@ -130,11 +130,11 @@ class LiveSocketService {
               final json = jsonDecode(jsonStr);
               _parseNotification(json);
             } catch (e) {
-               debugPrint('Failed to parse notification JSON: $e');
+              debugPrint('Failed to parse notification JSON: $e');
             }
           } else if (protocolVer == 3) {
-            // Brotli compressed - not supported natively in standard dart:io without plugins usually, 
-            // but let's assume zlib is used mostly for protover 2. 
+            // Brotli compressed - not supported natively in standard dart:io without plugins usually,
+            // but let's assume zlib is used mostly for protover 2.
             // If protover 3 is used, we might need 'brotli' package or skip.
             // Bilibili usually negotiates protover. We sent 2 in auth.
             debugPrint('Brotli compression (ver 3) not supported yet');
@@ -163,19 +163,87 @@ class LiveSocketService {
         final user = info[2] as List;
         final nickname = user[1] as String;
         final uid = user[0] as int;
-        
+
+        final isadmin = user.length > 2 ? (user[2] as int) : 0;
+        final vip = user.length > 3 ? (user[3] as int) : 0;
+        final svip = user.length > 4 ? (user[4] as int) : 0;
+
+        List<dynamic> medal = [];
+        if (info.length > 3 && info[3] != null) {
+          medal = info[3] as List;
+        }
+
+        List<dynamic> userLevel = [];
+        if (info.length > 4 && info[4] != null) {
+          userLevel = info[4] as List;
+        }
+
         final item = LiveDanmakuItem(
           text: text,
           nickname: nickname,
           uid: uid,
-          timeline: DateTime.now().toString(), // Or parsing from info
+          timeline: DateTime.now().toString(),
+          isadmin: isadmin,
+          vip: vip,
+          svip: svip,
+          medal: medal,
+          userLevel: userLevel,
         );
         _danmakuController.add(item);
       }
+    } else if (cmd == 'INTERACT_WORD') {
+      final data = json['data'] as Map<String, dynamic>;
+      final uname = data['uname'] as String;
+      final msgType = data['msg_type'] as int;
+      
+      String text = '进入直播间';
+      if (msgType == 2) text = '关注了主播';
+      if (msgType == 3) text = '分享了直播间';
+
+      final item = LiveDanmakuItem(
+        text: text,
+        nickname: uname,
+        uid: data['uid'] as int,
+        dmType: 1, // Interact
+        medal: data['fans_medal'] != null 
+            ? [data['fans_medal']['medal_level'], data['fans_medal']['medal_name'], '', data['fans_medal']['anchor_roomid'], data['fans_medal']['medal_color'] ?? 0] 
+            : [],
+      );
+      _danmakuController.add(item);
+    } else if (cmd == 'NOTICE_MSG') {
+      final msgSelf = json['msg_self'] as String?;
+      final msgCommon = json['msg_common'] as String?;
+      final msg = msgSelf ?? msgCommon;
+      
+      if (msg != null && msg.isNotEmpty) {
+         final item = LiveDanmakuItem(
+          text: msg,
+          nickname: '系统消息',
+          uid: 0,
+          dmType: 3, // System Notice
+        );
+        _danmakuController.add(item);
+      }
+    } else if (cmd == 'SEND_GIFT') {
+      final data = json['data'] as Map<String, dynamic>;
+      final uname = data['uname'] as String;
+      final giftName = data['giftName'] as String;
+      final num = data['num'] as int;
+      
+      final item = LiveDanmakuItem(
+        text: '投喂了 $giftName x$num',
+        nickname: uname,
+        uid: data['uid'] as int,
+        dmType: 2, // Gift
+        medal: data['medal_info'] != null 
+            ? [data['medal_info']['medal_level'], data['medal_info']['medal_name'], '', data['medal_info']['anchor_roomid'], data['medal_info']['medal_color'] ?? 0] 
+            : [],
+      );
+      _danmakuController.add(item);
     }
     // Handle other cmds like SEND_GIFT, INTERACT_WORD (entry), etc. if needed
   }
-  
+
   void dispose() {
     disconnect();
     _danmakuController.close();

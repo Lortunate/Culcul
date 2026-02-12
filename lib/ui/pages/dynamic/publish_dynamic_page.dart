@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/core/types/result.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:culcul/providers/dynamic/dynamic_provider.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/emoji_picker.dart';
@@ -32,12 +31,10 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
 
   Future<void> _pickImage() async {
     if (_images.length >= 9) return;
-    
+
     final picker = ImagePicker();
-    final picked = await picker.pickMultiImage(
-      limit: 9 - _images.length,
-    );
-    
+    final picked = await picker.pickMultiImage(limit: 9 - _images.length);
+
     if (picked.isNotEmpty) {
       setState(() {
         _images.addAll(picked.map((e) => File(e.path)));
@@ -85,7 +82,9 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
   void _insertText(String text) {
     if (!_controller.selection.isValid) {
       _controller.text += text;
-      _controller.selection = TextSelection.fromPosition(TextPosition(offset: _controller.text.length));
+      _controller.selection = TextSelection.fromPosition(
+        TextPosition(offset: _controller.text.length),
+      );
     } else {
       final textSelection = _controller.selection;
       final newText = _controller.text.replaceRange(
@@ -111,7 +110,9 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
       final List<DynamicUploadImageData> uploadedImages = [];
       if (_images.isNotEmpty) {
         for (var img in _images) {
-          final result = await ref.read(dynamicRepositoryProvider).uploadImage(img);
+          final result = await ref
+              .read(dynamicRepositoryProvider)
+              .uploadImage(img);
           result.when(
             success: (data) => uploadedImages.add(data),
             failure: (e) => throw e,
@@ -119,28 +120,24 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
         }
       }
 
-      final result = await ref.read(dynamicRepositoryProvider).publishDynamic(
-            content: _controller.text,
-            images: uploadedImages,
-          );
+      final result = await ref
+          .read(dynamicRepositoryProvider)
+          .publishDynamic(content: _controller.text, images: uploadedImages);
 
-      result.when(
-        success: (_) {},
-        failure: (e) => throw e,
-      );
+      result.when(success: (_) {}, failure: (e) => throw e);
 
       if (mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('发布成功')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('发布成功')));
         ref.invalidate(dynamicProvider);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('发布失败: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('发布失败: $e')));
       }
     } finally {
       if (mounted) setState(() => _isPublishing = false);
@@ -232,7 +229,10 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
                           color: colorScheme.onSurfaceVariant,
                         ),
                       )
-                    : const Text('发布', style: TextStyle(fontWeight: FontWeight.bold)),
+                    : const Text(
+                        '发布',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
               ),
             ),
           ],
@@ -241,7 +241,10 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
           children: [
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 children: [
                   TextField(
                     controller: _controller,
@@ -262,11 +265,12 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
-                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 8,
+                            mainAxisSpacing: 8,
+                          ),
                       itemCount: _images.length + (_images.length < 9 ? 1 : 0),
                       itemBuilder: (context, index) {
                         if (index == _images.length) {
@@ -291,10 +295,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
         Positioned.fill(
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.file(
-              _images[index],
-              fit: BoxFit.cover,
-            ),
+            child: Image.file(_images[index], fit: BoxFit.cover),
           ),
         ),
         Positioned(
@@ -349,20 +350,14 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
         children: [
           Row(
             children: [
-              _ToolbarAction(
-                icon: Icons.image_outlined,
-                onTap: _pickImage,
-              ),
+              _ToolbarAction(icon: Icons.image_outlined, onTap: _pickImage),
               const SizedBox(width: 24),
               _ToolbarAction(
                 icon: Icons.alternate_email,
                 onTap: () => _insertText('@'),
               ),
               const SizedBox(width: 24),
-              _ToolbarAction(
-                icon: Icons.tag,
-                onTap: _showTopicPicker,
-              ),
+              _ToolbarAction(icon: Icons.tag, onTap: _showTopicPicker),
               const SizedBox(width: 24),
               _ToolbarAction(
                 icon: Icons.sentiment_satisfied_alt,
@@ -372,10 +367,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
           ),
           Text(
             '${_controller.text.length}字',
-            style: TextStyle(
-              color: colorScheme.outline,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: colorScheme.outline, fontSize: 12),
           ),
         ],
       ),

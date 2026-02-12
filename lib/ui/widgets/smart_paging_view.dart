@@ -1,3 +1,4 @@
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,10 @@ class SmartPagingView<T> extends HookConsumerWidget {
     // 如果是首次加载且没有数据，显示骨架屏
     // 只有当是 Loading 状态 且 没有 value 时，才显示 Skeleton
     if (asyncValue.isLoading && !asyncValue.hasValue) {
-      return KeyedSubtree(key: const ValueKey('paging_loading'), child: skeleton);
+      return KeyedSubtree(
+        key: const ValueKey('paging_loading'),
+        child: skeleton,
+      );
     }
 
     final items = asyncValue.value ?? [];
@@ -64,7 +68,7 @@ class SmartPagingView<T> extends HookConsumerWidget {
         slivers: [
           SliverFillRemaining(
             child: Center(
-              child: AppErrorWidget(message: '暂无内容', onRetry: onRefresh),
+              child: AppErrorWidget(message: t.common.no_content, onRetry: onRefresh),
             ),
           ),
         ],
@@ -77,8 +81,8 @@ class SmartPagingView<T> extends HookConsumerWidget {
     return EasyRefresh(
       key: const ValueKey('paging_data'),
       controller: erController,
-      header: const AppRefreshHeader(),
-      footer: onLoadMore == null ? null : const AppLoadFooter(),
+      header: AppRefreshHeader(),
+      footer: onLoadMore == null ? null : AppLoadFooter(),
       onRefresh: () async {
         try {
           await onRefresh();

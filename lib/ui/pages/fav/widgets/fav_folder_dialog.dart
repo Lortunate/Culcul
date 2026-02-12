@@ -5,10 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 class FavFolderDialog extends HookWidget {
   final FavFolderModel? folder;
 
-  const FavFolderDialog({
-    super.key,
-    this.folder,
-  });
+  const FavFolderDialog({super.key, this.folder});
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +19,10 @@ class FavFolderDialog extends HookWidget {
     // Try to infer privacy from attr if editing
     useEffect(() {
       if (folder != null) {
-         // This is a guess: usually odd attr or specific bit means private.
-         // Without docs, safe to default to false or not change it.
-         // But users might want to see current state.
-         // Let's just leave it as false for now to avoid confusion.
+        // This is a guess: usually odd attr or specific bit means private.
+        // Without docs, safe to default to false or not change it.
+        // But users might want to see current state.
+        // Let's just leave it as false for now to avoid confusion.
       }
       return null;
     }, [folder]);

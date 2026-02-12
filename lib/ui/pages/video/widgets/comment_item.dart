@@ -76,41 +76,25 @@ class CommentItemWidget extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.bold,
-              color: isVip ? const Color(0xFFFB7299) : colorScheme.onSurface,
+              color: isVip ? colorScheme.primary : colorScheme.onSurface,
             ),
           ),
         ),
         const SizedBox(width: 6),
         if (item.member.level_info.current_level > 0)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0.5),
-            margin: const EdgeInsets.only(right: 6),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-                width: 0.5,
-              ),
-              borderRadius: BorderRadius.circular(2),
-            ),
-            child: Text(
-              'LV${item.member.level_info.current_level}',
-              style: theme.textTheme.labelSmall?.copyWith(
-                fontSize: 9,
-                color: colorScheme.outline,
-                fontStyle: FontStyle.italic,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
+          Padding(
+            padding: const EdgeInsets.only(right: 6),
+            child: LevelTag(level: item.member.level_info.current_level),
           ),
         if (isUpper)
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 0.5),
             decoration: BoxDecoration(
-              color: const Color(0xFFFB7299),
+              color: colorScheme.primary,
               borderRadius: BorderRadius.circular(2),
             ),
             child: Text(
-              'UP',
+              t.common.up,
               style: theme.textTheme.labelSmall?.copyWith(
                 fontSize: 9,
                 color: Colors.white,
@@ -124,6 +108,7 @@ class CommentItemWidget extends StatelessWidget {
 
   Widget _buildContent(BuildContext context, ThemeData theme) {
     final colorScheme = theme.colorScheme;
+    final t = Translations.of(context);
     final content = item.content;
     final message = content.message;
     final emote = content.emote;
@@ -136,7 +121,7 @@ class CommentItemWidget extends StatelessWidget {
     if (isReply && members.isNotEmpty) {
       spans.add(
         TextSpan(
-          text: '回复 @${members.first.uname} : ',
+          text: t.video.reply_to(name: members.first.uname),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: colorScheme.primary,
             fontWeight: FontWeight.bold,
@@ -182,7 +167,7 @@ class CommentItemWidget extends StatelessWidget {
   Widget _buildFooter(BuildContext context, ThemeData theme) {
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
-    
+
     final isLiked = item.action == 1;
 
     return Row(
@@ -190,7 +175,7 @@ class CommentItemWidget extends StatelessWidget {
         Text(
           FormatUtils.formatTimestamp(item.ctime),
           style: theme.textTheme.labelSmall?.copyWith(
-            color: const Color(0xFF9499A0),
+            color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
         if (item.content.device.isNotEmpty) ...[
@@ -198,15 +183,15 @@ class CommentItemWidget extends StatelessWidget {
           Text(
             item.content.device,
             style: theme.textTheme.labelSmall?.copyWith(
-              color: const Color(0xFF9499A0),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
         ],
         const Spacer(),
         _buildAction(
           context: context,
-          icon: isLiked ? Icons.thumb_up : Icons.thumb_up_outlined,
-          color: isLiked ? const Color(0xFFFB7299) : null,
+          icon: isLiked ? Icons.thumb_up_rounded : Icons.thumb_up_outlined,
+          color: isLiked ? colorScheme.primary : null,
           label: item.like > 0 ? FormatUtils.formatNumber(item.like) : '',
           onTap: onLike,
         ),
@@ -228,12 +213,12 @@ class CommentItemWidget extends StatelessWidget {
         AppClickable(
           onTap: () {},
           borderRadius: BorderRadius.circular(16),
-          child: const Padding(
-            padding: EdgeInsets.all(4),
+          child: Padding(
+            padding: const EdgeInsets.all(4),
             child: Icon(
               Icons.more_vert_rounded,
               size: 16,
-              color: Color(0xFF9499A0),
+              color: theme.colorScheme.onSurfaceVariant,
             ),
           ),
         ),
@@ -249,7 +234,7 @@ class CommentItemWidget extends StatelessWidget {
     VoidCallback? onTap,
   }) {
     final theme = Theme.of(context);
-    final contentColor = color ?? const Color(0xFF9499A0);
+    final contentColor = color ?? theme.colorScheme.onSurfaceVariant;
 
     return InkWell(
       onTap: onTap,
@@ -259,11 +244,7 @@ class CommentItemWidget extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              size: 18,
-              color: contentColor,
-            ),
+            Icon(icon, size: 18, color: contentColor),
             if (label.isNotEmpty) ...[
               const SizedBox(width: 4),
               Text(

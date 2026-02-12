@@ -7,10 +7,7 @@ import 'package:flutter/material.dart';
 class CommentImagesWidget extends StatelessWidget {
   final List<CommentPicture> pictures;
 
-  const CommentImagesWidget({
-    super.key,
-    required this.pictures,
-  });
+  const CommentImagesWidget({super.key, required this.pictures});
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +31,13 @@ class CommentImagesWidget extends StatelessWidget {
     // Single image logic
     // Limit max size to avoid taking too much space
     // Aspect ratio can be respected but with limits
-    final double? w = picture.img_width > 0 ? picture.img_width.toDouble() : null;
-    final double? h = picture.img_height > 0 ? picture.img_height.toDouble() : null;
-    
+    final double? w = picture.img_width > 0
+        ? picture.img_width.toDouble()
+        : null;
+    final double? h = picture.img_height > 0
+        ? picture.img_height.toDouble()
+        : null;
+
     // Calculate aspect ratio
     double aspectRatio = 1.0;
     if (w != null && h != null && h > 0) {
@@ -46,7 +47,7 @@ class CommentImagesWidget extends StatelessWidget {
     // Constraints
     const double maxSide = 200.0;
     const double minSide = 100.0;
-    
+
     // Simple constrained box approach
     return GestureDetector(
       onTap: () => _openPreview(context, imageUrls, 0),
@@ -89,16 +90,17 @@ class CommentImagesWidget extends StatelessWidget {
         const int crossAxisCount = 3;
         const double spacing = 8.0;
         final double totalWidth = constraints.maxWidth;
-        final double itemSize = (totalWidth - (spacing * (crossAxisCount - 1))) / crossAxisCount;
-        
+        final double itemSize =
+            (totalWidth - (spacing * (crossAxisCount - 1))) / crossAxisCount;
+
         // We might want to cap the item size if it's too big (e.g. on tablet)
         // But usually in comments column it's fine.
-        
+
         return Wrap(
           spacing: spacing,
           runSpacing: spacing,
           children: List.generate(pictures.length, (index) {
-             return GestureDetector(
+            return GestureDetector(
               onTap: () => _openPreview(context, imageUrls, index),
               child: Hero(
                 tag: pictures[index].img_src,
@@ -111,7 +113,8 @@ class CommentImagesWidget extends StatelessWidget {
                       FormatUtils.formatImageUrl(pictures[index].img_src),
                       fit: BoxFit.cover,
                       cache: true,
-                      loadStateChanged: (state) => _buildLoadState(context, state),
+                      loadStateChanged: (state) =>
+                          _buildLoadState(context, state),
                     ),
                   ),
                 ),
@@ -142,10 +145,8 @@ class CommentImagesWidget extends StatelessWidget {
   void _openPreview(BuildContext context, List<String> imageUrls, int index) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ImagePreviewPage(
-          imageUrls: imageUrls,
-          initialIndex: index,
-        ),
+        builder: (context) =>
+            ImagePreviewPage(imageUrls: imageUrls, initialIndex: index),
       ),
     );
   }

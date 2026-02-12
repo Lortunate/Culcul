@@ -1,7 +1,8 @@
+import 'package:culcul/core/types/result.dart';
 import 'package:culcul/data/models/fav/index.dart';
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/repositories/fav_repository.dart';
 import 'package:culcul/providers/auth/auth_provider.dart';
+import 'package:culcul/core/extensions/auth_extension.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'fav_provider.g.dart';
@@ -16,49 +17,56 @@ class FavCreatedFolders extends _$FavCreatedFolders {
     }
     final mid = int.parse(authState.user!.id);
     final repository = ref.read(favRepositoryProvider);
-    final response = await repository.getCreatedFolders(upMid: mid);
-    
-    final folders = response.list ?? [];
-    if (folders.isEmpty) return [];
+    final result = await repository.getCreatedFolders(upMid: mid);
 
-    // Fetch covers for created folders as they don't come with covers
-    final foldersWithCovers = await Future.wait(
-      folders.map((folder) async {
-        // If cover exists and is not empty, use it
-        if (folder.cover != null && folder.cover!.isNotEmpty) {
-          return folder;
-        }
+    return switch (result) {
+      Success(value: final response) => () async {
+        final folders = response.list ?? [];
+        if (folders.isEmpty) return <FavFolderModel>[];
 
-        try {
-          // Fetch folder info to get the cover
-          // Use ps: 1 because we only need the info or the first video's cover
-          final resources = await repository.getFolderResources(
-            mediaId: folder.id,
-            pn: 1,
-            ps: 1,
-          );
-          
-          String cover = resources.info.cover;
-          
-          // If info cover is empty, try to get from the first media
-          if (cover.isEmpty && 
-              resources.medias != null && 
-              resources.medias!.isNotEmpty) {
-            cover = resources.medias!.first.cover;
-          }
+        // Fetch covers for created folders as they don't come with covers
+        final foldersWithCovers = await Future.wait(
+          folders.map((folder) async {
+            // If cover exists and is not empty, use it
+            if (folder.cover != null && folder.cover!.isNotEmpty) {
+              return folder;
+            }
 
-          if (cover.isNotEmpty) {
-            return folder.copyWith(cover: cover);
-          }
-        } catch (e) {
-          // Ignore errors for individual folder info fetch
-        }
-        
-        return folder;
-      }),
-    );
+            try {
+              // Fetch folder info to get the cover
+              // Use ps: 1 because we only need the info or the first video's cover
+              final resResult = await repository.getFolderResources(
+                mediaId: folder.id,
+                pn: 1,
+                ps: 1,
+              );
 
-    return foldersWithCovers;
+              if (resResult case Success(value: final resources)) {
+                String cover = resources.info.cover;
+
+                // If info cover is empty, try to get from the first media
+                if (cover.isEmpty &&
+                    resources.medias != null &&
+                    resources.medias!.isNotEmpty) {
+                  cover = resources.medias!.first.cover;
+                }
+
+                if (cover.isNotEmpty) {
+                  return folder.copyWith(cover: cover);
+                }
+              }
+            } catch (e) {
+              // Ignore errors for individual folder info fetch
+            }
+
+            return folder;
+          }),
+        );
+
+        return foldersWithCovers;
+      }(),
+      Failure(exception: final e) => throw e,
+    };
   }
 }
 
@@ -81,17 +89,21 @@ class FavCollectedFolders extends _$FavCollectedFolders {
       return [];
     }
     final mid = int.parse(authState.user!.id);
-    final response = await ref
+    final result = await ref
         .read(favRepositoryProvider)
         .getCollectedFolders(upMid: mid, pn: page, ps: _pageSize);
 
-    // Check if we have more data based on count or list size
-    // API returns count, but we can also just check if list size < pageSize
-    if ((response.list?.length ?? 0) < _pageSize) {
-      _hasMore = false;
-    }
-
-    return response.list ?? [];
+    return switch (result) {
+      Success(value: final response) => () {
+        // Check if we have more data based on count or list size
+        // API returns count, but we can also just check if list size < pageSize
+        if ((response.list?.length ?? 0) < _pageSize) {
+          _hasMore = false;
+        }
+        return response.list ?? [];
+      }(),
+      Failure(exception: final e) => throw e,
+    };
   }
 
   Future<void> loadMore() async {
@@ -102,9 +114,8 @@ class FavCollectedFolders extends _$FavCollectedFolders {
       final newItems = await _fetchItems(_page + 1);
       _page++;
       state = AsyncValue.data([...currentList, ...newItems]);
-    } catch (e, st) {
+    } catch (e) {
       // Don't set state to error to preserve current list
-      // state = AsyncValue.error(e, st);
       rethrow;
     }
   }
@@ -131,33 +142,37 @@ class FavFolderResources extends _$FavFolderResources {
   }
 
   Future<FavFolderDetailState> _fetchItems(int mediaId, int page) async {
-    final response = await ref
+    final result = await ref
         .read(favRepositoryProvider)
         .getFolderResources(mediaId: mediaId, pn: page, ps: _pageSize);
 
-    _hasMore = response.hasMore;
-
-    return FavFolderDetailState(
-      info: response.info,
-      list: response.medias ?? [],
-    );
+    return switch (result) {
+      Success(value: final response) => () {
+        _hasMore = response.hasMore;
+        return FavFolderDetailState(
+          info: response.info,
+          list: response.medias ?? [],
+        );
+      }(),
+      Failure(exception: final e) => throw e,
+    };
   }
 
   Future<void> loadMore(int mediaId) async {
     if (!_hasMore || state.isLoading) return;
 
     final currentList = state.value?.list ?? [];
-    final currentInfo = state.value?.info;
-    
+
     try {
       final newState = await _fetchItems(mediaId, _page + 1);
       _page++;
-      state = AsyncValue.data(FavFolderDetailState(
-        info: newState.info,
-        list: [...currentList, ...newState.list],
-      ));
-    } catch (e, st) {
-      // Handle error
+      state = AsyncValue.data(
+        FavFolderDetailState(
+          info: newState.info,
+          list: [...currentList, ...newState.list],
+        ),
+      );
+    } catch (e) {
       rethrow;
     }
   }

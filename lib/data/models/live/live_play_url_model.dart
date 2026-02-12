@@ -9,7 +9,8 @@ abstract class LivePlayUrlModel with _$LivePlayUrlModel {
     @JsonKey(name: 'current_quality') required int currentQuality,
     @JsonKey(name: 'accept_quality') required List<String> acceptQuality,
     @JsonKey(name: 'current_qn') required int currentQn,
-    @JsonKey(name: 'quality_description') required List<LiveQualityDescription> qualityDescription,
+    @JsonKey(name: 'quality_description')
+    required List<LiveQualityDescription> qualityDescription,
     required List<LiveStreamUrl> durl,
   }) = _LivePlayUrlModel;
 

@@ -33,13 +33,11 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
         height: 36,
         margin: const EdgeInsets.only(left: 8, right: 4),
         decoration: BoxDecoration(
-          color: theme.inputDecorationTheme.fillColor ??
+          color:
+              theme.inputDecorationTheme.fillColor ??
               colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: Colors.transparent,
-            width: 0.0,
-          ),
+          border: Border.all(color: Colors.transparent, width: 0.0),
         ),
         child: Row(
           children: [
@@ -83,16 +81,11 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
             if (controller.text.isNotEmpty) ...[
               IconButton(
                 padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(
-                  minWidth: 36,
-                  minHeight: 36,
-                ),
+                constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
                 icon: Icon(
                   Icons.cancel,
                   size: 16,
-                  color: colorScheme.onSurfaceVariant.withValues(
-                    alpha: 0.7,
-                  ),
+                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                 ),
                 onPressed: onClear,
               ),

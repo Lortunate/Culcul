@@ -11,10 +11,7 @@ class SpeedIndicator extends StatelessWidget {
       right: 0,
       child: Center(
         child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 8,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
             color: Colors.black.withValues(alpha: 0.6),
             borderRadius: BorderRadius.circular(20),
@@ -22,11 +19,7 @@ class SpeedIndicator extends StatelessWidget {
           child: const Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.fast_forward_rounded,
-                color: Colors.white,
-                size: 16,
-              ),
+              Icon(Icons.fast_forward_rounded, color: Colors.white, size: 16),
               SizedBox(width: 8),
               Text(
                 '2.0x 倍速播放中',

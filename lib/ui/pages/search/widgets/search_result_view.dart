@@ -1,4 +1,4 @@
-import 'package:culcul/data/models/search_result.dart';
+import 'package:culcul/data/models/search/search_result.dart';
 import 'package:culcul/providers/search/search_provider.dart';
 import 'package:culcul/ui/pages/search/widgets/items/search_article_item.dart';
 import 'package:culcul/ui/pages/search/widgets/items/search_bangumi_item.dart';
@@ -103,7 +103,8 @@ class _SearchResultList extends HookConsumerWidget {
                 child: ListView.separated(
                   padding: const EdgeInsets.all(12),
                   itemCount: items.length + (data.page < data.numPages ? 1 : 0),
-                  separatorBuilder: (context, index) => const SizedBox(height: 16),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 16),
                   itemBuilder: (context, index) {
                     if (index == items.length) {
                       return const Center(

@@ -23,7 +23,7 @@ class RetryInterceptor extends Interceptor {
 
     if (retries < maxRetries && _shouldRetry(err)) {
       await Future.delayed(Duration(milliseconds: retryInterval));
-      
+
       try {
         extra['retries'] = retries + 1;
         final options = Options(
@@ -47,7 +47,7 @@ class RetryInterceptor extends Interceptor {
           onSendProgress: err.requestOptions.onSendProgress,
           onReceiveProgress: err.requestOptions.onReceiveProgress,
         );
-        
+
         return handler.resolve(response);
       } catch (e) {
         return super.onError(err, handler);

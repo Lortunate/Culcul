@@ -1,4 +1,5 @@
 import 'package:culcul/data/models/notification/private_message_model.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:culcul/ui/widgets/bilibili_emoji_text.dart';
@@ -22,12 +23,12 @@ class ChatMessageItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (message.isWithdrawn) {
-      return const Center(
+      return Center(
         child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: 8),
           child: Text(
-            '消息已撤回',
-            style: TextStyle(color: Colors.grey, fontSize: 12),
+            t.notification.chat.message_withdrawn,
+            style: const TextStyle(color: Colors.grey, fontSize: 12),
           ),
         ),
       );
@@ -35,7 +36,7 @@ class ChatMessageItem extends StatelessWidget {
 
     if (message.msgType == 10) {
       // 系统通知
-      final content = message.contentMap?['text'] as String? ?? '系统通知';
+      final content = message.contentMap?['text'] as String? ?? t.notification.types.system;
       return _buildSystemMessage(context, content);
     }
 
@@ -196,10 +197,10 @@ class ChatMessageItem extends StatelessWidget {
       );
     } else {
       // 未知类型
-      String text = '[不支持的消息类型: ${message.msgType}]';
+      String text = t.notification.chat.unsupported_type(type: message.msgType);
       if (message.contentMap != null) {
         if (message.contentMap!.containsKey('title')) {
-          text += '\n${message.contentMap!['title']}';
+          text += '\\n${message.contentMap!['title']}';
         }
       }
       content = Text(

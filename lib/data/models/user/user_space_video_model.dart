@@ -1,4 +1,4 @@
-import 'package:culcul/data/models/video_model.dart';
+import 'package:culcul/data/models/video/video_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'user_space_video_model.freezed.dart';

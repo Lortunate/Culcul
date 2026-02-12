@@ -16,12 +16,17 @@ class UserVideoTab extends ConsumerStatefulWidget {
 }
 
 class _UserVideoTabState extends ConsumerState<UserVideoTab> {
-  String _order = 'pubdate'; // pubdate (latest), click (popular), stow (most fav)
+  String _order =
+      'pubdate'; // pubdate (latest), click (popular), stow (most fav)
 
   @override
   Widget build(BuildContext context) {
-    final videosAsync = ref.watch(userSpaceVideosProvider(widget.mid, order: _order));
-    final notifier = ref.read(userSpaceVideosProvider(widget.mid, order: _order).notifier);
+    final videosAsync = ref.watch(
+      userSpaceVideosProvider(widget.mid, order: _order),
+    );
+    final notifier = ref.read(
+      userSpaceVideosProvider(widget.mid, order: _order).notifier,
+    );
 
     return CustomScrollView(
       key: PageStorageKey<String>('user_video_tab_${widget.mid}'),
@@ -66,55 +71,55 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab> {
               );
             }
             return SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  if (index == videos.length) {
-                    // Load more trigger
-                    notifier.loadMore();
-                    return const Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  }
-                  final video = videos[index];
-                  // Map UserSpaceVideoModel to VideoModel or similar for VideoListCard
-                  // VideoListCard expects VideoModel. UserSpaceVideoModel is similar but distinct.
-                  // We might need to map it or create a new card.
-                  // Ideally we reuse VideoListCard. Let's see if we can map.
-                  
-                  return VideoListCard(
-                    coverUrl: video.pic,
-                    title: video.title,
-                    duration: video.duration,
-                    viewCount: video.stat.view,
-                    danmakuCount: video.stat.danmaku,
-                    author: Row(
-                      children: [
-                        const Icon(Icons.access_time_rounded, size: 14, color: Colors.grey),
-                        const SizedBox(width: 4),
-                        Text(
-                          FormatUtils.formatTimestamp(video.pubDate),
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                    onTap: () {
-                      VideoDetailRoute(bvid: video.bvid).push(context);
-                    },
+              delegate: SliverChildBuilderDelegate((context, index) {
+                if (index == videos.length) {
+                  // Load more trigger
+                  notifier.loadMore();
+                  return const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Center(child: CircularProgressIndicator()),
                   );
-                },
-                childCount: videos.length + 1,
-              ),
+                }
+                final video = videos[index];
+                // Map UserSpaceVideoModel to VideoModel or similar for VideoListCard
+                // VideoListCard expects VideoModel. UserSpaceVideoModel is similar but distinct.
+                // We might need to map it or create a new card.
+                // Ideally we reuse VideoListCard. Let's see if we can map.
+
+                return VideoListCard(
+                  coverUrl: video.pic,
+                  title: video.title,
+                  duration: video.duration,
+                  viewCount: video.stat.view,
+                  danmakuCount: video.stat.danmaku,
+                  author: Row(
+                    children: [
+                      const Icon(
+                        Icons.access_time_rounded,
+                        size: 14,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        FormatUtils.formatTimestamp(video.pubDate),
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                  onTap: () {
+                    VideoDetailRoute(bvid: video.bvid).push(context);
+                  },
+                );
+              }, childCount: videos.length + 1),
             );
           },
-          error: (err, stack) => SliverFillRemaining(
-            child: Center(child: Text('Error: $err')),
-          ),
+          error: (err, stack) =>
+              SliverFillRemaining(child: Center(child: Text('Error: $err'))),
           loading: () => SliverList(
             delegate: SliverChildBuilderDelegate(
-              (context, index) => const AppShimmer(
-                child: VideoListSkeleton(),
-              ),
+              (context, index) => const AppShimmer(child: VideoListSkeleton()),
               childCount: 10,
             ),
           ),
@@ -146,9 +151,7 @@ class _SortChip extends StatelessWidget {
         fontSize: 12,
         color: selected ? Theme.of(context).colorScheme.primary : null,
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     );
   }
 }

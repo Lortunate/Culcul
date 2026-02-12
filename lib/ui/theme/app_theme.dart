@@ -32,18 +32,18 @@ class AppTheme {
       colorScheme: colorScheme,
       splashColor: AppColors.splashColor,
       highlightColor: AppColors.highlightColor,
-      
+
       textTheme: AppTextTheme.light,
 
       appBarTheme: AppComponentTheme.appBar(false),
       tabBarTheme: AppComponentTheme.tabBar(false),
       bottomNavigationBarTheme: AppComponentTheme.bottomNavBar(false),
       cardTheme: AppComponentTheme.card(false),
-      
+
       filledButtonTheme: AppComponentTheme.filledButton(),
       textButtonTheme: AppComponentTheme.textButton(false),
       outlinedButtonTheme: AppComponentTheme.outlinedButton(false),
-      
+
       inputDecorationTheme: AppComponentTheme.inputDecoration(false),
       dividerTheme: AppComponentTheme.divider(false),
     );

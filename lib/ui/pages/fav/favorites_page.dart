@@ -1,9 +1,9 @@
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/providers/auth/auth_provider.dart';
+import 'package:culcul/core/extensions/auth_extension.dart';
 import 'package:culcul/providers/fav/fav_provider.dart';
-import 'package:culcul/repositories/fav_repository.dart';
-import 'package:culcul/ui/pages/fav/fav_folder_list.dart';
+import 'package:culcul/ui/pages/fav/widgets/fav_folder_list.dart';
 import 'package:culcul/ui/pages/fav/widgets/fav_folder_dialog.dart';
 import 'package:culcul/ui/widgets/app_tab_bar.dart';
 import 'package:culcul/ui/widgets/guest_view.dart';
@@ -42,7 +42,9 @@ class FavoritesPage extends HookConsumerWidget {
 
                 if (result != null) {
                   try {
-                    await ref.read(favRepositoryProvider).addFolder(
+                    await ref
+                        .read(favRepositoryProvider)
+                        .addFolder(
                           title: result['title']! as String,
                           intro: result['intro'] as String?,
                           privacy: result['privacy'] as int?,

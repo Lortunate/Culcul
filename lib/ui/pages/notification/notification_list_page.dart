@@ -1,4 +1,3 @@
-import 'package:culcul/core/router/router.dart';
 import 'package:culcul/data/models/notification/reply_model.dart';
 import 'package:culcul/providers/notification/at_provider.dart';
 import 'package:culcul/providers/notification/like_provider.dart';
@@ -7,7 +6,6 @@ import 'package:culcul/ui/pages/notification/widgets/notification_item_widget.da
 import 'package:culcul/ui/widgets/index.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 enum NotificationType { reply, at, like, system }

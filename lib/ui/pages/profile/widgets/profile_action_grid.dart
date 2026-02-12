@@ -1,7 +1,6 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/index.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:culcul/core/router/router.dart';
 
 class ProfileActionGrid extends StatelessWidget {

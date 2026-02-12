@@ -18,7 +18,7 @@ class SearchPage extends HookConsumerWidget {
     final defaultSearchAsync = ref.watch(defaultSearchProvider);
     final searchController = useTextEditingController();
     final focusNode = useFocusNode();
-    
+
     useListenable(focusNode);
     useListenable(searchController);
 
@@ -45,7 +45,7 @@ class SearchPage extends HookConsumerWidget {
       focusNode.requestFocus();
       void listener() {
         final text = searchController.text;
-        
+
         if (confirmedKeyword.value != null && text != confirmedKeyword.value) {
           confirmedKeyword.value = null;
         }

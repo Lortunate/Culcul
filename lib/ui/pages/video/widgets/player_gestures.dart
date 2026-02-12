@@ -2,7 +2,6 @@ import 'package:culcul/providers/video/player_controller.dart';
 import 'package:culcul/ui/pages/video/widgets/controls/gesture_indicator.dart';
 import 'package:culcul/ui/pages/video/widgets/controls/seek_ripple_overlay.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -10,9 +9,8 @@ class PlayerGestures extends HookConsumerWidget {
   final Widget child;
   final VoidCallback onTap;
   final VoidCallback onDoubleTap;
-  final Function(double, bool isLeft)
-  onVerticalDragUpdate; // For brightness/volume
-  final Function(double) onHorizontalDragUpdate; // For seeking
+  final Function(double, bool isLeft) onVerticalDragUpdate;
+  final Function(double) onHorizontalDragUpdate;
   final VoidCallback onDragEnd;
   final VoidCallback? onLongPressStart;
   final VoidCallback? onLongPressEnd;
@@ -56,9 +54,8 @@ class PlayerGestures extends HookConsumerWidget {
     final indicatorLabel = useState('');
     final indicatorValue = useState<double?>(null);
     final indicatorTextValue = useState<String?>(null);
-    final rippleSide = useState(0); // 0: none, -1: left, 1: right
+    final rippleSide = useState(0);
 
-    // Store start position for seek calculation
     final startPosition = useRef<Duration>(Duration.zero);
     final totalDuration = useRef<Duration>(Duration.zero);
 
@@ -81,7 +78,6 @@ class PlayerGestures extends HookConsumerWidget {
           : (_) {
               horizontalDelta.value = 0.0;
               isHorizontalDrag.value = true;
-              // Capture current position and duration when drag starts
               final playerState = ref.read(playerControllerProvider);
               startPosition.value = playerState.position;
               totalDuration.value = playerState.duration;
@@ -95,27 +91,23 @@ class PlayerGestures extends HookConsumerWidget {
 
               showIndicator.value = true;
               final seconds = (horizontalDelta.value / 5).toInt();
-              
-              // Calculate target time
-              final targetSeconds = (startPosition.value.inSeconds + seconds).clamp(0, totalDuration.value.inSeconds);
+
+              final targetSeconds = (startPosition.value.inSeconds + seconds)
+                  .clamp(0, totalDuration.value.inSeconds);
               final targetDuration = Duration(seconds: targetSeconds);
 
-              indicatorIcon.value = seconds >= 0
+              indicatorIcon.value = seconds > 0
                   ? Icons.fast_forward_rounded
                   : Icons.fast_rewind_rounded;
-              
-              final diffText = '${seconds >= 0 ? '+' : ''}${seconds}s';
-              indicatorLabel.value = diffText;
-              
-              // Show target time / total time
-              indicatorTextValue.value = '${_formatDuration(targetDuration)} / ${_formatDuration(totalDuration.value)}';
-              
+              indicatorLabel.value = '${seconds > 0 ? '+' : ''}$seconds s';
+              indicatorTextValue.value =
+                  '${_formatDuration(targetDuration)} / ${_formatDuration(totalDuration.value)}';
               indicatorValue.value = null;
             },
       onHorizontalDragEnd: isLocked ? null : (_) => resetDrag(),
       onVerticalDragStart: isLocked
           ? null
-          : (_) {
+          : (details) {
               verticalDelta.value = 0.0;
               isVerticalDrag.value = true;
             },
@@ -123,48 +115,64 @@ class PlayerGestures extends HookConsumerWidget {
           ? null
           : (details) {
               if (!isVerticalDrag.value) return;
+              verticalDelta.value += details.primaryDelta ?? 0;
 
-              HapticFeedback.selectionClick();
-              final screenWidth = MediaQuery.of(context).size.width;
-              final isLeftSubscreen =
-                  details.globalPosition.dx < screenWidth / 2;
-
-              verticalDelta.value -=
-                  details.primaryDelta ?? 0; // Swipe up is positive
-              onVerticalDragUpdate(verticalDelta.value, isLeftSubscreen);
+              final isLeft =
+                  details.globalPosition.dx <
+                  MediaQuery.of(context).size.width / 2;
+              onVerticalDragUpdate(-details.primaryDelta!, isLeft);
 
               showIndicator.value = true;
-              indicatorTextValue.value = null; // Clear text value for volume/brightness
-              
-              if (isLeftSubscreen) {
-                if ((brightness ?? 0) < 0.3) {
-                  indicatorIcon.value = Icons.brightness_low;
-                } else if ((brightness ?? 0) < 0.7) {
-                  indicatorIcon.value = Icons.brightness_medium;
-                } else {
-                  indicatorIcon.value = Icons.brightness_high;
-                }
+              if (isLeft) {
+                indicatorIcon.value = Icons.brightness_6_rounded;
                 indicatorLabel.value = '亮度';
                 indicatorValue.value = brightness;
-                indicatorTextValue.value = '${((brightness ?? 0) * 100).toInt()}%';
+                indicatorTextValue.value = null;
               } else {
-                final v = volume ?? 0;
-                if (v <= 0) {
-                  indicatorIcon.value = Icons.volume_off;
-                } else if (v < 50) {
-                  indicatorIcon.value = Icons.volume_down;
-                } else {
-                  indicatorIcon.value = Icons.volume_up;
-                }
+                indicatorIcon.value = Icons.volume_up_rounded;
                 indicatorLabel.value = '音量';
-                indicatorValue.value = volume != null ? volume! / 100.0 : null;
-                indicatorTextValue.value = '${(volume ?? 0).toInt()}%';
+                indicatorValue.value = (volume ?? 0) / 100;
+                indicatorTextValue.value = null;
               }
             },
       onVerticalDragEnd: isLocked ? null : (_) => resetDrag(),
       child: Stack(
+        fit: StackFit.expand,
         children: [
           child,
+          if (!isLocked)
+            Positioned.fill(
+              child: GestureDetector(
+                onDoubleTapDown: (details) {
+                  final screenWidth = MediaQuery.of(context).size.width;
+                  if (details.globalPosition.dx < screenWidth * 0.2) {
+                    rippleSide.value = -1;
+                    final playerController = ref.read(
+                      playerControllerProvider.notifier,
+                    );
+                    playerController.seek(
+                      playerController.player.state.position -
+                          const Duration(seconds: 5),
+                    );
+                  } else if (details.globalPosition.dx > screenWidth * 0.8) {
+                    rippleSide.value = 1;
+                    final playerController = ref.read(
+                      playerControllerProvider.notifier,
+                    );
+                    playerController.seek(
+                      playerController.player.state.position +
+                          const Duration(seconds: 5),
+                    );
+                  }
+                },
+                child: Container(color: Colors.transparent),
+              ),
+            ),
+          if (rippleSide.value != 0)
+            SeekRippleOverlay(
+              isForward: rippleSide.value > 0,
+              onAnimationComplete: () => rippleSide.value = 0,
+            ),
           if (showIndicator.value)
             Center(
               child: GestureIndicator(
@@ -174,50 +182,6 @@ class PlayerGestures extends HookConsumerWidget {
                 textValue: indicatorTextValue.value,
               ),
             ),
-
-          if (rippleSide.value != 0)
-            Positioned.fill(
-              child: SeekRippleOverlay(
-                isForward: rippleSide.value == 1,
-                onAnimationComplete: () => rippleSide.value = 0,
-              ),
-            ),
-
-          // Double tap regions for seek
-          if (!isLocked) ...[
-            Positioned(
-              left: 0,
-              top: 0,
-              bottom: 0,
-              width:
-                  MediaQuery.of(context).size.width * 0.3, // Increased hit area
-              child: GestureDetector(
-                onDoubleTap: () {
-                  HapticFeedback.lightImpact();
-                  rippleSide.value = -1;
-                  onHorizontalDragUpdate(-50.0); // ~10s
-                  onDragEnd();
-                },
-                behavior: HitTestBehavior.translucent,
-              ),
-            ),
-            Positioned(
-              right: 0,
-              top: 0,
-              bottom: 0,
-              width:
-                  MediaQuery.of(context).size.width * 0.3, 
-              child: GestureDetector(
-                onDoubleTap: () {
-                  HapticFeedback.lightImpact();
-                  rippleSide.value = 1;
-                  onHorizontalDragUpdate(50.0); // ~10s
-                  onDragEnd();
-                },
-                behavior: HitTestBehavior.translucent,
-              ),
-            ),
-          ],
         ],
       ),
     );

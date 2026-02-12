@@ -7,8 +7,15 @@ class AppAvatar extends StatelessWidget {
   final String? url;
   final double size;
   final VoidCallback? onTap;
+  final BoxBorder? border;
 
-  const AppAvatar({super.key, this.url, this.size = 32, this.onTap});
+  const AppAvatar({
+    super.key,
+    this.url,
+    this.size = 32,
+    this.onTap,
+    this.border,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +35,14 @@ class AppAvatar extends StatelessWidget {
           color: hasUrl
               ? colorScheme.surfaceContainerHighest
               : colorScheme.primaryContainer,
-          border: hasUrl
-              ? Border.all(
-                  color: colorScheme.outlineVariant.withValues(alpha: 0.2),
-                  width: 0.5,
-                )
-              : null,
+          border:
+              border ??
+              (hasUrl
+                  ? Border.all(
+                      color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+                      width: 0.5,
+                    )
+                  : null),
         ),
         clipBehavior: Clip.antiAlias,
         child: hasUrl
@@ -55,7 +64,7 @@ class AppAvatar extends StatelessWidget {
               )
             : Center(
                 child: Text(
-                  '登录',
+                  t.auth.login,
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: colorScheme.primary,
                     fontWeight: FontWeight.bold,

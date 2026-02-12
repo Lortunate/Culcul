@@ -1,19 +1,21 @@
-import 'package:culcul/data/models/comment_model.dart';
-import 'package:culcul/domain/entities/dynamic_post.dart';
+import 'package:culcul/data/models/comment/comment_model.dart';
+import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:culcul/providers/dynamic/dynamic_comment_controller.dart';
 import 'package:culcul/ui/pages/video/widgets/comment_item.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class DynamicCommentsSliver extends ConsumerWidget {
-  final DynamicPost post;
+  final DynamicItem post;
 
   const DynamicCommentsSliver({super.key, required this.post});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(dynamicCommentControllerProvider(post));
-    final controller = ref.read(dynamicCommentControllerProvider(post).notifier);
+    final controller = ref.read(
+      dynamicCommentControllerProvider(post).notifier,
+    );
 
     if (state.isLoading && state.comments.isEmpty) {
       return const SliverToBoxAdapter(
@@ -55,18 +57,16 @@ class DynamicCommentsSliver extends ConsumerWidget {
     }
 
     return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          final comment = state.comments[index];
-          return CommentItemWidget(
-            item: comment,
-            onLike: () => controller.toggleLike(comment.rpid, comment.action == 1),
-            onDislike: () {},
-            onReply: () => _showReplySheet(context, ref, comment),
-          );
-        },
-        childCount: state.comments.length,
-      ),
+      delegate: SliverChildBuilderDelegate((context, index) {
+        final comment = state.comments[index];
+        return CommentItemWidget(
+          item: comment,
+          onLike: () =>
+              controller.toggleLike(comment.rpid, comment.action == 1),
+          onDislike: () {},
+          onReply: () => _showReplySheet(context, ref, comment),
+        );
+      }, childCount: state.comments.length),
     );
   }
 

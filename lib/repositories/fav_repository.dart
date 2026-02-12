@@ -1,32 +1,38 @@
+import 'package:culcul/core/errors/exceptions.dart';
+import 'package:culcul/core/providers/api_provider.dart';
+import 'package:culcul/core/repositories/base_repository.dart';
+import 'package:culcul/core/types/result.dart';
 import 'package:culcul/data/api/fav_api.dart';
 import 'package:culcul/data/models/fav/index.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-class FavRepository {
+part 'fav_repository.g.dart';
+
+@riverpod
+FavRepository favRepository(Ref ref) {
+  return FavRepository(ref.watch(favApiProvider));
+}
+
+class FavRepository extends BaseRepository {
   final FavApi _api;
 
   FavRepository(this._api);
 
-  Future<FavFolderListResponse> getCreatedFolders({required int upMid}) async {
-    final response = await _api.getCreatedFolders(upMid);
-    if (response.data == null) {
-      throw Exception('Failed to load created folders: ${response.message}');
-    }
-    return response.data!;
+  Future<Result<FavFolderListResponse, AppException>> getCreatedFolders({
+    required int upMid,
+  }) async {
+    return safeApiCall(() => _api.getCreatedFolders(upMid));
   }
 
-  Future<FavFolderListResponse> getCollectedFolders({
+  Future<Result<FavFolderListResponse, AppException>> getCollectedFolders({
     required int upMid,
     required int pn,
     required int ps,
   }) async {
-    final response = await _api.getCollectedFolders(upMid, pn, ps);
-    if (response.data == null) {
-      throw Exception('Failed to load collected folders: ${response.message}');
-    }
-    return response.data!;
+    return safeApiCall(() => _api.getCollectedFolders(upMid, pn, ps));
   }
 
-  Future<FavResourceListResponse> getFolderResources({
+  Future<Result<FavResourceListResponse, AppException>> getFolderResources({
     required int mediaId,
     required int pn,
     required int ps,
@@ -36,86 +42,75 @@ class FavRepository {
     int? tid,
     String platform = 'web',
   }) async {
-    final response = await _api.getFolderResources(
-      mediaId,
-      pn,
-      ps,
-      keyword: keyword,
-      order: order,
-      type: type,
-      tid: tid,
-      platform: platform,
+    return safeApiCall(
+      () => _api.getFolderResources(
+        mediaId,
+        pn,
+        ps,
+        keyword: keyword,
+        order: order,
+        type: type,
+        tid: tid,
+        platform: platform,
+      ),
     );
-    if (response.data == null) {
-      throw Exception('Failed to load folder resources: ${response.message}');
-    }
-    return response.data!;
   }
 
-  Future<FavFolderModel> addFolder({
+  Future<Result<FavFolderModel, AppException>> addFolder({
     required String title,
     String? intro,
     int? privacy,
     String? cover,
   }) async {
-    final response = await _api.addFolder(
-      title,
-      intro: intro,
-      privacy: privacy,
-      cover: cover,
+    return safeApiCall(
+      () => _api.addFolder(
+        title,
+        intro: intro,
+        privacy: privacy,
+        cover: cover,
+      ),
     );
-    if (response.code != 0 || response.data == null) {
-      throw Exception('Failed to add folder: ${response.message}');
-    }
-    return response.data!;
   }
 
-  Future<FavFolderModel> editFolder({
+  Future<Result<FavFolderModel, AppException>> editFolder({
     required int mediaId,
     required String title,
     String? intro,
     int? privacy,
     String? cover,
   }) async {
-    final response = await _api.editFolder(
-      mediaId,
-      title,
-      intro: intro,
-      privacy: privacy,
-      cover: cover,
+    return safeApiCall(
+      () => _api.editFolder(
+        mediaId,
+        title,
+        intro: intro,
+        privacy: privacy,
+        cover: cover,
+      ),
     );
-    if (response.code != 0 || response.data == null) {
-      throw Exception('Failed to edit folder: ${response.message}');
-    }
-    return response.data!;
   }
 
-  Future<void> delFolder({required String mediaIds}) async {
-    final response = await _api.delFolder(mediaIds);
-    if (response.code != 0) {
-      throw Exception('Failed to delete folder: ${response.message}');
-    }
+  Future<Result<void, AppException>> delFolder({required String mediaIds}) async {
+    return safeVoidApiCall(() => _api.delFolder(mediaIds));
   }
 
-  Future<void> batchDelResource({
+  Future<Result<void, AppException>> batchDelResource({
     required String resources,
     required int mediaId,
     String platform = 'web',
   }) async {
-    final response = await _api.batchDelResource(
-      resources,
-      mediaId,
-      platform: platform,
+    return safeVoidApiCall(
+      () => _api.batchDelResource(
+        resources,
+        mediaId,
+        platform: platform,
+      ),
     );
-    if (response.code != 0) {
-      throw Exception('Failed to delete resources: ${response.message}');
-    }
   }
 
-  Future<void> cleanInvalidResources({required int mediaId}) async {
-    final response = await _api.cleanInvalidResources(mediaId);
-    if (response.code != 0) {
-      throw Exception('Failed to clean invalid resources: ${response.message}');
-    }
+  Future<Result<void, AppException>> cleanInvalidResources({
+    required int mediaId,
+  }) async {
+    return safeVoidApiCall(() => _api.cleanInvalidResources(mediaId));
   }
 }

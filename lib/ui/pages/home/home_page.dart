@@ -3,7 +3,6 @@ import 'package:culcul/ui/pages/home/widgets/home_app_bar.dart';
 import 'package:culcul/ui/pages/home/widgets/home_empty_tab.dart';
 import 'package:culcul/ui/pages/home/widgets/popular_view.dart';
 import 'package:culcul/ui/pages/home/widgets/recommend_view.dart';
-import 'package:culcul/ui/pages/home/widgets/bangumi_view.dart';
 import 'package:culcul/ui/pages/home/live/live_view.dart';
 import 'package:culcul/ui/pages/home/home_events.dart';
 import 'package:culcul/providers/search/search_provider.dart';
@@ -19,13 +18,7 @@ class HomePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final t = Translations.of(context);
     final defaultSearchAsync = ref.watch(defaultSearchProvider);
-    final tabs = [
-      t.home.tabs.live,
-      t.home.tabs.recommend,
-      t.home.tabs.hot,
-      t.home.tabs.anime,
-      t.home.tabs.cinema,
-    ];
+    final tabs = [t.home.tabs.live, t.home.tabs.recommend, t.home.tabs.hot];
 
     final tabController = useTabController(
       initialLength: tabs.length,
@@ -60,9 +53,6 @@ class HomePage extends HookConsumerWidget {
           }
           if (tab == t.home.tabs.hot) {
             return const PopularView();
-          }
-          if (tab == t.home.tabs.anime) {
-            return const BangumiView();
           }
           return HomeEmptyTab(tab: tab);
         }).toList(),

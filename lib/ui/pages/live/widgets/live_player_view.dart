@@ -14,10 +14,10 @@ class LivePlayerView extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(liveRoomControllerProvider(roomId));
-    
+
     final player = useMemoized(() => Player());
     final controller = useMemoized(() => VideoController(player));
-    
+
     useEffect(() {
       return () {
         player.dispose();
@@ -50,9 +50,7 @@ class LivePlayerView extends HookConsumerWidget {
             controls: (state) => AdaptiveVideoControls(state),
           ),
           if (state.isLoading)
-            const Center(
-              child: CircularProgressIndicator(color: Colors.white),
-            ),
+            const Center(child: CircularProgressIndicator(color: Colors.white)),
         ],
       ),
     );

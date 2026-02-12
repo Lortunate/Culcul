@@ -10,19 +10,23 @@ part 'profile_api.g.dart';
 abstract class ProfileApi {
   factory ProfileApi(Dio dio, {String baseUrl}) = _ProfileApi;
 
-  // x/space/wbi/acc/info?mid=xxx&w_rid=xxx&wts=xxx
+  // x/space/wbi/acc/info?mid=xxx
   @GET('/x/space/wbi/acc/info')
   @Headers({'x-bili-wbi': 'true'})
   Future<ApiResponse<dynamic>> getAccountInfo(
-    @Queries() Map<String, dynamic> params,
+    @Query('mid') int mid,
   );
 
   // x/space/wbi/arc/search
   @GET('/x/space/wbi/arc/search')
   @Headers({'x-bili-wbi': 'true'})
-  Future<ApiResponse<UserSpaceVideoListResponse>> getSpaceVideos(
-    @Queries() Map<String, dynamic> params,
-  );
+  Future<ApiResponse<UserSpaceVideoListResponse>> getSpaceVideos({
+    @Query('mid') required int mid,
+    @Query('pn') int page = 1,
+    @Query('ps') int pageSize = 30,
+    @Query('order') String order = 'pubdate',
+    @Query('keyword') String? keyword,
+  });
 
   // x/space/top/arc
   @GET('/x/space/top/arc')
@@ -38,20 +42,20 @@ abstract class ProfileApi {
 
   // x/relation/stat?vmid=xxx
   @GET('/x/relation/stat')
-  Future<ApiResponse<dynamic>> getRelationStat(@Query('vmid') String vmid);
+  Future<ApiResponse<dynamic>> getRelationStat(@Query('vmid') int vmid);
 
   // x/space/upstat?mid=xxx
   @GET('/x/space/upstat')
-  Future<ApiResponse<dynamic>> getUpStat(@Query('mid') String mid);
+  Future<ApiResponse<dynamic>> getUpStat(@Query('mid') int mid);
 
   // x/space/navnum?mid=xxx
   @GET('/x/space/navnum')
-  Future<ApiResponse<dynamic>> getNavNum(@Query('mid') String mid);
+  Future<ApiResponse<dynamic>> getNavNum(@Query('mid') int mid);
 
   // x/web-interface/card?mid=xxx&photo=true
   @GET('/x/web-interface/card')
   Future<ApiResponse<dynamic>> getCard(
-    @Query('mid') String mid, {
+    @Query('mid') int mid, {
     @Query('photo') bool photo = true,
   });
 
@@ -63,7 +67,7 @@ abstract class ProfileApi {
   @FormUrlEncoded()
   @Headers({'x-bili-csrf': 'true'})
   Future<ApiResponse<dynamic>> modifyRelation(
-    @Field('fid') String fid,
+    @Field('fid') int fid,
     @Field('act') int act,
     @Field('re_src') int reSrc,
   );

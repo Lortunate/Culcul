@@ -1,9 +1,10 @@
-import 'package:culcul/domain/entities/dynamic_post.dart';
+import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
+import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/dynamic_content_widget.dart';
 import 'package:flutter/material.dart';
 
 class DynamicForwardWidget extends StatelessWidget {
-  final DynamicPost post;
+  final DynamicItem post;
 
   const DynamicForwardWidget({super.key, required this.post});
 
@@ -34,10 +35,7 @@ class DynamicForwardWidget extends StatelessWidget {
                 ),
                 if (post.description == null || post.description!.isEmpty) ...[
                   const TextSpan(text: ' : '),
-                  const TextSpan(
-                    text: '转发动态',
-                    style: TextStyle(fontSize: 15),
-                  ),
+                  const TextSpan(text: '转发动态', style: TextStyle(fontSize: 15)),
                 ],
               ],
             ),

@@ -1,5 +1,5 @@
-import 'package:culcul/domain/entities/user_profile.dart';
-import 'package:culcul/repositories/profile_repository.dart';
+import 'package:culcul/core/types/result.dart';
+import 'package:culcul/data/models/user/user_profile_model.dart';
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -10,7 +10,11 @@ class UserSpaceNotifier extends _$UserSpaceNotifier {
   @override
   Future<UserProfile> build(String mid) async {
     final repository = ref.read(profileRepositoryProvider);
-    return repository.getProfile(mid);
+    final result = await repository.getProfile(int.parse(mid));
+    return switch (result) {
+      Success(value: final data) => data,
+      Failure(exception: final e) => throw e,
+    };
   }
 
   Future<void> toggleFollow() async {
@@ -21,12 +25,14 @@ class UserSpaceNotifier extends _$UserSpaceNotifier {
     // Optimistic update
     state = AsyncData(currentProfile.copyWith(isFollowing: newFollowStatus));
 
-    try {
-      await ref.read(profileRepositoryProvider).modifyRelation(
-            mid: int.parse(currentProfile.id),
-            isFollow: newFollowStatus,
-          );
-    } catch (e) {
+    final result = await ref
+        .read(profileRepositoryProvider)
+        .modifyRelation(
+          mid: int.parse(currentProfile.id),
+          isFollow: newFollowStatus,
+        );
+
+    if (result is Failure) {
       // Revert if failed
       state = AsyncData(currentProfile);
       // TODO: Show error toast

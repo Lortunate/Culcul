@@ -1,8 +1,10 @@
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/core/utils/timeago_utils.dart';
 
 class FormatUtils {
   FormatUtils._();
 
+  // String utilities
   static String stripHtmlTags(String htmlString) {
     return htmlString.replaceAll(RegExp(r'<[^>]*>'), '');
   }
@@ -15,8 +17,11 @@ class FormatUtils {
     return url;
   }
 
+  // Number formatting
   static String formatNumber(int num) {
-    final isZh = t.format.ten_thousand == '万';
+    final isZh =
+        LocaleSettings.currentLocale == AppLocale.zh ||
+        LocaleSettings.currentLocale == AppLocale.zhHant;
     if (isZh) {
       if (num >= 100000000) {
         return '${(num / 100000000).toStringAsFixed(1)}${t.format.hundred_million}';
@@ -46,6 +51,7 @@ class FormatUtils {
     return value.toString();
   }
 
+  // Duration formatting
   static String formatDuration(int seconds) {
     final d = Duration(seconds: seconds);
     final hours = d.inHours;
@@ -72,21 +78,36 @@ class FormatUtils {
     return 0;
   }
 
+  // Date/time formatting
   static String formatTimestamp(int timestamp) {
-    final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-    final now = DateTime.now();
-    final diff = now.difference(date);
+    return TimeAgoUtils.formatTimeAgo(timestamp);
+  }
 
-    if (diff.inDays > 365) {
-      return '${date.year}-${date.month}-${date.day}';
-    } else if (diff.inDays > 1) {
-      return '${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-    } else if (diff.inHours >= 1) {
-      return t.format.hours_ago(hours: diff.inHours);
-    } else if (diff.inMinutes >= 1) {
-      return t.format.minutes_ago(minutes: diff.inMinutes);
-    } else {
-      return t.format.just_now;
+  // Additional formatting utilities
+  static String formatFileSize(int bytes) {
+    if (bytes < 1024) return '${bytes}B';
+    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)}KB';
+    if (bytes < 1024 * 1024 * 1024) {
+      return '${(bytes / (1024 * 1024)).toStringAsFixed(1)}MB';
     }
+    return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)}GB';
+  }
+
+  static String capitalize(String str) {
+    if (str.isEmpty) return str;
+    return str[0].toUpperCase() + str.substring(1).toLowerCase();
+  }
+
+  static String truncate(String str, int maxLength, {String suffix = '...'}) {
+    if (str.length <= maxLength) return str;
+    return str.substring(0, maxLength - suffix.length) + suffix;
+  }
+
+  static String camelCaseToTitle(String camelCase) {
+    final result = camelCase.replaceAllMapped(
+      RegExp(r'([A-Z])'),
+      (match) => ' ${match.group(0)}',
+    );
+    return capitalize(result.trim());
   }
 }

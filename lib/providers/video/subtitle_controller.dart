@@ -25,17 +25,17 @@ class SubtitleController extends _$SubtitleController {
   @override
   SubtitleState build(String bvid) {
     // Listen to video detail changes to initialize subtitles
-    final videoDetail = ref.watch(videoDetailControllerProvider(bvid)).videoDetail;
-    
+    final videoDetail = ref
+        .watch(videoDetailControllerProvider(bvid))
+        .videoDetail;
+
     if (videoDetail?.subtitle?.list.isNotEmpty == true) {
       // If we have subtitles but haven't initialized them yet
       // or if the available subtitles list has changed (unlikely but possible)
       // Note: This logic might need refinement if we want to persist user selection
-      return SubtitleState(
-        availableSubtitles: videoDetail!.subtitle!.list,
-      );
+      return SubtitleState(availableSubtitles: videoDetail!.subtitle!.list);
     }
-    
+
     return const SubtitleState();
   }
 
@@ -44,7 +44,8 @@ class SubtitleController extends _$SubtitleController {
       state = state.copyWith(isEnabled: false);
     } else {
       state = state.copyWith(isEnabled: true);
-      if (state.selectedSubtitle == null && state.availableSubtitles.isNotEmpty) {
+      if (state.selectedSubtitle == null &&
+          state.availableSubtitles.isNotEmpty) {
         // Select first by default
         await selectSubtitle(state.availableSubtitles.first);
       } else if (state.content.isEmpty && state.selectedSubtitle != null) {
@@ -72,15 +73,9 @@ class SubtitleController extends _$SubtitleController {
 
     switch (result) {
       case Success(value: final content):
-        state = state.copyWith(
-          content: content.body,
-          isLoading: false,
-        );
+        state = state.copyWith(content: content.body, isLoading: false);
       case Failure(exception: final e):
-        state = state.copyWith(
-          isLoading: false,
-          error: e.toString(),
-        );
+        state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 }

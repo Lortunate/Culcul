@@ -1,5 +1,5 @@
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/data/models/search_result.dart';
+import 'package:culcul/data/models/search/search_result.dart';
 import 'package:culcul/ui/widgets/index.dart';
 import 'package:flutter/material.dart';
 

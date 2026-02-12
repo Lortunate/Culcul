@@ -1,7 +1,7 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/data/models/live/index.dart';
 import 'package:culcul/data/models/response/api_response.dart';
-import 'package:dio/dio.dart';
+import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
 part 'live_api.g.dart';
@@ -54,5 +54,49 @@ abstract class LiveApi {
   Future<ApiResponse<LiveRecommendResponse>> getRecommendList({
     @Query('platform') String platform = 'web',
     @Query('web_location') String? webLocation,
+    @Query('page') int page = 1,
+    @Query('page_size') int pageSize = 30,
+  });
+
+  /// Get anchor info
+  /// https://api.live.bilibili.com/live_user/v1/Master/info
+  @GET('/live_user/v1/Master/info')
+  Future<ApiResponse<LiveAnchorInfoModel>> getAnchorInfo(
+    @Query('uid') int uid,
+  );
+
+  /// Get online gold rank
+  /// https://api.live.bilibili.com/xlive/general-interface/v1/rank/getOnlineGoldRank
+  @GET('/xlive/general-interface/v1/rank/getOnlineGoldRank')
+  Future<ApiResponse<LiveGoldRankModel>> getOnlineGoldRank({
+    @Query('ruid') required int ruid,
+    @Query('roomId') required int roomId,
+    @Query('page') int page = 1,
+    @Query('pageSize') int pageSize = 20,
+  });
+
+  /// Get guard list
+  /// https://api.live.bilibili.com/xlive/app-room/v2/guardTab/topListNew
+  @GET('/xlive/app-room/v2/guardTab/topListNew')
+  Future<ApiResponse<LiveGuardListModel>> getGuardList({
+    @Query('ruid') required int ruid,
+    @Query('roomid') required int roomId,
+    @Query('page') int page = 1,
+    @Query('page_size') int pageSize = 20,
+  });
+
+  /// Send danmaku
+  /// https://api.live.bilibili.com/msg/send
+  @POST('/msg/send')
+  @FormUrlEncoded()
+  @Headers({'x-bili-csrf': 'true'})
+  Future<ApiResponse<void>> sendDanmaku({
+    @Field('msg') required String msg,
+    @Field('roomid') required int roomId,
+    @Field('rnd') required int rnd,
+    @Field('color') int color = 16777215,
+    @Field('fontsize') int fontsize = 25,
+    @Field('mode') int mode = 1,
+    @Field('bubble') int bubble = 0,
   });
 }

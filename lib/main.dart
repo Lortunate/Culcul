@@ -6,6 +6,7 @@ import 'package:culcul/core/providers/cache_store_provider.dart';
 import 'package:culcul/core/providers/cookie_jar_provider.dart';
 import 'package:culcul/core/providers/shared_preferences_provider.dart';
 import 'package:culcul/core/providers/storage_provider.dart';
+import 'package:culcul/core/services/audio_handler.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:dio_cache_interceptor_file_store/dio_cache_interceptor_file_store.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   MediaKit.ensureInitialized();
   await Hive.initFlutter();
-  
+
+  // Initialize AudioService
+  final audioHandler = await CilixiliAudioHandler.init();
+
   // Open the main box for the app
   final box = await Hive.openBox('cilixili_box');
 
@@ -37,7 +41,9 @@ void main() async {
     storage: FileStorage("${appDocDir.path}/.cookies/"),
   );
 
-  final cacheStore = FileCacheStore('${cacheDir?.path ?? appDocDir.path}/http_cache');
+  final cacheStore = FileCacheStore(
+    '${cacheDir?.path ?? appDocDir.path}/http_cache',
+  );
 
   LocaleSettings.useDeviceLocale();
 
@@ -56,6 +62,7 @@ void main() async {
           cookieJarProvider.overrideWithValue(cookieJar),
           cacheStoreProvider.overrideWithValue(cacheStore),
           storageBoxProvider.overrideWithValue(box),
+          audioHandlerProvider.overrideWithValue(audioHandler),
         ],
         child: const culculApp(),
       ),

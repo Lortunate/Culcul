@@ -1,12 +1,13 @@
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/router/router.dart';
 import 'package:culcul/core/types/result.dart';
-import 'package:culcul/domain/entities/dynamic_post.dart';
+import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
+import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:culcul/providers/dynamic/dynamic_comment_controller.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/dynamic_comments_view.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/dynamic_content_widget.dart';
 import 'package:culcul/ui/widgets/index.dart';
-import 'package:culcul/utils/share_utils.dart';
+import 'package:culcul/core/utils/share_utils.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -21,7 +22,7 @@ class DynamicDetailPage extends ConsumerStatefulWidget {
 }
 
 class _DynamicDetailPageState extends ConsumerState<DynamicDetailPage> {
-  DynamicPost? _post;
+  DynamicItem? _post;
   bool _isLoading = true;
   String? _error;
   final TextEditingController _commentController = TextEditingController();
@@ -42,7 +43,7 @@ class _DynamicDetailPageState extends ConsumerState<DynamicDetailPage> {
     final result = await ref
         .read(dynamicRepositoryProvider)
         .getDetail(widget.dynamicId);
-    
+
     if (mounted) {
       result.when(
         success: (post) {
@@ -67,11 +68,9 @@ class _DynamicDetailPageState extends ConsumerState<DynamicDetailPage> {
     if (text.isEmpty) return;
 
     // Root comment: root=0, parent=0
-    ref.read(dynamicCommentControllerProvider(_post!).notifier).addReply(
-          0,
-          0,
-          text,
-        );
+    ref
+        .read(dynamicCommentControllerProvider(_post!).notifier)
+        .addReply(0, 0, text);
     _commentController.clear();
     FocusScope.of(context).unfocus();
   }
@@ -79,9 +78,7 @@ class _DynamicDetailPageState extends ConsumerState<DynamicDetailPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (_error != null) {
@@ -175,16 +172,18 @@ class _DynamicDetailPageState extends ConsumerState<DynamicDetailPage> {
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 15,
-                      color: _post!.authorName == '哔哩哔哩番剧' || _post!.authorName == '哔哩哔哩漫画'
-                          ? const Color(0xFFFB7299)
+                      color:
+                          _post!.authorName == '哔哩哔哩番剧' ||
+                              _post!.authorName == '哔哩哔哩漫画'
+                          ? colorScheme.primary
                           : colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     _post!.timeText,
-                    style: const TextStyle(
-                      color: Color(0xFF9499A0),
+                    style: TextStyle(
+                      color: colorScheme.onSurfaceVariant,
                       fontSize: 12,
                     ),
                   ),
@@ -192,7 +191,11 @@ class _DynamicDetailPageState extends ConsumerState<DynamicDetailPage> {
               ),
             ),
             IconButton(
-              icon: const Icon(Icons.more_vert, size: 20, color: Color(0xFF9499A0)),
+              icon: Icon(
+                Icons.more_vert,
+                size: 20,
+                color: colorScheme.onSurfaceVariant,
+              ),
               onPressed: () {},
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
@@ -262,7 +265,9 @@ class _DynamicDetailPageState extends ConsumerState<DynamicDetailPage> {
             _post!.isLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined,
             _post!.likeCount,
             () => _handleLike(context),
-            color: _post!.isLiked ? Theme.of(context).colorScheme.primary : null,
+            color: _post!.isLiked
+                ? Theme.of(context).colorScheme.primary
+                : null,
           ),
           const SizedBox(width: 16),
           _buildActionIcon(
@@ -275,8 +280,13 @@ class _DynamicDetailPageState extends ConsumerState<DynamicDetailPage> {
     );
   }
 
-  Widget _buildActionIcon(IconData icon, int count, VoidCallback onTap, {Color? color}) {
-    final contentColor = color ?? const Color(0xFF9499A0);
+  Widget _buildActionIcon(
+    IconData icon,
+    int count,
+    VoidCallback onTap, {
+    Color? color,
+  }) {
+    final contentColor = color ?? Theme.of(context).colorScheme.onSurfaceVariant;
     return InkWell(
       onTap: onTap,
       child: Column(
@@ -284,13 +294,7 @@ class _DynamicDetailPageState extends ConsumerState<DynamicDetailPage> {
         children: [
           Icon(icon, size: 24, color: contentColor),
           if (count > 0)
-            Text(
-              '$count',
-              style: TextStyle(
-                fontSize: 10,
-                color: contentColor,
-              ),
-            ),
+            Text('$count', style: TextStyle(fontSize: 10, color: contentColor)),
         ],
       ),
     );
@@ -298,33 +302,40 @@ class _DynamicDetailPageState extends ConsumerState<DynamicDetailPage> {
 
   Future<void> _handleLike(BuildContext context) async {
     if (_post == null) return;
+
+    final item = _post!;
+    final newStatus = !item.isLiked;
+    final newLikeCount = item.likeCount + (newStatus ? 1 : -1);
+
+    // Deep copy update logic
+    final newStatLike = item.modules.moduleStat?.like.copyWith(
+      count: newLikeCount,
+      status: newStatus,
+    );
     
-    final newStatus = !_post!.isLiked;
+    if (item.modules.moduleStat == null || newStatLike == null) return;
+
+    final newModuleStat = item.modules.moduleStat!.copyWith(like: newStatLike);
+    final newModules = item.modules.copyWith(moduleStat: newModuleStat);
+    final newItem = item.copyWith(modules: newModules);
+
     // Optimistic update
     setState(() {
-      _post = _post!.copyWith(
-        isLiked: newStatus,
-        likeCount: _post!.likeCount + (newStatus ? 1 : -1),
-      );
+      _post = newItem;
     });
-      
-    final result = await ref.read(dynamicRepositoryProvider).likeDynamic(
-          _post!.id,
-          newStatus,
-        );
-        
+
+    final result = await ref
+        .read(dynamicRepositoryProvider)
+        .likeDynamic(item.id, newStatus);
+
     if (result.isFailure && mounted) {
-       // Revert
-       final oldStatus = !newStatus;
-       setState(() {
-          _post = _post!.copyWith(
-            isLiked: oldStatus,
-            likeCount: _post!.likeCount + (oldStatus ? 1 : -1),
-          );
-       });
-       ScaffoldMessenger.of(context).showSnackBar(
-         SnackBar(content: Text('操作失败: ${(result as Failure).exception}')),
-       );
+      // Revert
+      setState(() {
+        _post = item;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('操作失败: ${(result as Failure).exception}')),
+      );
     }
   }
 }

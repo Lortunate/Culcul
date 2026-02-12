@@ -38,11 +38,7 @@ class Emote {
   final String text;
   final String url;
 
-  Emote({
-    required this.id,
-    required this.text,
-    required this.url,
-  });
+  Emote({required this.id, required this.text, required this.url});
 
   factory Emote.fromJson(Map<String, dynamic> json) => _$EmoteFromJson(json);
   Map<String, dynamic> toJson() => _$EmoteToJson(this);

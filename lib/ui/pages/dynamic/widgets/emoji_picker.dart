@@ -13,7 +13,8 @@ class EmojiPicker extends ConsumerStatefulWidget {
   ConsumerState<EmojiPicker> createState() => _EmojiPickerState();
 }
 
-class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderStateMixin {
+class _EmojiPickerState extends ConsumerState<EmojiPicker>
+    with TickerProviderStateMixin {
   TabController? _tabController;
 
   @override
@@ -28,9 +29,13 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderSt
           if (packages.isEmpty) {
             return const Center(child: Text('暂无表情包'));
           }
-          
-          if (_tabController == null || _tabController!.length != packages.length) {
-            _tabController = TabController(length: packages.length, vsync: this);
+
+          if (_tabController == null ||
+              _tabController!.length != packages.length) {
+            _tabController = TabController(
+              length: packages.length,
+              vsync: this,
+            );
           }
 
           return Column(
@@ -38,21 +43,27 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderSt
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
-                  children: packages.map((package) => _buildEmojiGrid(package)).toList(),
+                  children: packages
+                      .map((package) => _buildEmojiGrid(package))
+                      .toList(),
                 ),
               ),
               TabBar(
                 controller: _tabController,
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,
-                tabs: packages.map((package) => Tab(
-                  child: ExtendedImage.network(
-                    package.url,
-                    width: 24,
-                    height: 24,
-                    fit: BoxFit.contain,
-                  ),
-                )).toList(),
+                tabs: packages
+                    .map(
+                      (package) => Tab(
+                        child: ExtendedImage.network(
+                          package.url,
+                          width: 24,
+                          height: 24,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    )
+                    .toList(),
               ),
             ],
           );
@@ -77,10 +88,7 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderSt
         final emote = package.emote[index];
         return InkWell(
           onTap: () => widget.onEmojiSelected(emote.text),
-          child: ExtendedImage.network(
-            emote.url,
-            fit: BoxFit.contain,
-          ),
+          child: ExtendedImage.network(emote.url, fit: BoxFit.contain),
         );
       },
     );

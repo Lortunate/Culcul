@@ -54,7 +54,9 @@ class GuestView extends StatelessWidget {
                       width: 100,
                       height: 100,
                       decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                        color: colorScheme.surfaceContainerHighest.withValues(
+                          alpha: 0.5,
+                        ),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -138,21 +140,14 @@ class _DecorativeDot extends StatelessWidget {
   final double size;
   final Color color;
 
-  const _DecorativeDot({
-    required this.size,
-    required this.color,
-  });
+  const _DecorativeDot({required this.size, required this.color});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }
 }
-

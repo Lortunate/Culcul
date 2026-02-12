@@ -1,4 +1,4 @@
-import 'package:culcul/data/models/comment_model.dart';
+import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'comment_reply_state.freezed.dart';

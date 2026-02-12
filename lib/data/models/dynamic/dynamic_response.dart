@@ -3,44 +3,6 @@ import 'package:json_annotation/json_annotation.dart';
 part 'dynamic_response.g.dart';
 
 @JsonSerializable()
-class DynamicResponse {
-  final int code;
-  final String message;
-  final int ttl;
-  final DynamicData? data;
-
-  DynamicResponse({
-    required this.code,
-    required this.message,
-    required this.ttl,
-    this.data,
-  });
-
-  factory DynamicResponse.fromJson(Map<String, dynamic> json) =>
-      _$DynamicResponseFromJson(json);
-  Map<String, dynamic> toJson() => _$DynamicResponseToJson(this);
-}
-
-@JsonSerializable()
-class DynamicDetailResponse {
-  final int code;
-  final String message;
-  final int ttl;
-  final DynamicDetailData? data;
-
-  DynamicDetailResponse({
-    required this.code,
-    required this.message,
-    required this.ttl,
-    this.data,
-  });
-
-  factory DynamicDetailResponse.fromJson(Map<String, dynamic> json) =>
-      _$DynamicDetailResponseFromJson(json);
-  Map<String, dynamic> toJson() => _$DynamicDetailResponseToJson(this);
-}
-
-@JsonSerializable()
 class DynamicDetailData {
   final DynamicItem item;
 
@@ -97,6 +59,24 @@ class DynamicItem {
   factory DynamicItem.fromJson(Map<String, dynamic> json) =>
       _$DynamicItemFromJson(json);
   Map<String, dynamic> toJson() => _$DynamicItemToJson(this);
+
+  DynamicItem copyWith({
+    String? idStr,
+    String? type,
+    bool? visible,
+    DynamicModules? modules,
+    DynamicItem? orig,
+    DynamicBasic? basic,
+  }) {
+    return DynamicItem(
+      idStr: idStr ?? this.idStr,
+      type: type ?? this.type,
+      visible: visible ?? this.visible,
+      modules: modules ?? this.modules,
+      orig: orig ?? this.orig,
+      basic: basic ?? this.basic,
+    );
+  }
 }
 
 @JsonSerializable()
@@ -137,6 +117,18 @@ class DynamicModules {
   factory DynamicModules.fromJson(Map<String, dynamic> json) =>
       _$DynamicModulesFromJson(json);
   Map<String, dynamic> toJson() => _$DynamicModulesToJson(this);
+
+  DynamicModules copyWith({
+    ModuleAuthor? moduleAuthor,
+    ModuleDynamic? moduleDynamic,
+    ModuleStat? moduleStat,
+  }) {
+    return DynamicModules(
+      moduleAuthor: moduleAuthor ?? this.moduleAuthor,
+      moduleDynamic: moduleDynamic ?? this.moduleDynamic,
+      moduleStat: moduleStat ?? this.moduleStat,
+    );
+  }
 }
 
 @JsonSerializable()
@@ -235,9 +227,10 @@ class AdditionalReserve {
   final String jumpUrl;
   @JsonKey(name: 'reserve_total')
   final int reserveTotal;
-  final int state; // 0: unreserved?, 1: reserved? - Check docs. actually status in button. 
+  final int
+  state; // 0: unreserved?, 1: reserved? - Check docs. actually status in button.
   // Docs say: state 0.
-  // Docs say desc1, desc2 are objects. 
+  // Docs say desc1, desc2 are objects.
   final ReserveDesc? desc1;
   final ReserveDesc? desc2;
 
@@ -537,6 +530,18 @@ class ModuleStat {
   factory ModuleStat.fromJson(Map<String, dynamic> json) =>
       _$ModuleStatFromJson(json);
   Map<String, dynamic> toJson() => _$ModuleStatToJson(this);
+
+  ModuleStat copyWith({
+    StatLike? like,
+    StatCommon? comment,
+    StatCommon? forward,
+  }) {
+    return ModuleStat(
+      like: like ?? this.like,
+      comment: comment ?? this.comment,
+      forward: forward ?? this.forward,
+    );
+  }
 }
 
 @JsonSerializable()
@@ -549,6 +554,16 @@ class StatLike {
   factory StatLike.fromJson(Map<String, dynamic> json) =>
       _$StatLikeFromJson(json);
   Map<String, dynamic> toJson() => _$StatLikeToJson(this);
+
+  StatLike copyWith({
+    int? count,
+    bool? status,
+  }) {
+    return StatLike(
+      count: count ?? this.count,
+      status: status ?? this.status,
+    );
+  }
 }
 
 @JsonSerializable()
@@ -661,12 +676,7 @@ class MajorOpus {
   @JsonKey(name: 'jump_url')
   final String? jumpUrl;
 
-  MajorOpus({
-    this.title,
-    this.summary,
-    this.pics,
-    this.jumpUrl,
-  });
+  MajorOpus({this.title, this.summary, this.pics, this.jumpUrl});
 
   factory MajorOpus.fromJson(Map<String, dynamic> json) =>
       _$MajorOpusFromJson(json);
@@ -693,12 +703,7 @@ class OpusPic {
   final int? height;
   final int? size;
 
-  OpusPic({
-    this.url,
-    this.width,
-    this.height,
-    this.size,
-  });
+  OpusPic({this.url, this.width, this.height, this.size});
 
   factory OpusPic.fromJson(Map<String, dynamic> json) =>
       _$OpusPicFromJson(json);
@@ -746,25 +751,6 @@ class MajorLiveRcmd {
 }
 
 @JsonSerializable()
-class DynamicPublishResponse {
-  final int code;
-  final String message;
-  final int ttl;
-  final DynamicPublishData? data;
-
-  DynamicPublishResponse({
-    required this.code,
-    required this.message,
-    required this.ttl,
-    this.data,
-  });
-
-  factory DynamicPublishResponse.fromJson(Map<String, dynamic> json) =>
-      _$DynamicPublishResponseFromJson(json);
-  Map<String, dynamic> toJson() => _$DynamicPublishResponseToJson(this);
-}
-
-@JsonSerializable()
 class DynamicPublishData {
   @JsonKey(name: 'dyn_id_str')
   final String dynIdStr;
@@ -774,25 +760,6 @@ class DynamicPublishData {
   factory DynamicPublishData.fromJson(Map<String, dynamic> json) =>
       _$DynamicPublishDataFromJson(json);
   Map<String, dynamic> toJson() => _$DynamicPublishDataToJson(this);
-}
-
-@JsonSerializable()
-class DynamicUploadImageResponse {
-  final int code;
-  final String message;
-  final int ttl;
-  final DynamicUploadImageData? data;
-
-  DynamicUploadImageResponse({
-    required this.code,
-    required this.message,
-    required this.ttl,
-    this.data,
-  });
-
-  factory DynamicUploadImageResponse.fromJson(Map<String, dynamic> json) =>
-      _$DynamicUploadImageResponseFromJson(json);
-  Map<String, dynamic> toJson() => _$DynamicUploadImageResponseToJson(this);
 }
 
 @JsonSerializable()
