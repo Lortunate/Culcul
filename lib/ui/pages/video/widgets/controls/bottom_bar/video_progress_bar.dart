@@ -91,7 +91,7 @@ class SliderBar extends HookConsumerWidget {
         ),
         overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
         trackHeight: 2,
-        showValueIndicator: ShowValueIndicator.always,
+        showValueIndicator: ShowValueIndicator.onDrag,
         valueIndicatorTextStyle: const TextStyle(
           color: Colors.white,
           fontSize: 12,

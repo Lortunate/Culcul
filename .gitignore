@@ -1,4 +1,10 @@
 .idea
+*.g.dart
+*.freezed.dart
+*.pb.dart
+*.pbenum.dart
+*.pbjson.dart
+*.pbserver.dart
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/flutter

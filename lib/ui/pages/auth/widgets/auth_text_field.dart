@@ -64,7 +64,11 @@ class _AuthTextFieldState extends State<AuthTextField> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeOut,
-      transform: Matrix4.identity()..scale(_isFocused ? 1.02 : 1.0),
+      transform: Matrix4.diagonal3Values(
+        _isFocused ? 1.02 : 1.0,
+        _isFocused ? 1.02 : 1.0,
+        1.0,
+      ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         boxShadow: [

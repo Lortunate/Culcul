@@ -243,7 +243,7 @@ class DanmakuMaskClipper extends CustomClipper<Path> {
     final scaleX = size.width / videoSize.width;
     final scaleY = size.height / videoSize.height;
 
-    final matrix4 = Matrix4.identity()..scale(scaleX, scaleY);
+    final matrix4 = Matrix4.diagonal3Values(scaleX, scaleY, 1.0);
     final scaledMask = maskPath!.transform(matrix4.storage);
 
     return Path.combine(PathOperation.difference, rectPath, scaledMask);

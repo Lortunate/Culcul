@@ -1,7 +1,6 @@
 import 'package:culcul/features/dynamic/controllers/user_dynamic_controller.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/dynamic_post_card.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
-import 'package:culcul/ui/widgets/app_shimmer.dart';
 import 'package:culcul/ui/widgets/skeletons/dynamic_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

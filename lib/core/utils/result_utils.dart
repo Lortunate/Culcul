@@ -134,7 +134,7 @@ extension ResultAsyncValueExtensions<T, E extends Exception>
   }
 }
 
-/// Extensions to bridge Future<Result> and Riverpod's AsyncValue
+  /// Extensions to bridge `Future<Result>` and Riverpod's `AsyncValue`
 extension FutureResultAsyncValueExtensions<T, E extends Exception>
     on Future<Result<T, E>> {
   /// Awaits the result and converts it into an AsyncValue

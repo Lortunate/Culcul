@@ -98,7 +98,7 @@ class VideoListCard extends StatelessWidget {
                       width: thumbnailWidth,
                       height: thumbnailWidth / aspectRatio,
                     ),
-                    if (overlayWidget != null) overlayWidget,
+                    if (overlayWidget case final overlayWidget?) overlayWidget,
                   ],
                 ),
               ),
@@ -117,7 +117,10 @@ class VideoListCard extends StatelessWidget {
                       height: 1.3,
                     ),
                   ),
-                  if (badge != null) ...[const SizedBox(height: 4), badge!],
+                  if (badge case final badgeWidget?) ...[
+                    const SizedBox(height: 4),
+                    badgeWidget,
+                  ],
                   if (middleContent != null) ...[
                     const SizedBox(height: 4),
                     middleContent!,
@@ -160,4 +163,3 @@ class VideoListCard extends StatelessWidget {
     );
   }
 }
-

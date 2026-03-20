@@ -112,6 +112,6 @@ class CilixiliAudioHandler extends BaseAudioHandler {
         androidNotificationOngoing: true,
       ),
     );
-    return handler as CilixiliAudioHandler;
+    return handler;
   }
 }

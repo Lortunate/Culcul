@@ -10,7 +10,6 @@ class NotificationCategoryGrid extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final unreadCount = ref.watch(unreadCountProvider);
-    final theme = Theme.of(context);
 
     return unreadCount.when(
       data: (data) => Padding(
@@ -53,7 +52,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
           ],
         ),
       ),
-      error: (_, __) => const SizedBox.shrink(),
+      error: (_, errorStack) => const SizedBox.shrink(),
       loading: () => const SizedBox(height: 100),
     );
   }

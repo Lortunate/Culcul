@@ -23,7 +23,7 @@ class SystemNotificationPage extends ConsumerWidget {
           return ListView.separated(
             padding: const EdgeInsets.all(12),
             itemCount: items.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 12),
+            separatorBuilder: (_, index) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final item = items[index];
               return _SystemNotificationCard(item: item);
