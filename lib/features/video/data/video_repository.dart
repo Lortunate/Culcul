@@ -4,8 +4,12 @@ import 'package:culcul/core/result.dart';
 import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/data/api/resource_api.dart';
 import 'package:culcul/data/api/video_api.dart';
-import 'package:culcul/data/models/index.dart';
+import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/data/models/subtitle.dart';
+import 'package:culcul/data/models/video/play_url.dart';
+import 'package:culcul/data/models/video/player_info.dart';
+import 'package:culcul/data/models/video/related_video.dart';
+import 'package:culcul/data/models/video/video_detail.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'video_repository.g.dart';

@@ -1,6 +1,7 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/data/models/index.dart';
-import 'package:culcul/ui/widgets/index.dart';
+import 'package:culcul/data/models/video/video_model.dart';
+import 'package:culcul/ui/widgets/follow_button.dart';
+import 'package:culcul/ui/widgets/user_list_tile.dart';
 import 'package:flutter/material.dart';
 
 class UploaderSection extends StatelessWidget {

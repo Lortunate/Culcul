@@ -1,5 +1,5 @@
-import 'package:culcul/data/models/index.dart';
-import 'package:culcul/ui/widgets/index.dart';
+import 'package:culcul/data/models/video/video_detail.dart';
+import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 

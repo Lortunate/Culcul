@@ -1,4 +1,4 @@
-class User {
+class UserEntity {
   final String id;
   final String username;
   final String? avatarUrl;
@@ -8,7 +8,7 @@ class User {
   final int? currentExp;
   final int? nextExp;
 
-  User({
+  UserEntity({
     required this.id,
     required this.username,
     this.avatarUrl,
@@ -19,7 +19,7 @@ class User {
     this.nextExp,
   });
 
-  User copyWith({
+  UserEntity copyWith({
     String? id,
     String? username,
     String? avatarUrl,
@@ -29,7 +29,7 @@ class User {
     int? currentExp,
     int? nextExp,
   }) {
-    return User(
+    return UserEntity(
       id: id ?? this.id,
       username: username ?? this.username,
       avatarUrl: avatarUrl ?? this.avatarUrl,
@@ -44,7 +44,7 @@ class User {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is User &&
+      other is UserEntity &&
           runtimeType == other.runtimeType &&
           id == other.id &&
           username == other.username &&

@@ -1,6 +1,6 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/video/presentation/widgets/image_preview_page.dart';
-import 'package:culcul/data/models/index.dart';
+import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 

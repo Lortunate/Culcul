@@ -1,13 +1,13 @@
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/result.dart';
-import 'package:culcul/domain/entities/user.dart';
+import 'package:culcul/domain/entities/user_entity.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_controller.g.dart';
 
 class AuthState {
   final bool isLoggedIn;
-  final User? user;
+  final UserEntity? user;
   final bool isLoading;
   final String? error;
 
@@ -22,7 +22,7 @@ class AuthState {
 
   AuthState copyWith({
     bool? isLoggedIn,
-    User? user,
+    UserEntity? user,
     bool? isLoading,
     String? error,
   }) {

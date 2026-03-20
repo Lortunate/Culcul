@@ -1,6 +1,7 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/data/models/search/search_result.dart';
-import 'package:culcul/ui/widgets/index.dart';
+import 'package:culcul/ui/widgets/app_clickable.dart';
+import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 
 class SearchArticleItem extends StatelessWidget {

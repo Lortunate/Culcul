@@ -1,6 +1,9 @@
 import 'package:culcul/core/result.dart';
 import 'package:culcul/features/search/data/search_repository.dart';
-import 'package:culcul/data/models/index.dart';
+import 'package:culcul/data/models/feed/trending_ranking.dart';
+import 'package:culcul/data/models/search/default_search.dart';
+import 'package:culcul/data/models/search/search_result.dart';
+import 'package:culcul/data/models/search/search_suggestion.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_controller.g.dart';

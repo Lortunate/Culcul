@@ -5,7 +5,7 @@ import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_content_widget.dart';
-import 'package:culcul/ui/widgets/index.dart';
+import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:flutter/material.dart';
 
 class DynamicPostCard extends StatelessWidget {

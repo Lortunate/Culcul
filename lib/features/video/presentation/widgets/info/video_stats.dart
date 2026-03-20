@@ -1,6 +1,6 @@
-import 'package:culcul/data/models/index.dart';
+import 'package:culcul/data/models/video/video_detail.dart';
 import 'package:culcul/shared/format_extensions.dart';
-import 'package:culcul/ui/widgets/index.dart';
+import 'package:culcul/ui/widgets/icon_text.dart';
 import 'package:flutter/material.dart';
 
 class VideoStatsRow extends StatelessWidget {

@@ -1,8 +1,11 @@
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/data/models/index.dart';
+import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_images.dart';
-import 'package:culcul/ui/widgets/index.dart';
+import 'package:culcul/ui/widgets/app_avatar.dart';
+import 'package:culcul/ui/widgets/app_clickable.dart';
+import 'package:culcul/ui/widgets/bilibili_emoji_text.dart';
+import 'package:culcul/ui/widgets/user_tags.dart';
 import 'package:flutter/material.dart';
 
 class CommentItemWidget extends StatelessWidget {

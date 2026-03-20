@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:culcul/core/services/media_service.dart';
 import 'package:culcul/core/utils/id_utils.dart';
 import 'package:culcul/core/utils/toast_utils.dart';
-import 'package:culcul/data/models/index.dart';
+import 'package:culcul/data/models/video/video_model.dart';
 import 'package:culcul/features/to_view/controllers/to_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

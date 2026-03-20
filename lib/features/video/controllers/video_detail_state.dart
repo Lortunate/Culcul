@@ -1,4 +1,7 @@
-import 'package:culcul/data/models/index.dart';
+import 'package:culcul/data/models/comment/comment_model.dart';
+import 'package:culcul/data/models/video/play_url.dart';
+import 'package:culcul/data/models/video/related_video.dart';
+import 'package:culcul/data/models/video/video_detail.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'video_detail_state.freezed.dart';

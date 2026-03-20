@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:culcul/data/models/user/user_model.dart';
+import 'package:culcul/domain/entities/user_entity.dart';
 
-extension AuthStateExtension on AsyncValue<User?> {
+extension AuthStateExtension on AsyncValue<UserEntity?> {
   bool get isLoggedIn => asData?.value != null;
-  User? get user => asData?.value;
+  UserEntity? get user => asData?.value;
 }

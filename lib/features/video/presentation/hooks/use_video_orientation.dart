@@ -1,4 +1,4 @@
-import 'package:culcul/data/models/index.dart';
+import 'package:culcul/data/models/video/video_detail.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:culcul/features/video/controllers/player_controller.dart';

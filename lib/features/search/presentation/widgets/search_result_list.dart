@@ -4,7 +4,7 @@ import 'package:culcul/features/search/presentation/widgets/items/search_bangumi
 import 'package:culcul/features/search/presentation/widgets/items/search_topic_item.dart';
 import 'package:culcul/features/search/presentation/widgets/items/search_user_item.dart';
 import 'package:culcul/features/search/presentation/widgets/items/search_video_item.dart';
-import 'package:culcul/ui/widgets/index.dart';
+import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:flutter/material.dart';
 
 class SearchResultList extends StatelessWidget {

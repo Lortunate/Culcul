@@ -6,7 +6,7 @@ import 'package:culcul/data/api/auth_api.dart';
 import 'package:culcul/data/models/response/api_response.dart';
 import 'package:culcul/data/models/user/user_model.dart' as data_user;
 import 'package:culcul/domain/entities/country_code.dart';
-import 'package:culcul/domain/entities/user.dart';
+import 'package:culcul/domain/entities/user_entity.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pointycastle/asymmetric/api.dart';
@@ -23,8 +23,8 @@ class AuthRepository extends BaseRepository {
     // This method is required by TokenInterceptor
   }
 
-  User _toDomainUser(data_user.User user) {
-    return User(
+  UserEntity _toDomainUser(data_user.User user) {
+    return UserEntity(
       id: user.id,
       username: user.username,
       avatarUrl: user.avatarUrl,
@@ -36,7 +36,7 @@ class AuthRepository extends BaseRepository {
     );
   }
 
-  data_user.User _toDataUser(User user) {
+  data_user.User _toDataUser(UserEntity user) {
     return data_user.User(
       id: user.id,
       username: user.username,
@@ -49,7 +49,7 @@ class AuthRepository extends BaseRepository {
     );
   }
 
-  User? getCachedUser() {
+  UserEntity? getCachedUser() {
     final jsonStr = _box.get(_userCacheKey);
     if (jsonStr == null) return null;
     try {
@@ -62,7 +62,7 @@ class AuthRepository extends BaseRepository {
     }
   }
 
-  Future<void> _cacheUser(User user) async {
+  Future<void> _cacheUser(UserEntity user) async {
     await _box.put(
       _userCacheKey,
       jsonEncode(_toDataUser(user).toJson()),
@@ -74,7 +74,7 @@ class AuthRepository extends BaseRepository {
   }
 
   // Password Login Flow
-  Future<Result<User, AppException>> loginWithPassword({
+  Future<Result<UserEntity, AppException>> loginWithPassword({
     required String username,
     required String password,
     required String token,
@@ -196,7 +196,7 @@ class AuthRepository extends BaseRepository {
     });
   }
 
-  Future<Result<User, AppException>> loginWithSms(
+  Future<Result<UserEntity, AppException>> loginWithSms(
     int cid,
     String phone,
     String code,
@@ -260,7 +260,7 @@ class AuthRepository extends BaseRepository {
   }
 
   // User Info
-  Future<Result<User, AppException>> getCurrentUser() async {
+  Future<Result<UserEntity, AppException>> getCurrentUser() async {
     return safeCall(() async {
       final response = await _api.getCurrentUser();
       if (response.code == 0) {

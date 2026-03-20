@@ -1,7 +1,7 @@
 // ignore_for_file: invalid_use_of_internal_member
 import 'package:culcul/core/paging_mixin.dart';
 import 'package:culcul/core/result.dart';
-import 'package:culcul/data/models/index.dart';
+import 'package:culcul/data/models/video/video_model.dart';
 import 'package:culcul/features/home/data/home_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
