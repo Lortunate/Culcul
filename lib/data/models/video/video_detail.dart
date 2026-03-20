@@ -6,7 +6,7 @@ part 'video_detail.freezed.dart';
 part 'video_detail.g.dart';
 
 @freezed
-abstract class VideoDetail with _$VideoDetail {
+sealed class VideoDetail with _$VideoDetail {
   const factory VideoDetail({
     required String bvid,
     required int aid,
@@ -33,7 +33,7 @@ abstract class VideoDetail with _$VideoDetail {
 }
 
 @freezed
-abstract class ReqUser with _$ReqUser {
+sealed class ReqUser with _$ReqUser {
   const factory ReqUser({
     @Default(0) int attention,
     @JsonKey(name: 'guest_attention') @Default(0) int guestAttention,
@@ -44,7 +44,7 @@ abstract class ReqUser with _$ReqUser {
 }
 
 @freezed
-abstract class VideoPage with _$VideoPage {
+sealed class VideoPage with _$VideoPage {
   const factory VideoPage({
     required int cid,
     @Default(0) int page,
@@ -61,7 +61,7 @@ abstract class VideoPage with _$VideoPage {
 }
 
 @freezed
-abstract class VideoDimension with _$VideoDimension {
+sealed class VideoDimension with _$VideoDimension {
   const factory VideoDimension({
     @Default(0) int width,
     @Default(0) int height,
@@ -73,7 +73,7 @@ abstract class VideoDimension with _$VideoDimension {
 }
 
 @freezed
-abstract class VideoTag with _$VideoTag {
+sealed class VideoTag with _$VideoTag {
   const factory VideoTag({
     @JsonKey(name: 'tag_id') @Default(0) int tagId,
     @JsonKey(name: 'tag_name') @Default('') String tagName,
@@ -105,7 +105,7 @@ abstract class VideoTag with _$VideoTag {
 }
 
 @freezed
-abstract class TagCount with _$TagCount {
+sealed class TagCount with _$TagCount {
   const factory TagCount({
     @Default(0) int view,
     @Default(0) int use,

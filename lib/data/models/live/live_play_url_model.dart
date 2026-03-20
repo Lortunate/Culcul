@@ -4,7 +4,7 @@ part 'live_play_url_model.freezed.dart';
 part 'live_play_url_model.g.dart';
 
 @freezed
-abstract class LivePlayUrlModel with _$LivePlayUrlModel {
+sealed class LivePlayUrlModel with _$LivePlayUrlModel {
   const factory LivePlayUrlModel({
     @JsonKey(name: 'current_quality') required int currentQuality,
     @JsonKey(name: 'accept_quality') required List<String> acceptQuality,
@@ -19,7 +19,7 @@ abstract class LivePlayUrlModel with _$LivePlayUrlModel {
 }
 
 @freezed
-abstract class LiveQualityDescription with _$LiveQualityDescription {
+sealed class LiveQualityDescription with _$LiveQualityDescription {
   const factory LiveQualityDescription({
     required int qn,
     required String desc,
@@ -30,7 +30,7 @@ abstract class LiveQualityDescription with _$LiveQualityDescription {
 }
 
 @freezed
-abstract class LiveStreamUrl with _$LiveStreamUrl {
+sealed class LiveStreamUrl with _$LiveStreamUrl {
   const factory LiveStreamUrl({
     required String url,
     required int length,

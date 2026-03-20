@@ -88,15 +88,15 @@ extension DynamicItemExtension on DynamicItem {
       );
     }
 
-    if (major.ugc_season != null) {
+    if (major.ugcSeason != null) {
       return DynamicVideoContent(
-        title: major.ugc_season!.title,
-        cover: major.ugc_season!.cover,
-        duration: major.ugc_season!.durationText,
-        playCount: major.ugc_season!.stat.play,
-        danmakuCount: major.ugc_season!.stat.danmaku,
-        aid: major.ugc_season!.aid,
-        bvid: major.ugc_season!.bvid,
+        title: major.ugcSeason!.title,
+        cover: major.ugcSeason!.cover,
+        duration: major.ugcSeason!.durationText,
+        playCount: major.ugcSeason!.stat.play,
+        danmakuCount: major.ugcSeason!.stat.danmaku,
+        aid: major.ugcSeason!.aid,
+        bvid: major.ugcSeason!.bvid,
       );
     }
 
@@ -219,7 +219,7 @@ extension DynamicItemExtension on DynamicItem {
         title: additional.vote!.desc,
         voteJoinNum: additional.vote!.joinNum,
         voteId: additional.vote!.voteId,
-        voteChoiceCnt: additional.vote!.choice_cnt,
+        voteChoiceCnt: additional.vote!.choiceCnt,
         voteStatus: additional.vote!.status,
       );
     }

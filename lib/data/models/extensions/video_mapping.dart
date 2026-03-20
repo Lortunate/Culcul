@@ -13,7 +13,7 @@ extension RelatedVideoMapping on RelatedVideo {
       duration: duration,
       pubDate: pubDate,
       desc: desc,
-      rcmd_reason: rcmdReason,
+      rcmdReason: rcmdReason,
     );
   }
 }
@@ -29,7 +29,7 @@ extension UserSpaceVideoModelMapping on UserSpaceVideoModel {
       duration: duration,
       pubDate: pubDate,
       desc: desc,
-      rcmd_reason: reason,
+      rcmdReason: reason,
     );
   }
 }

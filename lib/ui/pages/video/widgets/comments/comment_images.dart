@@ -14,7 +14,7 @@ class CommentImagesWidget extends StatelessWidget {
     if (pictures.isEmpty) return const SizedBox.shrink();
 
     // Extract URLs for preview
-    final imageUrls = pictures.map((p) => p.img_src).toList();
+    final imageUrls = pictures.map((p) => p.imgSrc).toList();
 
     if (pictures.length == 1) {
       return _buildSingleImage(context, pictures.first, imageUrls);
@@ -31,11 +31,11 @@ class CommentImagesWidget extends StatelessWidget {
     // Single image logic
     // Limit max size to avoid taking too much space
     // Aspect ratio can be respected but with limits
-    final double? w = picture.img_width > 0
-        ? picture.img_width.toDouble()
+    final double? w = picture.imgWidth > 0
+        ? picture.imgWidth.toDouble()
         : null;
-    final double? h = picture.img_height > 0
-        ? picture.img_height.toDouble()
+    final double? h = picture.imgHeight > 0
+        ? picture.imgHeight.toDouble()
         : null;
 
     // Calculate aspect ratio
@@ -52,7 +52,7 @@ class CommentImagesWidget extends StatelessWidget {
     return GestureDetector(
       onTap: () => _openPreview(context, imageUrls, 0),
       child: Hero(
-        tag: picture.img_src,
+        tag: picture.imgSrc,
         child: Container(
           constraints: const BoxConstraints(
             maxWidth: maxSide,
@@ -65,7 +65,7 @@ class CommentImagesWidget extends StatelessWidget {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: ExtendedImage.network(
-                FormatUtils.formatImageUrl(picture.img_src),
+                FormatUtils.formatImageUrl(picture.imgSrc),
                 fit: BoxFit.cover,
                 cache: true,
                 loadStateChanged: (state) => _buildLoadState(context, state),
@@ -103,14 +103,14 @@ class CommentImagesWidget extends StatelessWidget {
             return GestureDetector(
               onTap: () => _openPreview(context, imageUrls, index),
               child: Hero(
-                tag: pictures[index].img_src,
+                tag: pictures[index].imgSrc,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: SizedBox(
                     width: itemSize,
                     height: itemSize,
                     child: ExtendedImage.network(
-                      FormatUtils.formatImageUrl(pictures[index].img_src),
+                      FormatUtils.formatImageUrl(pictures[index].imgSrc),
                       fit: BoxFit.cover,
                       cache: true,
                       loadStateChanged: (state) =>

@@ -129,10 +129,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _SearchSuggestionResponse():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -191,10 +188,7 @@ return $default(_that.code,_that.expStr,_that.result);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? code, @JsonKey(name: 'exp_str')  String? expStr, @SearchSuggestionResultConverter()  SearchSuggestionResult? result)  $default,) {final _that = this;
 switch (_that) {
 case _SearchSuggestionResponse():
-return $default(_that.code,_that.expStr,_that.result);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.code,_that.expStr,_that.result);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -408,10 +402,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _SearchSuggestionResult():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -470,10 +461,7 @@ return $default(_that.tags);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'tag')  List<SearchSuggestionTag>? tags)  $default,) {final _that = this;
 switch (_that) {
 case _SearchSuggestionResult():
-return $default(_that.tags);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.tags);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -684,10 +672,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _SearchSuggestionTag():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -746,10 +731,7 @@ return $default(_that.value,_that.term,_that.ref,_that.name,_that.spid,_that.typ
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? value,  String? term, @JsonKey(name: 'ref')  dynamic ref,  String? name, @JsonKey(name: 'spid')  dynamic spid,  String? type)  $default,) {final _that = this;
 switch (_that) {
 case _SearchSuggestionTag():
-return $default(_that.value,_that.term,_that.ref,_that.name,_that.spid,_that.type);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.value,_that.term,_that.ref,_that.name,_that.spid,_that.type);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

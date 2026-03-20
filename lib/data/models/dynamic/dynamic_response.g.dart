@@ -6,15 +6,15 @@ part of 'dynamic_response.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-DynamicDetailData _$DynamicDetailDataFromJson(Map<String, dynamic> json) =>
-    DynamicDetailData(
+_DynamicDetailData _$DynamicDetailDataFromJson(Map<String, dynamic> json) =>
+    _DynamicDetailData(
       item: DynamicItem.fromJson(json['item'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$DynamicDetailDataToJson(DynamicDetailData instance) =>
+Map<String, dynamic> _$DynamicDetailDataToJson(_DynamicDetailData instance) =>
     <String, dynamic>{'item': instance.item};
 
-DynamicData _$DynamicDataFromJson(Map<String, dynamic> json) => DynamicData(
+_DynamicData _$DynamicDataFromJson(Map<String, dynamic> json) => _DynamicData(
   hasMore: json['has_more'] as bool,
   items: (json['items'] as List<dynamic>)
       .map((e) => DynamicItem.fromJson(e as Map<String, dynamic>))
@@ -24,7 +24,7 @@ DynamicData _$DynamicDataFromJson(Map<String, dynamic> json) => DynamicData(
   updateNum: JsonUtils.parseIntWithDefault(json['update_num']),
 );
 
-Map<String, dynamic> _$DynamicDataToJson(DynamicData instance) =>
+Map<String, dynamic> _$DynamicDataToJson(_DynamicData instance) =>
     <String, dynamic>{
       'has_more': instance.hasMore,
       'items': instance.items,
@@ -33,7 +33,7 @@ Map<String, dynamic> _$DynamicDataToJson(DynamicData instance) =>
       'update_num': instance.updateNum,
     };
 
-DynamicItem _$DynamicItemFromJson(Map<String, dynamic> json) => DynamicItem(
+_DynamicItem _$DynamicItemFromJson(Map<String, dynamic> json) => _DynamicItem(
   idStr: json['id_str'] as String,
   type: json['type'] as String,
   visible: json['visible'] as bool,
@@ -46,7 +46,7 @@ DynamicItem _$DynamicItemFromJson(Map<String, dynamic> json) => DynamicItem(
       : DynamicBasic.fromJson(json['basic'] as Map<String, dynamic>),
 );
 
-Map<String, dynamic> _$DynamicItemToJson(DynamicItem instance) =>
+Map<String, dynamic> _$DynamicItemToJson(_DynamicItem instance) =>
     <String, dynamic>{
       'id_str': instance.idStr,
       'type': instance.type,
@@ -56,21 +56,22 @@ Map<String, dynamic> _$DynamicItemToJson(DynamicItem instance) =>
       'basic': instance.basic,
     };
 
-DynamicBasic _$DynamicBasicFromJson(Map<String, dynamic> json) => DynamicBasic(
-  commentIdStr: json['comment_id_str'] as String,
-  commentType: (json['comment_type'] as num).toInt(),
-  ridStr: json['rid_str'] as String,
-);
+_DynamicBasic _$DynamicBasicFromJson(Map<String, dynamic> json) =>
+    _DynamicBasic(
+      commentIdStr: json['comment_id_str'] as String,
+      commentType: (json['comment_type'] as num).toInt(),
+      ridStr: json['rid_str'] as String,
+    );
 
-Map<String, dynamic> _$DynamicBasicToJson(DynamicBasic instance) =>
+Map<String, dynamic> _$DynamicBasicToJson(_DynamicBasic instance) =>
     <String, dynamic>{
       'comment_id_str': instance.commentIdStr,
       'comment_type': instance.commentType,
       'rid_str': instance.ridStr,
     };
 
-DynamicModules _$DynamicModulesFromJson(Map<String, dynamic> json) =>
-    DynamicModules(
+_DynamicModules _$DynamicModulesFromJson(Map<String, dynamic> json) =>
+    _DynamicModules(
       moduleAuthor: ModuleAuthor.fromJson(
         json['module_author'] as Map<String, dynamic>,
       ),
@@ -82,22 +83,23 @@ DynamicModules _$DynamicModulesFromJson(Map<String, dynamic> json) =>
           : ModuleStat.fromJson(json['module_stat'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$DynamicModulesToJson(DynamicModules instance) =>
+Map<String, dynamic> _$DynamicModulesToJson(_DynamicModules instance) =>
     <String, dynamic>{
       'module_author': instance.moduleAuthor,
       'module_dynamic': instance.moduleDynamic,
       'module_stat': instance.moduleStat,
     };
 
-ModuleAuthor _$ModuleAuthorFromJson(Map<String, dynamic> json) => ModuleAuthor(
-  mid: (json['mid'] as num).toInt(),
-  name: json['name'] as String,
-  avatar: json['face'] as String,
-  pubTime: json['pub_time'] as String,
-  pubAction: json['pub_action'] as String,
-);
+_ModuleAuthor _$ModuleAuthorFromJson(Map<String, dynamic> json) =>
+    _ModuleAuthor(
+      mid: (json['mid'] as num).toInt(),
+      name: json['name'] as String,
+      avatar: json['face'] as String,
+      pubTime: json['pub_time'] as String,
+      pubAction: json['pub_action'] as String,
+    );
 
-Map<String, dynamic> _$ModuleAuthorToJson(ModuleAuthor instance) =>
+Map<String, dynamic> _$ModuleAuthorToJson(_ModuleAuthor instance) =>
     <String, dynamic>{
       'mid': instance.mid,
       'name': instance.name,
@@ -106,8 +108,8 @@ Map<String, dynamic> _$ModuleAuthorToJson(ModuleAuthor instance) =>
       'pub_action': instance.pubAction,
     };
 
-ModuleDynamic _$ModuleDynamicFromJson(Map<String, dynamic> json) =>
-    ModuleDynamic(
+_ModuleDynamic _$ModuleDynamicFromJson(Map<String, dynamic> json) =>
+    _ModuleDynamic(
       desc: json['desc'] == null
           ? null
           : ModuleDesc.fromJson(json['desc'] as Map<String, dynamic>),
@@ -124,7 +126,7 @@ ModuleDynamic _$ModuleDynamicFromJson(Map<String, dynamic> json) =>
             ),
     );
 
-Map<String, dynamic> _$ModuleDynamicToJson(ModuleDynamic instance) =>
+Map<String, dynamic> _$ModuleDynamicToJson(_ModuleDynamic instance) =>
     <String, dynamic>{
       'desc': instance.desc,
       'major': instance.major,
@@ -132,8 +134,8 @@ Map<String, dynamic> _$ModuleDynamicToJson(ModuleDynamic instance) =>
       'additional': instance.additional,
     };
 
-ModuleAdditional _$ModuleAdditionalFromJson(Map<String, dynamic> json) =>
-    ModuleAdditional(
+_ModuleAdditional _$ModuleAdditionalFromJson(Map<String, dynamic> json) =>
+    _ModuleAdditional(
       type: json['type'] as String,
       common: json['common'] == null
           ? null
@@ -152,7 +154,7 @@ ModuleAdditional _$ModuleAdditionalFromJson(Map<String, dynamic> json) =>
           : AdditionalUgc.fromJson(json['ugc'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$ModuleAdditionalToJson(ModuleAdditional instance) =>
+Map<String, dynamic> _$ModuleAdditionalToJson(_ModuleAdditional instance) =>
     <String, dynamic>{
       'type': instance.type,
       'common': instance.common,
@@ -162,8 +164,8 @@ Map<String, dynamic> _$ModuleAdditionalToJson(ModuleAdditional instance) =>
       'ugc': instance.ugc,
     };
 
-AdditionalCommon _$AdditionalCommonFromJson(Map<String, dynamic> json) =>
-    AdditionalCommon(
+_AdditionalCommon _$AdditionalCommonFromJson(Map<String, dynamic> json) =>
+    _AdditionalCommon(
       title: json['title'] as String,
       desc1: json['desc1'] as String?,
       desc2: json['desc2'] as String?,
@@ -173,7 +175,7 @@ AdditionalCommon _$AdditionalCommonFromJson(Map<String, dynamic> json) =>
       headText: json['head_text'] as String?,
     );
 
-Map<String, dynamic> _$AdditionalCommonToJson(AdditionalCommon instance) =>
+Map<String, dynamic> _$AdditionalCommonToJson(_AdditionalCommon instance) =>
     <String, dynamic>{
       'title': instance.title,
       'desc1': instance.desc1,
@@ -184,8 +186,8 @@ Map<String, dynamic> _$AdditionalCommonToJson(AdditionalCommon instance) =>
       'head_text': instance.headText,
     };
 
-AdditionalReserve _$AdditionalReserveFromJson(Map<String, dynamic> json) =>
-    AdditionalReserve(
+_AdditionalReserve _$AdditionalReserveFromJson(Map<String, dynamic> json) =>
+    _AdditionalReserve(
       title: json['title'] as String,
       jumpUrl: json['jump_url'] as String,
       reserveTotal: (json['reserve_total'] as num).toInt(),
@@ -198,7 +200,7 @@ AdditionalReserve _$AdditionalReserveFromJson(Map<String, dynamic> json) =>
           : ReserveDesc.fromJson(json['desc2'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$AdditionalReserveToJson(AdditionalReserve instance) =>
+Map<String, dynamic> _$AdditionalReserveToJson(_AdditionalReserve instance) =>
     <String, dynamic>{
       'title': instance.title,
       'jump_url': instance.jumpUrl,
@@ -208,16 +210,16 @@ Map<String, dynamic> _$AdditionalReserveToJson(AdditionalReserve instance) =>
       'desc2': instance.desc2,
     };
 
-ReserveDesc _$ReserveDescFromJson(Map<String, dynamic> json) => ReserveDesc(
+_ReserveDesc _$ReserveDescFromJson(Map<String, dynamic> json) => _ReserveDesc(
   text: json['text'] as String,
   style: (json['style'] as num).toInt(),
 );
 
-Map<String, dynamic> _$ReserveDescToJson(ReserveDesc instance) =>
+Map<String, dynamic> _$ReserveDescToJson(_ReserveDesc instance) =>
     <String, dynamic>{'text': instance.text, 'style': instance.style};
 
-AdditionalGoods _$AdditionalGoodsFromJson(Map<String, dynamic> json) =>
-    AdditionalGoods(
+_AdditionalGoods _$AdditionalGoodsFromJson(Map<String, dynamic> json) =>
+    _AdditionalGoods(
       headText: json['head_text'] as String,
       items: (json['items'] as List<dynamic>)
           .map((e) => GoodsItem.fromJson(e as Map<String, dynamic>))
@@ -225,49 +227,50 @@ AdditionalGoods _$AdditionalGoodsFromJson(Map<String, dynamic> json) =>
       jumpUrl: json['jump_url'] as String,
     );
 
-Map<String, dynamic> _$AdditionalGoodsToJson(AdditionalGoods instance) =>
+Map<String, dynamic> _$AdditionalGoodsToJson(_AdditionalGoods instance) =>
     <String, dynamic>{
       'head_text': instance.headText,
       'items': instance.items,
       'jump_url': instance.jumpUrl,
     };
 
-GoodsItem _$GoodsItemFromJson(Map<String, dynamic> json) => GoodsItem(
+_GoodsItem _$GoodsItemFromJson(Map<String, dynamic> json) => _GoodsItem(
   name: json['name'] as String,
   price: json['price'] as String,
   cover: json['cover'] as String,
   jumpUrl: json['jump_url'] as String,
 );
 
-Map<String, dynamic> _$GoodsItemToJson(GoodsItem instance) => <String, dynamic>{
-  'name': instance.name,
-  'price': instance.price,
-  'cover': instance.cover,
-  'jump_url': instance.jumpUrl,
-};
+Map<String, dynamic> _$GoodsItemToJson(_GoodsItem instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'price': instance.price,
+      'cover': instance.cover,
+      'jump_url': instance.jumpUrl,
+    };
 
-AdditionalVote _$AdditionalVoteFromJson(Map<String, dynamic> json) =>
-    AdditionalVote(
+_AdditionalVote _$AdditionalVoteFromJson(Map<String, dynamic> json) =>
+    _AdditionalVote(
       desc: json['desc'] as String,
       endTime: (json['end_time'] as num).toInt(),
       joinNum: (json['join_num'] as num).toInt(),
       voteId: (json['vote_id'] as num).toInt(),
-      choice_cnt: (json['choice_cnt'] as num).toInt(),
+      choiceCnt: (json['choice_cnt'] as num).toInt(),
       status: (json['status'] as num).toInt(),
     );
 
-Map<String, dynamic> _$AdditionalVoteToJson(AdditionalVote instance) =>
+Map<String, dynamic> _$AdditionalVoteToJson(_AdditionalVote instance) =>
     <String, dynamic>{
       'desc': instance.desc,
       'end_time': instance.endTime,
       'join_num': instance.joinNum,
       'vote_id': instance.voteId,
-      'choice_cnt': instance.choice_cnt,
+      'choice_cnt': instance.choiceCnt,
       'status': instance.status,
     };
 
-AdditionalUgc _$AdditionalUgcFromJson(Map<String, dynamic> json) =>
-    AdditionalUgc(
+_AdditionalUgc _$AdditionalUgcFromJson(Map<String, dynamic> json) =>
+    _AdditionalUgc(
       title: json['title'] as String,
       cover: json['cover'] as String,
       descSecond: json['desc_second'] as String,
@@ -275,7 +278,7 @@ AdditionalUgc _$AdditionalUgcFromJson(Map<String, dynamic> json) =>
       jumpUrl: json['jump_url'] as String,
     );
 
-Map<String, dynamic> _$AdditionalUgcToJson(AdditionalUgc instance) =>
+Map<String, dynamic> _$AdditionalUgcToJson(_AdditionalUgc instance) =>
     <String, dynamic>{
       'title': instance.title,
       'cover': instance.cover,
@@ -284,18 +287,18 @@ Map<String, dynamic> _$AdditionalUgcToJson(AdditionalUgc instance) =>
       'jump_url': instance.jumpUrl,
     };
 
-ModuleDesc _$ModuleDescFromJson(Map<String, dynamic> json) => ModuleDesc(
+_ModuleDesc _$ModuleDescFromJson(Map<String, dynamic> json) => _ModuleDesc(
   text: json['text'] as String,
   richTextNodes: json['rich_text_nodes'] as List<dynamic>?,
 );
 
-Map<String, dynamic> _$ModuleDescToJson(ModuleDesc instance) =>
+Map<String, dynamic> _$ModuleDescToJson(_ModuleDesc instance) =>
     <String, dynamic>{
       'text': instance.text,
       'rich_text_nodes': instance.richTextNodes,
     };
 
-ModuleMajor _$ModuleMajorFromJson(Map<String, dynamic> json) => ModuleMajor(
+_ModuleMajor _$ModuleMajorFromJson(Map<String, dynamic> json) => _ModuleMajor(
   type: json['type'] as String,
   archive: json['archive'] == null
       ? null
@@ -303,7 +306,7 @@ ModuleMajor _$ModuleMajorFromJson(Map<String, dynamic> json) => ModuleMajor(
   draw: json['draw'] == null
       ? null
       : MajorDraw.fromJson(json['draw'] as Map<String, dynamic>),
-  ugc_season: json['ugc_season'] == null
+  ugcSeason: json['ugc_season'] == null
       ? null
       : MajorArchive.fromJson(json['ugc_season'] as Map<String, dynamic>),
   article: json['article'] == null
@@ -332,12 +335,12 @@ ModuleMajor _$ModuleMajorFromJson(Map<String, dynamic> json) => ModuleMajor(
       : MajorLiveRcmd.fromJson(json['live_rcmd'] as Map<String, dynamic>),
 );
 
-Map<String, dynamic> _$ModuleMajorToJson(ModuleMajor instance) =>
+Map<String, dynamic> _$ModuleMajorToJson(_ModuleMajor instance) =>
     <String, dynamic>{
       'type': instance.type,
       'archive': instance.archive,
       'draw': instance.draw,
-      'ugc_season': instance.ugc_season,
+      'ugc_season': instance.ugcSeason,
       'article': instance.article,
       'common': instance.common,
       'pgc': instance.pgc,
@@ -348,18 +351,19 @@ Map<String, dynamic> _$ModuleMajorToJson(ModuleMajor instance) =>
       'live_rcmd': instance.liveRcmd,
     };
 
-MajorArchive _$MajorArchiveFromJson(Map<String, dynamic> json) => MajorArchive(
-  cover: json['cover'] as String,
-  title: json['title'] as String,
-  desc: json['desc'] as String,
-  durationText: json['duration_text'] as String,
-  stat: MajorStat.fromJson(json['stat'] as Map<String, dynamic>),
-  aid: json['aid'] as String,
-  bvid: json['bvid'] as String,
-  jumpUrl: json['jump_url'] as String,
-);
+_MajorArchive _$MajorArchiveFromJson(Map<String, dynamic> json) =>
+    _MajorArchive(
+      cover: json['cover'] as String,
+      title: json['title'] as String,
+      desc: json['desc'] as String,
+      durationText: json['duration_text'] as String,
+      stat: MajorStat.fromJson(json['stat'] as Map<String, dynamic>),
+      aid: json['aid'] as String,
+      bvid: json['bvid'] as String,
+      jumpUrl: json['jump_url'] as String,
+    );
 
-Map<String, dynamic> _$MajorArchiveToJson(MajorArchive instance) =>
+Map<String, dynamic> _$MajorArchiveToJson(_MajorArchive instance) =>
     <String, dynamic>{
       'cover': instance.cover,
       'title': instance.title,
@@ -371,42 +375,43 @@ Map<String, dynamic> _$MajorArchiveToJson(MajorArchive instance) =>
       'jump_url': instance.jumpUrl,
     };
 
-MajorDraw _$MajorDrawFromJson(Map<String, dynamic> json) => MajorDraw(
+_MajorDraw _$MajorDrawFromJson(Map<String, dynamic> json) => _MajorDraw(
   id: (json['id'] as num).toInt(),
   items: (json['items'] as List<dynamic>)
       .map((e) => DrawItem.fromJson(e as Map<String, dynamic>))
       .toList(),
 );
 
-Map<String, dynamic> _$MajorDrawToJson(MajorDraw instance) => <String, dynamic>{
-  'id': instance.id,
-  'items': instance.items,
-};
+Map<String, dynamic> _$MajorDrawToJson(_MajorDraw instance) =>
+    <String, dynamic>{'id': instance.id, 'items': instance.items};
 
-DrawItem _$DrawItemFromJson(Map<String, dynamic> json) => DrawItem(
+_DrawItem _$DrawItemFromJson(Map<String, dynamic> json) => _DrawItem(
   src: json['src'] as String,
   width: (json['width'] as num).toInt(),
   height: (json['height'] as num).toInt(),
   size: (json['size'] as num).toInt(),
 );
 
-Map<String, dynamic> _$DrawItemToJson(DrawItem instance) => <String, dynamic>{
+Map<String, dynamic> _$DrawItemToJson(_DrawItem instance) => <String, dynamic>{
   'src': instance.src,
   'width': instance.width,
   'height': instance.height,
   'size': instance.size,
 };
 
-MajorArticle _$MajorArticleFromJson(Map<String, dynamic> json) => MajorArticle(
-  id: (json['id'] as num).toInt(),
-  title: json['title'] as String,
-  desc: json['desc'] as String,
-  covers: (json['covers'] as List<dynamic>).map((e) => e as String).toList(),
-  label: json['label'] as String,
-  jumpUrl: json['jump_url'] as String,
-);
+_MajorArticle _$MajorArticleFromJson(Map<String, dynamic> json) =>
+    _MajorArticle(
+      id: (json['id'] as num).toInt(),
+      title: json['title'] as String,
+      desc: json['desc'] as String,
+      covers: (json['covers'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      label: json['label'] as String,
+      jumpUrl: json['jump_url'] as String,
+    );
 
-Map<String, dynamic> _$MajorArticleToJson(MajorArticle instance) =>
+Map<String, dynamic> _$MajorArticleToJson(_MajorArticle instance) =>
     <String, dynamic>{
       'id': instance.id,
       'title': instance.title,
@@ -416,7 +421,7 @@ Map<String, dynamic> _$MajorArticleToJson(MajorArticle instance) =>
       'jump_url': instance.jumpUrl,
     };
 
-MajorCommon _$MajorCommonFromJson(Map<String, dynamic> json) => MajorCommon(
+_MajorCommon _$MajorCommonFromJson(Map<String, dynamic> json) => _MajorCommon(
   title: json['title'] as String,
   desc: json['desc'] as String,
   cover: json['cover'] as String,
@@ -424,7 +429,7 @@ MajorCommon _$MajorCommonFromJson(Map<String, dynamic> json) => MajorCommon(
   label: json['label'] as String,
 );
 
-Map<String, dynamic> _$MajorCommonToJson(MajorCommon instance) =>
+Map<String, dynamic> _$MajorCommonToJson(_MajorCommon instance) =>
     <String, dynamic>{
       'title': instance.title,
       'desc': instance.desc,
@@ -433,52 +438,52 @@ Map<String, dynamic> _$MajorCommonToJson(MajorCommon instance) =>
       'label': instance.label,
     };
 
-MajorStat _$MajorStatFromJson(Map<String, dynamic> json) =>
-    MajorStat(play: json['play'] as String, danmaku: json['danmaku'] as String);
+_MajorStat _$MajorStatFromJson(Map<String, dynamic> json) => _MajorStat(
+  play: json['play'] as String,
+  danmaku: json['danmaku'] as String,
+);
 
-Map<String, dynamic> _$MajorStatToJson(MajorStat instance) => <String, dynamic>{
-  'play': instance.play,
-  'danmaku': instance.danmaku,
-};
+Map<String, dynamic> _$MajorStatToJson(_MajorStat instance) =>
+    <String, dynamic>{'play': instance.play, 'danmaku': instance.danmaku};
 
-ModuleStat _$ModuleStatFromJson(Map<String, dynamic> json) => ModuleStat(
+_ModuleStat _$ModuleStatFromJson(Map<String, dynamic> json) => _ModuleStat(
   like: StatLike.fromJson(json['like'] as Map<String, dynamic>),
   comment: StatCommon.fromJson(json['comment'] as Map<String, dynamic>),
   forward: StatCommon.fromJson(json['forward'] as Map<String, dynamic>),
 );
 
-Map<String, dynamic> _$ModuleStatToJson(ModuleStat instance) =>
+Map<String, dynamic> _$ModuleStatToJson(_ModuleStat instance) =>
     <String, dynamic>{
       'like': instance.like,
       'comment': instance.comment,
       'forward': instance.forward,
     };
 
-StatLike _$StatLikeFromJson(Map<String, dynamic> json) => StatLike(
+_StatLike _$StatLikeFromJson(Map<String, dynamic> json) => _StatLike(
   count: (json['count'] as num).toInt(),
   status: json['status'] as bool,
 );
 
-Map<String, dynamic> _$StatLikeToJson(StatLike instance) => <String, dynamic>{
+Map<String, dynamic> _$StatLikeToJson(_StatLike instance) => <String, dynamic>{
   'count': instance.count,
   'status': instance.status,
 };
 
-StatCommon _$StatCommonFromJson(Map<String, dynamic> json) =>
-    StatCommon(count: (json['count'] as num).toInt());
+_StatCommon _$StatCommonFromJson(Map<String, dynamic> json) =>
+    _StatCommon(count: (json['count'] as num).toInt());
 
-Map<String, dynamic> _$StatCommonToJson(StatCommon instance) =>
+Map<String, dynamic> _$StatCommonToJson(_StatCommon instance) =>
     <String, dynamic>{'count': instance.count};
 
-ModuleTopic _$ModuleTopicFromJson(Map<String, dynamic> json) => ModuleTopic(
+_ModuleTopic _$ModuleTopicFromJson(Map<String, dynamic> json) => _ModuleTopic(
   name: json['name'] as String,
   jumpUrl: json['jump_url'] as String,
 );
 
-Map<String, dynamic> _$ModuleTopicToJson(ModuleTopic instance) =>
+Map<String, dynamic> _$ModuleTopicToJson(_ModuleTopic instance) =>
     <String, dynamic>{'name': instance.name, 'jump_url': instance.jumpUrl};
 
-MajorPgc _$MajorPgcFromJson(Map<String, dynamic> json) => MajorPgc(
+_MajorPgc _$MajorPgcFromJson(Map<String, dynamic> json) => _MajorPgc(
   cover: json['cover'] as String,
   title: json['title'] as String,
   jumpUrl: json['jump_url'] as String,
@@ -489,7 +494,7 @@ MajorPgc _$MajorPgcFromJson(Map<String, dynamic> json) => MajorPgc(
   type: (json['type'] as num).toInt(),
 );
 
-Map<String, dynamic> _$MajorPgcToJson(MajorPgc instance) => <String, dynamic>{
+Map<String, dynamic> _$MajorPgcToJson(_MajorPgc instance) => <String, dynamic>{
   'cover': instance.cover,
   'title': instance.title,
   'jump_url': instance.jumpUrl,
@@ -500,16 +505,17 @@ Map<String, dynamic> _$MajorPgcToJson(MajorPgc instance) => <String, dynamic>{
   'type': instance.type,
 };
 
-MajorCourses _$MajorCoursesFromJson(Map<String, dynamic> json) => MajorCourses(
-  cover: json['cover'] as String,
-  title: json['title'] as String,
-  subTitle: json['sub_title'] as String,
-  desc: json['desc'] as String,
-  jumpUrl: json['jump_url'] as String,
-  id: (json['id'] as num).toInt(),
-);
+_MajorCourses _$MajorCoursesFromJson(Map<String, dynamic> json) =>
+    _MajorCourses(
+      cover: json['cover'] as String,
+      title: json['title'] as String,
+      subTitle: json['sub_title'] as String,
+      desc: json['desc'] as String,
+      jumpUrl: json['jump_url'] as String,
+      id: (json['id'] as num).toInt(),
+    );
 
-Map<String, dynamic> _$MajorCoursesToJson(MajorCourses instance) =>
+Map<String, dynamic> _$MajorCoursesToJson(_MajorCourses instance) =>
     <String, dynamic>{
       'cover': instance.cover,
       'title': instance.title,
@@ -519,7 +525,7 @@ Map<String, dynamic> _$MajorCoursesToJson(MajorCourses instance) =>
       'id': instance.id,
     };
 
-MajorMusic _$MajorMusicFromJson(Map<String, dynamic> json) => MajorMusic(
+_MajorMusic _$MajorMusicFromJson(Map<String, dynamic> json) => _MajorMusic(
   cover: json['cover'] as String,
   title: json['title'] as String,
   label: json['label'] as String,
@@ -527,7 +533,7 @@ MajorMusic _$MajorMusicFromJson(Map<String, dynamic> json) => MajorMusic(
   id: (json['id'] as num).toInt(),
 );
 
-Map<String, dynamic> _$MajorMusicToJson(MajorMusic instance) =>
+Map<String, dynamic> _$MajorMusicToJson(_MajorMusic instance) =>
     <String, dynamic>{
       'cover': instance.cover,
       'title': instance.title,
@@ -536,7 +542,7 @@ Map<String, dynamic> _$MajorMusicToJson(MajorMusic instance) =>
       'id': instance.id,
     };
 
-MajorOpus _$MajorOpusFromJson(Map<String, dynamic> json) => MajorOpus(
+_MajorOpus _$MajorOpusFromJson(Map<String, dynamic> json) => _MajorOpus(
   title: json['title'] as String?,
   summary: json['summary'] == null
       ? null
@@ -547,39 +553,40 @@ MajorOpus _$MajorOpusFromJson(Map<String, dynamic> json) => MajorOpus(
   jumpUrl: json['jump_url'] as String?,
 );
 
-Map<String, dynamic> _$MajorOpusToJson(MajorOpus instance) => <String, dynamic>{
-  'title': instance.title,
-  'summary': instance.summary,
-  'pics': instance.pics,
-  'jump_url': instance.jumpUrl,
-};
+Map<String, dynamic> _$MajorOpusToJson(_MajorOpus instance) =>
+    <String, dynamic>{
+      'title': instance.title,
+      'summary': instance.summary,
+      'pics': instance.pics,
+      'jump_url': instance.jumpUrl,
+    };
 
-OpusSummary _$OpusSummaryFromJson(Map<String, dynamic> json) => OpusSummary(
+_OpusSummary _$OpusSummaryFromJson(Map<String, dynamic> json) => _OpusSummary(
   text: json['text'] as String?,
   richTextNodes: json['rich_text_nodes'] as List<dynamic>?,
 );
 
-Map<String, dynamic> _$OpusSummaryToJson(OpusSummary instance) =>
+Map<String, dynamic> _$OpusSummaryToJson(_OpusSummary instance) =>
     <String, dynamic>{
       'text': instance.text,
       'rich_text_nodes': instance.richTextNodes,
     };
 
-OpusPic _$OpusPicFromJson(Map<String, dynamic> json) => OpusPic(
+_OpusPic _$OpusPicFromJson(Map<String, dynamic> json) => _OpusPic(
   url: json['url'] as String?,
   width: (json['width'] as num?)?.toInt(),
   height: (json['height'] as num?)?.toInt(),
   size: (json['size'] as num?)?.toInt(),
 );
 
-Map<String, dynamic> _$OpusPicToJson(OpusPic instance) => <String, dynamic>{
+Map<String, dynamic> _$OpusPicToJson(_OpusPic instance) => <String, dynamic>{
   'url': instance.url,
   'width': instance.width,
   'height': instance.height,
   'size': instance.size,
 };
 
-MajorLive _$MajorLiveFromJson(Map<String, dynamic> json) => MajorLive(
+_MajorLive _$MajorLiveFromJson(Map<String, dynamic> json) => _MajorLive(
   cover: json['cover'] as String,
   title: json['title'] as String,
   liveState: (json['live_state'] as num).toInt(),
@@ -588,43 +595,44 @@ MajorLive _$MajorLiveFromJson(Map<String, dynamic> json) => MajorLive(
   descSecond: json['desc_second'] as String,
 );
 
-Map<String, dynamic> _$MajorLiveToJson(MajorLive instance) => <String, dynamic>{
-  'cover': instance.cover,
-  'title': instance.title,
-  'live_state': instance.liveState,
-  'jump_url': instance.jumpUrl,
-  'desc_first': instance.descFirst,
-  'desc_second': instance.descSecond,
-};
+Map<String, dynamic> _$MajorLiveToJson(_MajorLive instance) =>
+    <String, dynamic>{
+      'cover': instance.cover,
+      'title': instance.title,
+      'live_state': instance.liveState,
+      'jump_url': instance.jumpUrl,
+      'desc_first': instance.descFirst,
+      'desc_second': instance.descSecond,
+    };
 
-MajorLiveRcmd _$MajorLiveRcmdFromJson(Map<String, dynamic> json) =>
-    MajorLiveRcmd(
+_MajorLiveRcmd _$MajorLiveRcmdFromJson(Map<String, dynamic> json) =>
+    _MajorLiveRcmd(
       content: json['content'] as String,
       reserveType: (json['reserve_type'] as num).toInt(),
     );
 
-Map<String, dynamic> _$MajorLiveRcmdToJson(MajorLiveRcmd instance) =>
+Map<String, dynamic> _$MajorLiveRcmdToJson(_MajorLiveRcmd instance) =>
     <String, dynamic>{
       'content': instance.content,
       'reserve_type': instance.reserveType,
     };
 
-DynamicPublishData _$DynamicPublishDataFromJson(Map<String, dynamic> json) =>
-    DynamicPublishData(dynIdStr: json['dyn_id_str'] as String);
+_DynamicPublishData _$DynamicPublishDataFromJson(Map<String, dynamic> json) =>
+    _DynamicPublishData(dynIdStr: json['dyn_id_str'] as String);
 
-Map<String, dynamic> _$DynamicPublishDataToJson(DynamicPublishData instance) =>
+Map<String, dynamic> _$DynamicPublishDataToJson(_DynamicPublishData instance) =>
     <String, dynamic>{'dyn_id_str': instance.dynIdStr};
 
-DynamicUploadImageData _$DynamicUploadImageDataFromJson(
+_DynamicUploadImageData _$DynamicUploadImageDataFromJson(
   Map<String, dynamic> json,
-) => DynamicUploadImageData(
+) => _DynamicUploadImageData(
   imageUrl: json['image_url'] as String,
   width: (json['image_width'] as num).toInt(),
   height: (json['image_height'] as num).toInt(),
 );
 
 Map<String, dynamic> _$DynamicUploadImageDataToJson(
-  DynamicUploadImageData instance,
+  _DynamicUploadImageData instance,
 ) => <String, dynamic>{
   'image_url': instance.imageUrl,
   'image_width': instance.width,

@@ -119,10 +119,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _DefaultSearch():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -181,10 +178,7 @@ return $default(_that.showName,_that.name,_that.type,_that.searchType,_that.id);
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'show_name')  String showName,  String name,  int type, @JsonKey(name: 'search_type')  String searchType, @JsonKey(name: 'id')  int id)  $default,) {final _that = this;
 switch (_that) {
 case _DefaultSearch():
-return $default(_that.showName,_that.name,_that.type,_that.searchType,_that.id);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.showName,_that.name,_that.type,_that.searchType,_that.id);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -397,10 +391,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _DefaultSearchData():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -459,10 +450,7 @@ return $default(_that.showName,_that.name,_that.id,_that.url,_that.seid,_that.ty
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'show_name')  String showName,  String name, @JsonKey(name: 'id')  int id,  String url,  String seid,  int type, @JsonKey(name: 'goto_type')  int gotoType, @JsonKey(name: 'goto_value')  String gotoValue)  $default,) {final _that = this;
 switch (_that) {
 case _DefaultSearchData():
-return $default(_that.showName,_that.name,_that.id,_that.url,_that.seid,_that.type,_that.gotoType,_that.gotoValue);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.showName,_that.name,_that.id,_that.url,_that.seid,_that.type,_that.gotoType,_that.gotoValue);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

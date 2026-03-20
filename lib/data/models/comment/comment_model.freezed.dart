@@ -141,10 +141,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _CommentResponse():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -203,10 +200,7 @@ return $default(_that.replies,_that.cursor,_that.page);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<CommentItem> replies,  CommentCursor? cursor,  CommentPage? page)  $default,) {final _that = this;
 switch (_that) {
 case _CommentResponse():
-return $default(_that.replies,_that.cursor,_that.page);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.replies,_that.cursor,_that.page);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -441,10 +435,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _CommentPage():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -503,10 +494,7 @@ return $default(_that.num,_that.size,_that.count,_that.acount);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int num,  int size,  int count,  int acount)  $default,) {final _that = this;
 switch (_that) {
 case _CommentPage():
-return $default(_that.num,_that.size,_that.count,_that.acount);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.num,_that.size,_that.count,_that.acount);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -610,7 +598,7 @@ as int,
 /// @nodoc
 mixin _$CommentCursor {
 
- int get all_count; bool get is_begin; bool get is_end; int get mode; String get name; int get next; int get prev;
+@JsonKey(name: 'all_count') int get allCount;@JsonKey(name: 'is_begin') bool get isBegin;@JsonKey(name: 'is_end') bool get isEnd; int get mode; String get name; int get next; int get prev;
 /// Create a copy of CommentCursor
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -623,16 +611,16 @@ $CommentCursorCopyWith<CommentCursor> get copyWith => _$CommentCursorCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentCursor&&(identical(other.all_count, all_count) || other.all_count == all_count)&&(identical(other.is_begin, is_begin) || other.is_begin == is_begin)&&(identical(other.is_end, is_end) || other.is_end == is_end)&&(identical(other.mode, mode) || other.mode == mode)&&(identical(other.name, name) || other.name == name)&&(identical(other.next, next) || other.next == next)&&(identical(other.prev, prev) || other.prev == prev));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentCursor&&(identical(other.allCount, allCount) || other.allCount == allCount)&&(identical(other.isBegin, isBegin) || other.isBegin == isBegin)&&(identical(other.isEnd, isEnd) || other.isEnd == isEnd)&&(identical(other.mode, mode) || other.mode == mode)&&(identical(other.name, name) || other.name == name)&&(identical(other.next, next) || other.next == next)&&(identical(other.prev, prev) || other.prev == prev));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,all_count,is_begin,is_end,mode,name,next,prev);
+int get hashCode => Object.hash(runtimeType,allCount,isBegin,isEnd,mode,name,next,prev);
 
 @override
 String toString() {
-  return 'CommentCursor(all_count: $all_count, is_begin: $is_begin, is_end: $is_end, mode: $mode, name: $name, next: $next, prev: $prev)';
+  return 'CommentCursor(allCount: $allCount, isBegin: $isBegin, isEnd: $isEnd, mode: $mode, name: $name, next: $next, prev: $prev)';
 }
 
 
@@ -643,7 +631,7 @@ abstract mixin class $CommentCursorCopyWith<$Res>  {
   factory $CommentCursorCopyWith(CommentCursor value, $Res Function(CommentCursor) _then) = _$CommentCursorCopyWithImpl;
 @useResult
 $Res call({
- int all_count, bool is_begin, bool is_end, int mode, String name, int next, int prev
+@JsonKey(name: 'all_count') int allCount,@JsonKey(name: 'is_begin') bool isBegin,@JsonKey(name: 'is_end') bool isEnd, int mode, String name, int next, int prev
 });
 
 
@@ -660,11 +648,11 @@ class _$CommentCursorCopyWithImpl<$Res>
 
 /// Create a copy of CommentCursor
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? all_count = null,Object? is_begin = null,Object? is_end = null,Object? mode = null,Object? name = null,Object? next = null,Object? prev = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? allCount = null,Object? isBegin = null,Object? isEnd = null,Object? mode = null,Object? name = null,Object? next = null,Object? prev = null,}) {
   return _then(_self.copyWith(
-all_count: null == all_count ? _self.all_count : all_count // ignore: cast_nullable_to_non_nullable
-as int,is_begin: null == is_begin ? _self.is_begin : is_begin // ignore: cast_nullable_to_non_nullable
-as bool,is_end: null == is_end ? _self.is_end : is_end // ignore: cast_nullable_to_non_nullable
+allCount: null == allCount ? _self.allCount : allCount // ignore: cast_nullable_to_non_nullable
+as int,isBegin: null == isBegin ? _self.isBegin : isBegin // ignore: cast_nullable_to_non_nullable
+as bool,isEnd: null == isEnd ? _self.isEnd : isEnd // ignore: cast_nullable_to_non_nullable
 as bool,mode: null == mode ? _self.mode : mode // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,next: null == next ? _self.next : next // ignore: cast_nullable_to_non_nullable
@@ -716,10 +704,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _CommentCursor():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -754,10 +739,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int all_count,  bool is_begin,  bool is_end,  int mode,  String name,  int next,  int prev)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'all_count')  int allCount, @JsonKey(name: 'is_begin')  bool isBegin, @JsonKey(name: 'is_end')  bool isEnd,  int mode,  String name,  int next,  int prev)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CommentCursor() when $default != null:
-return $default(_that.all_count,_that.is_begin,_that.is_end,_that.mode,_that.name,_that.next,_that.prev);case _:
+return $default(_that.allCount,_that.isBegin,_that.isEnd,_that.mode,_that.name,_that.next,_that.prev);case _:
   return orElse();
 
 }
@@ -775,13 +760,10 @@ return $default(_that.all_count,_that.is_begin,_that.is_end,_that.mode,_that.nam
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int all_count,  bool is_begin,  bool is_end,  int mode,  String name,  int next,  int prev)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'all_count')  int allCount, @JsonKey(name: 'is_begin')  bool isBegin, @JsonKey(name: 'is_end')  bool isEnd,  int mode,  String name,  int next,  int prev)  $default,) {final _that = this;
 switch (_that) {
 case _CommentCursor():
-return $default(_that.all_count,_that.is_begin,_that.is_end,_that.mode,_that.name,_that.next,_that.prev);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.allCount,_that.isBegin,_that.isEnd,_that.mode,_that.name,_that.next,_that.prev);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -795,10 +777,10 @@ return $default(_that.all_count,_that.is_begin,_that.is_end,_that.mode,_that.nam
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int all_count,  bool is_begin,  bool is_end,  int mode,  String name,  int next,  int prev)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'all_count')  int allCount, @JsonKey(name: 'is_begin')  bool isBegin, @JsonKey(name: 'is_end')  bool isEnd,  int mode,  String name,  int next,  int prev)?  $default,) {final _that = this;
 switch (_that) {
 case _CommentCursor() when $default != null:
-return $default(_that.all_count,_that.is_begin,_that.is_end,_that.mode,_that.name,_that.next,_that.prev);case _:
+return $default(_that.allCount,_that.isBegin,_that.isEnd,_that.mode,_that.name,_that.next,_that.prev);case _:
   return null;
 
 }
@@ -810,12 +792,12 @@ return $default(_that.all_count,_that.is_begin,_that.is_end,_that.mode,_that.nam
 @JsonSerializable()
 
 class _CommentCursor implements CommentCursor {
-  const _CommentCursor({this.all_count = 0, this.is_begin = false, this.is_end = false, this.mode = 0, required this.name, this.next = 0, this.prev = 0});
+  const _CommentCursor({@JsonKey(name: 'all_count') this.allCount = 0, @JsonKey(name: 'is_begin') this.isBegin = false, @JsonKey(name: 'is_end') this.isEnd = false, this.mode = 0, required this.name, this.next = 0, this.prev = 0});
   factory _CommentCursor.fromJson(Map<String, dynamic> json) => _$CommentCursorFromJson(json);
 
-@override@JsonKey() final  int all_count;
-@override@JsonKey() final  bool is_begin;
-@override@JsonKey() final  bool is_end;
+@override@JsonKey(name: 'all_count') final  int allCount;
+@override@JsonKey(name: 'is_begin') final  bool isBegin;
+@override@JsonKey(name: 'is_end') final  bool isEnd;
 @override@JsonKey() final  int mode;
 @override final  String name;
 @override@JsonKey() final  int next;
@@ -834,16 +816,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentCursor&&(identical(other.all_count, all_count) || other.all_count == all_count)&&(identical(other.is_begin, is_begin) || other.is_begin == is_begin)&&(identical(other.is_end, is_end) || other.is_end == is_end)&&(identical(other.mode, mode) || other.mode == mode)&&(identical(other.name, name) || other.name == name)&&(identical(other.next, next) || other.next == next)&&(identical(other.prev, prev) || other.prev == prev));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentCursor&&(identical(other.allCount, allCount) || other.allCount == allCount)&&(identical(other.isBegin, isBegin) || other.isBegin == isBegin)&&(identical(other.isEnd, isEnd) || other.isEnd == isEnd)&&(identical(other.mode, mode) || other.mode == mode)&&(identical(other.name, name) || other.name == name)&&(identical(other.next, next) || other.next == next)&&(identical(other.prev, prev) || other.prev == prev));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,all_count,is_begin,is_end,mode,name,next,prev);
+int get hashCode => Object.hash(runtimeType,allCount,isBegin,isEnd,mode,name,next,prev);
 
 @override
 String toString() {
-  return 'CommentCursor(all_count: $all_count, is_begin: $is_begin, is_end: $is_end, mode: $mode, name: $name, next: $next, prev: $prev)';
+  return 'CommentCursor(allCount: $allCount, isBegin: $isBegin, isEnd: $isEnd, mode: $mode, name: $name, next: $next, prev: $prev)';
 }
 
 
@@ -854,7 +836,7 @@ abstract mixin class _$CommentCursorCopyWith<$Res> implements $CommentCursorCopy
   factory _$CommentCursorCopyWith(_CommentCursor value, $Res Function(_CommentCursor) _then) = __$CommentCursorCopyWithImpl;
 @override @useResult
 $Res call({
- int all_count, bool is_begin, bool is_end, int mode, String name, int next, int prev
+@JsonKey(name: 'all_count') int allCount,@JsonKey(name: 'is_begin') bool isBegin,@JsonKey(name: 'is_end') bool isEnd, int mode, String name, int next, int prev
 });
 
 
@@ -871,11 +853,11 @@ class __$CommentCursorCopyWithImpl<$Res>
 
 /// Create a copy of CommentCursor
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? all_count = null,Object? is_begin = null,Object? is_end = null,Object? mode = null,Object? name = null,Object? next = null,Object? prev = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? allCount = null,Object? isBegin = null,Object? isEnd = null,Object? mode = null,Object? name = null,Object? next = null,Object? prev = null,}) {
   return _then(_CommentCursor(
-all_count: null == all_count ? _self.all_count : all_count // ignore: cast_nullable_to_non_nullable
-as int,is_begin: null == is_begin ? _self.is_begin : is_begin // ignore: cast_nullable_to_non_nullable
-as bool,is_end: null == is_end ? _self.is_end : is_end // ignore: cast_nullable_to_non_nullable
+allCount: null == allCount ? _self.allCount : allCount // ignore: cast_nullable_to_non_nullable
+as int,isBegin: null == isBegin ? _self.isBegin : isBegin // ignore: cast_nullable_to_non_nullable
+as bool,isEnd: null == isEnd ? _self.isEnd : isEnd // ignore: cast_nullable_to_non_nullable
 as bool,mode: null == mode ? _self.mode : mode // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,next: null == next ? _self.next : next // ignore: cast_nullable_to_non_nullable
@@ -891,7 +873,7 @@ as int,
 /// @nodoc
 mixin _$CommentItem {
 
- int get rpid; int get oid; int get type; int get mid; int get root; int get parent; int get dialog; int get count; int get rcount; int get floor; int get state; int get fansgrade; int get attr; int get ctime; String get rpid_str; String get root_str; String get parent_str; int get like; int get action; CommentMember get member; CommentContent get content; List<CommentItem> get replies; bool get show_follow; bool get invisible;
+ int get rpid; int get oid; int get type; int get mid; int get root; int get parent; int get dialog; int get count; int get rcount; int get floor; int get state; int get fansgrade; int get attr; int get ctime;@JsonKey(name: 'rpid_str') String get rpidStr;@JsonKey(name: 'root_str') String get rootStr;@JsonKey(name: 'parent_str') String get parentStr; int get like; int get action; CommentMember get member; CommentContent get content; List<CommentItem> get replies;@JsonKey(name: 'show_follow') bool get showFollow; bool get invisible;
 /// Create a copy of CommentItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -904,16 +886,16 @@ $CommentItemCopyWith<CommentItem> get copyWith => _$CommentItemCopyWithImpl<Comm
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentItem&&(identical(other.rpid, rpid) || other.rpid == rpid)&&(identical(other.oid, oid) || other.oid == oid)&&(identical(other.type, type) || other.type == type)&&(identical(other.mid, mid) || other.mid == mid)&&(identical(other.root, root) || other.root == root)&&(identical(other.parent, parent) || other.parent == parent)&&(identical(other.dialog, dialog) || other.dialog == dialog)&&(identical(other.count, count) || other.count == count)&&(identical(other.rcount, rcount) || other.rcount == rcount)&&(identical(other.floor, floor) || other.floor == floor)&&(identical(other.state, state) || other.state == state)&&(identical(other.fansgrade, fansgrade) || other.fansgrade == fansgrade)&&(identical(other.attr, attr) || other.attr == attr)&&(identical(other.ctime, ctime) || other.ctime == ctime)&&(identical(other.rpid_str, rpid_str) || other.rpid_str == rpid_str)&&(identical(other.root_str, root_str) || other.root_str == root_str)&&(identical(other.parent_str, parent_str) || other.parent_str == parent_str)&&(identical(other.like, like) || other.like == like)&&(identical(other.action, action) || other.action == action)&&(identical(other.member, member) || other.member == member)&&(identical(other.content, content) || other.content == content)&&const DeepCollectionEquality().equals(other.replies, replies)&&(identical(other.show_follow, show_follow) || other.show_follow == show_follow)&&(identical(other.invisible, invisible) || other.invisible == invisible));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentItem&&(identical(other.rpid, rpid) || other.rpid == rpid)&&(identical(other.oid, oid) || other.oid == oid)&&(identical(other.type, type) || other.type == type)&&(identical(other.mid, mid) || other.mid == mid)&&(identical(other.root, root) || other.root == root)&&(identical(other.parent, parent) || other.parent == parent)&&(identical(other.dialog, dialog) || other.dialog == dialog)&&(identical(other.count, count) || other.count == count)&&(identical(other.rcount, rcount) || other.rcount == rcount)&&(identical(other.floor, floor) || other.floor == floor)&&(identical(other.state, state) || other.state == state)&&(identical(other.fansgrade, fansgrade) || other.fansgrade == fansgrade)&&(identical(other.attr, attr) || other.attr == attr)&&(identical(other.ctime, ctime) || other.ctime == ctime)&&(identical(other.rpidStr, rpidStr) || other.rpidStr == rpidStr)&&(identical(other.rootStr, rootStr) || other.rootStr == rootStr)&&(identical(other.parentStr, parentStr) || other.parentStr == parentStr)&&(identical(other.like, like) || other.like == like)&&(identical(other.action, action) || other.action == action)&&(identical(other.member, member) || other.member == member)&&(identical(other.content, content) || other.content == content)&&const DeepCollectionEquality().equals(other.replies, replies)&&(identical(other.showFollow, showFollow) || other.showFollow == showFollow)&&(identical(other.invisible, invisible) || other.invisible == invisible));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,rpid,oid,type,mid,root,parent,dialog,count,rcount,floor,state,fansgrade,attr,ctime,rpid_str,root_str,parent_str,like,action,member,content,const DeepCollectionEquality().hash(replies),show_follow,invisible]);
+int get hashCode => Object.hashAll([runtimeType,rpid,oid,type,mid,root,parent,dialog,count,rcount,floor,state,fansgrade,attr,ctime,rpidStr,rootStr,parentStr,like,action,member,content,const DeepCollectionEquality().hash(replies),showFollow,invisible]);
 
 @override
 String toString() {
-  return 'CommentItem(rpid: $rpid, oid: $oid, type: $type, mid: $mid, root: $root, parent: $parent, dialog: $dialog, count: $count, rcount: $rcount, floor: $floor, state: $state, fansgrade: $fansgrade, attr: $attr, ctime: $ctime, rpid_str: $rpid_str, root_str: $root_str, parent_str: $parent_str, like: $like, action: $action, member: $member, content: $content, replies: $replies, show_follow: $show_follow, invisible: $invisible)';
+  return 'CommentItem(rpid: $rpid, oid: $oid, type: $type, mid: $mid, root: $root, parent: $parent, dialog: $dialog, count: $count, rcount: $rcount, floor: $floor, state: $state, fansgrade: $fansgrade, attr: $attr, ctime: $ctime, rpidStr: $rpidStr, rootStr: $rootStr, parentStr: $parentStr, like: $like, action: $action, member: $member, content: $content, replies: $replies, showFollow: $showFollow, invisible: $invisible)';
 }
 
 
@@ -924,7 +906,7 @@ abstract mixin class $CommentItemCopyWith<$Res>  {
   factory $CommentItemCopyWith(CommentItem value, $Res Function(CommentItem) _then) = _$CommentItemCopyWithImpl;
 @useResult
 $Res call({
- int rpid, int oid, int type, int mid, int root, int parent, int dialog, int count, int rcount, int floor, int state, int fansgrade, int attr, int ctime, String rpid_str, String root_str, String parent_str, int like, int action, CommentMember member, CommentContent content, List<CommentItem> replies, bool show_follow, bool invisible
+ int rpid, int oid, int type, int mid, int root, int parent, int dialog, int count, int rcount, int floor, int state, int fansgrade, int attr, int ctime,@JsonKey(name: 'rpid_str') String rpidStr,@JsonKey(name: 'root_str') String rootStr,@JsonKey(name: 'parent_str') String parentStr, int like, int action, CommentMember member, CommentContent content, List<CommentItem> replies,@JsonKey(name: 'show_follow') bool showFollow, bool invisible
 });
 
 
@@ -941,7 +923,7 @@ class _$CommentItemCopyWithImpl<$Res>
 
 /// Create a copy of CommentItem
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? rpid = null,Object? oid = null,Object? type = null,Object? mid = null,Object? root = null,Object? parent = null,Object? dialog = null,Object? count = null,Object? rcount = null,Object? floor = null,Object? state = null,Object? fansgrade = null,Object? attr = null,Object? ctime = null,Object? rpid_str = null,Object? root_str = null,Object? parent_str = null,Object? like = null,Object? action = null,Object? member = null,Object? content = null,Object? replies = null,Object? show_follow = null,Object? invisible = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? rpid = null,Object? oid = null,Object? type = null,Object? mid = null,Object? root = null,Object? parent = null,Object? dialog = null,Object? count = null,Object? rcount = null,Object? floor = null,Object? state = null,Object? fansgrade = null,Object? attr = null,Object? ctime = null,Object? rpidStr = null,Object? rootStr = null,Object? parentStr = null,Object? like = null,Object? action = null,Object? member = null,Object? content = null,Object? replies = null,Object? showFollow = null,Object? invisible = null,}) {
   return _then(_self.copyWith(
 rpid: null == rpid ? _self.rpid : rpid // ignore: cast_nullable_to_non_nullable
 as int,oid: null == oid ? _self.oid : oid // ignore: cast_nullable_to_non_nullable
@@ -957,15 +939,15 @@ as int,state: null == state ? _self.state : state // ignore: cast_nullable_to_no
 as int,fansgrade: null == fansgrade ? _self.fansgrade : fansgrade // ignore: cast_nullable_to_non_nullable
 as int,attr: null == attr ? _self.attr : attr // ignore: cast_nullable_to_non_nullable
 as int,ctime: null == ctime ? _self.ctime : ctime // ignore: cast_nullable_to_non_nullable
-as int,rpid_str: null == rpid_str ? _self.rpid_str : rpid_str // ignore: cast_nullable_to_non_nullable
-as String,root_str: null == root_str ? _self.root_str : root_str // ignore: cast_nullable_to_non_nullable
-as String,parent_str: null == parent_str ? _self.parent_str : parent_str // ignore: cast_nullable_to_non_nullable
+as int,rpidStr: null == rpidStr ? _self.rpidStr : rpidStr // ignore: cast_nullable_to_non_nullable
+as String,rootStr: null == rootStr ? _self.rootStr : rootStr // ignore: cast_nullable_to_non_nullable
+as String,parentStr: null == parentStr ? _self.parentStr : parentStr // ignore: cast_nullable_to_non_nullable
 as String,like: null == like ? _self.like : like // ignore: cast_nullable_to_non_nullable
 as int,action: null == action ? _self.action : action // ignore: cast_nullable_to_non_nullable
 as int,member: null == member ? _self.member : member // ignore: cast_nullable_to_non_nullable
 as CommentMember,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as CommentContent,replies: null == replies ? _self.replies : replies // ignore: cast_nullable_to_non_nullable
-as List<CommentItem>,show_follow: null == show_follow ? _self.show_follow : show_follow // ignore: cast_nullable_to_non_nullable
+as List<CommentItem>,showFollow: null == showFollow ? _self.showFollow : showFollow // ignore: cast_nullable_to_non_nullable
 as bool,invisible: null == invisible ? _self.invisible : invisible // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
@@ -1032,10 +1014,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _CommentItem():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -1070,10 +1049,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int rpid,  int oid,  int type,  int mid,  int root,  int parent,  int dialog,  int count,  int rcount,  int floor,  int state,  int fansgrade,  int attr,  int ctime,  String rpid_str,  String root_str,  String parent_str,  int like,  int action,  CommentMember member,  CommentContent content,  List<CommentItem> replies,  bool show_follow,  bool invisible)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int rpid,  int oid,  int type,  int mid,  int root,  int parent,  int dialog,  int count,  int rcount,  int floor,  int state,  int fansgrade,  int attr,  int ctime, @JsonKey(name: 'rpid_str')  String rpidStr, @JsonKey(name: 'root_str')  String rootStr, @JsonKey(name: 'parent_str')  String parentStr,  int like,  int action,  CommentMember member,  CommentContent content,  List<CommentItem> replies, @JsonKey(name: 'show_follow')  bool showFollow,  bool invisible)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CommentItem() when $default != null:
-return $default(_that.rpid,_that.oid,_that.type,_that.mid,_that.root,_that.parent,_that.dialog,_that.count,_that.rcount,_that.floor,_that.state,_that.fansgrade,_that.attr,_that.ctime,_that.rpid_str,_that.root_str,_that.parent_str,_that.like,_that.action,_that.member,_that.content,_that.replies,_that.show_follow,_that.invisible);case _:
+return $default(_that.rpid,_that.oid,_that.type,_that.mid,_that.root,_that.parent,_that.dialog,_that.count,_that.rcount,_that.floor,_that.state,_that.fansgrade,_that.attr,_that.ctime,_that.rpidStr,_that.rootStr,_that.parentStr,_that.like,_that.action,_that.member,_that.content,_that.replies,_that.showFollow,_that.invisible);case _:
   return orElse();
 
 }
@@ -1091,13 +1070,10 @@ return $default(_that.rpid,_that.oid,_that.type,_that.mid,_that.root,_that.paren
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int rpid,  int oid,  int type,  int mid,  int root,  int parent,  int dialog,  int count,  int rcount,  int floor,  int state,  int fansgrade,  int attr,  int ctime,  String rpid_str,  String root_str,  String parent_str,  int like,  int action,  CommentMember member,  CommentContent content,  List<CommentItem> replies,  bool show_follow,  bool invisible)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int rpid,  int oid,  int type,  int mid,  int root,  int parent,  int dialog,  int count,  int rcount,  int floor,  int state,  int fansgrade,  int attr,  int ctime, @JsonKey(name: 'rpid_str')  String rpidStr, @JsonKey(name: 'root_str')  String rootStr, @JsonKey(name: 'parent_str')  String parentStr,  int like,  int action,  CommentMember member,  CommentContent content,  List<CommentItem> replies, @JsonKey(name: 'show_follow')  bool showFollow,  bool invisible)  $default,) {final _that = this;
 switch (_that) {
 case _CommentItem():
-return $default(_that.rpid,_that.oid,_that.type,_that.mid,_that.root,_that.parent,_that.dialog,_that.count,_that.rcount,_that.floor,_that.state,_that.fansgrade,_that.attr,_that.ctime,_that.rpid_str,_that.root_str,_that.parent_str,_that.like,_that.action,_that.member,_that.content,_that.replies,_that.show_follow,_that.invisible);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.rpid,_that.oid,_that.type,_that.mid,_that.root,_that.parent,_that.dialog,_that.count,_that.rcount,_that.floor,_that.state,_that.fansgrade,_that.attr,_that.ctime,_that.rpidStr,_that.rootStr,_that.parentStr,_that.like,_that.action,_that.member,_that.content,_that.replies,_that.showFollow,_that.invisible);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1111,10 +1087,10 @@ return $default(_that.rpid,_that.oid,_that.type,_that.mid,_that.root,_that.paren
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int rpid,  int oid,  int type,  int mid,  int root,  int parent,  int dialog,  int count,  int rcount,  int floor,  int state,  int fansgrade,  int attr,  int ctime,  String rpid_str,  String root_str,  String parent_str,  int like,  int action,  CommentMember member,  CommentContent content,  List<CommentItem> replies,  bool show_follow,  bool invisible)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int rpid,  int oid,  int type,  int mid,  int root,  int parent,  int dialog,  int count,  int rcount,  int floor,  int state,  int fansgrade,  int attr,  int ctime, @JsonKey(name: 'rpid_str')  String rpidStr, @JsonKey(name: 'root_str')  String rootStr, @JsonKey(name: 'parent_str')  String parentStr,  int like,  int action,  CommentMember member,  CommentContent content,  List<CommentItem> replies, @JsonKey(name: 'show_follow')  bool showFollow,  bool invisible)?  $default,) {final _that = this;
 switch (_that) {
 case _CommentItem() when $default != null:
-return $default(_that.rpid,_that.oid,_that.type,_that.mid,_that.root,_that.parent,_that.dialog,_that.count,_that.rcount,_that.floor,_that.state,_that.fansgrade,_that.attr,_that.ctime,_that.rpid_str,_that.root_str,_that.parent_str,_that.like,_that.action,_that.member,_that.content,_that.replies,_that.show_follow,_that.invisible);case _:
+return $default(_that.rpid,_that.oid,_that.type,_that.mid,_that.root,_that.parent,_that.dialog,_that.count,_that.rcount,_that.floor,_that.state,_that.fansgrade,_that.attr,_that.ctime,_that.rpidStr,_that.rootStr,_that.parentStr,_that.like,_that.action,_that.member,_that.content,_that.replies,_that.showFollow,_that.invisible);case _:
   return null;
 
 }
@@ -1126,7 +1102,7 @@ return $default(_that.rpid,_that.oid,_that.type,_that.mid,_that.root,_that.paren
 @JsonSerializable()
 
 class _CommentItem implements CommentItem {
-  const _CommentItem({required this.rpid, required this.oid, required this.type, required this.mid, required this.root, required this.parent, this.dialog = 0, this.count = 0, this.rcount = 0, this.floor = 0, this.state = 0, this.fansgrade = 0, this.attr = 0, required this.ctime, this.rpid_str = '', this.root_str = '', this.parent_str = '', this.like = 0, this.action = 0, required this.member, required this.content, final  List<CommentItem> replies = const [], this.show_follow = false, this.invisible = false}): _replies = replies;
+  const _CommentItem({required this.rpid, required this.oid, required this.type, required this.mid, required this.root, required this.parent, this.dialog = 0, this.count = 0, this.rcount = 0, this.floor = 0, this.state = 0, this.fansgrade = 0, this.attr = 0, required this.ctime, @JsonKey(name: 'rpid_str') this.rpidStr = '', @JsonKey(name: 'root_str') this.rootStr = '', @JsonKey(name: 'parent_str') this.parentStr = '', this.like = 0, this.action = 0, required this.member, required this.content, final  List<CommentItem> replies = const [], @JsonKey(name: 'show_follow') this.showFollow = false, this.invisible = false}): _replies = replies;
   factory _CommentItem.fromJson(Map<String, dynamic> json) => _$CommentItemFromJson(json);
 
 @override final  int rpid;
@@ -1143,9 +1119,9 @@ class _CommentItem implements CommentItem {
 @override@JsonKey() final  int fansgrade;
 @override@JsonKey() final  int attr;
 @override final  int ctime;
-@override@JsonKey() final  String rpid_str;
-@override@JsonKey() final  String root_str;
-@override@JsonKey() final  String parent_str;
+@override@JsonKey(name: 'rpid_str') final  String rpidStr;
+@override@JsonKey(name: 'root_str') final  String rootStr;
+@override@JsonKey(name: 'parent_str') final  String parentStr;
 @override@JsonKey() final  int like;
 @override@JsonKey() final  int action;
 @override final  CommentMember member;
@@ -1157,7 +1133,7 @@ class _CommentItem implements CommentItem {
   return EqualUnmodifiableListView(_replies);
 }
 
-@override@JsonKey() final  bool show_follow;
+@override@JsonKey(name: 'show_follow') final  bool showFollow;
 @override@JsonKey() final  bool invisible;
 
 /// Create a copy of CommentItem
@@ -1173,16 +1149,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentItem&&(identical(other.rpid, rpid) || other.rpid == rpid)&&(identical(other.oid, oid) || other.oid == oid)&&(identical(other.type, type) || other.type == type)&&(identical(other.mid, mid) || other.mid == mid)&&(identical(other.root, root) || other.root == root)&&(identical(other.parent, parent) || other.parent == parent)&&(identical(other.dialog, dialog) || other.dialog == dialog)&&(identical(other.count, count) || other.count == count)&&(identical(other.rcount, rcount) || other.rcount == rcount)&&(identical(other.floor, floor) || other.floor == floor)&&(identical(other.state, state) || other.state == state)&&(identical(other.fansgrade, fansgrade) || other.fansgrade == fansgrade)&&(identical(other.attr, attr) || other.attr == attr)&&(identical(other.ctime, ctime) || other.ctime == ctime)&&(identical(other.rpid_str, rpid_str) || other.rpid_str == rpid_str)&&(identical(other.root_str, root_str) || other.root_str == root_str)&&(identical(other.parent_str, parent_str) || other.parent_str == parent_str)&&(identical(other.like, like) || other.like == like)&&(identical(other.action, action) || other.action == action)&&(identical(other.member, member) || other.member == member)&&(identical(other.content, content) || other.content == content)&&const DeepCollectionEquality().equals(other._replies, _replies)&&(identical(other.show_follow, show_follow) || other.show_follow == show_follow)&&(identical(other.invisible, invisible) || other.invisible == invisible));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentItem&&(identical(other.rpid, rpid) || other.rpid == rpid)&&(identical(other.oid, oid) || other.oid == oid)&&(identical(other.type, type) || other.type == type)&&(identical(other.mid, mid) || other.mid == mid)&&(identical(other.root, root) || other.root == root)&&(identical(other.parent, parent) || other.parent == parent)&&(identical(other.dialog, dialog) || other.dialog == dialog)&&(identical(other.count, count) || other.count == count)&&(identical(other.rcount, rcount) || other.rcount == rcount)&&(identical(other.floor, floor) || other.floor == floor)&&(identical(other.state, state) || other.state == state)&&(identical(other.fansgrade, fansgrade) || other.fansgrade == fansgrade)&&(identical(other.attr, attr) || other.attr == attr)&&(identical(other.ctime, ctime) || other.ctime == ctime)&&(identical(other.rpidStr, rpidStr) || other.rpidStr == rpidStr)&&(identical(other.rootStr, rootStr) || other.rootStr == rootStr)&&(identical(other.parentStr, parentStr) || other.parentStr == parentStr)&&(identical(other.like, like) || other.like == like)&&(identical(other.action, action) || other.action == action)&&(identical(other.member, member) || other.member == member)&&(identical(other.content, content) || other.content == content)&&const DeepCollectionEquality().equals(other._replies, _replies)&&(identical(other.showFollow, showFollow) || other.showFollow == showFollow)&&(identical(other.invisible, invisible) || other.invisible == invisible));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hashAll([runtimeType,rpid,oid,type,mid,root,parent,dialog,count,rcount,floor,state,fansgrade,attr,ctime,rpid_str,root_str,parent_str,like,action,member,content,const DeepCollectionEquality().hash(_replies),show_follow,invisible]);
+int get hashCode => Object.hashAll([runtimeType,rpid,oid,type,mid,root,parent,dialog,count,rcount,floor,state,fansgrade,attr,ctime,rpidStr,rootStr,parentStr,like,action,member,content,const DeepCollectionEquality().hash(_replies),showFollow,invisible]);
 
 @override
 String toString() {
-  return 'CommentItem(rpid: $rpid, oid: $oid, type: $type, mid: $mid, root: $root, parent: $parent, dialog: $dialog, count: $count, rcount: $rcount, floor: $floor, state: $state, fansgrade: $fansgrade, attr: $attr, ctime: $ctime, rpid_str: $rpid_str, root_str: $root_str, parent_str: $parent_str, like: $like, action: $action, member: $member, content: $content, replies: $replies, show_follow: $show_follow, invisible: $invisible)';
+  return 'CommentItem(rpid: $rpid, oid: $oid, type: $type, mid: $mid, root: $root, parent: $parent, dialog: $dialog, count: $count, rcount: $rcount, floor: $floor, state: $state, fansgrade: $fansgrade, attr: $attr, ctime: $ctime, rpidStr: $rpidStr, rootStr: $rootStr, parentStr: $parentStr, like: $like, action: $action, member: $member, content: $content, replies: $replies, showFollow: $showFollow, invisible: $invisible)';
 }
 
 
@@ -1193,7 +1169,7 @@ abstract mixin class _$CommentItemCopyWith<$Res> implements $CommentItemCopyWith
   factory _$CommentItemCopyWith(_CommentItem value, $Res Function(_CommentItem) _then) = __$CommentItemCopyWithImpl;
 @override @useResult
 $Res call({
- int rpid, int oid, int type, int mid, int root, int parent, int dialog, int count, int rcount, int floor, int state, int fansgrade, int attr, int ctime, String rpid_str, String root_str, String parent_str, int like, int action, CommentMember member, CommentContent content, List<CommentItem> replies, bool show_follow, bool invisible
+ int rpid, int oid, int type, int mid, int root, int parent, int dialog, int count, int rcount, int floor, int state, int fansgrade, int attr, int ctime,@JsonKey(name: 'rpid_str') String rpidStr,@JsonKey(name: 'root_str') String rootStr,@JsonKey(name: 'parent_str') String parentStr, int like, int action, CommentMember member, CommentContent content, List<CommentItem> replies,@JsonKey(name: 'show_follow') bool showFollow, bool invisible
 });
 
 
@@ -1210,7 +1186,7 @@ class __$CommentItemCopyWithImpl<$Res>
 
 /// Create a copy of CommentItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? rpid = null,Object? oid = null,Object? type = null,Object? mid = null,Object? root = null,Object? parent = null,Object? dialog = null,Object? count = null,Object? rcount = null,Object? floor = null,Object? state = null,Object? fansgrade = null,Object? attr = null,Object? ctime = null,Object? rpid_str = null,Object? root_str = null,Object? parent_str = null,Object? like = null,Object? action = null,Object? member = null,Object? content = null,Object? replies = null,Object? show_follow = null,Object? invisible = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? rpid = null,Object? oid = null,Object? type = null,Object? mid = null,Object? root = null,Object? parent = null,Object? dialog = null,Object? count = null,Object? rcount = null,Object? floor = null,Object? state = null,Object? fansgrade = null,Object? attr = null,Object? ctime = null,Object? rpidStr = null,Object? rootStr = null,Object? parentStr = null,Object? like = null,Object? action = null,Object? member = null,Object? content = null,Object? replies = null,Object? showFollow = null,Object? invisible = null,}) {
   return _then(_CommentItem(
 rpid: null == rpid ? _self.rpid : rpid // ignore: cast_nullable_to_non_nullable
 as int,oid: null == oid ? _self.oid : oid // ignore: cast_nullable_to_non_nullable
@@ -1226,15 +1202,15 @@ as int,state: null == state ? _self.state : state // ignore: cast_nullable_to_no
 as int,fansgrade: null == fansgrade ? _self.fansgrade : fansgrade // ignore: cast_nullable_to_non_nullable
 as int,attr: null == attr ? _self.attr : attr // ignore: cast_nullable_to_non_nullable
 as int,ctime: null == ctime ? _self.ctime : ctime // ignore: cast_nullable_to_non_nullable
-as int,rpid_str: null == rpid_str ? _self.rpid_str : rpid_str // ignore: cast_nullable_to_non_nullable
-as String,root_str: null == root_str ? _self.root_str : root_str // ignore: cast_nullable_to_non_nullable
-as String,parent_str: null == parent_str ? _self.parent_str : parent_str // ignore: cast_nullable_to_non_nullable
+as int,rpidStr: null == rpidStr ? _self.rpidStr : rpidStr // ignore: cast_nullable_to_non_nullable
+as String,rootStr: null == rootStr ? _self.rootStr : rootStr // ignore: cast_nullable_to_non_nullable
+as String,parentStr: null == parentStr ? _self.parentStr : parentStr // ignore: cast_nullable_to_non_nullable
 as String,like: null == like ? _self.like : like // ignore: cast_nullable_to_non_nullable
 as int,action: null == action ? _self.action : action // ignore: cast_nullable_to_non_nullable
 as int,member: null == member ? _self.member : member // ignore: cast_nullable_to_non_nullable
 as CommentMember,content: null == content ? _self.content : content // ignore: cast_nullable_to_non_nullable
 as CommentContent,replies: null == replies ? _self._replies : replies // ignore: cast_nullable_to_non_nullable
-as List<CommentItem>,show_follow: null == show_follow ? _self.show_follow : show_follow // ignore: cast_nullable_to_non_nullable
+as List<CommentItem>,showFollow: null == showFollow ? _self.showFollow : showFollow // ignore: cast_nullable_to_non_nullable
 as bool,invisible: null == invisible ? _self.invisible : invisible // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
@@ -1265,7 +1241,7 @@ $CommentContentCopyWith<$Res> get content {
 /// @nodoc
 mixin _$CommentMember {
 
- String get mid; String get uname; String get sex; String get sign; String get avatar; String get rank; int get DisplayRank; CommentLevelInfo get level_info; CommentPendant get pendant; CommentNameplate get nameplate; CommentOfficialVerify get official_verify; CommentVip get vip; dynamic get fans_detail; int get following; int get is_followed;
+ String get mid; String get uname; String get sex; String get sign; String get avatar; String get rank;@JsonKey(name: 'DisplayRank') int get displayRank;@JsonKey(name: 'level_info') CommentLevelInfo get levelInfo; CommentPendant get pendant; CommentNameplate get nameplate;@JsonKey(name: 'official_verify') CommentOfficialVerify get officialVerify; CommentVip get vip;@JsonKey(name: 'fans_detail') dynamic get fansDetail; int get following;@JsonKey(name: 'is_followed') int get isFollowed;
 /// Create a copy of CommentMember
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1278,16 +1254,16 @@ $CommentMemberCopyWith<CommentMember> get copyWith => _$CommentMemberCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentMember&&(identical(other.mid, mid) || other.mid == mid)&&(identical(other.uname, uname) || other.uname == uname)&&(identical(other.sex, sex) || other.sex == sex)&&(identical(other.sign, sign) || other.sign == sign)&&(identical(other.avatar, avatar) || other.avatar == avatar)&&(identical(other.rank, rank) || other.rank == rank)&&(identical(other.DisplayRank, DisplayRank) || other.DisplayRank == DisplayRank)&&(identical(other.level_info, level_info) || other.level_info == level_info)&&(identical(other.pendant, pendant) || other.pendant == pendant)&&(identical(other.nameplate, nameplate) || other.nameplate == nameplate)&&(identical(other.official_verify, official_verify) || other.official_verify == official_verify)&&(identical(other.vip, vip) || other.vip == vip)&&const DeepCollectionEquality().equals(other.fans_detail, fans_detail)&&(identical(other.following, following) || other.following == following)&&(identical(other.is_followed, is_followed) || other.is_followed == is_followed));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentMember&&(identical(other.mid, mid) || other.mid == mid)&&(identical(other.uname, uname) || other.uname == uname)&&(identical(other.sex, sex) || other.sex == sex)&&(identical(other.sign, sign) || other.sign == sign)&&(identical(other.avatar, avatar) || other.avatar == avatar)&&(identical(other.rank, rank) || other.rank == rank)&&(identical(other.displayRank, displayRank) || other.displayRank == displayRank)&&(identical(other.levelInfo, levelInfo) || other.levelInfo == levelInfo)&&(identical(other.pendant, pendant) || other.pendant == pendant)&&(identical(other.nameplate, nameplate) || other.nameplate == nameplate)&&(identical(other.officialVerify, officialVerify) || other.officialVerify == officialVerify)&&(identical(other.vip, vip) || other.vip == vip)&&const DeepCollectionEquality().equals(other.fansDetail, fansDetail)&&(identical(other.following, following) || other.following == following)&&(identical(other.isFollowed, isFollowed) || other.isFollowed == isFollowed));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,mid,uname,sex,sign,avatar,rank,DisplayRank,level_info,pendant,nameplate,official_verify,vip,const DeepCollectionEquality().hash(fans_detail),following,is_followed);
+int get hashCode => Object.hash(runtimeType,mid,uname,sex,sign,avatar,rank,displayRank,levelInfo,pendant,nameplate,officialVerify,vip,const DeepCollectionEquality().hash(fansDetail),following,isFollowed);
 
 @override
 String toString() {
-  return 'CommentMember(mid: $mid, uname: $uname, sex: $sex, sign: $sign, avatar: $avatar, rank: $rank, DisplayRank: $DisplayRank, level_info: $level_info, pendant: $pendant, nameplate: $nameplate, official_verify: $official_verify, vip: $vip, fans_detail: $fans_detail, following: $following, is_followed: $is_followed)';
+  return 'CommentMember(mid: $mid, uname: $uname, sex: $sex, sign: $sign, avatar: $avatar, rank: $rank, displayRank: $displayRank, levelInfo: $levelInfo, pendant: $pendant, nameplate: $nameplate, officialVerify: $officialVerify, vip: $vip, fansDetail: $fansDetail, following: $following, isFollowed: $isFollowed)';
 }
 
 
@@ -1298,11 +1274,11 @@ abstract mixin class $CommentMemberCopyWith<$Res>  {
   factory $CommentMemberCopyWith(CommentMember value, $Res Function(CommentMember) _then) = _$CommentMemberCopyWithImpl;
 @useResult
 $Res call({
- String mid, String uname, String sex, String sign, String avatar, String rank, int DisplayRank, CommentLevelInfo level_info, CommentPendant pendant, CommentNameplate nameplate, CommentOfficialVerify official_verify, CommentVip vip, dynamic fans_detail, int following, int is_followed
+ String mid, String uname, String sex, String sign, String avatar, String rank,@JsonKey(name: 'DisplayRank') int displayRank,@JsonKey(name: 'level_info') CommentLevelInfo levelInfo, CommentPendant pendant, CommentNameplate nameplate,@JsonKey(name: 'official_verify') CommentOfficialVerify officialVerify, CommentVip vip,@JsonKey(name: 'fans_detail') dynamic fansDetail, int following,@JsonKey(name: 'is_followed') int isFollowed
 });
 
 
-$CommentLevelInfoCopyWith<$Res> get level_info;$CommentPendantCopyWith<$Res> get pendant;$CommentNameplateCopyWith<$Res> get nameplate;$CommentOfficialVerifyCopyWith<$Res> get official_verify;$CommentVipCopyWith<$Res> get vip;
+$CommentLevelInfoCopyWith<$Res> get levelInfo;$CommentPendantCopyWith<$Res> get pendant;$CommentNameplateCopyWith<$Res> get nameplate;$CommentOfficialVerifyCopyWith<$Res> get officialVerify;$CommentVipCopyWith<$Res> get vip;
 
 }
 /// @nodoc
@@ -1315,7 +1291,7 @@ class _$CommentMemberCopyWithImpl<$Res>
 
 /// Create a copy of CommentMember
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? mid = null,Object? uname = null,Object? sex = null,Object? sign = null,Object? avatar = null,Object? rank = null,Object? DisplayRank = null,Object? level_info = null,Object? pendant = null,Object? nameplate = null,Object? official_verify = null,Object? vip = null,Object? fans_detail = freezed,Object? following = null,Object? is_followed = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? mid = null,Object? uname = null,Object? sex = null,Object? sign = null,Object? avatar = null,Object? rank = null,Object? displayRank = null,Object? levelInfo = null,Object? pendant = null,Object? nameplate = null,Object? officialVerify = null,Object? vip = null,Object? fansDetail = freezed,Object? following = null,Object? isFollowed = null,}) {
   return _then(_self.copyWith(
 mid: null == mid ? _self.mid : mid // ignore: cast_nullable_to_non_nullable
 as String,uname: null == uname ? _self.uname : uname // ignore: cast_nullable_to_non_nullable
@@ -1323,15 +1299,15 @@ as String,sex: null == sex ? _self.sex : sex // ignore: cast_nullable_to_non_nul
 as String,sign: null == sign ? _self.sign : sign // ignore: cast_nullable_to_non_nullable
 as String,avatar: null == avatar ? _self.avatar : avatar // ignore: cast_nullable_to_non_nullable
 as String,rank: null == rank ? _self.rank : rank // ignore: cast_nullable_to_non_nullable
-as String,DisplayRank: null == DisplayRank ? _self.DisplayRank : DisplayRank // ignore: cast_nullable_to_non_nullable
-as int,level_info: null == level_info ? _self.level_info : level_info // ignore: cast_nullable_to_non_nullable
+as String,displayRank: null == displayRank ? _self.displayRank : displayRank // ignore: cast_nullable_to_non_nullable
+as int,levelInfo: null == levelInfo ? _self.levelInfo : levelInfo // ignore: cast_nullable_to_non_nullable
 as CommentLevelInfo,pendant: null == pendant ? _self.pendant : pendant // ignore: cast_nullable_to_non_nullable
 as CommentPendant,nameplate: null == nameplate ? _self.nameplate : nameplate // ignore: cast_nullable_to_non_nullable
-as CommentNameplate,official_verify: null == official_verify ? _self.official_verify : official_verify // ignore: cast_nullable_to_non_nullable
+as CommentNameplate,officialVerify: null == officialVerify ? _self.officialVerify : officialVerify // ignore: cast_nullable_to_non_nullable
 as CommentOfficialVerify,vip: null == vip ? _self.vip : vip // ignore: cast_nullable_to_non_nullable
-as CommentVip,fans_detail: freezed == fans_detail ? _self.fans_detail : fans_detail // ignore: cast_nullable_to_non_nullable
+as CommentVip,fansDetail: freezed == fansDetail ? _self.fansDetail : fansDetail // ignore: cast_nullable_to_non_nullable
 as dynamic,following: null == following ? _self.following : following // ignore: cast_nullable_to_non_nullable
-as int,is_followed: null == is_followed ? _self.is_followed : is_followed // ignore: cast_nullable_to_non_nullable
+as int,isFollowed: null == isFollowed ? _self.isFollowed : isFollowed // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
@@ -1339,10 +1315,10 @@ as int,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$CommentLevelInfoCopyWith<$Res> get level_info {
+$CommentLevelInfoCopyWith<$Res> get levelInfo {
   
-  return $CommentLevelInfoCopyWith<$Res>(_self.level_info, (value) {
-    return _then(_self.copyWith(level_info: value));
+  return $CommentLevelInfoCopyWith<$Res>(_self.levelInfo, (value) {
+    return _then(_self.copyWith(levelInfo: value));
   });
 }/// Create a copy of CommentMember
 /// with the given fields replaced by the non-null parameter values.
@@ -1366,10 +1342,10 @@ $CommentNameplateCopyWith<$Res> get nameplate {
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$CommentOfficialVerifyCopyWith<$Res> get official_verify {
+$CommentOfficialVerifyCopyWith<$Res> get officialVerify {
   
-  return $CommentOfficialVerifyCopyWith<$Res>(_self.official_verify, (value) {
-    return _then(_self.copyWith(official_verify: value));
+  return $CommentOfficialVerifyCopyWith<$Res>(_self.officialVerify, (value) {
+    return _then(_self.copyWith(officialVerify: value));
   });
 }/// Create a copy of CommentMember
 /// with the given fields replaced by the non-null parameter values.
@@ -1424,10 +1400,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _CommentMember():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -1462,10 +1435,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String mid,  String uname,  String sex,  String sign,  String avatar,  String rank,  int DisplayRank,  CommentLevelInfo level_info,  CommentPendant pendant,  CommentNameplate nameplate,  CommentOfficialVerify official_verify,  CommentVip vip,  dynamic fans_detail,  int following,  int is_followed)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String mid,  String uname,  String sex,  String sign,  String avatar,  String rank, @JsonKey(name: 'DisplayRank')  int displayRank, @JsonKey(name: 'level_info')  CommentLevelInfo levelInfo,  CommentPendant pendant,  CommentNameplate nameplate, @JsonKey(name: 'official_verify')  CommentOfficialVerify officialVerify,  CommentVip vip, @JsonKey(name: 'fans_detail')  dynamic fansDetail,  int following, @JsonKey(name: 'is_followed')  int isFollowed)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CommentMember() when $default != null:
-return $default(_that.mid,_that.uname,_that.sex,_that.sign,_that.avatar,_that.rank,_that.DisplayRank,_that.level_info,_that.pendant,_that.nameplate,_that.official_verify,_that.vip,_that.fans_detail,_that.following,_that.is_followed);case _:
+return $default(_that.mid,_that.uname,_that.sex,_that.sign,_that.avatar,_that.rank,_that.displayRank,_that.levelInfo,_that.pendant,_that.nameplate,_that.officialVerify,_that.vip,_that.fansDetail,_that.following,_that.isFollowed);case _:
   return orElse();
 
 }
@@ -1483,13 +1456,10 @@ return $default(_that.mid,_that.uname,_that.sex,_that.sign,_that.avatar,_that.ra
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String mid,  String uname,  String sex,  String sign,  String avatar,  String rank,  int DisplayRank,  CommentLevelInfo level_info,  CommentPendant pendant,  CommentNameplate nameplate,  CommentOfficialVerify official_verify,  CommentVip vip,  dynamic fans_detail,  int following,  int is_followed)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String mid,  String uname,  String sex,  String sign,  String avatar,  String rank, @JsonKey(name: 'DisplayRank')  int displayRank, @JsonKey(name: 'level_info')  CommentLevelInfo levelInfo,  CommentPendant pendant,  CommentNameplate nameplate, @JsonKey(name: 'official_verify')  CommentOfficialVerify officialVerify,  CommentVip vip, @JsonKey(name: 'fans_detail')  dynamic fansDetail,  int following, @JsonKey(name: 'is_followed')  int isFollowed)  $default,) {final _that = this;
 switch (_that) {
 case _CommentMember():
-return $default(_that.mid,_that.uname,_that.sex,_that.sign,_that.avatar,_that.rank,_that.DisplayRank,_that.level_info,_that.pendant,_that.nameplate,_that.official_verify,_that.vip,_that.fans_detail,_that.following,_that.is_followed);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.mid,_that.uname,_that.sex,_that.sign,_that.avatar,_that.rank,_that.displayRank,_that.levelInfo,_that.pendant,_that.nameplate,_that.officialVerify,_that.vip,_that.fansDetail,_that.following,_that.isFollowed);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1503,10 +1473,10 @@ return $default(_that.mid,_that.uname,_that.sex,_that.sign,_that.avatar,_that.ra
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String mid,  String uname,  String sex,  String sign,  String avatar,  String rank,  int DisplayRank,  CommentLevelInfo level_info,  CommentPendant pendant,  CommentNameplate nameplate,  CommentOfficialVerify official_verify,  CommentVip vip,  dynamic fans_detail,  int following,  int is_followed)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String mid,  String uname,  String sex,  String sign,  String avatar,  String rank, @JsonKey(name: 'DisplayRank')  int displayRank, @JsonKey(name: 'level_info')  CommentLevelInfo levelInfo,  CommentPendant pendant,  CommentNameplate nameplate, @JsonKey(name: 'official_verify')  CommentOfficialVerify officialVerify,  CommentVip vip, @JsonKey(name: 'fans_detail')  dynamic fansDetail,  int following, @JsonKey(name: 'is_followed')  int isFollowed)?  $default,) {final _that = this;
 switch (_that) {
 case _CommentMember() when $default != null:
-return $default(_that.mid,_that.uname,_that.sex,_that.sign,_that.avatar,_that.rank,_that.DisplayRank,_that.level_info,_that.pendant,_that.nameplate,_that.official_verify,_that.vip,_that.fans_detail,_that.following,_that.is_followed);case _:
+return $default(_that.mid,_that.uname,_that.sex,_that.sign,_that.avatar,_that.rank,_that.displayRank,_that.levelInfo,_that.pendant,_that.nameplate,_that.officialVerify,_that.vip,_that.fansDetail,_that.following,_that.isFollowed);case _:
   return null;
 
 }
@@ -1518,7 +1488,7 @@ return $default(_that.mid,_that.uname,_that.sex,_that.sign,_that.avatar,_that.ra
 @JsonSerializable()
 
 class _CommentMember implements CommentMember {
-  const _CommentMember({required this.mid, required this.uname, required this.sex, required this.sign, required this.avatar, required this.rank, this.DisplayRank = 0, required this.level_info, required this.pendant, required this.nameplate, required this.official_verify, required this.vip, this.fans_detail, this.following = 0, this.is_followed = 0});
+  const _CommentMember({required this.mid, required this.uname, required this.sex, required this.sign, required this.avatar, required this.rank, @JsonKey(name: 'DisplayRank') this.displayRank = 0, @JsonKey(name: 'level_info') required this.levelInfo, required this.pendant, required this.nameplate, @JsonKey(name: 'official_verify') required this.officialVerify, required this.vip, @JsonKey(name: 'fans_detail') this.fansDetail, this.following = 0, @JsonKey(name: 'is_followed') this.isFollowed = 0});
   factory _CommentMember.fromJson(Map<String, dynamic> json) => _$CommentMemberFromJson(json);
 
 @override final  String mid;
@@ -1527,15 +1497,15 @@ class _CommentMember implements CommentMember {
 @override final  String sign;
 @override final  String avatar;
 @override final  String rank;
-@override@JsonKey() final  int DisplayRank;
-@override final  CommentLevelInfo level_info;
+@override@JsonKey(name: 'DisplayRank') final  int displayRank;
+@override@JsonKey(name: 'level_info') final  CommentLevelInfo levelInfo;
 @override final  CommentPendant pendant;
 @override final  CommentNameplate nameplate;
-@override final  CommentOfficialVerify official_verify;
+@override@JsonKey(name: 'official_verify') final  CommentOfficialVerify officialVerify;
 @override final  CommentVip vip;
-@override final  dynamic fans_detail;
+@override@JsonKey(name: 'fans_detail') final  dynamic fansDetail;
 @override@JsonKey() final  int following;
-@override@JsonKey() final  int is_followed;
+@override@JsonKey(name: 'is_followed') final  int isFollowed;
 
 /// Create a copy of CommentMember
 /// with the given fields replaced by the non-null parameter values.
@@ -1550,16 +1520,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentMember&&(identical(other.mid, mid) || other.mid == mid)&&(identical(other.uname, uname) || other.uname == uname)&&(identical(other.sex, sex) || other.sex == sex)&&(identical(other.sign, sign) || other.sign == sign)&&(identical(other.avatar, avatar) || other.avatar == avatar)&&(identical(other.rank, rank) || other.rank == rank)&&(identical(other.DisplayRank, DisplayRank) || other.DisplayRank == DisplayRank)&&(identical(other.level_info, level_info) || other.level_info == level_info)&&(identical(other.pendant, pendant) || other.pendant == pendant)&&(identical(other.nameplate, nameplate) || other.nameplate == nameplate)&&(identical(other.official_verify, official_verify) || other.official_verify == official_verify)&&(identical(other.vip, vip) || other.vip == vip)&&const DeepCollectionEquality().equals(other.fans_detail, fans_detail)&&(identical(other.following, following) || other.following == following)&&(identical(other.is_followed, is_followed) || other.is_followed == is_followed));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentMember&&(identical(other.mid, mid) || other.mid == mid)&&(identical(other.uname, uname) || other.uname == uname)&&(identical(other.sex, sex) || other.sex == sex)&&(identical(other.sign, sign) || other.sign == sign)&&(identical(other.avatar, avatar) || other.avatar == avatar)&&(identical(other.rank, rank) || other.rank == rank)&&(identical(other.displayRank, displayRank) || other.displayRank == displayRank)&&(identical(other.levelInfo, levelInfo) || other.levelInfo == levelInfo)&&(identical(other.pendant, pendant) || other.pendant == pendant)&&(identical(other.nameplate, nameplate) || other.nameplate == nameplate)&&(identical(other.officialVerify, officialVerify) || other.officialVerify == officialVerify)&&(identical(other.vip, vip) || other.vip == vip)&&const DeepCollectionEquality().equals(other.fansDetail, fansDetail)&&(identical(other.following, following) || other.following == following)&&(identical(other.isFollowed, isFollowed) || other.isFollowed == isFollowed));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,mid,uname,sex,sign,avatar,rank,DisplayRank,level_info,pendant,nameplate,official_verify,vip,const DeepCollectionEquality().hash(fans_detail),following,is_followed);
+int get hashCode => Object.hash(runtimeType,mid,uname,sex,sign,avatar,rank,displayRank,levelInfo,pendant,nameplate,officialVerify,vip,const DeepCollectionEquality().hash(fansDetail),following,isFollowed);
 
 @override
 String toString() {
-  return 'CommentMember(mid: $mid, uname: $uname, sex: $sex, sign: $sign, avatar: $avatar, rank: $rank, DisplayRank: $DisplayRank, level_info: $level_info, pendant: $pendant, nameplate: $nameplate, official_verify: $official_verify, vip: $vip, fans_detail: $fans_detail, following: $following, is_followed: $is_followed)';
+  return 'CommentMember(mid: $mid, uname: $uname, sex: $sex, sign: $sign, avatar: $avatar, rank: $rank, displayRank: $displayRank, levelInfo: $levelInfo, pendant: $pendant, nameplate: $nameplate, officialVerify: $officialVerify, vip: $vip, fansDetail: $fansDetail, following: $following, isFollowed: $isFollowed)';
 }
 
 
@@ -1570,11 +1540,11 @@ abstract mixin class _$CommentMemberCopyWith<$Res> implements $CommentMemberCopy
   factory _$CommentMemberCopyWith(_CommentMember value, $Res Function(_CommentMember) _then) = __$CommentMemberCopyWithImpl;
 @override @useResult
 $Res call({
- String mid, String uname, String sex, String sign, String avatar, String rank, int DisplayRank, CommentLevelInfo level_info, CommentPendant pendant, CommentNameplate nameplate, CommentOfficialVerify official_verify, CommentVip vip, dynamic fans_detail, int following, int is_followed
+ String mid, String uname, String sex, String sign, String avatar, String rank,@JsonKey(name: 'DisplayRank') int displayRank,@JsonKey(name: 'level_info') CommentLevelInfo levelInfo, CommentPendant pendant, CommentNameplate nameplate,@JsonKey(name: 'official_verify') CommentOfficialVerify officialVerify, CommentVip vip,@JsonKey(name: 'fans_detail') dynamic fansDetail, int following,@JsonKey(name: 'is_followed') int isFollowed
 });
 
 
-@override $CommentLevelInfoCopyWith<$Res> get level_info;@override $CommentPendantCopyWith<$Res> get pendant;@override $CommentNameplateCopyWith<$Res> get nameplate;@override $CommentOfficialVerifyCopyWith<$Res> get official_verify;@override $CommentVipCopyWith<$Res> get vip;
+@override $CommentLevelInfoCopyWith<$Res> get levelInfo;@override $CommentPendantCopyWith<$Res> get pendant;@override $CommentNameplateCopyWith<$Res> get nameplate;@override $CommentOfficialVerifyCopyWith<$Res> get officialVerify;@override $CommentVipCopyWith<$Res> get vip;
 
 }
 /// @nodoc
@@ -1587,7 +1557,7 @@ class __$CommentMemberCopyWithImpl<$Res>
 
 /// Create a copy of CommentMember
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? mid = null,Object? uname = null,Object? sex = null,Object? sign = null,Object? avatar = null,Object? rank = null,Object? DisplayRank = null,Object? level_info = null,Object? pendant = null,Object? nameplate = null,Object? official_verify = null,Object? vip = null,Object? fans_detail = freezed,Object? following = null,Object? is_followed = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? mid = null,Object? uname = null,Object? sex = null,Object? sign = null,Object? avatar = null,Object? rank = null,Object? displayRank = null,Object? levelInfo = null,Object? pendant = null,Object? nameplate = null,Object? officialVerify = null,Object? vip = null,Object? fansDetail = freezed,Object? following = null,Object? isFollowed = null,}) {
   return _then(_CommentMember(
 mid: null == mid ? _self.mid : mid // ignore: cast_nullable_to_non_nullable
 as String,uname: null == uname ? _self.uname : uname // ignore: cast_nullable_to_non_nullable
@@ -1595,15 +1565,15 @@ as String,sex: null == sex ? _self.sex : sex // ignore: cast_nullable_to_non_nul
 as String,sign: null == sign ? _self.sign : sign // ignore: cast_nullable_to_non_nullable
 as String,avatar: null == avatar ? _self.avatar : avatar // ignore: cast_nullable_to_non_nullable
 as String,rank: null == rank ? _self.rank : rank // ignore: cast_nullable_to_non_nullable
-as String,DisplayRank: null == DisplayRank ? _self.DisplayRank : DisplayRank // ignore: cast_nullable_to_non_nullable
-as int,level_info: null == level_info ? _self.level_info : level_info // ignore: cast_nullable_to_non_nullable
+as String,displayRank: null == displayRank ? _self.displayRank : displayRank // ignore: cast_nullable_to_non_nullable
+as int,levelInfo: null == levelInfo ? _self.levelInfo : levelInfo // ignore: cast_nullable_to_non_nullable
 as CommentLevelInfo,pendant: null == pendant ? _self.pendant : pendant // ignore: cast_nullable_to_non_nullable
 as CommentPendant,nameplate: null == nameplate ? _self.nameplate : nameplate // ignore: cast_nullable_to_non_nullable
-as CommentNameplate,official_verify: null == official_verify ? _self.official_verify : official_verify // ignore: cast_nullable_to_non_nullable
+as CommentNameplate,officialVerify: null == officialVerify ? _self.officialVerify : officialVerify // ignore: cast_nullable_to_non_nullable
 as CommentOfficialVerify,vip: null == vip ? _self.vip : vip // ignore: cast_nullable_to_non_nullable
-as CommentVip,fans_detail: freezed == fans_detail ? _self.fans_detail : fans_detail // ignore: cast_nullable_to_non_nullable
+as CommentVip,fansDetail: freezed == fansDetail ? _self.fansDetail : fansDetail // ignore: cast_nullable_to_non_nullable
 as dynamic,following: null == following ? _self.following : following // ignore: cast_nullable_to_non_nullable
-as int,is_followed: null == is_followed ? _self.is_followed : is_followed // ignore: cast_nullable_to_non_nullable
+as int,isFollowed: null == isFollowed ? _self.isFollowed : isFollowed // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
@@ -1612,10 +1582,10 @@ as int,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$CommentLevelInfoCopyWith<$Res> get level_info {
+$CommentLevelInfoCopyWith<$Res> get levelInfo {
   
-  return $CommentLevelInfoCopyWith<$Res>(_self.level_info, (value) {
-    return _then(_self.copyWith(level_info: value));
+  return $CommentLevelInfoCopyWith<$Res>(_self.levelInfo, (value) {
+    return _then(_self.copyWith(levelInfo: value));
   });
 }/// Create a copy of CommentMember
 /// with the given fields replaced by the non-null parameter values.
@@ -1639,10 +1609,10 @@ $CommentNameplateCopyWith<$Res> get nameplate {
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$CommentOfficialVerifyCopyWith<$Res> get official_verify {
+$CommentOfficialVerifyCopyWith<$Res> get officialVerify {
   
-  return $CommentOfficialVerifyCopyWith<$Res>(_self.official_verify, (value) {
-    return _then(_self.copyWith(official_verify: value));
+  return $CommentOfficialVerifyCopyWith<$Res>(_self.officialVerify, (value) {
+    return _then(_self.copyWith(officialVerify: value));
   });
 }/// Create a copy of CommentMember
 /// with the given fields replaced by the non-null parameter values.
@@ -1660,7 +1630,7 @@ $CommentVipCopyWith<$Res> get vip {
 /// @nodoc
 mixin _$CommentLevelInfo {
 
- int get current_level; int get current_min; int get current_exp; int get next_exp;
+@JsonKey(name: 'current_level') int get currentLevel;@JsonKey(name: 'current_min') int get currentMin;@JsonKey(name: 'current_exp') int get currentExp;@JsonKey(name: 'next_exp') int get nextExp;
 /// Create a copy of CommentLevelInfo
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1673,16 +1643,16 @@ $CommentLevelInfoCopyWith<CommentLevelInfo> get copyWith => _$CommentLevelInfoCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentLevelInfo&&(identical(other.current_level, current_level) || other.current_level == current_level)&&(identical(other.current_min, current_min) || other.current_min == current_min)&&(identical(other.current_exp, current_exp) || other.current_exp == current_exp)&&(identical(other.next_exp, next_exp) || other.next_exp == next_exp));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentLevelInfo&&(identical(other.currentLevel, currentLevel) || other.currentLevel == currentLevel)&&(identical(other.currentMin, currentMin) || other.currentMin == currentMin)&&(identical(other.currentExp, currentExp) || other.currentExp == currentExp)&&(identical(other.nextExp, nextExp) || other.nextExp == nextExp));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,current_level,current_min,current_exp,next_exp);
+int get hashCode => Object.hash(runtimeType,currentLevel,currentMin,currentExp,nextExp);
 
 @override
 String toString() {
-  return 'CommentLevelInfo(current_level: $current_level, current_min: $current_min, current_exp: $current_exp, next_exp: $next_exp)';
+  return 'CommentLevelInfo(currentLevel: $currentLevel, currentMin: $currentMin, currentExp: $currentExp, nextExp: $nextExp)';
 }
 
 
@@ -1693,7 +1663,7 @@ abstract mixin class $CommentLevelInfoCopyWith<$Res>  {
   factory $CommentLevelInfoCopyWith(CommentLevelInfo value, $Res Function(CommentLevelInfo) _then) = _$CommentLevelInfoCopyWithImpl;
 @useResult
 $Res call({
- int current_level, int current_min, int current_exp, int next_exp
+@JsonKey(name: 'current_level') int currentLevel,@JsonKey(name: 'current_min') int currentMin,@JsonKey(name: 'current_exp') int currentExp,@JsonKey(name: 'next_exp') int nextExp
 });
 
 
@@ -1710,12 +1680,12 @@ class _$CommentLevelInfoCopyWithImpl<$Res>
 
 /// Create a copy of CommentLevelInfo
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? current_level = null,Object? current_min = null,Object? current_exp = null,Object? next_exp = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? currentLevel = null,Object? currentMin = null,Object? currentExp = null,Object? nextExp = null,}) {
   return _then(_self.copyWith(
-current_level: null == current_level ? _self.current_level : current_level // ignore: cast_nullable_to_non_nullable
-as int,current_min: null == current_min ? _self.current_min : current_min // ignore: cast_nullable_to_non_nullable
-as int,current_exp: null == current_exp ? _self.current_exp : current_exp // ignore: cast_nullable_to_non_nullable
-as int,next_exp: null == next_exp ? _self.next_exp : next_exp // ignore: cast_nullable_to_non_nullable
+currentLevel: null == currentLevel ? _self.currentLevel : currentLevel // ignore: cast_nullable_to_non_nullable
+as int,currentMin: null == currentMin ? _self.currentMin : currentMin // ignore: cast_nullable_to_non_nullable
+as int,currentExp: null == currentExp ? _self.currentExp : currentExp // ignore: cast_nullable_to_non_nullable
+as int,nextExp: null == nextExp ? _self.nextExp : nextExp // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
@@ -1763,10 +1733,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _CommentLevelInfo():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -1801,10 +1768,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int current_level,  int current_min,  int current_exp,  int next_exp)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'current_level')  int currentLevel, @JsonKey(name: 'current_min')  int currentMin, @JsonKey(name: 'current_exp')  int currentExp, @JsonKey(name: 'next_exp')  int nextExp)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CommentLevelInfo() when $default != null:
-return $default(_that.current_level,_that.current_min,_that.current_exp,_that.next_exp);case _:
+return $default(_that.currentLevel,_that.currentMin,_that.currentExp,_that.nextExp);case _:
   return orElse();
 
 }
@@ -1822,13 +1789,10 @@ return $default(_that.current_level,_that.current_min,_that.current_exp,_that.ne
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int current_level,  int current_min,  int current_exp,  int next_exp)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'current_level')  int currentLevel, @JsonKey(name: 'current_min')  int currentMin, @JsonKey(name: 'current_exp')  int currentExp, @JsonKey(name: 'next_exp')  int nextExp)  $default,) {final _that = this;
 switch (_that) {
 case _CommentLevelInfo():
-return $default(_that.current_level,_that.current_min,_that.current_exp,_that.next_exp);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.currentLevel,_that.currentMin,_that.currentExp,_that.nextExp);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1842,10 +1806,10 @@ return $default(_that.current_level,_that.current_min,_that.current_exp,_that.ne
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int current_level,  int current_min,  int current_exp,  int next_exp)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'current_level')  int currentLevel, @JsonKey(name: 'current_min')  int currentMin, @JsonKey(name: 'current_exp')  int currentExp, @JsonKey(name: 'next_exp')  int nextExp)?  $default,) {final _that = this;
 switch (_that) {
 case _CommentLevelInfo() when $default != null:
-return $default(_that.current_level,_that.current_min,_that.current_exp,_that.next_exp);case _:
+return $default(_that.currentLevel,_that.currentMin,_that.currentExp,_that.nextExp);case _:
   return null;
 
 }
@@ -1857,13 +1821,13 @@ return $default(_that.current_level,_that.current_min,_that.current_exp,_that.ne
 @JsonSerializable()
 
 class _CommentLevelInfo implements CommentLevelInfo {
-  const _CommentLevelInfo({required this.current_level, required this.current_min, required this.current_exp, required this.next_exp});
+  const _CommentLevelInfo({@JsonKey(name: 'current_level') required this.currentLevel, @JsonKey(name: 'current_min') required this.currentMin, @JsonKey(name: 'current_exp') required this.currentExp, @JsonKey(name: 'next_exp') required this.nextExp});
   factory _CommentLevelInfo.fromJson(Map<String, dynamic> json) => _$CommentLevelInfoFromJson(json);
 
-@override final  int current_level;
-@override final  int current_min;
-@override final  int current_exp;
-@override final  int next_exp;
+@override@JsonKey(name: 'current_level') final  int currentLevel;
+@override@JsonKey(name: 'current_min') final  int currentMin;
+@override@JsonKey(name: 'current_exp') final  int currentExp;
+@override@JsonKey(name: 'next_exp') final  int nextExp;
 
 /// Create a copy of CommentLevelInfo
 /// with the given fields replaced by the non-null parameter values.
@@ -1878,16 +1842,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentLevelInfo&&(identical(other.current_level, current_level) || other.current_level == current_level)&&(identical(other.current_min, current_min) || other.current_min == current_min)&&(identical(other.current_exp, current_exp) || other.current_exp == current_exp)&&(identical(other.next_exp, next_exp) || other.next_exp == next_exp));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentLevelInfo&&(identical(other.currentLevel, currentLevel) || other.currentLevel == currentLevel)&&(identical(other.currentMin, currentMin) || other.currentMin == currentMin)&&(identical(other.currentExp, currentExp) || other.currentExp == currentExp)&&(identical(other.nextExp, nextExp) || other.nextExp == nextExp));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,current_level,current_min,current_exp,next_exp);
+int get hashCode => Object.hash(runtimeType,currentLevel,currentMin,currentExp,nextExp);
 
 @override
 String toString() {
-  return 'CommentLevelInfo(current_level: $current_level, current_min: $current_min, current_exp: $current_exp, next_exp: $next_exp)';
+  return 'CommentLevelInfo(currentLevel: $currentLevel, currentMin: $currentMin, currentExp: $currentExp, nextExp: $nextExp)';
 }
 
 
@@ -1898,7 +1862,7 @@ abstract mixin class _$CommentLevelInfoCopyWith<$Res> implements $CommentLevelIn
   factory _$CommentLevelInfoCopyWith(_CommentLevelInfo value, $Res Function(_CommentLevelInfo) _then) = __$CommentLevelInfoCopyWithImpl;
 @override @useResult
 $Res call({
- int current_level, int current_min, int current_exp, int next_exp
+@JsonKey(name: 'current_level') int currentLevel,@JsonKey(name: 'current_min') int currentMin,@JsonKey(name: 'current_exp') int currentExp,@JsonKey(name: 'next_exp') int nextExp
 });
 
 
@@ -1915,12 +1879,12 @@ class __$CommentLevelInfoCopyWithImpl<$Res>
 
 /// Create a copy of CommentLevelInfo
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? current_level = null,Object? current_min = null,Object? current_exp = null,Object? next_exp = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? currentLevel = null,Object? currentMin = null,Object? currentExp = null,Object? nextExp = null,}) {
   return _then(_CommentLevelInfo(
-current_level: null == current_level ? _self.current_level : current_level // ignore: cast_nullable_to_non_nullable
-as int,current_min: null == current_min ? _self.current_min : current_min // ignore: cast_nullable_to_non_nullable
-as int,current_exp: null == current_exp ? _self.current_exp : current_exp // ignore: cast_nullable_to_non_nullable
-as int,next_exp: null == next_exp ? _self.next_exp : next_exp // ignore: cast_nullable_to_non_nullable
+currentLevel: null == currentLevel ? _self.currentLevel : currentLevel // ignore: cast_nullable_to_non_nullable
+as int,currentMin: null == currentMin ? _self.currentMin : currentMin // ignore: cast_nullable_to_non_nullable
+as int,currentExp: null == currentExp ? _self.currentExp : currentExp // ignore: cast_nullable_to_non_nullable
+as int,nextExp: null == nextExp ? _self.nextExp : nextExp // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
@@ -1932,7 +1896,7 @@ as int,
 /// @nodoc
 mixin _$CommentPendant {
 
- int get pid; String get name; String get image; int get expire; String get image_enhance; String get image_enhance_frame;
+ int get pid; String get name; String get image; int get expire;@JsonKey(name: 'image_enhance') String get imageEnhance;@JsonKey(name: 'image_enhance_frame') String get imageEnhanceFrame;
 /// Create a copy of CommentPendant
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1945,16 +1909,16 @@ $CommentPendantCopyWith<CommentPendant> get copyWith => _$CommentPendantCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentPendant&&(identical(other.pid, pid) || other.pid == pid)&&(identical(other.name, name) || other.name == name)&&(identical(other.image, image) || other.image == image)&&(identical(other.expire, expire) || other.expire == expire)&&(identical(other.image_enhance, image_enhance) || other.image_enhance == image_enhance)&&(identical(other.image_enhance_frame, image_enhance_frame) || other.image_enhance_frame == image_enhance_frame));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentPendant&&(identical(other.pid, pid) || other.pid == pid)&&(identical(other.name, name) || other.name == name)&&(identical(other.image, image) || other.image == image)&&(identical(other.expire, expire) || other.expire == expire)&&(identical(other.imageEnhance, imageEnhance) || other.imageEnhance == imageEnhance)&&(identical(other.imageEnhanceFrame, imageEnhanceFrame) || other.imageEnhanceFrame == imageEnhanceFrame));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,pid,name,image,expire,image_enhance,image_enhance_frame);
+int get hashCode => Object.hash(runtimeType,pid,name,image,expire,imageEnhance,imageEnhanceFrame);
 
 @override
 String toString() {
-  return 'CommentPendant(pid: $pid, name: $name, image: $image, expire: $expire, image_enhance: $image_enhance, image_enhance_frame: $image_enhance_frame)';
+  return 'CommentPendant(pid: $pid, name: $name, image: $image, expire: $expire, imageEnhance: $imageEnhance, imageEnhanceFrame: $imageEnhanceFrame)';
 }
 
 
@@ -1965,7 +1929,7 @@ abstract mixin class $CommentPendantCopyWith<$Res>  {
   factory $CommentPendantCopyWith(CommentPendant value, $Res Function(CommentPendant) _then) = _$CommentPendantCopyWithImpl;
 @useResult
 $Res call({
- int pid, String name, String image, int expire, String image_enhance, String image_enhance_frame
+ int pid, String name, String image, int expire,@JsonKey(name: 'image_enhance') String imageEnhance,@JsonKey(name: 'image_enhance_frame') String imageEnhanceFrame
 });
 
 
@@ -1982,14 +1946,14 @@ class _$CommentPendantCopyWithImpl<$Res>
 
 /// Create a copy of CommentPendant
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? pid = null,Object? name = null,Object? image = null,Object? expire = null,Object? image_enhance = null,Object? image_enhance_frame = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? pid = null,Object? name = null,Object? image = null,Object? expire = null,Object? imageEnhance = null,Object? imageEnhanceFrame = null,}) {
   return _then(_self.copyWith(
 pid: null == pid ? _self.pid : pid // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,image: null == image ? _self.image : image // ignore: cast_nullable_to_non_nullable
 as String,expire: null == expire ? _self.expire : expire // ignore: cast_nullable_to_non_nullable
-as int,image_enhance: null == image_enhance ? _self.image_enhance : image_enhance // ignore: cast_nullable_to_non_nullable
-as String,image_enhance_frame: null == image_enhance_frame ? _self.image_enhance_frame : image_enhance_frame // ignore: cast_nullable_to_non_nullable
+as int,imageEnhance: null == imageEnhance ? _self.imageEnhance : imageEnhance // ignore: cast_nullable_to_non_nullable
+as String,imageEnhanceFrame: null == imageEnhanceFrame ? _self.imageEnhanceFrame : imageEnhanceFrame // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -2037,10 +2001,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _CommentPendant():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -2075,10 +2036,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int pid,  String name,  String image,  int expire,  String image_enhance,  String image_enhance_frame)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int pid,  String name,  String image,  int expire, @JsonKey(name: 'image_enhance')  String imageEnhance, @JsonKey(name: 'image_enhance_frame')  String imageEnhanceFrame)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CommentPendant() when $default != null:
-return $default(_that.pid,_that.name,_that.image,_that.expire,_that.image_enhance,_that.image_enhance_frame);case _:
+return $default(_that.pid,_that.name,_that.image,_that.expire,_that.imageEnhance,_that.imageEnhanceFrame);case _:
   return orElse();
 
 }
@@ -2096,13 +2057,10 @@ return $default(_that.pid,_that.name,_that.image,_that.expire,_that.image_enhanc
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int pid,  String name,  String image,  int expire,  String image_enhance,  String image_enhance_frame)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int pid,  String name,  String image,  int expire, @JsonKey(name: 'image_enhance')  String imageEnhance, @JsonKey(name: 'image_enhance_frame')  String imageEnhanceFrame)  $default,) {final _that = this;
 switch (_that) {
 case _CommentPendant():
-return $default(_that.pid,_that.name,_that.image,_that.expire,_that.image_enhance,_that.image_enhance_frame);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.pid,_that.name,_that.image,_that.expire,_that.imageEnhance,_that.imageEnhanceFrame);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -2116,10 +2074,10 @@ return $default(_that.pid,_that.name,_that.image,_that.expire,_that.image_enhanc
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int pid,  String name,  String image,  int expire,  String image_enhance,  String image_enhance_frame)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int pid,  String name,  String image,  int expire, @JsonKey(name: 'image_enhance')  String imageEnhance, @JsonKey(name: 'image_enhance_frame')  String imageEnhanceFrame)?  $default,) {final _that = this;
 switch (_that) {
 case _CommentPendant() when $default != null:
-return $default(_that.pid,_that.name,_that.image,_that.expire,_that.image_enhance,_that.image_enhance_frame);case _:
+return $default(_that.pid,_that.name,_that.image,_that.expire,_that.imageEnhance,_that.imageEnhanceFrame);case _:
   return null;
 
 }
@@ -2131,15 +2089,15 @@ return $default(_that.pid,_that.name,_that.image,_that.expire,_that.image_enhanc
 @JsonSerializable()
 
 class _CommentPendant implements CommentPendant {
-  const _CommentPendant({required this.pid, required this.name, required this.image, required this.expire, this.image_enhance = '', this.image_enhance_frame = ''});
+  const _CommentPendant({required this.pid, required this.name, required this.image, required this.expire, @JsonKey(name: 'image_enhance') this.imageEnhance = '', @JsonKey(name: 'image_enhance_frame') this.imageEnhanceFrame = ''});
   factory _CommentPendant.fromJson(Map<String, dynamic> json) => _$CommentPendantFromJson(json);
 
 @override final  int pid;
 @override final  String name;
 @override final  String image;
 @override final  int expire;
-@override@JsonKey() final  String image_enhance;
-@override@JsonKey() final  String image_enhance_frame;
+@override@JsonKey(name: 'image_enhance') final  String imageEnhance;
+@override@JsonKey(name: 'image_enhance_frame') final  String imageEnhanceFrame;
 
 /// Create a copy of CommentPendant
 /// with the given fields replaced by the non-null parameter values.
@@ -2154,16 +2112,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentPendant&&(identical(other.pid, pid) || other.pid == pid)&&(identical(other.name, name) || other.name == name)&&(identical(other.image, image) || other.image == image)&&(identical(other.expire, expire) || other.expire == expire)&&(identical(other.image_enhance, image_enhance) || other.image_enhance == image_enhance)&&(identical(other.image_enhance_frame, image_enhance_frame) || other.image_enhance_frame == image_enhance_frame));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentPendant&&(identical(other.pid, pid) || other.pid == pid)&&(identical(other.name, name) || other.name == name)&&(identical(other.image, image) || other.image == image)&&(identical(other.expire, expire) || other.expire == expire)&&(identical(other.imageEnhance, imageEnhance) || other.imageEnhance == imageEnhance)&&(identical(other.imageEnhanceFrame, imageEnhanceFrame) || other.imageEnhanceFrame == imageEnhanceFrame));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,pid,name,image,expire,image_enhance,image_enhance_frame);
+int get hashCode => Object.hash(runtimeType,pid,name,image,expire,imageEnhance,imageEnhanceFrame);
 
 @override
 String toString() {
-  return 'CommentPendant(pid: $pid, name: $name, image: $image, expire: $expire, image_enhance: $image_enhance, image_enhance_frame: $image_enhance_frame)';
+  return 'CommentPendant(pid: $pid, name: $name, image: $image, expire: $expire, imageEnhance: $imageEnhance, imageEnhanceFrame: $imageEnhanceFrame)';
 }
 
 
@@ -2174,7 +2132,7 @@ abstract mixin class _$CommentPendantCopyWith<$Res> implements $CommentPendantCo
   factory _$CommentPendantCopyWith(_CommentPendant value, $Res Function(_CommentPendant) _then) = __$CommentPendantCopyWithImpl;
 @override @useResult
 $Res call({
- int pid, String name, String image, int expire, String image_enhance, String image_enhance_frame
+ int pid, String name, String image, int expire,@JsonKey(name: 'image_enhance') String imageEnhance,@JsonKey(name: 'image_enhance_frame') String imageEnhanceFrame
 });
 
 
@@ -2191,14 +2149,14 @@ class __$CommentPendantCopyWithImpl<$Res>
 
 /// Create a copy of CommentPendant
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? pid = null,Object? name = null,Object? image = null,Object? expire = null,Object? image_enhance = null,Object? image_enhance_frame = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? pid = null,Object? name = null,Object? image = null,Object? expire = null,Object? imageEnhance = null,Object? imageEnhanceFrame = null,}) {
   return _then(_CommentPendant(
 pid: null == pid ? _self.pid : pid // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,image: null == image ? _self.image : image // ignore: cast_nullable_to_non_nullable
 as String,expire: null == expire ? _self.expire : expire // ignore: cast_nullable_to_non_nullable
-as int,image_enhance: null == image_enhance ? _self.image_enhance : image_enhance // ignore: cast_nullable_to_non_nullable
-as String,image_enhance_frame: null == image_enhance_frame ? _self.image_enhance_frame : image_enhance_frame // ignore: cast_nullable_to_non_nullable
+as int,imageEnhance: null == imageEnhance ? _self.imageEnhance : imageEnhance // ignore: cast_nullable_to_non_nullable
+as String,imageEnhanceFrame: null == imageEnhanceFrame ? _self.imageEnhanceFrame : imageEnhanceFrame // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -2210,7 +2168,7 @@ as String,
 /// @nodoc
 mixin _$CommentNameplate {
 
- int get nid; String get name; String get image; String get image_small; String get level; String get condition;
+ int get nid; String get name; String get image;@JsonKey(name: 'image_small') String get imageSmall; String get level; String get condition;
 /// Create a copy of CommentNameplate
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -2223,16 +2181,16 @@ $CommentNameplateCopyWith<CommentNameplate> get copyWith => _$CommentNameplateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentNameplate&&(identical(other.nid, nid) || other.nid == nid)&&(identical(other.name, name) || other.name == name)&&(identical(other.image, image) || other.image == image)&&(identical(other.image_small, image_small) || other.image_small == image_small)&&(identical(other.level, level) || other.level == level)&&(identical(other.condition, condition) || other.condition == condition));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentNameplate&&(identical(other.nid, nid) || other.nid == nid)&&(identical(other.name, name) || other.name == name)&&(identical(other.image, image) || other.image == image)&&(identical(other.imageSmall, imageSmall) || other.imageSmall == imageSmall)&&(identical(other.level, level) || other.level == level)&&(identical(other.condition, condition) || other.condition == condition));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,nid,name,image,image_small,level,condition);
+int get hashCode => Object.hash(runtimeType,nid,name,image,imageSmall,level,condition);
 
 @override
 String toString() {
-  return 'CommentNameplate(nid: $nid, name: $name, image: $image, image_small: $image_small, level: $level, condition: $condition)';
+  return 'CommentNameplate(nid: $nid, name: $name, image: $image, imageSmall: $imageSmall, level: $level, condition: $condition)';
 }
 
 
@@ -2243,7 +2201,7 @@ abstract mixin class $CommentNameplateCopyWith<$Res>  {
   factory $CommentNameplateCopyWith(CommentNameplate value, $Res Function(CommentNameplate) _then) = _$CommentNameplateCopyWithImpl;
 @useResult
 $Res call({
- int nid, String name, String image, String image_small, String level, String condition
+ int nid, String name, String image,@JsonKey(name: 'image_small') String imageSmall, String level, String condition
 });
 
 
@@ -2260,12 +2218,12 @@ class _$CommentNameplateCopyWithImpl<$Res>
 
 /// Create a copy of CommentNameplate
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? nid = null,Object? name = null,Object? image = null,Object? image_small = null,Object? level = null,Object? condition = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? nid = null,Object? name = null,Object? image = null,Object? imageSmall = null,Object? level = null,Object? condition = null,}) {
   return _then(_self.copyWith(
 nid: null == nid ? _self.nid : nid // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,image: null == image ? _self.image : image // ignore: cast_nullable_to_non_nullable
-as String,image_small: null == image_small ? _self.image_small : image_small // ignore: cast_nullable_to_non_nullable
+as String,imageSmall: null == imageSmall ? _self.imageSmall : imageSmall // ignore: cast_nullable_to_non_nullable
 as String,level: null == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
 as String,condition: null == condition ? _self.condition : condition // ignore: cast_nullable_to_non_nullable
 as String,
@@ -2315,10 +2273,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _CommentNameplate():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -2353,10 +2308,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int nid,  String name,  String image,  String image_small,  String level,  String condition)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int nid,  String name,  String image, @JsonKey(name: 'image_small')  String imageSmall,  String level,  String condition)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CommentNameplate() when $default != null:
-return $default(_that.nid,_that.name,_that.image,_that.image_small,_that.level,_that.condition);case _:
+return $default(_that.nid,_that.name,_that.image,_that.imageSmall,_that.level,_that.condition);case _:
   return orElse();
 
 }
@@ -2374,13 +2329,10 @@ return $default(_that.nid,_that.name,_that.image,_that.image_small,_that.level,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int nid,  String name,  String image,  String image_small,  String level,  String condition)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int nid,  String name,  String image, @JsonKey(name: 'image_small')  String imageSmall,  String level,  String condition)  $default,) {final _that = this;
 switch (_that) {
 case _CommentNameplate():
-return $default(_that.nid,_that.name,_that.image,_that.image_small,_that.level,_that.condition);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.nid,_that.name,_that.image,_that.imageSmall,_that.level,_that.condition);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -2394,10 +2346,10 @@ return $default(_that.nid,_that.name,_that.image,_that.image_small,_that.level,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int nid,  String name,  String image,  String image_small,  String level,  String condition)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int nid,  String name,  String image, @JsonKey(name: 'image_small')  String imageSmall,  String level,  String condition)?  $default,) {final _that = this;
 switch (_that) {
 case _CommentNameplate() when $default != null:
-return $default(_that.nid,_that.name,_that.image,_that.image_small,_that.level,_that.condition);case _:
+return $default(_that.nid,_that.name,_that.image,_that.imageSmall,_that.level,_that.condition);case _:
   return null;
 
 }
@@ -2409,13 +2361,13 @@ return $default(_that.nid,_that.name,_that.image,_that.image_small,_that.level,_
 @JsonSerializable()
 
 class _CommentNameplate implements CommentNameplate {
-  const _CommentNameplate({required this.nid, required this.name, required this.image, required this.image_small, required this.level, required this.condition});
+  const _CommentNameplate({required this.nid, required this.name, required this.image, @JsonKey(name: 'image_small') required this.imageSmall, required this.level, required this.condition});
   factory _CommentNameplate.fromJson(Map<String, dynamic> json) => _$CommentNameplateFromJson(json);
 
 @override final  int nid;
 @override final  String name;
 @override final  String image;
-@override final  String image_small;
+@override@JsonKey(name: 'image_small') final  String imageSmall;
 @override final  String level;
 @override final  String condition;
 
@@ -2432,16 +2384,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentNameplate&&(identical(other.nid, nid) || other.nid == nid)&&(identical(other.name, name) || other.name == name)&&(identical(other.image, image) || other.image == image)&&(identical(other.image_small, image_small) || other.image_small == image_small)&&(identical(other.level, level) || other.level == level)&&(identical(other.condition, condition) || other.condition == condition));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentNameplate&&(identical(other.nid, nid) || other.nid == nid)&&(identical(other.name, name) || other.name == name)&&(identical(other.image, image) || other.image == image)&&(identical(other.imageSmall, imageSmall) || other.imageSmall == imageSmall)&&(identical(other.level, level) || other.level == level)&&(identical(other.condition, condition) || other.condition == condition));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,nid,name,image,image_small,level,condition);
+int get hashCode => Object.hash(runtimeType,nid,name,image,imageSmall,level,condition);
 
 @override
 String toString() {
-  return 'CommentNameplate(nid: $nid, name: $name, image: $image, image_small: $image_small, level: $level, condition: $condition)';
+  return 'CommentNameplate(nid: $nid, name: $name, image: $image, imageSmall: $imageSmall, level: $level, condition: $condition)';
 }
 
 
@@ -2452,7 +2404,7 @@ abstract mixin class _$CommentNameplateCopyWith<$Res> implements $CommentNamepla
   factory _$CommentNameplateCopyWith(_CommentNameplate value, $Res Function(_CommentNameplate) _then) = __$CommentNameplateCopyWithImpl;
 @override @useResult
 $Res call({
- int nid, String name, String image, String image_small, String level, String condition
+ int nid, String name, String image,@JsonKey(name: 'image_small') String imageSmall, String level, String condition
 });
 
 
@@ -2469,12 +2421,12 @@ class __$CommentNameplateCopyWithImpl<$Res>
 
 /// Create a copy of CommentNameplate
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? nid = null,Object? name = null,Object? image = null,Object? image_small = null,Object? level = null,Object? condition = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? nid = null,Object? name = null,Object? image = null,Object? imageSmall = null,Object? level = null,Object? condition = null,}) {
   return _then(_CommentNameplate(
 nid: null == nid ? _self.nid : nid // ignore: cast_nullable_to_non_nullable
 as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,image: null == image ? _self.image : image // ignore: cast_nullable_to_non_nullable
-as String,image_small: null == image_small ? _self.image_small : image_small // ignore: cast_nullable_to_non_nullable
+as String,imageSmall: null == imageSmall ? _self.imageSmall : imageSmall // ignore: cast_nullable_to_non_nullable
 as String,level: null == level ? _self.level : level // ignore: cast_nullable_to_non_nullable
 as String,condition: null == condition ? _self.condition : condition // ignore: cast_nullable_to_non_nullable
 as String,
@@ -2589,10 +2541,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _CommentOfficialVerify():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -2651,10 +2600,7 @@ return $default(_that.type,_that.desc);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int type,  String desc)  $default,) {final _that = this;
 switch (_that) {
 case _CommentOfficialVerify():
-return $default(_that.type,_that.desc);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.type,_that.desc);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -2861,10 +2807,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _CommentVip():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -2923,10 +2866,7 @@ return $default(_that.vipType,_that.vipDueDate,_that.dueRemark,_that.accessStatu
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int vipType,  int vipDueDate,  String dueRemark,  int accessStatus,  int vipStatus,  String vipStatusWarn,  int themeType,  dynamic label)  $default,) {final _that = this;
 switch (_that) {
 case _CommentVip():
-return $default(_that.vipType,_that.vipDueDate,_that.dueRemark,_that.accessStatus,_that.vipStatus,_that.vipStatusWarn,_that.themeType,_that.label);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.vipType,_that.vipDueDate,_that.dueRemark,_that.accessStatus,_that.vipStatus,_that.vipStatusWarn,_that.themeType,_that.label);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -3038,7 +2978,7 @@ as dynamic,
 /// @nodoc
 mixin _$CommentLabel {
 
- String get path; String get text; String get label_theme; String get text_color; int get bg_style; String get bg_color; String get border_color; bool get use_img_label; String get img_label_uri_hans; String get img_label_uri_hant; String get img_label_uri_hans_static; String get img_label_uri_hant_static;
+ String get path; String get text;@JsonKey(name: 'label_theme') String get labelTheme;@JsonKey(name: 'text_color') String get textColor;@JsonKey(name: 'bg_style') int get bgStyle;@JsonKey(name: 'bg_color') String get bgColor;@JsonKey(name: 'border_color') String get borderColor;@JsonKey(name: 'use_img_label') bool get useImgLabel;@JsonKey(name: 'img_label_uri_hans') String get imgLabelUriHans;@JsonKey(name: 'img_label_uri_hant') String get imgLabelUriHant;@JsonKey(name: 'img_label_uri_hans_static') String get imgLabelUriHansStatic;@JsonKey(name: 'img_label_uri_hant_static') String get imgLabelUriHantStatic;
 /// Create a copy of CommentLabel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -3051,16 +2991,16 @@ $CommentLabelCopyWith<CommentLabel> get copyWith => _$CommentLabelCopyWithImpl<C
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentLabel&&(identical(other.path, path) || other.path == path)&&(identical(other.text, text) || other.text == text)&&(identical(other.label_theme, label_theme) || other.label_theme == label_theme)&&(identical(other.text_color, text_color) || other.text_color == text_color)&&(identical(other.bg_style, bg_style) || other.bg_style == bg_style)&&(identical(other.bg_color, bg_color) || other.bg_color == bg_color)&&(identical(other.border_color, border_color) || other.border_color == border_color)&&(identical(other.use_img_label, use_img_label) || other.use_img_label == use_img_label)&&(identical(other.img_label_uri_hans, img_label_uri_hans) || other.img_label_uri_hans == img_label_uri_hans)&&(identical(other.img_label_uri_hant, img_label_uri_hant) || other.img_label_uri_hant == img_label_uri_hant)&&(identical(other.img_label_uri_hans_static, img_label_uri_hans_static) || other.img_label_uri_hans_static == img_label_uri_hans_static)&&(identical(other.img_label_uri_hant_static, img_label_uri_hant_static) || other.img_label_uri_hant_static == img_label_uri_hant_static));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentLabel&&(identical(other.path, path) || other.path == path)&&(identical(other.text, text) || other.text == text)&&(identical(other.labelTheme, labelTheme) || other.labelTheme == labelTheme)&&(identical(other.textColor, textColor) || other.textColor == textColor)&&(identical(other.bgStyle, bgStyle) || other.bgStyle == bgStyle)&&(identical(other.bgColor, bgColor) || other.bgColor == bgColor)&&(identical(other.borderColor, borderColor) || other.borderColor == borderColor)&&(identical(other.useImgLabel, useImgLabel) || other.useImgLabel == useImgLabel)&&(identical(other.imgLabelUriHans, imgLabelUriHans) || other.imgLabelUriHans == imgLabelUriHans)&&(identical(other.imgLabelUriHant, imgLabelUriHant) || other.imgLabelUriHant == imgLabelUriHant)&&(identical(other.imgLabelUriHansStatic, imgLabelUriHansStatic) || other.imgLabelUriHansStatic == imgLabelUriHansStatic)&&(identical(other.imgLabelUriHantStatic, imgLabelUriHantStatic) || other.imgLabelUriHantStatic == imgLabelUriHantStatic));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,path,text,label_theme,text_color,bg_style,bg_color,border_color,use_img_label,img_label_uri_hans,img_label_uri_hant,img_label_uri_hans_static,img_label_uri_hant_static);
+int get hashCode => Object.hash(runtimeType,path,text,labelTheme,textColor,bgStyle,bgColor,borderColor,useImgLabel,imgLabelUriHans,imgLabelUriHant,imgLabelUriHansStatic,imgLabelUriHantStatic);
 
 @override
 String toString() {
-  return 'CommentLabel(path: $path, text: $text, label_theme: $label_theme, text_color: $text_color, bg_style: $bg_style, bg_color: $bg_color, border_color: $border_color, use_img_label: $use_img_label, img_label_uri_hans: $img_label_uri_hans, img_label_uri_hant: $img_label_uri_hant, img_label_uri_hans_static: $img_label_uri_hans_static, img_label_uri_hant_static: $img_label_uri_hant_static)';
+  return 'CommentLabel(path: $path, text: $text, labelTheme: $labelTheme, textColor: $textColor, bgStyle: $bgStyle, bgColor: $bgColor, borderColor: $borderColor, useImgLabel: $useImgLabel, imgLabelUriHans: $imgLabelUriHans, imgLabelUriHant: $imgLabelUriHant, imgLabelUriHansStatic: $imgLabelUriHansStatic, imgLabelUriHantStatic: $imgLabelUriHantStatic)';
 }
 
 
@@ -3071,7 +3011,7 @@ abstract mixin class $CommentLabelCopyWith<$Res>  {
   factory $CommentLabelCopyWith(CommentLabel value, $Res Function(CommentLabel) _then) = _$CommentLabelCopyWithImpl;
 @useResult
 $Res call({
- String path, String text, String label_theme, String text_color, int bg_style, String bg_color, String border_color, bool use_img_label, String img_label_uri_hans, String img_label_uri_hant, String img_label_uri_hans_static, String img_label_uri_hant_static
+ String path, String text,@JsonKey(name: 'label_theme') String labelTheme,@JsonKey(name: 'text_color') String textColor,@JsonKey(name: 'bg_style') int bgStyle,@JsonKey(name: 'bg_color') String bgColor,@JsonKey(name: 'border_color') String borderColor,@JsonKey(name: 'use_img_label') bool useImgLabel,@JsonKey(name: 'img_label_uri_hans') String imgLabelUriHans,@JsonKey(name: 'img_label_uri_hant') String imgLabelUriHant,@JsonKey(name: 'img_label_uri_hans_static') String imgLabelUriHansStatic,@JsonKey(name: 'img_label_uri_hant_static') String imgLabelUriHantStatic
 });
 
 
@@ -3088,20 +3028,20 @@ class _$CommentLabelCopyWithImpl<$Res>
 
 /// Create a copy of CommentLabel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? path = null,Object? text = null,Object? label_theme = null,Object? text_color = null,Object? bg_style = null,Object? bg_color = null,Object? border_color = null,Object? use_img_label = null,Object? img_label_uri_hans = null,Object? img_label_uri_hant = null,Object? img_label_uri_hans_static = null,Object? img_label_uri_hant_static = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? path = null,Object? text = null,Object? labelTheme = null,Object? textColor = null,Object? bgStyle = null,Object? bgColor = null,Object? borderColor = null,Object? useImgLabel = null,Object? imgLabelUriHans = null,Object? imgLabelUriHant = null,Object? imgLabelUriHansStatic = null,Object? imgLabelUriHantStatic = null,}) {
   return _then(_self.copyWith(
 path: null == path ? _self.path : path // ignore: cast_nullable_to_non_nullable
 as String,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
-as String,label_theme: null == label_theme ? _self.label_theme : label_theme // ignore: cast_nullable_to_non_nullable
-as String,text_color: null == text_color ? _self.text_color : text_color // ignore: cast_nullable_to_non_nullable
-as String,bg_style: null == bg_style ? _self.bg_style : bg_style // ignore: cast_nullable_to_non_nullable
-as int,bg_color: null == bg_color ? _self.bg_color : bg_color // ignore: cast_nullable_to_non_nullable
-as String,border_color: null == border_color ? _self.border_color : border_color // ignore: cast_nullable_to_non_nullable
-as String,use_img_label: null == use_img_label ? _self.use_img_label : use_img_label // ignore: cast_nullable_to_non_nullable
-as bool,img_label_uri_hans: null == img_label_uri_hans ? _self.img_label_uri_hans : img_label_uri_hans // ignore: cast_nullable_to_non_nullable
-as String,img_label_uri_hant: null == img_label_uri_hant ? _self.img_label_uri_hant : img_label_uri_hant // ignore: cast_nullable_to_non_nullable
-as String,img_label_uri_hans_static: null == img_label_uri_hans_static ? _self.img_label_uri_hans_static : img_label_uri_hans_static // ignore: cast_nullable_to_non_nullable
-as String,img_label_uri_hant_static: null == img_label_uri_hant_static ? _self.img_label_uri_hant_static : img_label_uri_hant_static // ignore: cast_nullable_to_non_nullable
+as String,labelTheme: null == labelTheme ? _self.labelTheme : labelTheme // ignore: cast_nullable_to_non_nullable
+as String,textColor: null == textColor ? _self.textColor : textColor // ignore: cast_nullable_to_non_nullable
+as String,bgStyle: null == bgStyle ? _self.bgStyle : bgStyle // ignore: cast_nullable_to_non_nullable
+as int,bgColor: null == bgColor ? _self.bgColor : bgColor // ignore: cast_nullable_to_non_nullable
+as String,borderColor: null == borderColor ? _self.borderColor : borderColor // ignore: cast_nullable_to_non_nullable
+as String,useImgLabel: null == useImgLabel ? _self.useImgLabel : useImgLabel // ignore: cast_nullable_to_non_nullable
+as bool,imgLabelUriHans: null == imgLabelUriHans ? _self.imgLabelUriHans : imgLabelUriHans // ignore: cast_nullable_to_non_nullable
+as String,imgLabelUriHant: null == imgLabelUriHant ? _self.imgLabelUriHant : imgLabelUriHant // ignore: cast_nullable_to_non_nullable
+as String,imgLabelUriHansStatic: null == imgLabelUriHansStatic ? _self.imgLabelUriHansStatic : imgLabelUriHansStatic // ignore: cast_nullable_to_non_nullable
+as String,imgLabelUriHantStatic: null == imgLabelUriHantStatic ? _self.imgLabelUriHantStatic : imgLabelUriHantStatic // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -3149,10 +3089,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _CommentLabel():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -3187,10 +3124,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String path,  String text,  String label_theme,  String text_color,  int bg_style,  String bg_color,  String border_color,  bool use_img_label,  String img_label_uri_hans,  String img_label_uri_hant,  String img_label_uri_hans_static,  String img_label_uri_hant_static)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String path,  String text, @JsonKey(name: 'label_theme')  String labelTheme, @JsonKey(name: 'text_color')  String textColor, @JsonKey(name: 'bg_style')  int bgStyle, @JsonKey(name: 'bg_color')  String bgColor, @JsonKey(name: 'border_color')  String borderColor, @JsonKey(name: 'use_img_label')  bool useImgLabel, @JsonKey(name: 'img_label_uri_hans')  String imgLabelUriHans, @JsonKey(name: 'img_label_uri_hant')  String imgLabelUriHant, @JsonKey(name: 'img_label_uri_hans_static')  String imgLabelUriHansStatic, @JsonKey(name: 'img_label_uri_hant_static')  String imgLabelUriHantStatic)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CommentLabel() when $default != null:
-return $default(_that.path,_that.text,_that.label_theme,_that.text_color,_that.bg_style,_that.bg_color,_that.border_color,_that.use_img_label,_that.img_label_uri_hans,_that.img_label_uri_hant,_that.img_label_uri_hans_static,_that.img_label_uri_hant_static);case _:
+return $default(_that.path,_that.text,_that.labelTheme,_that.textColor,_that.bgStyle,_that.bgColor,_that.borderColor,_that.useImgLabel,_that.imgLabelUriHans,_that.imgLabelUriHant,_that.imgLabelUriHansStatic,_that.imgLabelUriHantStatic);case _:
   return orElse();
 
 }
@@ -3208,13 +3145,10 @@ return $default(_that.path,_that.text,_that.label_theme,_that.text_color,_that.b
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String path,  String text,  String label_theme,  String text_color,  int bg_style,  String bg_color,  String border_color,  bool use_img_label,  String img_label_uri_hans,  String img_label_uri_hant,  String img_label_uri_hans_static,  String img_label_uri_hant_static)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String path,  String text, @JsonKey(name: 'label_theme')  String labelTheme, @JsonKey(name: 'text_color')  String textColor, @JsonKey(name: 'bg_style')  int bgStyle, @JsonKey(name: 'bg_color')  String bgColor, @JsonKey(name: 'border_color')  String borderColor, @JsonKey(name: 'use_img_label')  bool useImgLabel, @JsonKey(name: 'img_label_uri_hans')  String imgLabelUriHans, @JsonKey(name: 'img_label_uri_hant')  String imgLabelUriHant, @JsonKey(name: 'img_label_uri_hans_static')  String imgLabelUriHansStatic, @JsonKey(name: 'img_label_uri_hant_static')  String imgLabelUriHantStatic)  $default,) {final _that = this;
 switch (_that) {
 case _CommentLabel():
-return $default(_that.path,_that.text,_that.label_theme,_that.text_color,_that.bg_style,_that.bg_color,_that.border_color,_that.use_img_label,_that.img_label_uri_hans,_that.img_label_uri_hant,_that.img_label_uri_hans_static,_that.img_label_uri_hant_static);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.path,_that.text,_that.labelTheme,_that.textColor,_that.bgStyle,_that.bgColor,_that.borderColor,_that.useImgLabel,_that.imgLabelUriHans,_that.imgLabelUriHant,_that.imgLabelUriHansStatic,_that.imgLabelUriHantStatic);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -3228,10 +3162,10 @@ return $default(_that.path,_that.text,_that.label_theme,_that.text_color,_that.b
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String path,  String text,  String label_theme,  String text_color,  int bg_style,  String bg_color,  String border_color,  bool use_img_label,  String img_label_uri_hans,  String img_label_uri_hant,  String img_label_uri_hans_static,  String img_label_uri_hant_static)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String path,  String text, @JsonKey(name: 'label_theme')  String labelTheme, @JsonKey(name: 'text_color')  String textColor, @JsonKey(name: 'bg_style')  int bgStyle, @JsonKey(name: 'bg_color')  String bgColor, @JsonKey(name: 'border_color')  String borderColor, @JsonKey(name: 'use_img_label')  bool useImgLabel, @JsonKey(name: 'img_label_uri_hans')  String imgLabelUriHans, @JsonKey(name: 'img_label_uri_hant')  String imgLabelUriHant, @JsonKey(name: 'img_label_uri_hans_static')  String imgLabelUriHansStatic, @JsonKey(name: 'img_label_uri_hant_static')  String imgLabelUriHantStatic)?  $default,) {final _that = this;
 switch (_that) {
 case _CommentLabel() when $default != null:
-return $default(_that.path,_that.text,_that.label_theme,_that.text_color,_that.bg_style,_that.bg_color,_that.border_color,_that.use_img_label,_that.img_label_uri_hans,_that.img_label_uri_hant,_that.img_label_uri_hans_static,_that.img_label_uri_hant_static);case _:
+return $default(_that.path,_that.text,_that.labelTheme,_that.textColor,_that.bgStyle,_that.bgColor,_that.borderColor,_that.useImgLabel,_that.imgLabelUriHans,_that.imgLabelUriHant,_that.imgLabelUriHansStatic,_that.imgLabelUriHantStatic);case _:
   return null;
 
 }
@@ -3243,21 +3177,21 @@ return $default(_that.path,_that.text,_that.label_theme,_that.text_color,_that.b
 @JsonSerializable()
 
 class _CommentLabel implements CommentLabel {
-  const _CommentLabel({required this.path, required this.text, required this.label_theme, this.text_color = '', this.bg_style = 0, this.bg_color = '', this.border_color = '', this.use_img_label = false, this.img_label_uri_hans = '', this.img_label_uri_hant = '', this.img_label_uri_hans_static = '', this.img_label_uri_hant_static = ''});
+  const _CommentLabel({required this.path, required this.text, @JsonKey(name: 'label_theme') required this.labelTheme, @JsonKey(name: 'text_color') this.textColor = '', @JsonKey(name: 'bg_style') this.bgStyle = 0, @JsonKey(name: 'bg_color') this.bgColor = '', @JsonKey(name: 'border_color') this.borderColor = '', @JsonKey(name: 'use_img_label') this.useImgLabel = false, @JsonKey(name: 'img_label_uri_hans') this.imgLabelUriHans = '', @JsonKey(name: 'img_label_uri_hant') this.imgLabelUriHant = '', @JsonKey(name: 'img_label_uri_hans_static') this.imgLabelUriHansStatic = '', @JsonKey(name: 'img_label_uri_hant_static') this.imgLabelUriHantStatic = ''});
   factory _CommentLabel.fromJson(Map<String, dynamic> json) => _$CommentLabelFromJson(json);
 
 @override final  String path;
 @override final  String text;
-@override final  String label_theme;
-@override@JsonKey() final  String text_color;
-@override@JsonKey() final  int bg_style;
-@override@JsonKey() final  String bg_color;
-@override@JsonKey() final  String border_color;
-@override@JsonKey() final  bool use_img_label;
-@override@JsonKey() final  String img_label_uri_hans;
-@override@JsonKey() final  String img_label_uri_hant;
-@override@JsonKey() final  String img_label_uri_hans_static;
-@override@JsonKey() final  String img_label_uri_hant_static;
+@override@JsonKey(name: 'label_theme') final  String labelTheme;
+@override@JsonKey(name: 'text_color') final  String textColor;
+@override@JsonKey(name: 'bg_style') final  int bgStyle;
+@override@JsonKey(name: 'bg_color') final  String bgColor;
+@override@JsonKey(name: 'border_color') final  String borderColor;
+@override@JsonKey(name: 'use_img_label') final  bool useImgLabel;
+@override@JsonKey(name: 'img_label_uri_hans') final  String imgLabelUriHans;
+@override@JsonKey(name: 'img_label_uri_hant') final  String imgLabelUriHant;
+@override@JsonKey(name: 'img_label_uri_hans_static') final  String imgLabelUriHansStatic;
+@override@JsonKey(name: 'img_label_uri_hant_static') final  String imgLabelUriHantStatic;
 
 /// Create a copy of CommentLabel
 /// with the given fields replaced by the non-null parameter values.
@@ -3272,16 +3206,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentLabel&&(identical(other.path, path) || other.path == path)&&(identical(other.text, text) || other.text == text)&&(identical(other.label_theme, label_theme) || other.label_theme == label_theme)&&(identical(other.text_color, text_color) || other.text_color == text_color)&&(identical(other.bg_style, bg_style) || other.bg_style == bg_style)&&(identical(other.bg_color, bg_color) || other.bg_color == bg_color)&&(identical(other.border_color, border_color) || other.border_color == border_color)&&(identical(other.use_img_label, use_img_label) || other.use_img_label == use_img_label)&&(identical(other.img_label_uri_hans, img_label_uri_hans) || other.img_label_uri_hans == img_label_uri_hans)&&(identical(other.img_label_uri_hant, img_label_uri_hant) || other.img_label_uri_hant == img_label_uri_hant)&&(identical(other.img_label_uri_hans_static, img_label_uri_hans_static) || other.img_label_uri_hans_static == img_label_uri_hans_static)&&(identical(other.img_label_uri_hant_static, img_label_uri_hant_static) || other.img_label_uri_hant_static == img_label_uri_hant_static));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentLabel&&(identical(other.path, path) || other.path == path)&&(identical(other.text, text) || other.text == text)&&(identical(other.labelTheme, labelTheme) || other.labelTheme == labelTheme)&&(identical(other.textColor, textColor) || other.textColor == textColor)&&(identical(other.bgStyle, bgStyle) || other.bgStyle == bgStyle)&&(identical(other.bgColor, bgColor) || other.bgColor == bgColor)&&(identical(other.borderColor, borderColor) || other.borderColor == borderColor)&&(identical(other.useImgLabel, useImgLabel) || other.useImgLabel == useImgLabel)&&(identical(other.imgLabelUriHans, imgLabelUriHans) || other.imgLabelUriHans == imgLabelUriHans)&&(identical(other.imgLabelUriHant, imgLabelUriHant) || other.imgLabelUriHant == imgLabelUriHant)&&(identical(other.imgLabelUriHansStatic, imgLabelUriHansStatic) || other.imgLabelUriHansStatic == imgLabelUriHansStatic)&&(identical(other.imgLabelUriHantStatic, imgLabelUriHantStatic) || other.imgLabelUriHantStatic == imgLabelUriHantStatic));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,path,text,label_theme,text_color,bg_style,bg_color,border_color,use_img_label,img_label_uri_hans,img_label_uri_hant,img_label_uri_hans_static,img_label_uri_hant_static);
+int get hashCode => Object.hash(runtimeType,path,text,labelTheme,textColor,bgStyle,bgColor,borderColor,useImgLabel,imgLabelUriHans,imgLabelUriHant,imgLabelUriHansStatic,imgLabelUriHantStatic);
 
 @override
 String toString() {
-  return 'CommentLabel(path: $path, text: $text, label_theme: $label_theme, text_color: $text_color, bg_style: $bg_style, bg_color: $bg_color, border_color: $border_color, use_img_label: $use_img_label, img_label_uri_hans: $img_label_uri_hans, img_label_uri_hant: $img_label_uri_hant, img_label_uri_hans_static: $img_label_uri_hans_static, img_label_uri_hant_static: $img_label_uri_hant_static)';
+  return 'CommentLabel(path: $path, text: $text, labelTheme: $labelTheme, textColor: $textColor, bgStyle: $bgStyle, bgColor: $bgColor, borderColor: $borderColor, useImgLabel: $useImgLabel, imgLabelUriHans: $imgLabelUriHans, imgLabelUriHant: $imgLabelUriHant, imgLabelUriHansStatic: $imgLabelUriHansStatic, imgLabelUriHantStatic: $imgLabelUriHantStatic)';
 }
 
 
@@ -3292,7 +3226,7 @@ abstract mixin class _$CommentLabelCopyWith<$Res> implements $CommentLabelCopyWi
   factory _$CommentLabelCopyWith(_CommentLabel value, $Res Function(_CommentLabel) _then) = __$CommentLabelCopyWithImpl;
 @override @useResult
 $Res call({
- String path, String text, String label_theme, String text_color, int bg_style, String bg_color, String border_color, bool use_img_label, String img_label_uri_hans, String img_label_uri_hant, String img_label_uri_hans_static, String img_label_uri_hant_static
+ String path, String text,@JsonKey(name: 'label_theme') String labelTheme,@JsonKey(name: 'text_color') String textColor,@JsonKey(name: 'bg_style') int bgStyle,@JsonKey(name: 'bg_color') String bgColor,@JsonKey(name: 'border_color') String borderColor,@JsonKey(name: 'use_img_label') bool useImgLabel,@JsonKey(name: 'img_label_uri_hans') String imgLabelUriHans,@JsonKey(name: 'img_label_uri_hant') String imgLabelUriHant,@JsonKey(name: 'img_label_uri_hans_static') String imgLabelUriHansStatic,@JsonKey(name: 'img_label_uri_hant_static') String imgLabelUriHantStatic
 });
 
 
@@ -3309,20 +3243,20 @@ class __$CommentLabelCopyWithImpl<$Res>
 
 /// Create a copy of CommentLabel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? path = null,Object? text = null,Object? label_theme = null,Object? text_color = null,Object? bg_style = null,Object? bg_color = null,Object? border_color = null,Object? use_img_label = null,Object? img_label_uri_hans = null,Object? img_label_uri_hant = null,Object? img_label_uri_hans_static = null,Object? img_label_uri_hant_static = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? path = null,Object? text = null,Object? labelTheme = null,Object? textColor = null,Object? bgStyle = null,Object? bgColor = null,Object? borderColor = null,Object? useImgLabel = null,Object? imgLabelUriHans = null,Object? imgLabelUriHant = null,Object? imgLabelUriHansStatic = null,Object? imgLabelUriHantStatic = null,}) {
   return _then(_CommentLabel(
 path: null == path ? _self.path : path // ignore: cast_nullable_to_non_nullable
 as String,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
-as String,label_theme: null == label_theme ? _self.label_theme : label_theme // ignore: cast_nullable_to_non_nullable
-as String,text_color: null == text_color ? _self.text_color : text_color // ignore: cast_nullable_to_non_nullable
-as String,bg_style: null == bg_style ? _self.bg_style : bg_style // ignore: cast_nullable_to_non_nullable
-as int,bg_color: null == bg_color ? _self.bg_color : bg_color // ignore: cast_nullable_to_non_nullable
-as String,border_color: null == border_color ? _self.border_color : border_color // ignore: cast_nullable_to_non_nullable
-as String,use_img_label: null == use_img_label ? _self.use_img_label : use_img_label // ignore: cast_nullable_to_non_nullable
-as bool,img_label_uri_hans: null == img_label_uri_hans ? _self.img_label_uri_hans : img_label_uri_hans // ignore: cast_nullable_to_non_nullable
-as String,img_label_uri_hant: null == img_label_uri_hant ? _self.img_label_uri_hant : img_label_uri_hant // ignore: cast_nullable_to_non_nullable
-as String,img_label_uri_hans_static: null == img_label_uri_hans_static ? _self.img_label_uri_hans_static : img_label_uri_hans_static // ignore: cast_nullable_to_non_nullable
-as String,img_label_uri_hant_static: null == img_label_uri_hant_static ? _self.img_label_uri_hant_static : img_label_uri_hant_static // ignore: cast_nullable_to_non_nullable
+as String,labelTheme: null == labelTheme ? _self.labelTheme : labelTheme // ignore: cast_nullable_to_non_nullable
+as String,textColor: null == textColor ? _self.textColor : textColor // ignore: cast_nullable_to_non_nullable
+as String,bgStyle: null == bgStyle ? _self.bgStyle : bgStyle // ignore: cast_nullable_to_non_nullable
+as int,bgColor: null == bgColor ? _self.bgColor : bgColor // ignore: cast_nullable_to_non_nullable
+as String,borderColor: null == borderColor ? _self.borderColor : borderColor // ignore: cast_nullable_to_non_nullable
+as String,useImgLabel: null == useImgLabel ? _self.useImgLabel : useImgLabel // ignore: cast_nullable_to_non_nullable
+as bool,imgLabelUriHans: null == imgLabelUriHans ? _self.imgLabelUriHans : imgLabelUriHans // ignore: cast_nullable_to_non_nullable
+as String,imgLabelUriHant: null == imgLabelUriHant ? _self.imgLabelUriHant : imgLabelUriHant // ignore: cast_nullable_to_non_nullable
+as String,imgLabelUriHansStatic: null == imgLabelUriHansStatic ? _self.imgLabelUriHansStatic : imgLabelUriHansStatic // ignore: cast_nullable_to_non_nullable
+as String,imgLabelUriHantStatic: null == imgLabelUriHantStatic ? _self.imgLabelUriHantStatic : imgLabelUriHantStatic // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -3334,7 +3268,7 @@ as String,
 /// @nodoc
 mixin _$CommentContent {
 
- String get message; int get plat; String get device; List<CommentMember> get members; Map<String, CommentEmote>? get emote; List<CommentPicture> get pictures; Map<String, dynamic> get jump_url; int get max_line;
+ String get message; int get plat; String get device; List<CommentMember> get members; Map<String, CommentEmote>? get emote; List<CommentPicture> get pictures;@JsonKey(name: 'jump_url') Map<String, dynamic> get jumpUrl;@JsonKey(name: 'max_line') int get maxLine;
 /// Create a copy of CommentContent
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -3347,16 +3281,16 @@ $CommentContentCopyWith<CommentContent> get copyWith => _$CommentContentCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentContent&&(identical(other.message, message) || other.message == message)&&(identical(other.plat, plat) || other.plat == plat)&&(identical(other.device, device) || other.device == device)&&const DeepCollectionEquality().equals(other.members, members)&&const DeepCollectionEquality().equals(other.emote, emote)&&const DeepCollectionEquality().equals(other.pictures, pictures)&&const DeepCollectionEquality().equals(other.jump_url, jump_url)&&(identical(other.max_line, max_line) || other.max_line == max_line));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentContent&&(identical(other.message, message) || other.message == message)&&(identical(other.plat, plat) || other.plat == plat)&&(identical(other.device, device) || other.device == device)&&const DeepCollectionEquality().equals(other.members, members)&&const DeepCollectionEquality().equals(other.emote, emote)&&const DeepCollectionEquality().equals(other.pictures, pictures)&&const DeepCollectionEquality().equals(other.jumpUrl, jumpUrl)&&(identical(other.maxLine, maxLine) || other.maxLine == maxLine));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,message,plat,device,const DeepCollectionEquality().hash(members),const DeepCollectionEquality().hash(emote),const DeepCollectionEquality().hash(pictures),const DeepCollectionEquality().hash(jump_url),max_line);
+int get hashCode => Object.hash(runtimeType,message,plat,device,const DeepCollectionEquality().hash(members),const DeepCollectionEquality().hash(emote),const DeepCollectionEquality().hash(pictures),const DeepCollectionEquality().hash(jumpUrl),maxLine);
 
 @override
 String toString() {
-  return 'CommentContent(message: $message, plat: $plat, device: $device, members: $members, emote: $emote, pictures: $pictures, jump_url: $jump_url, max_line: $max_line)';
+  return 'CommentContent(message: $message, plat: $plat, device: $device, members: $members, emote: $emote, pictures: $pictures, jumpUrl: $jumpUrl, maxLine: $maxLine)';
 }
 
 
@@ -3367,7 +3301,7 @@ abstract mixin class $CommentContentCopyWith<$Res>  {
   factory $CommentContentCopyWith(CommentContent value, $Res Function(CommentContent) _then) = _$CommentContentCopyWithImpl;
 @useResult
 $Res call({
- String message, int plat, String device, List<CommentMember> members, Map<String, CommentEmote>? emote, List<CommentPicture> pictures, Map<String, dynamic> jump_url, int max_line
+ String message, int plat, String device, List<CommentMember> members, Map<String, CommentEmote>? emote, List<CommentPicture> pictures,@JsonKey(name: 'jump_url') Map<String, dynamic> jumpUrl,@JsonKey(name: 'max_line') int maxLine
 });
 
 
@@ -3384,7 +3318,7 @@ class _$CommentContentCopyWithImpl<$Res>
 
 /// Create a copy of CommentContent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? message = null,Object? plat = null,Object? device = null,Object? members = null,Object? emote = freezed,Object? pictures = null,Object? jump_url = null,Object? max_line = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? message = null,Object? plat = null,Object? device = null,Object? members = null,Object? emote = freezed,Object? pictures = null,Object? jumpUrl = null,Object? maxLine = null,}) {
   return _then(_self.copyWith(
 message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,plat: null == plat ? _self.plat : plat // ignore: cast_nullable_to_non_nullable
@@ -3392,8 +3326,8 @@ as int,device: null == device ? _self.device : device // ignore: cast_nullable_t
 as String,members: null == members ? _self.members : members // ignore: cast_nullable_to_non_nullable
 as List<CommentMember>,emote: freezed == emote ? _self.emote : emote // ignore: cast_nullable_to_non_nullable
 as Map<String, CommentEmote>?,pictures: null == pictures ? _self.pictures : pictures // ignore: cast_nullable_to_non_nullable
-as List<CommentPicture>,jump_url: null == jump_url ? _self.jump_url : jump_url // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>,max_line: null == max_line ? _self.max_line : max_line // ignore: cast_nullable_to_non_nullable
+as List<CommentPicture>,jumpUrl: null == jumpUrl ? _self.jumpUrl : jumpUrl // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>,maxLine: null == maxLine ? _self.maxLine : maxLine // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
@@ -3441,10 +3375,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _CommentContent():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -3479,10 +3410,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message,  int plat,  String device,  List<CommentMember> members,  Map<String, CommentEmote>? emote,  List<CommentPicture> pictures,  Map<String, dynamic> jump_url,  int max_line)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String message,  int plat,  String device,  List<CommentMember> members,  Map<String, CommentEmote>? emote,  List<CommentPicture> pictures, @JsonKey(name: 'jump_url')  Map<String, dynamic> jumpUrl, @JsonKey(name: 'max_line')  int maxLine)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CommentContent() when $default != null:
-return $default(_that.message,_that.plat,_that.device,_that.members,_that.emote,_that.pictures,_that.jump_url,_that.max_line);case _:
+return $default(_that.message,_that.plat,_that.device,_that.members,_that.emote,_that.pictures,_that.jumpUrl,_that.maxLine);case _:
   return orElse();
 
 }
@@ -3500,13 +3431,10 @@ return $default(_that.message,_that.plat,_that.device,_that.members,_that.emote,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message,  int plat,  String device,  List<CommentMember> members,  Map<String, CommentEmote>? emote,  List<CommentPicture> pictures,  Map<String, dynamic> jump_url,  int max_line)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String message,  int plat,  String device,  List<CommentMember> members,  Map<String, CommentEmote>? emote,  List<CommentPicture> pictures, @JsonKey(name: 'jump_url')  Map<String, dynamic> jumpUrl, @JsonKey(name: 'max_line')  int maxLine)  $default,) {final _that = this;
 switch (_that) {
 case _CommentContent():
-return $default(_that.message,_that.plat,_that.device,_that.members,_that.emote,_that.pictures,_that.jump_url,_that.max_line);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.message,_that.plat,_that.device,_that.members,_that.emote,_that.pictures,_that.jumpUrl,_that.maxLine);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -3520,10 +3448,10 @@ return $default(_that.message,_that.plat,_that.device,_that.members,_that.emote,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message,  int plat,  String device,  List<CommentMember> members,  Map<String, CommentEmote>? emote,  List<CommentPicture> pictures,  Map<String, dynamic> jump_url,  int max_line)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String message,  int plat,  String device,  List<CommentMember> members,  Map<String, CommentEmote>? emote,  List<CommentPicture> pictures, @JsonKey(name: 'jump_url')  Map<String, dynamic> jumpUrl, @JsonKey(name: 'max_line')  int maxLine)?  $default,) {final _that = this;
 switch (_that) {
 case _CommentContent() when $default != null:
-return $default(_that.message,_that.plat,_that.device,_that.members,_that.emote,_that.pictures,_that.jump_url,_that.max_line);case _:
+return $default(_that.message,_that.plat,_that.device,_that.members,_that.emote,_that.pictures,_that.jumpUrl,_that.maxLine);case _:
   return null;
 
 }
@@ -3535,7 +3463,7 @@ return $default(_that.message,_that.plat,_that.device,_that.members,_that.emote,
 @JsonSerializable()
 
 class _CommentContent implements CommentContent {
-  const _CommentContent({required this.message, this.plat = 0, this.device = '', final  List<CommentMember> members = const [], final  Map<String, CommentEmote>? emote, final  List<CommentPicture> pictures = const [], final  Map<String, dynamic> jump_url = const {}, this.max_line = 0}): _members = members,_emote = emote,_pictures = pictures,_jump_url = jump_url;
+  const _CommentContent({required this.message, this.plat = 0, this.device = '', final  List<CommentMember> members = const [], final  Map<String, CommentEmote>? emote, final  List<CommentPicture> pictures = const [], @JsonKey(name: 'jump_url') final  Map<String, dynamic> jumpUrl = const {}, @JsonKey(name: 'max_line') this.maxLine = 0}): _members = members,_emote = emote,_pictures = pictures,_jumpUrl = jumpUrl;
   factory _CommentContent.fromJson(Map<String, dynamic> json) => _$CommentContentFromJson(json);
 
 @override final  String message;
@@ -3564,14 +3492,14 @@ class _CommentContent implements CommentContent {
   return EqualUnmodifiableListView(_pictures);
 }
 
- final  Map<String, dynamic> _jump_url;
-@override@JsonKey() Map<String, dynamic> get jump_url {
-  if (_jump_url is EqualUnmodifiableMapView) return _jump_url;
+ final  Map<String, dynamic> _jumpUrl;
+@override@JsonKey(name: 'jump_url') Map<String, dynamic> get jumpUrl {
+  if (_jumpUrl is EqualUnmodifiableMapView) return _jumpUrl;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableMapView(_jump_url);
+  return EqualUnmodifiableMapView(_jumpUrl);
 }
 
-@override@JsonKey() final  int max_line;
+@override@JsonKey(name: 'max_line') final  int maxLine;
 
 /// Create a copy of CommentContent
 /// with the given fields replaced by the non-null parameter values.
@@ -3586,16 +3514,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentContent&&(identical(other.message, message) || other.message == message)&&(identical(other.plat, plat) || other.plat == plat)&&(identical(other.device, device) || other.device == device)&&const DeepCollectionEquality().equals(other._members, _members)&&const DeepCollectionEquality().equals(other._emote, _emote)&&const DeepCollectionEquality().equals(other._pictures, _pictures)&&const DeepCollectionEquality().equals(other._jump_url, _jump_url)&&(identical(other.max_line, max_line) || other.max_line == max_line));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentContent&&(identical(other.message, message) || other.message == message)&&(identical(other.plat, plat) || other.plat == plat)&&(identical(other.device, device) || other.device == device)&&const DeepCollectionEquality().equals(other._members, _members)&&const DeepCollectionEquality().equals(other._emote, _emote)&&const DeepCollectionEquality().equals(other._pictures, _pictures)&&const DeepCollectionEquality().equals(other._jumpUrl, _jumpUrl)&&(identical(other.maxLine, maxLine) || other.maxLine == maxLine));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,message,plat,device,const DeepCollectionEquality().hash(_members),const DeepCollectionEquality().hash(_emote),const DeepCollectionEquality().hash(_pictures),const DeepCollectionEquality().hash(_jump_url),max_line);
+int get hashCode => Object.hash(runtimeType,message,plat,device,const DeepCollectionEquality().hash(_members),const DeepCollectionEquality().hash(_emote),const DeepCollectionEquality().hash(_pictures),const DeepCollectionEquality().hash(_jumpUrl),maxLine);
 
 @override
 String toString() {
-  return 'CommentContent(message: $message, plat: $plat, device: $device, members: $members, emote: $emote, pictures: $pictures, jump_url: $jump_url, max_line: $max_line)';
+  return 'CommentContent(message: $message, plat: $plat, device: $device, members: $members, emote: $emote, pictures: $pictures, jumpUrl: $jumpUrl, maxLine: $maxLine)';
 }
 
 
@@ -3606,7 +3534,7 @@ abstract mixin class _$CommentContentCopyWith<$Res> implements $CommentContentCo
   factory _$CommentContentCopyWith(_CommentContent value, $Res Function(_CommentContent) _then) = __$CommentContentCopyWithImpl;
 @override @useResult
 $Res call({
- String message, int plat, String device, List<CommentMember> members, Map<String, CommentEmote>? emote, List<CommentPicture> pictures, Map<String, dynamic> jump_url, int max_line
+ String message, int plat, String device, List<CommentMember> members, Map<String, CommentEmote>? emote, List<CommentPicture> pictures,@JsonKey(name: 'jump_url') Map<String, dynamic> jumpUrl,@JsonKey(name: 'max_line') int maxLine
 });
 
 
@@ -3623,7 +3551,7 @@ class __$CommentContentCopyWithImpl<$Res>
 
 /// Create a copy of CommentContent
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? message = null,Object? plat = null,Object? device = null,Object? members = null,Object? emote = freezed,Object? pictures = null,Object? jump_url = null,Object? max_line = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? message = null,Object? plat = null,Object? device = null,Object? members = null,Object? emote = freezed,Object? pictures = null,Object? jumpUrl = null,Object? maxLine = null,}) {
   return _then(_CommentContent(
 message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String,plat: null == plat ? _self.plat : plat // ignore: cast_nullable_to_non_nullable
@@ -3631,8 +3559,8 @@ as int,device: null == device ? _self.device : device // ignore: cast_nullable_t
 as String,members: null == members ? _self._members : members // ignore: cast_nullable_to_non_nullable
 as List<CommentMember>,emote: freezed == emote ? _self._emote : emote // ignore: cast_nullable_to_non_nullable
 as Map<String, CommentEmote>?,pictures: null == pictures ? _self._pictures : pictures // ignore: cast_nullable_to_non_nullable
-as List<CommentPicture>,jump_url: null == jump_url ? _self._jump_url : jump_url // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>,max_line: null == max_line ? _self.max_line : max_line // ignore: cast_nullable_to_non_nullable
+as List<CommentPicture>,jumpUrl: null == jumpUrl ? _self._jumpUrl : jumpUrl // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>,maxLine: null == maxLine ? _self.maxLine : maxLine // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
@@ -3644,7 +3572,7 @@ as int,
 /// @nodoc
 mixin _$CommentPicture {
 
- String get img_src; double get img_width; double get img_height; double get img_size;
+@JsonKey(name: 'img_src') String get imgSrc;@JsonKey(name: 'img_width') double get imgWidth;@JsonKey(name: 'img_height') double get imgHeight;@JsonKey(name: 'img_size') double get imgSize;
 /// Create a copy of CommentPicture
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -3657,16 +3585,16 @@ $CommentPictureCopyWith<CommentPicture> get copyWith => _$CommentPictureCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentPicture&&(identical(other.img_src, img_src) || other.img_src == img_src)&&(identical(other.img_width, img_width) || other.img_width == img_width)&&(identical(other.img_height, img_height) || other.img_height == img_height)&&(identical(other.img_size, img_size) || other.img_size == img_size));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentPicture&&(identical(other.imgSrc, imgSrc) || other.imgSrc == imgSrc)&&(identical(other.imgWidth, imgWidth) || other.imgWidth == imgWidth)&&(identical(other.imgHeight, imgHeight) || other.imgHeight == imgHeight)&&(identical(other.imgSize, imgSize) || other.imgSize == imgSize));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,img_src,img_width,img_height,img_size);
+int get hashCode => Object.hash(runtimeType,imgSrc,imgWidth,imgHeight,imgSize);
 
 @override
 String toString() {
-  return 'CommentPicture(img_src: $img_src, img_width: $img_width, img_height: $img_height, img_size: $img_size)';
+  return 'CommentPicture(imgSrc: $imgSrc, imgWidth: $imgWidth, imgHeight: $imgHeight, imgSize: $imgSize)';
 }
 
 
@@ -3677,7 +3605,7 @@ abstract mixin class $CommentPictureCopyWith<$Res>  {
   factory $CommentPictureCopyWith(CommentPicture value, $Res Function(CommentPicture) _then) = _$CommentPictureCopyWithImpl;
 @useResult
 $Res call({
- String img_src, double img_width, double img_height, double img_size
+@JsonKey(name: 'img_src') String imgSrc,@JsonKey(name: 'img_width') double imgWidth,@JsonKey(name: 'img_height') double imgHeight,@JsonKey(name: 'img_size') double imgSize
 });
 
 
@@ -3694,12 +3622,12 @@ class _$CommentPictureCopyWithImpl<$Res>
 
 /// Create a copy of CommentPicture
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? img_src = null,Object? img_width = null,Object? img_height = null,Object? img_size = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? imgSrc = null,Object? imgWidth = null,Object? imgHeight = null,Object? imgSize = null,}) {
   return _then(_self.copyWith(
-img_src: null == img_src ? _self.img_src : img_src // ignore: cast_nullable_to_non_nullable
-as String,img_width: null == img_width ? _self.img_width : img_width // ignore: cast_nullable_to_non_nullable
-as double,img_height: null == img_height ? _self.img_height : img_height // ignore: cast_nullable_to_non_nullable
-as double,img_size: null == img_size ? _self.img_size : img_size // ignore: cast_nullable_to_non_nullable
+imgSrc: null == imgSrc ? _self.imgSrc : imgSrc // ignore: cast_nullable_to_non_nullable
+as String,imgWidth: null == imgWidth ? _self.imgWidth : imgWidth // ignore: cast_nullable_to_non_nullable
+as double,imgHeight: null == imgHeight ? _self.imgHeight : imgHeight // ignore: cast_nullable_to_non_nullable
+as double,imgSize: null == imgSize ? _self.imgSize : imgSize // ignore: cast_nullable_to_non_nullable
 as double,
   ));
 }
@@ -3747,10 +3675,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _CommentPicture():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -3785,10 +3710,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String img_src,  double img_width,  double img_height,  double img_size)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'img_src')  String imgSrc, @JsonKey(name: 'img_width')  double imgWidth, @JsonKey(name: 'img_height')  double imgHeight, @JsonKey(name: 'img_size')  double imgSize)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CommentPicture() when $default != null:
-return $default(_that.img_src,_that.img_width,_that.img_height,_that.img_size);case _:
+return $default(_that.imgSrc,_that.imgWidth,_that.imgHeight,_that.imgSize);case _:
   return orElse();
 
 }
@@ -3806,13 +3731,10 @@ return $default(_that.img_src,_that.img_width,_that.img_height,_that.img_size);c
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String img_src,  double img_width,  double img_height,  double img_size)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'img_src')  String imgSrc, @JsonKey(name: 'img_width')  double imgWidth, @JsonKey(name: 'img_height')  double imgHeight, @JsonKey(name: 'img_size')  double imgSize)  $default,) {final _that = this;
 switch (_that) {
 case _CommentPicture():
-return $default(_that.img_src,_that.img_width,_that.img_height,_that.img_size);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.imgSrc,_that.imgWidth,_that.imgHeight,_that.imgSize);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -3826,10 +3748,10 @@ return $default(_that.img_src,_that.img_width,_that.img_height,_that.img_size);c
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String img_src,  double img_width,  double img_height,  double img_size)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'img_src')  String imgSrc, @JsonKey(name: 'img_width')  double imgWidth, @JsonKey(name: 'img_height')  double imgHeight, @JsonKey(name: 'img_size')  double imgSize)?  $default,) {final _that = this;
 switch (_that) {
 case _CommentPicture() when $default != null:
-return $default(_that.img_src,_that.img_width,_that.img_height,_that.img_size);case _:
+return $default(_that.imgSrc,_that.imgWidth,_that.imgHeight,_that.imgSize);case _:
   return null;
 
 }
@@ -3841,13 +3763,13 @@ return $default(_that.img_src,_that.img_width,_that.img_height,_that.img_size);c
 @JsonSerializable()
 
 class _CommentPicture implements CommentPicture {
-  const _CommentPicture({required this.img_src, this.img_width = 0, this.img_height = 0, this.img_size = 0});
+  const _CommentPicture({@JsonKey(name: 'img_src') required this.imgSrc, @JsonKey(name: 'img_width') this.imgWidth = 0, @JsonKey(name: 'img_height') this.imgHeight = 0, @JsonKey(name: 'img_size') this.imgSize = 0});
   factory _CommentPicture.fromJson(Map<String, dynamic> json) => _$CommentPictureFromJson(json);
 
-@override final  String img_src;
-@override@JsonKey() final  double img_width;
-@override@JsonKey() final  double img_height;
-@override@JsonKey() final  double img_size;
+@override@JsonKey(name: 'img_src') final  String imgSrc;
+@override@JsonKey(name: 'img_width') final  double imgWidth;
+@override@JsonKey(name: 'img_height') final  double imgHeight;
+@override@JsonKey(name: 'img_size') final  double imgSize;
 
 /// Create a copy of CommentPicture
 /// with the given fields replaced by the non-null parameter values.
@@ -3862,16 +3784,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentPicture&&(identical(other.img_src, img_src) || other.img_src == img_src)&&(identical(other.img_width, img_width) || other.img_width == img_width)&&(identical(other.img_height, img_height) || other.img_height == img_height)&&(identical(other.img_size, img_size) || other.img_size == img_size));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentPicture&&(identical(other.imgSrc, imgSrc) || other.imgSrc == imgSrc)&&(identical(other.imgWidth, imgWidth) || other.imgWidth == imgWidth)&&(identical(other.imgHeight, imgHeight) || other.imgHeight == imgHeight)&&(identical(other.imgSize, imgSize) || other.imgSize == imgSize));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,img_src,img_width,img_height,img_size);
+int get hashCode => Object.hash(runtimeType,imgSrc,imgWidth,imgHeight,imgSize);
 
 @override
 String toString() {
-  return 'CommentPicture(img_src: $img_src, img_width: $img_width, img_height: $img_height, img_size: $img_size)';
+  return 'CommentPicture(imgSrc: $imgSrc, imgWidth: $imgWidth, imgHeight: $imgHeight, imgSize: $imgSize)';
 }
 
 
@@ -3882,7 +3804,7 @@ abstract mixin class _$CommentPictureCopyWith<$Res> implements $CommentPictureCo
   factory _$CommentPictureCopyWith(_CommentPicture value, $Res Function(_CommentPicture) _then) = __$CommentPictureCopyWithImpl;
 @override @useResult
 $Res call({
- String img_src, double img_width, double img_height, double img_size
+@JsonKey(name: 'img_src') String imgSrc,@JsonKey(name: 'img_width') double imgWidth,@JsonKey(name: 'img_height') double imgHeight,@JsonKey(name: 'img_size') double imgSize
 });
 
 
@@ -3899,12 +3821,12 @@ class __$CommentPictureCopyWithImpl<$Res>
 
 /// Create a copy of CommentPicture
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? img_src = null,Object? img_width = null,Object? img_height = null,Object? img_size = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? imgSrc = null,Object? imgWidth = null,Object? imgHeight = null,Object? imgSize = null,}) {
   return _then(_CommentPicture(
-img_src: null == img_src ? _self.img_src : img_src // ignore: cast_nullable_to_non_nullable
-as String,img_width: null == img_width ? _self.img_width : img_width // ignore: cast_nullable_to_non_nullable
-as double,img_height: null == img_height ? _self.img_height : img_height // ignore: cast_nullable_to_non_nullable
-as double,img_size: null == img_size ? _self.img_size : img_size // ignore: cast_nullable_to_non_nullable
+imgSrc: null == imgSrc ? _self.imgSrc : imgSrc // ignore: cast_nullable_to_non_nullable
+as String,imgWidth: null == imgWidth ? _self.imgWidth : imgWidth // ignore: cast_nullable_to_non_nullable
+as double,imgHeight: null == imgHeight ? _self.imgHeight : imgHeight // ignore: cast_nullable_to_non_nullable
+as double,imgSize: null == imgSize ? _self.imgSize : imgSize // ignore: cast_nullable_to_non_nullable
 as double,
   ));
 }
@@ -3916,7 +3838,7 @@ as double,
 /// @nodoc
 mixin _$CommentEmote {
 
- int get id; int get package_id; int get state; int get type; int get attr; String get text; String get url; int get mtime; String get jump_title;
+ int get id;@JsonKey(name: 'package_id') int get packageId; int get state; int get type; int get attr; String get text; String get url; int get mtime;@JsonKey(name: 'jump_title') String get jumpTitle;
 /// Create a copy of CommentEmote
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -3929,16 +3851,16 @@ $CommentEmoteCopyWith<CommentEmote> get copyWith => _$CommentEmoteCopyWithImpl<C
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentEmote&&(identical(other.id, id) || other.id == id)&&(identical(other.package_id, package_id) || other.package_id == package_id)&&(identical(other.state, state) || other.state == state)&&(identical(other.type, type) || other.type == type)&&(identical(other.attr, attr) || other.attr == attr)&&(identical(other.text, text) || other.text == text)&&(identical(other.url, url) || other.url == url)&&(identical(other.mtime, mtime) || other.mtime == mtime)&&(identical(other.jump_title, jump_title) || other.jump_title == jump_title));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentEmote&&(identical(other.id, id) || other.id == id)&&(identical(other.packageId, packageId) || other.packageId == packageId)&&(identical(other.state, state) || other.state == state)&&(identical(other.type, type) || other.type == type)&&(identical(other.attr, attr) || other.attr == attr)&&(identical(other.text, text) || other.text == text)&&(identical(other.url, url) || other.url == url)&&(identical(other.mtime, mtime) || other.mtime == mtime)&&(identical(other.jumpTitle, jumpTitle) || other.jumpTitle == jumpTitle));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,package_id,state,type,attr,text,url,mtime,jump_title);
+int get hashCode => Object.hash(runtimeType,id,packageId,state,type,attr,text,url,mtime,jumpTitle);
 
 @override
 String toString() {
-  return 'CommentEmote(id: $id, package_id: $package_id, state: $state, type: $type, attr: $attr, text: $text, url: $url, mtime: $mtime, jump_title: $jump_title)';
+  return 'CommentEmote(id: $id, packageId: $packageId, state: $state, type: $type, attr: $attr, text: $text, url: $url, mtime: $mtime, jumpTitle: $jumpTitle)';
 }
 
 
@@ -3949,7 +3871,7 @@ abstract mixin class $CommentEmoteCopyWith<$Res>  {
   factory $CommentEmoteCopyWith(CommentEmote value, $Res Function(CommentEmote) _then) = _$CommentEmoteCopyWithImpl;
 @useResult
 $Res call({
- int id, int package_id, int state, int type, int attr, String text, String url, int mtime, String jump_title
+ int id,@JsonKey(name: 'package_id') int packageId, int state, int type, int attr, String text, String url, int mtime,@JsonKey(name: 'jump_title') String jumpTitle
 });
 
 
@@ -3966,17 +3888,17 @@ class _$CommentEmoteCopyWithImpl<$Res>
 
 /// Create a copy of CommentEmote
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? package_id = null,Object? state = null,Object? type = null,Object? attr = null,Object? text = null,Object? url = null,Object? mtime = null,Object? jump_title = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? packageId = null,Object? state = null,Object? type = null,Object? attr = null,Object? text = null,Object? url = null,Object? mtime = null,Object? jumpTitle = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int,package_id: null == package_id ? _self.package_id : package_id // ignore: cast_nullable_to_non_nullable
+as int,packageId: null == packageId ? _self.packageId : packageId // ignore: cast_nullable_to_non_nullable
 as int,state: null == state ? _self.state : state // ignore: cast_nullable_to_non_nullable
 as int,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as int,attr: null == attr ? _self.attr : attr // ignore: cast_nullable_to_non_nullable
 as int,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,mtime: null == mtime ? _self.mtime : mtime // ignore: cast_nullable_to_non_nullable
-as int,jump_title: null == jump_title ? _self.jump_title : jump_title // ignore: cast_nullable_to_non_nullable
+as int,jumpTitle: null == jumpTitle ? _self.jumpTitle : jumpTitle // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -4024,10 +3946,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _CommentEmote():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -4062,10 +3981,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  int package_id,  int state,  int type,  int attr,  String text,  String url,  int mtime,  String jump_title)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id, @JsonKey(name: 'package_id')  int packageId,  int state,  int type,  int attr,  String text,  String url,  int mtime, @JsonKey(name: 'jump_title')  String jumpTitle)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CommentEmote() when $default != null:
-return $default(_that.id,_that.package_id,_that.state,_that.type,_that.attr,_that.text,_that.url,_that.mtime,_that.jump_title);case _:
+return $default(_that.id,_that.packageId,_that.state,_that.type,_that.attr,_that.text,_that.url,_that.mtime,_that.jumpTitle);case _:
   return orElse();
 
 }
@@ -4083,13 +4002,10 @@ return $default(_that.id,_that.package_id,_that.state,_that.type,_that.attr,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  int package_id,  int state,  int type,  int attr,  String text,  String url,  int mtime,  String jump_title)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id, @JsonKey(name: 'package_id')  int packageId,  int state,  int type,  int attr,  String text,  String url,  int mtime, @JsonKey(name: 'jump_title')  String jumpTitle)  $default,) {final _that = this;
 switch (_that) {
 case _CommentEmote():
-return $default(_that.id,_that.package_id,_that.state,_that.type,_that.attr,_that.text,_that.url,_that.mtime,_that.jump_title);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.id,_that.packageId,_that.state,_that.type,_that.attr,_that.text,_that.url,_that.mtime,_that.jumpTitle);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -4103,10 +4019,10 @@ return $default(_that.id,_that.package_id,_that.state,_that.type,_that.attr,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  int package_id,  int state,  int type,  int attr,  String text,  String url,  int mtime,  String jump_title)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id, @JsonKey(name: 'package_id')  int packageId,  int state,  int type,  int attr,  String text,  String url,  int mtime, @JsonKey(name: 'jump_title')  String jumpTitle)?  $default,) {final _that = this;
 switch (_that) {
 case _CommentEmote() when $default != null:
-return $default(_that.id,_that.package_id,_that.state,_that.type,_that.attr,_that.text,_that.url,_that.mtime,_that.jump_title);case _:
+return $default(_that.id,_that.packageId,_that.state,_that.type,_that.attr,_that.text,_that.url,_that.mtime,_that.jumpTitle);case _:
   return null;
 
 }
@@ -4118,18 +4034,18 @@ return $default(_that.id,_that.package_id,_that.state,_that.type,_that.attr,_tha
 @JsonSerializable()
 
 class _CommentEmote implements CommentEmote {
-  const _CommentEmote({required this.id, this.package_id = 0, this.state = 0, this.type = 0, this.attr = 0, required this.text, required this.url, this.mtime = 0, this.jump_title = ''});
+  const _CommentEmote({required this.id, @JsonKey(name: 'package_id') this.packageId = 0, this.state = 0, this.type = 0, this.attr = 0, required this.text, required this.url, this.mtime = 0, @JsonKey(name: 'jump_title') this.jumpTitle = ''});
   factory _CommentEmote.fromJson(Map<String, dynamic> json) => _$CommentEmoteFromJson(json);
 
 @override final  int id;
-@override@JsonKey() final  int package_id;
+@override@JsonKey(name: 'package_id') final  int packageId;
 @override@JsonKey() final  int state;
 @override@JsonKey() final  int type;
 @override@JsonKey() final  int attr;
 @override final  String text;
 @override final  String url;
 @override@JsonKey() final  int mtime;
-@override@JsonKey() final  String jump_title;
+@override@JsonKey(name: 'jump_title') final  String jumpTitle;
 
 /// Create a copy of CommentEmote
 /// with the given fields replaced by the non-null parameter values.
@@ -4144,16 +4060,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentEmote&&(identical(other.id, id) || other.id == id)&&(identical(other.package_id, package_id) || other.package_id == package_id)&&(identical(other.state, state) || other.state == state)&&(identical(other.type, type) || other.type == type)&&(identical(other.attr, attr) || other.attr == attr)&&(identical(other.text, text) || other.text == text)&&(identical(other.url, url) || other.url == url)&&(identical(other.mtime, mtime) || other.mtime == mtime)&&(identical(other.jump_title, jump_title) || other.jump_title == jump_title));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentEmote&&(identical(other.id, id) || other.id == id)&&(identical(other.packageId, packageId) || other.packageId == packageId)&&(identical(other.state, state) || other.state == state)&&(identical(other.type, type) || other.type == type)&&(identical(other.attr, attr) || other.attr == attr)&&(identical(other.text, text) || other.text == text)&&(identical(other.url, url) || other.url == url)&&(identical(other.mtime, mtime) || other.mtime == mtime)&&(identical(other.jumpTitle, jumpTitle) || other.jumpTitle == jumpTitle));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,package_id,state,type,attr,text,url,mtime,jump_title);
+int get hashCode => Object.hash(runtimeType,id,packageId,state,type,attr,text,url,mtime,jumpTitle);
 
 @override
 String toString() {
-  return 'CommentEmote(id: $id, package_id: $package_id, state: $state, type: $type, attr: $attr, text: $text, url: $url, mtime: $mtime, jump_title: $jump_title)';
+  return 'CommentEmote(id: $id, packageId: $packageId, state: $state, type: $type, attr: $attr, text: $text, url: $url, mtime: $mtime, jumpTitle: $jumpTitle)';
 }
 
 
@@ -4164,7 +4080,7 @@ abstract mixin class _$CommentEmoteCopyWith<$Res> implements $CommentEmoteCopyWi
   factory _$CommentEmoteCopyWith(_CommentEmote value, $Res Function(_CommentEmote) _then) = __$CommentEmoteCopyWithImpl;
 @override @useResult
 $Res call({
- int id, int package_id, int state, int type, int attr, String text, String url, int mtime, String jump_title
+ int id,@JsonKey(name: 'package_id') int packageId, int state, int type, int attr, String text, String url, int mtime,@JsonKey(name: 'jump_title') String jumpTitle
 });
 
 
@@ -4181,17 +4097,17 @@ class __$CommentEmoteCopyWithImpl<$Res>
 
 /// Create a copy of CommentEmote
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? package_id = null,Object? state = null,Object? type = null,Object? attr = null,Object? text = null,Object? url = null,Object? mtime = null,Object? jump_title = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? packageId = null,Object? state = null,Object? type = null,Object? attr = null,Object? text = null,Object? url = null,Object? mtime = null,Object? jumpTitle = null,}) {
   return _then(_CommentEmote(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int,package_id: null == package_id ? _self.package_id : package_id // ignore: cast_nullable_to_non_nullable
+as int,packageId: null == packageId ? _self.packageId : packageId // ignore: cast_nullable_to_non_nullable
 as int,state: null == state ? _self.state : state // ignore: cast_nullable_to_non_nullable
 as int,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as int,attr: null == attr ? _self.attr : attr // ignore: cast_nullable_to_non_nullable
 as int,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,mtime: null == mtime ? _self.mtime : mtime // ignore: cast_nullable_to_non_nullable
-as int,jump_title: null == jump_title ? _self.jump_title : jump_title // ignore: cast_nullable_to_non_nullable
+as int,jumpTitle: null == jumpTitle ? _self.jumpTitle : jumpTitle // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

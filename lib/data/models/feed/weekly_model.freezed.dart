@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'ranking_response.dart';
+part of 'weekly_model.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -13,22 +13,22 @@ part of 'ranking_response.dart';
 T _$identity<T>(T value) => value;
 
 /// @nodoc
-mixin _$RankingResponse {
+mixin _$WeeklyModel {
 
  List<VideoModel> get list;
-/// Create a copy of RankingResponse
+/// Create a copy of WeeklyModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$RankingResponseCopyWith<RankingResponse> get copyWith => _$RankingResponseCopyWithImpl<RankingResponse>(this as RankingResponse, _$identity);
+$WeeklyModelCopyWith<WeeklyModel> get copyWith => _$WeeklyModelCopyWithImpl<WeeklyModel>(this as WeeklyModel, _$identity);
 
-  /// Serializes this RankingResponse to a JSON map.
+  /// Serializes this WeeklyModel to a JSON map.
   Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is RankingResponse&&const DeepCollectionEquality().equals(other.list, list));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WeeklyModel&&const DeepCollectionEquality().equals(other.list, list));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -37,15 +37,15 @@ int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(
 
 @override
 String toString() {
-  return 'RankingResponse(list: $list)';
+  return 'WeeklyModel(list: $list)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $RankingResponseCopyWith<$Res>  {
-  factory $RankingResponseCopyWith(RankingResponse value, $Res Function(RankingResponse) _then) = _$RankingResponseCopyWithImpl;
+abstract mixin class $WeeklyModelCopyWith<$Res>  {
+  factory $WeeklyModelCopyWith(WeeklyModel value, $Res Function(WeeklyModel) _then) = _$WeeklyModelCopyWithImpl;
 @useResult
 $Res call({
  List<VideoModel> list
@@ -56,14 +56,14 @@ $Res call({
 
 }
 /// @nodoc
-class _$RankingResponseCopyWithImpl<$Res>
-    implements $RankingResponseCopyWith<$Res> {
-  _$RankingResponseCopyWithImpl(this._self, this._then);
+class _$WeeklyModelCopyWithImpl<$Res>
+    implements $WeeklyModelCopyWith<$Res> {
+  _$WeeklyModelCopyWithImpl(this._self, this._then);
 
-  final RankingResponse _self;
-  final $Res Function(RankingResponse) _then;
+  final WeeklyModel _self;
+  final $Res Function(WeeklyModel) _then;
 
-/// Create a copy of RankingResponse
+/// Create a copy of WeeklyModel
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? list = null,}) {
   return _then(_self.copyWith(
@@ -75,8 +75,8 @@ as List<VideoModel>,
 }
 
 
-/// Adds pattern-matching-related methods to [RankingResponse].
-extension RankingResponsePatterns on RankingResponse {
+/// Adds pattern-matching-related methods to [WeeklyModel].
+extension WeeklyModelPatterns on WeeklyModel {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -89,10 +89,10 @@ extension RankingResponsePatterns on RankingResponse {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _RankingResponse value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _WeeklyModel value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _RankingResponse() when $default != null:
+case _WeeklyModel() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -111,10 +111,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _RankingResponse value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _WeeklyModel value)  $default,){
 final _that = this;
 switch (_that) {
-case _RankingResponse():
+case _WeeklyModel():
 return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
@@ -129,10 +129,10 @@ return $default(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _RankingResponse value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _WeeklyModel value)?  $default,){
 final _that = this;
 switch (_that) {
-case _RankingResponse() when $default != null:
+case _WeeklyModel() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -152,7 +152,7 @@ return $default(_that);case _:
 
 @optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<VideoModel> list)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _RankingResponse() when $default != null:
+case _WeeklyModel() when $default != null:
 return $default(_that.list);case _:
   return orElse();
 
@@ -173,7 +173,7 @@ return $default(_that.list);case _:
 
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<VideoModel> list)  $default,) {final _that = this;
 switch (_that) {
-case _RankingResponse():
+case _WeeklyModel():
 return $default(_that.list);}
 }
 /// A variant of `when` that fallback to returning `null`
@@ -190,7 +190,7 @@ return $default(_that.list);}
 
 @optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<VideoModel> list)?  $default,) {final _that = this;
 switch (_that) {
-case _RankingResponse() when $default != null:
+case _WeeklyModel() when $default != null:
 return $default(_that.list);case _:
   return null;
 
@@ -202,32 +202,32 @@ return $default(_that.list);case _:
 /// @nodoc
 @JsonSerializable()
 
-class _RankingResponse implements RankingResponse {
-  const _RankingResponse({final  List<VideoModel> list = const []}): _list = list;
-  factory _RankingResponse.fromJson(Map<String, dynamic> json) => _$RankingResponseFromJson(json);
+class _WeeklyModel implements WeeklyModel {
+  const _WeeklyModel({required final  List<VideoModel> list}): _list = list;
+  factory _WeeklyModel.fromJson(Map<String, dynamic> json) => _$WeeklyModelFromJson(json);
 
  final  List<VideoModel> _list;
-@override@JsonKey() List<VideoModel> get list {
+@override List<VideoModel> get list {
   if (_list is EqualUnmodifiableListView) return _list;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_list);
 }
 
 
-/// Create a copy of RankingResponse
+/// Create a copy of WeeklyModel
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$RankingResponseCopyWith<_RankingResponse> get copyWith => __$RankingResponseCopyWithImpl<_RankingResponse>(this, _$identity);
+_$WeeklyModelCopyWith<_WeeklyModel> get copyWith => __$WeeklyModelCopyWithImpl<_WeeklyModel>(this, _$identity);
 
 @override
 Map<String, dynamic> toJson() {
-  return _$RankingResponseToJson(this, );
+  return _$WeeklyModelToJson(this, );
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RankingResponse&&const DeepCollectionEquality().equals(other._list, _list));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WeeklyModel&&const DeepCollectionEquality().equals(other._list, _list));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -236,15 +236,15 @@ int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(
 
 @override
 String toString() {
-  return 'RankingResponse(list: $list)';
+  return 'WeeklyModel(list: $list)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$RankingResponseCopyWith<$Res> implements $RankingResponseCopyWith<$Res> {
-  factory _$RankingResponseCopyWith(_RankingResponse value, $Res Function(_RankingResponse) _then) = __$RankingResponseCopyWithImpl;
+abstract mixin class _$WeeklyModelCopyWith<$Res> implements $WeeklyModelCopyWith<$Res> {
+  factory _$WeeklyModelCopyWith(_WeeklyModel value, $Res Function(_WeeklyModel) _then) = __$WeeklyModelCopyWithImpl;
 @override @useResult
 $Res call({
  List<VideoModel> list
@@ -255,17 +255,17 @@ $Res call({
 
 }
 /// @nodoc
-class __$RankingResponseCopyWithImpl<$Res>
-    implements _$RankingResponseCopyWith<$Res> {
-  __$RankingResponseCopyWithImpl(this._self, this._then);
+class __$WeeklyModelCopyWithImpl<$Res>
+    implements _$WeeklyModelCopyWith<$Res> {
+  __$WeeklyModelCopyWithImpl(this._self, this._then);
 
-  final _RankingResponse _self;
-  final $Res Function(_RankingResponse) _then;
+  final _WeeklyModel _self;
+  final $Res Function(_WeeklyModel) _then;
 
-/// Create a copy of RankingResponse
+/// Create a copy of WeeklyModel
 /// with the given fields replaced by the non-null parameter values.
 @override @pragma('vm:prefer-inline') $Res call({Object? list = null,}) {
-  return _then(_RankingResponse(
+  return _then(_WeeklyModel(
 list: null == list ? _self._list : list // ignore: cast_nullable_to_non_nullable
 as List<VideoModel>,
   ));

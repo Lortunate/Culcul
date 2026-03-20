@@ -4,7 +4,7 @@ part 'user_profile_model.freezed.dart';
 part 'user_profile_model.g.dart';
 
 @freezed
-abstract class UserProfile with _$UserProfile {
+sealed class UserProfile with _$UserProfile {
   const factory UserProfile({
     required String id,
     required String username,

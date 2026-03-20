@@ -5,7 +5,7 @@ part 'related_video.freezed.dart';
 part 'related_video.g.dart';
 
 @freezed
-abstract class RelatedVideo with _$RelatedVideo {
+sealed class RelatedVideo with _$RelatedVideo {
   const factory RelatedVideo({
     required int aid,
     required String bvid,

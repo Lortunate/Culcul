@@ -116,10 +116,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveDanmakuConfigModel():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -178,10 +175,7 @@ return $default(_that.group,_that.mode);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<LiveDanmakuGroup> group,  List<LiveDanmakuMode> mode)  $default,) {final _that = this;
 switch (_that) {
 case _LiveDanmakuConfigModel():
-return $default(_that.group,_that.mode);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.group,_that.mode);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -395,10 +389,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveDanmakuGroup():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -457,10 +448,7 @@ return $default(_that.name,_that.sort,_that.color);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  int sort,  List<LiveDanmakuColor> color)  $default,) {final _that = this;
 switch (_that) {
 case _LiveDanmakuGroup():
-return $default(_that.name,_that.sort,_that.color);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.name,_that.sort,_that.color);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -674,10 +662,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveDanmakuColor():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -736,10 +721,7 @@ return $default(_that.name,_that.color,_that.colorHex,_that.status,_that.weight,
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String color, @JsonKey(name: 'color_hex')  String colorHex,  int status,  int weight, @JsonKey(name: 'color_id')  int colorId,  int origin)  $default,) {final _that = this;
 switch (_that) {
 case _LiveDanmakuColor():
-return $default(_that.name,_that.color,_that.colorHex,_that.status,_that.weight,_that.colorId,_that.origin);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.name,_that.color,_that.colorHex,_that.status,_that.weight,_that.colorId,_that.origin);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -952,10 +934,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveDanmakuMode():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -1014,10 +993,7 @@ return $default(_that.name,_that.mode,_that.type,_that.status);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  int mode,  String type,  int status)  $default,) {final _that = this;
 switch (_that) {
 case _LiveDanmakuMode():
-return $default(_that.name,_that.mode,_that.type,_that.status);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.name,_that.mode,_that.type,_that.status);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

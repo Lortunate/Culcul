@@ -4,7 +4,7 @@ part 'player_info.freezed.dart';
 part 'player_info.g.dart';
 
 @freezed
-abstract class PlayerInfo with _$PlayerInfo {
+sealed class PlayerInfo with _$PlayerInfo {
   const factory PlayerInfo({@JsonKey(name: 'dm_mask') DmMask? dmMask}) =
       _PlayerInfo;
 
@@ -13,7 +13,7 @@ abstract class PlayerInfo with _$PlayerInfo {
 }
 
 @freezed
-abstract class DmMask with _$DmMask {
+sealed class DmMask with _$DmMask {
   const factory DmMask({
     @JsonKey(name: 'mask_url') required String maskUrl,
     required int fps,

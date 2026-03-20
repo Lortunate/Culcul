@@ -158,10 +158,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _ToViewModel():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -220,10 +217,7 @@ return $default(_that.aid,_that.videos,_that.tid,_that.tname,_that.copyright,_th
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'aid')  int? aid, @JsonKey(name: 'videos')  int? videos, @JsonKey(name: 'tid')  int? tid, @JsonKey(name: 'tname')  String? tname, @JsonKey(name: 'copyright')  int? copyright, @JsonKey(name: 'pic')  String? pic, @JsonKey(name: 'title')  String? title, @JsonKey(name: 'pubdate')  int? pubdate, @JsonKey(name: 'ctime')  int? ctime, @JsonKey(name: 'desc')  String? desc, @JsonKey(name: 'state')  int? state, @JsonKey(name: 'duration')  int? duration, @JsonKey(name: 'rights')  Map<String, dynamic>? rights, @JsonKey(name: 'owner')  FavUpperModel? owner, @JsonKey(name: 'stat')  ToViewStatModel? stat, @JsonKey(name: 'dynamic')  String? dynamicText, @JsonKey(name: 'cid')  int? cid, @JsonKey(name: 'progress')  int? progress, @JsonKey(name: 'add_at')  int? addAt, @JsonKey(name: 'bvid')  String? bvid)  $default,) {final _that = this;
 switch (_that) {
 case _ToViewModel():
-return $default(_that.aid,_that.videos,_that.tid,_that.tname,_that.copyright,_that.pic,_that.title,_that.pubdate,_that.ctime,_that.desc,_that.state,_that.duration,_that.rights,_that.owner,_that.stat,_that.dynamicText,_that.cid,_that.progress,_that.addAt,_that.bvid);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.aid,_that.videos,_that.tid,_that.tname,_that.copyright,_that.pic,_that.title,_that.pubdate,_that.ctime,_that.desc,_that.state,_that.duration,_that.rights,_that.owner,_that.stat,_that.dynamicText,_that.cid,_that.progress,_that.addAt,_that.bvid);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -499,10 +493,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _ToViewStatModel():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -561,10 +552,7 @@ return $default(_that.aid,_that.view,_that.danmaku,_that.reply,_that.favorite,_t
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'aid')  int? aid, @JsonKey(name: 'view')  int? view, @JsonKey(name: 'danmaku')  int? danmaku, @JsonKey(name: 'reply')  int? reply, @JsonKey(name: 'favorite')  int? favorite, @JsonKey(name: 'coin')  int? coin, @JsonKey(name: 'share')  int? share, @JsonKey(name: 'like')  int? like, @JsonKey(name: 'dislike')  int? dislike)  $default,) {final _that = this;
 switch (_that) {
 case _ToViewStatModel():
-return $default(_that.aid,_that.view,_that.danmaku,_that.reply,_that.favorite,_that.coin,_that.share,_that.like,_that.dislike);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.aid,_that.view,_that.danmaku,_that.reply,_that.favorite,_that.coin,_that.share,_that.like,_that.dislike);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -779,10 +767,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _ToViewListResponse():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -841,10 +826,7 @@ return $default(_that.count,_that.list);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'count')  int count, @JsonKey(name: 'list')  List<ToViewModel> list)  $default,) {final _that = this;
 switch (_that) {
 case _ToViewListResponse():
-return $default(_that.count,_that.list);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.count,_that.list);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

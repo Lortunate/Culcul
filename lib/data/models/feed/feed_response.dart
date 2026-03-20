@@ -4,13 +4,13 @@ part 'feed_response.freezed.dart';
 part 'feed_response.g.dart';
 
 @freezed
-abstract class FeedResponse with _$FeedResponse {
+sealed class FeedResponse with _$FeedResponse {
   const factory FeedResponse({
     @Default([]) List<Map<String, dynamic>> item,
     @JsonKey(name: 'business_card') dynamic businessCard,
-    @Default([]) List<dynamic> floor_info,
-    @Default(0) int user_feature,
-    @Default('') String side_bar_column,
+    @JsonKey(name: 'floor_info') @Default([]) List<dynamic> floorInfo,
+    @JsonKey(name: 'user_feature') @Default(0) int userFeature,
+    @JsonKey(name: 'side_bar_column') @Default('') String sideBarColumn,
   }) = _FeedResponse;
 
   factory FeedResponse.fromJson(Map<String, dynamic> json) =>

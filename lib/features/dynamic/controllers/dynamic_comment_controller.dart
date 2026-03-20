@@ -29,7 +29,7 @@ class DynamicCommentController extends _$DynamicCommentController {
         state = state.copyWith(
           comments: data.replies,
           isLoading: false,
-          hasMore: !data.cursor!.is_end,
+          hasMore: !data.cursor!.isEnd,
           page: 1,
         );
       },
@@ -59,7 +59,7 @@ class DynamicCommentController extends _$DynamicCommentController {
       success: (data) {
         state = state.copyWith(
           comments: [...state.comments, ...data.replies],
-          hasMore: !data.cursor!.is_end,
+          hasMore: !data.cursor!.isEnd,
           page: nextPage,
         );
       },

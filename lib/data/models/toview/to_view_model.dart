@@ -5,7 +5,7 @@ part 'to_view_model.freezed.dart';
 part 'to_view_model.g.dart';
 
 @freezed
-abstract class ToViewModel with _$ToViewModel {
+sealed class ToViewModel with _$ToViewModel {
   const ToViewModel._();
 
   const factory ToViewModel({
@@ -43,7 +43,7 @@ abstract class ToViewModel with _$ToViewModel {
 }
 
 @freezed
-abstract class ToViewStatModel with _$ToViewStatModel {
+sealed class ToViewStatModel with _$ToViewStatModel {
   const factory ToViewStatModel({
     @JsonKey(name: 'aid') int? aid,
     @JsonKey(name: 'view') @Default(0) int? view,
@@ -61,7 +61,7 @@ abstract class ToViewStatModel with _$ToViewStatModel {
 }
 
 @freezed
-abstract class ToViewListResponse with _$ToViewListResponse {
+sealed class ToViewListResponse with _$ToViewListResponse {
   const factory ToViewListResponse({
     @JsonKey(name: 'count') @Default(0) int count,
     @JsonKey(name: 'list')

@@ -126,10 +126,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _ReplyResponse():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -188,10 +185,7 @@ return $default(_that.cursor,_that.items,_that.lastViewAt);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ReplyCursor cursor,  List<ReplyItem> items, @JsonKey(name: 'last_view_at')  int lastViewAt)  $default,) {final _that = this;
 switch (_that) {
 case _ReplyResponse():
-return $default(_that.cursor,_that.items,_that.lastViewAt);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.cursor,_that.items,_that.lastViewAt);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -410,10 +404,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _ReplyCursor():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -472,10 +463,7 @@ return $default(_that.isEnd,_that.id,_that.time);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'is_end')  bool isEnd,  int id,  int time)  $default,) {final _that = this;
 switch (_that) {
 case _ReplyCursor():
-return $default(_that.isEnd,_that.id,_that.time);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.isEnd,_that.id,_that.time);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -708,10 +696,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _ReplyItem():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -770,10 +755,7 @@ return $default(_that.id,_that.users,_that.user,_that.item,_that.counts,_that.is
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id, @JsonKey(name: 'users')  List<ReplyUser>? users, @JsonKey(name: 'user')  ReplyUser? user,  ReplyItemDetail item,  int counts, @JsonKey(name: 'is_multi')  int isMulti, @JsonKey(name: 'reply_time')  int? replyTime, @JsonKey(name: 'like_time')  int? likeTime)  $default,) {final _that = this;
 switch (_that) {
 case _ReplyItem():
-return $default(_that.id,_that.users,_that.user,_that.item,_that.counts,_that.isMulti,_that.replyTime,_that.likeTime);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.id,_that.users,_that.user,_that.item,_that.counts,_that.isMulti,_that.replyTime,_that.likeTime);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1022,10 +1004,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _ReplyUser():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -1084,10 +1063,7 @@ return $default(_that.mid,_that.fans,_that.nickname,_that.avatar,_that.midLink,_
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int mid,  int fans,  String nickname,  String avatar, @JsonKey(name: 'mid_link')  String midLink,  bool follow)  $default,) {final _that = this;
 switch (_that) {
 case _ReplyUser():
-return $default(_that.mid,_that.fans,_that.nickname,_that.avatar,_that.midLink,_that.follow);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.mid,_that.fans,_that.nickname,_that.avatar,_that.midLink,_that.follow);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1314,10 +1290,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _ReplyItemDetail():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -1376,10 +1349,7 @@ return $default(_that.subjectId,_that.rootId,_that.sourceId,_that.targetId,_that
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'subject_id', readValue: _readSubjectId)  int subjectId, @JsonKey(name: 'root_id')  int rootId, @JsonKey(name: 'source_id')  int sourceId, @JsonKey(name: 'target_id')  int targetId,  String type, @JsonKey(name: 'business_id')  int businessId,  String business,  String title,  String desc,  String image,  String uri, @JsonKey(name: 'native_uri')  String nativeUri, @JsonKey(name: 'root_reply_content')  String rootReplyContent, @JsonKey(name: 'source_content')  String sourceContent, @JsonKey(name: 'target_reply_content')  String targetReplyContent, @JsonKey(name: 'at_details')  List<ReplyUser> atDetails, @JsonKey(name: 'hide_reply_button')  bool hideReplyButton, @JsonKey(name: 'hide_like_button')  bool hideLikeButton, @JsonKey(name: 'like_state')  int likeState,  String message)  $default,) {final _that = this;
 switch (_that) {
 case _ReplyItemDetail():
-return $default(_that.subjectId,_that.rootId,_that.sourceId,_that.targetId,_that.type,_that.businessId,_that.business,_that.title,_that.desc,_that.image,_that.uri,_that.nativeUri,_that.rootReplyContent,_that.sourceContent,_that.targetReplyContent,_that.atDetails,_that.hideReplyButton,_that.hideLikeButton,_that.likeState,_that.message);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.subjectId,_that.rootId,_that.sourceId,_that.targetId,_that.type,_that.businessId,_that.business,_that.title,_that.desc,_that.image,_that.uri,_that.nativeUri,_that.rootReplyContent,_that.sourceContent,_that.targetReplyContent,_that.atDetails,_that.hideReplyButton,_that.hideLikeButton,_that.likeState,_that.message);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

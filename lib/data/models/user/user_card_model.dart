@@ -4,7 +4,7 @@ part 'user_card_model.freezed.dart';
 part 'user_card_model.g.dart';
 
 @freezed
-abstract class UserCardModel with _$UserCardModel {
+sealed class UserCardModel with _$UserCardModel {
   const factory UserCardModel({
     required String mid,
     required String name,

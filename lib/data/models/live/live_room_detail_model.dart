@@ -4,7 +4,7 @@ part 'live_room_detail_model.freezed.dart';
 part 'live_room_detail_model.g.dart';
 
 @freezed
-abstract class LiveRoomDetailModel with _$LiveRoomDetailModel {
+sealed class LiveRoomDetailModel with _$LiveRoomDetailModel {
   const factory LiveRoomDetailModel({
     required int uid,
     @JsonKey(name: 'room_id') required int roomId,

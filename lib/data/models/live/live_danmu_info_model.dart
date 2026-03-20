@@ -4,7 +4,7 @@ part 'live_danmu_info_model.freezed.dart';
 part 'live_danmu_info_model.g.dart';
 
 @freezed
-abstract class LiveDanmuInfoModel with _$LiveDanmuInfoModel {
+sealed class LiveDanmuInfoModel with _$LiveDanmuInfoModel {
   const factory LiveDanmuInfoModel({
     required String token,
     @JsonKey(name: 'host_list') required List<LiveDanmuHost> hostList,
@@ -15,7 +15,7 @@ abstract class LiveDanmuInfoModel with _$LiveDanmuInfoModel {
 }
 
 @freezed
-abstract class LiveDanmuHost with _$LiveDanmuHost {
+sealed class LiveDanmuHost with _$LiveDanmuHost {
   const factory LiveDanmuHost({
     required String host,
     @JsonKey(name: 'wss_port') required int wssPort,

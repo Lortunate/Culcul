@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$VideoModel {
 
- String get bvid; String get title; String get pic; Owner get owner; Stat get stat; int get duration;@JsonKey(name: 'pubdate') int get pubDate; String get desc;@RcmdReasonConverter() String get rcmd_reason;
+ String get bvid; String get title; String get pic; Owner get owner; Stat get stat; int get duration;@JsonKey(name: 'pubdate') int get pubDate; String get desc;@JsonKey(name: 'rcmd_reason')@RcmdReasonConverter() String get rcmdReason;
 /// Create a copy of VideoModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $VideoModelCopyWith<VideoModel> get copyWith => _$VideoModelCopyWithImpl<VideoMo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is VideoModel&&(identical(other.bvid, bvid) || other.bvid == bvid)&&(identical(other.title, title) || other.title == title)&&(identical(other.pic, pic) || other.pic == pic)&&(identical(other.owner, owner) || other.owner == owner)&&(identical(other.stat, stat) || other.stat == stat)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.pubDate, pubDate) || other.pubDate == pubDate)&&(identical(other.desc, desc) || other.desc == desc)&&(identical(other.rcmd_reason, rcmd_reason) || other.rcmd_reason == rcmd_reason));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is VideoModel&&(identical(other.bvid, bvid) || other.bvid == bvid)&&(identical(other.title, title) || other.title == title)&&(identical(other.pic, pic) || other.pic == pic)&&(identical(other.owner, owner) || other.owner == owner)&&(identical(other.stat, stat) || other.stat == stat)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.pubDate, pubDate) || other.pubDate == pubDate)&&(identical(other.desc, desc) || other.desc == desc)&&(identical(other.rcmdReason, rcmdReason) || other.rcmdReason == rcmdReason));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,bvid,title,pic,owner,stat,duration,pubDate,desc,rcmd_reason);
+int get hashCode => Object.hash(runtimeType,bvid,title,pic,owner,stat,duration,pubDate,desc,rcmdReason);
 
 @override
 String toString() {
-  return 'VideoModel(bvid: $bvid, title: $title, pic: $pic, owner: $owner, stat: $stat, duration: $duration, pubDate: $pubDate, desc: $desc, rcmd_reason: $rcmd_reason)';
+  return 'VideoModel(bvid: $bvid, title: $title, pic: $pic, owner: $owner, stat: $stat, duration: $duration, pubDate: $pubDate, desc: $desc, rcmdReason: $rcmdReason)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $VideoModelCopyWith<$Res>  {
   factory $VideoModelCopyWith(VideoModel value, $Res Function(VideoModel) _then) = _$VideoModelCopyWithImpl;
 @useResult
 $Res call({
- String bvid, String title, String pic, Owner owner, Stat stat, int duration,@JsonKey(name: 'pubdate') int pubDate, String desc,@RcmdReasonConverter() String rcmd_reason
+ String bvid, String title, String pic, Owner owner, Stat stat, int duration,@JsonKey(name: 'pubdate') int pubDate, String desc,@JsonKey(name: 'rcmd_reason')@RcmdReasonConverter() String rcmdReason
 });
 
 
@@ -65,7 +65,7 @@ class _$VideoModelCopyWithImpl<$Res>
 
 /// Create a copy of VideoModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? bvid = null,Object? title = null,Object? pic = null,Object? owner = null,Object? stat = null,Object? duration = null,Object? pubDate = null,Object? desc = null,Object? rcmd_reason = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? bvid = null,Object? title = null,Object? pic = null,Object? owner = null,Object? stat = null,Object? duration = null,Object? pubDate = null,Object? desc = null,Object? rcmdReason = null,}) {
   return _then(_self.copyWith(
 bvid: null == bvid ? _self.bvid : bvid // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -75,7 +75,7 @@ as Owner,stat: null == stat ? _self.stat : stat // ignore: cast_nullable_to_non_
 as Stat,duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
 as int,pubDate: null == pubDate ? _self.pubDate : pubDate // ignore: cast_nullable_to_non_nullable
 as int,desc: null == desc ? _self.desc : desc // ignore: cast_nullable_to_non_nullable
-as String,rcmd_reason: null == rcmd_reason ? _self.rcmd_reason : rcmd_reason // ignore: cast_nullable_to_non_nullable
+as String,rcmdReason: null == rcmdReason ? _self.rcmdReason : rcmdReason // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -141,10 +141,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _VideoModel():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -179,10 +176,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String bvid,  String title,  String pic,  Owner owner,  Stat stat,  int duration, @JsonKey(name: 'pubdate')  int pubDate,  String desc, @RcmdReasonConverter()  String rcmd_reason)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String bvid,  String title,  String pic,  Owner owner,  Stat stat,  int duration, @JsonKey(name: 'pubdate')  int pubDate,  String desc, @JsonKey(name: 'rcmd_reason')@RcmdReasonConverter()  String rcmdReason)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _VideoModel() when $default != null:
-return $default(_that.bvid,_that.title,_that.pic,_that.owner,_that.stat,_that.duration,_that.pubDate,_that.desc,_that.rcmd_reason);case _:
+return $default(_that.bvid,_that.title,_that.pic,_that.owner,_that.stat,_that.duration,_that.pubDate,_that.desc,_that.rcmdReason);case _:
   return orElse();
 
 }
@@ -200,13 +197,10 @@ return $default(_that.bvid,_that.title,_that.pic,_that.owner,_that.stat,_that.du
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String bvid,  String title,  String pic,  Owner owner,  Stat stat,  int duration, @JsonKey(name: 'pubdate')  int pubDate,  String desc, @RcmdReasonConverter()  String rcmd_reason)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String bvid,  String title,  String pic,  Owner owner,  Stat stat,  int duration, @JsonKey(name: 'pubdate')  int pubDate,  String desc, @JsonKey(name: 'rcmd_reason')@RcmdReasonConverter()  String rcmdReason)  $default,) {final _that = this;
 switch (_that) {
 case _VideoModel():
-return $default(_that.bvid,_that.title,_that.pic,_that.owner,_that.stat,_that.duration,_that.pubDate,_that.desc,_that.rcmd_reason);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.bvid,_that.title,_that.pic,_that.owner,_that.stat,_that.duration,_that.pubDate,_that.desc,_that.rcmdReason);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -220,10 +214,10 @@ return $default(_that.bvid,_that.title,_that.pic,_that.owner,_that.stat,_that.du
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String bvid,  String title,  String pic,  Owner owner,  Stat stat,  int duration, @JsonKey(name: 'pubdate')  int pubDate,  String desc, @RcmdReasonConverter()  String rcmd_reason)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String bvid,  String title,  String pic,  Owner owner,  Stat stat,  int duration, @JsonKey(name: 'pubdate')  int pubDate,  String desc, @JsonKey(name: 'rcmd_reason')@RcmdReasonConverter()  String rcmdReason)?  $default,) {final _that = this;
 switch (_that) {
 case _VideoModel() when $default != null:
-return $default(_that.bvid,_that.title,_that.pic,_that.owner,_that.stat,_that.duration,_that.pubDate,_that.desc,_that.rcmd_reason);case _:
+return $default(_that.bvid,_that.title,_that.pic,_that.owner,_that.stat,_that.duration,_that.pubDate,_that.desc,_that.rcmdReason);case _:
   return null;
 
 }
@@ -235,7 +229,7 @@ return $default(_that.bvid,_that.title,_that.pic,_that.owner,_that.stat,_that.du
 @JsonSerializable()
 
 class _VideoModel extends VideoModel {
-  const _VideoModel({required this.bvid, required this.title, required this.pic, required this.owner, required this.stat, required this.duration, @JsonKey(name: 'pubdate') required this.pubDate, this.desc = '', @RcmdReasonConverter() this.rcmd_reason = ''}): super._();
+  const _VideoModel({required this.bvid, required this.title, required this.pic, required this.owner, required this.stat, required this.duration, @JsonKey(name: 'pubdate') required this.pubDate, this.desc = '', @JsonKey(name: 'rcmd_reason')@RcmdReasonConverter() this.rcmdReason = ''}): super._();
   factory _VideoModel.fromJson(Map<String, dynamic> json) => _$VideoModelFromJson(json);
 
 @override final  String bvid;
@@ -246,7 +240,7 @@ class _VideoModel extends VideoModel {
 @override final  int duration;
 @override@JsonKey(name: 'pubdate') final  int pubDate;
 @override@JsonKey() final  String desc;
-@override@JsonKey()@RcmdReasonConverter() final  String rcmd_reason;
+@override@JsonKey(name: 'rcmd_reason')@RcmdReasonConverter() final  String rcmdReason;
 
 /// Create a copy of VideoModel
 /// with the given fields replaced by the non-null parameter values.
@@ -261,16 +255,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _VideoModel&&(identical(other.bvid, bvid) || other.bvid == bvid)&&(identical(other.title, title) || other.title == title)&&(identical(other.pic, pic) || other.pic == pic)&&(identical(other.owner, owner) || other.owner == owner)&&(identical(other.stat, stat) || other.stat == stat)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.pubDate, pubDate) || other.pubDate == pubDate)&&(identical(other.desc, desc) || other.desc == desc)&&(identical(other.rcmd_reason, rcmd_reason) || other.rcmd_reason == rcmd_reason));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _VideoModel&&(identical(other.bvid, bvid) || other.bvid == bvid)&&(identical(other.title, title) || other.title == title)&&(identical(other.pic, pic) || other.pic == pic)&&(identical(other.owner, owner) || other.owner == owner)&&(identical(other.stat, stat) || other.stat == stat)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.pubDate, pubDate) || other.pubDate == pubDate)&&(identical(other.desc, desc) || other.desc == desc)&&(identical(other.rcmdReason, rcmdReason) || other.rcmdReason == rcmdReason));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,bvid,title,pic,owner,stat,duration,pubDate,desc,rcmd_reason);
+int get hashCode => Object.hash(runtimeType,bvid,title,pic,owner,stat,duration,pubDate,desc,rcmdReason);
 
 @override
 String toString() {
-  return 'VideoModel(bvid: $bvid, title: $title, pic: $pic, owner: $owner, stat: $stat, duration: $duration, pubDate: $pubDate, desc: $desc, rcmd_reason: $rcmd_reason)';
+  return 'VideoModel(bvid: $bvid, title: $title, pic: $pic, owner: $owner, stat: $stat, duration: $duration, pubDate: $pubDate, desc: $desc, rcmdReason: $rcmdReason)';
 }
 
 
@@ -281,7 +275,7 @@ abstract mixin class _$VideoModelCopyWith<$Res> implements $VideoModelCopyWith<$
   factory _$VideoModelCopyWith(_VideoModel value, $Res Function(_VideoModel) _then) = __$VideoModelCopyWithImpl;
 @override @useResult
 $Res call({
- String bvid, String title, String pic, Owner owner, Stat stat, int duration,@JsonKey(name: 'pubdate') int pubDate, String desc,@RcmdReasonConverter() String rcmd_reason
+ String bvid, String title, String pic, Owner owner, Stat stat, int duration,@JsonKey(name: 'pubdate') int pubDate, String desc,@JsonKey(name: 'rcmd_reason')@RcmdReasonConverter() String rcmdReason
 });
 
 
@@ -298,7 +292,7 @@ class __$VideoModelCopyWithImpl<$Res>
 
 /// Create a copy of VideoModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? bvid = null,Object? title = null,Object? pic = null,Object? owner = null,Object? stat = null,Object? duration = null,Object? pubDate = null,Object? desc = null,Object? rcmd_reason = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? bvid = null,Object? title = null,Object? pic = null,Object? owner = null,Object? stat = null,Object? duration = null,Object? pubDate = null,Object? desc = null,Object? rcmdReason = null,}) {
   return _then(_VideoModel(
 bvid: null == bvid ? _self.bvid : bvid // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -308,7 +302,7 @@ as Owner,stat: null == stat ? _self.stat : stat // ignore: cast_nullable_to_non_
 as Stat,duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
 as int,pubDate: null == pubDate ? _self.pubDate : pubDate // ignore: cast_nullable_to_non_nullable
 as int,desc: null == desc ? _self.desc : desc // ignore: cast_nullable_to_non_nullable
-as String,rcmd_reason: null == rcmd_reason ? _self.rcmd_reason : rcmd_reason // ignore: cast_nullable_to_non_nullable
+as String,rcmdReason: null == rcmdReason ? _self.rcmdReason : rcmdReason // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -440,10 +434,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _Owner():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -502,10 +493,7 @@ return $default(_that.mid,_that.name,_that.face);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int mid,  String name,  String face)  $default,) {final _that = this;
 switch (_that) {
 case _Owner():
-return $default(_that.mid,_that.name,_that.face);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.mid,_that.name,_that.face);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -713,10 +701,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _Stat():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -775,10 +760,7 @@ return $default(_that.view,_that.danmaku,_that.reply,_that.like,_that.coin,_that
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int view,  int danmaku,  int reply,  int like,  int coin,  int favorite,  int share)  $default,) {final _that = this;
 switch (_that) {
 case _Stat():
-return $default(_that.view,_that.danmaku,_that.reply,_that.like,_that.coin,_that.favorite,_that.share);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.view,_that.danmaku,_that.reply,_that.like,_that.coin,_that.favorite,_that.share);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

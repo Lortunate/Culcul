@@ -4,7 +4,7 @@ part 'app_settings_model.freezed.dart';
 part 'app_settings_model.g.dart';
 
 @freezed
-abstract class AppSettings with _$AppSettings {
+sealed class AppSettings with _$AppSettings {
   const factory AppSettings({
     String? language,
     String? theme,
@@ -18,6 +18,4 @@ abstract class AppSettings with _$AppSettings {
 
   factory AppSettings.fromJson(Map<String, dynamic> json) =>
       _$AppSettingsFromJson(json);
-
-  Map<String, dynamic> toJson();
 }

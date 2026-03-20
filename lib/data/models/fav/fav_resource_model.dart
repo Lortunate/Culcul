@@ -4,7 +4,7 @@ part 'fav_resource_model.freezed.dart';
 part 'fav_resource_model.g.dart';
 
 @freezed
-abstract class FavResourceModel with _$FavResourceModel {
+sealed class FavResourceModel with _$FavResourceModel {
   const factory FavResourceModel({
     @JsonKey(name: 'id') required int id,
     @JsonKey(name: 'type') required int type,
@@ -29,7 +29,7 @@ abstract class FavResourceModel with _$FavResourceModel {
 }
 
 @freezed
-abstract class FavUpperModel with _$FavUpperModel {
+sealed class FavUpperModel with _$FavUpperModel {
   const factory FavUpperModel({
     @JsonKey(name: 'mid') required int mid,
     @JsonKey(name: 'name') required String name,
@@ -41,7 +41,7 @@ abstract class FavUpperModel with _$FavUpperModel {
 }
 
 @freezed
-abstract class FavCntInfoModel with _$FavCntInfoModel {
+sealed class FavCntInfoModel with _$FavCntInfoModel {
   const factory FavCntInfoModel({
     @JsonKey(name: 'collect') required int collect,
     @JsonKey(name: 'play') required int play,
@@ -53,7 +53,7 @@ abstract class FavCntInfoModel with _$FavCntInfoModel {
 }
 
 @freezed
-abstract class FavResourceListResponse with _$FavResourceListResponse {
+sealed class FavResourceListResponse with _$FavResourceListResponse {
   const factory FavResourceListResponse({
     @JsonKey(name: 'info') required FavFolderInfoModel info,
     @JsonKey(name: 'medias') List<FavResourceModel>? medias,
@@ -65,7 +65,7 @@ abstract class FavResourceListResponse with _$FavResourceListResponse {
 }
 
 @freezed
-abstract class FavFolderInfoModel with _$FavFolderInfoModel {
+sealed class FavFolderInfoModel with _$FavFolderInfoModel {
   const factory FavFolderInfoModel({
     @JsonKey(name: 'id') required int id,
     @JsonKey(name: 'fid') required int fid,

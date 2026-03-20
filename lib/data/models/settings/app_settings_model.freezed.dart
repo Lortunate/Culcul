@@ -122,10 +122,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _AppSettings():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -184,10 +181,7 @@ return $default(_that.language,_that.theme,_that.notificationsEnabled,_that.auto
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? language,  String? theme,  bool notificationsEnabled,  bool autoPlayEnabled,  bool highQualityVideoEnabled,  bool darkModeEnabled,  bool showExplicitContent,  DateTime? updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _AppSettings():
-return $default(_that.language,_that.theme,_that.notificationsEnabled,_that.autoPlayEnabled,_that.highQualityVideoEnabled,_that.darkModeEnabled,_that.showExplicitContent,_that.updatedAt);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.language,_that.theme,_that.notificationsEnabled,_that.autoPlayEnabled,_that.highQualityVideoEnabled,_that.darkModeEnabled,_that.showExplicitContent,_that.updatedAt);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

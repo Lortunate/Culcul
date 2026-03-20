@@ -14,7 +14,9 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PlayerUiState implements DiagnosticableTreeMixin {
 
- bool get isPlaying; bool get isBuffering; Duration get position; Duration get duration; Duration get buffer; bool get isFullscreen; bool get isLocked; bool get showControls; DateTime? get sleepTimerTarget;
+ bool get isPlaying; bool get isBuffering;// Position, duration, and buffer are now accessed directly from the player stream
+// to avoid frequent state updates and rebuilds.
+ bool get isFullscreen; bool get isLocked; bool get showControls; DateTime? get sleepTimerTarget;
 /// Create a copy of PlayerUiState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,21 +28,21 @@ $PlayerUiStateCopyWith<PlayerUiState> get copyWith => _$PlayerUiStateCopyWithImp
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'PlayerUiState'))
-    ..add(DiagnosticsProperty('isPlaying', isPlaying))..add(DiagnosticsProperty('isBuffering', isBuffering))..add(DiagnosticsProperty('position', position))..add(DiagnosticsProperty('duration', duration))..add(DiagnosticsProperty('buffer', buffer))..add(DiagnosticsProperty('isFullscreen', isFullscreen))..add(DiagnosticsProperty('isLocked', isLocked))..add(DiagnosticsProperty('showControls', showControls))..add(DiagnosticsProperty('sleepTimerTarget', sleepTimerTarget));
+    ..add(DiagnosticsProperty('isPlaying', isPlaying))..add(DiagnosticsProperty('isBuffering', isBuffering))..add(DiagnosticsProperty('isFullscreen', isFullscreen))..add(DiagnosticsProperty('isLocked', isLocked))..add(DiagnosticsProperty('showControls', showControls))..add(DiagnosticsProperty('sleepTimerTarget', sleepTimerTarget));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlayerUiState&&(identical(other.isPlaying, isPlaying) || other.isPlaying == isPlaying)&&(identical(other.isBuffering, isBuffering) || other.isBuffering == isBuffering)&&(identical(other.position, position) || other.position == position)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.buffer, buffer) || other.buffer == buffer)&&(identical(other.isFullscreen, isFullscreen) || other.isFullscreen == isFullscreen)&&(identical(other.isLocked, isLocked) || other.isLocked == isLocked)&&(identical(other.showControls, showControls) || other.showControls == showControls)&&(identical(other.sleepTimerTarget, sleepTimerTarget) || other.sleepTimerTarget == sleepTimerTarget));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PlayerUiState&&(identical(other.isPlaying, isPlaying) || other.isPlaying == isPlaying)&&(identical(other.isBuffering, isBuffering) || other.isBuffering == isBuffering)&&(identical(other.isFullscreen, isFullscreen) || other.isFullscreen == isFullscreen)&&(identical(other.isLocked, isLocked) || other.isLocked == isLocked)&&(identical(other.showControls, showControls) || other.showControls == showControls)&&(identical(other.sleepTimerTarget, sleepTimerTarget) || other.sleepTimerTarget == sleepTimerTarget));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isPlaying,isBuffering,position,duration,buffer,isFullscreen,isLocked,showControls,sleepTimerTarget);
+int get hashCode => Object.hash(runtimeType,isPlaying,isBuffering,isFullscreen,isLocked,showControls,sleepTimerTarget);
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'PlayerUiState(isPlaying: $isPlaying, isBuffering: $isBuffering, position: $position, duration: $duration, buffer: $buffer, isFullscreen: $isFullscreen, isLocked: $isLocked, showControls: $showControls, sleepTimerTarget: $sleepTimerTarget)';
+  return 'PlayerUiState(isPlaying: $isPlaying, isBuffering: $isBuffering, isFullscreen: $isFullscreen, isLocked: $isLocked, showControls: $showControls, sleepTimerTarget: $sleepTimerTarget)';
 }
 
 
@@ -51,7 +53,7 @@ abstract mixin class $PlayerUiStateCopyWith<$Res>  {
   factory $PlayerUiStateCopyWith(PlayerUiState value, $Res Function(PlayerUiState) _then) = _$PlayerUiStateCopyWithImpl;
 @useResult
 $Res call({
- bool isPlaying, bool isBuffering, Duration position, Duration duration, Duration buffer, bool isFullscreen, bool isLocked, bool showControls, DateTime? sleepTimerTarget
+ bool isPlaying, bool isBuffering, bool isFullscreen, bool isLocked, bool showControls, DateTime? sleepTimerTarget
 });
 
 
@@ -68,14 +70,11 @@ class _$PlayerUiStateCopyWithImpl<$Res>
 
 /// Create a copy of PlayerUiState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isPlaying = null,Object? isBuffering = null,Object? position = null,Object? duration = null,Object? buffer = null,Object? isFullscreen = null,Object? isLocked = null,Object? showControls = null,Object? sleepTimerTarget = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isPlaying = null,Object? isBuffering = null,Object? isFullscreen = null,Object? isLocked = null,Object? showControls = null,Object? sleepTimerTarget = freezed,}) {
   return _then(_self.copyWith(
 isPlaying: null == isPlaying ? _self.isPlaying : isPlaying // ignore: cast_nullable_to_non_nullable
 as bool,isBuffering: null == isBuffering ? _self.isBuffering : isBuffering // ignore: cast_nullable_to_non_nullable
-as bool,position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
-as Duration,duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
-as Duration,buffer: null == buffer ? _self.buffer : buffer // ignore: cast_nullable_to_non_nullable
-as Duration,isFullscreen: null == isFullscreen ? _self.isFullscreen : isFullscreen // ignore: cast_nullable_to_non_nullable
+as bool,isFullscreen: null == isFullscreen ? _self.isFullscreen : isFullscreen // ignore: cast_nullable_to_non_nullable
 as bool,isLocked: null == isLocked ? _self.isLocked : isLocked // ignore: cast_nullable_to_non_nullable
 as bool,showControls: null == showControls ? _self.showControls : showControls // ignore: cast_nullable_to_non_nullable
 as bool,sleepTimerTarget: freezed == sleepTimerTarget ? _self.sleepTimerTarget : sleepTimerTarget // ignore: cast_nullable_to_non_nullable
@@ -126,10 +125,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _PlayerUiState():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -164,10 +160,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isPlaying,  bool isBuffering,  Duration position,  Duration duration,  Duration buffer,  bool isFullscreen,  bool isLocked,  bool showControls,  DateTime? sleepTimerTarget)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isPlaying,  bool isBuffering,  bool isFullscreen,  bool isLocked,  bool showControls,  DateTime? sleepTimerTarget)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PlayerUiState() when $default != null:
-return $default(_that.isPlaying,_that.isBuffering,_that.position,_that.duration,_that.buffer,_that.isFullscreen,_that.isLocked,_that.showControls,_that.sleepTimerTarget);case _:
+return $default(_that.isPlaying,_that.isBuffering,_that.isFullscreen,_that.isLocked,_that.showControls,_that.sleepTimerTarget);case _:
   return orElse();
 
 }
@@ -185,13 +181,10 @@ return $default(_that.isPlaying,_that.isBuffering,_that.position,_that.duration,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isPlaying,  bool isBuffering,  Duration position,  Duration duration,  Duration buffer,  bool isFullscreen,  bool isLocked,  bool showControls,  DateTime? sleepTimerTarget)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isPlaying,  bool isBuffering,  bool isFullscreen,  bool isLocked,  bool showControls,  DateTime? sleepTimerTarget)  $default,) {final _that = this;
 switch (_that) {
 case _PlayerUiState():
-return $default(_that.isPlaying,_that.isBuffering,_that.position,_that.duration,_that.buffer,_that.isFullscreen,_that.isLocked,_that.showControls,_that.sleepTimerTarget);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.isPlaying,_that.isBuffering,_that.isFullscreen,_that.isLocked,_that.showControls,_that.sleepTimerTarget);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -205,10 +198,10 @@ return $default(_that.isPlaying,_that.isBuffering,_that.position,_that.duration,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isPlaying,  bool isBuffering,  Duration position,  Duration duration,  Duration buffer,  bool isFullscreen,  bool isLocked,  bool showControls,  DateTime? sleepTimerTarget)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isPlaying,  bool isBuffering,  bool isFullscreen,  bool isLocked,  bool showControls,  DateTime? sleepTimerTarget)?  $default,) {final _that = this;
 switch (_that) {
 case _PlayerUiState() when $default != null:
-return $default(_that.isPlaying,_that.isBuffering,_that.position,_that.duration,_that.buffer,_that.isFullscreen,_that.isLocked,_that.showControls,_that.sleepTimerTarget);case _:
+return $default(_that.isPlaying,_that.isBuffering,_that.isFullscreen,_that.isLocked,_that.showControls,_that.sleepTimerTarget);case _:
   return null;
 
 }
@@ -220,14 +213,13 @@ return $default(_that.isPlaying,_that.isBuffering,_that.position,_that.duration,
 
 
 class _PlayerUiState with DiagnosticableTreeMixin implements PlayerUiState {
-  const _PlayerUiState({this.isPlaying = false, this.isBuffering = false, this.position = Duration.zero, this.duration = Duration.zero, this.buffer = Duration.zero, this.isFullscreen = false, this.isLocked = false, this.showControls = true, this.sleepTimerTarget});
+  const _PlayerUiState({this.isPlaying = false, this.isBuffering = false, this.isFullscreen = false, this.isLocked = false, this.showControls = true, this.sleepTimerTarget});
   
 
 @override@JsonKey() final  bool isPlaying;
 @override@JsonKey() final  bool isBuffering;
-@override@JsonKey() final  Duration position;
-@override@JsonKey() final  Duration duration;
-@override@JsonKey() final  Duration buffer;
+// Position, duration, and buffer are now accessed directly from the player stream
+// to avoid frequent state updates and rebuilds.
 @override@JsonKey() final  bool isFullscreen;
 @override@JsonKey() final  bool isLocked;
 @override@JsonKey() final  bool showControls;
@@ -244,21 +236,21 @@ _$PlayerUiStateCopyWith<_PlayerUiState> get copyWith => __$PlayerUiStateCopyWith
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
   properties
     ..add(DiagnosticsProperty('type', 'PlayerUiState'))
-    ..add(DiagnosticsProperty('isPlaying', isPlaying))..add(DiagnosticsProperty('isBuffering', isBuffering))..add(DiagnosticsProperty('position', position))..add(DiagnosticsProperty('duration', duration))..add(DiagnosticsProperty('buffer', buffer))..add(DiagnosticsProperty('isFullscreen', isFullscreen))..add(DiagnosticsProperty('isLocked', isLocked))..add(DiagnosticsProperty('showControls', showControls))..add(DiagnosticsProperty('sleepTimerTarget', sleepTimerTarget));
+    ..add(DiagnosticsProperty('isPlaying', isPlaying))..add(DiagnosticsProperty('isBuffering', isBuffering))..add(DiagnosticsProperty('isFullscreen', isFullscreen))..add(DiagnosticsProperty('isLocked', isLocked))..add(DiagnosticsProperty('showControls', showControls))..add(DiagnosticsProperty('sleepTimerTarget', sleepTimerTarget));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlayerUiState&&(identical(other.isPlaying, isPlaying) || other.isPlaying == isPlaying)&&(identical(other.isBuffering, isBuffering) || other.isBuffering == isBuffering)&&(identical(other.position, position) || other.position == position)&&(identical(other.duration, duration) || other.duration == duration)&&(identical(other.buffer, buffer) || other.buffer == buffer)&&(identical(other.isFullscreen, isFullscreen) || other.isFullscreen == isFullscreen)&&(identical(other.isLocked, isLocked) || other.isLocked == isLocked)&&(identical(other.showControls, showControls) || other.showControls == showControls)&&(identical(other.sleepTimerTarget, sleepTimerTarget) || other.sleepTimerTarget == sleepTimerTarget));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PlayerUiState&&(identical(other.isPlaying, isPlaying) || other.isPlaying == isPlaying)&&(identical(other.isBuffering, isBuffering) || other.isBuffering == isBuffering)&&(identical(other.isFullscreen, isFullscreen) || other.isFullscreen == isFullscreen)&&(identical(other.isLocked, isLocked) || other.isLocked == isLocked)&&(identical(other.showControls, showControls) || other.showControls == showControls)&&(identical(other.sleepTimerTarget, sleepTimerTarget) || other.sleepTimerTarget == sleepTimerTarget));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isPlaying,isBuffering,position,duration,buffer,isFullscreen,isLocked,showControls,sleepTimerTarget);
+int get hashCode => Object.hash(runtimeType,isPlaying,isBuffering,isFullscreen,isLocked,showControls,sleepTimerTarget);
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'PlayerUiState(isPlaying: $isPlaying, isBuffering: $isBuffering, position: $position, duration: $duration, buffer: $buffer, isFullscreen: $isFullscreen, isLocked: $isLocked, showControls: $showControls, sleepTimerTarget: $sleepTimerTarget)';
+  return 'PlayerUiState(isPlaying: $isPlaying, isBuffering: $isBuffering, isFullscreen: $isFullscreen, isLocked: $isLocked, showControls: $showControls, sleepTimerTarget: $sleepTimerTarget)';
 }
 
 
@@ -269,7 +261,7 @@ abstract mixin class _$PlayerUiStateCopyWith<$Res> implements $PlayerUiStateCopy
   factory _$PlayerUiStateCopyWith(_PlayerUiState value, $Res Function(_PlayerUiState) _then) = __$PlayerUiStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isPlaying, bool isBuffering, Duration position, Duration duration, Duration buffer, bool isFullscreen, bool isLocked, bool showControls, DateTime? sleepTimerTarget
+ bool isPlaying, bool isBuffering, bool isFullscreen, bool isLocked, bool showControls, DateTime? sleepTimerTarget
 });
 
 
@@ -286,14 +278,11 @@ class __$PlayerUiStateCopyWithImpl<$Res>
 
 /// Create a copy of PlayerUiState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isPlaying = null,Object? isBuffering = null,Object? position = null,Object? duration = null,Object? buffer = null,Object? isFullscreen = null,Object? isLocked = null,Object? showControls = null,Object? sleepTimerTarget = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isPlaying = null,Object? isBuffering = null,Object? isFullscreen = null,Object? isLocked = null,Object? showControls = null,Object? sleepTimerTarget = freezed,}) {
   return _then(_PlayerUiState(
 isPlaying: null == isPlaying ? _self.isPlaying : isPlaying // ignore: cast_nullable_to_non_nullable
 as bool,isBuffering: null == isBuffering ? _self.isBuffering : isBuffering // ignore: cast_nullable_to_non_nullable
-as bool,position: null == position ? _self.position : position // ignore: cast_nullable_to_non_nullable
-as Duration,duration: null == duration ? _self.duration : duration // ignore: cast_nullable_to_non_nullable
-as Duration,buffer: null == buffer ? _self.buffer : buffer // ignore: cast_nullable_to_non_nullable
-as Duration,isFullscreen: null == isFullscreen ? _self.isFullscreen : isFullscreen // ignore: cast_nullable_to_non_nullable
+as bool,isFullscreen: null == isFullscreen ? _self.isFullscreen : isFullscreen // ignore: cast_nullable_to_non_nullable
 as bool,isLocked: null == isLocked ? _self.isLocked : isLocked // ignore: cast_nullable_to_non_nullable
 as bool,showControls: null == showControls ? _self.showControls : showControls // ignore: cast_nullable_to_non_nullable
 as bool,sleepTimerTarget: freezed == sleepTimerTarget ? _self.sleepTimerTarget : sleepTimerTarget // ignore: cast_nullable_to_non_nullable

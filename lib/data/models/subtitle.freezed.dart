@@ -115,10 +115,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _VideoSubtitle():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -177,10 +174,7 @@ return $default(_that.list);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<SubtitleInfo> list)  $default,) {final _that = this;
 switch (_that) {
 case _VideoSubtitle():
-return $default(_that.list);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.list);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -390,10 +384,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _SubtitleInfo():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -452,10 +443,7 @@ return $default(_that.id,_that.lan,_that.lanDoc,_that.subtitleUrl,_that.isLock,_
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String lan, @JsonKey(name: 'lan_doc')  String lanDoc, @JsonKey(name: 'subtitle_url')  String subtitleUrl, @JsonKey(name: 'is_lock')  bool isLock, @JsonKey(name: 'id_str')  String? idStr,  int type)  $default,) {final _that = this;
 switch (_that) {
 case _SubtitleInfo():
-return $default(_that.id,_that.lan,_that.lanDoc,_that.subtitleUrl,_that.isLock,_that.idStr,_that.type);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.id,_that.lan,_that.lanDoc,_that.subtitleUrl,_that.isLock,_that.idStr,_that.type);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -669,10 +657,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _SubtitleContent():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -731,10 +716,7 @@ return $default(_that.fontSize,_that.fontColor,_that.backgroundAlpha,_that.backg
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'font_size')  double? fontSize, @JsonKey(name: 'font_color')  String? fontColor, @JsonKey(name: 'background_alpha')  double? backgroundAlpha, @JsonKey(name: 'background_color')  String? backgroundColor,  List<SubtitleItem> body)  $default,) {final _that = this;
 switch (_that) {
 case _SubtitleContent():
-return $default(_that.fontSize,_that.fontColor,_that.backgroundAlpha,_that.backgroundColor,_that.body);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.fontSize,_that.fontColor,_that.backgroundAlpha,_that.backgroundColor,_that.body);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -949,10 +931,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _SubtitleItem():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -1011,10 +990,7 @@ return $default(_that.from,_that.to,_that.location,_that.content);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double from,  double to,  int location,  String content)  $default,) {final _that = this;
 switch (_that) {
 case _SubtitleItem():
-return $default(_that.from,_that.to,_that.location,_that.content);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.from,_that.to,_that.location,_that.content);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

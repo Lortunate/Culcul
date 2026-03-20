@@ -116,10 +116,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _RelationResponseData():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -178,10 +175,7 @@ return $default(_that.list,_that.total);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<RelationUser> list,  int total)  $default,) {final _that = this;
 switch (_that) {
 case _RelationResponseData():
-return $default(_that.list,_that.total);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.list,_that.total);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -420,10 +414,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _RelationUser():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -482,10 +473,7 @@ return $default(_that.mid,_that.uname,_that.face,_that.sign,_that.attribute,_tha
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int mid,  String uname,  String face,  String sign,  int attribute, @JsonKey(name: 'official_verify')  OfficialVerify? officialVerify,  VipInfo? vip,  int mtime,  int special)  $default,) {final _that = this;
 switch (_that) {
 case _RelationUser():
-return $default(_that.mid,_that.uname,_that.face,_that.sign,_that.attribute,_that.officialVerify,_that.vip,_that.mtime,_that.special);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.mid,_that.uname,_that.face,_that.sign,_that.attribute,_that.officialVerify,_that.vip,_that.mtime,_that.special);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -725,10 +713,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _OfficialVerify():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -787,10 +772,7 @@ return $default(_that.type,_that.desc);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int type,  String desc)  $default,) {final _that = this;
 switch (_that) {
 case _OfficialVerify():
-return $default(_that.type,_that.desc);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.type,_that.desc);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -992,10 +974,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _VipInfo():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -1054,10 +1033,7 @@ return $default(_that.vipType,_that.vipStatus,_that.nicknameColor);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int vipType,  int vipStatus,  String nicknameColor)  $default,) {final _that = this;
 switch (_that) {
 case _VipInfo():
-return $default(_that.vipType,_that.vipStatus,_that.nicknameColor);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.vipType,_that.vipStatus,_that.nicknameColor);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

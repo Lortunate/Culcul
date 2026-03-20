@@ -209,10 +209,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveRoomState():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -271,10 +268,7 @@ return $default(_that.roomId,_that.isLoading,_that.error,_that.roomInfo,_that.an
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int roomId,  bool isLoading,  AppException? error,  LiveRoomDetailModel? roomInfo,  UserCardModel? anchorInfo,  LiveAnchorInfoModel? liveAnchorInfo,  LiveGoldRankModel? goldRank,  LiveGuardListModel? guardList,  LivePlayUrlModel? playUrl,  LiveDanmakuConfigModel? danmakuConfig,  List<LiveDanmakuItem> danmakuHistory,  bool isPlaying,  double volume,  bool isDanmakuEnabled)  $default,) {final _that = this;
 switch (_that) {
 case _LiveRoomState():
-return $default(_that.roomId,_that.isLoading,_that.error,_that.roomInfo,_that.anchorInfo,_that.liveAnchorInfo,_that.goldRank,_that.guardList,_that.playUrl,_that.danmakuConfig,_that.danmakuHistory,_that.isPlaying,_that.volume,_that.isDanmakuEnabled);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.roomId,_that.isLoading,_that.error,_that.roomInfo,_that.anchorInfo,_that.liveAnchorInfo,_that.goldRank,_that.guardList,_that.playUrl,_that.danmakuConfig,_that.danmakuHistory,_that.isPlaying,_that.volume,_that.isDanmakuEnabled);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

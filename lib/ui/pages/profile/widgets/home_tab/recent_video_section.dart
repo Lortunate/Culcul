@@ -93,7 +93,7 @@ class RecentVideoSection extends ConsumerWidget {
                     duration: spaceVideo.duration,
                     pubDate: spaceVideo.pubDate,
                     desc: spaceVideo.desc,
-                    rcmd_reason: spaceVideo.reason,
+                    rcmdReason: spaceVideo.reason,
                   );
                   return VideoCard(
                     video: video,

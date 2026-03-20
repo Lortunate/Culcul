@@ -105,10 +105,10 @@ class _Header extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 6),
-        if (member.level_info.current_level > 0)
+        if (member.levelInfo.currentLevel > 0)
           Padding(
             padding: const EdgeInsets.only(right: 6),
-            child: LevelTag(level: member.level_info.current_level),
+            child: LevelTag(level: member.levelInfo.currentLevel),
           ),
         if (isUpper)
           Container(

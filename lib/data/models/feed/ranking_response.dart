@@ -5,7 +5,7 @@ part 'ranking_response.freezed.dart';
 part 'ranking_response.g.dart';
 
 @freezed
-abstract class RankingResponse with _$RankingResponse {
+sealed class RankingResponse with _$RankingResponse {
   const factory RankingResponse({@Default([]) List<VideoModel> list}) =
       _RankingResponse;
 

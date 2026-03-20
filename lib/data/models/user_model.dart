@@ -1,20 +1,22 @@
 import 'package:culcul/domain/entities/user.dart';
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'user_model.g.dart';
+part 'user_model.freezed.dart';
 
-@JsonSerializable()
-class UserModel extends User {
-  UserModel({
-    required super.id,
-    required super.username,
-    super.avatarUrl,
-    super.email,
-    required super.createdAt,
-    super.level,
-    super.currentExp,
-    super.nextExp,
-  });
+@freezed
+sealed class UserModel with _$UserModel {
+  const factory UserModel({
+    required String id,
+    required String username,
+    String? avatarUrl,
+    String? email,
+    DateTime? createdAt,
+    int? level,
+    int? currentExp,
+    int? nextExp,
+  }) = _UserModel;
+
+  const UserModel._();
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     final levelInfo = json['level_info'] as Map<String, dynamic>?;
@@ -23,10 +25,36 @@ class UserModel extends User {
       username: json['uname'] as String,
       avatarUrl: json['face'] as String?,
       email: json['email'] as String?,
-      createdAt: DateTime.now(), // API doesn't return created_at
+      createdAt: DateTime.now(),
       level: levelInfo?['current_level'] as int?,
       currentExp: levelInfo?['current_exp'] as int?,
       nextExp: levelInfo?['next_exp'] as int?,
+    );
+  }
+
+  factory UserModel.fromEntity(User user) {
+    return UserModel(
+      id: user.id,
+      username: user.username,
+      avatarUrl: user.avatarUrl,
+      email: user.email,
+      createdAt: user.createdAt,
+      level: user.level,
+      currentExp: user.currentExp,
+      nextExp: user.nextExp,
+    );
+  }
+
+  User toEntity() {
+    return User(
+      id: id,
+      username: username,
+      avatarUrl: avatarUrl,
+      email: email,
+      createdAt: createdAt ?? DateTime.now(),
+      level: level,
+      currentExp: currentExp,
+      nextExp: nextExp,
     );
   }
 
@@ -41,24 +69,4 @@ class UserModel extends User {
       'next_exp': nextExp,
     },
   };
-
-  factory UserModel.fromEntity(User user) {
-    return UserModel(
-      id: user.id,
-      username: user.username,
-      avatarUrl: user.avatarUrl,
-      email: user.email,
-      createdAt: user.createdAt,
-    );
-  }
-
-  User toEntity() {
-    return User(
-      id: id,
-      username: username,
-      avatarUrl: avatarUrl,
-      email: email,
-      createdAt: createdAt,
-    );
-  }
 }

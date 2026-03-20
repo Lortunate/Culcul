@@ -116,10 +116,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveHistoryDanmakuModel():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -178,10 +175,7 @@ return $default(_that.admin,_that.room);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<LiveDanmakuItem> admin,  List<LiveDanmakuItem> room)  $default,) {final _that = this;
 switch (_that) {
 case _LiveHistoryDanmakuModel():
-return $default(_that.admin,_that.room);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.admin,_that.room);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -410,10 +404,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveDanmakuItem():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -472,10 +463,7 @@ return $default(_that.text,_that.nickname,_that.uid,_that.timeline,_that.dmType,
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String text,  String nickname,  int uid, @JsonKey(name: 'timeline')  String timeline, @JsonKey(name: 'dm_type')  int dmType,  int isadmin,  int vip,  int svip,  List<dynamic> medal,  List<dynamic> title, @JsonKey(name: 'user_level')  List<dynamic> userLevel,  int rank,  int teamid,  String rnd, @JsonKey(name: 'user_title')  String userTitle, @JsonKey(name: 'guard_level')  int guardLevel,  int bubble, @JsonKey(name: 'check_info')  Map<String, dynamic> checkInfo)  $default,) {final _that = this;
 switch (_that) {
 case _LiveDanmakuItem():
-return $default(_that.text,_that.nickname,_that.uid,_that.timeline,_that.dmType,_that.isadmin,_that.vip,_that.svip,_that.medal,_that.title,_that.userLevel,_that.rank,_that.teamid,_that.rnd,_that.userTitle,_that.guardLevel,_that.bubble,_that.checkInfo);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.text,_that.nickname,_that.uid,_that.timeline,_that.dmType,_that.isadmin,_that.vip,_that.svip,_that.medal,_that.title,_that.userLevel,_that.rank,_that.teamid,_that.rnd,_that.userTitle,_that.guardLevel,_that.bubble,_that.checkInfo);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

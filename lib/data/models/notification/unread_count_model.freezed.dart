@@ -125,10 +125,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _UnreadCountModel():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -187,10 +184,7 @@ return $default(_that.at,_that.chat,_that.coin,_that.danmu,_that.favorite,_that.
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int at,  int chat,  int coin,  int danmu,  int favorite,  int like, @JsonKey(name: 'recv_like')  int recvLike, @JsonKey(name: 'recv_reply')  int recvReply,  int reply, @JsonKey(name: 'sys_msg')  int sysMsg,  int up)  $default,) {final _that = this;
 switch (_that) {
 case _UnreadCountModel():
-return $default(_that.at,_that.chat,_that.coin,_that.danmu,_that.favorite,_that.like,_that.recvLike,_that.recvReply,_that.reply,_that.sysMsg,_that.up);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.at,_that.chat,_that.coin,_that.danmu,_that.favorite,_that.like,_that.recvLike,_that.recvReply,_that.reply,_that.sysMsg,_that.up);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

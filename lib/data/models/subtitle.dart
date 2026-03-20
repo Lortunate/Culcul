@@ -4,7 +4,7 @@ part 'subtitle.freezed.dart';
 part 'subtitle.g.dart';
 
 @freezed
-abstract class VideoSubtitle with _$VideoSubtitle {
+sealed class VideoSubtitle with _$VideoSubtitle {
   const factory VideoSubtitle({@Default([]) List<SubtitleInfo> list}) =
       _VideoSubtitle;
 
@@ -13,7 +13,7 @@ abstract class VideoSubtitle with _$VideoSubtitle {
 }
 
 @freezed
-abstract class SubtitleInfo with _$SubtitleInfo {
+sealed class SubtitleInfo with _$SubtitleInfo {
   const factory SubtitleInfo({
     required int id,
     required String lan,
@@ -29,7 +29,7 @@ abstract class SubtitleInfo with _$SubtitleInfo {
 }
 
 @freezed
-abstract class SubtitleContent with _$SubtitleContent {
+sealed class SubtitleContent with _$SubtitleContent {
   const factory SubtitleContent({
     @JsonKey(name: 'font_size') double? fontSize,
     @JsonKey(name: 'font_color') String? fontColor,
@@ -43,7 +43,7 @@ abstract class SubtitleContent with _$SubtitleContent {
 }
 
 @freezed
-abstract class SubtitleItem with _$SubtitleItem {
+sealed class SubtitleItem with _$SubtitleItem {
   const factory SubtitleItem({
     required double from,
     required double to,

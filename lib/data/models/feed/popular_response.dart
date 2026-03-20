@@ -5,7 +5,7 @@ part 'popular_response.freezed.dart';
 part 'popular_response.g.dart';
 
 @freezed
-abstract class PopularResponse with _$PopularResponse {
+sealed class PopularResponse with _$PopularResponse {
   const factory PopularResponse({
     @Default([]) List<VideoModel> list,
     @JsonKey(name: 'no_more') @Default(false) bool noMore,

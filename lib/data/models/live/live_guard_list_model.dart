@@ -4,7 +4,7 @@ part 'live_guard_list_model.freezed.dart';
 part 'live_guard_list_model.g.dart';
 
 @freezed
-abstract class LiveGuardListModel with _$LiveGuardListModel {
+sealed class LiveGuardListModel with _$LiveGuardListModel {
   const factory LiveGuardListModel({
     required LiveGuardInfo info,
     @Default([]) List<LiveGuardItem> top3,
@@ -16,7 +16,7 @@ abstract class LiveGuardListModel with _$LiveGuardListModel {
 }
 
 @freezed
-abstract class LiveGuardInfo with _$LiveGuardInfo {
+sealed class LiveGuardInfo with _$LiveGuardInfo {
   const factory LiveGuardInfo({
     required int num,
     required int page,
@@ -28,7 +28,7 @@ abstract class LiveGuardInfo with _$LiveGuardInfo {
 }
 
 @freezed
-abstract class LiveGuardItem with _$LiveGuardItem {
+sealed class LiveGuardItem with _$LiveGuardItem {
   const factory LiveGuardItem({
     required int ruid,
     required int rank,
@@ -41,7 +41,7 @@ abstract class LiveGuardItem with _$LiveGuardItem {
 }
 
 @freezed
-abstract class LiveGuardUserInfo with _$LiveGuardUserInfo {
+sealed class LiveGuardUserInfo with _$LiveGuardUserInfo {
   const factory LiveGuardUserInfo({
     required int uid,
     @JsonKey(name: 'base') required LiveGuardUserBase base,
@@ -52,7 +52,7 @@ abstract class LiveGuardUserInfo with _$LiveGuardUserInfo {
 }
 
 @freezed
-abstract class LiveGuardUserBase with _$LiveGuardUserBase {
+sealed class LiveGuardUserBase with _$LiveGuardUserBase {
   const factory LiveGuardUserBase({
     required String name,
     required String face,

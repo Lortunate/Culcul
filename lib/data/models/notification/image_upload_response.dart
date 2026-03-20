@@ -4,7 +4,7 @@ part 'image_upload_response.freezed.dart';
 part 'image_upload_response.g.dart';
 
 @freezed
-abstract class ImageUploadResponse with _$ImageUploadResponse {
+sealed class ImageUploadResponse with _$ImageUploadResponse {
   const factory ImageUploadResponse({
     @JsonKey(name: 'image_url') required String imageUrl,
     @JsonKey(name: 'image_width') required int imageWidth,

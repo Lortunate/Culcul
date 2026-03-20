@@ -4,7 +4,7 @@ part 'live_anchor_info_model.freezed.dart';
 part 'live_anchor_info_model.g.dart';
 
 @freezed
-abstract class LiveAnchorInfoModel with _$LiveAnchorInfoModel {
+sealed class LiveAnchorInfoModel with _$LiveAnchorInfoModel {
   const factory LiveAnchorInfoModel({
     required LiveAnchorInfo info,
     required LiveAnchorExp exp,
@@ -20,7 +20,7 @@ abstract class LiveAnchorInfoModel with _$LiveAnchorInfoModel {
 }
 
 @freezed
-abstract class LiveAnchorInfo with _$LiveAnchorInfo {
+sealed class LiveAnchorInfo with _$LiveAnchorInfo {
   const factory LiveAnchorInfo({
     required int uid,
     required String uname,
@@ -34,7 +34,7 @@ abstract class LiveAnchorInfo with _$LiveAnchorInfo {
 }
 
 @freezed
-abstract class LiveAnchorVerify with _$LiveAnchorVerify {
+sealed class LiveAnchorVerify with _$LiveAnchorVerify {
   const factory LiveAnchorVerify({
     required int type,
     required String desc,
@@ -45,7 +45,7 @@ abstract class LiveAnchorVerify with _$LiveAnchorVerify {
 }
 
 @freezed
-abstract class LiveAnchorExp with _$LiveAnchorExp {
+sealed class LiveAnchorExp with _$LiveAnchorExp {
   const factory LiveAnchorExp({
     @JsonKey(name: 'master_level') required LiveMasterLevel masterLevel,
   }) = _LiveAnchorExp;
@@ -55,7 +55,7 @@ abstract class LiveAnchorExp with _$LiveAnchorExp {
 }
 
 @freezed
-abstract class LiveMasterLevel with _$LiveMasterLevel {
+sealed class LiveMasterLevel with _$LiveMasterLevel {
   const factory LiveMasterLevel({
     required int level,
     required int color,

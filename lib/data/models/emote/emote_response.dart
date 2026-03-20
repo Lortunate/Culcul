@@ -1,45 +1,38 @@
-import 'package:json_annotation/json_annotation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
+part 'emote_response.freezed.dart';
 part 'emote_response.g.dart';
 
-@JsonSerializable()
-class EmoteResponse {
-  final List<EmotePackage> packages;
-
-  EmoteResponse({required this.packages});
+@freezed
+sealed class EmoteResponse with _$EmoteResponse {
+  const factory EmoteResponse({
+    required List<EmotePackage> packages,
+  }) = _EmoteResponse;
 
   factory EmoteResponse.fromJson(Map<String, dynamic> json) =>
       _$EmoteResponseFromJson(json);
-  Map<String, dynamic> toJson() => _$EmoteResponseToJson(this);
 }
 
-@JsonSerializable()
-class EmotePackage {
-  final int id;
-  final String text;
-  final String url;
-  final List<Emote> emote;
-
-  EmotePackage({
-    required this.id,
-    required this.text,
-    required this.url,
-    required this.emote,
-  });
+@freezed
+sealed class EmotePackage with _$EmotePackage {
+  const factory EmotePackage({
+    required int id,
+    required String text,
+    required String url,
+    required List<Emote> emote,
+  }) = _EmotePackage;
 
   factory EmotePackage.fromJson(Map<String, dynamic> json) =>
       _$EmotePackageFromJson(json);
-  Map<String, dynamic> toJson() => _$EmotePackageToJson(this);
 }
 
-@JsonSerializable()
-class Emote {
-  final int id;
-  final String text;
-  final String url;
-
-  Emote({required this.id, required this.text, required this.url});
+@freezed
+sealed class Emote with _$Emote {
+  const factory Emote({
+    required int id,
+    required String text,
+    required String url,
+  }) = _Emote;
 
   factory Emote.fromJson(Map<String, dynamic> json) => _$EmoteFromJson(json);
-  Map<String, dynamic> toJson() => _$EmoteToJson(this);
 }

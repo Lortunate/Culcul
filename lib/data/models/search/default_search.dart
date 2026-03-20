@@ -4,7 +4,7 @@ part 'default_search.freezed.dart';
 part 'default_search.g.dart';
 
 @freezed
-abstract class DefaultSearch with _$DefaultSearch {
+sealed class DefaultSearch with _$DefaultSearch {
   const factory DefaultSearch({
     @JsonKey(name: 'show_name') required String showName,
     required String name,
@@ -18,7 +18,7 @@ abstract class DefaultSearch with _$DefaultSearch {
 }
 
 @freezed
-abstract class DefaultSearchData with _$DefaultSearchData {
+sealed class DefaultSearchData with _$DefaultSearchData {
   const factory DefaultSearchData({
     @JsonKey(name: 'show_name') required String showName,
     required String name,

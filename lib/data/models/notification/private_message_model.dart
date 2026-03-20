@@ -5,7 +5,7 @@ part 'private_message_model.freezed.dart';
 part 'private_message_model.g.dart';
 
 @freezed
-abstract class PrivateMessageSessionResponse
+sealed class PrivateMessageSessionResponse
     with _$PrivateMessageSessionResponse {
   const factory PrivateMessageSessionResponse({
     @JsonKey(name: 'session_list') List<PrivateMessageSession>? sessionList,
@@ -18,7 +18,7 @@ abstract class PrivateMessageSessionResponse
 }
 
 @freezed
-abstract class PrivateMessageSession with _$PrivateMessageSession {
+sealed class PrivateMessageSession with _$PrivateMessageSession {
   const PrivateMessageSession._();
   const factory PrivateMessageSession({
     @JsonKey(name: 'talker_id') required int talkerId,
@@ -37,7 +37,7 @@ abstract class PrivateMessageSession with _$PrivateMessageSession {
 }
 
 @freezed
-abstract class PrivateMessageDetail with _$PrivateMessageDetail {
+sealed class PrivateMessageDetail with _$PrivateMessageDetail {
   const PrivateMessageDetail._();
   const factory PrivateMessageDetail({
     @JsonKey(name: 'sender_uid') required int senderUid,
@@ -147,7 +147,7 @@ abstract class PrivateMessageDetail with _$PrivateMessageDetail {
 }
 
 @freezed
-abstract class PrivateMessageListResponse with _$PrivateMessageListResponse {
+sealed class PrivateMessageListResponse with _$PrivateMessageListResponse {
   const factory PrivateMessageListResponse({
     List<PrivateMessageDetail>? messages,
     @JsonKey(name: 'has_more') @Default(0) int hasMore,
@@ -161,7 +161,7 @@ abstract class PrivateMessageListResponse with _$PrivateMessageListResponse {
 }
 
 @freezed
-abstract class PrivateMessageEmojiInfo with _$PrivateMessageEmojiInfo {
+sealed class PrivateMessageEmojiInfo with _$PrivateMessageEmojiInfo {
   const factory PrivateMessageEmojiInfo({
     required String text,
     required String url,
@@ -174,7 +174,7 @@ abstract class PrivateMessageEmojiInfo with _$PrivateMessageEmojiInfo {
 }
 
 @freezed
-abstract class SendMessageResponse with _$SendMessageResponse {
+sealed class SendMessageResponse with _$SendMessageResponse {
   const factory SendMessageResponse({
     @JsonKey(name: 'msg_key') required int msgKey,
     @JsonKey(name: 'msg_content') String? msgContent,
@@ -186,7 +186,7 @@ abstract class SendMessageResponse with _$SendMessageResponse {
 }
 
 @freezed
-abstract class PrivateMessageAccountInfo with _$PrivateMessageAccountInfo {
+sealed class PrivateMessageAccountInfo with _$PrivateMessageAccountInfo {
   const factory PrivateMessageAccountInfo({
     required String name,
     @JsonKey(name: 'pic_url') required String picUrl,

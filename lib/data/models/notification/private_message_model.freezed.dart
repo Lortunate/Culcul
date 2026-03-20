@@ -117,10 +117,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _PrivateMessageSessionResponse():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -179,10 +176,7 @@ return $default(_that.sessionList,_that.hasMore,_that.systemMsg);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'session_list')  List<PrivateMessageSession>? sessionList, @JsonKey(name: 'has_more')  int hasMore, @JsonKey(name: 'system_msg')  Map<String, int>? systemMsg)  $default,) {final _that = this;
 switch (_that) {
 case _PrivateMessageSessionResponse():
-return $default(_that.sessionList,_that.hasMore,_that.systemMsg);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.sessionList,_that.hasMore,_that.systemMsg);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -432,10 +426,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _PrivateMessageSession():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -494,10 +485,7 @@ return $default(_that.talkerId,_that.sessionType,_that.unreadCount,_that.lastMsg
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'talker_id')  int talkerId, @JsonKey(name: 'session_type')  int sessionType, @JsonKey(name: 'unread_count')  int unreadCount, @JsonKey(name: 'last_msg')  PrivateMessageDetail? lastMsg, @JsonKey(name: 'group_name')  String? groupName, @JsonKey(name: 'group_cover')  String? groupCover, @JsonKey(name: 'is_follow')  int isFollow, @JsonKey(name: 'session_ts')  int sessionTs, @JsonKey(name: 'account_info')  PrivateMessageAccountInfo? accountInfo)  $default,) {final _that = this;
 switch (_that) {
 case _PrivateMessageSession():
-return $default(_that.talkerId,_that.sessionType,_that.unreadCount,_that.lastMsg,_that.groupName,_that.groupCover,_that.isFollow,_that.sessionTs,_that.accountInfo);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.talkerId,_that.sessionType,_that.unreadCount,_that.lastMsg,_that.groupName,_that.groupCover,_that.isFollow,_that.sessionTs,_that.accountInfo);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -748,10 +736,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _PrivateMessageDetail():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -810,10 +795,7 @@ return $default(_that.senderUid,_that.receiverType,_that.receiverId,_that.msgTyp
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'sender_uid')  int senderUid, @JsonKey(name: 'receiver_type')  int receiverType, @JsonKey(name: 'receiver_id')  int receiverId, @JsonKey(name: 'msg_type')  int msgType,  dynamic content, @JsonKey(name: 'msg_seqno')  int msgSeqno,  int timestamp, @JsonKey(name: 'at_uids')  List<int>? atUids, @JsonKey(name: 'msg_key')  int? msgKey, @JsonKey(name: 'msg_status')  int? msgStatus, @JsonKey(name: 'notify_code')  String? notifyCode, @JsonKey(name: 'new_face_version')  int? newFaceVersion, @JsonKey(name: 'msg_source')  int? msgSource)  $default,) {final _that = this;
 switch (_that) {
 case _PrivateMessageDetail():
-return $default(_that.senderUid,_that.receiverType,_that.receiverId,_that.msgType,_that.content,_that.msgSeqno,_that.timestamp,_that.atUids,_that.msgKey,_that.msgStatus,_that.notifyCode,_that.newFaceVersion,_that.msgSource);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.senderUid,_that.receiverType,_that.receiverId,_that.msgType,_that.content,_that.msgSeqno,_that.timestamp,_that.atUids,_that.msgKey,_that.msgStatus,_that.notifyCode,_that.newFaceVersion,_that.msgSource);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1048,10 +1030,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _PrivateMessageListResponse():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -1110,10 +1089,7 @@ return $default(_that.messages,_that.hasMore,_that.minSeqno,_that.maxSeqno,_that
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<PrivateMessageDetail>? messages, @JsonKey(name: 'has_more')  int hasMore, @JsonKey(name: 'min_seqno')  int? minSeqno, @JsonKey(name: 'max_seqno')  int? maxSeqno, @JsonKey(name: 'e_infos')  List<PrivateMessageEmojiInfo>? emojiInfos)  $default,) {final _that = this;
 switch (_that) {
 case _PrivateMessageListResponse():
-return $default(_that.messages,_that.hasMore,_that.minSeqno,_that.maxSeqno,_that.emojiInfos);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.messages,_that.hasMore,_that.minSeqno,_that.maxSeqno,_that.emojiInfos);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1338,10 +1314,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _PrivateMessageEmojiInfo():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -1400,10 +1373,7 @@ return $default(_that.text,_that.url,_that.size,_that.gifUrl);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String text,  String url,  int size, @JsonKey(name: 'gif_url')  String? gifUrl)  $default,) {final _that = this;
 switch (_that) {
 case _PrivateMessageEmojiInfo():
-return $default(_that.text,_that.url,_that.size,_that.gifUrl);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.text,_that.url,_that.size,_that.gifUrl);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1609,10 +1579,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _SendMessageResponse():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -1671,10 +1638,7 @@ return $default(_that.msgKey,_that.msgContent,_that.keyHitInfos);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'msg_key')  int msgKey, @JsonKey(name: 'msg_content')  String? msgContent, @JsonKey(name: 'key_hit_infos')  Map<String, dynamic>? keyHitInfos)  $default,) {final _that = this;
 switch (_that) {
 case _SendMessageResponse():
-return $default(_that.msgKey,_that.msgContent,_that.keyHitInfos);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.msgKey,_that.msgContent,_that.keyHitInfos);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1885,10 +1849,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _PrivateMessageAccountInfo():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -1947,10 +1908,7 @@ return $default(_that.name,_that.picUrl);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name, @JsonKey(name: 'pic_url')  String picUrl)  $default,) {final _that = this;
 switch (_that) {
 case _PrivateMessageAccountInfo():
-return $default(_that.name,_that.picUrl);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.name,_that.picUrl);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

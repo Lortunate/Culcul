@@ -4,7 +4,7 @@ part 'search_suggestion.freezed.dart';
 part 'search_suggestion.g.dart';
 
 @freezed
-abstract class SearchSuggestionResponse with _$SearchSuggestionResponse {
+sealed class SearchSuggestionResponse with _$SearchSuggestionResponse {
   const factory SearchSuggestionResponse({
     int? code,
     @JsonKey(name: 'exp_str') String? expStr,
@@ -16,7 +16,7 @@ abstract class SearchSuggestionResponse with _$SearchSuggestionResponse {
 }
 
 @freezed
-abstract class SearchSuggestionResult with _$SearchSuggestionResult {
+sealed class SearchSuggestionResult with _$SearchSuggestionResult {
   const factory SearchSuggestionResult({
     @JsonKey(name: 'tag') List<SearchSuggestionTag>? tags,
   }) = _SearchSuggestionResult;
@@ -26,7 +26,7 @@ abstract class SearchSuggestionResult with _$SearchSuggestionResult {
 }
 
 @freezed
-abstract class SearchSuggestionTag with _$SearchSuggestionTag {
+sealed class SearchSuggestionTag with _$SearchSuggestionTag {
   const factory SearchSuggestionTag({
     String? value,
     String? term,

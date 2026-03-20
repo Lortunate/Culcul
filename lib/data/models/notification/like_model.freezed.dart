@@ -134,10 +134,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LikeResponse():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -196,10 +193,7 @@ return $default(_that.latest,_that.total);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( LikeLatest latest,  LikeTotal total)  $default,) {final _that = this;
 switch (_that) {
 case _LikeResponse():
-return $default(_that.latest,_that.total);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.latest,_that.total);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -418,10 +412,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LikeLatest():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -480,10 +471,7 @@ return $default(_that.items,_that.lastViewAt);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<ReplyItem> items, @JsonKey(name: 'last_view_at')  int lastViewAt)  $default,) {final _that = this;
 switch (_that) {
 case _LikeLatest():
-return $default(_that.items,_that.lastViewAt);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.items,_that.lastViewAt);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -699,10 +687,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LikeTotal():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -761,10 +746,7 @@ return $default(_that.cursor,_that.items);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ReplyCursor cursor,  List<ReplyItem> items)  $default,) {final _that = this;
 switch (_that) {
 case _LikeTotal():
-return $default(_that.cursor,_that.items);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.cursor,_that.items);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

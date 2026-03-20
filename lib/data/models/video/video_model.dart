@@ -5,7 +5,7 @@ part 'video_model.freezed.dart';
 part 'video_model.g.dart';
 
 @freezed
-abstract class VideoModel with _$VideoModel {
+sealed class VideoModel with _$VideoModel {
   const VideoModel._();
 
   const factory VideoModel({
@@ -17,7 +17,10 @@ abstract class VideoModel with _$VideoModel {
     required int duration,
     @JsonKey(name: 'pubdate') required int pubDate,
     @Default('') String desc,
-    @RcmdReasonConverter() @Default('') String rcmd_reason,
+    @JsonKey(name: 'rcmd_reason')
+    @RcmdReasonConverter()
+    @Default('')
+    String rcmdReason,
   }) = _VideoModel;
 
   factory VideoModel.fromJson(Map<String, dynamic> json) =>
@@ -28,7 +31,7 @@ abstract class VideoModel with _$VideoModel {
 }
 
 @freezed
-abstract class Owner with _$Owner {
+sealed class Owner with _$Owner {
   const factory Owner({
     required int mid,
     required String name,
@@ -39,7 +42,7 @@ abstract class Owner with _$Owner {
 }
 
 @freezed
-abstract class Stat with _$Stat {
+sealed class Stat with _$Stat {
   const Stat._();
 
   const factory Stat({

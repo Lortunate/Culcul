@@ -15,7 +15,7 @@ _VideoModel _$VideoModelFromJson(Map<String, dynamic> json) => _VideoModel(
   duration: (json['duration'] as num).toInt(),
   pubDate: (json['pubdate'] as num).toInt(),
   desc: json['desc'] as String? ?? '',
-  rcmd_reason: json['rcmd_reason'] == null
+  rcmdReason: json['rcmd_reason'] == null
       ? ''
       : const RcmdReasonConverter().fromJson(json['rcmd_reason']),
 );
@@ -30,7 +30,7 @@ Map<String, dynamic> _$VideoModelToJson(_VideoModel instance) =>
       'duration': instance.duration,
       'pubdate': instance.pubDate,
       'desc': instance.desc,
-      'rcmd_reason': const RcmdReasonConverter().toJson(instance.rcmd_reason),
+      'rcmd_reason': const RcmdReasonConverter().toJson(instance.rcmdReason),
     };
 
 _Owner _$OwnerFromJson(Map<String, dynamic> json) => _Owner(

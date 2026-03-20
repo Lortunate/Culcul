@@ -139,10 +139,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveRoomModel():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -201,10 +198,7 @@ return $default(_that.roomId,_that.uid,_that.title,_that.uname,_that.cover,_that
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'roomid')  int roomId, @JsonKey(name: 'uid')  int uid,  String title,  String uname,  String cover,  String face, @JsonKey(name: 'online')  int online, @JsonKey(name: 'area_v2_name')  String areaName, @JsonKey(name: 'area_v2_parent_name')  String parentAreaName, @JsonKey(name: 'link')  String link, @JsonKey(name: 'keyframe')  String? keyframe, @JsonKey(name: 'watched_show')  WatchedShow? watchedShow, @JsonKey(name: 'is_auto_play')  int? isAutoPlay)  $default,) {final _that = this;
 switch (_that) {
 case _LiveRoomModel():
-return $default(_that.roomId,_that.uid,_that.title,_that.uname,_that.cover,_that.face,_that.online,_that.areaName,_that.parentAreaName,_that.link,_that.keyframe,_that.watchedShow,_that.isAutoPlay);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.roomId,_that.uid,_that.title,_that.uname,_that.cover,_that.face,_that.online,_that.areaName,_that.parentAreaName,_that.link,_that.keyframe,_that.watchedShow,_that.isAutoPlay);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -443,10 +437,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _WatchedShow():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -505,10 +496,7 @@ return $default(_that.switchStatus,_that.num,_that.textSmall,_that.textLarge,_th
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'switch')  bool switchStatus,  int num, @JsonKey(name: 'text_small')  String textSmall, @JsonKey(name: 'text_large')  String textLarge,  String icon, @JsonKey(name: 'icon_web')  String iconWeb)  $default,) {final _that = this;
 switch (_that) {
 case _WatchedShow():
-return $default(_that.switchStatus,_that.num,_that.textSmall,_that.textLarge,_that.icon,_that.iconWeb);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.switchStatus,_that.num,_that.textSmall,_that.textLarge,_that.icon,_that.iconWeb);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

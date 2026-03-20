@@ -4,7 +4,7 @@ part 'live_danmaku_model.freezed.dart';
 part 'live_danmaku_model.g.dart';
 
 @freezed
-abstract class LiveDanmakuConfigModel with _$LiveDanmakuConfigModel {
+sealed class LiveDanmakuConfigModel with _$LiveDanmakuConfigModel {
   const factory LiveDanmakuConfigModel({
     required List<LiveDanmakuGroup> group,
     required List<LiveDanmakuMode> mode,
@@ -15,7 +15,7 @@ abstract class LiveDanmakuConfigModel with _$LiveDanmakuConfigModel {
 }
 
 @freezed
-abstract class LiveDanmakuGroup with _$LiveDanmakuGroup {
+sealed class LiveDanmakuGroup with _$LiveDanmakuGroup {
   const factory LiveDanmakuGroup({
     required String name,
     required int sort,
@@ -27,7 +27,7 @@ abstract class LiveDanmakuGroup with _$LiveDanmakuGroup {
 }
 
 @freezed
-abstract class LiveDanmakuColor with _$LiveDanmakuColor {
+sealed class LiveDanmakuColor with _$LiveDanmakuColor {
   const factory LiveDanmakuColor({
     required String name,
     required String color,
@@ -43,7 +43,7 @@ abstract class LiveDanmakuColor with _$LiveDanmakuColor {
 }
 
 @freezed
-abstract class LiveDanmakuMode with _$LiveDanmakuMode {
+sealed class LiveDanmakuMode with _$LiveDanmakuMode {
   const factory LiveDanmakuMode({
     required String name,
     required int mode,

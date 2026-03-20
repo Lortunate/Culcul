@@ -148,10 +148,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _FavResourceModel():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -210,10 +207,7 @@ return $default(_that.id,_that.type,_that.title,_that.cover,_that.intro,_that.pa
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'id')  int id, @JsonKey(name: 'type')  int type, @JsonKey(name: 'title')  String title, @JsonKey(name: 'cover')  String cover, @JsonKey(name: 'intro')  String intro, @JsonKey(name: 'page')  int page, @JsonKey(name: 'duration')  int duration, @JsonKey(name: 'upper')  FavUpperModel upper, @JsonKey(name: 'attr')  int attr, @JsonKey(name: 'cnt_info')  FavCntInfoModel cntInfo, @JsonKey(name: 'link')  String link, @JsonKey(name: 'ctime')  int ctime, @JsonKey(name: 'pubtime')  int pubtime, @JsonKey(name: 'fav_time')  int favTime, @JsonKey(name: 'bv_id')  String? bvId, @JsonKey(name: 'bvid')  String? bvid)  $default,) {final _that = this;
 switch (_that) {
 case _FavResourceModel():
-return $default(_that.id,_that.type,_that.title,_that.cover,_that.intro,_that.page,_that.duration,_that.upper,_that.attr,_that.cntInfo,_that.link,_that.ctime,_that.pubtime,_that.favTime,_that.bvId,_that.bvid);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.id,_that.type,_that.title,_that.cover,_that.intro,_that.page,_that.duration,_that.upper,_that.attr,_that.cntInfo,_that.link,_that.ctime,_that.pubtime,_that.favTime,_that.bvId,_that.bvid);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -461,10 +455,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _FavUpperModel():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -523,10 +514,7 @@ return $default(_that.mid,_that.name,_that.face);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'mid')  int mid, @JsonKey(name: 'name')  String name, @JsonKey(name: 'face')  String face)  $default,) {final _that = this;
 switch (_that) {
 case _FavUpperModel():
-return $default(_that.mid,_that.name,_that.face);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.mid,_that.name,_that.face);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -730,10 +718,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _FavCntInfoModel():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -792,10 +777,7 @@ return $default(_that.collect,_that.play,_that.danmaku);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'collect')  int collect, @JsonKey(name: 'play')  int play, @JsonKey(name: 'danmaku')  int danmaku)  $default,) {final _that = this;
 switch (_that) {
 case _FavCntInfoModel():
-return $default(_that.collect,_that.play,_that.danmaku);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.collect,_that.play,_that.danmaku);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1008,10 +990,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _FavResourceListResponse():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -1070,10 +1049,7 @@ return $default(_that.info,_that.medias,_that.hasMore);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'info')  FavFolderInfoModel info, @JsonKey(name: 'medias')  List<FavResourceModel>? medias, @JsonKey(name: 'has_more')  bool hasMore)  $default,) {final _that = this;
 switch (_that) {
 case _FavResourceListResponse():
-return $default(_that.info,_that.medias,_that.hasMore);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.info,_that.medias,_that.hasMore);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1308,10 +1284,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _FavFolderInfoModel():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -1370,10 +1343,7 @@ return $default(_that.id,_that.fid,_that.mid,_that.attr,_that.title,_that.cover,
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'id')  int id, @JsonKey(name: 'fid')  int fid, @JsonKey(name: 'mid')  int mid, @JsonKey(name: 'attr')  int attr, @JsonKey(name: 'title')  String title, @JsonKey(name: 'cover')  String cover, @JsonKey(name: 'upper')  FavUpperModel upper, @JsonKey(name: 'media_count')  int mediaCount)  $default,) {final _that = this;
 switch (_that) {
 case _FavFolderInfoModel():
-return $default(_that.id,_that.fid,_that.mid,_that.attr,_that.title,_that.cover,_that.upper,_that.mediaCount);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.id,_that.fid,_that.mid,_that.attr,_that.title,_that.cover,_that.upper,_that.mediaCount);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

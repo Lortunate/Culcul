@@ -127,10 +127,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _TrendingRankingResponse():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -189,10 +186,7 @@ return $default(_that.code,_that.message,_that.ttl,_that.data);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int code,  String message,  int ttl,  TrendingRankingData data)  $default,) {final _that = this;
 switch (_that) {
 case _TrendingRankingResponse():
-return $default(_that.code,_that.message,_that.ttl,_that.data);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.code,_that.message,_that.ttl,_that.data);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -408,10 +402,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _TrendingRankingData():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -470,10 +461,7 @@ return $default(_that.trackid,_that.list,_that.topList,_that.hotwordEggInfo);cas
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String trackid,  List<TrendingItem> list, @JsonKey(name: 'top_list')  List<dynamic> topList, @JsonKey(name: 'hotword_egg_info')  String hotwordEggInfo)  $default,) {final _that = this;
 switch (_that) {
 case _TrendingRankingData():
-return $default(_that.trackid,_that.list,_that.topList,_that.hotwordEggInfo);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.trackid,_that.list,_that.topList,_that.hotwordEggInfo);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -697,10 +685,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _TrendingItem():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -759,10 +744,7 @@ return $default(_that.position,_that.keyword,_that.showName,_that.wordType,_that
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int position,  String keyword, @JsonKey(name: 'show_name')  String showName, @JsonKey(name: 'word_type')  int wordType,  String? icon, @JsonKey(name: 'hot_id')  int hotId, @JsonKey(name: 'is_commercial')  String? isCommercial, @JsonKey(name: 'resource_id')  int? resourceId, @JsonKey(name: 'show_live_icon')  bool? showLiveIcon)  $default,) {final _that = this;
 switch (_that) {
 case _TrendingItem():
-return $default(_that.position,_that.keyword,_that.showName,_that.wordType,_that.icon,_that.hotId,_that.isCommercial,_that.resourceId,_that.showLiveIcon);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.position,_that.keyword,_that.showName,_that.wordType,_that.icon,_that.hotId,_that.isCommercial,_that.resourceId,_that.showLiveIcon);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

@@ -12,7 +12,7 @@ part 'player_controller.freezed.dart';
 part 'player_controller.g.dart';
 
 @freezed
-abstract class PlayerUiState with _$PlayerUiState {
+sealed class PlayerUiState with _$PlayerUiState {
   const factory PlayerUiState({
     @Default(false) bool isPlaying,
     @Default(false) bool isBuffering,

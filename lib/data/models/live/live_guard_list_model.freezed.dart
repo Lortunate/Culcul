@@ -126,10 +126,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveGuardListModel():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -188,10 +185,7 @@ return $default(_that.info,_that.top3,_that.list);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( LiveGuardInfo info,  List<LiveGuardItem> top3,  List<LiveGuardItem> list)  $default,) {final _that = this;
 switch (_that) {
 case _LiveGuardListModel():
-return $default(_that.info,_that.top3,_that.list);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.info,_that.top3,_that.list);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -416,10 +410,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveGuardInfo():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -478,10 +469,7 @@ return $default(_that.num,_that.page,_that.now);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int num,  int page,  int now)  $default,) {final _that = this;
 switch (_that) {
 case _LiveGuardInfo():
-return $default(_that.num,_that.page,_that.now);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.num,_that.page,_that.now);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -695,10 +683,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveGuardItem():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -757,10 +742,7 @@ return $default(_that.ruid,_that.rank,_that.userInfo,_that.guardLevel);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int ruid,  int rank, @JsonKey(name: 'uinfo')  LiveGuardUserInfo userInfo, @JsonKey(name: 'guard_level')  int guardLevel)  $default,) {final _that = this;
 switch (_that) {
 case _LiveGuardItem():
-return $default(_that.ruid,_that.rank,_that.userInfo,_that.guardLevel);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.ruid,_that.rank,_that.userInfo,_that.guardLevel);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -983,10 +965,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveGuardUserInfo():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -1045,10 +1024,7 @@ return $default(_that.uid,_that.base);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int uid, @JsonKey(name: 'base')  LiveGuardUserBase base)  $default,) {final _that = this;
 switch (_that) {
 case _LiveGuardUserInfo():
-return $default(_that.uid,_that.base);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.uid,_that.base);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1258,10 +1234,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveGuardUserBase():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -1320,10 +1293,7 @@ return $default(_that.name,_that.face);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String face)  $default,) {final _that = this;
 switch (_that) {
 case _LiveGuardUserBase():
-return $default(_that.name,_that.face);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.name,_that.face);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

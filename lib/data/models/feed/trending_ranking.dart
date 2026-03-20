@@ -4,7 +4,7 @@ part 'trending_ranking.freezed.dart';
 part 'trending_ranking.g.dart';
 
 @freezed
-abstract class TrendingRankingResponse with _$TrendingRankingResponse {
+sealed class TrendingRankingResponse with _$TrendingRankingResponse {
   const factory TrendingRankingResponse({
     required int code,
     required String message,
@@ -17,7 +17,7 @@ abstract class TrendingRankingResponse with _$TrendingRankingResponse {
 }
 
 @freezed
-abstract class TrendingRankingData with _$TrendingRankingData {
+sealed class TrendingRankingData with _$TrendingRankingData {
   const factory TrendingRankingData({
     required String trackid,
     required List<TrendingItem> list,
@@ -30,7 +30,7 @@ abstract class TrendingRankingData with _$TrendingRankingData {
 }
 
 @freezed
-abstract class TrendingItem with _$TrendingItem {
+sealed class TrendingItem with _$TrendingItem {
   const factory TrendingItem({
     required int position,
     required String keyword,

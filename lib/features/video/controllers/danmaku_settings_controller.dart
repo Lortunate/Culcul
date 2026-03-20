@@ -5,7 +5,7 @@ part 'danmaku_settings_controller.freezed.dart';
 part 'danmaku_settings_controller.g.dart';
 
 @freezed
-abstract class DanmakuSettings with _$DanmakuSettings {
+sealed class DanmakuSettings with _$DanmakuSettings {
   const factory DanmakuSettings({
     @Default(1.0) double opacity,
     @Default(1.0) double fontSizeScale,

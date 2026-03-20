@@ -5,7 +5,7 @@ part 'live_recommend_response.freezed.dart';
 part 'live_recommend_response.g.dart';
 
 @freezed
-abstract class LiveRecommendResponse with _$LiveRecommendResponse {
+sealed class LiveRecommendResponse with _$LiveRecommendResponse {
   const factory LiveRecommendResponse({
     @JsonKey(name: 'recommend_room_list') required List<LiveRoomModel> roomList,
   }) = _LiveRecommendResponse;

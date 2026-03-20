@@ -4,7 +4,7 @@ part 'unread_count_model.freezed.dart';
 part 'unread_count_model.g.dart';
 
 @freezed
-abstract class UnreadCountModel with _$UnreadCountModel {
+sealed class UnreadCountModel with _$UnreadCountModel {
   const factory UnreadCountModel({
     @Default(0) int at,
     @Default(0) int chat,

@@ -60,7 +60,7 @@ final class DynamicCommentControllerProvider
 }
 
 String _$dynamicCommentControllerHash() =>
-    r'250b4b8408891f1dc913249c823b335873447d85';
+    r'1645c8d23deb51990f43cbf33b769b600fb319d0';
 
 final class DynamicCommentControllerFamily extends $Family
     with

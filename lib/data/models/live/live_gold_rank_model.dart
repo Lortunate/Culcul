@@ -4,7 +4,7 @@ part 'live_gold_rank_model.freezed.dart';
 part 'live_gold_rank_model.g.dart';
 
 @freezed
-abstract class LiveGoldRankModel with _$LiveGoldRankModel {
+sealed class LiveGoldRankModel with _$LiveGoldRankModel {
   const factory LiveGoldRankModel({
     @JsonKey(name: 'onlineNum') required int onlineNum,
     @JsonKey(name: 'OnlineRankItem') required List<LiveRankItem> list,
@@ -15,7 +15,7 @@ abstract class LiveGoldRankModel with _$LiveGoldRankModel {
 }
 
 @freezed
-abstract class LiveRankItem with _$LiveRankItem {
+sealed class LiveRankItem with _$LiveRankItem {
   const factory LiveRankItem({
     required int userRank,
     required int uid,
@@ -32,7 +32,7 @@ abstract class LiveRankItem with _$LiveRankItem {
 }
 
 @freezed
-abstract class LiveRankMedalInfo with _$LiveRankMedalInfo {
+sealed class LiveRankMedalInfo with _$LiveRankMedalInfo {
   const factory LiveRankMedalInfo({
     required int guardLevel,
     required int medalColorStart,

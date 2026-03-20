@@ -4,7 +4,7 @@ part 'api_response.freezed.dart';
 part 'api_response.g.dart';
 
 @Freezed(genericArgumentFactories: true)
-abstract class ApiResponse<T> with _$ApiResponse<T> {
+sealed class ApiResponse<T> with _$ApiResponse<T> {
   const ApiResponse._();
 
   const factory ApiResponse({

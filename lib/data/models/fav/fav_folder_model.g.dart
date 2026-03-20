@@ -6,8 +6,8 @@ part of 'fav_folder_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-FavFolderModel _$FavFolderModelFromJson(Map<String, dynamic> json) =>
-    FavFolderModel(
+_FavFolderModel _$FavFolderModelFromJson(Map<String, dynamic> json) =>
+    _FavFolderModel(
       id: (json['id'] as num).toInt(),
       fid: (json['fid'] as num).toInt(),
       mid: (json['mid'] as num).toInt(),
@@ -25,7 +25,7 @@ FavFolderModel _$FavFolderModelFromJson(Map<String, dynamic> json) =>
       state: (json['state'] as num?)?.toInt(),
     );
 
-Map<String, dynamic> _$FavFolderModelToJson(FavFolderModel instance) =>
+Map<String, dynamic> _$FavFolderModelToJson(_FavFolderModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'fid': instance.fid,
@@ -42,9 +42,9 @@ Map<String, dynamic> _$FavFolderModelToJson(FavFolderModel instance) =>
       'state': instance.state,
     };
 
-FavFolderListResponse _$FavFolderListResponseFromJson(
+_FavFolderListResponse _$FavFolderListResponseFromJson(
   Map<String, dynamic> json,
-) => FavFolderListResponse(
+) => _FavFolderListResponse(
   count: (json['count'] as num).toInt(),
   list: (json['list'] as List<dynamic>?)
       ?.map((e) => FavFolderModel.fromJson(e as Map<String, dynamic>))
@@ -52,5 +52,5 @@ FavFolderListResponse _$FavFolderListResponseFromJson(
 );
 
 Map<String, dynamic> _$FavFolderListResponseToJson(
-  FavFolderListResponse instance,
+  _FavFolderListResponse instance,
 ) => <String, dynamic>{'count': instance.count, 'list': instance.list};

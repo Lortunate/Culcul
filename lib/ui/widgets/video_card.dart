@@ -90,7 +90,7 @@ class _VideoContent extends StatelessWidget {
     return VideoCardContent(
       title: video.title,
       author: video.owner.name,
-      reason: video.rcmd_reason,
+      reason: video.rcmdReason,
       description: showDescription ? video.desc : null,
       showAuthor: showAuthor,
     );

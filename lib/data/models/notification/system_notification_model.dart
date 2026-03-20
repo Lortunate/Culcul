@@ -4,7 +4,7 @@ part 'system_notification_model.freezed.dart';
 part 'system_notification_model.g.dart';
 
 @freezed
-abstract class SystemNotificationItem with _$SystemNotificationItem {
+sealed class SystemNotificationItem with _$SystemNotificationItem {
   const factory SystemNotificationItem({
     required int id,
     String? title,

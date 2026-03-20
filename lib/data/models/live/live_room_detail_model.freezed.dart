@@ -151,10 +151,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveRoomDetailModel():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -213,10 +210,7 @@ return $default(_that.uid,_that.roomId,_that.shortId,_that.attention,_that.onlin
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int uid, @JsonKey(name: 'room_id')  int roomId, @JsonKey(name: 'short_id')  int shortId,  int attention,  int online, @JsonKey(name: 'is_portrait')  bool isPortrait,  String description, @JsonKey(name: 'live_status')  int liveStatus, @JsonKey(name: 'area_id')  int areaId, @JsonKey(name: 'parent_area_id')  int parentAreaId, @JsonKey(name: 'parent_area_name')  String parentAreaName, @JsonKey(name: 'old_area_id')  int oldAreaId,  String background,  String title, @JsonKey(name: 'user_cover')  String userCover,  String keyframe, @JsonKey(name: 'is_strict_room')  bool isStrictRoom, @JsonKey(name: 'live_time')  String liveTime,  String tags, @JsonKey(name: 'is_anchor')  int isAnchor, @JsonKey(name: 'room_silent_type')  String roomSilentType, @JsonKey(name: 'room_silent_level')  int roomSilentLevel, @JsonKey(name: 'room_silent_second')  int roomSilentSecond, @JsonKey(name: 'area_name')  String areaName,  String pendants, @JsonKey(name: 'area_pendants')  String areaPendants, @JsonKey(name: 'hot_words')  List<String> hotWords, @JsonKey(name: 'hot_words_status')  int hotWordsStatus,  String verify, @JsonKey(name: 'new_pendants')  Map<String, dynamic> newPendants, @JsonKey(name: 'up_session')  String upSession, @JsonKey(name: 'pk_status')  int pkStatus, @JsonKey(name: 'pk_id')  int pkId, @JsonKey(name: 'battle_id')  int battleId, @JsonKey(name: 'allow_change_area_time')  int allowChangeAreaTime, @JsonKey(name: 'allow_upload_cover_time')  int allowUploadCoverTime, @JsonKey(name: 'studio_info')  Map<String, dynamic> studioInfo)  $default,) {final _that = this;
 switch (_that) {
 case _LiveRoomDetailModel():
-return $default(_that.uid,_that.roomId,_that.shortId,_that.attention,_that.online,_that.isPortrait,_that.description,_that.liveStatus,_that.areaId,_that.parentAreaId,_that.parentAreaName,_that.oldAreaId,_that.background,_that.title,_that.userCover,_that.keyframe,_that.isStrictRoom,_that.liveTime,_that.tags,_that.isAnchor,_that.roomSilentType,_that.roomSilentLevel,_that.roomSilentSecond,_that.areaName,_that.pendants,_that.areaPendants,_that.hotWords,_that.hotWordsStatus,_that.verify,_that.newPendants,_that.upSession,_that.pkStatus,_that.pkId,_that.battleId,_that.allowChangeAreaTime,_that.allowUploadCoverTime,_that.studioInfo);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.uid,_that.roomId,_that.shortId,_that.attention,_that.online,_that.isPortrait,_that.description,_that.liveStatus,_that.areaId,_that.parentAreaId,_that.parentAreaName,_that.oldAreaId,_that.background,_that.title,_that.userCover,_that.keyframe,_that.isStrictRoom,_that.liveTime,_that.tags,_that.isAnchor,_that.roomSilentType,_that.roomSilentLevel,_that.roomSilentSecond,_that.areaName,_that.pendants,_that.areaPendants,_that.hotWords,_that.hotWordsStatus,_that.verify,_that.newPendants,_that.upSession,_that.pkStatus,_that.pkId,_that.battleId,_that.allowChangeAreaTime,_that.allowUploadCoverTime,_that.studioInfo);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

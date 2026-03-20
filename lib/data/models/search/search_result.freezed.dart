@@ -130,10 +130,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _SearchResultResponse():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -192,10 +189,7 @@ return $default(_that.code,_that.message,_that.ttl,_that.data);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int code,  String message,  int ttl,  SearchResultData? data)  $default,) {final _that = this;
 switch (_that) {
 case _SearchResultResponse():
-return $default(_that.code,_that.message,_that.ttl,_that.data);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.code,_that.message,_that.ttl,_that.data);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -416,10 +410,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _SearchResultData():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -478,10 +469,7 @@ return $default(_that.seid,_that.page,_that.pageSize,_that.numResults,_that.numP
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'seid')  String seid, @JsonKey(name: 'page')  int page, @JsonKey(name: 'pagesize')  int pageSize, @JsonKey(name: 'numResults')  int numResults, @JsonKey(name: 'numPages')  int numPages, @JsonKey(name: 'result')@_SearchResultConverter()  List<SearchResultItem> result)  $default,) {final _that = this;
 switch (_that) {
 case _SearchResultData():
-return $default(_that.seid,_that.page,_that.pageSize,_that.numResults,_that.numPages,_that.result);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.seid,_that.page,_that.pageSize,_that.numResults,_that.numPages,_that.result);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -731,10 +719,7 @@ return video(_that);case SearchUserModel():
 return user(_that);case SearchBangumiModel():
 return bangumi(_that);case SearchArticleModel():
 return article(_that);case SearchTopicModel():
-return topic(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return topic(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -805,10 +790,7 @@ return video(_that.type,_that.title,_that.author,_that.pic,_that.bvid,_that.dura
 return user(_that.type,_that.uname,_that.upic,_that.upicUrl,_that.usign,_that.fans,_that.videos,_that.level,_that.mid);case SearchBangumiModel():
 return bangumi(_that.type,_that.title,_that.cover,_that.pic,_that.seasonId,_that.pgcSeasonId,_that.seasonTypeName,_that.areas,_that.styles,_that.label,_that.gotoUrl);case SearchArticleModel():
 return article(_that.type,_that.title,_that.imageUrls,_that.author,_that.uname,_that.view,_that.review,_that.pubTime);case SearchTopicModel():
-return topic(_that.type,_that.title,_that.description,_that.cover,_that.tpId,_that.arcurl,_that.author,_that.update);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return topic(_that.type,_that.title,_that.description,_that.cover,_that.tpId,_that.arcurl,_that.author,_that.update);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

@@ -5,7 +5,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'dynamic_comment_state.freezed.dart';
 
 @freezed
-abstract class DynamicCommentState with _$DynamicCommentState {
+sealed class DynamicCommentState with _$DynamicCommentState {
   const factory DynamicCommentState({
     @Default([]) List<CommentItem> comments,
     @Default(true) bool isLoading,

@@ -4,7 +4,7 @@ part 'live_history_danmaku_model.freezed.dart';
 part 'live_history_danmaku_model.g.dart';
 
 @freezed
-abstract class LiveHistoryDanmakuModel with _$LiveHistoryDanmakuModel {
+sealed class LiveHistoryDanmakuModel with _$LiveHistoryDanmakuModel {
   const factory LiveHistoryDanmakuModel({
     required List<LiveDanmakuItem> admin,
     required List<LiveDanmakuItem> room,
@@ -15,7 +15,7 @@ abstract class LiveHistoryDanmakuModel with _$LiveHistoryDanmakuModel {
 }
 
 @freezed
-abstract class LiveDanmakuItem with _$LiveDanmakuItem {
+sealed class LiveDanmakuItem with _$LiveDanmakuItem {
   const factory LiveDanmakuItem({
     required String text,
     required String nickname,

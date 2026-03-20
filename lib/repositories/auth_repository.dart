@@ -27,7 +27,7 @@ class AuthRepository extends BaseRepository {
     final jsonStr = _box.get(_userCacheKey);
     if (jsonStr == null) return null;
     try {
-      return UserModel.fromJson(jsonDecode(jsonStr));
+      return UserModel.fromJson(jsonDecode(jsonStr)).toEntity();
     } catch (e) {
       _box.delete(_userCacheKey);
       return null;
@@ -35,14 +35,10 @@ class AuthRepository extends BaseRepository {
   }
 
   Future<void> _cacheUser(User user) async {
-    if (user is UserModel) {
-      await _box.put(_userCacheKey, jsonEncode(user.toJson()));
-    } else {
-      await _box.put(
-        _userCacheKey,
-        jsonEncode(UserModel.fromEntity(user).toJson()),
-      );
-    }
+    await _box.put(
+      _userCacheKey,
+      jsonEncode(UserModel.fromEntity(user).toJson()),
+    );
   }
 
   Future<void> clearCache() async {
@@ -253,7 +249,7 @@ class AuthRepository extends BaseRepository {
             currentExp: levelInfo?['current_exp'] as int?,
             nextExp: levelInfo?['next_exp'] as int?,
           );
-          await _cacheUser(userModel);
+          await _cacheUser(userModel.toEntity());
           return userModel.toEntity();
         } else {
           await clearCache();

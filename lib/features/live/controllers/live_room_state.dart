@@ -6,7 +6,7 @@ import 'package:culcul/core/errors/exceptions.dart';
 part 'live_room_state.freezed.dart';
 
 @freezed
-abstract class LiveRoomState with _$LiveRoomState {
+sealed class LiveRoomState with _$LiveRoomState {
   const factory LiveRoomState({
     required int roomId,
     @Default(true) bool isLoading,

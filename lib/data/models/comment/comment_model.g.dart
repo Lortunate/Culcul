@@ -45,9 +45,9 @@ Map<String, dynamic> _$CommentPageToJson(_CommentPage instance) =>
 
 _CommentCursor _$CommentCursorFromJson(Map<String, dynamic> json) =>
     _CommentCursor(
-      all_count: (json['all_count'] as num?)?.toInt() ?? 0,
-      is_begin: json['is_begin'] as bool? ?? false,
-      is_end: json['is_end'] as bool? ?? false,
+      allCount: (json['all_count'] as num?)?.toInt() ?? 0,
+      isBegin: json['is_begin'] as bool? ?? false,
+      isEnd: json['is_end'] as bool? ?? false,
       mode: (json['mode'] as num?)?.toInt() ?? 0,
       name: json['name'] as String,
       next: (json['next'] as num?)?.toInt() ?? 0,
@@ -56,9 +56,9 @@ _CommentCursor _$CommentCursorFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$CommentCursorToJson(_CommentCursor instance) =>
     <String, dynamic>{
-      'all_count': instance.all_count,
-      'is_begin': instance.is_begin,
-      'is_end': instance.is_end,
+      'all_count': instance.allCount,
+      'is_begin': instance.isBegin,
+      'is_end': instance.isEnd,
       'mode': instance.mode,
       'name': instance.name,
       'next': instance.next,
@@ -80,9 +80,9 @@ _CommentItem _$CommentItemFromJson(Map<String, dynamic> json) => _CommentItem(
   fansgrade: (json['fansgrade'] as num?)?.toInt() ?? 0,
   attr: (json['attr'] as num?)?.toInt() ?? 0,
   ctime: (json['ctime'] as num).toInt(),
-  rpid_str: json['rpid_str'] as String? ?? '',
-  root_str: json['root_str'] as String? ?? '',
-  parent_str: json['parent_str'] as String? ?? '',
+  rpidStr: json['rpid_str'] as String? ?? '',
+  rootStr: json['root_str'] as String? ?? '',
+  parentStr: json['parent_str'] as String? ?? '',
   like: (json['like'] as num?)?.toInt() ?? 0,
   action: (json['action'] as num?)?.toInt() ?? 0,
   member: CommentMember.fromJson(json['member'] as Map<String, dynamic>),
@@ -92,7 +92,7 @@ _CommentItem _$CommentItemFromJson(Map<String, dynamic> json) => _CommentItem(
           ?.map((e) => CommentItem.fromJson(e as Map<String, dynamic>))
           .toList() ??
       const [],
-  show_follow: json['show_follow'] as bool? ?? false,
+  showFollow: json['show_follow'] as bool? ?? false,
   invisible: json['invisible'] as bool? ?? false,
 );
 
@@ -112,15 +112,15 @@ Map<String, dynamic> _$CommentItemToJson(_CommentItem instance) =>
       'fansgrade': instance.fansgrade,
       'attr': instance.attr,
       'ctime': instance.ctime,
-      'rpid_str': instance.rpid_str,
-      'root_str': instance.root_str,
-      'parent_str': instance.parent_str,
+      'rpid_str': instance.rpidStr,
+      'root_str': instance.rootStr,
+      'parent_str': instance.parentStr,
       'like': instance.like,
       'action': instance.action,
       'member': instance.member,
       'content': instance.content,
       'replies': instance.replies,
-      'show_follow': instance.show_follow,
+      'show_follow': instance.showFollow,
       'invisible': instance.invisible,
     };
 
@@ -132,21 +132,21 @@ _CommentMember _$CommentMemberFromJson(Map<String, dynamic> json) =>
       sign: json['sign'] as String,
       avatar: json['avatar'] as String,
       rank: json['rank'] as String,
-      DisplayRank: (json['DisplayRank'] as num?)?.toInt() ?? 0,
-      level_info: CommentLevelInfo.fromJson(
+      displayRank: (json['DisplayRank'] as num?)?.toInt() ?? 0,
+      levelInfo: CommentLevelInfo.fromJson(
         json['level_info'] as Map<String, dynamic>,
       ),
       pendant: CommentPendant.fromJson(json['pendant'] as Map<String, dynamic>),
       nameplate: CommentNameplate.fromJson(
         json['nameplate'] as Map<String, dynamic>,
       ),
-      official_verify: CommentOfficialVerify.fromJson(
+      officialVerify: CommentOfficialVerify.fromJson(
         json['official_verify'] as Map<String, dynamic>,
       ),
       vip: CommentVip.fromJson(json['vip'] as Map<String, dynamic>),
-      fans_detail: json['fans_detail'],
+      fansDetail: json['fans_detail'],
       following: (json['following'] as num?)?.toInt() ?? 0,
-      is_followed: (json['is_followed'] as num?)?.toInt() ?? 0,
+      isFollowed: (json['is_followed'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$CommentMemberToJson(_CommentMember instance) =>
@@ -157,31 +157,31 @@ Map<String, dynamic> _$CommentMemberToJson(_CommentMember instance) =>
       'sign': instance.sign,
       'avatar': instance.avatar,
       'rank': instance.rank,
-      'DisplayRank': instance.DisplayRank,
-      'level_info': instance.level_info,
+      'DisplayRank': instance.displayRank,
+      'level_info': instance.levelInfo,
       'pendant': instance.pendant,
       'nameplate': instance.nameplate,
-      'official_verify': instance.official_verify,
+      'official_verify': instance.officialVerify,
       'vip': instance.vip,
-      'fans_detail': instance.fans_detail,
+      'fans_detail': instance.fansDetail,
       'following': instance.following,
-      'is_followed': instance.is_followed,
+      'is_followed': instance.isFollowed,
     };
 
 _CommentLevelInfo _$CommentLevelInfoFromJson(Map<String, dynamic> json) =>
     _CommentLevelInfo(
-      current_level: (json['current_level'] as num).toInt(),
-      current_min: (json['current_min'] as num).toInt(),
-      current_exp: (json['current_exp'] as num).toInt(),
-      next_exp: (json['next_exp'] as num).toInt(),
+      currentLevel: (json['current_level'] as num).toInt(),
+      currentMin: (json['current_min'] as num).toInt(),
+      currentExp: (json['current_exp'] as num).toInt(),
+      nextExp: (json['next_exp'] as num).toInt(),
     );
 
 Map<String, dynamic> _$CommentLevelInfoToJson(_CommentLevelInfo instance) =>
     <String, dynamic>{
-      'current_level': instance.current_level,
-      'current_min': instance.current_min,
-      'current_exp': instance.current_exp,
-      'next_exp': instance.next_exp,
+      'current_level': instance.currentLevel,
+      'current_min': instance.currentMin,
+      'current_exp': instance.currentExp,
+      'next_exp': instance.nextExp,
     };
 
 _CommentPendant _$CommentPendantFromJson(Map<String, dynamic> json) =>
@@ -190,8 +190,8 @@ _CommentPendant _$CommentPendantFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       image: json['image'] as String,
       expire: (json['expire'] as num).toInt(),
-      image_enhance: json['image_enhance'] as String? ?? '',
-      image_enhance_frame: json['image_enhance_frame'] as String? ?? '',
+      imageEnhance: json['image_enhance'] as String? ?? '',
+      imageEnhanceFrame: json['image_enhance_frame'] as String? ?? '',
     );
 
 Map<String, dynamic> _$CommentPendantToJson(_CommentPendant instance) =>
@@ -200,8 +200,8 @@ Map<String, dynamic> _$CommentPendantToJson(_CommentPendant instance) =>
       'name': instance.name,
       'image': instance.image,
       'expire': instance.expire,
-      'image_enhance': instance.image_enhance,
-      'image_enhance_frame': instance.image_enhance_frame,
+      'image_enhance': instance.imageEnhance,
+      'image_enhance_frame': instance.imageEnhanceFrame,
     };
 
 _CommentNameplate _$CommentNameplateFromJson(Map<String, dynamic> json) =>
@@ -209,7 +209,7 @@ _CommentNameplate _$CommentNameplateFromJson(Map<String, dynamic> json) =>
       nid: (json['nid'] as num).toInt(),
       name: json['name'] as String,
       image: json['image'] as String,
-      image_small: json['image_small'] as String,
+      imageSmall: json['image_small'] as String,
       level: json['level'] as String,
       condition: json['condition'] as String,
     );
@@ -219,7 +219,7 @@ Map<String, dynamic> _$CommentNameplateToJson(_CommentNameplate instance) =>
       'nid': instance.nid,
       'name': instance.name,
       'image': instance.image,
-      'image_small': instance.image_small,
+      'image_small': instance.imageSmall,
       'level': instance.level,
       'condition': instance.condition,
     };
@@ -258,37 +258,36 @@ Map<String, dynamic> _$CommentVipToJson(_CommentVip instance) =>
       'label': instance.label,
     };
 
-_CommentLabel _$CommentLabelFromJson(
-  Map<String, dynamic> json,
-) => _CommentLabel(
-  path: json['path'] as String,
-  text: json['text'] as String,
-  label_theme: json['label_theme'] as String,
-  text_color: json['text_color'] as String? ?? '',
-  bg_style: (json['bg_style'] as num?)?.toInt() ?? 0,
-  bg_color: json['bg_color'] as String? ?? '',
-  border_color: json['border_color'] as String? ?? '',
-  use_img_label: json['use_img_label'] as bool? ?? false,
-  img_label_uri_hans: json['img_label_uri_hans'] as String? ?? '',
-  img_label_uri_hant: json['img_label_uri_hant'] as String? ?? '',
-  img_label_uri_hans_static: json['img_label_uri_hans_static'] as String? ?? '',
-  img_label_uri_hant_static: json['img_label_uri_hant_static'] as String? ?? '',
-);
+_CommentLabel _$CommentLabelFromJson(Map<String, dynamic> json) =>
+    _CommentLabel(
+      path: json['path'] as String,
+      text: json['text'] as String,
+      labelTheme: json['label_theme'] as String,
+      textColor: json['text_color'] as String? ?? '',
+      bgStyle: (json['bg_style'] as num?)?.toInt() ?? 0,
+      bgColor: json['bg_color'] as String? ?? '',
+      borderColor: json['border_color'] as String? ?? '',
+      useImgLabel: json['use_img_label'] as bool? ?? false,
+      imgLabelUriHans: json['img_label_uri_hans'] as String? ?? '',
+      imgLabelUriHant: json['img_label_uri_hant'] as String? ?? '',
+      imgLabelUriHansStatic: json['img_label_uri_hans_static'] as String? ?? '',
+      imgLabelUriHantStatic: json['img_label_uri_hant_static'] as String? ?? '',
+    );
 
 Map<String, dynamic> _$CommentLabelToJson(_CommentLabel instance) =>
     <String, dynamic>{
       'path': instance.path,
       'text': instance.text,
-      'label_theme': instance.label_theme,
-      'text_color': instance.text_color,
-      'bg_style': instance.bg_style,
-      'bg_color': instance.bg_color,
-      'border_color': instance.border_color,
-      'use_img_label': instance.use_img_label,
-      'img_label_uri_hans': instance.img_label_uri_hans,
-      'img_label_uri_hant': instance.img_label_uri_hant,
-      'img_label_uri_hans_static': instance.img_label_uri_hans_static,
-      'img_label_uri_hant_static': instance.img_label_uri_hant_static,
+      'label_theme': instance.labelTheme,
+      'text_color': instance.textColor,
+      'bg_style': instance.bgStyle,
+      'bg_color': instance.bgColor,
+      'border_color': instance.borderColor,
+      'use_img_label': instance.useImgLabel,
+      'img_label_uri_hans': instance.imgLabelUriHans,
+      'img_label_uri_hant': instance.imgLabelUriHant,
+      'img_label_uri_hans_static': instance.imgLabelUriHansStatic,
+      'img_label_uri_hant_static': instance.imgLabelUriHantStatic,
     };
 
 _CommentContent _$CommentContentFromJson(Map<String, dynamic> json) =>
@@ -309,8 +308,8 @@ _CommentContent _$CommentContentFromJson(Map<String, dynamic> json) =>
               ?.map((e) => CommentPicture.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
-      jump_url: json['jump_url'] as Map<String, dynamic>? ?? const {},
-      max_line: (json['max_line'] as num?)?.toInt() ?? 0,
+      jumpUrl: json['jump_url'] as Map<String, dynamic>? ?? const {},
+      maxLine: (json['max_line'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$CommentContentToJson(_CommentContent instance) =>
@@ -321,48 +320,48 @@ Map<String, dynamic> _$CommentContentToJson(_CommentContent instance) =>
       'members': instance.members,
       'emote': instance.emote,
       'pictures': instance.pictures,
-      'jump_url': instance.jump_url,
-      'max_line': instance.max_line,
+      'jump_url': instance.jumpUrl,
+      'max_line': instance.maxLine,
     };
 
 _CommentPicture _$CommentPictureFromJson(Map<String, dynamic> json) =>
     _CommentPicture(
-      img_src: json['img_src'] as String,
-      img_width: (json['img_width'] as num?)?.toDouble() ?? 0,
-      img_height: (json['img_height'] as num?)?.toDouble() ?? 0,
-      img_size: (json['img_size'] as num?)?.toDouble() ?? 0,
+      imgSrc: json['img_src'] as String,
+      imgWidth: (json['img_width'] as num?)?.toDouble() ?? 0,
+      imgHeight: (json['img_height'] as num?)?.toDouble() ?? 0,
+      imgSize: (json['img_size'] as num?)?.toDouble() ?? 0,
     );
 
 Map<String, dynamic> _$CommentPictureToJson(_CommentPicture instance) =>
     <String, dynamic>{
-      'img_src': instance.img_src,
-      'img_width': instance.img_width,
-      'img_height': instance.img_height,
-      'img_size': instance.img_size,
+      'img_src': instance.imgSrc,
+      'img_width': instance.imgWidth,
+      'img_height': instance.imgHeight,
+      'img_size': instance.imgSize,
     };
 
 _CommentEmote _$CommentEmoteFromJson(Map<String, dynamic> json) =>
     _CommentEmote(
       id: (json['id'] as num).toInt(),
-      package_id: (json['package_id'] as num?)?.toInt() ?? 0,
+      packageId: (json['package_id'] as num?)?.toInt() ?? 0,
       state: (json['state'] as num?)?.toInt() ?? 0,
       type: (json['type'] as num?)?.toInt() ?? 0,
       attr: (json['attr'] as num?)?.toInt() ?? 0,
       text: json['text'] as String,
       url: json['url'] as String,
       mtime: (json['mtime'] as num?)?.toInt() ?? 0,
-      jump_title: json['jump_title'] as String? ?? '',
+      jumpTitle: json['jump_title'] as String? ?? '',
     );
 
 Map<String, dynamic> _$CommentEmoteToJson(_CommentEmote instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'package_id': instance.package_id,
+      'package_id': instance.packageId,
       'state': instance.state,
       'type': instance.type,
       'attr': instance.attr,
       'text': instance.text,
       'url': instance.url,
       'mtime': instance.mtime,
-      'jump_title': instance.jump_title,
+      'jump_title': instance.jumpTitle,
     };

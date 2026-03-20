@@ -59,7 +59,7 @@ final class LiveRoomControllerProvider
 }
 
 String _$liveRoomControllerHash() =>
-    r'eb96456c553c6508d8c87a1b400e411ee0a51b6e';
+    r'1d48930e18e387ab8deb6d47455b4ae59613af4e';
 
 final class LiveRoomControllerFamily extends $Family
     with

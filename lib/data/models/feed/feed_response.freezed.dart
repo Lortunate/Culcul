@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$FeedResponse {
 
- List<Map<String, dynamic>> get item;@JsonKey(name: 'business_card') dynamic get businessCard; List<dynamic> get floor_info; int get user_feature; String get side_bar_column;
+ List<Map<String, dynamic>> get item;@JsonKey(name: 'business_card') dynamic get businessCard;@JsonKey(name: 'floor_info') List<dynamic> get floorInfo;@JsonKey(name: 'user_feature') int get userFeature;@JsonKey(name: 'side_bar_column') String get sideBarColumn;
 /// Create a copy of FeedResponse
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $FeedResponseCopyWith<FeedResponse> get copyWith => _$FeedResponseCopyWithImpl<F
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FeedResponse&&const DeepCollectionEquality().equals(other.item, item)&&const DeepCollectionEquality().equals(other.businessCard, businessCard)&&const DeepCollectionEquality().equals(other.floor_info, floor_info)&&(identical(other.user_feature, user_feature) || other.user_feature == user_feature)&&(identical(other.side_bar_column, side_bar_column) || other.side_bar_column == side_bar_column));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FeedResponse&&const DeepCollectionEquality().equals(other.item, item)&&const DeepCollectionEquality().equals(other.businessCard, businessCard)&&const DeepCollectionEquality().equals(other.floorInfo, floorInfo)&&(identical(other.userFeature, userFeature) || other.userFeature == userFeature)&&(identical(other.sideBarColumn, sideBarColumn) || other.sideBarColumn == sideBarColumn));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(item),const DeepCollectionEquality().hash(businessCard),const DeepCollectionEquality().hash(floor_info),user_feature,side_bar_column);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(item),const DeepCollectionEquality().hash(businessCard),const DeepCollectionEquality().hash(floorInfo),userFeature,sideBarColumn);
 
 @override
 String toString() {
-  return 'FeedResponse(item: $item, businessCard: $businessCard, floor_info: $floor_info, user_feature: $user_feature, side_bar_column: $side_bar_column)';
+  return 'FeedResponse(item: $item, businessCard: $businessCard, floorInfo: $floorInfo, userFeature: $userFeature, sideBarColumn: $sideBarColumn)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $FeedResponseCopyWith<$Res>  {
   factory $FeedResponseCopyWith(FeedResponse value, $Res Function(FeedResponse) _then) = _$FeedResponseCopyWithImpl;
 @useResult
 $Res call({
- List<Map<String, dynamic>> item,@JsonKey(name: 'business_card') dynamic businessCard, List<dynamic> floor_info, int user_feature, String side_bar_column
+ List<Map<String, dynamic>> item,@JsonKey(name: 'business_card') dynamic businessCard,@JsonKey(name: 'floor_info') List<dynamic> floorInfo,@JsonKey(name: 'user_feature') int userFeature,@JsonKey(name: 'side_bar_column') String sideBarColumn
 });
 
 
@@ -65,13 +65,13 @@ class _$FeedResponseCopyWithImpl<$Res>
 
 /// Create a copy of FeedResponse
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? item = null,Object? businessCard = freezed,Object? floor_info = null,Object? user_feature = null,Object? side_bar_column = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? item = null,Object? businessCard = freezed,Object? floorInfo = null,Object? userFeature = null,Object? sideBarColumn = null,}) {
   return _then(_self.copyWith(
 item: null == item ? _self.item : item // ignore: cast_nullable_to_non_nullable
 as List<Map<String, dynamic>>,businessCard: freezed == businessCard ? _self.businessCard : businessCard // ignore: cast_nullable_to_non_nullable
-as dynamic,floor_info: null == floor_info ? _self.floor_info : floor_info // ignore: cast_nullable_to_non_nullable
-as List<dynamic>,user_feature: null == user_feature ? _self.user_feature : user_feature // ignore: cast_nullable_to_non_nullable
-as int,side_bar_column: null == side_bar_column ? _self.side_bar_column : side_bar_column // ignore: cast_nullable_to_non_nullable
+as dynamic,floorInfo: null == floorInfo ? _self.floorInfo : floorInfo // ignore: cast_nullable_to_non_nullable
+as List<dynamic>,userFeature: null == userFeature ? _self.userFeature : userFeature // ignore: cast_nullable_to_non_nullable
+as int,sideBarColumn: null == sideBarColumn ? _self.sideBarColumn : sideBarColumn // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -119,10 +119,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _FeedResponse():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -157,10 +154,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Map<String, dynamic>> item, @JsonKey(name: 'business_card')  dynamic businessCard,  List<dynamic> floor_info,  int user_feature,  String side_bar_column)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Map<String, dynamic>> item, @JsonKey(name: 'business_card')  dynamic businessCard, @JsonKey(name: 'floor_info')  List<dynamic> floorInfo, @JsonKey(name: 'user_feature')  int userFeature, @JsonKey(name: 'side_bar_column')  String sideBarColumn)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FeedResponse() when $default != null:
-return $default(_that.item,_that.businessCard,_that.floor_info,_that.user_feature,_that.side_bar_column);case _:
+return $default(_that.item,_that.businessCard,_that.floorInfo,_that.userFeature,_that.sideBarColumn);case _:
   return orElse();
 
 }
@@ -178,13 +175,10 @@ return $default(_that.item,_that.businessCard,_that.floor_info,_that.user_featur
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Map<String, dynamic>> item, @JsonKey(name: 'business_card')  dynamic businessCard,  List<dynamic> floor_info,  int user_feature,  String side_bar_column)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Map<String, dynamic>> item, @JsonKey(name: 'business_card')  dynamic businessCard, @JsonKey(name: 'floor_info')  List<dynamic> floorInfo, @JsonKey(name: 'user_feature')  int userFeature, @JsonKey(name: 'side_bar_column')  String sideBarColumn)  $default,) {final _that = this;
 switch (_that) {
 case _FeedResponse():
-return $default(_that.item,_that.businessCard,_that.floor_info,_that.user_feature,_that.side_bar_column);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.item,_that.businessCard,_that.floorInfo,_that.userFeature,_that.sideBarColumn);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -198,10 +192,10 @@ return $default(_that.item,_that.businessCard,_that.floor_info,_that.user_featur
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Map<String, dynamic>> item, @JsonKey(name: 'business_card')  dynamic businessCard,  List<dynamic> floor_info,  int user_feature,  String side_bar_column)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Map<String, dynamic>> item, @JsonKey(name: 'business_card')  dynamic businessCard, @JsonKey(name: 'floor_info')  List<dynamic> floorInfo, @JsonKey(name: 'user_feature')  int userFeature, @JsonKey(name: 'side_bar_column')  String sideBarColumn)?  $default,) {final _that = this;
 switch (_that) {
 case _FeedResponse() when $default != null:
-return $default(_that.item,_that.businessCard,_that.floor_info,_that.user_feature,_that.side_bar_column);case _:
+return $default(_that.item,_that.businessCard,_that.floorInfo,_that.userFeature,_that.sideBarColumn);case _:
   return null;
 
 }
@@ -213,7 +207,7 @@ return $default(_that.item,_that.businessCard,_that.floor_info,_that.user_featur
 @JsonSerializable()
 
 class _FeedResponse implements FeedResponse {
-  const _FeedResponse({final  List<Map<String, dynamic>> item = const [], @JsonKey(name: 'business_card') this.businessCard, final  List<dynamic> floor_info = const [], this.user_feature = 0, this.side_bar_column = ''}): _item = item,_floor_info = floor_info;
+  const _FeedResponse({final  List<Map<String, dynamic>> item = const [], @JsonKey(name: 'business_card') this.businessCard, @JsonKey(name: 'floor_info') final  List<dynamic> floorInfo = const [], @JsonKey(name: 'user_feature') this.userFeature = 0, @JsonKey(name: 'side_bar_column') this.sideBarColumn = ''}): _item = item,_floorInfo = floorInfo;
   factory _FeedResponse.fromJson(Map<String, dynamic> json) => _$FeedResponseFromJson(json);
 
  final  List<Map<String, dynamic>> _item;
@@ -224,15 +218,15 @@ class _FeedResponse implements FeedResponse {
 }
 
 @override@JsonKey(name: 'business_card') final  dynamic businessCard;
- final  List<dynamic> _floor_info;
-@override@JsonKey() List<dynamic> get floor_info {
-  if (_floor_info is EqualUnmodifiableListView) return _floor_info;
+ final  List<dynamic> _floorInfo;
+@override@JsonKey(name: 'floor_info') List<dynamic> get floorInfo {
+  if (_floorInfo is EqualUnmodifiableListView) return _floorInfo;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_floor_info);
+  return EqualUnmodifiableListView(_floorInfo);
 }
 
-@override@JsonKey() final  int user_feature;
-@override@JsonKey() final  String side_bar_column;
+@override@JsonKey(name: 'user_feature') final  int userFeature;
+@override@JsonKey(name: 'side_bar_column') final  String sideBarColumn;
 
 /// Create a copy of FeedResponse
 /// with the given fields replaced by the non-null parameter values.
@@ -247,16 +241,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FeedResponse&&const DeepCollectionEquality().equals(other._item, _item)&&const DeepCollectionEquality().equals(other.businessCard, businessCard)&&const DeepCollectionEquality().equals(other._floor_info, _floor_info)&&(identical(other.user_feature, user_feature) || other.user_feature == user_feature)&&(identical(other.side_bar_column, side_bar_column) || other.side_bar_column == side_bar_column));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FeedResponse&&const DeepCollectionEquality().equals(other._item, _item)&&const DeepCollectionEquality().equals(other.businessCard, businessCard)&&const DeepCollectionEquality().equals(other._floorInfo, _floorInfo)&&(identical(other.userFeature, userFeature) || other.userFeature == userFeature)&&(identical(other.sideBarColumn, sideBarColumn) || other.sideBarColumn == sideBarColumn));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_item),const DeepCollectionEquality().hash(businessCard),const DeepCollectionEquality().hash(_floor_info),user_feature,side_bar_column);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_item),const DeepCollectionEquality().hash(businessCard),const DeepCollectionEquality().hash(_floorInfo),userFeature,sideBarColumn);
 
 @override
 String toString() {
-  return 'FeedResponse(item: $item, businessCard: $businessCard, floor_info: $floor_info, user_feature: $user_feature, side_bar_column: $side_bar_column)';
+  return 'FeedResponse(item: $item, businessCard: $businessCard, floorInfo: $floorInfo, userFeature: $userFeature, sideBarColumn: $sideBarColumn)';
 }
 
 
@@ -267,7 +261,7 @@ abstract mixin class _$FeedResponseCopyWith<$Res> implements $FeedResponseCopyWi
   factory _$FeedResponseCopyWith(_FeedResponse value, $Res Function(_FeedResponse) _then) = __$FeedResponseCopyWithImpl;
 @override @useResult
 $Res call({
- List<Map<String, dynamic>> item,@JsonKey(name: 'business_card') dynamic businessCard, List<dynamic> floor_info, int user_feature, String side_bar_column
+ List<Map<String, dynamic>> item,@JsonKey(name: 'business_card') dynamic businessCard,@JsonKey(name: 'floor_info') List<dynamic> floorInfo,@JsonKey(name: 'user_feature') int userFeature,@JsonKey(name: 'side_bar_column') String sideBarColumn
 });
 
 
@@ -284,13 +278,13 @@ class __$FeedResponseCopyWithImpl<$Res>
 
 /// Create a copy of FeedResponse
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? item = null,Object? businessCard = freezed,Object? floor_info = null,Object? user_feature = null,Object? side_bar_column = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? item = null,Object? businessCard = freezed,Object? floorInfo = null,Object? userFeature = null,Object? sideBarColumn = null,}) {
   return _then(_FeedResponse(
 item: null == item ? _self._item : item // ignore: cast_nullable_to_non_nullable
 as List<Map<String, dynamic>>,businessCard: freezed == businessCard ? _self.businessCard : businessCard // ignore: cast_nullable_to_non_nullable
-as dynamic,floor_info: null == floor_info ? _self._floor_info : floor_info // ignore: cast_nullable_to_non_nullable
-as List<dynamic>,user_feature: null == user_feature ? _self.user_feature : user_feature // ignore: cast_nullable_to_non_nullable
-as int,side_bar_column: null == side_bar_column ? _self.side_bar_column : side_bar_column // ignore: cast_nullable_to_non_nullable
+as dynamic,floorInfo: null == floorInfo ? _self._floorInfo : floorInfo // ignore: cast_nullable_to_non_nullable
+as List<dynamic>,userFeature: null == userFeature ? _self.userFeature : userFeature // ignore: cast_nullable_to_non_nullable
+as int,sideBarColumn: null == sideBarColumn ? _self.sideBarColumn : sideBarColumn // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

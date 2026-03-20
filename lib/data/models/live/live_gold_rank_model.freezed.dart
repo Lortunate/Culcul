@@ -116,10 +116,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveGoldRankModel():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -178,10 +175,7 @@ return $default(_that.onlineNum,_that.list);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'onlineNum')  int onlineNum, @JsonKey(name: 'OnlineRankItem')  List<LiveRankItem> list)  $default,) {final _that = this;
 switch (_that) {
 case _LiveGoldRankModel():
-return $default(_that.onlineNum,_that.list);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.onlineNum,_that.list);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -403,10 +397,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveRankItem():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -465,10 +456,7 @@ return $default(_that.userRank,_that.uid,_that.name,_that.face,_that.score,_that
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int userRank,  int uid,  String name,  String face,  int score,  LiveRankMedalInfo medalInfo, @JsonKey(name: 'guard_level')  int guardLevel, @JsonKey(name: 'wealth_level')  int wealthLevel)  $default,) {final _that = this;
 switch (_that) {
 case _LiveRankItem():
-return $default(_that.userRank,_that.uid,_that.name,_that.face,_that.score,_that.medalInfo,_that.guardLevel,_that.wealthLevel);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.userRank,_that.uid,_that.name,_that.face,_that.score,_that.medalInfo,_that.guardLevel,_that.wealthLevel);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -696,10 +684,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveRankMedalInfo():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -758,10 +743,7 @@ return $default(_that.guardLevel,_that.medalColorStart,_that.medalColorEnd,_that
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int guardLevel,  int medalColorStart,  int medalColorEnd,  int medalColorBorder,  String medalName,  int level,  int targetId,  int isLight)  $default,) {final _that = this;
 switch (_that) {
 case _LiveRankMedalInfo():
-return $default(_that.guardLevel,_that.medalColorStart,_that.medalColorEnd,_that.medalColorBorder,_that.medalName,_that.level,_that.targetId,_that.isLight);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.guardLevel,_that.medalColorStart,_that.medalColorEnd,_that.medalColorBorder,_that.medalName,_that.level,_that.targetId,_that.isLight);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

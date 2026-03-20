@@ -4,7 +4,7 @@ part 'live_room_model.freezed.dart';
 part 'live_room_model.g.dart';
 
 @freezed
-abstract class LiveRoomModel with _$LiveRoomModel {
+sealed class LiveRoomModel with _$LiveRoomModel {
   const factory LiveRoomModel({
     @JsonKey(name: 'roomid') required int roomId,
     @JsonKey(name: 'uid') required int uid,
@@ -26,7 +26,7 @@ abstract class LiveRoomModel with _$LiveRoomModel {
 }
 
 @freezed
-abstract class WatchedShow with _$WatchedShow {
+sealed class WatchedShow with _$WatchedShow {
   const factory WatchedShow({
     @JsonKey(name: 'switch') required bool switchStatus,
     required int num,

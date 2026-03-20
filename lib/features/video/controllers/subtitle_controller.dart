@@ -10,7 +10,7 @@ part 'subtitle_controller.freezed.dart';
 part 'subtitle_controller.g.dart';
 
 @freezed
-abstract class SubtitleState with _$SubtitleState {
+sealed class SubtitleState with _$SubtitleState {
   const factory SubtitleState({
     @Default([]) List<SubtitleInfo> availableSubtitles,
     SubtitleInfo? selectedSubtitle,

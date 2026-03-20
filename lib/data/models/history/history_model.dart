@@ -4,7 +4,7 @@ part 'history_model.freezed.dart';
 part 'history_model.g.dart';
 
 @freezed
-abstract class HistoryResponseData with _$HistoryResponseData {
+sealed class HistoryResponseData with _$HistoryResponseData {
   const factory HistoryResponseData({
     required HistoryCursor cursor,
     required List<HistoryTab> tab,
@@ -16,7 +16,7 @@ abstract class HistoryResponseData with _$HistoryResponseData {
 }
 
 @freezed
-abstract class HistoryCursor with _$HistoryCursor {
+sealed class HistoryCursor with _$HistoryCursor {
   const factory HistoryCursor({
     required int max,
     @JsonKey(name: 'view_at') required int viewAt,
@@ -29,7 +29,7 @@ abstract class HistoryCursor with _$HistoryCursor {
 }
 
 @freezed
-abstract class HistoryTab with _$HistoryTab {
+sealed class HistoryTab with _$HistoryTab {
   const factory HistoryTab({required String type, required String name}) =
       _HistoryTab;
 
@@ -38,7 +38,7 @@ abstract class HistoryTab with _$HistoryTab {
 }
 
 @freezed
-abstract class HistoryItem with _$HistoryItem {
+sealed class HistoryItem with _$HistoryItem {
   const factory HistoryItem({
     required String title,
     @JsonKey(name: 'long_title') required String longTitle,
@@ -70,7 +70,7 @@ abstract class HistoryItem with _$HistoryItem {
 }
 
 @freezed
-abstract class HistoryDetail with _$HistoryDetail {
+sealed class HistoryDetail with _$HistoryDetail {
   const factory HistoryDetail({
     required int oid,
     required int epid,

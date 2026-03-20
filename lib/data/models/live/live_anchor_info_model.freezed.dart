@@ -139,10 +139,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveAnchorInfoModel():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -201,10 +198,7 @@ return $default(_that.info,_that.exp,_that.followerNum,_that.roomId,_that.medalN
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( LiveAnchorInfo info,  LiveAnchorExp exp, @JsonKey(name: 'follower_num')  int followerNum, @JsonKey(name: 'room_id')  int roomId, @JsonKey(name: 'medal_name')  String medalName, @JsonKey(name: 'glory_count')  int gloryCount,  String pendant)  $default,) {final _that = this;
 switch (_that) {
 case _LiveAnchorInfoModel():
-return $default(_that.info,_that.exp,_that.followerNum,_that.roomId,_that.medalName,_that.gloryCount,_that.pendant);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.info,_that.exp,_that.followerNum,_that.roomId,_that.medalName,_that.gloryCount,_that.pendant);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -445,10 +439,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveAnchorInfo():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -507,10 +498,7 @@ return $default(_that.uid,_that.uname,_that.face,_that.officialVerify,_that.gend
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int uid,  String uname,  String face, @JsonKey(name: 'official_verify')  LiveAnchorVerify officialVerify,  int gender)  $default,) {final _that = this;
 switch (_that) {
 case _LiveAnchorInfo():
-return $default(_that.uid,_that.uname,_that.face,_that.officialVerify,_that.gender);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.uid,_that.uname,_that.face,_that.officialVerify,_that.gender);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -726,10 +714,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveAnchorVerify():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -788,10 +773,7 @@ return $default(_that.type,_that.desc);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int type,  String desc)  $default,) {final _that = this;
 switch (_that) {
 case _LiveAnchorVerify():
-return $default(_that.type,_that.desc);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.type,_that.desc);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1000,10 +982,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveAnchorExp():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -1062,10 +1041,7 @@ return $default(_that.masterLevel);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'master_level')  LiveMasterLevel masterLevel)  $default,) {final _that = this;
 switch (_that) {
 case _LiveAnchorExp():
-return $default(_that.masterLevel);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.masterLevel);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -1275,10 +1251,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _LiveMasterLevel():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -1337,10 +1310,7 @@ return $default(_that.level,_that.color,_that.current,_that.next);case _:
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int level,  int color,  List<int> current,  List<int> next)  $default,) {final _that = this;
 switch (_that) {
 case _LiveMasterLevel():
-return $default(_that.level,_that.color,_that.current,_that.next);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.level,_that.color,_that.current,_that.next);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

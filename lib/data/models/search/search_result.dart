@@ -4,7 +4,7 @@ part 'search_result.freezed.dart';
 part 'search_result.g.dart';
 
 @freezed
-abstract class SearchResultResponse with _$SearchResultResponse {
+sealed class SearchResultResponse with _$SearchResultResponse {
   const factory SearchResultResponse({
     required int code,
     required String message,
@@ -17,7 +17,7 @@ abstract class SearchResultResponse with _$SearchResultResponse {
 }
 
 @freezed
-abstract class SearchResultData with _$SearchResultData {
+sealed class SearchResultData with _$SearchResultData {
   const factory SearchResultData({
     @JsonKey(name: 'seid') required String seid,
     @JsonKey(name: 'page') required int page,
@@ -35,7 +35,7 @@ abstract class SearchResultData with _$SearchResultData {
 }
 
 @Freezed(unionKey: 'type', fallbackUnion: 'video')
-abstract class SearchResultItem with _$SearchResultItem {
+sealed class SearchResultItem with _$SearchResultItem {
   @FreezedUnionValue('video')
   const factory SearchResultItem.video({
     String? type,

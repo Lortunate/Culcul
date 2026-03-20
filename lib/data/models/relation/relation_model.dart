@@ -4,7 +4,7 @@ part 'relation_model.freezed.dart';
 part 'relation_model.g.dart';
 
 @freezed
-abstract class RelationResponseData with _$RelationResponseData {
+sealed class RelationResponseData with _$RelationResponseData {
   const factory RelationResponseData({
     @Default([]) List<RelationUser> list,
     @Default(0) int total,
@@ -15,7 +15,7 @@ abstract class RelationResponseData with _$RelationResponseData {
 }
 
 @freezed
-abstract class RelationUser with _$RelationUser {
+sealed class RelationUser with _$RelationUser {
   const factory RelationUser({
     required int mid,
     required String uname,
@@ -33,7 +33,7 @@ abstract class RelationUser with _$RelationUser {
 }
 
 @freezed
-abstract class OfficialVerify with _$OfficialVerify {
+sealed class OfficialVerify with _$OfficialVerify {
   const factory OfficialVerify({
     @Default(-1) int type,
     @Default('') String desc,
@@ -44,7 +44,7 @@ abstract class OfficialVerify with _$OfficialVerify {
 }
 
 @freezed
-abstract class VipInfo with _$VipInfo {
+sealed class VipInfo with _$VipInfo {
   const factory VipInfo({
     @Default(0) int vipType,
     @Default(0) int vipStatus,

@@ -5,7 +5,7 @@ part 'like_model.freezed.dart';
 part 'like_model.g.dart';
 
 @freezed
-abstract class LikeResponse with _$LikeResponse {
+sealed class LikeResponse with _$LikeResponse {
   const factory LikeResponse({
     required LikeLatest latest,
     required LikeTotal total,
@@ -16,7 +16,7 @@ abstract class LikeResponse with _$LikeResponse {
 }
 
 @freezed
-abstract class LikeLatest with _$LikeLatest {
+sealed class LikeLatest with _$LikeLatest {
   const factory LikeLatest({
     @Default([]) List<ReplyItem> items,
     @JsonKey(name: 'last_view_at') required int lastViewAt,
@@ -27,7 +27,7 @@ abstract class LikeLatest with _$LikeLatest {
 }
 
 @freezed
-abstract class LikeTotal with _$LikeTotal {
+sealed class LikeTotal with _$LikeTotal {
   const factory LikeTotal({
     required ReplyCursor cursor,
     @Default([]) List<ReplyItem> items,

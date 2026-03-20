@@ -4,7 +4,7 @@ part 'play_url.freezed.dart';
 part 'play_url.g.dart';
 
 @freezed
-abstract class PlayUrl with _$PlayUrl {
+sealed class PlayUrl with _$PlayUrl {
   const factory PlayUrl({
     required String format,
     required int quality,
@@ -25,7 +25,7 @@ abstract class PlayUrl with _$PlayUrl {
 }
 
 @freezed
-abstract class Durl with _$Durl {
+sealed class Durl with _$Durl {
   const factory Durl({
     required int order,
     required int length,
@@ -38,7 +38,7 @@ abstract class Durl with _$Durl {
 }
 
 @freezed
-abstract class SupportFormat with _$SupportFormat {
+sealed class SupportFormat with _$SupportFormat {
   const factory SupportFormat({
     required int quality,
     required String format,

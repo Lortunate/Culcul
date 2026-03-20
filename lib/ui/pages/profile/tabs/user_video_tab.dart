@@ -3,7 +3,6 @@ import 'package:culcul/core/router/router.dart';
 import 'package:culcul/data/models/video/video_model.dart';
 import 'package:culcul/features/profile/controllers/user_space_videos_controller.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
-import 'package:culcul/ui/widgets/app_shimmer.dart';
 import 'package:culcul/ui/widgets/skeletons/video_list_skeleton.dart';
 import 'package:culcul/ui/widgets/video_list_card.dart';
 import 'package:culcul/ui/widgets/icon_text.dart';
@@ -102,7 +101,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
                   duration: spaceVideo.duration,
                   pubDate: spaceVideo.pubDate,
                   desc: spaceVideo.desc,
-                  rcmd_reason: spaceVideo.reason,
+                  rcmdReason: spaceVideo.reason,
                 );
 
                 return Column(

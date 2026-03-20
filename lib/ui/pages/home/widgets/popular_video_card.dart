@@ -34,8 +34,8 @@ class PopularVideoCard extends StatelessWidget {
       duration: video.duration,
       viewCount: video.stat.view,
       danmakuCount: video.stat.danmaku,
-      badge: video.rcmd_reason.isNotEmpty
-          ? _PopularTag(text: video.rcmd_reason)
+      badge: video.rcmdReason.isNotEmpty
+          ? _PopularTag(text: video.rcmdReason)
           : null,
       author: Row(
         children: [

@@ -123,10 +123,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _PlayUrl():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -185,10 +182,7 @@ return $default(_that.format,_that.quality,_that.timeLength,_that.acceptFormat,_
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String format,  int quality, @JsonKey(name: 'timelength')  int timeLength, @JsonKey(name: 'accept_format')  String acceptFormat, @JsonKey(name: 'accept_description')  List<String> acceptDescription, @JsonKey(name: 'accept_quality')  List<int> acceptQuality, @JsonKey(name: 'video_codecid')  int videoCodecId,  List<Durl> durl, @JsonKey(name: 'support_formats')  List<SupportFormat> supportFormats)  $default,) {final _that = this;
 switch (_that) {
 case _PlayUrl():
-return $default(_that.format,_that.quality,_that.timeLength,_that.acceptFormat,_that.acceptDescription,_that.acceptQuality,_that.videoCodecId,_that.durl,_that.supportFormats);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.format,_that.quality,_that.timeLength,_that.acceptFormat,_that.acceptDescription,_that.acceptQuality,_that.videoCodecId,_that.durl,_that.supportFormats);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -430,10 +424,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _Durl():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -492,10 +483,7 @@ return $default(_that.order,_that.length,_that.size,_that.url,_that.backupUrl);c
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int order,  int length,  int size,  String url,  List<String> backupUrl)  $default,) {final _that = this;
 switch (_that) {
 case _Durl():
-return $default(_that.order,_that.length,_that.size,_that.url,_that.backupUrl);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.order,_that.length,_that.size,_that.url,_that.backupUrl);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -712,10 +700,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _SupportFormat():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -774,10 +759,7 @@ return $default(_that.quality,_that.format,_that.newDescription,_that.displayDes
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int quality,  String format, @JsonKey(name: 'new_description')  String newDescription, @JsonKey(name: 'display_desc')  String displayDesc,  String superscript,  List<String> codecs)  $default,) {final _that = this;
 switch (_that) {
 case _SupportFormat():
-return $default(_that.quality,_that.format,_that.newDescription,_that.displayDesc,_that.superscript,_that.codecs);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.quality,_that.format,_that.newDescription,_that.displayDesc,_that.superscript,_that.codecs);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

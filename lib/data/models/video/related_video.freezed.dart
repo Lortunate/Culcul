@@ -144,10 +144,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _RelatedVideo():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -206,10 +203,7 @@ return $default(_that.aid,_that.bvid,_that.cid,_that.title,_that.pic,_that.owner
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int aid,  String bvid,  int cid,  String title,  String pic,  Owner owner,  Stat stat,  int duration, @JsonKey(name: 'pubdate')  int pubDate,  String desc, @JsonKey(name: 'short_link_v2')  String shortLink, @JsonKey(name: 'rcmd_reason')  String rcmdReason)  $default,) {final _that = this;
 switch (_that) {
 case _RelatedVideo():
-return $default(_that.aid,_that.bvid,_that.cid,_that.title,_that.pic,_that.owner,_that.stat,_that.duration,_that.pubDate,_that.desc,_that.shortLink,_that.rcmdReason);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.aid,_that.bvid,_that.cid,_that.title,_that.pic,_that.owner,_that.stat,_that.duration,_that.pubDate,_that.desc,_that.shortLink,_that.rcmdReason);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

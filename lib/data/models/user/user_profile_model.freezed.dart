@@ -136,10 +136,7 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _UserProfile():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -198,10 +195,7 @@ return $default(_that.id,_that.username,_that.avatarUrl,_that.bannerUrl,_that.bi
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String username,  String? avatarUrl,  String? bannerUrl,  String? bio,  String? location,  int followersCount,  int followingCount,  int videosCount,  int dynamicCount,  int likesCount,  int level,  int vipType,  int vipStatus,  double? coins,  double? bCoins,  int? currentExp,  int? nextExp,  int? currentMinExp,  bool isFollowing,  bool isVerified,  DateTime? createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _UserProfile():
-return $default(_that.id,_that.username,_that.avatarUrl,_that.bannerUrl,_that.bio,_that.location,_that.followersCount,_that.followingCount,_that.videosCount,_that.dynamicCount,_that.likesCount,_that.level,_that.vipType,_that.vipStatus,_that.coins,_that.bCoins,_that.currentExp,_that.nextExp,_that.currentMinExp,_that.isFollowing,_that.isVerified,_that.createdAt);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return $default(_that.id,_that.username,_that.avatarUrl,_that.bannerUrl,_that.bio,_that.location,_that.followersCount,_that.followingCount,_that.videosCount,_that.dynamicCount,_that.likesCount,_that.level,_that.vipType,_that.vipStatus,_that.coins,_that.bCoins,_that.currentExp,_that.nextExp,_that.currentMinExp,_that.isFollowing,_that.isVerified,_that.createdAt);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///

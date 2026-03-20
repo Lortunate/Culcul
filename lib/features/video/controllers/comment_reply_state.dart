@@ -4,7 +4,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'comment_reply_state.freezed.dart';
 
 @freezed
-abstract class CommentReplyState with _$CommentReplyState {
+sealed class CommentReplyState with _$CommentReplyState {
   const factory CommentReplyState({
     CommentItem? rootComment,
     @Default([]) List<CommentItem> replies,

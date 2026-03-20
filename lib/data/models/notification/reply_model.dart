@@ -4,7 +4,7 @@ part 'reply_model.freezed.dart';
 part 'reply_model.g.dart';
 
 @freezed
-abstract class ReplyResponse with _$ReplyResponse {
+sealed class ReplyResponse with _$ReplyResponse {
   const factory ReplyResponse({
     required ReplyCursor cursor,
     @Default([]) List<ReplyItem> items,
@@ -20,7 +20,7 @@ Object? _readSubjectId(Map json, String key) {
 }
 
 @freezed
-abstract class ReplyCursor with _$ReplyCursor {
+sealed class ReplyCursor with _$ReplyCursor {
   const factory ReplyCursor({
     @JsonKey(name: 'is_end') required bool isEnd,
     required int id,
@@ -32,7 +32,7 @@ abstract class ReplyCursor with _$ReplyCursor {
 }
 
 @freezed
-abstract class ReplyItem with _$ReplyItem {
+sealed class ReplyItem with _$ReplyItem {
   const factory ReplyItem({
     required int id,
     @JsonKey(name: 'users')
@@ -51,7 +51,7 @@ abstract class ReplyItem with _$ReplyItem {
 }
 
 @freezed
-abstract class ReplyUser with _$ReplyUser {
+sealed class ReplyUser with _$ReplyUser {
   const factory ReplyUser({
     required int mid,
     @Default(0) int fans,
@@ -66,7 +66,7 @@ abstract class ReplyUser with _$ReplyUser {
 }
 
 @freezed
-abstract class ReplyItemDetail with _$ReplyItemDetail {
+sealed class ReplyItemDetail with _$ReplyItemDetail {
   const factory ReplyItemDetail({
     @JsonKey(name: 'subject_id', readValue: _readSubjectId)
     required int subjectId,
