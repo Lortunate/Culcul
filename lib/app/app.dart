@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_router.dart';
 import 'package:culcul/core/utils/toast_utils.dart';
-import 'package:culcul/features/settings/logic/settings_provider.dart';
+import 'package:culcul/features/settings/controllers/settings_controller.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';

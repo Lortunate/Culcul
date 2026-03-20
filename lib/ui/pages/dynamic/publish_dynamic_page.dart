@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
-import 'package:culcul/providers/dynamic/dynamic_provider.dart';
+import 'package:culcul/features/dynamic/controllers/dynamic_controller.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/emoji_picker.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/topic_picker.dart';
 import 'package:flutter/material.dart';

@@ -1,6 +1,6 @@
 import 'package:culcul/core/router/router.dart';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/providers/user_space/user_space_extras_provider.dart';
+import 'package:culcul/features/profile/providers/user_space_extras_provider.dart';
 import 'package:culcul/ui/pages/profile/widgets/home_tab/section_header.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';

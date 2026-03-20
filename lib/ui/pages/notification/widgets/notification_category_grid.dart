@@ -1,4 +1,4 @@
-import 'package:culcul/providers/notification/unread_count_provider.dart';
+import 'package:culcul/features/notification/controllers/unread_count_controller.dart';
 import 'package:culcul/core/router/router.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

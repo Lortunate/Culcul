@@ -1,5 +1,5 @@
 import 'package:culcul/core/router/router.dart';
-import 'package:culcul/providers/live/live_provider.dart';
+import 'package:culcul/features/live/controllers/live_recommend_controller.dart';
 import 'package:culcul/ui/pages/home/live/widgets/live_card_skeleton.dart';
 import 'package:culcul/ui/pages/home/live/widgets/live_room_card.dart';
 import 'package:culcul/ui/pages/home/logic/home_scroll_manager.dart';

@@ -1,6 +1,6 @@
 import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
-import 'package:culcul/providers/dynamic/dynamic_comment_controller.dart';
+import 'package:culcul/features/dynamic/controllers/dynamic_comment_controller.dart';
 import 'package:culcul/ui/pages/video/widgets/comments/comment_item.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

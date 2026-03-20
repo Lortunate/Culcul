@@ -1,7 +1,7 @@
 import 'package:culcul/core/router/router.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/providers/profile/profile_provider.dart';
+import 'package:culcul/features/profile/providers/profile_provider.dart';
 import 'package:culcul/ui/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

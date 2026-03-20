@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:culcul/features/video/logic/player_controller.dart';
-import 'package:culcul/features/video/logic/video_detail_controller.dart';
+import 'package:culcul/features/video/controllers/player_controller.dart';
+import 'package:culcul/features/video/controllers/video_detail_controller.dart';
 import 'package:culcul/shared/extensions/format_extensions.dart';
 import 'package:culcul/ui/pages/video/widgets/controls/player_settings_sheet.dart';
 import 'package:culcul/ui/theme/app_colors.dart';

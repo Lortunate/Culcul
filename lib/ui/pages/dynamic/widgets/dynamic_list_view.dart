@@ -1,6 +1,6 @@
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
-import 'package:culcul/providers/dynamic/dynamic_provider.dart';
+import 'package:culcul/features/dynamic/controllers/dynamic_controller.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/dynamic_post_card.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/recently_followed_widget.dart';
 import 'package:culcul/ui/widgets/skeletons/video_list_skeleton.dart';

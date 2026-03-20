@@ -1,7 +1,7 @@
 import 'package:culcul/data/models/notification/reply_model.dart';
-import 'package:culcul/providers/notification/at_provider.dart';
-import 'package:culcul/providers/notification/like_provider.dart';
-import 'package:culcul/providers/notification/reply_provider.dart';
+import 'package:culcul/features/notification/controllers/at_controller.dart';
+import 'package:culcul/features/notification/controllers/like_controller.dart';
+import 'package:culcul/features/notification/controllers/reply_controller.dart';
 import 'package:culcul/ui/pages/notification/widgets/notification_item_widget.dart';
 import 'package:culcul/ui/widgets/index.dart';
 import 'package:easy_refresh/easy_refresh.dart';

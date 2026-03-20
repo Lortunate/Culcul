@@ -1,6 +1,6 @@
 import 'package:culcul/core/router/router.dart';
 import 'package:culcul/data/models/user/user_profile_model.dart';
-import 'package:culcul/providers/auth/auth_provider.dart';
+import 'package:culcul/features/auth/controllers/auth_controller.dart';
 import 'package:culcul/ui/pages/profile/widgets/user_profile_stat_item.dart';
 import 'package:culcul/ui/pages/profile/widgets/user_profile_banner.dart';
 import 'package:culcul/ui/pages/profile/widgets/user_profile_buttons.dart';

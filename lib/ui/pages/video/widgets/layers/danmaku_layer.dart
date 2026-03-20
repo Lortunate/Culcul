@@ -1,8 +1,8 @@
-import 'package:culcul/providers/video/danmaku_provider.dart';
-import 'package:culcul/providers/video/danmaku_settings_provider.dart';
-import 'package:culcul/providers/video/danmaku_mask_provider.dart';
-import 'package:culcul/providers/video/player_controller.dart';
-import 'package:culcul/providers/video/video_detail_controller.dart';
+import 'package:culcul/features/video/controllers/danmaku_controller.dart';
+import 'package:culcul/features/video/controllers/danmaku_settings_controller.dart';
+import 'package:culcul/features/video/providers/danmaku_mask_provider.dart';
+import 'package:culcul/features/video/controllers/player_controller.dart';
+import 'package:culcul/features/video/controllers/video_detail_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

@@ -1,6 +1,6 @@
 import 'package:culcul/core/router/router.dart';
 import 'package:culcul/data/models/fav/index.dart';
-import 'package:culcul/features/favorites/logic/fav_provider.dart';
+import 'package:culcul/features/favorites/controllers/favorites_controller.dart';
 import 'package:culcul/features/favorites/presentation/fav_folder_item.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';

@@ -1,5 +1,5 @@
-import 'package:culcul/providers/video/player_controller.dart';
-import 'package:culcul/providers/video/video_detail_controller.dart';
+import 'package:culcul/features/video/controllers/player_controller.dart';
+import 'package:culcul/features/video/controllers/video_detail_controller.dart';
 import 'package:culcul/shared/extensions/format_extensions.dart';
 import 'package:culcul/ui/pages/video/widgets/controls/player_constants.dart';
 import 'package:culcul/ui/pages/video/widgets/controls/seek_ripple_overlay.dart';

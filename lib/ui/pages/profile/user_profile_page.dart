@@ -1,4 +1,4 @@
-import 'package:culcul/providers/user_space/user_space_provider.dart';
+import 'package:culcul/features/profile/controllers/user_space_controller.dart';
 import 'package:culcul/ui/pages/profile/tabs/user_dynamic_tab.dart';
 import 'package:culcul/ui/pages/profile/tabs/user_home_tab.dart';
 import 'package:culcul/ui/pages/profile/tabs/user_video_tab.dart';

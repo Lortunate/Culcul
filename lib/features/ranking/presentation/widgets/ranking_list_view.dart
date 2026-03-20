@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:culcul/features/ranking/data/models/ranking_category.dart';
-import 'package:culcul/features/ranking/logic/category_ranking_provider.dart';
+import 'package:culcul/features/ranking/providers/category_ranking_provider.dart';
 import 'package:culcul/features/ranking/presentation/widgets/ranking_item_card.dart';
 import 'package:culcul/features/ranking/presentation/widgets/ranking_skeleton_item.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';

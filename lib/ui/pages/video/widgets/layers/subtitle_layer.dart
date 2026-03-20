@@ -1,6 +1,6 @@
 import 'package:culcul/data/models/subtitle.dart';
-import 'package:culcul/providers/video/player_controller.dart';
-import 'package:culcul/providers/video/subtitle_controller.dart';
+import 'package:culcul/features/video/controllers/player_controller.dart';
+import 'package:culcul/features/video/controllers/subtitle_controller.dart';
 import 'package:culcul/ui/pages/video/widgets/controls/player_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';

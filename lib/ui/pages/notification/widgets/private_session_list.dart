@@ -1,4 +1,4 @@
-import 'package:culcul/providers/notification/private_session_provider.dart';
+import 'package:culcul/features/notification/controllers/private_session_controller.dart';
 import 'package:culcul/ui/pages/notification/widgets/notification_skeletons.dart';
 import 'package:culcul/ui/pages/notification/widgets/private_session_item.dart';
 import 'package:easy_refresh/easy_refresh.dart';

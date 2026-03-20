@@ -1,5 +1,5 @@
 import 'package:culcul/data/models/emote/emote_response.dart';
-import 'package:culcul/providers/emote/emote_provider.dart';
+import 'package:culcul/features/dynamic/providers/emote_provider.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

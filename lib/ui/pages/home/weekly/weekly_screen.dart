@@ -1,4 +1,4 @@
-import 'package:culcul/providers/home/weekly_provider.dart';
+import 'package:culcul/features/home/providers/weekly_provider.dart';
 import 'package:culcul/ui/pages/home/widgets/popular_video_card.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

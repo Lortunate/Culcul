@@ -1,6 +1,6 @@
 import 'package:culcul/core/router/router.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/providers/video/video_detail_controller.dart';
+import 'package:culcul/features/video/controllers/video_detail_controller.dart';
 import 'package:culcul/ui/pages/video/widgets/comments/comment_item.dart';
 import 'package:culcul/ui/pages/video/widgets/comments/comment_reply_sheet.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';

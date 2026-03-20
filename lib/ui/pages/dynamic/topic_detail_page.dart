@@ -1,4 +1,4 @@
-import 'package:culcul/providers/dynamic/topic_dynamic_provider.dart';
+import 'package:culcul/features/dynamic/controllers/topic_dynamic_controller.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/dynamic_post_card.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';

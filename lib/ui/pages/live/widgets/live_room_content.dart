@@ -1,5 +1,5 @@
-import 'package:culcul/providers/live/live_room_controller.dart';
-import 'package:culcul/providers/live/live_room_state.dart';
+import 'package:culcul/features/live/controllers/live_room_controller.dart';
+import 'package:culcul/features/live/controllers/live_room_state.dart';
 import 'package:culcul/ui/pages/live/widgets/live_danmaku_view.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:flutter/material.dart';

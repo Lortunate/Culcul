@@ -1,7 +1,7 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/providers/auth/auth_provider.dart';
-import 'package:culcul/providers/video/video_detail_controller.dart';
-import 'package:culcul/providers/video/video_detail_state.dart';
+import 'package:culcul/features/auth/controllers/auth_controller.dart';
+import 'package:culcul/features/video/controllers/video_detail_controller.dart';
+import 'package:culcul/features/video/controllers/video_detail_state.dart';
 import 'package:culcul/shared/extensions/format_extensions.dart';
 import 'package:culcul/ui/widgets/index.dart';
 import 'package:flutter/material.dart';

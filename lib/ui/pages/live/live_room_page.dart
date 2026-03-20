@@ -1,4 +1,4 @@
-import 'package:culcul/providers/live/live_room_controller.dart';
+import 'package:culcul/features/live/controllers/live_room_controller.dart';
 import 'package:culcul/ui/pages/live/widgets/live_bottom_bar.dart';
 import 'package:culcul/ui/pages/live/widgets/live_header.dart';
 import 'package:culcul/ui/pages/live/widgets/live_input_sheet.dart';

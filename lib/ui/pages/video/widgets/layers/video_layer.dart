@@ -1,4 +1,4 @@
-import 'package:culcul/providers/video/player_controller.dart';
+import 'package:culcul/features/video/controllers/player_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit_video/media_kit_video.dart';

@@ -1,5 +1,5 @@
 import 'package:culcul/core/router/router.dart';
-import 'package:culcul/providers/home/home_popular_provider.dart';
+import 'package:culcul/features/home/controllers/home_popular_controller.dart';
 import 'package:culcul/ui/pages/home/logic/home_scroll_manager.dart';
 import 'package:culcul/ui/pages/home/widgets/popular_video_card.dart';
 import 'package:culcul/ui/widgets/index.dart';

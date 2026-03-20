@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/settings/logic/settings_provider.dart';
+import 'package:culcul/features/settings/controllers/settings_controller.dart';
 import 'package:culcul/features/settings/presentation/widgets/selection_sheet/selection_item.dart';
 import 'package:culcul/features/settings/presentation/widgets/selection_sheet/selection_sheet.dart';
 import 'package:culcul/features/settings/presentation/widgets/settings_group.dart';

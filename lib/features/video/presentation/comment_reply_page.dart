@@ -1,5 +1,5 @@
 import 'package:culcul/data/models/comment/comment_model.dart';
-import 'package:culcul/features/video/logic/comment_reply_controller.dart';
+import 'package:culcul/features/video/controllers/comment_reply_controller.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/pages/video/widgets/comments/bottom_input_bar.dart';
 import 'package:culcul/ui/pages/video/widgets/comments/comment_item.dart';

@@ -1,5 +1,5 @@
 import 'package:culcul/core/router/router.dart';
-import 'package:culcul/providers/home/home_recommend_provider.dart';
+import 'package:culcul/features/home/controllers/home_recommend_controller.dart';
 import 'package:culcul/ui/pages/home/logic/home_scroll_manager.dart';
 import 'package:culcul/ui/widgets/index.dart';
 import 'package:easy_refresh/easy_refresh.dart';

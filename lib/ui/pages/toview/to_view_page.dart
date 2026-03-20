@@ -1,5 +1,5 @@
-import 'package:culcul/providers/auth/auth_provider.dart';
-import 'package:culcul/providers/toview/toview_provider.dart';
+import 'package:culcul/features/auth/controllers/auth_controller.dart';
+import 'package:culcul/features/to_view/controllers/to_view_controller.dart';
 import 'package:culcul/ui/pages/toview/to_view_item.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/guest_view.dart';

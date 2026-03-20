@@ -1,7 +1,7 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/data/models/video/video_detail.dart';
-import 'package:culcul/features/video/logic/player_controller.dart';
-import 'package:culcul/features/video/logic/video_detail_controller.dart';
+import 'package:culcul/features/video/controllers/player_controller.dart';
+import 'package:culcul/features/video/controllers/video_detail_controller.dart';
 import 'package:culcul/features/video/presentation/hooks/use_player_system_settings.dart';
 import 'package:culcul/features/video/presentation/hooks/use_video_loader.dart';
 import 'package:culcul/features/video/presentation/hooks/use_video_progress.dart';

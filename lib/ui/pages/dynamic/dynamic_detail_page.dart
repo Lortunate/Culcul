@@ -2,7 +2,7 @@ import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/types/result.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
-import 'package:culcul/providers/dynamic/dynamic_comment_controller.dart';
+import 'package:culcul/features/dynamic/controllers/dynamic_comment_controller.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/detail/dynamic_detail_bottom_bar.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/detail/dynamic_detail_header.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/dynamic_comments_view.dart';

@@ -4,7 +4,7 @@ import 'package:culcul/ui/pages/home/widgets/popular_view.dart';
 import 'package:culcul/ui/pages/home/widgets/recommend_view.dart';
 import 'package:culcul/ui/pages/home/live/live_view.dart';
 import 'package:culcul/ui/pages/home/home_events.dart';
-import 'package:culcul/providers/search/search_provider.dart';
+import 'package:culcul/features/search/controllers/search_controller.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';

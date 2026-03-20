@@ -1,4 +1,4 @@
-import 'package:culcul/features/search/logic/search_provider.dart';
+import 'package:culcul/features/search/controllers/search_controller.dart';
 import 'package:culcul/features/search/presentation/widgets/search_filter_bar.dart';
 import 'package:culcul/features/search/presentation/widgets/search_result_list.dart';
 import 'package:culcul/features/search/presentation/widgets/search_result_skeleton.dart';

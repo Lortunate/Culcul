@@ -1,7 +1,7 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/router/router.dart';
 import 'package:culcul/data/models/video/video_model.dart';
-import 'package:culcul/providers/user_space/user_space_videos_provider.dart';
+import 'package:culcul/features/profile/controllers/user_space_videos_controller.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
 import 'package:culcul/ui/widgets/skeletons/video_list_skeleton.dart';

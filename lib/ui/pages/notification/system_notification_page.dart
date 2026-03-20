@@ -1,5 +1,5 @@
 import 'package:culcul/data/models/notification/system_notification_model.dart';
-import 'package:culcul/providers/notification/system_notification_provider.dart';
+import 'package:culcul/features/notification/controllers/system_notification_controller.dart';
 import 'package:culcul/shared/extensions/format_extensions.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:flutter/material.dart';
