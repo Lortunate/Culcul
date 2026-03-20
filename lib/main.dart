@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:cookie_jar/cookie_jar.dart';
-import 'package:culcul/app.dart';
+import 'package:culcul/app/app.dart';
 import 'package:culcul/core/providers/cache_store_provider.dart';
 import 'package:culcul/core/providers/cookie_jar_provider.dart';
 import 'package:culcul/core/providers/shared_preferences_provider.dart';
@@ -64,7 +64,7 @@ void main() async {
           storageBoxProvider.overrideWithValue(box),
           audioHandlerProvider.overrideWithValue(audioHandler),
         ],
-        child: const culculApp(),
+        child: const CulculApp(),
       ),
     ),
   );
