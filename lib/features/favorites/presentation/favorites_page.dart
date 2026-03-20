@@ -3,7 +3,7 @@ import 'package:culcul/features/favorites/logic/fav_provider.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/providers/auth/auth_provider.dart';
+import 'package:culcul/features/auth/logic/auth_provider.dart';
 import 'package:culcul/ui/widgets/app_tab_bar.dart';
 import 'package:culcul/ui/widgets/guest_view.dart';
 import 'package:flutter/material.dart';

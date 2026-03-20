@@ -1,127 +1,135 @@
-# Flutter 项目目录结构重构方案
+# Culcul 目录结构重构方案
 
-## 1. 当前结构的核心问题
+## 1. 基于当前代码的结论
 
-当前 `lib` 的主要问题不是单个目录太大，而是**同一业务被按技术层拆散后，又在 UI 内继续细拆**，导致查找路径长、理解成本高、功能边界模糊。
+这次重构的核心问题，不是单纯“目录层级深”，而是项目已经进入**半迁移、双轨并存**状态：
 
-### 1.1 目录重复按“技术类型”切分
+- 应用装配层已经迁到 `lib/app/`
+- `settings`、`history`、`ranking`、`search`、`favorites`、部分 `video` 已迁到 `lib/features/`
+- 但主路由 `lib/app/router/app_routes.dart` 仍然大量引用 `lib/ui/pages/*`
+- `providers/`、`repositories/`、`data/api/`、`data/models/` 仍是主数据来源
 
-当前顶层同时存在：
+这意味着现在最大的结构性问题不是“目录多”，而是：
 
+1. 同一业务被拆散在多个横向目录
+2. 新旧结构同时有效，维护成本翻倍
+3. 某些 feature 已迁一半，职责边界反而更模糊
+
+换句话说，当前项目最需要的是**完成收口**，而不是继续增加一套更复杂的新分层。
+
+---
+
+## 2. 当前结构的主要问题
+
+### 2.1 顶层按技术分层，业务链路被打散
+
+当前 `lib/` 顶层同时存在：
+
+- `app/`
 - `core/`
 - `data/`
 - `domain/`
+- `features/`
 - `providers/`
 - `repositories/`
 - `services/`
 - `shared/`
 - `ui/`
 
-这意味着一个功能通常会分散在：
+以视频功能为例，相关代码分散在：
 
-- `ui/pages/video/...`
-- `providers/video/...`
+- `ui/pages/video/*`
+- `features/video/*`
+- `providers/video/*`
 - `repositories/video_repository.dart`
+- `repositories/danmaku_repository.dart`
 - `data/api/video_api.dart`
-- `data/models/video/...`
+- `data/api/danmaku_api.dart`
+- `data/models/video/*`
+- `data/models/comment/*`
 
-结果是：
+这是典型的低内聚结构。改一个业务，需要跨 5 到 8 个目录跳转。
 
-- 改一个功能要跨 4 到 6 个目录跳转
-- 目录名表达的是“技术实现方式”，不是“业务能力”
-- 业务链路无法在一个地方看全
+### 2.2 新旧结构双轨并存
 
-### 1.2 过度分层，存在“为分层而分层”
+当前路由文件同时引用：
 
-当前结构里有明显的过度抽象：
+- 新结构：`features/*`
+- 旧结构：`ui/pages/*`
+- 旧模型：`data/models/*`
 
-- `data/api` + `repositories` + `providers` 三层对多数功能来说过重
-- `domain/entities` 很薄，只有少量实体，不足以支撑完整 DDD 分层
-- `core/repositories/base_repository.dart`、`core/types/result.dart`、`core/errors/...` 等基础层与具体业务调用深度耦合
+这会带来三个直接问题：
 
-问题在于：
+- 开发者不知道新增文件该放 `features` 还是 `ui/pages`
+- 同类状态逻辑可能同时存在于 `features/*/logic` 与 `providers/*`
+- 后续重构不再是“搬家”，而是在双轨之间来回复制
 
-- 项目规模还没到必须强制分 `domain/data/presentation` 的程度
-- 大量 feature 只是“接口 + 状态 + 页面”，却被迫拆成多个横向层
-- 抽象层带来的复杂度，大于它带来的收益
+### 2.3 `core/shared/ui` 的边界不清
 
-### 1.3 `core/shared/common` 边界不清
-
-当前全局能力被分散到多个“看起来都像公共层”的目录：
+当前公共能力被分散在：
 
 - `core/utils`
 - `core/widgets`
+- `core/services`
 - `shared/extensions`
 - `ui/widgets`
 - `ui/theme`
 
-这会导致两个问题：
+这不是“公共层丰富”，而是“公共层失控”。
 
-- 新文件不知道放哪
-- 本该 feature 私有的东西被提前提升为全局共享
+例如下面这些文件并不适合留在全局共享层：
 
-典型表现：
+- `ui/widgets/video_card.dart`
+- `ui/widgets/follow_button.dart`
+- `ui/widgets/profile_stat_item.dart`
+- `ui/widgets/user_tags.dart`
+- `core/utils/danmaku_mask_parser.dart`
 
-- `ui/widgets/video_card.dart`、`follow_button.dart`、`profile_stat_item.dart` 其实具备明显业务语义，不是纯通用组件
-- `ui/widgets/danmaku/...` 更接近播放器能力或独立 feature，不适合挂在全局 widgets 下
-- `core/utils/danmaku_mask_parser.dart`、`share_utils.dart`、`toast_utils.dart`、`timeago_utils.dart` 混放在一起，职责跨度过大
+它们都带有明显业务语义，应回收到 feature 内部。
 
-### 1.4 UI 层内部再次过细拆分
+### 2.4 目录深度超过实际收益
 
-例如：
+典型例子：
 
-- `ui/pages/video/widgets/controls/bottom_bar/...`
-- `ui/pages/search/widgets/items/...`
-- `ui/pages/profile/widgets/home_tab/...`
+- `ui/pages/video/widgets/controls/bottom_bar/*`
+- `ui/pages/profile/widgets/home_tab/*`
+- `ui/pages/dynamic/widgets/content/*`
+- `ui/pages/notification/widgets/chat/*`
 
-这些目录拆分深度已经超过“可读性提升”的收益，反而导致：
+这些路径很多都已经超过四层。对实际维护而言，问题不是“文件太多”，而是“打开目录之后还是目录”。
 
-- 打开目录才能继续找目录
-- 组件数量不多，却被多层文件夹包裹
-- 很多“只服务一个页面”的部件被拆得像共享库
+### 2.5 `domain/` 过薄，不足以支撑独立分层
 
-### 1.5 feature 之间边界不稳定
+当前 `domain/entities` 非常薄，无法支撑完整 DDD 或 clean architecture 分层收益。继续保留 `domain`，只会让结构看起来“正规”，但不会让项目更简单。
 
-目前一些功能被拆散在多个 feature 之间：
+### 2.6 有效 feature 与 feature 之间边界仍不稳定
 
-- `home` 下有 `live/weekly`
-- `profile` 与 `relation`、`user_space` 存在业务交叉
-- `notification`、`chat`、`private_session` 聚合不彻底
+几个明显交叉点：
 
-这说明当前 feature 划分与用户心智模型不完全一致。
+- `profile`、`relation`、`user_space`
+- `home`、`live`、`weekly`
+- `notification`、`chat`、`private_session`
+- `video` 与全局 `ui/widgets/danmaku`
 
-### 1.6 存在无效目录和空目录
+说明 feature 划分目前还没有完全基于业务心智。
 
-例如：
+---
 
-- `ui/pages/subscription/`
-- `ui/pages/dynamic/utils/`
-- `ui/widgets/refresh_indicator/`
-- `data/models/bangumi/`
+## 3. 重构原则
 
-这类目录会不断制造“这里应该还有内容”的错觉，增加噪音。
+本项目建议坚持以下原则：
 
-### 1.7 生成物与源码摆放不够收敛
+1. 高内聚：同一业务的页面、状态、数据访问尽量放在一个模块里
+2. 低耦合：feature 之间通过路由、共享组件、少量稳定模型协作，不直接横向依赖实现细节
+3. 按功能组织：优先按“用户能感知的业务模块”组织，而不是按“技术类别”组织
+4. 避免过度设计：不要为了分层而分层，小模块允许保持简单
+5. 先收口再抽象：先把业务收回 feature，再决定哪些内容真的值得上升到共享层
 
-例如：
+---
 
-- `lib/protos/` 下同时出现源码与生成后的 `lib/protos/...`
+## 4. 目标目录结构
 
-这会让源码边界变得不清晰，也不利于后续维护。
-
-## 2. 重构目标
-
-新的结构应满足：
-
-- 按功能模块组织
-- 一个 feature 内能看到页面、状态、仓储、模型
-- 共享目录只保留真正全局复用的能力
-- 降低目录深度，减少中间层
-- 允许简单 feature 保持简单，不强制套模板
-
-## 3. 建议的新目录结构
-
-推荐将 `lib` 收敛为下面这套结构：
+推荐将 `lib/` 收敛为下面这套骨架：
 
 ```text
 lib/
@@ -130,381 +138,120 @@ lib/
 │   ├── bootstrap.dart
 │   ├── router/
 │   │   ├── app_router.dart
-│   │   └── app_routes.dart
-│   ├── theme/
-│   │   ├── app_theme.dart
-│   │   ├── app_colors.dart
-│   │   ├── app_text_theme.dart
-│   │   └── app_component_theme.dart
-│   └── l10n/
-│       ├── en.i18n.json
-│       ├── zh.i18n.json
-│       └── zh_Hant.i18n.json
+│   │   ├── app_routes.dart
+│   │   └── transitions.dart
+│   └── theme/
+│       ├── app_theme.dart
+│       ├── app_colors.dart
+│       ├── app_text_theme.dart
+│       └── app_component_theme.dart
 ├── foundation/
+│   ├── config/
+│   ├── errors/
 │   ├── network/
 │   │   ├── dio_client.dart
 │   │   └── interceptors/
 │   ├── storage/
-│   │   ├── shared_prefs.dart
-│   │   ├── hive_box.dart
-│   │   └── cookie_jar.dart
-│   ├── errors/
-│   │   ├── exceptions.dart
-│   │   └── error_handler.dart
 │   ├── result/
-│   │   └── result.dart
-│   ├── config/
-│   │   ├── api_constants.dart
-│   │   ├── api_cache_config.dart
-│   │   ├── app_constants.dart
-│   │   └── app_dimens.dart
 │   └── utils/
-│       ├── format_utils.dart
-│       ├── json_utils.dart
-│       ├── validation_utils.dart
-│       └── toast_utils.dart
 ├── shared/
 │   ├── widgets/
-│   │   ├── app_network_image.dart
-│   │   ├── app_error_widget.dart
-│   │   ├── app_bottom_sheet.dart
-│   │   ├── app_shimmer.dart
-│   │   ├── smart_paging_view.dart
-│   │   └── refresh_header_footer.dart
 │   ├── extensions/
-│   │   └── format_extensions.dart
-│   └── services/
-│       ├── audio_handler.dart
-│       └── media_service.dart
+│   ├── services/
+│   └── models/
 ├── features/
 │   ├── auth/
-│   │   ├── data/
-│   │   │   ├── auth_api.dart
-│   │   │   ├── auth_repository.dart
-│   │   │   └── models/
-│   │   ├── logic/
-│   │   │   └── auth_provider.dart
-│   │   └── presentation/
-│   │       ├── login_page.dart
-│   │       ├── country_code_selection_page.dart
-│   │       ├── hooks/
-│   │       └── widgets/
 │   ├── home/
-│   │   ├── data/
-│   │   ├── logic/
-│   │   └── presentation/
 │   ├── dynamic/
-│   │   ├── data/
-│   │   ├── logic/
-│   │   └── presentation/
 │   ├── video/
-│   │   ├── data/
-│   │   │   ├── video_api.dart
-│   │   │   ├── video_repository.dart
-│   │   │   ├── danmaku_repository.dart
-│   │   │   └── models/
-│   │   ├── logic/
-│   │   │   ├── video_detail_controller.dart
-│   │   │   ├── video_detail_state.dart
-│   │   │   ├── player_controller.dart
-│   │   │   ├── subtitle_controller.dart
-│   │   │   └── comment_reply_controller.dart
-│   │   └── presentation/
-│   │       ├── video_detail_page.dart
-│   │       ├── vertical_video_page.dart
-│   │       ├── comment_reply_page.dart
-│   │       ├── hooks/
-│   │       └── widgets/
 │   ├── live/
 │   ├── profile/
-│   ├── relation/
-│   ├── search/
 │   ├── notification/
+│   ├── search/
+│   ├── ranking/
 │   ├── favorites/
 │   ├── history/
-│   ├── ranking/
 │   ├── settings/
 │   ├── scanner/
 │   └── to_view/
 ├── integrations/
 │   └── protos/
-│       ├── dm.proto
-│       ├── dm.pb.dart
-│       ├── dm.pbenum.dart
-│       ├── dm.pbjson.dart
-│       └── dm.pbserver.dart
+├── i18n/
 └── main.dart
 ```
 
-## 4. 每个目录存在的必要性
+### 4.1 顶层目录职责
 
-### `app/`
+#### `app/`
 
-只放应用装配层代码：
+只负责应用装配：
 
-- 应用入口 Widget
-- 路由注册
+- 根应用 Widget
+- 全局路由
 - Theme
-- 国际化资源
-- 启动初始化协调
+- 启动初始化编排
 
-它不承载业务逻辑，只负责“把应用拼起来”。
+这里不承载业务逻辑。
 
-### `foundation/`
+#### `foundation/`
 
-只放真正跨 feature 的底层基础设施：
+只放跨 feature 的基础设施：
 
-- 网络客户端
+- 网络客户端与拦截器
 - 存储适配
-- 通用异常与结果类型
-- 全局配置
-- 无业务语义的纯工具函数
+- 全局异常
+- 结果类型
+- 配置常量
+- 无业务语义的工具函数
 
-这里是基础设施层，不是“什么都能放”的杂物间。
+#### `shared/`
 
-### `shared/`
+只放稳定复用的共享内容：
 
-只放多个 feature 重复使用、且不绑定某个具体业务的内容：
-
-- 通用 UI 组件
-- 通用扩展
+- 纯通用 UI 组件
+- 跨 feature 扩展方法
 - 跨 feature 服务
+- 真正稳定的共享模型
 
-如果一个组件带有明确业务语义，例如“视频卡片”“关注按钮”“用户标签”，原则上不应该优先放这里。
+判断标准很严格：至少两个 feature 已稳定使用，且不携带明显业务语义。
 
-### `features/`
+#### `features/`
 
-这是核心目录。每个 feature 对外是一个完整模块，内部自己管理：
-
-- `data/`：接口、仓储、本地数据源、feature 专属模型
-- `logic/`：Riverpod provider、controller、state、业务组合逻辑
-- `presentation/`：页面、局部 widgets、hooks
-
-注意：**不是每个 feature 都必须三个子目录都齐全**。
-
-例如：
-
-- 很小的 `scanner` 可以只有 `presentation/`
-- 很简单的 `history` 可能 `data/logic/presentation` 也足够，不要继续拆 `domain`
-
-### `integrations/`
-
-放外部协议或第三方生成代码，例如 protobuf。它们既不是业务 feature，也不是通用 UI。
-
-## 5. 合并建议：哪些目录应该直接取消
-
-建议逐步取消这些顶层目录：
-
-- `data/`
-- `domain/`
-- `providers/`
-- `repositories/`
-- `services/`
-- `ui/pages/`
-
-它们的内容迁移方式如下：
-
-- `data/api/*` -> 对应 feature 的 `data/`
-- `data/models/*` -> 对应 feature 的 `data/models/`
-- `providers/*` -> 对应 feature 的 `logic/`
-- `repositories/*` -> 对应 feature 的 `data/`
-- `services/live_socket_service.dart` -> `features/live/data/` 或 `features/live/logic/`
-- `ui/pages/*` -> 对应 feature 的 `presentation/`
-- `ui/theme/*` -> `app/theme/`
-- `core/router/*` -> `app/router/`
-- `i18n/*` -> `app/l10n/`
-
-## 6. 页面、状态管理、数据层、通用组件等的合理归属
-
-### 页面
-
-放在 feature 内的 `presentation/`。
-
-例如：
-
-- `features/video/presentation/video_detail_page.dart`
-- `features/profile/presentation/user_profile_page.dart`
-
-### 页面私有组件
-
-放在对应 feature 的 `presentation/widgets/`。
-
-例如：
-
-- `video_info_view.dart`
-- `video_comments_view.dart`
-- `profile_menu.dart`
-
-如果只被一个页面使用，甚至可以直接与页面放在同级，不必强行再套多层目录。
-
-### 状态管理
-
-Riverpod 的 provider、controller、state 放在 feature 的 `logic/`。
-
-例如：
-
-- `features/video/logic/video_detail_controller.dart`
-- `features/video/logic/video_detail_state.dart`
-
-不要再单独放到全局 `providers/`。
-
-### 数据层
-
-与 feature 强相关的数据获取逻辑放在 feature 的 `data/`：
-
-- api
-- repository
-- local data source
-- DTO / model
-
-例如视频相关：
-
-- `video_api.dart`
-- `video_repository.dart`
-- `video_detail.dart`
-- `play_url.dart`
-
-都应收敛到 `features/video/data/`。
-
-### 通用组件
-
-只有满足这两个条件才放 `shared/widgets/`：
-
-- 至少被两个以上 feature 使用
-- 不带明显业务语义
-
-适合放共享层的典型例子：
-
-- `app_network_image.dart`
-- `app_bottom_sheet.dart`
-- `app_error_widget.dart`
-- `app_shimmer.dart`
-- `smart_paging_view.dart`
-
-不适合放共享层的例子：
-
-- `video_card.dart`
-- `follow_button.dart`
-- `profile_stat_item.dart`
-- `user_tags.dart`
-
-这些都带业务含义，应放回对应 feature。
-
-### 工具类
-
-按规则归属：
-
-- 纯基础能力 -> `foundation/utils/`
-- 强业务语义 -> feature 内部 `utils/` 或 `logic/`
-
-例如：
-
-- `format_utils.dart` 可放 `foundation/utils/`
-- `danmaku_mask_parser.dart` 更适合 `features/video/` 或 `features/live/`
-- `share_utils.dart` 如果主要服务视频分享，应移入 `features/video/logic/` 或 `presentation/`
-
-### 路由
-
-集中放 `app/router/`，但路由页面引用 feature。
-
-可进一步优化为：
-
-- `app_router.dart` 负责 `GoRouter`
-- `app_routes.dart` 负责 typed routes
-
-如果后续 feature 很多，也可以拆成：
-
-- `app/router/routes/video_routes.dart`
-- `app/router/routes/profile_routes.dart`
-
-### 主题
-
-属于应用级能力，放 `app/theme/`。
-
-### 常量
-
-归属规则要收紧：
-
-- 全局配置常量 -> `foundation/config/`
-- 只服务某个模块的常量 -> feature 内部
-
-例如：
-
-- `player_constants.dart` 应放 `features/video/`
-- 不应放全局 `core/constants/`
-
-### 网络层
-
-底层网络客户端放 `foundation/network/`：
-
-- `dio_client.dart`
-- `interceptors/...`
-
-但具体业务 API 定义不要放这里，应该跟 feature 走。
-
-### 实体模型
-
-当前项目不建议再保留一个薄弱的全局 `domain/entities/`。
-
-建议规则：
-
-- 接口返回模型、页面使用模型、feature 专属模型 -> 放 feature `data/models/`
-- 真正跨模块复用的稳定模型，再考虑提升到 `shared/models/` 或 `foundation/`
-
-如果一个模型只被一个 feature 使用，就不要上升到全局。
-
-## 7. 哪些应该放在 feature 内，哪些才应该放在 shared/core/common
-
-### 应该放在 feature 内部的内容
+这是主战场。每个 feature 自己管理：
 
 - 页面
-- 页面私有组件
-- feature 的 provider / controller / state
-- feature 的 repository
-- feature 的 api
-- feature 的模型
-- feature 专属 hooks
-- feature 专属 constants
-- feature 专属 utils
-- feature 专属 service
+- 页面局部组件
+- provider / controller / state
+- repository / api / local data source
+- feature 专属 model / utils / constants
 
-判断标准只有一个：
+#### `integrations/`
 
-**离开这个 feature，文件是否仍然成立。**
+放协议文件和第三方生成代码，例如 protobuf。
 
-如果答案是否定的，就不应该提升到共享层。
+#### `i18n/`
 
-### 只应放在 `shared/` 或 `foundation/` 的内容
+当前项目已经有成熟生成链路，建议暂时保留在顶层，不强制搬进 `app/`。这样改动更小，也更符合 Flutter 社区常见习惯。
 
-- 与业务无关的基础设施
-- 多个 feature 已稳定复用的通用组件
-- 全局主题、路由、启动流程
-- 全局错误处理、结果类型、存储封装、网络封装
+---
 
-### 不该滥用的目录
+## 5. feature 内部推荐粒度
 
-不建议再新增：
-
-- `common/`
-- `base/`
-- `helpers/`
-- `utils/` 这种没有范围说明的大杂烩目录
-
-如果必须有 `utils/`，要么放在 `foundation/utils/`，要么放在具体 feature 内部。
-
-## 8. 推荐的 feature 内部结构粒度
-
-不要给所有 feature 强制套同一个复杂模板。建议按规模分级：
+不是每个 feature 都必须长成同一个模板。
 
 ### 小 feature
+
+适用于 `scanner`、`to_view` 这类轻模块：
 
 ```text
 features/scanner/
 ├── scanner_page.dart
-└── scanner_provider.dart
+└── scanner_route.dart
 ```
 
 ### 中等 feature
+
+适用于 `history`、`settings`、`ranking`：
 
 ```text
 features/history/
@@ -515,86 +262,67 @@ features/history/
 
 ### 大 feature
 
+适用于 `video`、`dynamic`、`notification`、`profile`、`live`：
+
 ```text
 features/video/
 ├── data/
+│   ├── api/
 │   ├── models/
-│   ├── video_api.dart
-│   └── video_repository.dart
+│   ├── repositories/
+│   └── services/
 ├── logic/
 ├── presentation/
-│   ├── hooks/
-│   └── widgets/
+│   ├── pages/
+│   ├── widgets/
+│   └── hooks/
 └── player/
 ```
 
-对于 `video`、`notification`、`dynamic` 这类复杂模块，可以在 feature 内允许一层业务子域，但不要继续无节制下钻。
+注意：大 feature 允许内部再分一层业务子域，但不要继续纵向细拆到五六层。
 
-## 9. 从旧结构迁移到新结构的具体步骤
+---
 
-建议按下面顺序迁移，风险最低。
+## 6. 面向当前项目的目标模块划分
 
-### 第一步：先建立新骨架，不立即全量搬迁
+### 6.1 `auth`
 
-先创建：
+收拢：
 
-- `lib/app/`
-- `lib/foundation/`
-- `lib/shared/`
-- `lib/features/`
-- `lib/integrations/`
+- `ui/pages/auth/*`
+- `repositories/auth_repository.dart`
+- `data/api/auth_api.dart`
+- `domain/entities/country_code.dart`
 
-目标是让新结构先落地，再分批迁移代码。
+### 6.2 `home`
 
-### 第二步：迁移应用装配层
+只保留首页主 tab、本地交互、推荐与热门聚合：
 
-先移动低风险文件：
+- `ui/pages/home/home_page.dart`
+- `ui/pages/home/widgets/*`
+- `ui/pages/home/logic/home_scroll_manager.dart`
+- `providers/home/home_popular_provider.dart`
+- `providers/home/home_recommend_provider.dart`
+- `repositories/home_repository.dart`
+- `data/models/feed/*`
 
-- `app.dart` -> `app/app.dart`
-- `core/router/*` -> `app/router/`
-- `ui/theme/*` -> `app/theme/`
-- `i18n/*` -> `app/l10n/`
+`weekly` 不建议长期挂在 `home/weekly/` 下，如果只是首页入口，可作为 `home/presentation/pages/weekly_page.dart`。
 
-同时调整 `main.dart` 的引用。
+### 6.3 `dynamic`
 
-### 第三步：迁移底层基础设施
+收拢：
 
-将真正基础设施收敛到 `foundation/`：
+- `ui/pages/dynamic/*`
+- `providers/dynamic/*`
+- `repositories/dynamic_repository.dart`
+- `data/api/dynamic_api.dart`
+- `data/models/dynamic/*`
 
-- `core/errors/*`
-- `core/types/result.dart`
-- `data/network/*`
-- `core/constants/*`
-- `core/providers` 中与存储/网络初始化相关的 provider
+### 6.4 `video`
 
-注意：
+这是最关键的样板模块，应完整收口：
 
-- 如果某个 provider 明显属于某个 feature，不要一起迁进基础层
-
-### 第四步：按 feature 逐个迁移，不要横向一次搬完
-
-优先顺序建议：
-
-1. `settings`
-2. `history`
-3. `ranking`
-4. `search`
-5. `favorites`
-6. `profile`
-7. `notification`
-8. `dynamic`
-9. `video`
-10. `live`
-
-原因：
-
-- 从简单模块开始，先验证目录策略
-- 最后再处理复杂模块，避免前期方案不稳定
-
-### 第五步：每迁一个 feature，就完成整链路收敛
-
-以 `video` 为例，一次性迁移：
-
+- `features/video/*`
 - `ui/pages/video/*`
 - `providers/video/*`
 - `repositories/video_repository.dart`
@@ -602,106 +330,360 @@ features/video/
 - `data/api/video_api.dart`
 - `data/api/danmaku_api.dart`
 - `data/models/video/*`
-- `data/models/comment/*` 中仅视频使用的部分
+- `data/models/comment/*`
+- `data/models/subtitle*`
+- `ui/widgets/danmaku/*`
+- `core/utils/danmaku_mask_parser.dart`
 
-迁移完成后，保证“视频相关代码主要只在 `features/video/` 内查找”。
+建议目标结构：
 
-### 第六步：清理被掏空的旧目录
+```text
+features/video/
+├── data/
+│   ├── api/
+│   ├── models/
+│   ├── repositories/
+│   └── services/
+├── logic/
+├── presentation/
+│   ├── pages/
+│   ├── widgets/
+│   └── hooks/
+└── player/
+```
 
-迁移完成一个 feature 后，及时删除空目录：
+其中：
 
-- `providers/video/`
-- `ui/pages/video/`
-- `data/models/video/`
+- `player/` 放播放器专属状态、常量、控制层、覆盖层
+- 评论相关 UI 可放 `presentation/widgets/comments/`
+- 详情信息相关 UI 可放 `presentation/widgets/info/`
+- 若弹幕能力未来被 `live` 共用，再上提到 `shared/widgets/danmaku/`
 
-不要让新旧结构长期并存，否则会出现双轨维护。
+### 6.5 `live`
 
-### 第七步：最后再处理共享提炼
+收拢：
 
-当两个或更多 feature 出现重复实现时，再提炼到 `shared/`。
+- `ui/pages/live/*`
+- `ui/pages/home/live/*`
+- `providers/live/*`
+- `services/live_socket_service.dart`
+- `repositories/live_repository.dart`
+- `data/api/live_api.dart`
+- `data/models/live/*`
 
-不要在重构第一阶段就急着抽公共组件，否则很容易把 feature 私有逻辑误抽出去。
+直播列表和直播间都应归入 `features/live/`，不要一半挂在首页，一半单独存在。
 
-## 10. 针对当前项目的具体落点建议
+### 6.6 `profile`
 
-### `video`
+建议将“用户域”并成一个 feature，而不是继续拆散：
 
-这是当前最典型的“被拆散的 feature”，建议优先作为样板模块重构。
+- `ui/pages/profile/*`
+- `ui/pages/relation/*`
+- `providers/profile/*`
+- `providers/relation/*`
+- `providers/user_space/*`
+- `repositories/profile_repository.dart`
+- `repositories/relation_repository.dart`
+- `data/api/profile_api.dart`
+- `data/api/relation_api.dart`
+- `data/models/user/*`
+- `data/models/relation/*`
 
-应收敛的内容包括：
+推荐结构：
 
-- 页面
-- 播放器控件
-- 评论 UI
-- 播放状态
-- subtitle / player controller
-- video api / repository
-- video models
-- danmaku 相关实现
+```text
+features/profile/
+├── data/
+├── logic/
+├── presentation/
+│   ├── pages/
+│   ├── tabs/
+│   └── widgets/
+└── relation/
+```
 
-尤其是：
+如果后面证明 `relation` 可独立演化，再拆出去；当前阶段先并入更符合“高内聚”。
 
-- `ui/widgets/danmaku/ns_danmaku/...`
+### 6.7 `notification`
 
-更适合迁到：
+建议统一为一个“消息中心”模块：
 
-- `features/video/presentation/widgets/danmaku/`
+- `ui/pages/notification/*`
+- `providers/notification/*`
+- `repositories/notification_repository.dart`
+- `data/api/notification_api.dart`
+- `data/models/notification/*`
 
-如果直播也共用，则再抽成：
+聊天、私信 session、点赞/回复/系统通知都不要再散落在不同横向层。
 
-- `shared/widgets/danmaku/`
+### 6.8 已迁移中的模块
 
-### `notification`
+以下模块已经有 `features/*` 雏形，但尚未彻底收口：
 
-建议把通知列表、聊天、私信 session 统一收敛到一个 feature，下设：
+- `favorites`
+- `history`
+- `ranking`
+- `search`
+- `settings`
 
-- `presentation/`
-- `logic/`
-- `data/`
+这些模块的优先任务不是“继续优化层次”，而是：
 
-不要继续让聊天相关能力散落在 provider 和页面两个横向层。
-
-### `profile`、`relation`、`user_space`
-
-这三块强关联，建议按“用户域”思路整理：
-
-- `profile/` 保留个人主页和用户主页
-- `relation/` 如果只服务用户页，可以并入 `profile/`
-- `user_space` 如果只是用户视频/动态的一部分，也应并入 `profile/`
-
-### `home`
-
-当前 `home` 下还包了 `live` 和 `weekly` 子目录，建议按业务拆回独立 feature：
-
-- `home`：推荐、热门、主 tab
-- `live`：直播列表、直播间
-- `ranking`：排行榜
-- `weekly`：如果只是一个入口页面，可并回 `home` 或 `ranking`
-
-### `settings`
-
-是很适合作为首批迁移样板的 feature，结构可以很简单。
-
-## 11. 重构后的直接收益
-
-完成后会得到以下结果：
-
-- 结构更直观：开发者优先按业务找代码，不再先猜技术层
-- 查找文件更快：一个功能的大多数文件集中在同一个 feature
-- 模块边界更清晰：公共层职责收窄，不再泛滥
-- 维护成本更低：新增功能时不必同时改多个横向目录
-- 扩展成本更低：新 feature 可以直接复制简单模板，不用进入过度分层
-
-## 12. 最终执行原则
-
-后续新增文件时，严格遵循以下原则：
-
-1. 先问“它属于哪个业务模块”，再决定路径。
-2. 只有跨多个 feature 稳定复用，才提升到 `shared/`。
-3. 只有真正底层无业务语义，才放进 `foundation/`。
-4. 小 feature 不强制三层，大 feature 才允许适度细分。
-5. 不再新增模糊目录名，例如 `common`、`helpers`、`base`。
+1. 迁完残余依赖
+2. 删除旧目录同名实现
+3. 统一导入方向
 
 ---
 
-如果你准备开始真正落地重构，建议第一批直接处理 `settings -> history -> ranking -> video`。这样可以先验证迁移方式，再把最复杂的 `video` 模块作为标准模板固定下来。
+## 7. 哪些内容该放 feature，哪些才该放 shared/foundation
+
+### 7.1 应该留在 feature 内的内容
+
+- 页面
+- 页面私有 widgets
+- hooks
+- provider / controller / state
+- repository
+- api
+- local cache
+- feature model
+- feature constants
+- feature utils
+
+判断标准：
+
+如果文件脱离该业务就失去意义，它就不应该放到共享层。
+
+### 7.2 应该进入 `shared/` 的内容
+
+建议仅保留这类真正通用的东西：
+
+- `app_network_image.dart`
+- `app_bottom_sheet.dart`
+- `app_error_widget.dart`
+- `app_shimmer.dart`
+- `smart_paging_view.dart`
+- `refresh_header_footer.dart`
+- `format_extensions.dart`
+
+### 7.3 不建议继续挂在共享层的内容
+
+应逐步回收进对应业务模块：
+
+- `video_card.dart`
+- `video_list_card.dart`
+- `video_thumbnail.dart`
+- `follow_button.dart`
+- `profile_stat_item.dart`
+- `user_tags.dart`
+- `guest_view.dart`
+
+这些组件都具有明确业务语义，不是纯共享组件。
+
+### 7.4 应该进入 `foundation/` 的内容
+
+建议迁入：
+
+- `core/constants/*` 中真正全局的配置
+- `core/errors/*`
+- `core/types/result.dart`
+- `data/network/*`
+- `core/providers` 中与存储、网络初始化直接相关的 provider
+
+### 7.5 暂不建议保留的顶层目录
+
+最终目标是清空并删除：
+
+- `domain/`
+- `providers/`
+- `repositories/`
+- `services/`
+- `ui/pages/`
+- `data/api/`
+- `data/models/`
+
+如果某个目录还存在，只能表示“迁移尚未完成”，不能作为长期结构。
+
+---
+
+## 8. 旧结构到新结构的映射规则
+
+### 8.1 通用映射
+
+- `ui/pages/<feature>/*` -> `features/<feature>/presentation/*`
+- `providers/<feature>/*` -> `features/<feature>/logic/*`
+- `repositories/<feature>_repository.dart` -> `features/<feature>/data/repositories/*`
+- `data/api/<feature>_api.dart` -> `features/<feature>/data/api/*`
+- `data/models/<feature>/*` -> `features/<feature>/data/models/*`
+
+### 8.2 基础设施映射
+
+- `core/errors/*` -> `foundation/errors/*`
+- `data/network/*` -> `foundation/network/*`
+- `core/types/result.dart` -> `foundation/result/result.dart`
+- `core/constants/*` -> `foundation/config/*`
+- `core/providers/shared_preferences_provider.dart` -> `foundation/storage/`
+- `core/providers/storage_provider.dart` -> `foundation/storage/`
+- `core/providers/cookie_jar_provider.dart` -> `foundation/storage/`
+- `core/providers/cache_store_provider.dart` -> `foundation/storage/`
+
+### 8.3 共享能力映射
+
+- `ui/widgets/*` 中纯通用组件 -> `shared/widgets/*`
+- `shared/extensions/*` 保持不变
+- `core/services/audio_handler.dart` -> `shared/services/audio_handler.dart`
+- `core/services/media_service.dart` -> `shared/services/media_service.dart`
+
+### 8.4 协议与生成物映射
+
+- `protos/*` -> `integrations/protos/*`
+
+并清理当前这种重复嵌套：
+
+- `lib/protos/lib/protos/*`
+
+这类结构必须消除，否则后续生成链路会继续制造噪音。
+
+---
+
+## 9. 推荐迁移顺序
+
+不建议一次性物理搬动全项目。正确顺序是“先完成已开始的迁移，再做复杂模块”。
+
+### 阶段 1：冻结新旧双轨
+
+规则立即生效：
+
+1. 新代码只允许进入 `features/`、`shared/`、`foundation/`
+2. `ui/pages`、`providers`、`repositories`、`data/api`、`data/models` 不再新增业务文件
+3. 所有新路由只指向 `features/*`
+
+这是重构成功的前提。
+
+### 阶段 2：完成已部分迁移的模块
+
+顺序建议：
+
+1. `settings`
+2. `history`
+3. `ranking`
+4. `search`
+5. `favorites`
+
+原因：
+
+- 这些模块已经有 `features/*` 目录
+- 规模较小，适合验证策略
+- 完成后可以快速减少双轨面积
+
+### 阶段 3：收口应用装配层
+
+处理：
+
+- `app_routes.dart` 中所有 `ui/pages/*` 依赖
+- 统一导入 `features/*`
+- 视情况拆分路由文件，例如：
+  - `app/router/routes/home_routes.dart`
+  - `app/router/routes/video_routes.dart`
+  - `app/router/routes/profile_routes.dart`
+
+### 阶段 4：按业务域处理复杂模块
+
+顺序建议：
+
+1. `profile`
+2. `notification`
+3. `dynamic`
+4. `live`
+5. `video`
+
+其中 `video` 应作为最终样板，因为它交叉最多、最能暴露结构问题。
+
+### 阶段 5：回收共享层与基础层
+
+当 feature 收口完成后，再做：
+
+- 识别真正可复用组件
+- 回收 `ui/widgets` 到 `shared/widgets`
+- 回收基础能力到 `foundation`
+- 删除空目录
+
+不要在 feature 尚未收口前过早抽公共组件。
+
+---
+
+## 10. 单个 feature 的迁移动作模板
+
+以任意 feature 为例，建议每次迁移都按这 7 步执行：
+
+1. 在 `features/<feature>/` 下建目标目录
+2. 先搬 `presentation`
+3. 再搬 `logic`
+4. 再搬 `data`
+5. 修正 imports 和 exports
+6. 修改路由与上层调用
+7. 删除旧目录与旧文件
+
+关键原则：
+
+- 一个 feature 迁完，就立刻删除旧实现
+- 不允许长期保留“同一职责两份代码”
+
+---
+
+## 11. 对当前项目最值得优先执行的样板
+
+### 第一批
+
+- `settings`
+- `history`
+- `ranking`
+- `search`
+- `favorites`
+
+目标：
+
+- 把已存在的 `features/*` 做完整
+- 把旧依赖从路由和调用处完全切断
+
+### 第二批
+
+- `profile`
+- `notification`
+
+目标：
+
+- 按“用户域”和“消息域”完成合并
+
+### 第三批
+
+- `dynamic`
+- `live`
+- `video`
+
+目标：
+
+- 清理最深层级目录
+- 清理播放器、弹幕、评论等交叉实现
+- 最终移除 `ui/pages/video` 与 `providers/video`
+
+---
+
+## 12. 最终落地标准
+
+当下面这些条件同时满足，说明重构完成：
+
+1. `app_routes.dart` 不再导入 `ui/pages/*`
+2. `providers/` 顶层目录被清空并删除
+3. `repositories/` 顶层目录被清空并删除
+4. `data/api/` 与 `data/models/` 被 feature 内部目录替代
+5. `domain/` 不再存在
+6. `ui/widgets/` 只剩真正共享组件，或被完全替换为 `shared/widgets/`
+7. 新增功能时，开发者可以先定位 feature，再在 feature 内完成绝大多数修改
+
+---
+
+## 13. 一句话执行策略
+
+对这个项目，最正确的方向不是继续叠加抽象层，而是：
+
+**以 `features` 为中心完成收口，清理双轨结构，压缩顶层目录，把共享层和基础层收紧到真正必要的范围。**

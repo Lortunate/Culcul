@@ -2,7 +2,7 @@ import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/features/favorites/logic/fav_provider.dart';
 import 'package:culcul/features/favorites/presentation/fav_resource_item.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
-import 'package:culcul/providers/auth/auth_provider.dart';
+import 'package:culcul/features/auth/logic/auth_provider.dart';
 import 'package:culcul/ui/widgets/index.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';

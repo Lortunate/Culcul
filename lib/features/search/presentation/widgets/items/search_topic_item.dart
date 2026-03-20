@@ -1,6 +1,6 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/data/models/search/search_result.dart';
-import 'package:culcul/ui/pages/dynamic/topic_detail_page.dart';
+import 'package:culcul/features/dynamic/presentation/topic_detail_page.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 
