@@ -1,5 +1,8 @@
+import 'dart:io';
+
+import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:dio/dio.dart';
+import 'package:culcul/data/api/resource_api.dart';
 import 'package:gal/gal.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -8,14 +11,13 @@ part 'media_service.g.dart';
 
 @riverpod
 MediaService mediaService(Ref ref) {
-  // Use a fresh Dio instance for downloads to avoid interference with API interceptors
-  return MediaService(Dio());
+  return MediaService(ref.watch(basicResourceApiProvider));
 }
 
 class MediaService {
-  final Dio _dio;
+  final ResourceApi _resourceApi;
 
-  MediaService(this._dio);
+  MediaService(this._resourceApi);
 
   Future<void> saveImage(String url) async {
     final formattedUrl = FormatUtils.formatImageUrl(url);
@@ -25,7 +27,8 @@ class MediaService {
     final fileName = uri.pathSegments.last;
     final savePath = '${tempDir.path}/$fileName';
 
-    await _dio.download(formattedUrl, savePath);
+    final bytes = await _resourceApi.fetchBytes(formattedUrl);
+    await File(savePath).writeAsBytes(bytes, flush: true);
     await Gal.putImage(savePath);
   }
 }

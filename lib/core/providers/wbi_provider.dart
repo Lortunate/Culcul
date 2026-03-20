@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+
+import 'package:culcul/core/providers/api_provider.dart';
+import 'package:culcul/data/api/resource_api.dart';
 import 'package:crypto/crypto.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/data/network/dio_client.dart';
 
 // Mixin key encoding table
 const _mixinKeyEncTab = [
@@ -76,13 +76,13 @@ const _mixinKeyEncTab = [
 ];
 
 class WbiHelper {
-  final Dio _dio;
+  final ResourceApi _resourceApi;
   String? _imgKey;
   String? _subKey;
   DateTime? _lastUpdate;
   Completer<void>? _updateCompleter;
 
-  WbiHelper(this._dio);
+  WbiHelper(this._resourceApi);
 
   Future<void> updateKeys() async {
     // Check if keys are valid (less than 1 hour old)
@@ -100,15 +100,11 @@ class WbiHelper {
     _updateCompleter = Completer<void>();
 
     try {
-      final response = await _dio.get(ApiConstants.nav);
-
-      final data = response.data;
-      if (data == null) {
-        throw Exception('Nav response is null');
-      }
+      final response = await _resourceApi.fetchNav();
+      final data = Map<String, dynamic>.from(response as Map);
 
       // Check for API error code
-      if (data is Map && data['code'] != 0) {
+      if (data['code'] != 0) {
         debugPrint(
           'Nav API error: code=${data['code']}, message=${data['message']}',
         );
@@ -199,7 +195,5 @@ class WbiHelper {
 }
 
 final wbiHelperProvider = Provider<WbiHelper>((ref) {
-  // Use basicDioProvider to avoid circular dependency
-  // dioClientProvider -> WbiInterceptor -> wbiHelperProvider -> dioClientProvider
-  return WbiHelper(ref.watch(basicDioProvider));
+  return WbiHelper(ref.watch(basicResourceApiProvider));
 });

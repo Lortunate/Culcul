@@ -2,23 +2,27 @@ import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/types/result.dart';
 import 'package:culcul/core/repositories/base_repository.dart';
+import 'package:culcul/data/api/resource_api.dart';
 import 'package:culcul/data/api/video_api.dart';
 import 'package:culcul/data/models/index.dart';
 import 'package:culcul/data/models/subtitle.dart';
-import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'video_repository.g.dart';
 
 @riverpod
 VideoRepository videoRepository(Ref ref) {
-  return VideoRepository(api: ref.watch(videoApiProvider));
+  return VideoRepository(
+    api: ref.watch(videoApiProvider),
+    resourceApi: ref.watch(resourceApiProvider),
+  );
 }
 
 class VideoRepository extends BaseRepository {
   final VideoApi api;
+  final ResourceApi resourceApi;
 
-  VideoRepository({required this.api});
+  VideoRepository({required this.api, required this.resourceApi});
 
   Future<Result<void, AppException>> actionComment({
     required int oid,
@@ -112,21 +116,9 @@ class VideoRepository extends BaseRepository {
     String url,
   ) {
     return safeCall(() async {
-      // Create a Dio instance for downloading JSON directly
-      final dio = Dio();
-      // Ensure the URL starts with https:
       final fullUrl = url.startsWith('http') ? url : 'https:$url';
-
-      final response = await dio.get(fullUrl);
-
-      if (response.statusCode == 200) {
-        return SubtitleContent.fromJson(response.data);
-      } else {
-        throw ServerException(
-          'Failed to load subtitle',
-          code: response.statusCode ?? -1,
-        );
-      }
+      final response = await resourceApi.fetchJson(fullUrl);
+      return SubtitleContent.fromJson(Map<String, dynamic>.from(response as Map));
     });
   }
 

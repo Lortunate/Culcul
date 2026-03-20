@@ -17,6 +17,7 @@ import 'package:culcul/data/api/dynamic_api.dart';
 import 'package:culcul/data/api/notification_api.dart';
 import 'package:culcul/data/api/profile_api.dart';
 import 'package:culcul/data/api/ranking_api.dart';
+import 'package:culcul/data/api/resource_api.dart';
 import 'package:culcul/data/api/search_api.dart';
 import 'package:culcul/data/api/video_api.dart';
 import 'package:culcul/data/api/danmaku_api.dart';
@@ -33,6 +34,16 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:culcul/data/api/emote_api.dart';
 
 part 'api_provider.g.dart';
+
+@riverpod
+ResourceApi basicResourceApi(Ref ref) {
+  return ResourceApi(ref.watch(basicDioProvider));
+}
+
+@riverpod
+ResourceApi resourceApi(Ref ref) {
+  return ResourceApi(ref.watch(dioClientProvider));
+}
 
 @riverpod
 EmoteApi emoteApi(Ref ref) {
@@ -166,7 +177,7 @@ DanmakuApi danmakuApi(Ref ref) {
 DanmakuRepository danmakuRepository(Ref ref) {
   return DanmakuRepository(
     ref.watch(danmakuApiProvider),
-    ref.watch(dioClientProvider),
+    ref.watch(resourceApiProvider),
   );
 }
 

@@ -3,9 +3,8 @@ import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/repositories/base_repository.dart';
 import 'package:culcul/core/types/result.dart';
 import 'package:culcul/data/api/danmaku_api.dart';
-import 'package:culcul/data/network/dio_client.dart';
+import 'package:culcul/data/api/resource_api.dart';
 import 'package:culcul/protos/dm.pb.dart';
-import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'danmaku_repository.g.dart';
@@ -14,15 +13,15 @@ part 'danmaku_repository.g.dart';
 DanmakuRepository danmakuRepository(Ref ref) {
   return DanmakuRepository(
     ref.watch(danmakuApiProvider),
-    ref.watch(dioClientProvider),
+    ref.watch(resourceApiProvider),
   );
 }
 
 class DanmakuRepository extends BaseRepository {
   final DanmakuApi _api;
-  final Dio _dio;
+  final ResourceApi _resourceApi;
 
-  DanmakuRepository(this._api, this._dio);
+  DanmakuRepository(this._api, this._resourceApi);
 
   Future<Result<DmSegMobileReply, AppException>> fetchDanmakuSegment({
     required int oid,
@@ -54,11 +53,7 @@ class DanmakuRepository extends BaseRepository {
 
   Future<Result<List<int>, AppException>> fetchMaskData(String url) async {
     return safeCall(() async {
-      final response = await _dio.get<List<int>>(
-        url,
-        options: Options(responseType: ResponseType.bytes),
-      );
-      return response.data ?? [];
+      return _resourceApi.fetchBytes(url);
     });
   }
 }
