@@ -134,7 +134,7 @@ class LiveHeader extends StatelessWidget {
               Text(
                 t.live.header.online(count: _formatNumber(roomInfo!.online)),
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                   fontSize: 10,
                 ),
               ),
@@ -143,8 +143,8 @@ class LiveHeader extends StatelessWidget {
                 Text(
                   t.live.header.guard(count: guardList!.info.num),
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
-                    fontSize: 10,
+                    color: Colors.white.withValues(alpha: 0.7),
+                    fontSize: 11,
                   ),
                 ),
               ],
@@ -205,7 +205,7 @@ class LiveHeader extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
-              '${_formatNumber(goldRank!.onlineNum)}',
+              _formatNumber(goldRank!.onlineNum),
               style: TextStyle(
                 color: Colors.white.withValues(alpha: 0.9),
                 fontSize: 11,
@@ -244,14 +244,14 @@ class LiveHeader extends StatelessWidget {
                 Text(
                   t.live.tags.more_play,
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                     fontSize: 11,
                   ),
                 ),
                 Icon(
                   Icons.chevron_right_rounded,
                   size: 14,
-                  color: Colors.white.withOpacity(0.7),
+                  color: Colors.white.withValues(alpha: 0.7),
                 ),
               ],
             ),
@@ -276,7 +276,7 @@ class LiveHeader extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
+        color: Colors.white.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(

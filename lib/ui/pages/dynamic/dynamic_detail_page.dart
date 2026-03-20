@@ -1,341 +1,162 @@
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/core/router/router.dart';
 import 'package:culcul/core/types/result.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:culcul/providers/dynamic/dynamic_comment_controller.dart';
+import 'package:culcul/ui/pages/dynamic/widgets/detail/dynamic_detail_bottom_bar.dart';
+import 'package:culcul/ui/pages/dynamic/widgets/detail/dynamic_detail_header.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/dynamic_comments_view.dart';
 import 'package:culcul/ui/pages/dynamic/widgets/dynamic_content_widget.dart';
-import 'package:culcul/ui/widgets/index.dart';
-import 'package:culcul/core/utils/share_utils.dart';
+import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class DynamicDetailPage extends ConsumerStatefulWidget {
+class DynamicDetailPage extends HookConsumerWidget {
   final String dynamicId;
 
   const DynamicDetailPage({super.key, required this.dynamicId});
 
   @override
-  ConsumerState<DynamicDetailPage> createState() => _DynamicDetailPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final post = useState<DynamicItem?>(null);
+    final isLoading = useState(true);
+    final error = useState<String?>(null);
+    final commentController = useTextEditingController();
+    
+    // We need a way to refresh comments, so we get the controller for comments
+    // But we can only get it if we have a post.
+    
+    Future<void> loadDetail() async {
+      final result = await ref
+          .read(dynamicRepositoryProvider)
+          .getDetail(dynamicId);
 
-class _DynamicDetailPageState extends ConsumerState<DynamicDetailPage> {
-  DynamicItem? _post;
-  bool _isLoading = true;
-  String? _error;
-  final TextEditingController _commentController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _loadDetail();
-  }
-
-  @override
-  void dispose() {
-    _commentController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _loadDetail() async {
-    final result = await ref
-        .read(dynamicRepositoryProvider)
-        .getDetail(widget.dynamicId);
-
-    if (mounted) {
       result.when(
-        success: (post) {
-          setState(() {
-            _post = post;
-            _isLoading = false;
-          });
+        success: (data) {
+          post.value = data;
+          isLoading.value = false;
         },
         failure: (e) {
-          setState(() {
-            _error = e.toString();
-            _isLoading = false;
-          });
+          error.value = e.toString();
+          isLoading.value = false;
         },
       );
     }
-  }
 
-  void _submitComment() {
-    if (_post == null) return;
-    final text = _commentController.text.trim();
-    if (text.isEmpty) return;
+    useEffect(() {
+      loadDetail();
+      return null;
+    }, []);
 
-    // Root comment: root=0, parent=0
-    ref
-        .read(dynamicCommentControllerProvider(_post!).notifier)
-        .addReply(0, 0, text);
-    _commentController.clear();
-    FocusScope.of(context).unfocus();
-  }
+    void submitComment() {
+      if (post.value == null) return;
+      final text = commentController.text.trim();
+      if (text.isEmpty) return;
 
-  @override
-  Widget build(BuildContext context) {
-    if (_isLoading) {
+      ref
+          .read(dynamicCommentControllerProvider(post.value!).notifier)
+          .addReply(0, 0, text);
+      commentController.clear();
+      FocusScope.of(context).unfocus();
+    }
+
+    Future<void> handleLike() async {
+      if (post.value == null) return;
+
+      final item = post.value!;
+      final newStatus = !item.isLiked;
+      final newLikeCount = item.likeCount + (newStatus ? 1 : -1);
+
+      // Deep copy update logic
+      final newStatLike = item.modules.moduleStat?.like.copyWith(
+        count: newLikeCount,
+        status: newStatus,
+      );
+      
+      if (item.modules.moduleStat == null || newStatLike == null) return;
+
+      final newModuleStat = item.modules.moduleStat!.copyWith(like: newStatLike);
+      final newModules = item.modules.copyWith(moduleStat: newModuleStat);
+      final newItem = item.copyWith(modules: newModules);
+
+      // Optimistic update
+      post.value = newItem;
+
+      final result = await ref
+          .read(dynamicRepositoryProvider)
+          .likeDynamic(item.id, newStatus);
+
+      if (result.isFailure) {
+        // Revert
+        post.value = item;
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('操作失败: ${(result as Failure).exception}')),
+          );
+        }
+      }
+    }
+
+    if (isLoading.value) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    if (_error != null) {
+    if (error.value != null) {
       return Scaffold(
         appBar: AppBar(title: const Text('动态详情')),
-        body: Center(child: Text(_error!)),
+        body: Center(child: Text(error.value!)),
       );
     }
 
-    if (_post == null) return const SizedBox();
+    if (post.value == null) return const SizedBox();
 
     return Scaffold(
       appBar: AppBar(title: const Text('动态详情')),
       body: EasyRefresh(
         onRefresh: () async {
-          await _loadDetail();
-          if (_post != null) {
+          await loadDetail();
+          if (post.value != null) {
             return ref
-                .read(dynamicCommentControllerProvider(_post!).notifier)
+                .read(dynamicCommentControllerProvider(post.value!).notifier)
                 .refresh();
           }
         },
         onLoad: () async {
-          if (_post != null) {
+          if (post.value != null) {
             return ref
-                .read(dynamicCommentControllerProvider(_post!).notifier)
+                .read(dynamicCommentControllerProvider(post.value!).notifier)
                 .loadMore();
           }
         },
-        header: const ClassicHeader(
-          dragText: '下拉刷新',
-          armedText: '释放刷新',
-          readyText: '正在刷新...',
-          processingText: '正在刷新...',
-          processedText: '刷新完成',
-          noMoreText: '没有更多了',
-          failedText: '刷新失败',
-          messageText: '最后更新于 %T',
-        ),
-        footer: const ClassicFooter(
-          dragText: '上拉加载',
-          armedText: '释放加载',
-          readyText: '正在加载...',
-          processingText: '正在加载...',
-          processedText: '加载完成',
-          noMoreText: '没有更多了',
-          failedText: '加载失败',
-          messageText: '最后更新于 %T',
-        ),
+        header: const AppRefreshHeader(),
+        footer: AppLoadFooter(),
         child: CustomScrollView(
           slivers: [
-            SliverToBoxAdapter(child: _buildHeader(context)),
+            SliverToBoxAdapter(
+              child: DynamicDetailHeader(post: post.value!),
+            ),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: DynamicContentWidget(post: _post!),
+                child: DynamicContentWidget(post: post.value!),
               ),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 12)),
             const SliverToBoxAdapter(child: Divider(height: 1)),
-            DynamicCommentsSliver(post: _post!),
+            DynamicCommentsSliver(post: post.value!),
             // Add some padding at bottom for the input bar
             const SliverToBoxAdapter(child: SizedBox(height: 80)),
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomBar(context),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return GestureDetector(
-      onTap: () {
-        UserProfileRoute(mid: _post!.authorMid).push(context);
-      },
-      child: Padding(
-        padding: const EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 8),
-        child: Row(
-          children: [
-            AppAvatar(url: _post!.authorAvatar, size: 42),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _post!.authorName,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15,
-                      color:
-                          _post!.authorName == '哔哩哔哩番剧' ||
-                              _post!.authorName == '哔哩哔哩漫画'
-                          ? colorScheme.primary
-                          : colorScheme.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    _post!.timeText,
-                    style: TextStyle(
-                      color: colorScheme.onSurfaceVariant,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            IconButton(
-              icon: Icon(
-                Icons.more_vert,
-                size: 20,
-                color: colorScheme.onSurfaceVariant,
-              ),
-              onPressed: () {},
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              style: const ButtonStyle(
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-            ),
-          ],
-        ),
+      bottomNavigationBar: DynamicDetailBottomBar(
+        post: post.value!,
+        onLike: handleLike,
+        onSubmitComment: submitComment,
+        commentController: commentController,
       ),
     );
-  }
-
-  Widget _buildBottomBar(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        border: Border(
-          top: BorderSide(
-            color: Theme.of(context).colorScheme.outlineVariant,
-            width: 0.5,
-          ),
-        ),
-      ),
-      padding: EdgeInsets.only(
-        left: 16,
-        right: 16,
-        top: 8,
-        bottom: 8 + MediaQuery.of(context).padding.bottom,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          Expanded(
-            child: Container(
-              height: 36,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(18),
-              ),
-              alignment: Alignment.centerLeft,
-              child: TextField(
-                controller: _commentController,
-                decoration: const InputDecoration(
-                  hintText: '发一条友善的评论',
-                  border: InputBorder.none,
-                  isDense: true,
-                  contentPadding: EdgeInsets.zero,
-                ),
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontSize: 14,
-                ),
-                textInputAction: TextInputAction.send,
-                onSubmitted: (_) => _submitComment(),
-              ),
-            ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.send),
-            onPressed: _submitComment,
-            color: Theme.of(context).colorScheme.primary,
-          ),
-          const SizedBox(width: 8),
-          _buildActionIcon(
-            _post!.isLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined,
-            _post!.likeCount,
-            () => _handleLike(context),
-            color: _post!.isLiked
-                ? Theme.of(context).colorScheme.primary
-                : null,
-          ),
-          const SizedBox(width: 16),
-          _buildActionIcon(
-            Icons.reply_rounded,
-            _post!.forwardCount,
-            () => ShareUtils.shareDynamic(_post!.id, _post!.description ?? ''),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionIcon(
-    IconData icon,
-    int count,
-    VoidCallback onTap, {
-    Color? color,
-  }) {
-    final contentColor = color ?? Theme.of(context).colorScheme.onSurfaceVariant;
-    return InkWell(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 24, color: contentColor),
-          if (count > 0)
-            Text('$count', style: TextStyle(fontSize: 10, color: contentColor)),
-        ],
-      ),
-    );
-  }
-
-  Future<void> _handleLike(BuildContext context) async {
-    if (_post == null) return;
-
-    final item = _post!;
-    final newStatus = !item.isLiked;
-    final newLikeCount = item.likeCount + (newStatus ? 1 : -1);
-
-    // Deep copy update logic
-    final newStatLike = item.modules.moduleStat?.like.copyWith(
-      count: newLikeCount,
-      status: newStatus,
-    );
-    
-    if (item.modules.moduleStat == null || newStatLike == null) return;
-
-    final newModuleStat = item.modules.moduleStat!.copyWith(like: newStatLike);
-    final newModules = item.modules.copyWith(moduleStat: newModuleStat);
-    final newItem = item.copyWith(modules: newModules);
-
-    // Optimistic update
-    setState(() {
-      _post = newItem;
-    });
-
-    final result = await ref
-        .read(dynamicRepositoryProvider)
-        .likeDynamic(item.id, newStatus);
-
-    if (result.isFailure && mounted) {
-      // Revert
-      setState(() {
-        _post = item;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('操作失败: ${(result as Failure).exception}')),
-      );
-    }
   }
 }

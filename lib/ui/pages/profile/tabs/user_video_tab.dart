@@ -1,9 +1,12 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/router/router.dart';
+import 'package:culcul/data/models/video/video_model.dart';
 import 'package:culcul/providers/user_space/user_space_videos_provider.dart';
+import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
 import 'package:culcul/ui/widgets/skeletons/video_list_skeleton.dart';
 import 'package:culcul/ui/widgets/video_list_card.dart';
+import 'package:culcul/ui/widgets/icon_text.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -15,25 +18,35 @@ class UserVideoTab extends ConsumerStatefulWidget {
   ConsumerState<UserVideoTab> createState() => _UserVideoTabState();
 }
 
-class _UserVideoTabState extends ConsumerState<UserVideoTab> {
+class _UserVideoTabState extends ConsumerState<UserVideoTab>
+    with AutomaticKeepAliveClientMixin {
   String _order =
       'pubdate'; // pubdate (latest), click (popular), stow (most fav)
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final videosAsync = ref.watch(
       userSpaceVideosProvider(widget.mid, order: _order),
     );
     final notifier = ref.read(
       userSpaceVideosProvider(widget.mid, order: _order).notifier,
     );
+    final colorScheme = Theme.of(context).colorScheme;
 
     return CustomScrollView(
       key: PageStorageKey<String>('user_video_tab_${widget.mid}'),
       slivers: [
+        SliverOverlapInjector(
+          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+        ),
         SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Container(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
             child: Row(
               children: [
                 _SortChip(
@@ -43,7 +56,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab> {
                     if (val) setState(() => _order = 'pubdate');
                   },
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 _SortChip(
                   label: '最多播放',
                   selected: _order == 'click',
@@ -51,7 +64,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab> {
                     if (val) setState(() => _order = 'click');
                   },
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 12),
                 _SortChip(
                   label: '最多收藏',
                   selected: _order == 'stow',
@@ -73,57 +86,91 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab> {
             return SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
                 if (index == videos.length) {
-                  // Load more trigger
                   notifier.loadMore();
                   return const Padding(
                     padding: EdgeInsets.all(16.0),
                     child: Center(child: CircularProgressIndicator()),
                   );
                 }
-                final video = videos[index];
-                // Map UserSpaceVideoModel to VideoModel or similar for VideoListCard
-                // VideoListCard expects VideoModel. UserSpaceVideoModel is similar but distinct.
-                // We might need to map it or create a new card.
-                // Ideally we reuse VideoListCard. Let's see if we can map.
+                final spaceVideo = videos[index];
+                final video = VideoModel(
+                  bvid: spaceVideo.bvid,
+                  title: spaceVideo.title,
+                  pic: spaceVideo.pic,
+                  owner: spaceVideo.owner,
+                  stat: spaceVideo.stat,
+                  duration: spaceVideo.duration,
+                  pubDate: spaceVideo.pubDate,
+                  desc: spaceVideo.desc,
+                  rcmd_reason: spaceVideo.reason,
+                );
 
-                return VideoListCard(
-                  coverUrl: video.pic,
-                  title: video.title,
-                  duration: video.duration,
-                  viewCount: video.stat.view,
-                  danmakuCount: video.stat.danmaku,
-                  author: Row(
-                    children: [
-                      const Icon(
-                        Icons.access_time_rounded,
-                        size: 14,
-                        color: Colors.grey,
+                return Column(
+                  children: [
+                    VideoListCard(
+                      coverUrl: video.pic,
+                      title: video.title,
+                      duration: video.duration,
+                      showDefaultStats: false,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        FormatUtils.formatTimestamp(video.pubDate),
-                        style: Theme.of(
-                          context,
-                        ).textTheme.bodySmall?.copyWith(color: Colors.grey),
+                      stats: [
+                        Text(
+                          FormatUtils.formatTimestamp(video.pubDate),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: colorScheme.outline,
+                                fontSize: 11,
+                              ),
+                        ),
+                        const Spacer(),
+                        IconText(
+                          icon: Icons.play_circle_outline_rounded,
+                          text: FormatUtils.formatNumber(video.stat.view),
+                        ),
+                        const SizedBox(width: 4),
+                        IconText(
+                          icon: Icons.list_alt_rounded,
+                          text: FormatUtils.formatNumber(video.stat.danmaku),
+                        ),
+                      ],
+                      onTap: () {
+                        VideoDetailRoute(bvid: video.bvid).push(context);
+                      },
+                    ),
+                    if (index < videos.length - 1)
+                      Divider(
+                        height: 1,
+                        thickness: 0.5,
+                        indent: 16,
+                        endIndent: 16,
+                        color: colorScheme.outlineVariant.withValues(
+                          alpha: 0.2,
+                        ),
                       ),
-                    ],
-                  ),
-                  onTap: () {
-                    VideoDetailRoute(bvid: video.bvid).push(context);
-                  },
+                  ],
                 );
               }, childCount: videos.length + 1),
             );
           },
-          error: (err, stack) =>
-              SliverFillRemaining(child: Center(child: Text('Error: $err'))),
+          error: (err, stack) => SliverFillRemaining(
+            child: AppErrorWidget(
+              error: err,
+              onRetry: () => ref.refresh(
+                userSpaceVideosProvider(widget.mid, order: _order),
+              ),
+            ),
+          ),
           loading: () => SliverList(
             delegate: SliverChildBuilderDelegate(
-              (context, index) => const AppShimmer(child: VideoListSkeleton()),
+              (context, index) => const VideoListSkeleton(),
               childCount: 10,
             ),
           ),
         ),
+        const SliverToBoxAdapter(child: SizedBox(height: 24)),
       ],
     );
   }
@@ -142,16 +189,37 @@ class _SortChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FilterChip(
-      label: Text(label),
-      selected: selected,
-      onSelected: onSelected,
-      showCheckmark: false,
-      labelStyle: TextStyle(
-        fontSize: 12,
-        color: selected ? Theme.of(context).colorScheme.primary : null,
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return GestureDetector(
+      onTap: () => onSelected(!selected),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: selected
+              ? colorScheme.primary.withValues(alpha: 0.1)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: selected
+                ? Colors.transparent
+                : colorScheme.outlineVariant.withValues(alpha: 0.5),
+            width: 1,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            color: selected
+                ? colorScheme.primary
+                : colorScheme.onSurfaceVariant,
+            fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+          ),
+        ),
       ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
     );
   }
 }

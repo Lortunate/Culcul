@@ -23,50 +23,35 @@ void useVideoProgressReport(
 
   final videoRepo = ref.read(videoRepositoryProvider);
 
+  void reportProgress() {
+    final pos = player.state.position.inSeconds;
+    final info = latestInfoRef.value;
+    if (pos > 0 && info.aid != null && info.cid != 0) {
+      videoRepo.reportVideoProgress(
+        aid: info.aid!,
+        cid: info.cid,
+        progress: pos,
+      );
+    }
+  }
+
   useEffect(() {
-    Timer? reportTimer;
-    reportTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+    final timer = Timer.periodic(const Duration(seconds: 30), (_) {
       if (isPlayingRef.value) {
-        final pos = player.state.position.inSeconds;
-        final info = latestInfoRef.value;
-        if (pos > 0 && info.aid != null && info.cid != 0) {
-          videoRepo.reportVideoProgress(
-            aid: info.aid!,
-            cid: info.cid,
-            progress: pos,
-          );
-        }
+        reportProgress();
       }
     });
-    return () => reportTimer?.cancel();
+    return timer.cancel;
   }, []);
 
   useEffect(() {
     if (!isPlaying) {
-      final pos = player.state.position.inSeconds;
-      final info = latestInfoRef.value;
-      if (pos > 0 && info.aid != null && info.cid != 0) {
-        videoRepo.reportVideoProgress(
-          aid: info.aid!,
-          cid: info.cid,
-          progress: pos,
-        );
-      }
+      reportProgress();
     }
     return null;
   }, [isPlaying]);
 
   useEffect(() {
-    return () {
-      final pos = player.state.position.inSeconds;
-      final info = latestInfoRef.value;
-      if (pos > 0 && info.aid != null && info.cid != 0) {
-        videoRepo.reportVideoProgress(
-          aid: info.aid!,
-          cid: info.cid,
-          progress: pos,
-        );
-      }
-    };
+    return reportProgress;
   }, []);
 }

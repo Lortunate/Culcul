@@ -1,5 +1,4 @@
 // ignore_for_file: invalid_use_of_internal_member
-import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/types/result.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../core/mixins/paging_mixin.dart';

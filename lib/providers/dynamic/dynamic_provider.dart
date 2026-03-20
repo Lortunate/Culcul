@@ -3,7 +3,6 @@ import 'package:culcul/core/types/result.dart';
 import 'package:culcul/core/utils/list_utils.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
-import 'package:culcul/repositories/dynamic_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'dynamic_provider.g.dart';

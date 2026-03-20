@@ -1,4 +1,3 @@
-import 'package:culcul/core/extensions/auth_extension.dart';
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/types/result.dart';
 import 'package:culcul/data/models/relation/relation_model.dart';

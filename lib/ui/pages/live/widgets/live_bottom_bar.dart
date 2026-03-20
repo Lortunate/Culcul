@@ -24,7 +24,7 @@ class LiveBottomBar extends StatelessWidget {
         color: Colors.black, // Force black background
         border: Border(
           top: BorderSide(
-            color: Colors.white.withOpacity(0.05),
+            color: Colors.white.withValues(alpha: 0.05),
             width: 1,
           ),
         ),
@@ -40,7 +40,7 @@ class LiveBottomBar extends StatelessWidget {
                   height: 36,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
+                    color: Colors.white.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(18),
                   ),
                   child: Row(
@@ -50,7 +50,7 @@ class LiveBottomBar extends StatelessWidget {
                         child: Text(
                           '弹幕支持下~',
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.4),
+                            color: Colors.white.withValues(alpha: 0.4),
                             fontSize: 14,
                           ),
                           maxLines: 1,

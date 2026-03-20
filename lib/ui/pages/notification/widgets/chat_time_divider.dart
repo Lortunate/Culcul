@@ -1,3 +1,4 @@
+import 'package:culcul/shared/extensions/format_extensions.dart';
 import 'package:flutter/material.dart';
 
 class ChatTimeDivider extends StatelessWidget {
@@ -8,20 +9,7 @@ class ChatTimeDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-    final now = DateTime.now();
-    String timeStr;
-
-    if (date.year == now.year &&
-        date.month == now.month &&
-        date.day == now.day) {
-      timeStr =
-          '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-    } else if (date.year == now.year) {
-      timeStr =
-          '${date.month}月${date.day}日 ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-    } else {
-      timeStr = '${date.year}年${date.month}月${date.day}日';
-    }
+    final timeStr = date.toChatTime();
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),

@@ -1,33 +1,31 @@
 import 'dart:ui';
 
-import 'package:culcul/ui/theme/app_colors.dart';
 import 'package:culcul/providers/video/player_controller.dart';
 import 'package:culcul/providers/video/video_detail_controller.dart';
+import 'package:culcul/shared/extensions/format_extensions.dart';
 import 'package:culcul/ui/pages/video/widgets/controls/player_settings_sheet.dart';
+import 'package:culcul/ui/theme/app_colors.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class VideoListenPage extends ConsumerWidget {
+class VideoListenPage extends HookConsumerWidget {
   final String bvid;
 
   const VideoListenPage({super.key, required this.bvid});
-
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, '0');
-    final minutes = duration.inMinutes.remainder(60);
-    final seconds = duration.inSeconds.remainder(60);
-    if (duration.inHours > 0) {
-      return '${duration.inHours}:${twoDigits(minutes)}:${twoDigits(seconds)}';
-    }
-    return '${twoDigits(minutes)}:${twoDigits(seconds)}';
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(videoDetailControllerProvider(bvid));
     final playerState = ref.watch(playerControllerProvider);
     final playerController = ref.read(playerControllerProvider.notifier);
+    final player = playerController.player;
+
+    final positionSnapshot = useStream(player.stream.position);
+    final durationSnapshot = useStream(player.stream.duration);
+    final position = positionSnapshot.data ?? Duration.zero;
+    final duration = durationSnapshot.data ?? Duration.zero;
 
     final detail = state.videoDetail;
 
@@ -36,7 +34,7 @@ class VideoListenPage extends ConsumerWidget {
     if (sleepTimerTarget != null) {
       final remaining = sleepTimerTarget.difference(DateTime.now());
       if (remaining.inSeconds > 0) {
-        sleepTimerText = '定时关闭: ${_formatDuration(remaining)}';
+        sleepTimerText = '定时关闭: ${remaining.formatDuration}';
       }
     }
 
@@ -202,13 +200,13 @@ class VideoListenPage extends ConsumerWidget {
                           ),
                         ),
                         child: Slider(
-                          value: playerState.position.inMilliseconds
+                          value: position.inMilliseconds
                               .toDouble()
                               .clamp(
                                 0.0,
-                                playerState.duration.inMilliseconds.toDouble(),
+                                duration.inMilliseconds.toDouble(),
                               ),
-                          max: playerState.duration.inMilliseconds.toDouble(),
+                          max: duration.inMilliseconds.toDouble() > 0 ? duration.inMilliseconds.toDouble() : 1.0,
                           onChanged: (value) {
                             playerController.seek(
                               Duration(milliseconds: value.toInt()),
@@ -222,14 +220,14 @@ class VideoListenPage extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              _formatDuration(playerState.position),
+                              position.formatDuration,
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.5),
                                 fontSize: 12,
                               ),
                             ),
                             Text(
-                              _formatDuration(playerState.duration),
+                              duration.formatDuration,
                               style: TextStyle(
                                 color: Colors.white.withValues(alpha: 0.5),
                                 fontSize: 12,
@@ -258,7 +256,7 @@ class VideoListenPage extends ConsumerWidget {
                         onPressed: () {
                           // -15s
                           final newPos =
-                              playerState.position -
+                              position -
                               const Duration(seconds: 15);
                           playerController.seek(
                             newPos < Duration.zero ? Duration.zero : newPos,
@@ -268,7 +266,7 @@ class VideoListenPage extends ConsumerWidget {
                           Icons.replay_10_rounded,
                           color: Colors.white,
                           size: 28,
-                        ), // Using 10 icon for now
+                        ),
                       ),
                       Container(
                         width: 72,
@@ -292,11 +290,11 @@ class VideoListenPage extends ConsumerWidget {
                         onPressed: () {
                           // +15s
                           final newPos =
-                              playerState.position +
+                              position +
                               const Duration(seconds: 15);
                           playerController.seek(
-                            newPos > playerState.duration
-                                ? playerState.duration
+                            newPos > duration
+                                ? duration
                                 : newPos,
                           );
                         },

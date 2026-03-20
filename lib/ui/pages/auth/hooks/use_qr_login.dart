@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/providers/auth/auth_provider.dart';
 // import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';

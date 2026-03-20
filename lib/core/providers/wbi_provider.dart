@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
@@ -79,6 +80,7 @@ class WbiHelper {
   String? _imgKey;
   String? _subKey;
   DateTime? _lastUpdate;
+  Completer<void>? _updateCompleter;
 
   WbiHelper(this._dio);
 
@@ -90,6 +92,12 @@ class WbiHelper {
         return;
       }
     }
+
+    if (_updateCompleter != null) {
+      return _updateCompleter!.future;
+    }
+
+    _updateCompleter = Completer<void>();
 
     try {
       final response = await _dio.get(ApiConstants.nav);
@@ -131,11 +139,15 @@ class WbiHelper {
       _subKey = subUrl.split('/').last.split('.').first;
       _lastUpdate = DateTime.now();
       debugPrint('Wbi keys updated successfully: $_imgKey, $_subKey');
+      _updateCompleter?.complete();
     } catch (e) {
       debugPrint('Wbi updateKeys failed: $e');
       _imgKey = null;
       _subKey = null;
+      _updateCompleter?.completeError(e);
       rethrow;
+    } finally {
+      _updateCompleter = null;
     }
   }
 

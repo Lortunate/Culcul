@@ -176,7 +176,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
 
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) async {
+      onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
         final shouldPop = await _onWillPop();
         if (shouldPop && context.mounted) {
@@ -306,7 +306,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withValues(alpha: 0.5),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.close, size: 16, color: Colors.white),
@@ -323,9 +323,9 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
       borderRadius: BorderRadius.circular(12),
       child: Container(
         decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
-          borderRadius: BorderRadius.circular(12),
-        ),
+            color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(12),
+          ),
         child: Icon(Icons.add, size: 32, color: colorScheme.onSurfaceVariant),
       ),
     );
@@ -342,7 +342,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,
         border: Border(
-          top: BorderSide(color: colorScheme.outlineVariant.withOpacity(0.2)),
+          top: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.2)),
         ),
       ),
       child: Row(

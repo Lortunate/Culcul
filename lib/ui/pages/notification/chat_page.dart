@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:culcul/providers/notification/chat_provider.dart';
 import 'package:culcul/providers/auth/auth_provider.dart';
-import 'package:culcul/core/extensions/auth_extension.dart';
 import 'package:culcul/providers/profile/profile_provider.dart';
 import 'package:culcul/ui/pages/notification/widgets/chat_input.dart';
 import 'package:culcul/ui/pages/notification/widgets/chat_message_list.dart';

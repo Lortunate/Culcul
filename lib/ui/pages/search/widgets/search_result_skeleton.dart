@@ -7,20 +7,18 @@ class SearchResultSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppShimmer(
-      child: ListView.separated(
-        padding: const EdgeInsets.all(12),
-        itemCount: 10,
-        separatorBuilder: (context, index) => const SizedBox(height: 16),
-        itemBuilder: (context, index) {
-          return const VideoListSkeleton(
-            padding: EdgeInsets.zero,
-            height: 100,
-            thumbnailWidth: 177,
-            aspectRatio: 16 / 9,
-          );
-        },
-      ),
+    return ListView.separated(
+      padding: const EdgeInsets.all(12),
+      itemCount: 10,
+      separatorBuilder: (context, index) => const SizedBox(height: 16),
+      itemBuilder: (context, index) {
+        return const VideoListSkeleton(
+          padding: EdgeInsets.zero,
+          height: 100,
+          thumbnailWidth: 177,
+          aspectRatio: 16 / 9,
+        );
+      },
     );
   }
 }

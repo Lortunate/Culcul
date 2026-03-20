@@ -1,6 +1,5 @@
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/providers/auth/auth_provider.dart';
-import 'package:culcul/core/extensions/auth_extension.dart';
 import 'package:culcul/providers/fav/fav_provider.dart';
 import 'package:culcul/ui/pages/fav/fav_resource_item.dart';
 import 'package:culcul/ui/pages/fav/widgets/fav_folder_dialog.dart';

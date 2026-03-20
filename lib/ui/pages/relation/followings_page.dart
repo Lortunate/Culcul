@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:culcul/providers/relation/relation_provider.dart';
 import 'package:culcul/ui/pages/relation/widgets/relation_user_list.dart';
+import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class FollowingsPage extends ConsumerWidget {
   final int vmid;

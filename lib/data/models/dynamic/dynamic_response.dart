@@ -1,3 +1,4 @@
+import 'package:culcul/core/utils/json_utils.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'dynamic_response.g.dart';
@@ -21,7 +22,7 @@ class DynamicData {
   final String offset;
   @JsonKey(name: 'update_baseline')
   final String updateBaseline;
-  @JsonKey(name: 'update_num')
+  @JsonKey(name: 'update_num', fromJson: JsonUtils.parseIntWithDefault)
   final int updateNum;
 
   DynamicData({
@@ -555,14 +556,8 @@ class StatLike {
       _$StatLikeFromJson(json);
   Map<String, dynamic> toJson() => _$StatLikeToJson(this);
 
-  StatLike copyWith({
-    int? count,
-    bool? status,
-  }) {
-    return StatLike(
-      count: count ?? this.count,
-      status: status ?? this.status,
-    );
+  StatLike copyWith({int? count, bool? status}) {
+    return StatLike(count: count ?? this.count, status: status ?? this.status);
   }
 }
 

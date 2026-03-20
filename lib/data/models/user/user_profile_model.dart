@@ -9,6 +9,7 @@ abstract class UserProfile with _$UserProfile {
     required String id,
     required String username,
     String? avatarUrl,
+    String? bannerUrl,
     String? bio,
     String? location,
     required int followersCount,

@@ -1,7 +1,5 @@
 import 'package:culcul/core/router/router.dart';
-import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/providers/auth/auth_provider.dart';
-import 'package:culcul/core/extensions/auth_extension.dart';
 import 'package:culcul/providers/profile/profile_provider.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/user_tags.dart';
@@ -48,7 +46,6 @@ class ProfileAppBar extends ConsumerWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Avatar Section
               Hero(
                 tag: 'profile_avatar',
                 child: Container(
@@ -69,14 +66,11 @@ class ProfileAppBar extends ConsumerWidget {
                 ),
               ),
               const SizedBox(width: 20),
-
-              // Info Section
               Expanded(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Row 1: Username & VIP
                     Row(
                       children: [
                         Flexible(
@@ -98,10 +92,7 @@ class ProfileAppBar extends ConsumerWidget {
                         ],
                       ],
                     ),
-
                     const SizedBox(height: 8),
-
-                    // Row 2: Level & Exp
                     if (profile != null)
                       Row(
                         children: [
@@ -119,8 +110,6 @@ class ProfileAppBar extends ConsumerWidget {
                           ],
                         ],
                       ),
-
-                    // Row 3: Bio
                     if (profile?.bio != null && profile!.bio!.isNotEmpty) ...[
                       const SizedBox(height: 8),
                       Text(
@@ -139,52 +128,6 @@ class ProfileAppBar extends ConsumerWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _AssetItem extends StatelessWidget {
-  final IconData icon;
-  final String value;
-  final Color color;
-  final String label;
-
-  const _AssetItem({
-    required this.icon,
-    required this.value,
-    required this.color,
-    required this.label,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.baseline,
-      textBaseline: TextBaseline.alphabetic,
-      children: [
-        Icon(icon, size: 14, color: color),
-        const SizedBox(width: 4),
-        Text(
-          value,
-          style: theme.textTheme.labelLarge?.copyWith(
-            fontWeight: FontWeight.w700,
-            color: theme.colorScheme.onSurface,
-            fontSize: 14,
-            fontFamily: 'Roboto',
-          ),
-        ),
-        const SizedBox(width: 2),
-        Text(
-          label,
-          style: theme.textTheme.labelSmall?.copyWith(
-            color: theme.colorScheme.outline,
-            fontSize: 11,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
     );
   }
 }
@@ -246,4 +189,3 @@ class _ExpBar extends StatelessWidget {
     );
   }
 }
-

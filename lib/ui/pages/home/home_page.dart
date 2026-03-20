@@ -1,6 +1,5 @@
 import 'package:culcul/core/router/router.dart';
 import 'package:culcul/ui/pages/home/widgets/home_app_bar.dart';
-import 'package:culcul/ui/pages/home/widgets/home_empty_tab.dart';
 import 'package:culcul/ui/pages/home/widgets/popular_view.dart';
 import 'package:culcul/ui/pages/home/widgets/recommend_view.dart';
 import 'package:culcul/ui/pages/home/live/live_view.dart';
@@ -18,7 +17,12 @@ class HomePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final t = Translations.of(context);
     final defaultSearchAsync = ref.watch(defaultSearchProvider);
-    final tabs = [t.home.tabs.live, t.home.tabs.recommend, t.home.tabs.hot];
+
+    final tabs = useMemoized(() => [
+      (title: t.home.tabs.live, view: const LiveView()),
+      (title: t.home.tabs.recommend, view: const RecommendView()),
+      (title: t.home.tabs.hot, view: const PopularView()),
+    ], [t]);
 
     final tabController = useTabController(
       initialLength: tabs.length,
@@ -28,7 +32,7 @@ class HomePage extends HookConsumerWidget {
     return Scaffold(
       appBar: HomeAppBar(
         tabController: tabController,
-        tabs: tabs,
+        tabs: tabs.map((e) => e.title).toList(),
         onTabTap: (index) {
           if (!tabController.indexIsChanging) {
             ref
@@ -44,18 +48,7 @@ class HomePage extends HookConsumerWidget {
       ),
       body: TabBarView(
         controller: tabController,
-        children: tabs.map((tab) {
-          if (tab == t.home.tabs.live) {
-            return const LiveView();
-          }
-          if (tab == t.home.tabs.recommend) {
-            return const RecommendView();
-          }
-          if (tab == t.home.tabs.hot) {
-            return const PopularView();
-          }
-          return HomeEmptyTab(tab: tab);
-        }).toList(),
+        children: tabs.map((e) => e.view).toList(),
       ),
     );
   }

@@ -16,9 +16,8 @@ abstract class PlayerUiState with _$PlayerUiState {
   const factory PlayerUiState({
     @Default(false) bool isPlaying,
     @Default(false) bool isBuffering,
-    @Default(Duration.zero) Duration position,
-    @Default(Duration.zero) Duration duration,
-    @Default(Duration.zero) Duration buffer,
+    // Position, duration, and buffer are now accessed directly from the player stream
+    // to avoid frequent state updates and rebuilds.
     @Default(false) bool isFullscreen,
     @Default(false) bool isLocked,
     @Default(true) bool showControls,
@@ -58,15 +57,6 @@ class PlayerController extends _$PlayerController {
     Future.microtask(() {
       if (!_mounted) return;
       _subscriptions.addAll([
-        player.stream.position.listen((p) {
-          state = state.copyWith(position: p);
-        }),
-        player.stream.duration.listen((d) {
-          state = state.copyWith(duration: d);
-        }),
-        player.stream.buffer.listen((b) {
-          state = state.copyWith(buffer: b);
-        }),
         player.stream.playing.listen((p) {
           state = state.copyWith(isPlaying: p);
         }),
@@ -78,9 +68,6 @@ class PlayerController extends _$PlayerController {
 
     return PlayerUiState(
       isPlaying: player.state.playing,
-      position: player.state.position,
-      duration: player.state.duration,
-      buffer: player.state.buffer,
       isBuffering: player.state.buffering,
     );
   }
@@ -143,7 +130,7 @@ class PlayerController extends _$PlayerController {
     }
 
     if (isQualitySwitch) {
-      final currentPos = state.position;
+      final currentPos = player.state.position;
       final wasPlaying = state.isPlaying;
 
       await player.open(media, play: false);

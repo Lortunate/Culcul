@@ -1,0 +1,92 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'live_room_detail_model.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_LiveRoomDetailModel _$LiveRoomDetailModelFromJson(Map<String, dynamic> json) =>
+    _LiveRoomDetailModel(
+      uid: (json['uid'] as num).toInt(),
+      roomId: (json['room_id'] as num).toInt(),
+      shortId: (json['short_id'] as num).toInt(),
+      attention: (json['attention'] as num).toInt(),
+      online: (json['online'] as num).toInt(),
+      isPortrait: json['is_portrait'] as bool,
+      description: json['description'] as String,
+      liveStatus: (json['live_status'] as num).toInt(),
+      areaId: (json['area_id'] as num).toInt(),
+      parentAreaId: (json['parent_area_id'] as num).toInt(),
+      parentAreaName: json['parent_area_name'] as String,
+      oldAreaId: (json['old_area_id'] as num).toInt(),
+      background: json['background'] as String,
+      title: json['title'] as String,
+      userCover: json['user_cover'] as String,
+      keyframe: json['keyframe'] as String,
+      isStrictRoom: json['is_strict_room'] as bool,
+      liveTime: json['live_time'] as String,
+      tags: json['tags'] as String,
+      isAnchor: (json['is_anchor'] as num).toInt(),
+      roomSilentType: json['room_silent_type'] as String,
+      roomSilentLevel: (json['room_silent_level'] as num).toInt(),
+      roomSilentSecond: (json['room_silent_second'] as num).toInt(),
+      areaName: json['area_name'] as String,
+      pendants: json['pendants'] as String,
+      areaPendants: json['area_pendants'] as String,
+      hotWords: (json['hot_words'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      hotWordsStatus: (json['hot_words_status'] as num).toInt(),
+      verify: json['verify'] as String,
+      newPendants: json['new_pendants'] as Map<String, dynamic>,
+      upSession: json['up_session'] as String,
+      pkStatus: (json['pk_status'] as num).toInt(),
+      pkId: (json['pk_id'] as num).toInt(),
+      battleId: (json['battle_id'] as num).toInt(),
+      allowChangeAreaTime: (json['allow_change_area_time'] as num).toInt(),
+      allowUploadCoverTime: (json['allow_upload_cover_time'] as num).toInt(),
+      studioInfo: json['studio_info'] as Map<String, dynamic>,
+    );
+
+Map<String, dynamic> _$LiveRoomDetailModelToJson(
+  _LiveRoomDetailModel instance,
+) => <String, dynamic>{
+  'uid': instance.uid,
+  'room_id': instance.roomId,
+  'short_id': instance.shortId,
+  'attention': instance.attention,
+  'online': instance.online,
+  'is_portrait': instance.isPortrait,
+  'description': instance.description,
+  'live_status': instance.liveStatus,
+  'area_id': instance.areaId,
+  'parent_area_id': instance.parentAreaId,
+  'parent_area_name': instance.parentAreaName,
+  'old_area_id': instance.oldAreaId,
+  'background': instance.background,
+  'title': instance.title,
+  'user_cover': instance.userCover,
+  'keyframe': instance.keyframe,
+  'is_strict_room': instance.isStrictRoom,
+  'live_time': instance.liveTime,
+  'tags': instance.tags,
+  'is_anchor': instance.isAnchor,
+  'room_silent_type': instance.roomSilentType,
+  'room_silent_level': instance.roomSilentLevel,
+  'room_silent_second': instance.roomSilentSecond,
+  'area_name': instance.areaName,
+  'pendants': instance.pendants,
+  'area_pendants': instance.areaPendants,
+  'hot_words': instance.hotWords,
+  'hot_words_status': instance.hotWordsStatus,
+  'verify': instance.verify,
+  'new_pendants': instance.newPendants,
+  'up_session': instance.upSession,
+  'pk_status': instance.pkStatus,
+  'pk_id': instance.pkId,
+  'battle_id': instance.battleId,
+  'allow_change_area_time': instance.allowChangeAreaTime,
+  'allow_upload_cover_time': instance.allowUploadCoverTime,
+  'studio_info': instance.studioInfo,
+};

@@ -1,8 +1,9 @@
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/providers/settings/settings_provider.dart';
+import 'package:culcul/ui/pages/settings/widgets/selection_sheet/selection_item.dart';
+import 'package:culcul/ui/pages/settings/widgets/selection_sheet/selection_sheet.dart';
 import 'package:culcul/ui/pages/settings/widgets/settings_group.dart';
 import 'package:culcul/ui/pages/settings/widgets/settings_item.dart';
-import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -62,11 +63,12 @@ class SettingsPage extends HookConsumerWidget {
             children: [
               SettingsItem(
                 title: t.settings.clear_cache,
-                value: cacheSizeAsync.when(
-                  data: (size) => size,
-                  loading: () => '...',
-                  error: (_, __) => '0 B',
-                ),
+                value:
+                    cacheSizeAsync.when(
+                      data: (size) => size,
+                      loading: () => '...',
+                      error: (_, __) => '0 B',
+                    ),
                 onTap: () => _handleClearCache(context, ref),
               ),
             ],
@@ -116,16 +118,17 @@ class SettingsPage extends HookConsumerWidget {
     _showSelectionSheet(
       context,
       title: t.settings.change_language,
-      children: AppLocale.values.map((locale) {
-        return _SelectionItem(
-          title: _getLanguageName(t, locale),
-          isSelected: LocaleSettings.currentLocale == locale,
-          onTap: () {
-            LocaleSettings.setLocale(locale);
-            context.pop();
-          },
-        );
-      }).toList(),
+      children:
+          AppLocale.values.map((locale) {
+            return SelectionItem(
+              title: _getLanguageName(t, locale),
+              isSelected: LocaleSettings.currentLocale == locale,
+              onTap: () {
+                LocaleSettings.setLocale(locale);
+                context.pop();
+              },
+            );
+          }).toList(),
     );
   }
 
@@ -138,16 +141,17 @@ class SettingsPage extends HookConsumerWidget {
     _showSelectionSheet(
       context,
       title: t.settings.appearance,
-      children: ThemeMode.values.map((mode) {
-        return _SelectionItem(
-          title: _getThemeName(t, mode),
-          isSelected: currentMode == mode,
-          onTap: () {
-            ref.read(themeModeProvider.notifier).setTheme(mode);
-            context.pop();
-          },
-        );
-      }).toList(),
+      children:
+          ThemeMode.values.map((mode) {
+            return SelectionItem(
+              title: _getThemeName(t, mode),
+              isSelected: currentMode == mode,
+              onTap: () {
+                ref.read(themeModeProvider.notifier).setTheme(mode);
+                context.pop();
+              },
+            );
+          }).toList(),
     );
   }
 
@@ -166,33 +170,7 @@ class SettingsPage extends HookConsumerWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 12),
-              Container(
-                width: 36,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: colorScheme.outlineVariant,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: Text(
-                  title,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              ...children,
-              const SizedBox(height: 12),
-            ],
-          ),
-        );
+        return SelectionSheet(title: title, children: children);
       },
     );
   }
@@ -208,45 +186,5 @@ class SettingsPage extends HookConsumerWidget {
         ),
       );
     }
-  }
-}
-
-class _SelectionItem extends StatelessWidget {
-  final String title;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _SelectionItem({
-    required this.title,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return AppClickable(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: isSelected ? colorScheme.primary : colorScheme.onSurface,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
-            if (isSelected)
-              Icon(Icons.check_rounded, color: colorScheme.primary, size: 20),
-          ],
-        ),
-      ),
-    );
   }
 }

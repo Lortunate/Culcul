@@ -25,8 +25,70 @@ abstract class UserSpaceVideoModel with _$UserSpaceVideoModel {
     @JsonKey(name: 'inter_video') @Default(false) bool interVideo,
   }) = _UserSpaceVideoModel;
 
-  factory UserSpaceVideoModel.fromJson(Map<String, dynamic> json) =>
-      _$UserSpaceVideoModelFromJson(json);
+  factory UserSpaceVideoModel.fromJson(Map<String, dynamic> json) {
+    // Adapter for flattened JSON from x/space/wbi/arc/search
+    if (json['owner'] == null && json.containsKey('author')) {
+      final adjusted = Map<String, dynamic>.from(json);
+
+      // Adapt Owner
+      adjusted['owner'] = {
+        'mid': json['mid'] ?? 0,
+        'name': json['author'],
+        'face': '',
+      };
+
+      // Adapt Stat
+      adjusted['stat'] = {
+        'view': json['play'] ?? 0,
+        'danmaku': json['video_review'] ?? 0,
+        'reply': json['comment'] ?? 0,
+        'like': 0,
+        'coin': 0,
+        'favorite': 0,
+        'share': 0,
+      };
+
+      // Adapt Duration (MM:SS string to int seconds)
+      if (json['length'] is String) {
+        final parts = (json['length'] as String).split(':');
+        int seconds = 0;
+        if (parts.length == 2) {
+          seconds =
+              (int.tryParse(parts[0]) ?? 0) * 60 +
+              (int.tryParse(parts[1]) ?? 0);
+        } else if (parts.length == 3) {
+          seconds =
+              (int.tryParse(parts[0]) ?? 0) * 3600 +
+              (int.tryParse(parts[1]) ?? 0) * 60 +
+              (int.tryParse(parts[2]) ?? 0);
+        }
+        adjusted['duration'] = seconds;
+      }
+
+      // Adapt Dates
+      if (json.containsKey('created')) {
+        adjusted['pubdate'] = json['created'];
+        adjusted['ctime'] = json['created'];
+      }
+
+      // Adapt Description
+      if (json.containsKey('description')) {
+        adjusted['desc'] = json['description'];
+      }
+
+      // Adapt Type ID
+      if (json.containsKey('typeid')) {
+        adjusted['tid'] = json['typeid'];
+      }
+
+      // Defaults for missing required fields
+      adjusted.putIfAbsent('tname', () => '');
+
+      return _$UserSpaceVideoModelFromJson(adjusted);
+    }
+
+    return _$UserSpaceVideoModelFromJson(json);
+  }
 }
 
 @freezed

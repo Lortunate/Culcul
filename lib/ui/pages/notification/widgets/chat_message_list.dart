@@ -1,6 +1,7 @@
 import 'package:culcul/data/models/notification/private_message_model.dart';
 import 'package:culcul/ui/pages/notification/widgets/chat_message_item.dart';
 import 'package:culcul/ui/pages/notification/widgets/chat_time_divider.dart';
+import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 
@@ -54,16 +55,7 @@ class _ChatMessageListState extends State<ChatMessageList> {
       onRefresh: widget.onRefresh,
       onLoad: widget.onLoadMore,
       header: null,
-      footer: const ClassicFooter(
-        dragText: '下拉加载更多',
-        armedText: '释放加载',
-        readyText: '加载中...',
-        processingText: '加载中...',
-        processedText: '加载完成',
-        noMoreText: '没有更多了',
-        failedText: '加载失败',
-        messageText: '最后更新于 %T',
-      ),
+      footer: AppLoadFooter(),
       child: ListView.builder(
         controller: widget.scrollController,
         reverse: true,

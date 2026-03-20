@@ -1,98 +1,180 @@
+import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/data/models/user/user_profile_model.dart';
-import 'package:culcul/ui/widgets/app_network_image.dart';
+import 'package:culcul/ui/widgets/app_bottom_sheet.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class UserProfileAppBar extends StatelessWidget {
+class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   final UserProfile? profile;
-  final bool isSliver;
+  final ValueListenable<double> scrollOffset;
 
   const UserProfileAppBar({
     super.key,
     this.profile,
-    this.isSliver = true,
+    required this.scrollOffset,
   });
 
   @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+
+  @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    return ValueListenableBuilder<double>(
+      valueListenable: scrollOffset,
+      builder: (context, offset, child) {
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
+        final topPadding = MediaQuery.paddingOf(context).top;
 
-    // Use a default banner if profile doesn't have one (currently model doesn't have it)
-    // In a real app, we would use profile?.bannerUrl
-    const String? bannerUrl = null; 
+        const double fadeStart = 0;
+        const double fadeEnd = 120;
+        final double opacity = ((offset - fadeStart) / (fadeEnd - fadeStart))
+            .clamp(0.0, 1.0);
+        final bool isScrolled = opacity > 0.8;
 
-    final flexibleSpace = FlexibleSpaceBar(
-      background: Stack(
-        fit: StackFit.expand,
+        final Color backgroundColor = theme.scaffoldBackgroundColor.withValues(
+          alpha: opacity,
+        );
+        final Color contentColor = isScrolled
+            ? colorScheme.onSurface
+            : Colors.white;
+        final Color iconBackgroundColor = isScrolled
+            ? Colors.transparent
+            : Colors.black.withValues(alpha: 0.3);
+
+        final SystemUiOverlayStyle overlayStyle = isScrolled
+            ? (theme.brightness == Brightness.dark
+                  ? SystemUiOverlayStyle.light
+                  : SystemUiOverlayStyle.dark)
+            : SystemUiOverlayStyle.light;
+
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+          value: overlayStyle,
+          child: Container(
+            padding: EdgeInsets.only(top: topPadding),
+            height: kToolbarHeight + topPadding,
+            decoration: BoxDecoration(
+              color: backgroundColor,
+              border: isScrolled
+                  ? Border(
+                      bottom: BorderSide(
+                        color: theme.dividerColor.withValues(alpha: 0.1),
+                        width: 0.5,
+                      ),
+                    )
+                  : null,
+            ),
+            child: Row(
+              children: [
+                const SizedBox(width: 4),
+                _buildIconButton(
+                  context,
+                  icon: Icons.arrow_back,
+                  color: contentColor,
+                  backgroundColor: iconBackgroundColor,
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Opacity(
+                    opacity: opacity,
+                    child: Text(
+                      profile?.username ?? '',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: contentColor,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+                _buildIconButton(
+                  context,
+                  icon: Icons.search,
+                  color: contentColor,
+                  backgroundColor: iconBackgroundColor,
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Search in Space: Coming Soon'),
+                      ),
+                    );
+                  },
+                ),
+                _buildIconButton(
+                  context,
+                  icon: Icons.more_vert,
+                  color: contentColor,
+                  backgroundColor: iconBackgroundColor,
+                  onPressed: () => _showMoreMenu(context),
+                ),
+                const SizedBox(width: 4),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showMoreMenu(BuildContext context) {
+    showAppModalBottomSheet(
+      context: context,
+      builder: (context) => Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          if (bannerUrl != null)
-            AppNetworkImage(
-              url: bannerUrl,
-              fit: BoxFit.cover,
-            )
-          else
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    colorScheme.primary.withValues(alpha: 0.3),
-                    colorScheme.surface,
-                  ],
-                ),
-              ),
-            ),
-            
-          // Gradient overlay for text readability if we had an image
-          if (bannerUrl != null)
-            DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withValues(alpha: 0.3),
-                    Colors.transparent,
-                  ],
-                  stops: const [0.0, 0.4],
-                ),
-              ),
-            ),
+          ListTile(
+            leading: const Icon(Icons.share_outlined),
+            title: const Text('分享'),
+            onTap: () {
+              Navigator.pop(context);
+              if (profile != null) {
+                ShareUtils.shareUser(profile!.id, profile!.username);
+              }
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.block_outlined),
+            title: const Text('加入黑名单'),
+            onTap: () {
+              Navigator.pop(context);
+              // TODO: Block
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.report_gmailerrorred_outlined),
+            title: const Text('举报'),
+            onTap: () {
+              Navigator.pop(context);
+              // TODO: Report
+            },
+          ),
+          const SizedBox(height: 16),
         ],
       ),
-      stretchModes: const [
-        StretchMode.zoomBackground,
-        StretchMode.blurBackground,
-      ],
     );
+  }
 
-    if (isSliver) {
-      return SliverAppBar(
-        expandedHeight: 140,
-        pinned: true,
-        stretch: true,
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        backgroundColor: colorScheme.surface,
-        leading: const BackButton(color: Colors.white), // Always white on banner
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.search, color: Colors.white),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.more_vert, color: Colors.white),
-          ),
-        ],
-        flexibleSpace: flexibleSpace,
-      );
-    }
-
-    return AppBar(
-      // Non-sliver version if needed
-      title: Text(profile?.username ?? ''),
+  Widget _buildIconButton(
+    BuildContext context, {
+    required IconData icon,
+    required Color color,
+    required Color backgroundColor,
+    required VoidCallback onPressed,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      decoration: BoxDecoration(shape: BoxShape.circle, color: backgroundColor),
+      child: IconButton(
+        onPressed: onPressed,
+        icon: Icon(icon, color: color, size: 22),
+        constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+        style: IconButton.styleFrom(
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        ),
+      ),
     );
   }
 }

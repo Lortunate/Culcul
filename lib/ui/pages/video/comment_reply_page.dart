@@ -1,13 +1,15 @@
-import 'package:easy_refresh/easy_refresh.dart';
 import 'package:culcul/data/models/comment/comment_model.dart';
-import 'package:culcul/providers/video/comment_reply_controller.dart';
-import 'package:culcul/ui/pages/video/widgets/bottom_input_bar.dart';
-import 'package:culcul/ui/pages/video/widgets/comment_item.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/providers/video/comment_reply_controller.dart';
+import 'package:culcul/ui/pages/video/widgets/comments/bottom_input_bar.dart';
+import 'package:culcul/ui/pages/video/widgets/comments/comment_item.dart';
+import 'package:culcul/ui/pages/video/widgets/comments/comment_reply_sheet.dart';
+import 'package:culcul/ui/widgets/refresh_header_footer.dart';
+import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class CommentReplyPage extends HookConsumerWidget {
   final int oid;
@@ -42,6 +44,21 @@ class CommentReplyPage extends HookConsumerWidget {
 
     final rootComment = state.rootComment ?? comment;
 
+    void showReplySheet(CommentItem item) {
+      CommentReplySheet.show(
+        context,
+        comment: item,
+        onSend: (text) {
+          controller.addReply(
+            item.oid,
+            item.root == 0 ? item.rpid : item.root,
+            item.rpid,
+            text,
+          );
+        },
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -73,26 +90,8 @@ class CommentReplyPage extends HookConsumerWidget {
             child: EasyRefresh(
               onRefresh: controller.refresh,
               onLoad: state.hasMore ? controller.loadMore : null,
-              header: const ClassicHeader(
-                dragText: '下拉刷新',
-                armedText: '释放刷新',
-                readyText: '正在刷新...',
-                processingText: '正在刷新...',
-                processedText: '刷新完成',
-                noMoreText: '没有更多了',
-                failedText: '刷新失败',
-                messageText: '最后更新于 %T',
-              ),
-              footer: const ClassicFooter(
-                dragText: '上拉加载',
-                armedText: '释放加载',
-                readyText: '正在加载...',
-                processingText: '正在加载...',
-                processedText: '加载完成',
-                noMoreText: '没有更多了',
-                failedText: '加载失败',
-                messageText: '最后更新于 %T',
-              ),
+              header: AppRefreshHeader(),
+              footer: AppLoadFooter(),
               child: CustomScrollView(
                 slivers: [
                   SliverToBoxAdapter(
@@ -111,8 +110,7 @@ class CommentReplyPage extends HookConsumerWidget {
                             rootComment.oid,
                             rootComment.rpid,
                           ),
-                          onReply: () =>
-                              _showReplySheet(context, rootComment, controller),
+                          onReply: () => showReplySheet(rootComment),
                         ),
                         Divider(
                           height: 1,
@@ -160,8 +158,7 @@ class CommentReplyPage extends HookConsumerWidget {
                             reply.oid,
                             reply.rpid,
                           ),
-                          onReply: () =>
-                              _showReplySheet(context, reply, controller),
+                          onReply: () => showReplySheet(reply),
                         );
                       }, childCount: state.replies.length),
                     ),
@@ -173,70 +170,6 @@ class CommentReplyPage extends HookConsumerWidget {
           const BottomInputBar(simpleMode: true),
         ],
       ),
-    );
-  }
-
-  void _showReplySheet(
-    BuildContext context,
-    CommentItem comment,
-    CommentReplyController notifier,
-  ) {
-    final theme = Theme.of(context);
-    final controller = TextEditingController();
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 16,
-            right: 16,
-            top: 16,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    '回复 @${comment.member.uname}',
-                    style: theme.textTheme.titleMedium,
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.send),
-                    onPressed: () {
-                      final text = controller.text.trim();
-                      if (text.isNotEmpty) {
-                        notifier.addReply(
-                          comment.oid,
-                          comment.root == 0 ? comment.rpid : comment.root,
-                          comment.rpid,
-                          text,
-                        );
-                        Navigator.pop(context);
-                      }
-                    },
-                  ),
-                ],
-              ),
-              TextField(
-                controller: controller,
-                autofocus: true,
-                minLines: 1,
-                maxLines: 5,
-                decoration: const InputDecoration(
-                  hintText: '发一条友善的评论',
-                  border: InputBorder.none,
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
-          ),
-        );
-      },
     );
   }
 }

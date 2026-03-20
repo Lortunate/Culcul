@@ -27,9 +27,9 @@ class FavFolderItem extends StatelessWidget {
               height: 90,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                 border: Border.all(
-                  color: colorScheme.outlineVariant.withOpacity(0.2),
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.2),
                   width: 0.5,
                 ),
               ),
@@ -45,7 +45,7 @@ class FavFolderItem extends StatelessWidget {
                     : Center(
                         child: Icon(
                           Icons.folder_open_rounded,
-                          color: colorScheme.primary.withOpacity(0.5),
+                          color: colorScheme.primary.withValues(alpha: 0.5),
                           size: 32,
                         ),
                       ),

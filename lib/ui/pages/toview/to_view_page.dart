@@ -1,10 +1,10 @@
 import 'package:culcul/providers/auth/auth_provider.dart';
-import 'package:culcul/core/extensions/auth_extension.dart';
 import 'package:culcul/providers/toview/toview_provider.dart';
 import 'package:culcul/ui/pages/toview/to_view_item.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/guest_view.dart';
 import 'package:flutter/material.dart';
+import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:culcul/i18n/strings.g.dart';
@@ -57,7 +57,7 @@ class ToViewPage extends ConsumerWidget {
                   return Center(child: Text(t.common.no_content));
                 }
                 return EasyRefresh(
-                  header: const MaterialHeader(),
+                  header: const AppRefreshHeader(),
                   onRefresh: () async {
                     final _ = await ref.refresh(toViewListProvider.future);
                     return IndicatorResult.success;

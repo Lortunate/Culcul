@@ -27,3 +27,7 @@ const Map<int, String> qualityDescriptions = {
   32: '480P 清晰',
   16: '360P 流畅',
 };
+
+const double kVolumeSensitivity = 2.0;
+const double kBrightnessSensitivity = 200.0;
+const double kSeekSensitivity = 5.0;

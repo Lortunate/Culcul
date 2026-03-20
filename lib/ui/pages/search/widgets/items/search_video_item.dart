@@ -15,60 +15,59 @@ class SearchVideoItem extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return SizedBox(
-      height: 100,
-      child: VideoListCard(
-        onTap: () {
-          if (item.bvid != null) {
-            VideoDetailRoute(bvid: item.bvid!).push(context);
-          }
-        },
-        padding: EdgeInsets.zero,
-        coverUrl: item.pic ?? '',
-        title: FormatUtils.stripHtmlTags(item.title ?? ''),
-        duration: item.duration.parseDuration,
-        thumbnailWidth: 177,
-        aspectRatio: 16 / 9,
-        author: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-              decoration: BoxDecoration(
-                color: colorScheme.primaryContainer.withValues(alpha: 0.4),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                item.typename ?? '视频',
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: colorScheme.primary,
-                  fontSize: 10,
-                ),
+    return VideoListCard(
+      flat: true,
+      onTap: () {
+        if (item.bvid != null) {
+          VideoDetailRoute(bvid: item.bvid!).push(context);
+        }
+      },
+      padding: EdgeInsets.zero,
+      coverUrl: item.pic ?? '',
+      title: FormatUtils.stripHtmlTags(item.title ?? ''),
+      duration: item.duration.parseDuration,
+      thumbnailWidth: 160,
+      aspectRatio: 16 / 9,
+      height: 90,
+      author: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Text(
+              item.typename ?? '视频',
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+                fontSize: 10,
               ),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                item.author ?? '',
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
-                ),
-              ),
-            ),
-          ],
-        ),
-        stats: [
-          IconText(
-            icon: Icons.play_circle_outline_rounded,
-            text: FormatUtils.formatAnyNumber(item.play ?? item.view),
           ),
-          IconText(
-            icon: Icons.list_alt_rounded,
-            text: FormatUtils.formatAnyNumber(item.danmaku ?? item.videoReview),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              item.author ?? '',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
           ),
         ],
       ),
+      stats: [
+        IconText(
+          icon: Icons.play_circle_outline_rounded,
+          text: FormatUtils.formatAnyNumber(item.play ?? item.view),
+        ),
+        IconText(
+          icon: Icons.list_alt_rounded,
+          text: FormatUtils.formatAnyNumber(item.danmaku ?? item.videoReview),
+        ),
+      ],
     );
   }
 }

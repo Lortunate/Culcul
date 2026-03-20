@@ -2,10 +2,8 @@ import 'package:culcul/data/models/live/index.dart';
 import 'package:culcul/core/types/result.dart';
 import 'package:culcul/providers/live/live_room_state.dart';
 import 'package:culcul/repositories/live_repository.dart';
-import 'package:culcul/repositories/profile_repository.dart' hide profileRepositoryProvider;
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/services/live_socket_service.dart';
-import 'package:culcul/core/errors/exceptions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'live_room_controller.g.dart';
@@ -64,7 +62,7 @@ class LiveRoomController extends _$LiveRoomController {
       case Failure(exception: final e):
         state = state.copyWith(
           isLoading: false,
-          error: e is AppException ? e : UnknownException(e.toString()),
+          error: e,
         );
     }
   }

@@ -1,9 +1,12 @@
 import 'dart:io';
 
 import 'package:culcul/core/providers/storage_provider.dart';
+import 'package:culcul/shared/extensions/format_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
+
+// ... (ThemeModeNotifier code remains unchanged)
 
 final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(
   ThemeModeNotifier.new,
@@ -38,7 +41,7 @@ final cacheSizeProvider = FutureProvider.autoDispose<String>((ref) async {
     if (!tempDir.existsSync()) return '0 B';
 
     int totalSize = await _calculateSize(tempDir);
-    return _formatSize(totalSize);
+    return totalSize.formatFileSize;
   } catch (e) {
     return '0 B';
   }
@@ -65,15 +68,6 @@ Future<int> _calculateSize(FileSystemEntity file) async {
     return sum;
   }
   return 0;
-}
-
-String _formatSize(int size) {
-  if (size < 1024) return '$size B';
-  if (size < 1024 * 1024) return '${(size / 1024).toStringAsFixed(2)} KB';
-  if (size < 1024 * 1024 * 1024) {
-    return '${(size / (1024 * 1024)).toStringAsFixed(2)} MB';
-  }
-  return '${(size / (1024 * 1024 * 1024)).toStringAsFixed(2)} GB';
 }
 
 final clearCacheProvider = Provider.autoDispose((ref) {

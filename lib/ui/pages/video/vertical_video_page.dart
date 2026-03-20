@@ -1,19 +1,21 @@
-import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/data/models/video/video_detail.dart';
 import 'package:culcul/providers/video/player_controller.dart';
 import 'package:culcul/providers/video/video_detail_controller.dart';
+import 'package:culcul/ui/pages/video/hooks/use_player_system_settings.dart';
+import 'package:culcul/ui/pages/video/hooks/use_video_loader.dart';
 import 'package:culcul/ui/pages/video/hooks/use_video_progress.dart';
-import 'package:culcul/ui/pages/video/widgets/danmaku_layer.dart';
-import 'package:culcul/ui/pages/video/widgets/player_gestures.dart';
-import 'package:culcul/ui/pages/video/widgets/subtitle_overlay.dart';
+import 'package:culcul/ui/pages/video/widgets/layers/danmaku_layer.dart';
+import 'package:culcul/ui/pages/video/widgets/layers/interaction_layer.dart';
+import 'package:culcul/ui/pages/video/widgets/layers/subtitle_layer.dart';
+import 'package:culcul/ui/pages/video/widgets/layers/video_layer.dart';
 import 'package:culcul/ui/theme/app_colors.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:media_kit_video/media_kit_video.dart';
+import 'package:media_kit/media_kit.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 class VerticalVideoPage extends HookConsumerWidget {
@@ -31,106 +33,38 @@ class VerticalVideoPage extends HookConsumerWidget {
     final playerController = ref.watch(playerControllerProvider.notifier);
     final playerState = ref.watch(playerControllerProvider);
     final player = playerController.player;
-    final controller = playerController.videoController;
     final state = ref.watch(videoDetailControllerProvider(bvid));
 
-    final isSpeedingUp = useState(false);
-    final lastLoadedCid = useRef<int?>(null);
-    final lastPlayUrl = useRef<String?>(null);
+    useVideoLoader(ref, player, state);
+    final brightness = usePlayerSystemSettings(player);
+    useVideoProgressReport(ref, bvid, player, playerState.isPlaying);
 
-    // Wakelock
     useEffect(() {
       WakelockPlus.enable();
       return () => WakelockPlus.disable();
     }, []);
 
-    // Player initialization
-    useEffect(() {
-      if (state.playUrl != null && state.playUrl!.durl.isNotEmpty) {
-        final url = state.playUrl!.durl.first.url;
-
-        if (lastPlayUrl.value == url) return null;
-
-        final bool isQualitySwitch =
-            lastLoadedCid.value == state.currentCid &&
-            lastPlayUrl.value != null;
-
-        Future.microtask(() async {
-          await playerController.loadVideo(
-            url,
-            httpHeaders: {
-              'Referer': ApiConstants.referer,
-              'User-Agent': ApiConstants.userAgent,
-            },
-            isQualitySwitch: isQualitySwitch,
-            title: videoDetail.title,
-            artist: videoDetail.owner.name,
-            coverUrl: videoDetail.pic,
-          );
-
-          player.setRate(state.playbackSpeed);
-
-          lastLoadedCid.value = state.currentCid;
-          lastPlayUrl.value = url;
-        });
-      }
-      return null;
-    }, [state.playUrl]);
-
-    // Report progress
-    useVideoProgressReport(ref, bvid, player, playerState.isPlaying);
+    final volumeSnapshot = useStream(player.stream.volume);
+    final currentVolume = volumeSnapshot.data ?? player.state.volume;
 
     return Scaffold(
       backgroundColor: Colors.black,
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
-          // Video Layer
-          Positioned.fill(
-            child: Video(
-              controller: controller,
-              controls: (state) => const SizedBox(),
-              fit: BoxFit
-                  .contain, // Maintain aspect ratio, might have black bars
+          InteractionLayer(
+            bvid: bvid,
+            brightness: brightness,
+            currentVolume: currentVolume,
+            child: Stack(
+              children: [
+                const Positioned.fill(child: VideoLayer(fit: BoxFit.contain)),
+                Positioned.fill(child: DanmakuLayer(bvid: bvid)),
+                Positioned.fill(child: SubtitleLayer(bvid: bvid)),
+              ],
             ),
           ),
 
-          // Danmaku Layer
-          Positioned.fill(child: DanmakuLayer(bvid: bvid)),
-
-          // Subtitle Layer
-          Positioned.fill(child: SubtitleOverlay(bvid: bvid)),
-
-          // Gestures
-          Positioned.fill(
-            child: PlayerGestures(
-              isLocked: playerState.isLocked,
-              volume: player.state.volume,
-              brightness: 0.5, // Simplified
-              onTap: playerController.playOrPause,
-              onDoubleTap: () {
-                // TODO: Like action
-              },
-              onLongPressStart: () {
-                if (playerState.isPlaying) {
-                  isSpeedingUp.value = true;
-                  player.setRate(2.0);
-                }
-              },
-              onLongPressEnd: () {
-                isSpeedingUp.value = false;
-                player.setRate(state.playbackSpeed);
-              },
-              onVerticalDragUpdate:
-                  (_, __) {}, // Disable for now or implement simplified
-              onHorizontalDragUpdate:
-                  (_) {}, // Disable seeking for now or implement
-              onDragEnd: () {},
-              child: Container(color: Colors.transparent),
-            ),
-          ),
-
-          // Top Bar
           Positioned(
             top: 0,
             left: 0,
@@ -138,36 +72,22 @@ class VerticalVideoPage extends HookConsumerWidget {
             child: SafeArea(child: _buildTopBar(context)),
           ),
 
-          // Right Bar (Interaction)
           Positioned(
             right: 8,
-            bottom: 120, // Leave space for bottom bar
+            bottom: 120,
             child: _buildRightBar(context, videoDetail),
           ),
 
-          // Bottom Bar (Info & Controls)
           Positioned(
             left: 0,
             right: 0,
             bottom: 0,
-            child: _buildBottomBar(
-              context,
-              videoDetail,
-              playerState,
-              playerController,
+            child: _BottomBar(
+              videoDetail: videoDetail,
+              player: player,
+              playerController: playerController,
             ),
           ),
-
-          if (isSpeedingUp.value)
-            const Positioned(
-              top: 40,
-              child: Center(
-                child: Text(
-                  '2.0x Speed',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
         ],
       ),
     );
@@ -188,7 +108,7 @@ class VerticalVideoPage extends HookConsumerWidget {
           ),
           const SizedBox(width: 8),
           const Text(
-            '12人正在看', // Mock data, replace with real data if available
+            '12人正在看', // TODO: Real data
             style: TextStyle(color: Colors.white70, fontSize: 12),
           ),
           const Spacer(),
@@ -208,7 +128,7 @@ class VerticalVideoPage extends HookConsumerWidget {
         const SizedBox(height: 20),
         _buildIconAction(Icons.comment_rounded, detail.stat.reply, '评论'),
         const SizedBox(height: 20),
-        _buildIconAction(Icons.thumb_down_alt_rounded, 438, '不喜欢'), // Mock
+        _buildIconAction(Icons.thumb_down_alt_rounded, 438, '不喜欢'),
         const SizedBox(height: 20),
         _buildIconAction(Icons.star_rounded, detail.stat.favorite, '收藏'),
         const SizedBox(height: 20),
@@ -233,13 +153,26 @@ class VerticalVideoPage extends HookConsumerWidget {
       ],
     );
   }
+}
 
-  Widget _buildBottomBar(
-    BuildContext context,
-    VideoDetail detail,
-    dynamic playerState,
-    dynamic playerController,
-  ) {
+class _BottomBar extends HookWidget {
+  final VideoDetail videoDetail;
+  final Player player;
+  final PlayerController playerController;
+
+  const _BottomBar({
+    required this.videoDetail,
+    required this.player,
+    required this.playerController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final positionSnapshot = useStream(player.stream.position);
+    final durationSnapshot = useStream(player.stream.duration);
+    final position = positionSnapshot.data ?? Duration.zero;
+    final duration = durationSnapshot.data ?? Duration.zero;
+
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
@@ -253,16 +186,15 @@ class VerticalVideoPage extends HookConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Author Info
           Row(
             children: [
-              AppAvatar(url: detail.owner.face, size: 36, onTap: () {}),
+              AppAvatar(url: videoDetail.owner.face, size: 36, onTap: () {}),
               const SizedBox(width: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    detail.owner.name,
+                    videoDetail.owner.name,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -270,7 +202,7 @@ class VerticalVideoPage extends HookConsumerWidget {
                     ),
                   ),
                   const Text(
-                    '504.4万粉丝', // Mock
+                    '504.4万粉丝', // TODO: Real data
                     style: TextStyle(color: Colors.white70, fontSize: 12),
                   ),
                 ],
@@ -297,12 +229,11 @@ class VerticalVideoPage extends HookConsumerWidget {
             ],
           ),
           const SizedBox(height: 12),
-          // Title
           Row(
             children: [
               Expanded(
                 child: Text(
-                  detail.title,
+                  videoDetail.title,
                   style: const TextStyle(color: Colors.white, fontSize: 14),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -326,13 +257,12 @@ class VerticalVideoPage extends HookConsumerWidget {
               ),
               const SizedBox(width: 4),
               Text(
-                '${FormatUtils.formatNumber(detail.stat.view)}播放',
+                '${FormatUtils.formatNumber(videoDetail.stat.view)}播放',
                 style: const TextStyle(color: Colors.white60, fontSize: 12),
               ),
             ],
           ),
           const SizedBox(height: 12),
-          // Progress Bar
           SizedBox(
             height: 20,
             child: SliderTheme(
@@ -345,9 +275,9 @@ class VerticalVideoPage extends HookConsumerWidget {
                 thumbColor: Colors.white,
               ),
               child: Slider(
-                value: playerState.position.inSeconds.toDouble(),
-                max: playerState.duration.inSeconds.toDouble() > 0
-                    ? playerState.duration.inSeconds.toDouble()
+                value: position.inSeconds.toDouble(),
+                max: duration.inSeconds.toDouble() > 0
+                    ? duration.inSeconds.toDouble()
                     : 1.0,
                 onChanged: (value) {
                   playerController.seek(Duration(seconds: value.toInt()));
@@ -355,7 +285,6 @@ class VerticalVideoPage extends HookConsumerWidget {
               ),
             ),
           ),
-          // Controls
           Row(
             children: [
               Expanded(
@@ -377,11 +306,7 @@ class VerticalVideoPage extends HookConsumerWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              const Icon(
-                Icons.notes,
-                color: Colors.white,
-                size: 24,
-              ), // Danmaku settings
+              const Icon(Icons.notes, color: Colors.white, size: 24),
               const SizedBox(width: 16),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),

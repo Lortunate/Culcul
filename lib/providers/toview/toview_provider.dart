@@ -2,7 +2,6 @@ import 'package:culcul/core/types/result.dart';
 import 'package:culcul/data/models/toview/to_view_model.dart';
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/providers/auth/auth_provider.dart';
-import 'package:culcul/core/extensions/auth_extension.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'toview_provider.g.dart';

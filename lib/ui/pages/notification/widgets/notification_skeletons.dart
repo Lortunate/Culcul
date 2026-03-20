@@ -1,4 +1,5 @@
 import 'package:culcul/ui/widgets/app_shimmer.dart';
+import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +10,7 @@ class PrivateSessionSkeletonList extends StatelessWidget {
   Widget build(BuildContext context) {
     return EasyRefresh(
       onRefresh: () async {}, // No-op for skeleton
-      header: const MaterialHeader(),
+      header: const AppRefreshHeader(),
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         itemCount: 15,
@@ -100,7 +101,7 @@ class _ChatMessageSkeletonItem extends StatelessWidget {
             width: 150 + (isSelf ? 30.0 : 0.0), // Randomize slightly
             height: 40,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: BorderRadius.only(
                 topLeft: const Radius.circular(12),
                 topRight: const Radius.circular(12),

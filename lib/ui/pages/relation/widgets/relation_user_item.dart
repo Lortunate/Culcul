@@ -1,7 +1,6 @@
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/router/router.dart';
 import 'package:culcul/data/models/relation/relation_model.dart';
-import 'package:culcul/ui/widgets/follow_button.dart';
 import 'package:culcul/ui/widgets/index.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

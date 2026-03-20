@@ -22,4 +22,9 @@ class ShareUtils {
     final String url = 'https://t.bilibili.com/$dynamicId';
     await Share.share('$content\n$url');
   }
+
+  static Future<void> shareUser(String uid, String username) async {
+    final String url = 'https://space.bilibili.com/$uid';
+    await Share.share('Check out $username on Bilibili!\n$url', subject: username);
+  }
 }

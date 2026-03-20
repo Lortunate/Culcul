@@ -1,3 +1,4 @@
+import 'package:culcul/core/constants/app_dimens.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +22,8 @@ class UserListTile extends StatelessWidget {
     this.stats,
     this.trailing,
     this.onTap,
-    this.avatarSize = 48,
-    this.padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    this.avatarSize = AppDimens.iconXLarge, // 48
+    this.padding = const EdgeInsets.symmetric(horizontal: AppDimens.p16, vertical: AppDimens.p12),
     this.titleBadge,
   });
 
@@ -38,7 +39,7 @@ class UserListTile extends StatelessWidget {
         child: Row(
           children: [
             AppAvatar(url: avatarUrl, size: avatarSize),
-            const SizedBox(width: 12),
+            const SizedBox(width: AppDimens.p12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,31 +52,31 @@ class UserListTile extends StatelessWidget {
                           name,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
-                            fontSize: 15,
+                            fontSize: 15, // TODO: Use text theme properly
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       if (titleBadge != null) ...[
-                        const SizedBox(width: 4),
+                        const SizedBox(width: AppDimens.p4),
                         titleBadge!,
                       ],
                     ],
                   ),
                   if (stats != null && stats!.isNotEmpty) ...[
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AppDimens.p4),
                     Row(
                       children: [
                         for (int i = 0; i < stats!.length; i++) ...[
-                          if (i > 0) const SizedBox(width: 12),
+                          if (i > 0) const SizedBox(width: AppDimens.p12),
                           stats![i],
                         ],
                       ],
                     ),
                   ],
                   if (subtitle != null && subtitle!.isNotEmpty) ...[
-                    const SizedBox(height: 4),
+                    const SizedBox(height: AppDimens.p4),
                     Text(
                       subtitle!,
                       style: theme.textTheme.bodySmall?.copyWith(
@@ -88,7 +89,7 @@ class UserListTile extends StatelessWidget {
                 ],
               ),
             ),
-            if (trailing != null) ...[const SizedBox(width: 12), trailing!],
+            if (trailing != null) ...[const SizedBox(width: AppDimens.p12), trailing!],
           ],
         ),
       ),

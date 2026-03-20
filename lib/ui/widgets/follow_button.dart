@@ -10,6 +10,7 @@ class FollowButton extends ConsumerWidget {
   final double? width;
   final double? height;
   final String? text;
+  final OutlinedBorder? shape;
 
   const FollowButton({
     super.key,
@@ -18,10 +19,12 @@ class FollowButton extends ConsumerWidget {
     this.width,
     this.height,
     this.text,
+    this.shape,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = Translations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
     final authState = ref.watch(authProvider);
 
@@ -35,15 +38,21 @@ class FollowButton extends ConsumerWidget {
       },
       style: FilledButton.styleFrom(
         backgroundColor: isFollowed
-            ? colorScheme.surfaceContainerHighest
-            : colorScheme.primary,
+            ? colorScheme.surfaceContainerHighest.withValues(
+                alpha: 0.5,
+              ) // Lighter grey for followed
+            : colorScheme.primary, // Theme primary color for follow
         foregroundColor: isFollowed
             ? colorScheme.onSurfaceVariant
             : colorScheme.onPrimary,
         elevation: 0,
         minimumSize: Size(width ?? 56, height ?? 32),
+        fixedSize: height != null ? Size.fromHeight(height!) : null,
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+        shape: shape ??
+            (isFollowed
+                ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))
+                : const StadiumBorder()),
         visualDensity: VisualDensity.compact,
       ),
       child: AnimatedSwitcher(
@@ -54,13 +63,22 @@ class FollowButton extends ConsumerWidget {
             child: ScaleTransition(scale: animation, child: child),
           );
         },
-        child: Text(
-          text ??
-              (isFollowed
-                  ? t.video.actions.followed
-                  : '+ ${t.video.actions.follow}'),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
           key: ValueKey<bool>(isFollowed),
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+          children: [
+            if (isFollowed) ...[
+              const Icon(Icons.menu, size: 16),
+              const SizedBox(width: 4),
+            ],
+            Text(
+              text ??
+                  (isFollowed
+                      ? '已关注' // Use explicit text for now or verify translation
+                      : '+ ${t.video.actions.follow}'),
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
       ),
     );

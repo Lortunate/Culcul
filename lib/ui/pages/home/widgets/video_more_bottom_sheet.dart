@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/services/media_service.dart';
 import 'package:culcul/core/utils/id_utils.dart';
 import 'package:culcul/core/utils/toast_utils.dart';

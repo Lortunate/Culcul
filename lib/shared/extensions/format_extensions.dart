@@ -10,6 +10,10 @@ extension FormatIntExtension on int {
   String get timeAgo => FormatUtils.formatTimestamp(this);
 }
 
+extension FormatDurationExtension on Duration {
+  String get formatDuration => FormatUtils.formatDuration(inSeconds);
+}
+
 extension FormatStringExtension on String {
   int get parseDuration => FormatUtils.parseDurationString(this);
   String get capitalize => FormatUtils.capitalize(this);
@@ -33,5 +37,20 @@ extension FormatDateTimeExtension on DateTime {
     } else {
       return '$year-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';
     }
+  }
+
+  String toIsoDate() {
+    return '$year-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';
+  }
+  
+  String toChatTime() {
+     final now = DateTime.now();
+     if (year == now.year && month == now.month && day == now.day) {
+       return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+     } else if (year == now.year) {
+       return '$month月$day日 ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+     } else {
+       return '$year年$month月$day日';
+     }
   }
 }

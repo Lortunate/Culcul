@@ -63,29 +63,30 @@ class SearchResult extends _$SearchResult {
 
   Future<void> fetchMore() async {
     final oldState = state.value;
+    // Check if we already have data, aren't loading, and have more pages
     if (oldState == null ||
         state.isLoading ||
+        state.isRefreshing ||
         oldState.page >= oldState.numPages) {
       return;
     }
 
-    state = const AsyncLoading();
-    
+    // Set state to loading but keep previous value to avoid UI flicker
+    state = AsyncLoading<SearchResultData?>().copyWithPrevious(state);
+
     state = await AsyncValue.guard(() async {
-      final result = await ref
-          .read(searchRepositoryProvider)
-          .fetchSearchAll(
+      final result = await ref.read(searchRepositoryProvider).fetchSearchAll(
             keyword: keyword,
             searchType: searchType,
             order: order,
             duration: duration,
             page: oldState.page + 1,
           );
-      
+
       return switch (result) {
         Success(value: final newData) => newData.copyWith(
-          result: [...oldState.result, ...newData.result],
-        ),
+            result: [...oldState.result, ...newData.result],
+          ),
         Failure(exception: final e) => throw e,
       };
     });

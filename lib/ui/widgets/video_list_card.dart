@@ -1,5 +1,6 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/ui/widgets/app_card_container.dart';
+import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:culcul/ui/widgets/icon_text.dart';
 import 'package:culcul/ui/widgets/video_thumbnail.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ class VideoListCard extends StatelessWidget {
   final Widget? trailing; // Custom trailing widget
   final VoidCallback? onLongPress;
   final bool showDefaultStats;
+  final bool flat;
 
   const VideoListCard({
     super.key,
@@ -47,13 +49,16 @@ class VideoListCard extends StatelessWidget {
     this.trailing,
     this.onLongPress,
     this.showDefaultStats = false,
+    this.flat = false,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final overlayWidget = overlay;
     final statsWidgets = <Widget>[
-      if (stats != null) ...stats!
+      if (stats != null)
+        ...stats!
       else if (showDefaultStats) ...[
         if (viewCount != null)
           IconText(
@@ -68,80 +73,91 @@ class VideoListCard extends StatelessWidget {
       ],
     ];
 
-    return AppCardContainer(
-      onTap: onTap,
-      onLongPress: onLongPress,
-      child: Padding(
-        padding: padding,
-        child: SizedBox(
-          height: height,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (leading != null)
-                leading!
-              else
-                SizedBox(
-                  width: thumbnailWidth,
-                  child: Stack(
-                    children: [
-                      VideoThumbnail(
-                        url: coverUrl,
-                        duration: duration ?? 0,
-                        // Don't show stats on thumbnail in list view to avoid duplication
-                        viewCount: null,
-                        danmakuCount: null,
-                        borderRadius: 8,
-                        aspectRatio: aspectRatio,
-                        width: thumbnailWidth,
-                        height: thumbnailWidth / aspectRatio,
-                      ),
-                      if (overlay != null) overlay!,
-                    ],
-                  ),
-                ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    final content = Padding(
+      padding: padding,
+      child: SizedBox(
+        height: height,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (leading != null)
+              leading!
+            else
+              SizedBox(
+                width: thumbnailWidth,
+                child: Stack(
                   children: [
-                    Text(
-                      title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        height: 1.3,
-                      ),
+                    VideoThumbnail(
+                      url: coverUrl,
+                      duration: duration ?? 0,
+                      // Don't show stats on thumbnail in list view to avoid duplication
+                      viewCount: null,
+                      danmakuCount: null,
+                      borderRadius: 8,
+                      aspectRatio: aspectRatio,
+                      width: thumbnailWidth,
+                      height: thumbnailWidth / aspectRatio,
                     ),
-                    if (badge != null) ...[const SizedBox(height: 4), badge!],
-                    if (middleContent != null) ...[
-                      const SizedBox(height: 4),
-                      middleContent!,
-                    ],
-                    const Spacer(),
-                    if (author != null) ...[
-                      author!,
-                      if (statsWidgets.isNotEmpty) const SizedBox(height: 2),
-                    ],
-                    if (statsWidgets.isNotEmpty)
-                      Row(
-                        children: [
-                          for (int i = 0; i < statsWidgets.length; i++) ...[
-                            if (i > 0) const SizedBox(width: 12),
-                            statsWidgets[i],
-                          ],
-                        ],
-                      ),
+                    if (overlayWidget != null) overlayWidget,
                   ],
                 ),
               ),
-              if (trailing != null) ...[const SizedBox(width: 12), trailing!],
-            ],
-          ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      height: 1.3,
+                    ),
+                  ),
+                  if (badge != null) ...[const SizedBox(height: 4), badge!],
+                  if (middleContent != null) ...[
+                    const SizedBox(height: 4),
+                    middleContent!,
+                  ],
+                  const Spacer(),
+                  if (author != null) ...[
+                    author!,
+                    if (statsWidgets.isNotEmpty) const SizedBox(height: 2),
+                  ],
+                  if (statsWidgets.isNotEmpty)
+                    Row(
+                      children: [
+                        for (int i = 0; i < statsWidgets.length; i++) ...[
+                          if (i > 0) const SizedBox(width: 12),
+                          statsWidgets[i],
+                        ],
+                      ],
+                    ),
+                ],
+              ),
+            ),
+            if (trailing != null) ...[const SizedBox(width: 12), trailing!],
+          ],
         ),
       ),
     );
+
+    if (flat) {
+      return AppClickable(
+        onTap: onTap,
+        onLongPress: onLongPress,
+        child: content,
+      );
+    }
+
+    return AppCardContainer(
+      onTap: onTap,
+      onLongPress: onLongPress,
+      child: content,
+    );
   }
 }
+

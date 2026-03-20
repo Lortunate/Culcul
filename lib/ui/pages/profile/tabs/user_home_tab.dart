@@ -1,238 +1,46 @@
-import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/core/router/router.dart';
-import 'package:culcul/providers/user_space/user_space_extras_provider.dart';
-import 'package:culcul/providers/user_space/user_space_videos_provider.dart';
-import 'package:culcul/ui/widgets/index.dart';
+import 'package:culcul/ui/pages/profile/widgets/home_tab/masterpiece_section.dart';
+import 'package:culcul/ui/pages/profile/widgets/home_tab/recent_video_section.dart';
+import 'package:culcul/ui/pages/profile/widgets/home_tab/sticky_video_section.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class UserHomeTab extends ConsumerWidget {
+class UserHomeTab extends ConsumerStatefulWidget {
   final int mid;
-  const UserHomeTab({super.key, required this.mid});
+  final ValueChanged<int>? onSwitchToTab;
+
+  const UserHomeTab({super.key, required this.mid, this.onSwitchToTab});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final stickyAsync = ref.watch(userStickyVideoProvider(mid));
-    final masterpieceAsync = ref.watch(userMasterpiecesProvider(mid));
-    final videosAsync = ref.watch(
-      userSpaceVideosProvider(mid, order: 'pubdate'),
-    );
+  ConsumerState<UserHomeTab> createState() => _UserHomeTabState();
+}
 
+class _UserHomeTabState extends ConsumerState<UserHomeTab>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
     return CustomScrollView(
-      key: PageStorageKey<String>('user_home_tab_$mid'),
+      key: PageStorageKey<String>('user_home_tab_${widget.mid}'),
       slivers: [
-        // Sticky Video
-        stickyAsync.when(
-          data: (video) {
-            if (video == null) {
-              return const SliverToBoxAdapter(child: SizedBox.shrink());
-            }
-            return SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.vertical_align_top_rounded,
-                          color: Colors.pink,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '置顶视频',
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: VideoListCard(
-                      coverUrl: video.pic,
-                      title: video.title,
-                      duration: video.duration,
-                      thumbnailWidth: 120,
-                      aspectRatio: 16 / 9,
-                      height: 76,
-                      padding: EdgeInsets.zero,
-                      onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
-                      stats: [
-                        Text(
-                          FormatUtils.formatTimestamp(video.pubDate),
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Divider(height: 24, thickness: 8),
-                ],
-              ),
-            );
-          },
-          error: (err, stack) =>
-              const SliverToBoxAdapter(child: SizedBox.shrink()),
-          loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+        SliverOverlapInjector(
+          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
         ),
-
-        // Masterpieces
-        masterpieceAsync.when(
-          data: (videos) {
-            if (videos.isEmpty) {
-              return const SliverToBoxAdapter(child: SizedBox.shrink());
-            }
-            return SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.thumb_up_rounded,
-                          color: Colors.orange,
-                          size: 18,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          '代表作',
-                          style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 180, // Adjust height as needed
-                    child: ListView.separated(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      scrollDirection: Axis.horizontal,
-                      itemCount: videos.length,
-                      separatorBuilder: (c, i) => const SizedBox(width: 12),
-                      itemBuilder: (context, index) {
-                        final video = videos[index];
-                        return SizedBox(
-                          width: 160,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              VideoThumbnail(
-                                url: video.pic,
-                                duration: video.duration,
-                                viewCount: video.stat.view,
-                                danmakuCount: video.stat.danmaku,
-                                borderRadius: 8,
-                                aspectRatio: 16 / 10,
-                                width: 160,
-                                height: 100,
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                video.title,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 13,
-                                    ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  const Divider(height: 24, thickness: 8),
-                ],
-              ),
-            );
-          },
-          error: (err, stack) =>
-              const SliverToBoxAdapter(child: SizedBox.shrink()),
-          loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+        SliverPadding(
+          padding: const EdgeInsets.only(top: 12),
+          sliver: StickyVideoSection(mid: widget.mid),
         ),
-
-        // Latest Videos
-        videosAsync.when(
-          data: (videos) {
-            return SliverList(
-              delegate: SliverChildListDelegate([
-                if (videos.isNotEmpty) ...[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    child: Text(
-                      '最新视频',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  ...videos
-                      .take(5)
-                      .map(
-                        (video) => Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          child: VideoListCard(
-                            coverUrl: video.pic,
-                            title: video.title,
-                            duration: video.duration,
-                            thumbnailWidth: 120,
-                            aspectRatio: 16 / 9,
-                            height: 76,
-                            padding: EdgeInsets.zero,
-                            onTap: () =>
-                                VideoDetailRoute(bvid: video.bvid).push(context),
-                            stats: [
-                              Text(
-                                FormatUtils.formatTimestamp(video.pubDate),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(color: Colors.grey),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                ] else
-                  const SizedBox(
-                    height: 100,
-                    child: Center(child: Text('暂无内容')),
-                  ),
-              ]),
-            );
-          },
-          error: (err, stack) => SliverToBoxAdapter(child: Text('Error: $err')),
-          loading: () => SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => const AppShimmer(child: VideoListSkeleton()),
-              childCount: 3,
-            ),
-          ),
+        MasterpieceSection(mid: widget.mid),
+        RecentVideoSection(
+          mid: widget.mid,
+          onSwitchToTab: widget.onSwitchToTab,
+        ),
+        SliverToBoxAdapter(
+          child: SizedBox(height: MediaQuery.paddingOf(context).bottom + 24),
         ),
       ],
     );
   }
 }
-
-

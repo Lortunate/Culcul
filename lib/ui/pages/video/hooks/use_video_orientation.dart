@@ -12,58 +12,20 @@ VoidCallback useVideoOrientation(
   final playerController = ref.watch(playerControllerProvider.notifier);
   final playerState = ref.watch(playerControllerProvider);
 
-  // Toggle fullscreen logic
   void toggleFullscreen() {
     if (playerState.isFullscreen) {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     } else {
-      int width = 0;
-      int height = 0;
-      int rotate = 0;
+      final dimensions = _getVideoDimensions(
+        videoDetail,
+        currentCid,
+        playerController.player.state.width,
+        playerController.player.state.height,
+      );
 
-      // 1. Try to get dimensions from API data (most reliable)
-      if (videoDetail != null) {
-        // Find current page
-        VideoPage? currentPage;
-        for (final page in videoDetail.pages) {
-          if (page.cid == currentCid) {
-            currentPage = page;
-            break;
-          }
-        }
-
-        if (currentPage != null &&
-            currentPage.dimension.width > 0 &&
-            currentPage.dimension.height > 0) {
-          width = currentPage.dimension.width;
-          height = currentPage.dimension.height;
-          rotate = currentPage.dimension.rotate;
-        } else if (videoDetail.dimension.width > 0 &&
-            videoDetail.dimension.height > 0) {
-          // Fallback to video detail dimension
-          width = videoDetail.dimension.width;
-          height = videoDetail.dimension.height;
-          rotate = videoDetail.dimension.rotate;
-        }
-      }
-
-      // 2. Fallback to player state if API dimensions are missing
-      if (width == 0 || height == 0) {
-        width = playerController.player.state.width ?? 0;
-        height = playerController.player.state.height ?? 0;
-        // Player state dimensions are usually already rotated by the player engine if needed
-        rotate = 0;
-      }
-
-      // Handle rotation for API dimensions
-      if (rotate == 90 || rotate == 270) {
-        final temp = width;
-        width = height;
-        height = temp;
-      }
-
-      // Default to landscape if dimensions are not available or video is landscape
+      final width = dimensions.width;
+      final height = dimensions.height;
       final isLandscape = (width == 0 || height == 0) || (width >= height);
 
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
@@ -74,8 +36,6 @@ VoidCallback useVideoOrientation(
           DeviceOrientation.landscapeRight,
         ]);
       } else {
-        // For portrait videos, prefer portrait but allow rotation
-        // This prevents locking in portrait if the detection was wrong or user wants to rotate
         SystemChrome.setPreferredOrientations([
           DeviceOrientation.portraitUp,
           DeviceOrientation.landscapeLeft,
@@ -86,7 +46,6 @@ VoidCallback useVideoOrientation(
     playerController.toggleFullscreen();
   }
 
-  // Handle cleanup
   useEffect(() {
     return () {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
@@ -95,4 +54,52 @@ VoidCallback useVideoOrientation(
   }, const []);
 
   return toggleFullscreen;
+}
+
+({int width, int height}) _getVideoDimensions(
+  VideoDetail? videoDetail,
+  int currentCid,
+  int? playerWidth,
+  int? playerHeight,
+) {
+  int width = 0;
+  int height = 0;
+  int rotate = 0;
+
+  if (videoDetail != null) {
+    VideoPage? currentPage;
+    for (final page in videoDetail.pages) {
+      if (page.cid == currentCid) {
+        currentPage = page;
+        break;
+      }
+    }
+
+    if (currentPage != null &&
+        currentPage.dimension.width > 0 &&
+        currentPage.dimension.height > 0) {
+      width = currentPage.dimension.width;
+      height = currentPage.dimension.height;
+      rotate = currentPage.dimension.rotate;
+    } else if (videoDetail.dimension.width > 0 &&
+        videoDetail.dimension.height > 0) {
+      width = videoDetail.dimension.width;
+      height = videoDetail.dimension.height;
+      rotate = videoDetail.dimension.rotate;
+    }
+  }
+
+  if (width == 0 || height == 0) {
+    width = playerWidth ?? 0;
+    height = playerHeight ?? 0;
+    rotate = 0;
+  }
+
+  if (rotate == 90 || rotate == 270) {
+    final temp = width;
+    width = height;
+    height = temp;
+  }
+
+  return (width: width, height: height);
 }

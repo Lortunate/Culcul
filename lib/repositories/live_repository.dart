@@ -4,7 +4,6 @@ import 'package:culcul/core/repositories/base_repository.dart';
 import 'package:culcul/core/types/result.dart';
 import 'package:culcul/data/api/live_api.dart';
 import 'package:culcul/data/models/live/index.dart';
-import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'live_repository.g.dart';

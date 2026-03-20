@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:culcul/domain/entities/ranking_category.dart';
@@ -29,7 +30,7 @@ class _RankingListViewState extends ConsumerState<RankingListView>
     );
 
     return EasyRefresh(
-      header: const MaterialHeader(),
+      header: const AppRefreshHeader(),
       onRefresh: () async {
         final _ = await ref.refresh(
           categoryRankingListProvider(rid: widget.category.rid).future,

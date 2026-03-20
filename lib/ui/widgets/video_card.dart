@@ -9,8 +9,16 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class VideoCard extends HookConsumerWidget {
   final VideoModel video;
   final VoidCallback? onTap;
+  final bool showAuthor;
+  final bool showDescription;
 
-  const VideoCard({super.key, required this.video, this.onTap});
+  const VideoCard({
+    super.key,
+    required this.video,
+    this.onTap,
+    this.showAuthor = true,
+    this.showDescription = false,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -29,7 +37,11 @@ class VideoCard extends HookConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _VideoThumbnail(video: video),
-          _VideoContent(video: video),
+          _VideoContent(
+            video: video,
+            showAuthor: showAuthor,
+            showDescription: showDescription,
+          ),
         ],
       ),
     );
@@ -64,8 +76,14 @@ class _VideoThumbnail extends StatelessWidget {
 
 class _VideoContent extends StatelessWidget {
   final VideoModel video;
+  final bool showAuthor;
+  final bool showDescription;
 
-  const _VideoContent({required this.video});
+  const _VideoContent({
+    required this.video,
+    required this.showAuthor,
+    required this.showDescription,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +91,8 @@ class _VideoContent extends StatelessWidget {
       title: video.title,
       author: video.owner.name,
       reason: video.rcmd_reason,
+      description: showDescription ? video.desc : null,
+      showAuthor: showAuthor,
     );
   }
 }
@@ -81,6 +101,8 @@ class VideoCardContent extends StatelessWidget {
   final String title;
   final String author;
   final String? reason;
+  final String? description;
+  final bool showAuthor;
   final List<Widget>? extra;
 
   const VideoCardContent({
@@ -88,6 +110,8 @@ class VideoCardContent extends StatelessWidget {
     required this.title,
     required this.author,
     this.reason,
+    this.description,
+    this.showAuthor = true,
     this.extra,
   });
 
@@ -122,29 +146,45 @@ class VideoCardContent extends StatelessWidget {
                 fontSize: 10,
               ),
             ],
+            if (description != null && description!.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(
+                description!,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                  fontSize: 11,
+                ),
+              ),
+            ],
             if (extra != null) ...extra!,
-            const Spacer(),
-            const SizedBox(height: 6),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    author,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                      fontSize: 11,
+            if (showAuthor) ...[
+              const Spacer(),
+              const SizedBox(height: 6),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      author,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                        fontSize: 11,
+                      ),
                     ),
                   ),
-                ),
-                Icon(
-                  Icons.more_vert_rounded,
-                  size: 14,
-                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-                ),
-              ],
-            ),
+                  Icon(
+                    Icons.more_vert_rounded,
+                    size: 14,
+                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                  ),
+                ],
+              ),
+            ] else ...[
+              const Spacer(), // Ensure consistent height if needed, or remove if auto-height
+            ],
           ],
         ),
       ),

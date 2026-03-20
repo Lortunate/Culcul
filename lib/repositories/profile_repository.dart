@@ -60,11 +60,13 @@ class ProfileRepository extends BaseRepository {
         api.getRelationStat(userId),
         api.getUpStat(userId),
         api.getNavNum(userId),
+        api.getCard(userId, photo: true),
       ]);
 
       final relationResponse = results[0];
       final upStatResponse = results[1];
       final navNumResponse = results[2];
+      final cardResponse = results[3];
 
       int followers = 0;
       int following = 0;
@@ -87,8 +89,8 @@ class ProfileRepository extends BaseRepository {
         videoCount = navData['video'] as int? ?? 0;
       }
 
-      final name = infoData['name'] as String;
-      final face = infoData['face'] as String;
+      final name = infoData['name'] as String? ?? '';
+      final face = infoData['face'] as String? ?? '';
       final sign = infoData['sign'] as String?;
       final level = infoData['level'] as int? ?? 0;
 
@@ -108,10 +110,30 @@ class ProfileRepository extends BaseRepository {
         isFollowing = infoData['is_followed'] as bool;
       }
 
+      String? topPhoto = infoData['top_photo'] as String?;
+      
+      // Try to get better banner from card API (space.l_img)
+      if (cardResponse.code == 0) {
+        final cardResponseData = cardResponse.data as Map<String, dynamic>;
+        if (cardResponseData.containsKey('space')) {
+           final space = cardResponseData['space'] as Map<String, dynamic>;
+           final lImg = space['l_img'] as String?;
+           if (lImg != null && lImg.isNotEmpty) {
+             topPhoto = lImg;
+           } else {
+              final sImg = space['s_img'] as String?;
+              if (sImg != null && sImg.isNotEmpty) {
+                 topPhoto = sImg;
+              }
+           }
+        }
+      }
+
       return UserProfile(
         id: userId.toString(),
         username: name,
         avatarUrl: face,
+        bannerUrl: topPhoto,
         bio: sign,
         location: null,
         followersCount: followers,
