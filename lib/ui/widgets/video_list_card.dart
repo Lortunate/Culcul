@@ -98,7 +98,7 @@ class VideoListCard extends StatelessWidget {
                       width: thumbnailWidth,
                       height: thumbnailWidth / aspectRatio,
                     ),
-                    if (overlayWidget case final overlayWidget?) overlayWidget,
+                    if (overlayWidget != null) ...<Widget>[overlayWidget],
                   ],
                 ),
               ),
