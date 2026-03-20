@@ -1,4 +1,4 @@
-import 'package:culcul/core/types/result.dart';
+import 'package:culcul/core/result.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 /// Utility functions for handling Result types consistently across the app

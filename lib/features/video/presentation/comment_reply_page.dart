@@ -1,9 +1,9 @@
 import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/features/video/controllers/comment_reply_controller.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/pages/video/widgets/comments/bottom_input_bar.dart';
-import 'package:culcul/ui/pages/video/widgets/comments/comment_item.dart';
-import 'package:culcul/ui/pages/video/widgets/comments/comment_reply_sheet.dart';
+import 'package:culcul/features/video/presentation/widgets/comments/bottom_input_bar.dart';
+import 'package:culcul/features/video/presentation/widgets/comments/comment_item.dart';
+import 'package:culcul/features/video/presentation/widgets/comments/comment_reply_sheet.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';

@@ -1,4 +1,4 @@
-import 'package:culcul/core/router/router.dart';
+import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/data/models/search/search_result.dart';
 import 'package:culcul/ui/widgets/index.dart';

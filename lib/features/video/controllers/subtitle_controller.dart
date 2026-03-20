@@ -1,6 +1,6 @@
-import 'package:culcul/core/types/result.dart';
+import 'package:culcul/core/result.dart';
 import 'package:culcul/data/models/subtitle.dart';
-import 'package:culcul/repositories/video_repository.dart';
+import 'package:culcul/features/video/data/video_repository.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

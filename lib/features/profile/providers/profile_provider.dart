@@ -1,6 +1,6 @@
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/core/types/result.dart';
-import 'package:culcul/data/local/user_info_cache_service.dart';
+import 'package:culcul/core/result.dart';
+import 'package:culcul/data/user_info_cache_service.dart';
 import 'package:culcul/data/models/user/user_profile_model.dart';
 import 'package:culcul/features/auth/controllers/auth_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

@@ -1,6 +1,6 @@
-import 'package:culcul/core/types/result.dart';
+import 'package:culcul/core/result.dart';
 import 'package:culcul/data/models/comment/comment_model.dart';
-import 'package:culcul/repositories/video_repository.dart';
+import 'package:culcul/features/video/data/video_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'comment_reply_state.dart';

@@ -1,4 +1,4 @@
-import 'package:culcul/core/types/result.dart';
+import 'package:culcul/core/result.dart';
 import 'package:culcul/data/models/fav/index.dart';
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/features/auth/controllers/auth_controller.dart';

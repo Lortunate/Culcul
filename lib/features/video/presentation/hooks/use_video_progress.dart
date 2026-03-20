@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:culcul/features/video/controllers/video_detail_controller.dart';
-import 'package:culcul/repositories/video_repository.dart';
+import 'package:culcul/features/video/data/video_repository.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit/media_kit.dart';

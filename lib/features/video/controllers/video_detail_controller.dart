@@ -1,8 +1,8 @@
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/core/types/result.dart';
+import 'package:culcul/core/result.dart';
 import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/data/models/index.dart';
-import 'package:culcul/repositories/video_repository.dart';
+import 'package:culcul/features/video/data/video_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'video_detail_state.dart';

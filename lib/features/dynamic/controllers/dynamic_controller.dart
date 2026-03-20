@@ -1,5 +1,5 @@
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/core/types/result.dart';
+import 'package:culcul/core/result.dart';
 import 'package:culcul/core/utils/list_utils.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';

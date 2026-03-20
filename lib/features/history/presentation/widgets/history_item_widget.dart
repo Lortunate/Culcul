@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/features/history/data/models/history_model.dart';
+import 'package:culcul/data/models/history/history_model.dart';
 import 'package:culcul/ui/widgets/index.dart';
 
 class HistoryItemWidget extends StatelessWidget {

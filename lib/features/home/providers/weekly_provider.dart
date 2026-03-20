@@ -1,5 +1,5 @@
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/core/types/result.dart';
+import 'package:culcul/core/result.dart';
 import 'package:culcul/data/models/feed/weekly_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

@@ -1,5 +1,5 @@
-import 'package:culcul/core/types/result.dart';
-import 'package:culcul/repositories/search_repository.dart';
+import 'package:culcul/core/result.dart';
+import 'package:culcul/features/search/data/search_repository.dart';
 import 'package:culcul/data/models/index.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

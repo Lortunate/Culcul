@@ -6,7 +6,7 @@ import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/features/favorites/presentation/favorite_detail_page.dart';
 import 'package:culcul/features/favorites/presentation/favorites_page.dart';
 import 'package:culcul/features/home/presentation/home_page.dart';
-import 'package:culcul/features/home/presentation/weekly_screen.dart';
+import 'package:culcul/features/home/presentation/weekly/weekly_screen.dart';
 import 'package:culcul/features/history/presentation/history_page.dart';
 import 'package:culcul/features/live/presentation/live_room_page.dart';
 import 'package:culcul/features/notification/presentation/chat_page.dart';

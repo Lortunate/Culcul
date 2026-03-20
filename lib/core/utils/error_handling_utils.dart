@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 import 'package:culcul/core/errors/exceptions.dart';
-import 'package:culcul/core/types/result.dart';
+import 'package:culcul/core/result.dart';
 import 'package:dio/dio.dart';
 
 /// Utility class for standardized error handling across the application

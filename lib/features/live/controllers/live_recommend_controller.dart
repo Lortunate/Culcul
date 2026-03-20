@@ -1,6 +1,6 @@
-import 'package:culcul/core/types/result.dart';
+import 'package:culcul/core/result.dart';
 import 'package:culcul/data/models/live/live_room_model.dart';
-import 'package:culcul/repositories/live_repository.dart';
+import 'package:culcul/features/live/data/live_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'live_recommend_controller.g.dart';

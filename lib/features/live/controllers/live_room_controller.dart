@@ -1,9 +1,9 @@
 import 'package:culcul/data/models/live/index.dart';
-import 'package:culcul/core/types/result.dart';
+import 'package:culcul/core/result.dart';
 import 'package:culcul/features/live/controllers/live_room_state.dart';
-import 'package:culcul/repositories/live_repository.dart';
+import 'package:culcul/features/live/data/live_repository.dart';
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/services/live_socket_service.dart';
+import 'package:culcul/features/live/data/live_socket_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'live_room_controller.g.dart';
