@@ -4,7 +4,7 @@ import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/result.dart';
 import 'package:culcul/data/api/auth_api.dart';
 import 'package:culcul/data/models/response/api_response.dart';
-import 'package:culcul/data/models/user_model.dart';
+import 'package:culcul/data/models/user/user_model.dart' as data_user;
 import 'package:culcul/domain/entities/country_code.dart';
 import 'package:culcul/domain/entities/user.dart';
 import 'package:encrypt/encrypt.dart';
@@ -23,11 +23,39 @@ class AuthRepository extends BaseRepository {
     // This method is required by TokenInterceptor
   }
 
+  User _toDomainUser(data_user.User user) {
+    return User(
+      id: user.id,
+      username: user.username,
+      avatarUrl: user.avatarUrl,
+      email: user.email,
+      createdAt: user.createdAt,
+      level: user.level,
+      currentExp: user.currentExp,
+      nextExp: user.nextExp,
+    );
+  }
+
+  data_user.User _toDataUser(User user) {
+    return data_user.User(
+      id: user.id,
+      username: user.username,
+      avatarUrl: user.avatarUrl,
+      email: user.email,
+      createdAt: user.createdAt,
+      level: user.level,
+      currentExp: user.currentExp,
+      nextExp: user.nextExp,
+    );
+  }
+
   User? getCachedUser() {
     final jsonStr = _box.get(_userCacheKey);
     if (jsonStr == null) return null;
     try {
-      return UserModel.fromJson(jsonDecode(jsonStr)).toEntity();
+      return _toDomainUser(
+        data_user.User.fromJson(jsonDecode(jsonStr) as Map<String, dynamic>),
+      );
     } catch (e) {
       _box.delete(_userCacheKey);
       return null;
@@ -37,7 +65,7 @@ class AuthRepository extends BaseRepository {
   Future<void> _cacheUser(User user) async {
     await _box.put(
       _userCacheKey,
-      jsonEncode(UserModel.fromEntity(user).toJson()),
+      jsonEncode(_toDataUser(user).toJson()),
     );
   }
 
@@ -239,7 +267,7 @@ class AuthRepository extends BaseRepository {
         final data = response.data as Map<String, dynamic>?;
         if (data != null && data['isLogin'] == true) {
           final levelInfo = data['level_info'] as Map<String, dynamic>?;
-          final userModel = UserModel(
+          final userModel = data_user.User(
             id: data['mid'].toString(),
             username: data['uname'],
             avatarUrl: data['face'],
@@ -249,8 +277,9 @@ class AuthRepository extends BaseRepository {
             currentExp: levelInfo?['current_exp'] as int?,
             nextExp: levelInfo?['next_exp'] as int?,
           );
-          await _cacheUser(userModel.toEntity());
-          return userModel.toEntity();
+          final user = _toDomainUser(userModel);
+          await _cacheUser(user);
+          return user;
         } else {
           await clearCache();
           throw const AuthException('Not logged in');
