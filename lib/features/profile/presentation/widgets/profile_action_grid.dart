@@ -75,9 +75,7 @@ class _GridItem extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               label,
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: colorScheme.onSurface,
-              ),
+              style: theme.textTheme.labelMedium?.copyWith(color: colorScheme.onSurface),
               textAlign: TextAlign.center,
             ),
           ],

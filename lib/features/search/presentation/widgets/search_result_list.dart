@@ -31,11 +31,7 @@ class SearchResultList extends StatelessWidget {
   Widget build(BuildContext context) {
     if (error != null) {
       return Center(
-        child: AppErrorWidget(
-          error: error!,
-          stackTrace: stackTrace,
-          onRetry: onRetry,
-        ),
+        child: AppErrorWidget(error: error!, stackTrace: stackTrace, onRetry: onRetry),
       );
     }
 

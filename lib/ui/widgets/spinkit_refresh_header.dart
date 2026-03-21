@@ -115,10 +115,7 @@ class _SpinkitIndicatorState extends State<_SpinkitIndicator> {
     final primaryColor = widget.color ?? Theme.of(context).primaryColor;
 
     // 默认使用 SpinKitThreeBounce，灵动且简约
-    final defaultSpin = SpinKitThreeBounce(
-      color: primaryColor,
-      size: widget.size,
-    );
+    final defaultSpin = SpinKitThreeBounce(color: primaryColor, size: widget.size);
 
     final child = widget.spinWidget ?? defaultSpin;
 
@@ -129,10 +126,7 @@ class _SpinkitIndicatorState extends State<_SpinkitIndicator> {
         child: Center(
           child: Text(
             widget.noMoreText ?? 'No more',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.outline,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: Theme.of(context).colorScheme.outline, fontSize: 12),
           ),
         ),
       );
@@ -148,8 +142,10 @@ class _SpinkitIndicatorState extends State<_SpinkitIndicator> {
     double opacity = 1.0;
     if (mode == IndicatorMode.drag || mode == IndicatorMode.armed) {
       // 下拉/上拉过程中的透明度渐变
-      opacity = (widget.state.offset.abs() / widget.state.actualTriggerOffset)
-          .clamp(0.0, 1.0);
+      opacity = (widget.state.offset.abs() / widget.state.actualTriggerOffset).clamp(
+        0.0,
+        1.0,
+      );
     }
 
     // 如果是 Footer，通常不需要像 Header 那样有大的位移空间，直接显示在底部即可

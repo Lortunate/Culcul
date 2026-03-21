@@ -111,8 +111,7 @@ sealed class SearchResultItem with _$SearchResultItem {
       _$SearchResultItemFromJson(json);
 }
 
-class _SearchResultConverter
-    implements JsonConverter<List<SearchResultItem>, dynamic> {
+class _SearchResultConverter implements JsonConverter<List<SearchResultItem>, dynamic> {
   const _SearchResultConverter();
 
   @override
@@ -121,8 +120,7 @@ class _SearchResultConverter
     if (json is List) {
       for (final element in json) {
         if (element is Map<String, dynamic>) {
-          if (element.containsKey('result_type') &&
-              element.containsKey('data')) {
+          if (element.containsKey('result_type') && element.containsKey('data')) {
             final type = element['result_type'] as String;
             final dataList = element['data'] as List?;
             if (dataList != null) {
@@ -144,6 +142,5 @@ class _SearchResultConverter
   }
 
   @override
-  dynamic toJson(List<SearchResultItem> object) =>
-      object.map((e) => e.toJson()).toList();
+  dynamic toJson(List<SearchResultItem> object) => object.map((e) => e.toJson()).toList();
 }

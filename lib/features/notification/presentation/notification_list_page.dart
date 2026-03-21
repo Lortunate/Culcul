@@ -16,8 +16,7 @@ class NotificationListPage extends ConsumerStatefulWidget {
   const NotificationListPage({super.key, required this.type});
 
   @override
-  ConsumerState<NotificationListPage> createState() =>
-      _NotificationListPageState();
+  ConsumerState<NotificationListPage> createState() => _NotificationListPageState();
 }
 
 class _NotificationListPageState extends ConsumerState<NotificationListPage> {

@@ -40,9 +40,7 @@ class LiveRoomController extends _$LiveRoomController {
     state = state.copyWith(danmakuHistory: [welcomeItem]);
 
     // Fetch room info first to get real room_id if using short_id
-    final infoResult = await ref
-        .read(liveRepositoryProvider)
-        .getRoomInfo(roomId);
+    final infoResult = await ref.read(liveRepositoryProvider).getRoomInfo(roomId);
 
     switch (infoResult) {
       case Success(value: final info):
@@ -60,10 +58,7 @@ class LiveRoomController extends _$LiveRoomController {
         ]);
         state = state.copyWith(isLoading: false);
       case Failure(exception: final e):
-        state = state.copyWith(
-          isLoading: false,
-          error: e,
-        );
+        state = state.copyWith(isLoading: false, error: e);
     }
   }
 
@@ -87,16 +82,13 @@ class LiveRoomController extends _$LiveRoomController {
     if (anchor == null) return;
 
     final isFollowing = anchor.isFollowed;
-    final result = await ref.read(profileRepositoryProvider).modifyRelation(
-      mid: int.parse(anchor.mid),
-      isFollow: !isFollowing,
-    );
+    final result = await ref
+        .read(profileRepositoryProvider)
+        .modifyRelation(mid: int.parse(anchor.mid), isFollow: !isFollowing);
 
     if (result is Success) {
       // Optimistic update if success
-      state = state.copyWith(
-        anchorInfo: anchor.copyWith(isFollowed: !isFollowing),
-      );
+      state = state.copyWith(anchorInfo: anchor.copyWith(isFollowed: !isFollowing));
     } else {
       // Show error? For now just keep state
     }
@@ -131,38 +123,32 @@ class LiveRoomController extends _$LiveRoomController {
   }
 
   Future<void> _fetchGoldRank(int roomId, int ruid) async {
-    final result = await ref.read(liveRepositoryProvider).getOnlineGoldRank(
-          roomId: roomId,
-          ruid: ruid,
-        );
+    final result = await ref
+        .read(liveRepositoryProvider)
+        .getOnlineGoldRank(roomId: roomId, ruid: ruid);
     if (result case Success(value: final rank)) {
       state = state.copyWith(goldRank: rank);
     }
   }
 
   Future<void> _fetchGuardList(int roomId, int ruid) async {
-    final result = await ref.read(liveRepositoryProvider).getGuardList(
-          roomId: roomId,
-          ruid: ruid,
-        );
+    final result = await ref
+        .read(liveRepositoryProvider)
+        .getGuardList(roomId: roomId, ruid: ruid);
     if (result case Success(value: final list)) {
       state = state.copyWith(guardList: list);
     }
   }
 
   Future<void> _fetchDanmakuConfig(int roomId) async {
-    final result = await ref
-        .read(liveRepositoryProvider)
-        .getDanmakuConfig(roomId);
+    final result = await ref.read(liveRepositoryProvider).getDanmakuConfig(roomId);
     if (result case Success(value: final config)) {
       state = state.copyWith(danmakuConfig: config);
     }
   }
 
   Future<void> _fetchHistoryDanmaku(int roomId) async {
-    final result = await ref
-        .read(liveRepositoryProvider)
-        .getHistoryDanmaku(roomId);
+    final result = await ref.read(liveRepositoryProvider).getHistoryDanmaku(roomId);
     if (result case Success(value: final history)) {
       // API returns history in chronological order (Oldest -> Newest).
       // We need to reverse it to Newest -> Oldest for ListView(reverse: true).
@@ -177,10 +163,9 @@ class LiveRoomController extends _$LiveRoomController {
   Future<void> sendDanmaku(String msg) async {
     if (msg.trim().isEmpty) return;
 
-    final result = await ref.read(liveRepositoryProvider).sendDanmaku(
-          roomId: state.roomId,
-          msg: msg,
-        );
+    final result = await ref
+        .read(liveRepositoryProvider)
+        .sendDanmaku(roomId: state.roomId, msg: msg);
 
     if (result case Failure(exception: final _)) {
       // TODO: Show error

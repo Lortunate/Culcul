@@ -15,7 +15,7 @@ class HistoryList extends _$HistoryList {
   Future<List<HistoryItem>> _fetchHistory() async {
     final repository = ref.read(historyRepositoryProvider);
     final result = await repository.getHistoryCursor();
-    
+
     return switch (result) {
       Success(value: final data) => data.list,
       Failure(exception: final e) => throw e,

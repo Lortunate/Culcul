@@ -5,11 +5,9 @@ part 'player_info.g.dart';
 
 @freezed
 sealed class PlayerInfo with _$PlayerInfo {
-  const factory PlayerInfo({@JsonKey(name: 'dm_mask') DmMask? dmMask}) =
-      _PlayerInfo;
+  const factory PlayerInfo({@JsonKey(name: 'dm_mask') DmMask? dmMask}) = _PlayerInfo;
 
-  factory PlayerInfo.fromJson(Map<String, dynamic> json) =>
-      _$PlayerInfoFromJson(json);
+  factory PlayerInfo.fromJson(Map<String, dynamic> json) => _$PlayerInfoFromJson(json);
 }
 
 @freezed

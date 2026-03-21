@@ -18,11 +18,7 @@ class DynamicPage extends HookConsumerWidget {
     final colorScheme = theme.colorScheme;
     final authState = ref.watch(authProvider);
 
-    final tabs = [
-      t.moments.tabs.all,
-      t.moments.tabs.video,
-      t.moments.tabs.comprehensive,
-    ];
+    final tabs = [t.moments.tabs.all, t.moments.tabs.video, t.moments.tabs.comprehensive];
     final tabController = useTabController(initialLength: tabs.length);
 
     return Scaffold(
@@ -32,9 +28,7 @@ class DynamicPage extends HookConsumerWidget {
         scrolledUnderElevation: 0,
         title: Text(
           t.moments.title,
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         actions: [
           if (authState.isLoggedIn)
@@ -49,18 +43,11 @@ class DynamicPage extends HookConsumerWidget {
                 );
               },
             ),
-          IconButton(
-            icon: const Icon(Icons.search_rounded, size: 24),
-            onPressed: () {},
-          ),
+          IconButton(icon: const Icon(Icons.search_rounded, size: 24), onPressed: () {}),
           const SizedBox(width: 8),
         ],
         bottom: authState.isLoggedIn
-            ? AppTabBar(
-                controller: tabController,
-                tabs: tabs,
-                isScrollable: false,
-              )
+            ? AppTabBar(controller: tabController, tabs: tabs, isScrollable: false)
             : null,
       ),
       body: authState.isLoggedIn
@@ -72,10 +59,7 @@ class DynamicPage extends HookConsumerWidget {
                 DynamicListView(type: 'pgc'),
               ],
             )
-          : GuestView(
-              title: t.profile.not_logged_in,
-              message: t.profile.login_hint,
-            ),
+          : GuestView(title: t.profile.not_logged_in, message: t.profile.login_hint),
     );
   }
 }

@@ -13,10 +13,7 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier {
   String _order = 'pubdate';
 
   @override
-  Future<List<UserSpaceVideoModel>> build(
-    int mid, {
-    String order = 'pubdate',
-  }) async {
+  Future<List<UserSpaceVideoModel>> build(int mid, {String order = 'pubdate'}) async {
     _mid = mid;
     _order = order;
     _page = 1;
@@ -26,11 +23,7 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier {
 
   Future<List<UserSpaceVideoModel>> _fetchVideos() async {
     final repository = ref.read(profileRepositoryProvider);
-    final result = await repository.getSpaceVideos(
-      mid: _mid,
-      page: _page,
-      order: _order,
-    );
+    final result = await repository.getSpaceVideos(mid: _mid, page: _page, order: _order);
 
     return switch (result) {
       Success(value: final videos) => () {
@@ -51,9 +44,7 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier {
     final oldState = state;
     if (oldState.asData?.value == null) return;
 
-    state = AsyncLoading<List<UserSpaceVideoModel>>().copyWithPrevious(
-      oldState,
-    );
+    state = AsyncLoading<List<UserSpaceVideoModel>>().copyWithPrevious(oldState);
 
     try {
       final newItems = await _fetchVideos();
@@ -66,10 +57,7 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier {
 
       state = AsyncData([...previousItems, ...uniqueNewItems]);
     } catch (e, st) {
-      state = AsyncError<List<UserSpaceVideoModel>>(
-        e,
-        st,
-      ).copyWithPrevious(oldState);
+      state = AsyncError<List<UserSpaceVideoModel>>(e, st).copyWithPrevious(oldState);
     }
   }
 

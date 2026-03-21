@@ -152,10 +152,7 @@ class _ScannerPageState extends State<ScannerPage> with WidgetsBindingObserver {
             onDetect: _handleBarcode,
             errorBuilder: (context, error) {
               debugPrint('Scanner Error: $error');
-              return AppErrorWidget(
-                error: error,
-                onRetry: () => controller.start(),
-              );
+              return AppErrorWidget(error: error, onRetry: () => controller.start());
             },
           ),
           // Overlay guide
@@ -164,10 +161,7 @@ class _ScannerPageState extends State<ScannerPage> with WidgetsBindingObserver {
               width: 250,
               height: 250,
               decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.5),
-                  width: 2,
-                ),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.5), width: 2),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Stack(
@@ -192,11 +186,7 @@ class _ScannerPageState extends State<ScannerPage> with WidgetsBindingObserver {
                   color: Colors.white,
                   fontSize: 16,
                   shadows: [
-                    Shadow(
-                      blurRadius: 4,
-                      color: Colors.black,
-                      offset: Offset(0, 1),
-                    ),
+                    Shadow(blurRadius: 4, color: Colors.black, offset: Offset(0, 1)),
                   ],
                 ),
               ),

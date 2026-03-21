@@ -56,8 +56,7 @@ class ChatMessageItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       child: Row(
-        mainAxisAlignment:
-            isSelf ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isSelf ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!isSelf) ...[_buildAvatar(avatarUrl), const SizedBox(width: 8)],
@@ -75,20 +74,19 @@ class ChatMessageItem extends StatelessWidget {
         child: SizedBox(
           width: 40,
           height: 40,
-          child:
-              url.isNotEmpty
-                  ? ExtendedImage.network(
-                    url,
-                    fit: BoxFit.cover,
-                    cache: true,
-                    loadStateChanged: (state) {
-                      if (state.extendedImageLoadState == LoadState.failed) {
-                        return const Icon(Icons.person, color: Colors.grey);
-                      }
-                      return null;
-                    },
-                  )
-                  : const Icon(Icons.person, color: Colors.grey),
+          child: url.isNotEmpty
+              ? ExtendedImage.network(
+                  url,
+                  fit: BoxFit.cover,
+                  cache: true,
+                  loadStateChanged: (state) {
+                    if (state.extendedImageLoadState == LoadState.failed) {
+                      return const Icon(Icons.person, color: Colors.grey);
+                    }
+                    return null;
+                  },
+                )
+              : const Icon(Icons.person, color: Colors.grey),
         ),
       ),
     );
@@ -96,8 +94,7 @@ class ChatMessageItem extends StatelessWidget {
 
   Widget _buildContent(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final bubbleColor =
-        isSelf ? colorScheme.primary : colorScheme.surfaceContainerLow;
+    final bubbleColor = isSelf ? colorScheme.primary : colorScheme.surfaceContainerLow;
     final textColor = isSelf ? colorScheme.onPrimary : colorScheme.onSurface;
 
     if (message.msgType == 2 || message.msgType == 6) {

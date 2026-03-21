@@ -49,7 +49,8 @@ class FollowButton extends ConsumerWidget {
         minimumSize: Size(width ?? 56, height ?? 32),
         fixedSize: height != null ? Size.fromHeight(height!) : null,
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        shape: shape ??
+        shape:
+            shape ??
             (isFollowed
                 ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))
                 : const StadiumBorder()),

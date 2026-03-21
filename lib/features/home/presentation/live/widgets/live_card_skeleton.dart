@@ -31,11 +31,7 @@ class LiveCardSkeleton extends StatelessWidget {
                   // User Info
                   Row(
                     children: const [
-                      AppShimmerBox(
-                        width: 20,
-                        height: 20,
-                        borderRadius: 10,
-                      ),
+                      AppShimmerBox(width: 20, height: 20, borderRadius: 10),
                       SizedBox(width: 6),
                       Expanded(child: AppShimmerBox(height: 12)),
                     ],

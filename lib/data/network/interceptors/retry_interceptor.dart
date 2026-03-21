@@ -7,17 +7,10 @@ class RetryInterceptor extends Interceptor {
   final int maxRetries;
   final int retryInterval;
 
-  RetryInterceptor({
-    required this.dio,
-    this.maxRetries = 3,
-    this.retryInterval = 1000,
-  });
+  RetryInterceptor({required this.dio, this.maxRetries = 3, this.retryInterval = 1000});
 
   @override
-  Future<void> onError(
-    DioException err,
-    ErrorInterceptorHandler handler,
-  ) async {
+  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
     final extra = err.requestOptions.extra;
     final retries = extra['retries'] as int? ?? 0;
 

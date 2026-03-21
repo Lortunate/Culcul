@@ -34,7 +34,7 @@ class _AuthBackgroundState extends State<AuthBackground>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    
+
     // Optimized colors for better background blend
     final primaryColor = theme.colorScheme.primary;
     final secondaryColor = theme.colorScheme.secondary;
@@ -45,12 +45,12 @@ class _AuthBackgroundState extends State<AuthBackground>
         // Base background - subtle off-white/dark surface
         Positioned.fill(
           child: Container(
-            color: isDark 
-                ? theme.colorScheme.surface 
+            color: isDark
+                ? theme.colorScheme.surface
                 : theme.colorScheme.surfaceContainerLow,
           ),
         ),
-        
+
         // Animated Blob 1 (Top Right)
         AnimatedBuilder(
           animation: _controller,
@@ -110,10 +110,12 @@ class _AuthBackgroundState extends State<AuthBackground>
           animation: _controller,
           builder: (context, child) {
             return Positioned(
-              top: MediaQuery.of(context).size.height * 0.25 + 
-                   sin(_controller.value * 2 * pi) * 60,
-              left: MediaQuery.of(context).size.width * 0.1 + 
-                   cos(_controller.value * 2 * pi) * 40,
+              top:
+                  MediaQuery.of(context).size.height * 0.25 +
+                  sin(_controller.value * 2 * pi) * 60,
+              left:
+                  MediaQuery.of(context).size.width * 0.1 +
+                  cos(_controller.value * 2 * pi) * 40,
               child: child!,
             );
           },
@@ -136,9 +138,7 @@ class _AuthBackgroundState extends State<AuthBackground>
         Positioned.fill(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
-            child: Container(
-              color: Colors.transparent,
-            ),
+            child: Container(color: Colors.transparent),
           ),
         ),
 

@@ -6,8 +6,7 @@ class HomeTabTapEvent {
   final int index;
   final int timestamp;
 
-  HomeTabTapEvent(this.index)
-    : timestamp = DateTime.now().millisecondsSinceEpoch;
+  HomeTabTapEvent(this.index) : timestamp = DateTime.now().millisecondsSinceEpoch;
 }
 
 @riverpod

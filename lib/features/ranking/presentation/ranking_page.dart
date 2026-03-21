@@ -28,19 +28,15 @@ class RankingPage extends StatelessWidget {
                 floating: true,
                 forceElevated: innerBoxIsScrolled,
                 bottom: AppTabBar(
-                  tabs:
-                      rankingCategoriesV2
-                          .map((category) => category.name)
-                          .toList(),
+                  tabs: rankingCategoriesV2.map((category) => category.name).toList(),
                 ),
               ),
             ];
           },
           body: TabBarView(
-            children:
-                rankingCategoriesV2
-                    .map((category) => RankingListView(category: category))
-                    .toList(),
+            children: rankingCategoriesV2
+                .map((category) => RankingListView(category: category))
+                .toList(),
           ),
         ),
       ),

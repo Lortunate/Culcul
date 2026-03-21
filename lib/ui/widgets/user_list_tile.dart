@@ -23,7 +23,10 @@ class UserListTile extends StatelessWidget {
     this.trailing,
     this.onTap,
     this.avatarSize = AppDimens.iconXLarge, // 48
-    this.padding = const EdgeInsets.symmetric(horizontal: AppDimens.p16, vertical: AppDimens.p12),
+    this.padding = const EdgeInsets.symmetric(
+      horizontal: AppDimens.p16,
+      vertical: AppDimens.p12,
+    ),
     this.titleBadge,
   });
 

@@ -81,8 +81,7 @@ VoidCallback useVideoOrientation(
       width = currentPage.dimension.width;
       height = currentPage.dimension.height;
       rotate = currentPage.dimension.rotate;
-    } else if (videoDetail.dimension.width > 0 &&
-        videoDetail.dimension.height > 0) {
+    } else if (videoDetail.dimension.width > 0 && videoDetail.dimension.height > 0) {
       width = videoDetail.dimension.width;
       height = videoDetail.dimension.height;
       rotate = videoDetail.dimension.rotate;

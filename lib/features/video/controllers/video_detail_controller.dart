@@ -60,9 +60,7 @@ class VideoDetailController extends _$VideoDetailController {
     final result = await repo.fetchVideoTags(bvid);
     if (result is Success && state.videoDetail != null) {
       state = state.copyWith(
-        videoDetail: state.videoDetail!.copyWith(
-          tag: (result as Success).value,
-        ),
+        videoDetail: state.videoDetail!.copyWith(tag: (result as Success).value),
       );
     }
   }
@@ -76,11 +74,7 @@ class VideoDetailController extends _$VideoDetailController {
     );
 
     final repo = ref.read(videoRepositoryProvider);
-    final result = await repo.fetchComments(
-      oid: aid,
-      sort: state.commentSort,
-      pn: 1,
-    );
+    final result = await repo.fetchComments(oid: aid, sort: state.commentSort, pn: 1);
 
     switch (result) {
       case Success(value: final response):
@@ -226,10 +220,7 @@ class VideoDetailController extends _$VideoDetailController {
     state = state.copyWith(videoDetail: detail.copyWith(reqUser: newReqUser));
 
     final relationRepo = ref.read(relationRepositoryProvider);
-    final result = await relationRepo.modifyRelation(
-      fid: detail.owner.mid,
-      act: act,
-    );
+    final result = await relationRepo.modifyRelation(fid: detail.owner.mid, act: act);
 
     if (result is Failure) {
       // Revert
@@ -247,11 +238,7 @@ class VideoDetailController extends _$VideoDetailController {
 
     final action = isLiked ? 0 : 1;
     final repo = ref.read(videoRepositoryProvider);
-    final result = await repo.actionComment(
-      oid: oid,
-      rpid: rpid,
-      action: action,
-    );
+    final result = await repo.actionComment(oid: oid, rpid: rpid, action: action);
 
     if (result is Failure) {
       _updateCommentLikeStatus(rpid, isLiked);

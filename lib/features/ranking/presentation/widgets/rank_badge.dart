@@ -42,11 +42,7 @@ class RankBadge extends StatelessWidget {
         gradient: _rank1Gradient,
         borderRadius: _borderRadius,
         boxShadow: [
-          BoxShadow(
-            color: Color(0x4DD32F2F),
-            blurRadius: 4,
-            offset: _shadowOffset,
-          ),
+          BoxShadow(color: Color(0x4DD32F2F), blurRadius: 4, offset: _shadowOffset),
         ],
       );
     } else if (rank == 2) {
@@ -56,11 +52,7 @@ class RankBadge extends StatelessWidget {
         gradient: _rank2Gradient,
         borderRadius: _borderRadius,
         boxShadow: [
-          BoxShadow(
-            color: Color(0x4DFFA502),
-            blurRadius: 4,
-            offset: _shadowOffset,
-          ),
+          BoxShadow(color: Color(0x4DFFA502), blurRadius: 4, offset: _shadowOffset),
         ],
       );
     } else if (rank == 3) {
@@ -70,11 +62,7 @@ class RankBadge extends StatelessWidget {
         gradient: _rank3Gradient,
         borderRadius: _borderRadius,
         boxShadow: [
-          BoxShadow(
-            color: Color(0x4D3742FA),
-            blurRadius: 4,
-            offset: _shadowOffset,
-          ),
+          BoxShadow(color: Color(0x4D3742FA), blurRadius: 4, offset: _shadowOffset),
         ],
       );
     } else {

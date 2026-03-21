@@ -26,9 +26,7 @@ class InteractionLayer extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final playerController = ref.watch(playerControllerProvider.notifier);
-    final isLocked = ref.watch(
-      playerControllerProvider.select((s) => s.isLocked),
-    );
+    final isLocked = ref.watch(playerControllerProvider.select((s) => s.isLocked));
     final detailState = ref.watch(videoDetailControllerProvider(bvid));
     final playbackSpeed = detailState.playbackSpeed;
 
@@ -55,30 +53,34 @@ class InteractionLayer extends HookConsumerWidget {
       isHorizontalDrag.value = false;
       isVerticalDrag.value = false;
       showIndicator.value = false;
-      
+
       if (seekOffset.value != null) {
-         var targetPos = player.state.position + seekOffset.value!;
-         if (targetPos < Duration.zero) {
-           targetPos = Duration.zero;
-         } else if (targetPos > player.state.duration) {
-           targetPos = player.state.duration;
-         }
-         playerController.seek(targetPos);
-         seekOffset.value = null;
+        var targetPos = player.state.position + seekOffset.value!;
+        if (targetPos < Duration.zero) {
+          targetPos = Duration.zero;
+        } else if (targetPos > player.state.duration) {
+          targetPos = player.state.duration;
+        }
+        playerController.seek(targetPos);
+        seekOffset.value = null;
       }
     }
 
     return GestureDetector(
       onTap: playerController.toggleControls,
       onDoubleTap: isLocked ? null : playerController.playOrPause,
-      onLongPressStart: isLocked ? null : (_) {
-        if (player.state.playing) {
-          player.setRate(2.0);
-        }
-      },
-      onLongPressEnd: isLocked ? null : (_) {
-        player.setRate(playbackSpeed);
-      },
+      onLongPressStart: isLocked
+          ? null
+          : (_) {
+              if (player.state.playing) {
+                player.setRate(2.0);
+              }
+            },
+      onLongPressEnd: isLocked
+          ? null
+          : (_) {
+              player.setRate(playbackSpeed);
+            },
       onHorizontalDragStart: isLocked
           ? null
           : (_) {
@@ -97,8 +99,10 @@ class InteractionLayer extends HookConsumerWidget {
               final seconds = (horizontalDelta.value / kSeekSensitivity).toInt();
               seekOffset.value = Duration(seconds: seconds);
 
-              final targetSeconds = (startPosition.value.inSeconds + seconds)
-                  .clamp(0, totalDuration.value.inSeconds);
+              final targetSeconds = (startPosition.value.inSeconds + seconds).clamp(
+                0,
+                totalDuration.value.inSeconds,
+              );
               final targetDuration = Duration(seconds: targetSeconds);
 
               indicatorIcon.value = seconds > 0
@@ -123,26 +127,29 @@ class InteractionLayer extends HookConsumerWidget {
               verticalDelta.value += details.primaryDelta ?? 0;
 
               final isLeft =
-                  details.globalPosition.dx <
-                  MediaQuery.of(context).size.width / 2;
-              
+                  details.globalPosition.dx < MediaQuery.of(context).size.width / 2;
+
               showIndicator.value = true;
-              
+
               if (isLeft) {
                 final delta = -details.primaryDelta!;
-                final newBrightness = (brightness.value + delta / kBrightnessSensitivity).clamp(0.0, 1.0);
+                final newBrightness = (brightness.value + delta / kBrightnessSensitivity)
+                    .clamp(0.0, 1.0);
                 brightness.value = newBrightness;
                 ScreenBrightness().setApplicationScreenBrightness(newBrightness);
-                
+
                 indicatorIcon.value = Icons.brightness_6_rounded;
                 indicatorLabel.value = '亮度';
                 indicatorValue.value = brightness.value;
                 indicatorTextValue.value = null;
               } else {
                 final delta = -details.primaryDelta!;
-                final newVolume = (currentVolume + delta / kVolumeSensitivity).clamp(0.0, 100.0);
+                final newVolume = (currentVolume + delta / kVolumeSensitivity).clamp(
+                  0.0,
+                  100.0,
+                );
                 player.setVolume(newVolume);
-                
+
                 indicatorIcon.value = Icons.volume_up_rounded;
                 indicatorLabel.value = '音量';
                 indicatorValue.value = newVolume / 100;

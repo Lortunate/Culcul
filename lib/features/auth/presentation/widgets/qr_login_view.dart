@@ -13,30 +13,26 @@ class QrLoginView extends HookConsumerWidget {
     final t = Translations.of(context);
     final theme = Theme.of(context);
     final qrState = useQrLogin(ref);
-    
+
     // Entry animation
     final entryAnimationController = useAnimationController(
       duration: const Duration(milliseconds: 600),
     );
-    
+
     useEffect(() {
       entryAnimationController.forward();
       return null;
     }, []);
 
-    final entryOffset = Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
-      CurvedAnimation(
-        parent: entryAnimationController,
-        curve: Curves.easeOutCubic,
-      ),
-    );
-    
-    final entryOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: entryAnimationController,
-        curve: Curves.easeOut,
-      ),
-    );
+    final entryOffset = Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero)
+        .animate(
+          CurvedAnimation(parent: entryAnimationController, curve: Curves.easeOutCubic),
+        );
+
+    final entryOpacity = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: entryAnimationController, curve: Curves.easeOut));
 
     return Center(
       child: SingleChildScrollView(
@@ -124,7 +120,7 @@ class QrLoginView extends HookConsumerWidget {
                     ],
                   ),
                 ),
-                
+
                 // Refresh Button (only when needed)
                 if (qrState.statusCode == 86038 ||
                     qrState.status == QrLoginStatus.error) ...[

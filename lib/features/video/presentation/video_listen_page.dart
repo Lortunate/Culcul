@@ -128,10 +128,7 @@ class VideoListenPage extends HookConsumerWidget {
                       border: Border.all(color: Colors.white12, width: 4),
                     ),
                     child: ClipOval(
-                      child: AppNetworkImage(
-                        url: detail.pic,
-                        fit: BoxFit.cover,
-                      ),
+                      child: AppNetworkImage(url: detail.pic, fit: BoxFit.cover),
                     ),
                   ),
                   const SizedBox(height: 48),
@@ -159,10 +156,7 @@ class VideoListenPage extends HookConsumerWidget {
                   if (sleepTimerText != null) ...[
                     const SizedBox(height: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.white10,
                         borderRadius: BorderRadius.circular(12),
@@ -189,28 +183,20 @@ class VideoListenPage extends HookConsumerWidget {
                           activeTrackColor: AppColors.primary,
                           inactiveTrackColor: Colors.white24,
                           thumbColor: Colors.white,
-                          thumbShape: const RoundSliderThumbShape(
-                            enabledThumbRadius: 6,
-                          ),
-                          overlayColor: AppColors.primary.withValues(
-                            alpha: 0.2,
-                          ),
-                          overlayShape: const RoundSliderOverlayShape(
-                            overlayRadius: 16,
-                          ),
+                          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                          overlayColor: AppColors.primary.withValues(alpha: 0.2),
+                          overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
                         ),
                         child: Slider(
-                          value: position.inMilliseconds
-                              .toDouble()
-                              .clamp(
-                                0.0,
-                                duration.inMilliseconds.toDouble(),
-                              ),
-                          max: duration.inMilliseconds.toDouble() > 0 ? duration.inMilliseconds.toDouble() : 1.0,
+                          value: position.inMilliseconds.toDouble().clamp(
+                            0.0,
+                            duration.inMilliseconds.toDouble(),
+                          ),
+                          max: duration.inMilliseconds.toDouble() > 0
+                              ? duration.inMilliseconds.toDouble()
+                              : 1.0,
                           onChanged: (value) {
-                            playerController.seek(
-                              Duration(milliseconds: value.toInt()),
-                            );
+                            playerController.seek(Duration(milliseconds: value.toInt()));
                           },
                         ),
                       ),
@@ -255,9 +241,7 @@ class VideoListenPage extends HookConsumerWidget {
                       IconButton(
                         onPressed: () {
                           // -15s
-                          final newPos =
-                              position -
-                              const Duration(seconds: 15);
+                          final newPos = position - const Duration(seconds: 15);
                           playerController.seek(
                             newPos < Duration.zero ? Duration.zero : newPos,
                           );
@@ -289,14 +273,8 @@ class VideoListenPage extends HookConsumerWidget {
                       IconButton(
                         onPressed: () {
                           // +15s
-                          final newPos =
-                              position +
-                              const Duration(seconds: 15);
-                          playerController.seek(
-                            newPos > duration
-                                ? duration
-                                : newPos,
-                          );
+                          final newPos = position + const Duration(seconds: 15);
+                          playerController.seek(newPos > duration ? duration : newPos);
                         },
                         icon: const Icon(
                           Icons.forward_10_rounded,

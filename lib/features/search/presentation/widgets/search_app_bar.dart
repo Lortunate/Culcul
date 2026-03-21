@@ -34,19 +34,14 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
         margin: const EdgeInsets.only(left: 8, right: 4),
         decoration: BoxDecoration(
           color:
-              theme.inputDecorationTheme.fillColor ??
-              colorScheme.surfaceContainerHighest,
+              theme.inputDecorationTheme.fillColor ?? colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.transparent, width: 0.0),
         ),
         child: Row(
           children: [
             const SizedBox(width: 14),
-            Icon(
-              Icons.search_rounded,
-              size: 18,
-              color: colorScheme.onSurfaceVariant,
-            ),
+            Icon(Icons.search_rounded, size: 18, color: colorScheme.onSurfaceVariant),
             const SizedBox(width: 8),
             Expanded(
               child: TextField(

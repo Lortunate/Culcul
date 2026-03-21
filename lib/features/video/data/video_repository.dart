@@ -34,9 +34,7 @@ class VideoRepository extends BaseRepository {
     required int action, // 1: like, 0: cancel
     int type = 1,
   }) {
-    return safeVoidApiCall(
-      () => api.actionComment(oid, rpid, action, type),
-    );
+    return safeVoidApiCall(() => api.actionComment(oid, rpid, action, type));
   }
 
   Future<Result<void, AppException>> hateComment({
@@ -45,9 +43,7 @@ class VideoRepository extends BaseRepository {
     required int action, // 1: dislike, 0: cancel
     int type = 1,
   }) {
-    return safeVoidApiCall(
-      () => api.hateComment(oid, rpid, action, type),
-    );
+    return safeVoidApiCall(() => api.hateComment(oid, rpid, action, type));
   }
 
   Future<Result<CommentItem, AppException>> addReply({
@@ -57,9 +53,7 @@ class VideoRepository extends BaseRepository {
     required String message,
     int type = 1,
   }) {
-    return safeApiCall(
-      () => api.addReply(oid, root, parent, message, type),
-    );
+    return safeApiCall(() => api.addReply(oid, root, parent, message, type));
   }
 
   Future<Result<VideoDetail, AppException>> fetchVideoView(String bvid) {
@@ -78,9 +72,7 @@ class VideoRepository extends BaseRepository {
     int fnver = 0,
     int fourk = 1,
   }) {
-    return safeApiCall(
-      () => api.fetchVideoPlayUrl(aid, cid, qn, fnval, fnver, fourk),
-    );
+    return safeApiCall(() => api.fetchVideoPlayUrl(aid, cid, qn, fnval, fnver, fourk));
   }
 
   Future<Result<PlayerInfo, AppException>> fetchPlayerInfo({
@@ -90,9 +82,7 @@ class VideoRepository extends BaseRepository {
     return safeApiCall(() => api.fetchPlayerInfo(aid, cid));
   }
 
-  Future<Result<List<RelatedVideo>, AppException>> fetchRelatedVideos(
-    String bvid,
-  ) {
+  Future<Result<List<RelatedVideo>, AppException>> fetchRelatedVideos(String bvid) {
     return safeApiCall(() => api.fetchRelatedVideos(bvid));
   }
 
@@ -116,9 +106,7 @@ class VideoRepository extends BaseRepository {
     return safeApiCall(() => api.fetchReply(oid, root, type, ps, pn));
   }
 
-  Future<Result<SubtitleContent, AppException>> fetchSubtitleContent(
-    String url,
-  ) {
+  Future<Result<SubtitleContent, AppException>> fetchSubtitleContent(String url) {
     return safeCall(() async {
       final fullUrl = url.startsWith('http') ? url : 'https:$url';
       final response = await resourceApi.fetchJson(fullUrl);

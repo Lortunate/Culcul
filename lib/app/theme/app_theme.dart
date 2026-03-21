@@ -6,7 +6,6 @@ import 'app_component_theme.dart';
 class AppTheme {
   AppTheme._();
 
-
   static ThemeData get light {
     final colorScheme = ColorScheme.light(
       primary: AppColors.primary,

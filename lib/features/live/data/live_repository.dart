@@ -18,9 +18,7 @@ class LiveRepository extends BaseRepository {
 
   LiveRepository(this._api);
 
-  Future<Result<LiveRoomDetailModel, AppException>> getRoomInfo(
-    int roomId,
-  ) async {
+  Future<Result<LiveRoomDetailModel, AppException>> getRoomInfo(int roomId) async {
     return safeApiCall(() => _api.getRoomInfo(roomId));
   }
 
@@ -29,9 +27,7 @@ class LiveRepository extends BaseRepository {
     int? qn,
     String platform = 'web',
   }) async {
-    return safeApiCall(
-      () => _api.getPlayUrl(roomId: roomId, qn: qn, platform: platform),
-    );
+    return safeApiCall(() => _api.getPlayUrl(roomId: roomId, qn: qn, platform: platform));
   }
 
   Future<Result<LiveDanmakuConfigModel, AppException>> getDanmakuConfig(
@@ -46,9 +42,7 @@ class LiveRepository extends BaseRepository {
     return safeApiCall(() => _api.getHistoryDanmaku(roomId));
   }
 
-  Future<Result<LiveDanmuInfoModel, AppException>> getDanmuInfo(
-    int roomId,
-  ) async {
+  Future<Result<LiveDanmuInfoModel, AppException>> getDanmuInfo(int roomId) async {
     return safeApiCall(() => _api.getDanmuInfo(roomId, 0));
   }
 
@@ -66,9 +60,7 @@ class LiveRepository extends BaseRepository {
     };
   }
 
-  Future<Result<LiveAnchorInfoModel, AppException>> getAnchorInfo(
-    int uid,
-  ) async {
+  Future<Result<LiveAnchorInfoModel, AppException>> getAnchorInfo(int uid) async {
     return safeApiCall(() => _api.getAnchorInfo(uid));
   }
 
@@ -95,12 +87,7 @@ class LiveRepository extends BaseRepository {
     int pageSize = 20,
   }) async {
     return safeApiCall(
-      () => _api.getGuardList(
-        ruid: ruid,
-        roomId: roomId,
-        page: page,
-        pageSize: pageSize,
-      ),
+      () => _api.getGuardList(ruid: ruid, roomId: roomId, page: page, pageSize: pageSize),
     );
   }
 

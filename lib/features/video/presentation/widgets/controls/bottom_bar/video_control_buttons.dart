@@ -38,21 +38,14 @@ class VideoControlButtons extends ConsumerWidget {
         selectedItem: selectedQuality,
         labelBuilder: (q) => qualityLabels[q] ?? '未知',
         onSelected: (q) {
-          ref
-              .read(videoDetailControllerProvider(bvid).notifier)
-              .switchQuality(q);
+          ref.read(videoDetailControllerProvider(bvid).notifier).switchQuality(q);
         },
-        isBottomSheet:
-            MediaQuery.of(context).orientation == Orientation.portrait,
+        isBottomSheet: MediaQuery.of(context).orientation == Orientation.portrait,
       ),
     );
   }
 
-  void _showSpeedMenu(
-    BuildContext context,
-    WidgetRef ref,
-    double currentSpeed,
-  ) {
+  void _showSpeedMenu(BuildContext context, WidgetRef ref, double currentSpeed) {
     const speeds = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
     showSidePanel(
       context,
@@ -62,13 +55,10 @@ class VideoControlButtons extends ConsumerWidget {
         selectedItem: currentSpeed,
         labelBuilder: (s) => '${s}x',
         onSelected: (s) {
-          ref
-              .read(videoDetailControllerProvider(bvid).notifier)
-              .setPlaybackSpeed(s);
+          ref.read(videoDetailControllerProvider(bvid).notifier).setPlaybackSpeed(s);
           ref.read(playerControllerProvider.notifier).player.setRate(s);
         },
-        isBottomSheet:
-            MediaQuery.of(context).orientation == Orientation.portrait,
+        isBottomSheet: MediaQuery.of(context).orientation == Orientation.portrait,
       ),
     );
   }
@@ -77,9 +67,7 @@ class VideoControlButtons extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    final isPlaying = ref.watch(
-      playerControllerProvider.select((s) => s.isPlaying),
-    );
+    final isPlaying = ref.watch(playerControllerProvider.select((s) => s.isPlaying));
     final isFullscreen = ref.watch(
       playerControllerProvider.select((s) => s.isFullscreen),
     );
@@ -116,11 +104,7 @@ class VideoControlButtons extends ConsumerWidget {
           ),
           if (onNext != null) ...[
             const SizedBox(width: 4),
-            ControlButton(
-              onPressed: onNext,
-              icon: Icons.skip_next_rounded,
-              size: 24,
-            ),
+            ControlButton(onPressed: onNext, icon: Icons.skip_next_rounded, size: 24),
           ],
           const SizedBox(width: 8),
           const TimeText(),
@@ -156,16 +140,12 @@ class VideoControlButtons extends ConsumerWidget {
             if (subtitleState.availableSubtitles.isNotEmpty) ...[
               ControlButton(
                 onPressed: () {
-                  ref
-                      .read(subtitleControllerProvider(bvid).notifier)
-                      .toggleSubtitle();
+                  ref.read(subtitleControllerProvider(bvid).notifier).toggleSubtitle();
                 },
                 icon: subtitleState.isEnabled
                     ? Icons.closed_caption_rounded
                     : Icons.closed_caption_off_rounded,
-                color: subtitleState.isEnabled
-                    ? colorScheme.primary
-                    : Colors.white,
+                color: subtitleState.isEnabled ? colorScheme.primary : Colors.white,
                 size: 20,
               ),
               const SizedBox(width: 4),
@@ -173,9 +153,7 @@ class VideoControlButtons extends ConsumerWidget {
           ],
           ControlButton(
             onPressed: onToggleFullscreen ?? playerController.toggleFullscreen,
-            icon: isFullscreen
-                ? Icons.fullscreen_exit_rounded
-                : Icons.fullscreen_rounded,
+            icon: isFullscreen ? Icons.fullscreen_exit_rounded : Icons.fullscreen_rounded,
             size: 26,
           ),
         ],
@@ -238,11 +216,7 @@ class ControlButton extends StatelessWidget {
               color: color,
               size: size,
               shadows: const [
-                BoxShadow(
-                  color: Colors.black26,
-                  blurRadius: 4,
-                  spreadRadius: 1,
-                ),
+                BoxShadow(color: Colors.black26, blurRadius: 4, spreadRadius: 1),
               ],
             ),
           ),
@@ -256,11 +230,7 @@ class PlayerCapsuleButton extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
 
-  const PlayerCapsuleButton({
-    super.key,
-    required this.text,
-    required this.onTap,
-  });
+  const PlayerCapsuleButton({super.key, required this.text, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

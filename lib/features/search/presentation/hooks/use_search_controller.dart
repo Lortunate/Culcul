@@ -13,7 +13,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
   VoidCallback onClear,
   void Function(String) onSearch,
   String? defaultSearchHint,
-}) useSearchController(WidgetRef ref) {
+})
+useSearchController(WidgetRef ref) {
   final defaultSearchAsync = ref.watch(defaultSearchProvider);
   final searchController = useTextEditingController();
   final focusNode = useFocusNode();
@@ -25,10 +26,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
   useListenable(searchController);
 
   void performSearch(String value) {
-    final query = value.isEmpty
-        ? (defaultSearchAsync.asData?.value?.name ?? '')
-        : value;
-    
+    final query = value.isEmpty ? (defaultSearchAsync.asData?.value?.name ?? '') : value;
+
     if (query.isNotEmpty) {
       confirmedKeyword.value = query;
       searchController.text = query;
@@ -54,7 +53,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
     if (confirmedKeyword.value == null) {
       focusNode.requestFocus();
     }
-    
+
     void listener() {
       final text = searchController.text;
 

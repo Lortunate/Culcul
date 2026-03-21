@@ -37,9 +37,7 @@ class ToViewList extends _$ToViewList {
     switch (result) {
       case Success():
         final currentList = state.asData?.value ?? [];
-        state = AsyncValue.data(
-          currentList.where((item) => item.aid != aid).toList(),
-        );
+        state = AsyncValue.data(currentList.where((item) => item.aid != aid).toList());
       case Failure(exception: final e):
         throw e;
     }

@@ -92,17 +92,11 @@ class NotificationCategoryGrid extends ConsumerWidget {
                     top: -4,
                     right: -4,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.error,
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: theme.colorScheme.surface,
-                          width: 2,
-                        ),
+                        border: Border.all(color: theme.colorScheme.surface, width: 2),
                       ),
                       child: Text(
                         count > 99 ? '99+' : count.toString(),

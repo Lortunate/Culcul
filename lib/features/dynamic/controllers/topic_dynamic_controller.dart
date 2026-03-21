@@ -21,10 +21,7 @@ class TopicDynamicNotifier extends _$TopicDynamicNotifier {
 
   Future<List<DynamicItem>> _fetchFeed() async {
     final repository = ref.read(dynamicRepositoryProvider);
-    final result = await repository.getTopicFeed(
-      topicId: _topicId,
-      offset: _offset,
-    );
+    final result = await repository.getTopicFeed(topicId: _topicId, offset: _offset);
     return result.when(
       success: (feed) {
         _offset = feed.offset;
@@ -79,16 +76,16 @@ class TopicDynamicNotifier extends _$TopicDynamicNotifier {
     if (index == -1) return;
 
     final item = items[index];
-    
+
     // Deep copy update logic
     final newLikeCount = isLiked ? item.likeCount - 1 : item.likeCount + 1;
     final newStatus = !isLiked;
-    
+
     final newStatLike = item.modules.moduleStat?.like.copyWith(
       count: newLikeCount,
       status: newStatus,
     );
-    
+
     if (item.modules.moduleStat != null && newStatLike != null) {
       final newModuleStat = item.modules.moduleStat!.copyWith(like: newStatLike);
       final newModules = item.modules.copyWith(moduleStat: newModuleStat);
@@ -98,9 +95,7 @@ class TopicDynamicNotifier extends _$TopicDynamicNotifier {
       newItems[index] = newItem;
       state = AsyncData(newItems);
 
-      final result = await ref
-          .read(dynamicRepositoryProvider)
-          .likeDynamic(id, !isLiked);
+      final result = await ref.read(dynamicRepositoryProvider).likeDynamic(id, !isLiked);
       if (result.isFailure) {
         // Revert
         state = oldState;

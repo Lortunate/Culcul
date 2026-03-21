@@ -37,9 +37,7 @@ class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
         padding: const EdgeInsets.symmetric(horizontal: 4),
         tabAlignment: isScrollable ? TabAlignment.start : null,
         labelColor: colorScheme.primary,
-        unselectedLabelColor: colorScheme.onSurfaceVariant.withValues(
-          alpha: 0.8,
-        ),
+        unselectedLabelColor: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
         labelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
         unselectedLabelStyle: const TextStyle(
           fontSize: 15,

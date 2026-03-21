@@ -122,19 +122,20 @@ class ResultUtils {
 }
 
 /// Extensions to bridge Result and Riverpod's AsyncValue
-extension ResultAsyncValueExtensions<T, E extends Exception>
-    on Result<T, E> {
+extension ResultAsyncValueExtensions<T, E extends Exception> on Result<T, E> {
   /// Converts a Result into an AsyncValue
   AsyncValue<T> toAsyncValue() {
     return switch (this) {
       Success(value: final value) => AsyncValue.data(value),
-      Failure(exception: final exception) =>
-        AsyncValue.error(exception, StackTrace.current),
+      Failure(exception: final exception) => AsyncValue.error(
+        exception,
+        StackTrace.current,
+      ),
     };
   }
 }
 
-  /// Extensions to bridge `Future<Result>` and Riverpod's `AsyncValue`
+/// Extensions to bridge `Future<Result>` and Riverpod's `AsyncValue`
 extension FutureResultAsyncValueExtensions<T, E extends Exception>
     on Future<Result<T, E>> {
   /// Awaits the result and converts it into an AsyncValue

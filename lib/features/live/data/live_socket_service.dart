@@ -17,10 +17,7 @@ class LiveSocketService {
 
   bool get isConnected => _channel != null;
 
-  Future<void> connect({
-    required LiveDanmuInfoModel info,
-    required int roomId,
-  }) async {
+  Future<void> connect({required LiveDanmuInfoModel info, required int roomId}) async {
     disconnect();
 
     try {
@@ -195,7 +192,7 @@ class LiveSocketService {
       final data = json['data'] as Map<String, dynamic>;
       final uname = data['uname'] as String;
       final msgType = data['msg_type'] as int;
-      
+
       String text = '进入直播间';
       if (msgType == 2) text = '关注了主播';
       if (msgType == 3) text = '分享了直播间';
@@ -205,8 +202,14 @@ class LiveSocketService {
         nickname: uname,
         uid: data['uid'] as int,
         dmType: 1, // Interact
-        medal: data['fans_medal'] != null 
-            ? [data['fans_medal']['medal_level'], data['fans_medal']['medal_name'], '', data['fans_medal']['anchor_roomid'], data['fans_medal']['medal_color'] ?? 0] 
+        medal: data['fans_medal'] != null
+            ? [
+                data['fans_medal']['medal_level'],
+                data['fans_medal']['medal_name'],
+                '',
+                data['fans_medal']['anchor_roomid'],
+                data['fans_medal']['medal_color'] ?? 0,
+              ]
             : [],
       );
       _danmakuController.add(item);
@@ -214,9 +217,9 @@ class LiveSocketService {
       final msgSelf = json['msg_self'] as String?;
       final msgCommon = json['msg_common'] as String?;
       final msg = msgSelf ?? msgCommon;
-      
+
       if (msg != null && msg.isNotEmpty) {
-         final item = LiveDanmakuItem(
+        final item = LiveDanmakuItem(
           text: msg,
           nickname: '系统消息',
           uid: 0,
@@ -229,14 +232,20 @@ class LiveSocketService {
       final uname = data['uname'] as String;
       final giftName = data['giftName'] as String;
       final num = data['num'] as int;
-      
+
       final item = LiveDanmakuItem(
         text: '投喂了 $giftName x$num',
         nickname: uname,
         uid: data['uid'] as int,
         dmType: 2, // Gift
-        medal: data['medal_info'] != null 
-            ? [data['medal_info']['medal_level'], data['medal_info']['medal_name'], '', data['medal_info']['anchor_roomid'], data['medal_info']['medal_color'] ?? 0] 
+        medal: data['medal_info'] != null
+            ? [
+                data['medal_info']['medal_level'],
+                data['medal_info']['medal_name'],
+                '',
+                data['medal_info']['anchor_roomid'],
+                data['medal_info']['medal_color'] ?? 0,
+              ]
             : [],
       );
       _danmakuController.add(item);

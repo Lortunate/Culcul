@@ -110,9 +110,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
       final List<DynamicUploadImageData> uploadedImages = [];
       if (_images.isNotEmpty) {
         for (var img in _images) {
-          final result = await ref
-              .read(dynamicRepositoryProvider)
-              .uploadImage(img);
+          final result = await ref.read(dynamicRepositoryProvider).uploadImage(img);
           result.when(
             success: (data) => uploadedImages.add(data),
             failure: (e) => throw e,
@@ -128,16 +126,12 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
 
       if (mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('发布成功')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('发布成功')));
         ref.invalidate(dynamicProvider);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('发布失败: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('发布失败: $e')));
       }
     } finally {
       if (mounted) setState(() => _isPublishing = false);
@@ -198,9 +192,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
           ),
           title: Text(
             '发布动态',
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
+            style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
           actions: [
@@ -216,9 +208,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
                       ? colorScheme.onSurfaceVariant
                       : colorScheme.onPrimary,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 ),
                 child: _isPublishing
                     ? SizedBox(
@@ -229,10 +219,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
                           color: colorScheme.onSurfaceVariant,
                         ),
                       )
-                    : const Text(
-                        '发布',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                    : const Text('发布', style: TextStyle(fontWeight: FontWeight.bold)),
               ),
             ),
           ],
@@ -241,10 +228,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
           children: [
             Expanded(
               child: ListView(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 children: [
                   TextField(
                     controller: _controller,
@@ -265,12 +249,11 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 8,
-                            mainAxisSpacing: 8,
-                          ),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                      ),
                       itemCount: _images.length + (_images.length < 9 ? 1 : 0),
                       itemBuilder: (context, index) {
                         if (index == _images.length) {
@@ -323,9 +306,9 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
       borderRadius: BorderRadius.circular(12),
       child: Container(
         decoration: BoxDecoration(
-            color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-            borderRadius: BorderRadius.circular(12),
-          ),
+          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Icon(Icons.add, size: 32, color: colorScheme.onSurfaceVariant),
       ),
     );
@@ -352,10 +335,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
             children: [
               _ToolbarAction(icon: Icons.image_outlined, onTap: _pickImage),
               const SizedBox(width: 24),
-              _ToolbarAction(
-                icon: Icons.alternate_email,
-                onTap: () => _insertText('@'),
-              ),
+              _ToolbarAction(icon: Icons.alternate_email, onTap: () => _insertText('@')),
               const SizedBox(width: 24),
               _ToolbarAction(icon: Icons.tag, onTap: _showTopicPicker),
               const SizedBox(width: 24),
@@ -388,11 +368,7 @@ class _ToolbarAction extends StatelessWidget {
       borderRadius: BorderRadius.circular(8),
       child: Padding(
         padding: const EdgeInsets.all(4.0),
-        child: Icon(
-          icon,
-          size: 26,
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
+        child: Icon(icon, size: 26, color: Theme.of(context).colorScheme.onSurface),
       ),
     );
   }

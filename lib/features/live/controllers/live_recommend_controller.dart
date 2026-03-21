@@ -16,8 +16,7 @@ class LiveRecommend extends _$LiveRecommend {
   }
 
   Future<List<LiveRoomModel>> _fetchItems({required int page}) async {
-    final result =
-        await ref.read(liveRepositoryProvider).fetchRecommendList(page: page);
+    final result = await ref.read(liveRepositoryProvider).fetchRecommendList(page: page);
     return switch (result) {
       Success(value: final list) => list,
       Failure(exception: final e) => throw e,

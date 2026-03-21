@@ -32,14 +32,13 @@ sealed class ToViewModel with _$ToViewModel {
   }) = _ToViewModel;
 
   bool get hasProgress => (progress ?? 0) > 0;
-  
+
   double get progressRatio {
     final d = (duration ?? 0) == 0 ? 1 : (duration ?? 1);
     return (progress ?? 0) / d;
   }
 
-  factory ToViewModel.fromJson(Map<String, dynamic> json) =>
-      _$ToViewModelFromJson(json);
+  factory ToViewModel.fromJson(Map<String, dynamic> json) => _$ToViewModelFromJson(json);
 }
 
 @freezed
@@ -64,9 +63,7 @@ sealed class ToViewStatModel with _$ToViewStatModel {
 sealed class ToViewListResponse with _$ToViewListResponse {
   const factory ToViewListResponse({
     @JsonKey(name: 'count') @Default(0) int count,
-    @JsonKey(name: 'list')
-    @Default([])
-    List<ToViewModel> list,
+    @JsonKey(name: 'list') @Default([]) List<ToViewModel> list,
   }) = _ToViewListResponse;
 
   factory ToViewListResponse.fromJson(Map<String, dynamic> json) =>

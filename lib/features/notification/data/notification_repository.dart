@@ -36,10 +36,7 @@ class NotificationRepository extends BaseRepository {
     return safeApiCall(() => _api.getReplyList(id: id, replyTime: replyTime));
   }
 
-  Future<Result<ReplyResponse, AppException>> getAtList({
-    int? id,
-    int? atTime,
-  }) async {
+  Future<Result<ReplyResponse, AppException>> getAtList({int? id, int? atTime}) async {
     return safeApiCall(() => _api.getAtList(id: id, atTime: atTime));
   }
 
@@ -47,9 +44,7 @@ class NotificationRepository extends BaseRepository {
     int? id,
     int? likeTime,
   }) async {
-    final result = await safeApiCall(
-      () => _api.getLikeList(id: id, likeTime: likeTime),
-    );
+    final result = await safeApiCall(() => _api.getLikeList(id: id, likeTime: likeTime));
 
     return switch (result) {
       Success(value: final likeResponse) => Success(
@@ -69,11 +64,7 @@ class NotificationRepository extends BaseRepository {
     int? endTs,
   }) async {
     return safeApiCall(
-      () => _api.getPrivateSessions(
-        sessionType: sessionType,
-        size: size,
-        endTs: endTs,
-      ),
+      () => _api.getPrivateSessions(sessionType: sessionType, size: size, endTs: endTs),
     );
   }
 
@@ -95,14 +86,16 @@ class NotificationRepository extends BaseRepository {
     );
   }
 
-  Future<Result<List<SystemNotificationItem>, AppException>> fetchSystemNotifications() async {
+  Future<Result<List<SystemNotificationItem>, AppException>>
+  fetchSystemNotifications() async {
     final sessionResult = await getPrivateSessions(sessionType: 7);
 
     if (sessionResult case Failure(exception: final e)) {
       return Failure(e);
     }
 
-    final sessionRes = (sessionResult as Success<PrivateMessageSessionResponse, AppException>).value;
+    final sessionRes =
+        (sessionResult as Success<PrivateMessageSessionResponse, AppException>).value;
     final systemMsgMap = sessionRes.systemMsg;
 
     if (systemMsgMap == null || !systemMsgMap.containsKey('5')) {
@@ -119,9 +112,7 @@ class NotificationRepository extends BaseRepository {
               return SystemNotificationItem(
                 id: msg.msgSeqno,
                 title: contentMap?['title'] as String?,
-                text:
-                    contentMap?['content'] as String? ??
-                    contentMap?['text'] as String?,
+                text: contentMap?['content'] as String? ?? contentMap?['text'] as String?,
                 time: msg.timestamp,
                 uri:
                     contentMap?['url'] as String? ??
@@ -136,9 +127,7 @@ class NotificationRepository extends BaseRepository {
     };
   }
 
-  Future<Result<ImageUploadResponse, AppException>> uploadImage(
-    File file,
-  ) async {
+  Future<Result<ImageUploadResponse, AppException>> uploadImage(File file) async {
     return safeApiCall(() => _api.uploadImage(file: file));
   }
 

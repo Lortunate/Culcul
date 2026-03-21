@@ -28,10 +28,7 @@ abstract class RelationApi {
   });
 
   @POST('/x/relation/modify')
-  @Headers({
-    'content-type': 'application/x-www-form-urlencoded',
-    'x-bili-csrf': 'true',
-  })
+  @Headers({'content-type': 'application/x-www-form-urlencoded', 'x-bili-csrf': 'true'})
   Future<ApiResponse<void>> modifyRelation(
     @Field('fid') int fid,
     @Field('act') int act, {

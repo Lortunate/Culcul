@@ -21,10 +21,9 @@ class ReplyList extends _$ReplyList {
     if (currentList.isEmpty) return;
 
     final lastItem = currentList.last;
-    final result = await ref.read(notificationRepositoryProvider).getReplyList(
-      id: lastItem.id,
-      replyTime: lastItem.replyTime,
-    );
+    final result = await ref
+        .read(notificationRepositoryProvider)
+        .getReplyList(id: lastItem.id, replyTime: lastItem.replyTime);
 
     switch (result) {
       case Success(value: final data):

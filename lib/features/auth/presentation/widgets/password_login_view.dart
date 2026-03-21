@@ -69,7 +69,9 @@ class PasswordLoginView extends HookConsumerWidget {
     final geetest = useGeetest(
       ref: ref,
       onSuccess: (token, challenge, validate, seccode) async {
-        await ref.read(authProvider.notifier).loginWithPassword(
+        await ref
+            .read(authProvider.notifier)
+            .loginWithPassword(
               usernameController.text,
               passwordController.text,
               token,

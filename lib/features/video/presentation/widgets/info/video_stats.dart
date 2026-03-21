@@ -27,10 +27,7 @@ class VideoStatsRow extends StatelessWidget {
           icon: Icons.play_circle_outline_rounded,
           text: detail.stat.view.formatNumber,
         ),
-        IconText(
-          icon: Icons.list_alt_outlined,
-          text: detail.stat.danmaku.formatNumber,
-        ),
+        IconText(icon: Icons.list_alt_outlined, text: detail.stat.danmaku.formatNumber),
         Text(date, style: style),
         Text('BV${detail.bvid}', style: style),
       ],

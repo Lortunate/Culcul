@@ -37,12 +37,9 @@ class DynamicContentWidget extends StatelessWidget {
         ],
         if (post.images != null && post.images!.isNotEmpty)
           DynamicImagesWidget(images: post.images!),
-        if (post.videoContent != null)
-          DynamicVideoWidget(video: post.videoContent!),
-        if (post.linkCard != null)
-          DynamicLinkCardWidget(card: post.linkCard!),
-        if (post.additional != null)
-          _buildAdditional(context, post.additional!),
+        if (post.videoContent != null) DynamicVideoWidget(video: post.videoContent!),
+        if (post.linkCard != null) DynamicLinkCardWidget(card: post.linkCard!),
+        if (post.additional != null) _buildAdditional(context, post.additional!),
         if (post.orig != null) DynamicForwardWidget(post: post.orig!),
         if (post.topicName != null)
           Padding(
@@ -61,14 +58,9 @@ class DynamicContentWidget extends StatelessWidget {
                 }
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.primary.withValues(alpha: 0.1),
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(

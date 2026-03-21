@@ -28,9 +28,7 @@ class CommentReplyPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(commentReplyControllerProvider(oid, rootId));
-    final controller = ref.read(
-      commentReplyControllerProvider(oid, rootId).notifier,
-    );
+    final controller = ref.read(commentReplyControllerProvider(oid, rootId).notifier);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
@@ -63,9 +61,7 @@ class CommentReplyPage extends HookConsumerWidget {
       appBar: AppBar(
         title: Text(
           t.video.comment_detail,
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: colorScheme.surface,
@@ -154,10 +150,8 @@ class CommentReplyPage extends HookConsumerWidget {
                             reply.rpid,
                             reply.action == 1,
                           ),
-                          onDislike: () => controller.toggleCommentDislike(
-                            reply.oid,
-                            reply.rpid,
-                          ),
+                          onDislike: () =>
+                              controller.toggleCommentDislike(reply.oid, reply.rpid),
                           onReply: () => showReplySheet(reply),
                         );
                       }, childCount: state.replies.length),

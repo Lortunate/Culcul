@@ -62,9 +62,7 @@ void main() {
     expect(find.byType(EasyRefresh), findsNothing);
 
     // Switch back to data
-    container
-        .read(provider.notifier)
-        .setState(const AsyncValue.data(['Item 2']));
+    container.read(provider.notifier).setState(const AsyncValue.data(['Item 2']));
     await tester.pumpAndSettle();
 
     // Should be back to Data

@@ -24,14 +24,12 @@ class DynamicDetailPage extends HookConsumerWidget {
     final isLoading = useState(true);
     final error = useState<String?>(null);
     final commentController = useTextEditingController();
-    
+
     // We need a way to refresh comments, so we get the controller for comments
     // But we can only get it if we have a post.
-    
+
     Future<void> loadDetail() async {
-      final result = await ref
-          .read(dynamicRepositoryProvider)
-          .getDetail(dynamicId);
+      final result = await ref.read(dynamicRepositoryProvider).getDetail(dynamicId);
 
       result.when(
         success: (data) {
@@ -74,7 +72,7 @@ class DynamicDetailPage extends HookConsumerWidget {
         count: newLikeCount,
         status: newStatus,
       );
-      
+
       if (item.modules.moduleStat == null || newStatLike == null) return;
 
       final newModuleStat = item.modules.moduleStat!.copyWith(like: newStatLike);
@@ -134,9 +132,7 @@ class DynamicDetailPage extends HookConsumerWidget {
         footer: AppLoadFooter(),
         child: CustomScrollView(
           slivers: [
-            SliverToBoxAdapter(
-              child: DynamicDetailHeader(post: post.value!),
-            ),
+            SliverToBoxAdapter(child: DynamicDetailHeader(post: post.value!)),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),

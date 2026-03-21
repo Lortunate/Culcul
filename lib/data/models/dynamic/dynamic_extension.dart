@@ -26,11 +26,11 @@ extension DynamicItemExtension on DynamicItem {
   int get forwardCount => modules.moduleStat?.forward.count ?? 0;
 
   DynamicVideoContent? get videoContent => _mapVideoContent(modules.moduleDynamic.major);
-  
+
   // orig is already a field in DynamicItem returning DynamicItem?
 
   String? get topicName => modules.moduleDynamic.topic?.name;
-  
+
   int? get topicId {
     final url = modules.moduleDynamic.topic?.jumpUrl;
     if (url == null) return null;
@@ -62,10 +62,7 @@ extension DynamicItemExtension on DynamicItem {
     final moduleStat = modules.moduleStat;
     if (moduleStat == null) return this;
 
-    final newStatLike = moduleStat.like.copyWith(
-      count: newLikeCount,
-      status: newStatus,
-    );
+    final newStatLike = moduleStat.like.copyWith(count: newLikeCount, status: newStatus);
 
     final newModuleStat = moduleStat.copyWith(like: newStatLike);
     final newModules = modules.copyWith(moduleStat: newModuleStat);
@@ -109,9 +106,7 @@ extension DynamicItemExtension on DynamicItem {
     if (major.article != null) {
       return DynamicLinkCard(
         title: major.article!.title,
-        cover: major.article!.covers.isNotEmpty
-            ? major.article!.covers.first
-            : '',
+        cover: major.article!.covers.isNotEmpty ? major.article!.covers.first : '',
         desc: major.article!.desc,
         url: major.article!.jumpUrl,
       );
@@ -168,8 +163,7 @@ extension DynamicItemExtension on DynamicItem {
   DynamicAdditional? _mapAdditional(ModuleAdditional? additional) {
     if (additional == null) return null;
 
-    if (additional.type == 'ADDITIONAL_TYPE_COMMON' &&
-        additional.common != null) {
+    if (additional.type == 'ADDITIONAL_TYPE_COMMON' && additional.common != null) {
       return DynamicAdditional(
         type: additional.type,
         title: additional.common!.title,
@@ -181,8 +175,7 @@ extension DynamicItemExtension on DynamicItem {
       );
     }
 
-    if (additional.type == 'ADDITIONAL_TYPE_RESERVE' &&
-        additional.reserve != null) {
+    if (additional.type == 'ADDITIONAL_TYPE_RESERVE' && additional.reserve != null) {
       return DynamicAdditional(
         type: additional.type,
         title: additional.reserve!.title,
@@ -194,8 +187,7 @@ extension DynamicItemExtension on DynamicItem {
       );
     }
 
-    if (additional.type == 'ADDITIONAL_TYPE_GOODS' &&
-        additional.goods != null) {
+    if (additional.type == 'ADDITIONAL_TYPE_GOODS' && additional.goods != null) {
       return DynamicAdditional(
         type: additional.type,
         headText: additional.goods!.headText,

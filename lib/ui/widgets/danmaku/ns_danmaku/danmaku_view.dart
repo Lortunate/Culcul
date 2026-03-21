@@ -21,8 +21,7 @@ class DanmakuView extends StatefulWidget {
   State<DanmakuView> createState() => _DanmakuViewState();
 }
 
-class _DanmakuViewState extends State<DanmakuView>
-    with SingleTickerProviderStateMixin {
+class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStateMixin {
   late DanmakuController _controller;
   late Ticker _ticker;
   late DanmakuOption _option;
@@ -205,10 +204,8 @@ class _DanmakuViewState extends State<DanmakuView>
       ),
     );
 
-    final textPainter = TextPainter(
-      text: textSpan,
-      textDirection: TextDirection.ltr,
-    )..layout();
+    final textPainter = TextPainter(text: textSpan, textDirection: TextDirection.ltr)
+      ..layout();
 
     // Velocity calculation
     // Distance = Screen Width + Text Width
@@ -426,10 +423,7 @@ class _DanmakuViewState extends State<DanmakuView>
 
         return RepaintBoundary(
           child: CustomPaint(
-            painter: DanmakuPainter(
-              items: _activeItems,
-              opacity: _option.opacity,
-            ),
+            painter: DanmakuPainter(items: _activeItems, opacity: _option.opacity),
             size: Size.infinite,
           ),
         );

@@ -24,8 +24,7 @@ sealed class CommentPage with _$CommentPage {
     @Default(0) int acount,
   }) = _CommentPage;
 
-  factory CommentPage.fromJson(Map<String, dynamic> json) =>
-      _$CommentPageFromJson(json);
+  factory CommentPage.fromJson(Map<String, dynamic> json) => _$CommentPageFromJson(json);
 }
 
 @freezed
@@ -73,8 +72,7 @@ sealed class CommentItem with _$CommentItem {
     @Default(false) bool invisible,
   }) = _CommentItem;
 
-  factory CommentItem.fromJson(Map<String, dynamic> json) =>
-      _$CommentItemFromJson(json);
+  factory CommentItem.fromJson(Map<String, dynamic> json) => _$CommentItemFromJson(json);
 }
 
 @freezed
@@ -90,8 +88,7 @@ sealed class CommentMember with _$CommentMember {
     @JsonKey(name: 'level_info') required CommentLevelInfo levelInfo,
     required CommentPendant pendant,
     required CommentNameplate nameplate,
-    @JsonKey(name: 'official_verify')
-    required CommentOfficialVerify officialVerify,
+    @JsonKey(name: 'official_verify') required CommentOfficialVerify officialVerify,
     required CommentVip vip,
     @JsonKey(name: 'fans_detail') dynamic fansDetail,
     @Default(0) int following,
@@ -123,9 +120,7 @@ sealed class CommentPendant with _$CommentPendant {
     required String image,
     required int expire,
     @JsonKey(name: 'image_enhance') @Default('') String imageEnhance,
-    @JsonKey(name: 'image_enhance_frame')
-    @Default('')
-    String imageEnhanceFrame,
+    @JsonKey(name: 'image_enhance_frame') @Default('') String imageEnhanceFrame,
   }) = _CommentPendant;
 
   factory CommentPendant.fromJson(Map<String, dynamic> json) =>
@@ -149,10 +144,8 @@ sealed class CommentNameplate with _$CommentNameplate {
 
 @freezed
 sealed class CommentOfficialVerify with _$CommentOfficialVerify {
-  const factory CommentOfficialVerify({
-    @Default(-1) int type,
-    @Default('') String desc,
-  }) = _CommentOfficialVerify;
+  const factory CommentOfficialVerify({@Default(-1) int type, @Default('') String desc}) =
+      _CommentOfficialVerify;
 
   factory CommentOfficialVerify.fromJson(Map<String, dynamic> json) =>
       _$CommentOfficialVerifyFromJson(json);
@@ -171,8 +164,7 @@ sealed class CommentVip with _$CommentVip {
     dynamic label,
   }) = _CommentVip;
 
-  factory CommentVip.fromJson(Map<String, dynamic> json) =>
-      _$CommentVipFromJson(json);
+  factory CommentVip.fromJson(Map<String, dynamic> json) => _$CommentVipFromJson(json);
 }
 
 @freezed
@@ -186,18 +178,10 @@ sealed class CommentLabel with _$CommentLabel {
     @JsonKey(name: 'bg_color') @Default('') String bgColor,
     @JsonKey(name: 'border_color') @Default('') String borderColor,
     @JsonKey(name: 'use_img_label') @Default(false) bool useImgLabel,
-    @JsonKey(name: 'img_label_uri_hans')
-    @Default('')
-    String imgLabelUriHans,
-    @JsonKey(name: 'img_label_uri_hant')
-    @Default('')
-    String imgLabelUriHant,
-    @JsonKey(name: 'img_label_uri_hans_static')
-    @Default('')
-    String imgLabelUriHansStatic,
-    @JsonKey(name: 'img_label_uri_hant_static')
-    @Default('')
-    String imgLabelUriHantStatic,
+    @JsonKey(name: 'img_label_uri_hans') @Default('') String imgLabelUriHans,
+    @JsonKey(name: 'img_label_uri_hant') @Default('') String imgLabelUriHant,
+    @JsonKey(name: 'img_label_uri_hans_static') @Default('') String imgLabelUriHansStatic,
+    @JsonKey(name: 'img_label_uri_hant_static') @Default('') String imgLabelUriHantStatic,
   }) = _CommentLabel;
 
   factory CommentLabel.fromJson(Map<String, dynamic> json) =>

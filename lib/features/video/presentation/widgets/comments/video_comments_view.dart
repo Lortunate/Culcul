@@ -11,10 +11,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class VideoCommentsView extends ConsumerWidget {
   final String bvid;
 
-  const VideoCommentsView({
-    super.key,
-    required this.bvid,
-  });
+  const VideoCommentsView({super.key, required this.bvid});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -64,11 +61,7 @@ class VideoCommentsView extends ConsumerWidget {
             item: comment,
             upperMid: upperMid,
             onLike: () {
-              notifier.toggleCommentLike(
-                comment.oid,
-                comment.rpid,
-                comment.action == 1,
-              );
+              notifier.toggleCommentLike(comment.oid, comment.rpid, comment.action == 1);
             },
             onDislike: () {
               notifier.toggleCommentDislike(comment.oid, comment.rpid);

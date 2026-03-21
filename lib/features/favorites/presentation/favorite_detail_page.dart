@@ -55,18 +55,15 @@ class FavoriteDetailPage extends HookConsumerWidget {
                       try {
                         await ref
                             .read(favRepositoryProvider)
-                            .batchDelResource(
-                              resources: resources,
-                              mediaId: mediaId,
-                            );
+                            .batchDelResource(resources: resources, mediaId: mediaId);
                         isSelectionMode.value = false;
                         selectedItems.value = {};
                         ref.invalidate(provider);
                       } catch (e) {
                         if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Failed to delete: $e')),
-                          );
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(SnackBar(content: Text('Failed to delete: $e')));
                         }
                       }
                     },
@@ -109,9 +106,9 @@ class FavoriteDetailPage extends HookConsumerWidget {
                       ref.invalidate(favCreatedFoldersProvider);
                     } catch (e) {
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Failed to edit: $e')),
-                        );
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text('Failed to edit: $e')));
                       }
                     }
                   }
@@ -122,9 +119,7 @@ class FavoriteDetailPage extends HookConsumerWidget {
                     context: context,
                     builder: (context) => AlertDialog(
                       title: const Text('Delete Folder'),
-                      content: const Text(
-                        'Are you sure you want to delete this folder?',
-                      ),
+                      content: const Text('Are you sure you want to delete this folder?'),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context, false),
@@ -148,9 +143,9 @@ class FavoriteDetailPage extends HookConsumerWidget {
                       }
                     } catch (e) {
                       if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Failed to delete: $e')),
-                        );
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text('Failed to delete: $e')));
                       }
                     }
                   }
@@ -158,16 +153,10 @@ class FavoriteDetailPage extends HookConsumerWidget {
               },
               itemBuilder: (context) => [
                 const PopupMenuItem(value: 'edit', child: Text('Edit Info')),
-                const PopupMenuItem(
-                  value: 'manage',
-                  child: Text('Manage Resources'),
-                ),
+                const PopupMenuItem(value: 'manage', child: Text('Manage Resources')),
                 const PopupMenuItem(
                   value: 'delete',
-                  child: Text(
-                    'Delete Folder',
-                    style: TextStyle(color: Colors.red),
-                  ),
+                  child: Text('Delete Folder', style: TextStyle(color: Colors.red)),
                 ),
               ],
             ),
@@ -228,10 +217,9 @@ class FavoriteDetailPage extends HookConsumerWidget {
                                     const SizedBox(width: 8),
                                     Text(
                                       info.upper.name,
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(
-                                            color: colorScheme.onSurfaceVariant,
-                                          ),
+                                      style: theme.textTheme.bodySmall?.copyWith(
+                                        color: colorScheme.onSurfaceVariant,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -270,9 +258,7 @@ class FavoriteDetailPage extends HookConsumerWidget {
                                 Checkbox(
                                   value: selectedItems.value.contains(item.id),
                                   onChanged: (value) {
-                                    final newSet = Set<int>.from(
-                                      selectedItems.value,
-                                    );
+                                    final newSet = Set<int>.from(selectedItems.value);
                                     if (value == true) {
                                       newSet.add(item.id);
                                     } else {
@@ -286,9 +272,7 @@ class FavoriteDetailPage extends HookConsumerWidget {
                                   item: item,
                                   onTap: () {
                                     if (isSelectionMode.value) {
-                                      final newSet = Set<int>.from(
-                                        selectedItems.value,
-                                      );
+                                      final newSet = Set<int>.from(selectedItems.value);
                                       if (newSet.contains(item.id)) {
                                         newSet.remove(item.id);
                                       } else {

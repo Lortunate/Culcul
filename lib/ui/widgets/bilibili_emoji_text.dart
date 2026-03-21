@@ -9,8 +9,7 @@ class BilibiliEmojiText extends StatelessWidget {
   final bool selectable;
   final int? maxLines;
   final TextOverflow? overflow;
-  final ValueChanged<String>?
-  onEmojiTap; // Callback when an emoji is tapped (optional)
+  final ValueChanged<String>? onEmojiTap; // Callback when an emoji is tapped (optional)
 
   const BilibiliEmojiText({
     super.key,

@@ -30,9 +30,7 @@ class VideoPlayerView extends HookConsumerWidget {
     final isFullscreen = ref.watch(
       playerControllerProvider.select((s) => s.isFullscreen),
     );
-    final isPlaying = ref.watch(
-      playerControllerProvider.select((s) => s.isPlaying),
-    );
+    final isPlaying = ref.watch(playerControllerProvider.select((s) => s.isPlaying));
 
     final player = playerController.player;
 
@@ -50,9 +48,7 @@ class VideoPlayerView extends HookConsumerWidget {
     }
 
     return AspectRatio(
-      aspectRatio: isFullscreen
-          ? MediaQuery.of(context).size.aspectRatio
-          : aspectRatio,
+      aspectRatio: isFullscreen ? MediaQuery.of(context).size.aspectRatio : aspectRatio,
       child: Container(
         color: Colors.black,
         child: Stack(

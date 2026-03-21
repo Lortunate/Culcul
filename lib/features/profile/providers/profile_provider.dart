@@ -54,7 +54,7 @@ class UserProfileNotifier extends _$UserProfileNotifier {
   Future<UserProfile> _fetchAndSave(String userId) async {
     final repo = ref.read(profileRepositoryProvider);
     final result = await repo.getProfile(int.parse(userId));
-    
+
     return switch (result) {
       Success(value: final user) => () async {
         final cacheService = await ref.read(userInfoCacheServiceProvider.future);

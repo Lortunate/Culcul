@@ -16,9 +16,7 @@ class RecentVideoSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final videosAsync = ref.watch(
-      userSpaceVideosProvider(mid, order: 'pubdate'),
-    );
+    final videosAsync = ref.watch(userSpaceVideosProvider(mid, order: 'pubdate'));
     final profileAsync = ref.watch(userSpaceProvider(mid.toString()));
     final videoCount = profileAsync.asData?.value.videosCount ?? 0;
     final theme = Theme.of(context);
@@ -35,10 +33,7 @@ class RecentVideoSection extends ConsumerWidget {
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   children: [
                     Text(
@@ -97,8 +92,7 @@ class RecentVideoSection extends ConsumerWidget {
                   );
                   return VideoCard(
                     video: video,
-                    onTap: () =>
-                        VideoDetailRoute(bvid: video.bvid).push(context),
+                    onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
                     showAuthor: false,
                     showDescription: false,
                   );
@@ -113,8 +107,7 @@ class RecentVideoSection extends ConsumerWidget {
           padding: const EdgeInsets.all(16.0),
           child: AppErrorWidget(
             error: err,
-            onRetry: () =>
-                ref.refresh(userSpaceVideosProvider(mid, order: 'pubdate')),
+            onRetry: () => ref.refresh(userSpaceVideosProvider(mid, order: 'pubdate')),
           ),
         ),
       ),

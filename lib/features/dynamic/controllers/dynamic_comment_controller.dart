@@ -18,11 +18,7 @@ class DynamicCommentController extends _$DynamicCommentController {
     state = state.copyWith(isLoading: true, error: null);
     final repository = ref.read(dynamicRepositoryProvider);
 
-    final result = await repository.getComments(
-      post,
-      sort: state.sort,
-      page: 1,
-    );
+    final result = await repository.getComments(post, sort: state.sort, page: 1);
 
     result.when(
       success: (data) {
@@ -49,11 +45,7 @@ class DynamicCommentController extends _$DynamicCommentController {
     // Ideally we don't want to clear comments, just append.
     // We don't set global isLoading to true to avoid full screen loader.
 
-    final result = await repository.getComments(
-      post,
-      sort: state.sort,
-      page: nextPage,
-    );
+    final result = await repository.getComments(post, sort: state.sort, page: nextPage);
 
     result.when(
       success: (data) {
@@ -87,11 +79,7 @@ class DynamicCommentController extends _$DynamicCommentController {
     newComments[index] = newItem;
     state = state.copyWith(comments: newComments);
 
-    final result = await repository.likeComment(
-      post: post,
-      rpid: rpid,
-      isLiked: isLiked,
-    );
+    final result = await repository.likeComment(post: post, rpid: rpid, isLiked: isLiked);
 
     if (result.isFailure) {
       // Revert on failure

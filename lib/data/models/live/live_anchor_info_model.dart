@@ -35,10 +35,8 @@ sealed class LiveAnchorInfo with _$LiveAnchorInfo {
 
 @freezed
 sealed class LiveAnchorVerify with _$LiveAnchorVerify {
-  const factory LiveAnchorVerify({
-    required int type,
-    required String desc,
-  }) = _LiveAnchorVerify;
+  const factory LiveAnchorVerify({required int type, required String desc}) =
+      _LiveAnchorVerify;
 
   factory LiveAnchorVerify.fromJson(Map<String, dynamic> json) =>
       _$LiveAnchorVerifyFromJson(json);

@@ -15,7 +15,8 @@ class SmartPagingView<T> extends HookConsumerWidget {
   final dynamic provider;
   final EasyRefreshController? controller;
   final bool hasMore;
-  final Widget Function(BuildContext context, Object error, StackTrace? stackTrace)? errorBuilder;
+  final Widget Function(BuildContext context, Object error, StackTrace? stackTrace)?
+  errorBuilder;
   final Widget Function(BuildContext context)? emptyBuilder;
   final String? emptyText;
 
@@ -42,10 +43,7 @@ class SmartPagingView<T> extends HookConsumerWidget {
     // 如果是首次加载且没有数据，显示骨架屏
     // 只有当是 Loading 状态 且 没有 value 时，才显示 Skeleton
     if (asyncValue.isLoading && !asyncValue.hasValue) {
-      return KeyedSubtree(
-        key: const ValueKey('paging_loading'),
-        child: skeleton,
-      );
+      return KeyedSubtree(key: const ValueKey('paging_loading'), child: skeleton);
     }
 
     final items = asyncValue.value ?? [];
@@ -59,7 +57,8 @@ class SmartPagingView<T> extends HookConsumerWidget {
         slivers: [
           SliverFillRemaining(
             child: Center(
-              child: errorBuilder?.call(context, asyncValue.error!, asyncValue.stackTrace) ??
+              child:
+                  errorBuilder?.call(context, asyncValue.error!, asyncValue.stackTrace) ??
                   AppErrorWidget(
                     error: asyncValue.error!,
                     stackTrace: asyncValue.stackTrace,
@@ -77,7 +76,8 @@ class SmartPagingView<T> extends HookConsumerWidget {
         slivers: [
           SliverFillRemaining(
             child: Center(
-              child: emptyBuilder?.call(context) ??
+              child:
+                  emptyBuilder?.call(context) ??
                   AppErrorWidget(
                     message: emptyText ?? t.common.no_content,
                     onRetry: onRefresh,
@@ -111,10 +111,10 @@ class SmartPagingView<T> extends HookConsumerWidget {
               final prevCount = items.length;
               try {
                 await onLoadMore!();
-                
+
                 // 如果 provider 存在，尝试智能检测
                 if (provider != null) {
-                   try {
+                  try {
                     dynamic newValue = ref.read(provider);
                     int nextCount = prevCount;
                     if (newValue is AsyncValue<List<T>>) {
@@ -134,7 +134,7 @@ class SmartPagingView<T> extends HookConsumerWidget {
                     debugPrint('SmartPagingView: Failed to read provider: $e');
                   }
                 }
-                
+
                 // 如果没有 provider，或者读取失败，且没有报错，则认为成功。
                 // 此时依赖外部传入的 hasMore 来控制下一次是否显示 footer。
                 return IndicatorResult.success;

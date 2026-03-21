@@ -65,9 +65,7 @@ class ChatPage extends HookConsumerWidget {
                 otherAvatarUrl: displayAvatarUrl,
                 scrollController: scrollController,
                 onLoadMore: () async {
-                  final notifier = ref.read(
-                    chatProvider(talkerId, sessionType).notifier,
-                  );
+                  final notifier = ref.read(chatProvider(talkerId, sessionType).notifier);
                   await notifier.loadMore();
                 },
               ),

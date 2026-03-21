@@ -6,10 +6,8 @@ part 'like_model.g.dart';
 
 @freezed
 sealed class LikeResponse with _$LikeResponse {
-  const factory LikeResponse({
-    required LikeLatest latest,
-    required LikeTotal total,
-  }) = _LikeResponse;
+  const factory LikeResponse({required LikeLatest latest, required LikeTotal total}) =
+      _LikeResponse;
 
   factory LikeResponse.fromJson(Map<String, dynamic> json) =>
       _$LikeResponseFromJson(json);
@@ -22,8 +20,7 @@ sealed class LikeLatest with _$LikeLatest {
     @JsonKey(name: 'last_view_at') required int lastViewAt,
   }) = _LikeLatest;
 
-  factory LikeLatest.fromJson(Map<String, dynamic> json) =>
-      _$LikeLatestFromJson(json);
+  factory LikeLatest.fromJson(Map<String, dynamic> json) => _$LikeLatestFromJson(json);
 }
 
 @freezed
@@ -33,6 +30,5 @@ sealed class LikeTotal with _$LikeTotal {
     @Default([]) List<ReplyItem> items,
   }) = _LikeTotal;
 
-  factory LikeTotal.fromJson(Map<String, dynamic> json) =>
-      _$LikeTotalFromJson(json);
+  factory LikeTotal.fromJson(Map<String, dynamic> json) => _$LikeTotalFromJson(json);
 }

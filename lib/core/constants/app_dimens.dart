@@ -1,4 +1,3 @@
-
 class AppDimens {
   AppDimens._();
 

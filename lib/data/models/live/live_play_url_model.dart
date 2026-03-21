@@ -20,10 +20,8 @@ sealed class LivePlayUrlModel with _$LivePlayUrlModel {
 
 @freezed
 sealed class LiveQualityDescription with _$LiveQualityDescription {
-  const factory LiveQualityDescription({
-    required int qn,
-    required String desc,
-  }) = _LiveQualityDescription;
+  const factory LiveQualityDescription({required int qn, required String desc}) =
+      _LiveQualityDescription;
 
   factory LiveQualityDescription.fromJson(Map<String, dynamic> json) =>
       _$LiveQualityDescriptionFromJson(json);

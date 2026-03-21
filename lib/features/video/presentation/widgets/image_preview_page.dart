@@ -8,11 +8,7 @@ class ImagePreviewPage extends ConsumerStatefulWidget {
   final List<String> imageUrls;
   final int initialIndex;
 
-  const ImagePreviewPage({
-    super.key,
-    required this.imageUrls,
-    this.initialIndex = 0,
-  });
+  const ImagePreviewPage({super.key, required this.imageUrls, this.initialIndex = 0});
 
   @override
   ConsumerState<ImagePreviewPage> createState() => _ImagePreviewPageState();
@@ -39,15 +35,11 @@ class _ImagePreviewPageState extends ConsumerState<ImagePreviewPage> {
       await ref.read(mediaServiceProvider).saveImage(url);
 
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('保存成功')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('保存成功')));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('保存失败: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('保存失败: $e')));
       }
     }
   }
@@ -60,9 +52,7 @@ class _ImagePreviewPageState extends ConsumerState<ImagePreviewPage> {
         children: [
           ExtendedImageGesturePageView.builder(
             itemCount: widget.imageUrls.length,
-            controller: ExtendedPageController(
-              initialPage: widget.initialIndex,
-            ),
+            controller: ExtendedPageController(initialPage: widget.initialIndex),
             onPageChanged: (index) {
               setState(() {
                 _currentIndex = index;
@@ -136,11 +126,7 @@ class _ImagePreviewPageState extends ConsumerState<ImagePreviewPage> {
             bottom: MediaQuery.of(context).padding.bottom + 20,
             right: 20,
             child: IconButton(
-              icon: const Icon(
-                Icons.download_rounded,
-                color: Colors.white,
-                size: 28,
-              ),
+              icon: const Icon(Icons.download_rounded, color: Colors.white, size: 28),
               onPressed: () => _saveImage(widget.imageUrls[_currentIndex]),
             ),
           ),

@@ -26,9 +26,7 @@ class AppErrorWidget extends StatelessWidget {
 
     final displayMessage =
         message ??
-        (error != null
-            ? ErrorHandler.getErrorMessage(context, error)
-            : t.common.error);
+        (error != null ? ErrorHandler.getErrorMessage(context, error) : t.common.error);
 
     return Center(
       child: SingleChildScrollView(
@@ -64,9 +62,7 @@ class AppErrorWidget extends StatelessWidget {
                           children: [
                             Text(
                               'Error: $error',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             if (stackTrace != null) ...[
                               const SizedBox(height: 8),
@@ -95,10 +91,7 @@ class AppErrorWidget extends StatelessWidget {
                     ),
                   );
                 },
-                child: const Text(
-                  'View Details',
-                  style: TextStyle(fontSize: 12),
-                ),
+                child: const Text('View Details', style: TextStyle(fontSize: 12)),
               ),
             ],
             if (onRetry != null) ...[
@@ -109,13 +102,8 @@ class AppErrorWidget extends StatelessWidget {
                 label: Text(t.common.retry),
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(color: colorScheme.outlineVariant),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
               ),
             ],

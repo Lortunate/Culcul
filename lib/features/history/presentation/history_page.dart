@@ -57,10 +57,7 @@ class HistoryPage extends ConsumerWidget {
                 );
               },
             )
-          : GuestView(
-              title: t.profile.not_logged_in,
-              message: t.profile.login_hint,
-            ),
+          : GuestView(title: t.profile.not_logged_in, message: t.profile.login_hint),
     );
   }
 }

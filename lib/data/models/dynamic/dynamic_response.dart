@@ -6,9 +6,7 @@ part 'dynamic_response.g.dart';
 
 @freezed
 sealed class DynamicDetailData with _$DynamicDetailData {
-  const factory DynamicDetailData({
-    required DynamicItem item,
-  }) = _DynamicDetailData;
+  const factory DynamicDetailData({required DynamicItem item}) = _DynamicDetailData;
 
   factory DynamicDetailData.fromJson(Map<String, dynamic> json) =>
       _$DynamicDetailDataFromJson(json);
@@ -25,8 +23,7 @@ sealed class DynamicData with _$DynamicData {
     required int updateNum,
   }) = _DynamicData;
 
-  factory DynamicData.fromJson(Map<String, dynamic> json) =>
-      _$DynamicDataFromJson(json);
+  factory DynamicData.fromJson(Map<String, dynamic> json) => _$DynamicDataFromJson(json);
 }
 
 @freezed
@@ -40,8 +37,7 @@ sealed class DynamicItem with _$DynamicItem {
     DynamicBasic? basic,
   }) = _DynamicItem;
 
-  factory DynamicItem.fromJson(Map<String, dynamic> json) =>
-      _$DynamicItemFromJson(json);
+  factory DynamicItem.fromJson(Map<String, dynamic> json) => _$DynamicItemFromJson(json);
 }
 
 @freezed
@@ -143,13 +139,9 @@ sealed class AdditionalReserve with _$AdditionalReserve {
 
 @freezed
 sealed class ReserveDesc with _$ReserveDesc {
-  const factory ReserveDesc({
-    required String text,
-    required int style,
-  }) = _ReserveDesc;
+  const factory ReserveDesc({required String text, required int style}) = _ReserveDesc;
 
-  factory ReserveDesc.fromJson(Map<String, dynamic> json) =>
-      _$ReserveDescFromJson(json);
+  factory ReserveDesc.fromJson(Map<String, dynamic> json) => _$ReserveDescFromJson(json);
 }
 
 @freezed
@@ -173,8 +165,7 @@ sealed class GoodsItem with _$GoodsItem {
     @JsonKey(name: 'jump_url') required String jumpUrl,
   }) = _GoodsItem;
 
-  factory GoodsItem.fromJson(Map<String, dynamic> json) =>
-      _$GoodsItemFromJson(json);
+  factory GoodsItem.fromJson(Map<String, dynamic> json) => _$GoodsItemFromJson(json);
 }
 
 @freezed
@@ -213,8 +204,7 @@ sealed class ModuleDesc with _$ModuleDesc {
     @JsonKey(name: 'rich_text_nodes') List<dynamic>? richTextNodes,
   }) = _ModuleDesc;
 
-  factory ModuleDesc.fromJson(Map<String, dynamic> json) =>
-      _$ModuleDescFromJson(json);
+  factory ModuleDesc.fromJson(Map<String, dynamic> json) => _$ModuleDescFromJson(json);
 }
 
 @freezed
@@ -234,8 +224,7 @@ sealed class ModuleMajor with _$ModuleMajor {
     @JsonKey(name: 'live_rcmd') MajorLiveRcmd? liveRcmd,
   }) = _ModuleMajor;
 
-  factory ModuleMajor.fromJson(Map<String, dynamic> json) =>
-      _$ModuleMajorFromJson(json);
+  factory ModuleMajor.fromJson(Map<String, dynamic> json) => _$ModuleMajorFromJson(json);
 }
 
 @freezed
@@ -257,13 +246,9 @@ sealed class MajorArchive with _$MajorArchive {
 
 @freezed
 sealed class MajorDraw with _$MajorDraw {
-  const factory MajorDraw({
-    required int id,
-    required List<DrawItem> items,
-  }) = _MajorDraw;
+  const factory MajorDraw({required int id, required List<DrawItem> items}) = _MajorDraw;
 
-  factory MajorDraw.fromJson(Map<String, dynamic> json) =>
-      _$MajorDrawFromJson(json);
+  factory MajorDraw.fromJson(Map<String, dynamic> json) => _$MajorDrawFromJson(json);
 }
 
 @freezed
@@ -275,8 +260,7 @@ sealed class DrawItem with _$DrawItem {
     required int size,
   }) = _DrawItem;
 
-  factory DrawItem.fromJson(Map<String, dynamic> json) =>
-      _$DrawItemFromJson(json);
+  factory DrawItem.fromJson(Map<String, dynamic> json) => _$DrawItemFromJson(json);
 }
 
 @freezed
@@ -304,19 +288,14 @@ sealed class MajorCommon with _$MajorCommon {
     required String label,
   }) = _MajorCommon;
 
-  factory MajorCommon.fromJson(Map<String, dynamic> json) =>
-      _$MajorCommonFromJson(json);
+  factory MajorCommon.fromJson(Map<String, dynamic> json) => _$MajorCommonFromJson(json);
 }
 
 @freezed
 sealed class MajorStat with _$MajorStat {
-  const factory MajorStat({
-    required String play,
-    required String danmaku,
-  }) = _MajorStat;
+  const factory MajorStat({required String play, required String danmaku}) = _MajorStat;
 
-  factory MajorStat.fromJson(Map<String, dynamic> json) =>
-      _$MajorStatFromJson(json);
+  factory MajorStat.fromJson(Map<String, dynamic> json) => _$MajorStatFromJson(json);
 }
 
 @freezed
@@ -327,29 +306,21 @@ sealed class ModuleStat with _$ModuleStat {
     required StatCommon forward,
   }) = _ModuleStat;
 
-  factory ModuleStat.fromJson(Map<String, dynamic> json) =>
-      _$ModuleStatFromJson(json);
+  factory ModuleStat.fromJson(Map<String, dynamic> json) => _$ModuleStatFromJson(json);
 }
 
 @freezed
 sealed class StatLike with _$StatLike {
-  const factory StatLike({
-    required int count,
-    required bool status,
-  }) = _StatLike;
+  const factory StatLike({required int count, required bool status}) = _StatLike;
 
-  factory StatLike.fromJson(Map<String, dynamic> json) =>
-      _$StatLikeFromJson(json);
+  factory StatLike.fromJson(Map<String, dynamic> json) => _$StatLikeFromJson(json);
 }
 
 @freezed
 sealed class StatCommon with _$StatCommon {
-  const factory StatCommon({
-    required int count,
-  }) = _StatCommon;
+  const factory StatCommon({required int count}) = _StatCommon;
 
-  factory StatCommon.fromJson(Map<String, dynamic> json) =>
-      _$StatCommonFromJson(json);
+  factory StatCommon.fromJson(Map<String, dynamic> json) => _$StatCommonFromJson(json);
 }
 
 @freezed
@@ -359,8 +330,7 @@ sealed class ModuleTopic with _$ModuleTopic {
     @JsonKey(name: 'jump_url') required String jumpUrl,
   }) = _ModuleTopic;
 
-  factory ModuleTopic.fromJson(Map<String, dynamic> json) =>
-      _$ModuleTopicFromJson(json);
+  factory ModuleTopic.fromJson(Map<String, dynamic> json) => _$ModuleTopicFromJson(json);
 }
 
 @freezed
@@ -376,8 +346,7 @@ sealed class MajorPgc with _$MajorPgc {
     required int type,
   }) = _MajorPgc;
 
-  factory MajorPgc.fromJson(Map<String, dynamic> json) =>
-      _$MajorPgcFromJson(json);
+  factory MajorPgc.fromJson(Map<String, dynamic> json) => _$MajorPgcFromJson(json);
 }
 
 @freezed
@@ -405,8 +374,7 @@ sealed class MajorMusic with _$MajorMusic {
     required int id,
   }) = _MajorMusic;
 
-  factory MajorMusic.fromJson(Map<String, dynamic> json) =>
-      _$MajorMusicFromJson(json);
+  factory MajorMusic.fromJson(Map<String, dynamic> json) => _$MajorMusicFromJson(json);
 }
 
 @freezed
@@ -418,8 +386,7 @@ sealed class MajorOpus with _$MajorOpus {
     @JsonKey(name: 'jump_url') String? jumpUrl,
   }) = _MajorOpus;
 
-  factory MajorOpus.fromJson(Map<String, dynamic> json) =>
-      _$MajorOpusFromJson(json);
+  factory MajorOpus.fromJson(Map<String, dynamic> json) => _$MajorOpusFromJson(json);
 }
 
 @freezed
@@ -429,21 +396,14 @@ sealed class OpusSummary with _$OpusSummary {
     @JsonKey(name: 'rich_text_nodes') List<dynamic>? richTextNodes,
   }) = _OpusSummary;
 
-  factory OpusSummary.fromJson(Map<String, dynamic> json) =>
-      _$OpusSummaryFromJson(json);
+  factory OpusSummary.fromJson(Map<String, dynamic> json) => _$OpusSummaryFromJson(json);
 }
 
 @freezed
 sealed class OpusPic with _$OpusPic {
-  const factory OpusPic({
-    String? url,
-    int? width,
-    int? height,
-    int? size,
-  }) = _OpusPic;
+  const factory OpusPic({String? url, int? width, int? height, int? size}) = _OpusPic;
 
-  factory OpusPic.fromJson(Map<String, dynamic> json) =>
-      _$OpusPicFromJson(json);
+  factory OpusPic.fromJson(Map<String, dynamic> json) => _$OpusPicFromJson(json);
 }
 
 @freezed
@@ -457,8 +417,7 @@ sealed class MajorLive with _$MajorLive {
     @JsonKey(name: 'desc_second') required String descSecond,
   }) = _MajorLive;
 
-  factory MajorLive.fromJson(Map<String, dynamic> json) =>
-      _$MajorLiveFromJson(json);
+  factory MajorLive.fromJson(Map<String, dynamic> json) => _$MajorLiveFromJson(json);
 }
 
 @freezed

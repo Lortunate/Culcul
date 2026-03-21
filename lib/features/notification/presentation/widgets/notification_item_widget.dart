@@ -11,11 +11,7 @@ class NotificationItemWidget extends StatelessWidget {
   final ReplyItem item;
   final NotificationType type;
 
-  const NotificationItemWidget({
-    super.key,
-    required this.item,
-    required this.type,
-  });
+  const NotificationItemWidget({super.key, required this.item, required this.type});
 
   @override
   Widget build(BuildContext context) {
@@ -102,9 +98,7 @@ class NotificationItemWidget extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: colorScheme.surfaceContainerHighest.withValues(
-                        alpha: 0.3,
-                      ),
+                      color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Row(
@@ -172,7 +166,10 @@ class NotificationItemWidget extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          t.notification.navigation_error(type: detail.type, id: detail.subjectId.toString()),
+          t.notification.navigation_error(
+            type: detail.type,
+            id: detail.subjectId.toString(),
+          ),
         ),
       ),
     );

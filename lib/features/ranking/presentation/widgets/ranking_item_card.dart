@@ -10,11 +10,7 @@ class RankingItemCard extends StatelessWidget {
   final VideoModel video;
   final int rank;
 
-  const RankingItemCard({
-    required this.video,
-    required this.rank,
-    super.key,
-  });
+  const RankingItemCard({required this.video, required this.rank, super.key});
 
   @override
   Widget build(BuildContext context) {

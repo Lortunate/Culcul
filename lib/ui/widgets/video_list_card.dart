@@ -21,8 +21,7 @@ class VideoListCard extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final Widget? overlay; // Overlay on thumbnail (e.g. Rank)
   final Widget? middleContent; // Between title and footer
-  final Widget?
-  leading; // Custom leading widget (overrides coverUrl/VideoThumbnail)
+  final Widget? leading; // Custom leading widget (overrides coverUrl/VideoThumbnail)
   final Widget? trailing; // Custom trailing widget
   final VoidCallback? onLongPress;
   final bool showDefaultStats;
@@ -149,17 +148,9 @@ class VideoListCard extends StatelessWidget {
     );
 
     if (flat) {
-      return AppClickable(
-        onTap: onTap,
-        onLongPress: onLongPress,
-        child: content,
-      );
+      return AppClickable(onTap: onTap, onLongPress: onLongPress, child: content);
     }
 
-    return AppCardContainer(
-      onTap: onTap,
-      onLongPress: onLongPress,
-      child: content,
-    );
+    return AppCardContainer(onTap: onTap, onLongPress: onLongPress, child: content);
   }
 }

@@ -23,10 +23,7 @@ class LiveBottomBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.black, // Force black background
         border: Border(
-          top: BorderSide(
-            color: Colors.white.withValues(alpha: 0.05),
-            width: 1,
-          ),
+          top: BorderSide(color: Colors.white.withValues(alpha: 0.05), width: 1),
         ),
       ),
       child: SafeArea(

@@ -13,8 +13,5 @@ import 'package:media_kit/media_kit.dart';
     return sub.cancel;
   }, []);
 
-  return (
-    width: videoWidth.value.toDouble(),
-    height: videoHeight.value.toDouble(),
-  );
+  return (width: videoWidth.value.toDouble(), height: videoHeight.value.toDouble());
 }

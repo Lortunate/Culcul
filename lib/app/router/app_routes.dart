@@ -49,15 +49,9 @@ GoRouter router(Ref ref) {
 @TypedStatefulShellRoute<MainShellRoute>(
   branches: [
     TypedStatefulShellBranch(routes: [TypedGoRoute<HomeRoute>(path: '/home')]),
-    TypedStatefulShellBranch(
-      routes: [TypedGoRoute<DynamicRoute>(path: '/dynamic')],
-    ),
-    TypedStatefulShellBranch(
-      routes: [TypedGoRoute<RankingRoute>(path: '/ranking')],
-    ),
-    TypedStatefulShellBranch(
-      routes: [TypedGoRoute<ProfileRoute>(path: '/profile')],
-    ),
+    TypedStatefulShellBranch(routes: [TypedGoRoute<DynamicRoute>(path: '/dynamic')]),
+    TypedStatefulShellBranch(routes: [TypedGoRoute<RankingRoute>(path: '/ranking')]),
+    TypedStatefulShellBranch(routes: [TypedGoRoute<ProfileRoute>(path: '/profile')]),
   ],
 )
 class MainShellRoute extends StatefulShellRouteData {
@@ -83,10 +77,7 @@ class HomeRoute extends GoRouteData with $HomeRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -100,10 +91,7 @@ class DynamicRoute extends GoRouteData with $DynamicRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -127,10 +115,7 @@ class NotificationRoute extends GoRouteData with $NotificationRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -144,10 +129,7 @@ class RankingRoute extends GoRouteData with $RankingRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -161,10 +143,7 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -179,10 +158,7 @@ class WeeklyRoute extends GoRouteData with $WeeklyRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -251,19 +227,12 @@ class CommentReplyRoute extends GoRouteData with $CommentReplyRoute {
         upperMid: map['upperMid'] as int?,
       );
     }
-    return CommentReplyPage(
-      oid: oid,
-      rootId: rootId,
-      comment: $extra as CommentItem,
-    );
+    return CommentReplyPage(oid: oid, rootId: rootId, comment: $extra as CommentItem);
   }
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -278,10 +247,7 @@ class SearchRoute extends GoRouteData with $SearchRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -299,10 +265,7 @@ class FavoritesRoute extends GoRouteData with $FavoritesRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -324,10 +287,7 @@ class FavoriteDetailRoute extends GoRouteData with $FavoriteDetailRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -343,10 +303,7 @@ class FollowingsRoute extends GoRouteData with $FollowingsRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -362,10 +319,7 @@ class FollowersRoute extends GoRouteData with $FollowersRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -381,10 +335,7 @@ class UserProfileRoute extends GoRouteData with $UserProfileRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -414,10 +365,7 @@ class SettingsRoute extends GoRouteData with $SettingsRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -432,10 +380,7 @@ class ToViewRoute extends GoRouteData with $ToViewRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -450,10 +395,7 @@ class HistoryRoute extends GoRouteData with $HistoryRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -465,10 +407,7 @@ class ReplyNotificationRoute extends GoRouteData with $ReplyNotificationRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -480,10 +419,7 @@ class AtNotificationRoute extends GoRouteData with $AtNotificationRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -495,15 +431,11 @@ class LikeNotificationRoute extends GoRouteData with $LikeNotificationRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
-class SystemNotificationRoute extends GoRouteData
-    with $SystemNotificationRoute {
+class SystemNotificationRoute extends GoRouteData with $SystemNotificationRoute {
   const SystemNotificationRoute();
   @override
   Widget build(BuildContext context, GoRouterState state) =>
@@ -511,10 +443,7 @@ class SystemNotificationRoute extends GoRouteData
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -524,12 +453,7 @@ class ChatRoute extends GoRouteData with $ChatRoute {
   final int? sessionType;
   final String? avatarUrl;
 
-  const ChatRoute({
-    required this.talkerId,
-    this.name,
-    this.sessionType,
-    this.avatarUrl,
-  });
+  const ChatRoute({required this.talkerId, this.name, this.sessionType, this.avatarUrl});
 
   @override
   Widget build(BuildContext context, GoRouterState state) => ChatPage(
@@ -559,10 +483,7 @@ class ScannerRoute extends GoRouteData with $ScannerRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 
@@ -578,10 +499,7 @@ class DynamicDetailRoute extends GoRouteData with $DynamicDetailRoute {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 

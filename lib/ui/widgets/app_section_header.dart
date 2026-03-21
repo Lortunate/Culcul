@@ -36,10 +36,7 @@ class AppSectionHeader extends StatelessWidget {
             AppClickable(
               onTap: onTrailingTap,
               borderRadius: BorderRadius.circular(8),
-              child: Padding(
-                padding: const EdgeInsets.all(4),
-                child: trailing!,
-              ),
+              child: Padding(padding: const EdgeInsets.all(4), child: trailing!),
             ),
         ],
       ),

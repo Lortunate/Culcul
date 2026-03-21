@@ -46,9 +46,7 @@ class CacheInterceptor extends Interceptor {
     params.remove('force_refresh');
 
     final sortedKeys = params.keys.toList()..sort();
-    final sortedParams = sortedKeys
-        .map((key) => '$key=${params[key]}')
-        .join('&');
+    final sortedParams = sortedKeys.map((key) => '$key=${params[key]}').join('&');
 
     return 'api_cache_${options.path}_$sortedParams';
   }

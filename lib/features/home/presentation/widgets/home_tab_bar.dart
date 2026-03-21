@@ -5,12 +5,7 @@ class HomeTabBar extends StatelessWidget implements PreferredSizeWidget {
   final List<String> tabs;
   final ValueChanged<int>? onTap;
 
-  const HomeTabBar({
-    super.key,
-    this.controller,
-    required this.tabs,
-    this.onTap,
-  });
+  const HomeTabBar({super.key, this.controller, required this.tabs, this.onTap});
 
   @override
   Widget build(BuildContext context) {

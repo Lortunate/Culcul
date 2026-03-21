@@ -26,15 +26,11 @@ class DanmakuLayer extends HookConsumerWidget {
       videoDetailControllerProvider(bvid).select((s) => s.videoDetail?.aid),
     );
     final videoDimension = ref.watch(
-      videoDetailControllerProvider(bvid).select(
-        (s) => s.videoDetail?.dimension,
-      ),
+      videoDetailControllerProvider(bvid).select((s) => s.videoDetail?.dimension),
     );
 
     final settings = ref.watch(danmakuSettingsControllerProvider);
-    final maskProvider = ref.watch(
-      danmakuMaskProvider(oid: currentCid, pid: aid ?? 0),
-    );
+    final maskProvider = ref.watch(danmakuMaskProvider(oid: currentCid, pid: aid ?? 0));
 
     final player = ref.read(playerControllerProvider.notifier).player;
 
@@ -208,9 +204,7 @@ class DanmakuLayer extends HookConsumerWidget {
                 hideTop: !settings.showTop,
                 hideBottom: !settings.showBottom,
                 hideScroll: !settings.showScroll,
-                strokeWidth: settings.strokeWidth == 0
-                    ? 1.5
-                    : settings.strokeWidth,
+                strokeWidth: settings.strokeWidth == 0 ? 1.5 : settings.strokeWidth,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -234,8 +228,7 @@ class DanmakuMaskClipper extends CustomClipper<Path> {
 
   @override
   Path getClip(Size size) {
-    final rectPath = Path()
-      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    final rectPath = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
     if (maskPath == null || videoSize.width == 0 || videoSize.height == 0) {
       return rectPath;
     }

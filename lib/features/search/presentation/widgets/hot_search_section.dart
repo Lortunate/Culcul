@@ -31,10 +31,7 @@ class HotSearchSection extends ConsumerWidget {
               return SizedBox(
                 height: 120,
                 child: Center(
-                  child: Text(
-                    t.common.no_content,
-                    style: theme.textTheme.bodyMedium,
-                  ),
+                  child: Text(t.common.no_content, style: theme.textTheme.bodyMedium),
                 ),
               );
             }
@@ -65,17 +62,11 @@ class HotSearchSection extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.error_outline_rounded,
-                    color: colorScheme.error,
-                    size: 24,
-                  ),
+                  Icon(Icons.error_outline_rounded, color: colorScheme.error, size: 24),
                   const SizedBox(height: 8),
                   Text(
                     t.common.error,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.error,
-                    ),
+                    style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.error),
                   ),
                 ],
               ),

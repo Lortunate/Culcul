@@ -5,8 +5,7 @@ part 'private_message_model.freezed.dart';
 part 'private_message_model.g.dart';
 
 @freezed
-sealed class PrivateMessageSessionResponse
-    with _$PrivateMessageSessionResponse {
+sealed class PrivateMessageSessionResponse with _$PrivateMessageSessionResponse {
   const factory PrivateMessageSessionResponse({
     @JsonKey(name: 'session_list') List<PrivateMessageSession>? sessionList,
     @JsonKey(name: 'has_more') @Default(0) int hasMore,

@@ -27,9 +27,7 @@ class PrivateSessionList extends ConsumerWidget {
                     return SingleChildScrollView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight,
-                        ),
+                        constraints: BoxConstraints(minHeight: constraints.maxHeight),
                         child: const Center(child: Text('暂无消息')),
                       ),
                     );

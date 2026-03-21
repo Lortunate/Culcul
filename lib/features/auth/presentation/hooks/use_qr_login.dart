@@ -4,13 +4,7 @@ import 'package:culcul/features/auth/controllers/auth_controller.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-enum QrLoginStatus {
-  loading,
-  success,
-  scanned,
-  expired,
-  error,
-}
+enum QrLoginStatus { loading, success, scanned, expired, error }
 
 class UseQrLoginResult {
   final String? qrUrl;

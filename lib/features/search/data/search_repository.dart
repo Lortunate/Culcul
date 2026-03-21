@@ -53,10 +53,10 @@ class SearchRepository extends BaseRepository {
     final result = await safeCall(() => api.fetchTrendingRanking());
 
     return switch (result) {
-      Success(value: final response) => 
+      Success(value: final response) =>
         (response.code == 0)
-          ? Success(response.data)
-          : Failure(ServerException(response.message, code: response.code)),
+            ? Success(response.data)
+            : Failure(ServerException(response.message, code: response.code)),
       Failure(exception: final e) => Failure(e),
     };
   }
@@ -72,28 +72,28 @@ class SearchRepository extends BaseRepository {
     final result = await safeCall(() async {
       return searchType == 'all'
           ? await api.fetchSearchAll(
-            keyword: keyword,
-            page: page,
-            pageSize: pageSize,
-            searchType: searchType,
-            order: order,
-            duration: duration,
-          )
+              keyword: keyword,
+              page: page,
+              pageSize: pageSize,
+              searchType: searchType,
+              order: order,
+              duration: duration,
+            )
           : await api.fetchSearchByType(
-            keyword: keyword,
-            page: page,
-            pageSize: pageSize,
-            searchType: searchType,
-            order: order,
-            duration: duration,
-          );
+              keyword: keyword,
+              page: page,
+              pageSize: pageSize,
+              searchType: searchType,
+              order: order,
+              duration: duration,
+            );
     });
 
     return switch (result) {
-      Success(value: final response) => 
+      Success(value: final response) =>
         (response.code == 0 && response.data != null)
-          ? Success(response.data!)
-          : Failure(ServerException(response.message, code: response.code)),
+            ? Success(response.data!)
+            : Failure(ServerException(response.message, code: response.code)),
       Failure(exception: final e) => Failure(e),
     };
   }

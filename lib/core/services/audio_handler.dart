@@ -52,25 +52,27 @@ class CilixiliAudioHandler extends BaseAudioHandler {
   }
 
   void _broadcastState() {
-    playbackState.add(playbackState.value.copyWith(
-      controls: [
-        if (player.state.playing) MediaControl.pause else MediaControl.play,
-        MediaControl.stop, // Or close?
-      ],
-      systemActions: const {
-        MediaAction.seek,
-        MediaAction.seekForward,
-        MediaAction.seekBackward,
-        MediaAction.playPause,
-      },
-      androidCompactActionIndices: const [0],
-      processingState: _getProcessingState(),
-      playing: player.state.playing,
-      updatePosition: player.state.position,
-      bufferedPosition: player.state.buffer,
-      speed: player.state.rate,
-      queueIndex: 0,
-    ));
+    playbackState.add(
+      playbackState.value.copyWith(
+        controls: [
+          if (player.state.playing) MediaControl.pause else MediaControl.play,
+          MediaControl.stop, // Or close?
+        ],
+        systemActions: const {
+          MediaAction.seek,
+          MediaAction.seekForward,
+          MediaAction.seekBackward,
+          MediaAction.playPause,
+        },
+        androidCompactActionIndices: const [0],
+        processingState: _getProcessingState(),
+        playing: player.state.playing,
+        updatePosition: player.state.position,
+        bufferedPosition: player.state.buffer,
+        speed: player.state.rate,
+        queueIndex: 0,
+      ),
+    );
   }
 
   AudioProcessingState _getProcessingState() {
@@ -80,7 +82,7 @@ class CilixiliAudioHandler extends BaseAudioHandler {
     if (player.state.completed) {
       return AudioProcessingState.completed;
     }
-    // We don't have a direct error state check from player.state usually, 
+    // We don't have a direct error state check from player.state usually,
     // but assuming if not buffering and not completed, it's ready.
     // Ideally we track error from stream.
     return AudioProcessingState.ready;

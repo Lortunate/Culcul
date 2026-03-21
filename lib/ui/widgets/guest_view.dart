@@ -54,17 +54,11 @@ class GuestView extends StatelessWidget {
                       width: 100,
                       height: 100,
                       decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerHighest.withValues(
-                          alpha: 0.5,
-                        ),
+                        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                         shape: BoxShape.circle,
                       ),
                     ),
-                    Icon(
-                      Icons.lock_person_rounded,
-                      size: 56,
-                      color: colorScheme.primary,
-                    ),
+                    Icon(Icons.lock_person_rounded, size: 56, color: colorScheme.primary),
                     Positioned(
                       top: 40,
                       right: 40,
@@ -120,10 +114,7 @@ class GuestView extends StatelessWidget {
                     ),
                     child: Text(
                       t.auth.login,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

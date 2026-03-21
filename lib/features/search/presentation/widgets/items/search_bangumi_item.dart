@@ -24,10 +24,7 @@ class SearchBangumiItem extends StatelessWidget {
         aspectRatio: 3 / 4,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8),
-          child: AppNetworkImage(
-            url: item.cover ?? item.pic ?? '',
-            borderRadius: 8,
-          ),
+          child: AppNetworkImage(url: item.cover ?? item.pic ?? '', borderRadius: 8),
         ),
       ),
       middleContent: Column(

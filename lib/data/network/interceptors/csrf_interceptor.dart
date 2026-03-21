@@ -20,14 +20,9 @@ class CsrfInterceptor extends Interceptor {
 
       try {
         final cookieJar = _ref.read(cookieJarProvider);
-        final cookies = await cookieJar.loadForRequest(
-          Uri.parse(ApiConstants.baseUrl),
-        );
+        final cookies = await cookieJar.loadForRequest(Uri.parse(ApiConstants.baseUrl));
         final csrf = cookies
-            .firstWhere(
-              (c) => c.name == 'bili_jct',
-              orElse: () => Cookie('bili_jct', ''),
-            )
+            .firstWhere((c) => c.name == 'bili_jct', orElse: () => Cookie('bili_jct', ''))
             .value;
 
         if (csrf.isEmpty) {
@@ -49,9 +44,7 @@ class CsrfInterceptor extends Interceptor {
         }
       } catch (e) {
         if (e is AuthException) {
-          return handler.reject(
-            DioException(requestOptions: options, error: e),
-          );
+          return handler.reject(DioException(requestOptions: options, error: e));
         }
       }
     }

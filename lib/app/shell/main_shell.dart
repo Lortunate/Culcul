@@ -58,9 +58,7 @@ class MainShell extends StatelessWidget {
               selectedFontSize: 10,
               unselectedFontSize: 10,
               selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
-              unselectedLabelStyle: const TextStyle(
-                fontWeight: FontWeight.w500,
-              ),
+              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
               enableFeedback: true,
               type: BottomNavigationBarType.fixed,
               landscapeLayout: BottomNavigationBarLandscapeLayout.spread,

@@ -57,10 +57,7 @@ AuthApi authApi(Ref ref) {
 
 @riverpod
 AuthRepository authRepository(Ref ref) {
-  return AuthRepository(
-    ref.watch(authApiProvider),
-    ref.watch(storageBoxProvider),
-  );
+  return AuthRepository(ref.watch(authApiProvider), ref.watch(storageBoxProvider));
 }
 
 @riverpod
@@ -72,8 +69,6 @@ WeeklyApi weeklyApi(Ref ref) {
 WeeklyRepository weeklyRepository(Ref ref) {
   return WeeklyRepository(ref.watch(weeklyApiProvider));
 }
-
-
 
 @riverpod
 VideoApi videoApi(Ref ref) {
@@ -112,10 +107,7 @@ DynamicApi dynamicApi(Ref ref) {
 
 @riverpod
 DynamicRepository dynamicRepository(Ref ref) {
-  return DynamicRepository(
-    ref.watch(dynamicApiProvider),
-    ref.watch(cookieJarProvider),
-  );
+  return DynamicRepository(ref.watch(dynamicApiProvider), ref.watch(cookieJarProvider));
 }
 
 @riverpod
@@ -175,10 +167,7 @@ DanmakuApi danmakuApi(Ref ref) {
 
 @riverpod
 DanmakuRepository danmakuRepository(Ref ref) {
-  return DanmakuRepository(
-    ref.watch(danmakuApiProvider),
-    ref.watch(resourceApiProvider),
-  );
+  return DanmakuRepository(ref.watch(danmakuApiProvider), ref.watch(resourceApiProvider));
 }
 
 @riverpod

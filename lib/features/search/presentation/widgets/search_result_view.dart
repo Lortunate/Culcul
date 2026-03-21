@@ -41,11 +41,7 @@ class SearchResultTab extends HookConsumerWidget {
   final String keyword;
   final String searchType;
 
-  const SearchResultTab({
-    super.key,
-    required this.keyword,
-    this.searchType = 'all',
-  });
+  const SearchResultTab({super.key, required this.keyword, this.searchType = 'all'});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -82,8 +78,8 @@ class SearchResultTab extends HookConsumerWidget {
               return SearchResultList(
                 items: items,
                 hasMore: hasMore,
-                isLoadingMore: searchResultAsync.isLoading &&
-                    !searchResultAsync.isRefreshing,
+                isLoadingMore:
+                    searchResultAsync.isLoading && !searchResultAsync.isRefreshing,
                 onLoadMore: notifier.fetchMore,
                 onRetry: () => ref.refresh(provider),
               );

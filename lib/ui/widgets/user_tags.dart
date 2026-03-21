@@ -5,11 +5,7 @@ class VipTag extends StatelessWidget {
   final int type;
   final bool showShadow;
 
-  const VipTag({
-    super.key,
-    required this.type,
-    this.showShadow = false,
-  });
+  const VipTag({super.key, required this.type, this.showShadow = false});
 
   @override
   Widget build(BuildContext context) {

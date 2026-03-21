@@ -13,9 +13,7 @@ abstract class ProfileApi {
   // x/space/wbi/acc/info?mid=xxx
   @GET('/x/space/wbi/acc/info')
   @Headers({'x-bili-wbi': 'true'})
-  Future<ApiResponse<dynamic>> getAccountInfo(
-    @Query('mid') int mid,
-  );
+  Future<ApiResponse<dynamic>> getAccountInfo(@Query('mid') int mid);
 
   // x/space/wbi/arc/search
   @GET('/x/space/wbi/arc/search')
@@ -30,15 +28,11 @@ abstract class ProfileApi {
 
   // x/space/top/arc
   @GET('/x/space/top/arc')
-  Future<ApiResponse<UserSpaceVideoModel>> getStickyVideo(
-    @Query('vmid') int vmid,
-  );
+  Future<ApiResponse<UserSpaceVideoModel>> getStickyVideo(@Query('vmid') int vmid);
 
   // x/space/masterpiece
   @GET('/x/space/masterpiece')
-  Future<ApiResponse<List<UserSpaceVideoModel>>> getMasterpiece(
-    @Query('vmid') int vmid,
-  );
+  Future<ApiResponse<List<UserSpaceVideoModel>>> getMasterpiece(@Query('vmid') int vmid);
 
   // x/relation/stat?vmid=xxx
   @GET('/x/relation/stat')

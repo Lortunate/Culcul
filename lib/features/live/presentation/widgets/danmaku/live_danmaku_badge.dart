@@ -8,19 +8,17 @@ class LiveGuardBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color =
-        level == 1
-            ? const Color(0xFFD32F2F) // Material Red 700
-            : level == 2
-            ? const Color(0xFF7B1FA2) // Material Purple 700
-            : const Color(0xFF1976D2); // Material Blue 700
+    final color = level == 1
+        ? const Color(0xFFD32F2F) // Material Red 700
+        : level == 2
+        ? const Color(0xFF7B1FA2) // Material Purple 700
+        : const Color(0xFF1976D2); // Material Blue 700
 
-    final icon =
-        level == 1
-            ? Icons.local_police
-            : level == 2
-            ? Icons.star
-            : Icons.shield;
+    final icon = level == 1
+        ? Icons.local_police
+        : level == 2
+        ? Icons.star
+        : Icons.shield;
 
     return Container(
       margin: const EdgeInsets.only(right: 4),
@@ -51,10 +49,9 @@ class LiveMedalBadge extends StatelessWidget {
       colorInt = medal[4] as int;
     }
 
-    final color =
-        colorInt != 0
-            ? Color(0xFF000000 + colorInt)
-            : Theme.of(context).colorScheme.primary;
+    final color = colorInt != 0
+        ? Color(0xFF000000 + colorInt)
+        : Theme.of(context).colorScheme.primary;
 
     return Container(
       margin: const EdgeInsets.only(right: 4),
@@ -69,20 +66,14 @@ class LiveMedalBadge extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
             child: Text(
               name,
-              style: TextStyle(
-                color: color,
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.w600),
             ),
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
             decoration: BoxDecoration(
               color: color,
-              borderRadius: const BorderRadius.horizontal(
-                right: Radius.circular(2),
-              ),
+              borderRadius: const BorderRadius.horizontal(right: Radius.circular(2)),
             ),
             child: Text(
               level,

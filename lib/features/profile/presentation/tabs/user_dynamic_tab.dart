@@ -33,9 +33,7 @@ class _UserDynamicTabState extends ConsumerState<UserDynamicTab>
         feedAsync.when(
           data: (items) {
             if (items.isEmpty) {
-              return const SliverFillRemaining(
-                child: Center(child: Text('暂无动态')),
-              );
+              return const SliverFillRemaining(child: Center(child: Text('暂无动态')));
             }
             return SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {

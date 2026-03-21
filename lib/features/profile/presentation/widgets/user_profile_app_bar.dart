@@ -9,11 +9,7 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   final UserProfile? profile;
   final ValueListenable<double> scrollOffset;
 
-  const UserProfileAppBar({
-    super.key,
-    this.profile,
-    required this.scrollOffset,
-  });
+  const UserProfileAppBar({super.key, this.profile, required this.scrollOffset});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -29,16 +25,16 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
 
         const double fadeStart = 0;
         const double fadeEnd = 120;
-        final double opacity = ((offset - fadeStart) / (fadeEnd - fadeStart))
-            .clamp(0.0, 1.0);
+        final double opacity = ((offset - fadeStart) / (fadeEnd - fadeStart)).clamp(
+          0.0,
+          1.0,
+        );
         final bool isScrolled = opacity > 0.8;
 
         final Color backgroundColor = theme.scaffoldBackgroundColor.withValues(
           alpha: opacity,
         );
-        final Color contentColor = isScrolled
-            ? colorScheme.onSurface
-            : Colors.white;
+        final Color contentColor = isScrolled ? colorScheme.onSurface : Colors.white;
         final Color iconBackgroundColor = isScrolled
             ? Colors.transparent
             : Colors.black.withValues(alpha: 0.3);
@@ -97,9 +93,7 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                   backgroundColor: iconBackgroundColor,
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Search in Space: Coming Soon'),
-                      ),
+                      const SnackBar(content: Text('Search in Space: Coming Soon')),
                     );
                   },
                 ),
@@ -171,9 +165,7 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
         onPressed: onPressed,
         icon: Icon(icon, color: color, size: 22),
         constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-        style: IconButton.styleFrom(
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        ),
+        style: IconButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
       ),
     );
   }

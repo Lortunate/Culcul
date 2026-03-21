@@ -31,11 +31,8 @@ class LiveRoomPage extends HookConsumerWidget {
               liveAnchorInfo: state.liveAnchorInfo,
               guardList: state.guardList,
               goldRank: state.goldRank,
-              onFollow:
-                  () =>
-                      ref
-                          .read(liveRoomControllerProvider(roomId).notifier)
-                          .toggleFollow(),
+              onFollow: () =>
+                  ref.read(liveRoomControllerProvider(roomId).notifier).toggleFollow(),
             ),
 
             // 2. Video Player
@@ -48,7 +45,9 @@ class LiveRoomPage extends HookConsumerWidget {
             ),
 
             // 3. Room Info & Danmaku
-            Expanded(child: LiveRoomContent(roomId: roomId, state: state)),
+            Expanded(
+              child: LiveRoomContent(roomId: roomId, state: state),
+            ),
 
             // 4. Bottom Input Bar
             LiveBottomBar(

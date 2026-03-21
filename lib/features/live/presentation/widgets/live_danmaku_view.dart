@@ -34,8 +34,7 @@ class LiveDanmakuView extends StatelessWidget {
       return LiveSystemMessage(item: item);
     }
 
-    if (item.nickname == t.live.danmaku.system_notice ||
-        item.nickname == '系统消息') {
+    if (item.nickname == t.live.danmaku.system_notice || item.nickname == '系统消息') {
       return LiveSystemMessage(item: item);
     }
 

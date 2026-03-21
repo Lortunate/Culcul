@@ -102,11 +102,7 @@ class _ActionItem extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
 
-  const _ActionItem({
-    required this.icon,
-    required this.text,
-    required this.onTap,
-  });
+  const _ActionItem({required this.icon, required this.text, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

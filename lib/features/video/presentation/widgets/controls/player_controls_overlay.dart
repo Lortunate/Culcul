@@ -29,9 +29,7 @@ class PlayerControlsOverlay extends HookConsumerWidget {
     final showControls = ref.watch(
       playerControllerProvider.select((s) => s.showControls),
     );
-    final isLocked = ref.watch(
-      playerControllerProvider.select((s) => s.isLocked),
-    );
+    final isLocked = ref.watch(playerControllerProvider.select((s) => s.isLocked));
     final playerController = ref.read(playerControllerProvider.notifier);
     final videoDetailState = ref.watch(videoDetailControllerProvider(bvid));
     final videoTitle = videoDetailState.videoDetail?.title;
@@ -41,8 +39,7 @@ class PlayerControlsOverlay extends HookConsumerWidget {
         context,
         PlayerSettingsSheet(
           bvid: bvid,
-          isBottomSheet:
-              MediaQuery.of(context).orientation == Orientation.portrait,
+          isBottomSheet: MediaQuery.of(context).orientation == Orientation.portrait,
         ),
       );
     }
@@ -72,9 +69,7 @@ class PlayerControlsOverlay extends HookConsumerWidget {
                 height: 160,
                 child: IgnorePointer(
                   child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: PlayerTheme.bottomGradient,
-                    ),
+                    decoration: BoxDecoration(gradient: PlayerTheme.bottomGradient),
                   ),
                 ),
               ),

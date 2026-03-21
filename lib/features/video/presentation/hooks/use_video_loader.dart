@@ -5,11 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
 
-void useVideoLoader(
-  WidgetRef ref,
-  Player player,
-  VideoDetailState state,
-) {
+void useVideoLoader(WidgetRef ref, Player player, VideoDetailState state) {
   final playerController = ref.read(playerControllerProvider.notifier);
   final lastLoadedCid = useRef<int?>(null);
   final lastPlayUrl = useRef<String?>(null);

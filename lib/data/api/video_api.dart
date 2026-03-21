@@ -39,9 +39,7 @@ abstract class VideoApi {
 
   @GET(ApiConstants.videoTags)
   @Headers({'x-bili-wbi': 'true'})
-  Future<ApiResponse<List<VideoTag>>> fetchVideoTags(
-    @Query('bvid') String bvid,
-  );
+  Future<ApiResponse<List<VideoTag>>> fetchVideoTags(@Query('bvid') String bvid);
 
   @GET(ApiConstants.videoPlayUrl)
   @Headers({'x-bili-wbi': 'true'})
@@ -63,9 +61,7 @@ abstract class VideoApi {
 
   @GET(ApiConstants.related)
   @Headers({'x-bili-wbi': 'true'})
-  Future<ApiResponse<List<RelatedVideo>>> fetchRelatedVideos(
-    @Query('bvid') String bvid,
-  );
+  Future<ApiResponse<List<RelatedVideo>>> fetchRelatedVideos(@Query('bvid') String bvid);
 
   @GET(ApiConstants.reply)
   @Headers({'x-bili-wbi': 'true'})

@@ -11,12 +11,7 @@ class AuthState {
   final bool isLoading;
   final String? error;
 
-  AuthState({
-    this.isLoggedIn = false,
-    this.user,
-    this.isLoading = false,
-    this.error,
-  });
+  AuthState({this.isLoggedIn = false, this.user, this.isLoading = false, this.error});
 
   factory AuthState.initial() => AuthState();
 
@@ -61,11 +56,7 @@ class Auth extends _$Auth {
         if (stillCached != null) {
           state = state.copyWith(isLoading: false);
         } else {
-          state = state.copyWith(
-            isLoggedIn: false,
-            user: null,
-            isLoading: false,
-          );
+          state = state.copyWith(isLoggedIn: false, user: null, isLoading: false);
         }
     }
   }
@@ -104,14 +95,16 @@ class Auth extends _$Auth {
     String seccode,
   ) async {
     state = state.copyWith(isLoading: true, error: null);
-    final result = await ref.read(authRepositoryProvider).loginWithPassword(
-      username: username,
-      password: password,
-      token: token,
-      challenge: challenge,
-      validate: validate,
-      seccode: seccode,
-    );
+    final result = await ref
+        .read(authRepositoryProvider)
+        .loginWithPassword(
+          username: username,
+          password: password,
+          token: token,
+          challenge: challenge,
+          validate: validate,
+          seccode: seccode,
+        );
 
     switch (result) {
       case Success(value: final user):
@@ -122,12 +115,7 @@ class Auth extends _$Auth {
     }
   }
 
-  Future<void> loginWithSms(
-    int cid,
-    String phone,
-    String code,
-    String captchaKey,
-  ) async {
+  Future<void> loginWithSms(int cid, String phone, String code, String captchaKey) async {
     state = state.copyWith(isLoading: true, error: null);
     final result = await ref
         .read(authRepositoryProvider)

@@ -6,9 +6,7 @@ import 'package:dio/dio.dart';
 /// Base class for repositories that handle API calls with consistent error handling
 abstract class BaseRepository {
   /// Wraps an API call in a Result type with consistent error handling
-  Future<Result<T, AppException>> safeCall<T>(
-    Future<T> Function() apiCall,
-  ) async {
+  Future<Result<T, AppException>> safeCall<T>(Future<T> Function() apiCall) async {
     try {
       final result = await apiCall();
       return Success(result);
@@ -57,7 +55,6 @@ abstract class BaseRepository {
       return Failure(UnknownException('Unexpected error occurred: $e', cause: e));
     }
   }
-
 
   /// Wraps an API call that returns a nullable value
   Future<Result<T?, AppException>> safeCallNullable<T>(

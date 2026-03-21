@@ -82,9 +82,7 @@ class DynamicPostCard extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 15,
-                    color:
-                        post.authorName == '哔哩哔哩番剧' ||
-                            post.authorName == '哔哩哔哩漫画'
+                    color: post.authorName == '哔哩哔哩番剧' || post.authorName == '哔哩哔哩漫画'
                         ? colorScheme.primary
                         : colorScheme.onSurface,
                   ),
@@ -92,10 +90,7 @@ class DynamicPostCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   post.timeText,
-                  style: TextStyle(
-                    color: colorScheme.onSurfaceVariant,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
                 ),
               ],
             ),
@@ -109,9 +104,7 @@ class DynamicPostCard extends StatelessWidget {
             onPressed: () {},
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
-            style: const ButtonStyle(
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
+            style: const ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
           ),
         ],
       ),
@@ -146,18 +139,16 @@ class DynamicPostCard extends StatelessWidget {
         Expanded(
           child: _buildStat(
             context,
-            post.isLiked
-                ? Icons.thumb_up_alt_rounded
-                : Icons.thumb_up_alt_outlined,
+            post.isLiked ? Icons.thumb_up_alt_rounded : Icons.thumb_up_alt_outlined,
             post.likeCount,
             t.moments.actions.like,
             () {
               if (onLike != null) {
                 onLike!(post);
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(t.moments.like_coming_soon)),
-                );
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(t.moments.like_coming_soon)));
               }
             },
             color: post.isLiked ? Theme.of(context).colorScheme.primary : null,
@@ -175,8 +166,7 @@ class DynamicPostCard extends StatelessWidget {
     VoidCallback onTap, {
     Color? color,
   }) {
-    final contentColor =
-        color ?? Theme.of(context).colorScheme.onSurfaceVariant;
+    final contentColor = color ?? Theme.of(context).colorScheme.onSurfaceVariant;
 
     return InkWell(
       onTap: onTap,

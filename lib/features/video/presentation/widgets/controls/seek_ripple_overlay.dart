@@ -31,17 +31,13 @@ class SeekRippleOverlay extends HookWidget {
             opacity: 1.0 - controller.value,
             child: Container(
               color: Colors.white.withValues(alpha: 0.2),
-              alignment: isForward
-                  ? Alignment.centerRight
-                  : Alignment.centerLeft,
+              alignment: isForward ? Alignment.centerRight : Alignment.centerLeft,
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    isForward
-                        ? Icons.fast_forward_rounded
-                        : Icons.fast_rewind_rounded,
+                    isForward ? Icons.fast_forward_rounded : Icons.fast_rewind_rounded,
                     color: Colors.white,
                     size: 40,
                   ),

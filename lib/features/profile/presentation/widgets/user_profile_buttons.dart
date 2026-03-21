@@ -34,9 +34,7 @@ class UserProfileButtons extends ConsumerWidget {
                 padding: EdgeInsets.zero,
                 minimumSize: Size(double.infinity, height),
                 fixedSize: Size.fromHeight(height),
-                side: BorderSide(
-                  color: colorScheme.outline.withValues(alpha: 0.3),
-                ),
+                side: BorderSide(color: colorScheme.outline.withValues(alpha: 0.3)),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(borderRadius),
                 ),

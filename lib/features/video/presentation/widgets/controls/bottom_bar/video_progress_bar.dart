@@ -31,8 +31,7 @@ class BufferBar extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final player = ref.watch(playerControllerProvider.notifier).player;
     final duration = useStream(player.stream.duration).data ?? Duration.zero;
-    final bufferedPosition =
-        useStream(player.stream.buffer).data ?? Duration.zero;
+    final bufferedPosition = useStream(player.stream.buffer).data ?? Duration.zero;
 
     final double max = duration.inMilliseconds.toDouble();
     final safeMax = max > 0 ? max : 1.0;
@@ -85,17 +84,11 @@ class SliderBar extends HookConsumerWidget {
         activeTrackColor: Theme.of(context).colorScheme.primary,
         inactiveTrackColor: Colors.transparent,
         thumbColor: Theme.of(context).colorScheme.primary,
-        thumbShape: const RoundSliderThumbShape(
-          enabledThumbRadius: 8,
-          elevation: 2,
-        ),
+        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8, elevation: 2),
         overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
         trackHeight: 2,
         showValueIndicator: ShowValueIndicator.onDrag,
-        valueIndicatorTextStyle: const TextStyle(
-          color: Colors.white,
-          fontSize: 12,
-        ),
+        valueIndicatorTextStyle: const TextStyle(color: Colors.white, fontSize: 12),
         valueIndicatorColor: Theme.of(context).colorScheme.primary,
       ),
       child: Slider(

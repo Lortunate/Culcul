@@ -35,10 +35,7 @@ class LiveGiftMessage extends StatelessWidget {
                   ),
                   TextSpan(
                     text: ' ${item.text}',
-                    style: TextStyle(
-                      color: colorScheme.primary,
-                      fontSize: 13,
-                    ),
+                    style: TextStyle(color: colorScheme.primary, fontSize: 13),
                   ),
                 ],
               ),

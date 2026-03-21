@@ -16,10 +16,7 @@ class ProfilePage extends HookConsumerWidget {
     final authState = ref.watch(authProvider);
 
     if (!authState.isLoggedIn) {
-      return GuestView(
-        title: t.profile.not_logged_in,
-        message: t.profile.login_hint,
-      );
+      return GuestView(title: t.profile.not_logged_in, message: t.profile.login_hint);
     }
 
     final colorScheme = Theme.of(context).colorScheme;

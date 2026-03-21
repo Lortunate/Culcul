@@ -79,16 +79,16 @@ class UserDynamicNotifier extends _$UserDynamicNotifier {
     if (index == -1) return;
 
     final item = items[index];
-    
+
     // Deep copy update logic
     final newLikeCount = isLiked ? item.likeCount - 1 : item.likeCount + 1;
     final newStatus = !isLiked;
-    
+
     final newStatLike = item.modules.moduleStat?.like.copyWith(
       count: newLikeCount,
       status: newStatus,
     );
-    
+
     if (item.modules.moduleStat != null && newStatLike != null) {
       final newModuleStat = item.modules.moduleStat!.copyWith(like: newStatLike);
       final newModules = item.modules.copyWith(moduleStat: newModuleStat);
@@ -98,9 +98,7 @@ class UserDynamicNotifier extends _$UserDynamicNotifier {
       newItems[index] = newItem;
       state = AsyncData(newItems);
 
-      final result = await ref
-          .read(dynamicRepositoryProvider)
-          .likeDynamic(id, !isLiked);
+      final result = await ref.read(dynamicRepositoryProvider).likeDynamic(id, !isLiked);
       if (result.isFailure) {
         // Revert
         state = oldState;

@@ -5,13 +5,10 @@ import 'app_colors.dart';
 class AppComponentTheme {
   AppComponentTheme._();
 
-
   static AppBarTheme appBar(bool isDark) {
     final surface = isDark ? AppColors.darkSurface : AppColors.surface;
     final text = isDark ? AppColors.darkTextPrimary : AppColors.textPrimary;
-    final overlayStyle = isDark
-        ? SystemUiOverlayStyle.light
-        : SystemUiOverlayStyle.dark;
+    final overlayStyle = isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark;
 
     return AppBarTheme(
       backgroundColor: surface,
@@ -19,15 +16,9 @@ class AppComponentTheme {
       elevation: 0,
       scrolledUnderElevation: 0,
       centerTitle: true,
-      titleTextStyle: TextStyle(
-        color: text,
-        fontSize: 17,
-        fontWeight: FontWeight.w600,
-      ),
+      titleTextStyle: TextStyle(color: text, fontSize: 17, fontWeight: FontWeight.w600),
       iconTheme: IconThemeData(color: text, size: 24),
-      systemOverlayStyle: overlayStyle.copyWith(
-        statusBarColor: Colors.transparent,
-      ),
+      systemOverlayStyle: overlayStyle.copyWith(statusBarColor: Colors.transparent),
     );
   }
 
@@ -39,41 +30,25 @@ class AppComponentTheme {
     return TabBarThemeData(
       labelColor: AppColors.primary,
       unselectedLabelColor: unselectedLabel,
-      labelStyle: const TextStyle(
-        fontSize: 15,
-        fontWeight: FontWeight.w600,
-      ),
-      unselectedLabelStyle: const TextStyle(
-        fontSize: 15,
-        fontWeight: FontWeight.w500,
-      ),
+      labelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+      unselectedLabelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
       indicatorSize: TabBarIndicatorSize.label,
       indicatorColor: AppColors.primary,
       dividerColor: Colors.transparent,
-      overlayColor: WidgetStateProperty.all(
-        AppColors.primary.withValues(alpha: 0.1),
-      ),
+      overlayColor: WidgetStateProperty.all(AppColors.primary.withValues(alpha: 0.1)),
     );
   }
 
   static BottomNavigationBarThemeData bottomNavBar(bool isDark) {
     final surface = isDark ? AppColors.darkSurface : AppColors.surface;
-    final unselectedItem = isDark
-        ? AppColors.darkTextSecondary
-        : AppColors.textSecondary;
+    final unselectedItem = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
 
     return BottomNavigationBarThemeData(
       backgroundColor: surface,
       selectedItemColor: AppColors.primary,
       unselectedItemColor: unselectedItem,
-      selectedLabelStyle: const TextStyle(
-        fontSize: 10,
-        fontWeight: FontWeight.w500,
-      ),
-      unselectedLabelStyle: const TextStyle(
-        fontSize: 10,
-        fontWeight: FontWeight.w400,
-      ),
+      selectedLabelStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.w500),
+      unselectedLabelStyle: const TextStyle(fontSize: 10, fontWeight: FontWeight.w400),
       type: BottomNavigationBarType.fixed,
       elevation: 0,
       showSelectedLabels: true,
@@ -111,9 +86,7 @@ class AppComponentTheme {
   }
 
   static TextButtonThemeData textButton(bool isDark) {
-    final color = isDark
-        ? AppColors.darkTextSecondary
-        : AppColors.textSecondary;
+    final color = isDark ? AppColors.darkTextSecondary : AppColors.textSecondary;
 
     return TextButtonThemeData(
       style: TextButton.styleFrom(

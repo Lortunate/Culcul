@@ -59,8 +59,7 @@ class ExpandableDescriptionAndTags extends HookWidget {
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children:
-                    tags.take(12).map((tag) => CompactTag(tag: tag)).toList(),
+                children: tags.take(12).map((tag) => CompactTag(tag: tag)).toList(),
               ),
             ],
           ],

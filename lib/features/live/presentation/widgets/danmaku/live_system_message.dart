@@ -16,10 +16,7 @@ class LiveSystemMessage extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF1F1F1F).withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
-          width: 0.5,
-        ),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

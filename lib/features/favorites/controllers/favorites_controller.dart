@@ -148,10 +148,7 @@ class FavFolderResources extends _$FavFolderResources {
     return switch (result) {
       Success(value: final response) => () {
         _hasMore = response.hasMore;
-        return FavFolderDetailState(
-          info: response.info,
-          list: response.medias ?? [],
-        );
+        return FavFolderDetailState(info: response.info, list: response.medias ?? []);
       }(),
       Failure(exception: final e) => throw e,
     };

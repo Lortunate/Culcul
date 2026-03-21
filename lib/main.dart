@@ -34,13 +34,9 @@ void main() async {
   }
 
   final appDocDir = await getApplicationDocumentsDirectory();
-  final cookieJar = PersistCookieJar(
-    storage: FileStorage("${appDocDir.path}/.cookies/"),
-  );
+  final cookieJar = PersistCookieJar(storage: FileStorage("${appDocDir.path}/.cookies/"));
 
-  final cacheStore = FileCacheStore(
-    '${cacheDir?.path ?? appDocDir.path}/http_cache',
-  );
+  final cacheStore = FileCacheStore('${cacheDir?.path ?? appDocDir.path}/http_cache');
 
   LocaleSettings.useDeviceLocale();
 

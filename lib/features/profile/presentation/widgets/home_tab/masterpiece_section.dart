@@ -33,8 +33,7 @@ class MasterpieceSection extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     final video = videos[index];
                     return GestureDetector(
-                      onTap: () =>
-                          VideoDetailRoute(bvid: video.bvid).push(context),
+                      onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
                       child: SizedBox(
                         width: 160,
                         child: Column(
@@ -55,15 +54,12 @@ class MasterpieceSection extends ConsumerWidget {
                               video.title,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodyMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 13,
-                                    height: 1.3,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurface,
-                                  ),
+                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 13,
+                                height: 1.3,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
                             ),
                           ],
                         ),

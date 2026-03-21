@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 void showSidePanel(BuildContext context, Widget child) {
-  final isLandscape =
-      MediaQuery.of(context).orientation == Orientation.landscape;
+  final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
   if (isLandscape) {
     showGeneralDialog(
@@ -16,10 +15,10 @@ void showSidePanel(BuildContext context, Widget child) {
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return SlideTransition(
-          position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-              .animate(
-                CurvedAnimation(parent: animation, curve: Curves.easeOutQuart),
-              ),
+          position: Tween<Offset>(
+            begin: const Offset(1, 0),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOutQuart)),
           child: child,
         );
       },

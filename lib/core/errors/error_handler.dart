@@ -34,10 +34,7 @@ class ErrorHandler {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(
-          message,
-          style: TextStyle(color: theme.colorScheme.onError),
-        ),
+        content: Text(message, style: TextStyle(color: theme.colorScheme.onError)),
         backgroundColor: theme.colorScheme.error,
         behavior: SnackBarBehavior.floating,
         action: onRetry != null

@@ -30,9 +30,7 @@ class VideoPartsSection extends StatelessWidget {
             children: [
               Text(
                 '${t.video.parts} (${pages.length})',
-                style: theme.textTheme.labelLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
               ),
               const Spacer(),
               Icon(
@@ -59,17 +57,14 @@ class VideoPartsSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(6),
                 backgroundColor: isSelected
                     ? colorScheme.primaryContainer.withValues(alpha: 0.5)
-                    : colorScheme.surfaceContainerHighest.withValues(
-                      alpha: 0.4,
-                    ),
+                    : colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
                 child: Container(
                   constraints: const BoxConstraints(minWidth: 80),
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(
-                      color:
-                          isSelected ? colorScheme.primary : Colors.transparent,
+                      color: isSelected ? colorScheme.primary : Colors.transparent,
                       width: 1,
                     ),
                   ),
@@ -77,12 +72,8 @@ class VideoPartsSection extends StatelessWidget {
                   child: Text(
                     'P${page.page} ${page.part}',
                     style: theme.textTheme.labelMedium?.copyWith(
-                      color:
-                          isSelected
-                              ? colorScheme.primary
-                              : colorScheme.onSurface,
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: isSelected ? colorScheme.primary : colorScheme.onSurface,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
                 ),

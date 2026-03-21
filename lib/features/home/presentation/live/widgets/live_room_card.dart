@@ -22,7 +22,6 @@ class LiveRoomCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Cover Image with Gradient Overlay and Info
           Stack(
             children: [
               AspectRatio(
@@ -35,10 +34,7 @@ class LiveRoomCard extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withValues(alpha: 0.6),
-                      ],
+                      colors: [Colors.transparent, Colors.black.withValues(alpha: 0.6)],
                       stops: const [0.6, 1.0],
                     ),
                   ),
@@ -49,10 +45,7 @@ class LiveRoomCard extends StatelessWidget {
                 right: 6,
                 top: 6,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 3,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                   decoration: BoxDecoration(
                     color: Colors.black.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(4),

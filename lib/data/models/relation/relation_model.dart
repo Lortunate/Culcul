@@ -34,10 +34,8 @@ sealed class RelationUser with _$RelationUser {
 
 @freezed
 sealed class OfficialVerify with _$OfficialVerify {
-  const factory OfficialVerify({
-    @Default(-1) int type,
-    @Default('') String desc,
-  }) = _OfficialVerify;
+  const factory OfficialVerify({@Default(-1) int type, @Default('') String desc}) =
+      _OfficialVerify;
 
   factory OfficialVerify.fromJson(Map<String, dynamic> json) =>
       _$OfficialVerifyFromJson(json);
@@ -51,6 +49,5 @@ sealed class VipInfo with _$VipInfo {
     @Default('') String nicknameColor,
   }) = _VipInfo;
 
-  factory VipInfo.fromJson(Map<String, dynamic> json) =>
-      _$VipInfoFromJson(json);
+  factory VipInfo.fromJson(Map<String, dynamic> json) => _$VipInfoFromJson(json);
 }

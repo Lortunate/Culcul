@@ -75,9 +75,7 @@ class DynamicDetailBottomBar extends StatelessWidget {
             post.isLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined,
             post.likeCount,
             onLike,
-            color: post.isLiked
-                ? Theme.of(context).colorScheme.primary
-                : null,
+            color: post.isLiked ? Theme.of(context).colorScheme.primary : null,
           ),
           const SizedBox(width: 16),
           _buildActionIcon(

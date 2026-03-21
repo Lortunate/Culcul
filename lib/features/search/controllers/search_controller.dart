@@ -78,7 +78,9 @@ class SearchResult extends _$SearchResult {
     state = AsyncLoading<SearchResultData?>().copyWithPrevious(state);
 
     state = await AsyncValue.guard(() async {
-      final result = await ref.read(searchRepositoryProvider).fetchSearchAll(
+      final result = await ref
+          .read(searchRepositoryProvider)
+          .fetchSearchAll(
             keyword: keyword,
             searchType: searchType,
             order: order,
@@ -88,8 +90,8 @@ class SearchResult extends _$SearchResult {
 
       return switch (result) {
         Success(value: final newData) => newData.copyWith(
-            result: [...oldState.result, ...newData.result],
-          ),
+          result: [...oldState.result, ...newData.result],
+        ),
         Failure(exception: final e) => throw e,
       };
     });

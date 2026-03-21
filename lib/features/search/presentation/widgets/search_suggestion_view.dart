@@ -47,8 +47,7 @@ class SearchSuggestionView extends HookConsumerWidget {
           );
         },
         loading: () => const _LoadingState(),
-        error: (error, _) =>
-            _ErrorState(colorScheme: colorScheme, theme: theme),
+        error: (error, _) => _ErrorState(colorScheme: colorScheme, theme: theme),
       ),
     );
   }
@@ -72,18 +71,13 @@ class SearchSuggestionView extends HookConsumerWidget {
       final matchIndex = lowerText.indexOf(lowerSearchTerm, currentIndex);
 
       if (matchIndex == -1) {
-        spans.add(
-          TextSpan(text: text.substring(currentIndex), style: normalStyle),
-        );
+        spans.add(TextSpan(text: text.substring(currentIndex), style: normalStyle));
         break;
       }
 
       if (matchIndex > currentIndex) {
         spans.add(
-          TextSpan(
-            text: text.substring(currentIndex, matchIndex),
-            style: normalStyle,
-          ),
+          TextSpan(text: text.substring(currentIndex, matchIndex), style: normalStyle),
         );
       }
 

@@ -90,11 +90,7 @@ class _MenuItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
           children: [
-            Icon(
-              icon,
-              color: iconColor ?? colorScheme.onSurfaceVariant,
-              size: 24,
-            ),
+            Icon(icon, color: iconColor ?? colorScheme.onSurfaceVariant, size: 24),
             const SizedBox(width: 16),
             Expanded(
               child: Text(

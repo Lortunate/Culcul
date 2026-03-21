@@ -57,10 +57,7 @@ class ListSkeletonView extends StatelessWidget {
           padding: padding,
           sliver: SliverList(
             delegate: SliverChildBuilderDelegate(
-              (context, index) => Padding(
-                padding: itemPadding,
-                child: itemSkeleton,
-              ),
+              (context, index) => Padding(padding: itemPadding, child: itemSkeleton),
               childCount: itemCount,
             ),
           ),

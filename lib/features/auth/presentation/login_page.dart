@@ -152,7 +152,7 @@ class LoginPage extends HookConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 40),
-                  
+
                   // Custom Tab Selector
                   FadeTransition(
                     opacity: tabsAnimation,
@@ -176,16 +176,21 @@ class LoginPage extends HookConsumerWidget {
                                 duration: const Duration(milliseconds: 200),
                                 curve: Curves.easeOut,
                                 margin: const EdgeInsets.only(right: 16),
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 10,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: isSelected 
+                                  color: isSelected
                                       ? theme.colorScheme.primary
                                       : Colors.transparent,
                                   borderRadius: BorderRadius.circular(24),
                                   border: Border.all(
-                                    color: isSelected 
-                                        ? Colors.transparent 
-                                        : theme.colorScheme.outline.withValues(alpha: 0.1),
+                                    color: isSelected
+                                        ? Colors.transparent
+                                        : theme.colorScheme.outline.withValues(
+                                            alpha: 0.1,
+                                          ),
                                     width: 1,
                                   ),
                                 ),
@@ -194,9 +199,11 @@ class LoginPage extends HookConsumerWidget {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: isSelected 
-                                      ? theme.colorScheme.onPrimary 
-                                      : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                                    color: isSelected
+                                        ? theme.colorScheme.onPrimary
+                                        : theme.colorScheme.onSurfaceVariant.withValues(
+                                            alpha: 0.7,
+                                          ),
                                     letterSpacing: 0.3,
                                   ),
                                 ),
@@ -207,7 +214,7 @@ class LoginPage extends HookConsumerWidget {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 32),
                   // Content
                   Expanded(
@@ -220,43 +227,45 @@ class LoginPage extends HookConsumerWidget {
                         ).animate(contentAnimation),
                         child: AnimatedSwitcher(
                           duration: const Duration(milliseconds: 500),
-                      switchInCurve: Curves.easeOutQuart,
-                      switchOutCurve: Curves.easeInQuart,
-                      transitionBuilder: (child, animation) {
-                        return FadeTransition(
-                          opacity: animation,
-                          child: SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(0.05, 0),
-                              end: Offset.zero,
-                            ).animate(animation),
-                            child: ScaleTransition(
-                              scale: Tween<double>(begin: 0.95, end: 1.0)
-                                  .animate(animation),
-                              child: child,
-                            ),
+                          switchInCurve: Curves.easeOutQuart,
+                          switchOutCurve: Curves.easeInQuart,
+                          transitionBuilder: (child, animation) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: const Offset(0.05, 0),
+                                  end: Offset.zero,
+                                ).animate(animation),
+                                child: ScaleTransition(
+                                  scale: Tween<double>(
+                                    begin: 0.95,
+                                    end: 1.0,
+                                  ).animate(animation),
+                                  child: child,
+                                ),
+                              ),
+                            );
+                          },
+                          child: KeyedSubtree(
+                            key: ValueKey<int>(selectedTab.value),
+                            child: switch (selectedTab.value) {
+                              0 => const SmsLoginView(),
+                              1 => const PasswordLoginView(),
+                              2 => const QrLoginView(),
+                              _ => const SizedBox(),
+                            },
                           ),
-                        );
-                      },
-                      child: KeyedSubtree(
-                        key: ValueKey<int>(selectedTab.value),
-                        child: switch (selectedTab.value) {
-                          0 => const SmsLoginView(),
-                          1 => const PasswordLoginView(),
-                          2 => const QrLoginView(),
-                          _ => const SizedBox(),
-                        },
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
-    ),
-  ),
-);
-}
+    );
+  }
 }

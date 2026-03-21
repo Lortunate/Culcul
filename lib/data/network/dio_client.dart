@@ -30,8 +30,7 @@ Dio _createBaseDio(Ref ref) {
     ),
   );
 
-  dio.transformer = BackgroundTransformer()
-    ..jsonDecodeCallback = jsonDecodeCompute;
+  dio.transformer = BackgroundTransformer()..jsonDecodeCallback = jsonDecodeCompute;
 
   final cookieJar = ref.read(cookieJarProvider);
   dio.interceptors.add(CookieManager(cookieJar));

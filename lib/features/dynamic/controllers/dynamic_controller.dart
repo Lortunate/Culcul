@@ -49,18 +49,18 @@ class DynamicNotifier extends _$DynamicNotifier {
         _offset = data.offset;
 
         final newItems = data.items;
-        
+
         if (state.value != null && _offset.isNotEmpty) {
-           final mergedItems = ListUtils.mergeUnique(
-             state.value!, 
-             newItems, 
-             idGetter: (item) => item.idStr
-           );
-           state = AsyncValue.data(mergedItems);
+          final mergedItems = ListUtils.mergeUnique(
+            state.value!,
+            newItems,
+            idGetter: (item) => item.idStr,
+          );
+          state = AsyncValue.data(mergedItems);
         } else {
-           state = AsyncValue.data(newItems);
+          state = AsyncValue.data(newItems);
         }
-        
+
       case Failure(exception: final error):
         if (state.value == null) {
           state = AsyncValue.error(error, StackTrace.current);
@@ -78,10 +78,10 @@ class DynamicNotifier extends _$DynamicNotifier {
     if (index == -1) return;
 
     final item = currentList[index];
-    
+
     // Optimistic update using the extension method
     final newItem = item.copyWithLike(!isLiked);
-    
+
     final newList = List<DynamicItem>.from(currentList);
     newList[index] = newItem;
     state = AsyncValue.data(newList);

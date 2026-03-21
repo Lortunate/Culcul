@@ -12,10 +12,6 @@ class VideoLayer extends ConsumerWidget {
     final playerController = ref.watch(playerControllerProvider.notifier);
     final controller = playerController.videoController;
 
-    return Video(
-      controller: controller,
-      controls: (state) => const SizedBox(),
-      fit: fit,
-    );
+    return Video(controller: controller, controls: (state) => const SizedBox(), fit: fit);
   }
 }

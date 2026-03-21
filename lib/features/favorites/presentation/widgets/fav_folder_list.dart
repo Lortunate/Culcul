@@ -27,8 +27,7 @@ class FavFolderList extends HookConsumerWidget {
     } else {
       provider = favCollectedFoldersProvider;
       asyncValue = ref.watch(favCollectedFoldersProvider);
-      onLoadMore = () =>
-          ref.read(favCollectedFoldersProvider.notifier).loadMore();
+      onLoadMore = () => ref.read(favCollectedFoldersProvider.notifier).loadMore();
     }
 
     return SmartPagingView<FavFolderModel>(

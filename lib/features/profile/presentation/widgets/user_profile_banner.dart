@@ -24,10 +24,7 @@ class UserProfileBanner extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black.withValues(alpha: 0.3),
-                  Colors.transparent,
-                ],
+                colors: [Colors.black.withValues(alpha: 0.3), Colors.transparent],
                 stops: const [0.0, 0.4],
               ),
             ),

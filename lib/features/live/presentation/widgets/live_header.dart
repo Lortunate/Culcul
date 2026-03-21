@@ -30,19 +30,16 @@ class LiveHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(4, 4, 12, 4),
-      decoration: const BoxDecoration(
-        color: Colors.black,
-      ),
+      decoration: const BoxDecoration(color: Colors.black),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Row 1: Anchor Info & Tools
           _buildAnchorRow(context),
-          
+
           // Row 2: Tags & "More"
-          if (roomInfo != null)
-            _buildTagsRow(),
+          if (roomInfo != null) _buildTagsRow(),
         ],
       ),
     );
@@ -52,8 +49,11 @@ class LiveHeader extends StatelessWidget {
     return Row(
       children: [
         IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded,
-              size: 20, color: Colors.white),
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 20,
+            color: Colors.white,
+          ),
           onPressed: onBack ?? () => Navigator.of(context).maybePop(),
         ),
         if (roomInfo != null) ...[
@@ -74,16 +74,10 @@ class LiveHeader extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(
-          color: colorScheme.primary,
-          width: 1.5,
-        ),
+        border: Border.all(color: colorScheme.primary, width: 1.5),
       ),
       padding: const EdgeInsets.all(1.5),
-      child: AppAvatar(
-        url: anchorInfo?.face ?? roomInfo!.userCover,
-        size: 38,
-      ),
+      child: AppAvatar(url: anchorInfo?.face ?? roomInfo!.userCover, size: 38),
     );
   }
 
@@ -190,10 +184,7 @@ class LiveHeader extends StatelessWidget {
               alignment: Alignment.centerLeft,
               children: [
                 for (int i = 0; i < top3.length; i++)
-                  Positioned(
-                    left: i * 14.0,
-                    child: _buildViewerAvatar(top3[i].face),
-                  ),
+                  Positioned(left: i * 14.0, child: _buildViewerAvatar(top3[i].face)),
               ],
             ),
           ),
@@ -265,9 +256,7 @@ class LiveHeader extends StatelessWidget {
     return Container(
       width: 20,
       height: 20,
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-      ),
+      decoration: const BoxDecoration(shape: BoxShape.circle),
       child: AppAvatar(url: url, size: 20),
     );
   }

@@ -15,13 +15,13 @@ class LiveView extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     useAutomaticKeepAlive();
+
     final liveAsync = ref.watch(liveRecommendProvider);
     final scrollController = useScrollController();
     final refreshController = useMemoized(() => EasyRefreshController());
 
     useHomeScrollManager(ref, scrollController, refreshController, 0);
 
-    // Common grid delegate for consistency
     const gridDelegate = SliverGridDelegateWithFixedCrossAxisCount(
       crossAxisCount: 2,
       mainAxisSpacing: 10,
@@ -35,19 +35,17 @@ class LiveView extends HookConsumerWidget {
       provider: liveRecommendProvider,
       asyncValue: liveAsync,
       controller: refreshController,
-      onRefresh: () => ref.read(liveRecommendProvider.notifier).refresh(),
-      onLoadMore: () => ref.read(liveRecommendProvider.notifier).loadMore(),
+      onRefresh: ref.read(liveRecommendProvider.notifier).refresh,
+      onLoadMore: ref.read(liveRecommendProvider.notifier).loadMore,
       skeleton: CustomScrollView(
         controller: scrollController,
         slivers: [
           SliverPadding(
             padding: padding,
-            sliver: SliverGrid(
+            sliver: SliverGrid.builder(
               gridDelegate: gridDelegate,
-              delegate: SliverChildBuilderDelegate(
-                (context, index) => const LiveCardSkeleton(),
-                childCount: 6,
-              ),
+              itemCount: 6,
+              itemBuilder: (context, index) => const LiveCardSkeleton(),
             ),
           ),
         ],
@@ -57,17 +55,16 @@ class LiveView extends HookConsumerWidget {
         slivers: [
           SliverPadding(
             padding: padding,
-            sliver: SliverGrid(
+            sliver: SliverGrid.builder(
               gridDelegate: gridDelegate,
-              delegate: SliverChildBuilderDelegate((context, index) {
+              itemCount: items.length,
+              itemBuilder: (context, index) {
                 final room = items[index];
                 return LiveRoomCard(
                   room: room,
-                  onTap: () {
-                    LiveRoomRoute(roomId: room.roomId).push(context);
-                  },
+                  onTap: () => LiveRoomRoute(roomId: room.roomId).push(context),
                 );
-              }, childCount: items.length),
+              },
             ),
           ),
         ],

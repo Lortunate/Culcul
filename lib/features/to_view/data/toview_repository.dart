@@ -22,10 +22,10 @@ class ToViewRepository extends BaseRepository {
     final result = await safeApiCall(() => _api.getToViewList());
     return switch (result) {
       Success(value: final data) => Success(data),
-      Failure(exception: final e) => 
+      Failure(exception: final e) =>
         (e is ServerException && e.code == 0 && e.message == 'No Data')
-          ? Success(ToViewListResponse(count: 0, list: []))
-          : Failure(e),
+            ? Success(ToViewListResponse(count: 0, list: []))
+            : Failure(e),
     };
   }
 

@@ -25,14 +25,10 @@ class PlayerSettingsSheet extends ConsumerWidget {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     final danmakuSettings = ref.watch(danmakuSettingsControllerProvider);
-    final danmakuNotifier = ref.read(
-      danmakuSettingsControllerProvider.notifier,
-    );
+    final danmakuNotifier = ref.read(danmakuSettingsControllerProvider.notifier);
 
     final videoDetailState = ref.watch(videoDetailControllerProvider(bvid));
-    final videoDetailNotifier = ref.read(
-      videoDetailControllerProvider(bvid).notifier,
-    );
+    final videoDetailNotifier = ref.read(videoDetailControllerProvider(bvid).notifier);
 
     // Calculate quality labels
     final qualityLabels = <int, String>{};
@@ -346,10 +342,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
     );
   }
 
-  Widget _buildSleepTimerOptions(
-    ColorScheme colorScheme,
-    BuildContext context,
-  ) {
+  Widget _buildSleepTimerOptions(ColorScheme colorScheme, BuildContext context) {
     final options = [
       null,
       const Duration(minutes: 15),

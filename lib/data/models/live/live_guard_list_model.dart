@@ -17,11 +17,8 @@ sealed class LiveGuardListModel with _$LiveGuardListModel {
 
 @freezed
 sealed class LiveGuardInfo with _$LiveGuardInfo {
-  const factory LiveGuardInfo({
-    required int num,
-    required int page,
-    required int now,
-  }) = _LiveGuardInfo;
+  const factory LiveGuardInfo({required int num, required int page, required int now}) =
+      _LiveGuardInfo;
 
   factory LiveGuardInfo.fromJson(Map<String, dynamic> json) =>
       _$LiveGuardInfoFromJson(json);
@@ -53,10 +50,8 @@ sealed class LiveGuardUserInfo with _$LiveGuardUserInfo {
 
 @freezed
 sealed class LiveGuardUserBase with _$LiveGuardUserBase {
-  const factory LiveGuardUserBase({
-    required String name,
-    required String face,
-  }) = _LiveGuardUserBase;
+  const factory LiveGuardUserBase({required String name, required String face}) =
+      _LiveGuardUserBase;
 
   factory LiveGuardUserBase.fromJson(Map<String, dynamic> json) =>
       _$LiveGuardUserBaseFromJson(json);

@@ -3,11 +3,7 @@ class CountryCode {
   final String name;
   final String code;
 
-  const CountryCode({
-    required this.id,
-    required this.name,
-    required this.code,
-  });
+  const CountryCode({required this.id, required this.name, required this.code});
 
   factory CountryCode.fromJson(Map<String, dynamic> json) {
     return CountryCode(

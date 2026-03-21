@@ -42,9 +42,8 @@ sealed class UserSpaceVideoListResponse with _$UserSpaceVideoListResponse {
 
 @freezed
 sealed class UserSpaceVideoList with _$UserSpaceVideoList {
-  const factory UserSpaceVideoList({
-    @Default([]) List<UserSpaceVideoModel> vlist,
-  }) = _UserSpaceVideoList;
+  const factory UserSpaceVideoList({@Default([]) List<UserSpaceVideoModel> vlist}) =
+      _UserSpaceVideoList;
 
   factory UserSpaceVideoList.fromJson(Map<String, dynamic> json) =>
       _$UserSpaceVideoListFromJson(json);
@@ -69,11 +68,7 @@ Map<String, dynamic> _normalizeUserSpaceVideoJson(Map<String, dynamic> json) {
 
   final adjusted = Map<String, dynamic>.from(json);
 
-  adjusted['owner'] = {
-    'mid': json['mid'] ?? 0,
-    'name': json['author'],
-    'face': '',
-  };
+  adjusted['owner'] = {'mid': json['mid'] ?? 0, 'name': json['author'], 'face': ''};
 
   adjusted['stat'] = {
     'view': json['play'] ?? 0,
@@ -89,8 +84,7 @@ Map<String, dynamic> _normalizeUserSpaceVideoJson(Map<String, dynamic> json) {
     final parts = (json['length'] as String).split(':');
     var seconds = 0;
     if (parts.length == 2) {
-      seconds =
-          (int.tryParse(parts[0]) ?? 0) * 60 + (int.tryParse(parts[1]) ?? 0);
+      seconds = (int.tryParse(parts[0]) ?? 0) * 60 + (int.tryParse(parts[1]) ?? 0);
     } else if (parts.length == 3) {
       seconds =
           (int.tryParse(parts[0]) ?? 0) * 3600 +

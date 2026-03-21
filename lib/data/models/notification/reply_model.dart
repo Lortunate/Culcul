@@ -27,18 +27,15 @@ sealed class ReplyCursor with _$ReplyCursor {
     required int time,
   }) = _ReplyCursor;
 
-  factory ReplyCursor.fromJson(Map<String, dynamic> json) =>
-      _$ReplyCursorFromJson(json);
+  factory ReplyCursor.fromJson(Map<String, dynamic> json) => _$ReplyCursorFromJson(json);
 }
 
 @freezed
 sealed class ReplyItem with _$ReplyItem {
   const factory ReplyItem({
     required int id,
-    @JsonKey(name: 'users')
-    List<ReplyUser>? users, // Like API returns 'users' array
-    @JsonKey(name: 'user')
-    ReplyUser? user, // Reply/At API returns single 'user'
+    @JsonKey(name: 'users') List<ReplyUser>? users, // Like API returns 'users' array
+    @JsonKey(name: 'user') ReplyUser? user, // Reply/At API returns single 'user'
     required ReplyItemDetail item,
     @Default(1) int counts,
     @JsonKey(name: 'is_multi') @Default(0) int isMulti,
@@ -46,8 +43,7 @@ sealed class ReplyItem with _$ReplyItem {
     @JsonKey(name: 'like_time') int? likeTime, // Like API has this
   }) = _ReplyItem;
 
-  factory ReplyItem.fromJson(Map<String, dynamic> json) =>
-      _$ReplyItemFromJson(json);
+  factory ReplyItem.fromJson(Map<String, dynamic> json) => _$ReplyItemFromJson(json);
 }
 
 @freezed
@@ -61,15 +57,13 @@ sealed class ReplyUser with _$ReplyUser {
     @Default(false) bool follow,
   }) = _ReplyUser;
 
-  factory ReplyUser.fromJson(Map<String, dynamic> json) =>
-      _$ReplyUserFromJson(json);
+  factory ReplyUser.fromJson(Map<String, dynamic> json) => _$ReplyUserFromJson(json);
 }
 
 @freezed
 sealed class ReplyItemDetail with _$ReplyItemDetail {
   const factory ReplyItemDetail({
-    @JsonKey(name: 'subject_id', readValue: _readSubjectId)
-    required int subjectId,
+    @JsonKey(name: 'subject_id', readValue: _readSubjectId) required int subjectId,
     @JsonKey(name: 'root_id') @Default(0) int rootId,
     @JsonKey(name: 'source_id') @Default(0) int sourceId,
     @JsonKey(name: 'target_id') @Default(0) int targetId,
@@ -83,9 +77,7 @@ sealed class ReplyItemDetail with _$ReplyItemDetail {
     @JsonKey(name: 'native_uri') @Default('') String nativeUri,
     @JsonKey(name: 'root_reply_content') @Default('') String rootReplyContent,
     @JsonKey(name: 'source_content') @Default('') String sourceContent,
-    @JsonKey(name: 'target_reply_content')
-    @Default('')
-    String targetReplyContent,
+    @JsonKey(name: 'target_reply_content') @Default('') String targetReplyContent,
     @JsonKey(name: 'at_details') @Default([]) List<ReplyUser> atDetails,
     @JsonKey(name: 'hide_reply_button') @Default(false) bool hideReplyButton,
     @JsonKey(name: 'hide_like_button') @Default(false) bool hideLikeButton,

@@ -63,10 +63,7 @@ class AuthRepository extends BaseRepository {
   }
 
   Future<void> _cacheUser(UserEntity user) async {
-    await _box.put(
-      _userCacheKey,
-      jsonEncode(_toDataUser(user).toJson()),
-    );
+    await _box.put(_userCacheKey, jsonEncode(_toDataUser(user).toJson()));
   }
 
   Future<void> clearCache() async {
@@ -140,11 +137,13 @@ class AuthRepository extends BaseRepository {
       if (response.code == 0) {
         final data = response.data as Map<String, dynamic>?;
         if (data != null) {
-          final common = (data['common'] as List<dynamic>?)
+          final common =
+              (data['common'] as List<dynamic>?)
                   ?.map((e) => CountryCode.fromJson(e as Map<String, dynamic>))
                   .toList() ??
               [];
-          final others = (data['others'] as List<dynamic>?)
+          final others =
+              (data['others'] as List<dynamic>?)
                   ?.map((e) => CountryCode.fromJson(e as Map<String, dynamic>))
                   .toList() ??
               [];
@@ -203,13 +202,7 @@ class AuthRepository extends BaseRepository {
     String captchaKey,
   ) async {
     return safeCall(() async {
-      final response = await _api.loginWithSms(
-        cid,
-        phone,
-        code,
-        'main_web',
-        captchaKey,
-      );
+      final response = await _api.loginWithSms(cid, phone, code, 'main_web', captchaKey);
 
       if (response.code == 0) {
         final userResult = await getCurrentUser();
@@ -234,9 +227,7 @@ class AuthRepository extends BaseRepository {
     });
   }
 
-  Future<Result<Map<String, dynamic>, AppException>> pollQrCode(
-    String authCode,
-  ) async {
+  Future<Result<Map<String, dynamic>, AppException>> pollQrCode(String authCode) async {
     // pollQrCode returns data even on non-zero code sometimes (e.g. pending),
     // but BaseRepository.safeApiCall treats non-zero as error.
     // However, original code returned Success even if code != 0.

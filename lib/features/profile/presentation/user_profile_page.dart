@@ -19,7 +19,7 @@ class UserProfilePage extends HookConsumerWidget {
     final profileAsync = ref.watch(userSpaceProvider(mid.toString()));
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     final tabController = useTabController(initialLength: 3);
     final scrollOffsetNotifier = useValueNotifier(0.0);
     final topPadding = MediaQuery.paddingOf(context).top + kToolbarHeight;
@@ -41,27 +41,22 @@ class UserProfilePage extends HookConsumerWidget {
               },
               child: RefreshIndicator(
                 edgeOffset: topPadding,
-                onRefresh: () => ref.refresh(
-                  userSpaceProvider(mid.toString()).future,
-                ),
+                onRefresh: () => ref.refresh(userSpaceProvider(mid.toString()).future),
                 child: NestedScrollView(
                   headerSliverBuilder: (context, innerBoxIsScrolled) {
                     return [
-                      SliverToBoxAdapter(
-                        child: UserProfileInfo(profile: profile),
-                      ),
+                      SliverToBoxAdapter(child: UserProfileInfo(profile: profile)),
                       // Add a spacer/divider to separate the profile info from the tabs
                       SliverToBoxAdapter(
                         child: Container(
                           height: 8,
-                          color: theme.colorScheme.surfaceContainerHighest
-                              .withValues(alpha: 0.3),
+                          color: theme.colorScheme.surfaceContainerHighest.withValues(
+                            alpha: 0.3,
+                          ),
                         ),
                       ),
                       SliverOverlapAbsorber(
-                        handle: NestedScrollView.sliverOverlapAbsorberHandleFor(
-                          context,
-                        ),
+                        handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
                         sliver: SliverPersistentHeader(
                           delegate: SliverTabBarDelegate(
                             TabBar(
@@ -77,8 +72,7 @@ class UserProfilePage extends HookConsumerWidget {
                                 fontSize: 15,
                                 letterSpacing: 0.5,
                               ),
-                              unselectedLabelColor:
-                                  colorScheme.onSurfaceVariant,
+                              unselectedLabelColor: colorScheme.onSurfaceVariant,
                               unselectedLabelStyle: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -89,16 +83,12 @@ class UserProfilePage extends HookConsumerWidget {
                                   color: colorScheme.primary,
                                 ),
                                 borderRadius: BorderRadius.circular(2),
-                                insets: const EdgeInsets.symmetric(
-                                  horizontal: 20,
-                                ),
+                                insets: const EdgeInsets.symmetric(horizontal: 20),
                               ),
                               indicatorSize: TabBarIndicatorSize.label,
                               dividerColor: Colors.transparent,
                               splashFactory: NoSplash.splashFactory,
-                              overlayColor: WidgetStateProperty.all(
-                                Colors.transparent,
-                              ),
+                              overlayColor: WidgetStateProperty.all(Colors.transparent),
                             ),
                             topPadding: topPadding,
                           ),
@@ -112,8 +102,7 @@ class UserProfilePage extends HookConsumerWidget {
                     children: [
                       UserHomeTab(
                         mid: mid,
-                        onSwitchToTab: (index) =>
-                            tabController.animateTo(index),
+                        onSwitchToTab: (index) => tabController.animateTo(index),
                       ),
                       UserDynamicTab(mid: mid),
                       UserVideoTab(mid: mid),
@@ -125,8 +114,7 @@ class UserProfilePage extends HookConsumerWidget {
             error: (err, stack) => Center(
               child: AppErrorWidget(
                 error: err,
-                onRetry: () =>
-                    ref.refresh(userSpaceProvider(mid.toString())),
+                onRetry: () => ref.refresh(userSpaceProvider(mid.toString())),
               ),
             ),
             loading: () => const Center(child: CircularProgressIndicator()),

@@ -44,10 +44,7 @@ class AppCardContainer extends StatelessWidget {
           onLongPress: onLongPress,
           haptic: true,
           borderRadius: BorderRadius.circular(borderRadius),
-          child: Padding(
-            padding: padding ?? EdgeInsets.zero,
-            child: child,
-          ),
+          child: Padding(padding: padding ?? EdgeInsets.zero, child: child),
         ),
       ),
     );

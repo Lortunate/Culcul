@@ -19,11 +19,13 @@ ValueNotifier<double> usePlayerSystemSettings(Player player) {
   }, []);
 
   useEffect(() {
-    ScreenBrightness().application.then((val) {
-      brightness.value = val;
-    }).catchError((e) {
-      debugPrint('Failed to get brightness: $e');
-    });
+    ScreenBrightness().application
+        .then((val) {
+          brightness.value = val;
+        })
+        .catchError((e) {
+          debugPrint('Failed to get brightness: $e');
+        });
     return null;
   }, []);
 

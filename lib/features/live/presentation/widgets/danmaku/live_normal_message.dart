@@ -39,10 +39,7 @@ class LiveNormalMessage extends StatelessWidget {
       spans.add(
         const WidgetSpan(
           alignment: PlaceholderAlignment.middle,
-          child: Padding(
-            padding: EdgeInsets.only(right: 4),
-            child: LiveAdminBadge(),
-          ),
+          child: Padding(padding: EdgeInsets.only(right: 4), child: LiveAdminBadge()),
         ),
       );
     }
@@ -61,11 +58,7 @@ class LiveNormalMessage extends StatelessWidget {
     spans.add(
       TextSpan(
         text: item.text,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 14,
-          height: 1.4,
-        ),
+        style: const TextStyle(color: Colors.white, fontSize: 14, height: 1.4),
       ),
     );
 

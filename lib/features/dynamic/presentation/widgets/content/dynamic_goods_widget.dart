@@ -30,9 +30,7 @@ class DynamicGoodsWidget extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Text(
                 additional.headText!,
-                style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
             ),
           ...additional.goodsItems!.map(

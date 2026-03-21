@@ -23,7 +23,7 @@ class SmsLoginView extends HookConsumerWidget {
     final countdown = useState(0);
     final captchaKey = useState<String>('');
     final selectedCountry = useState<CountryCode>(defaultCountryCodes.first);
-    
+
     // Animation Controller for staggered entry
     final animationController = useAnimationController(
       duration: const Duration(milliseconds: 600),
@@ -51,7 +51,7 @@ class SmsLoginView extends HookConsumerWidget {
         ),
       );
     }
-    
+
     void showAuthSnackBar(String message) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).clearSnackBars();
@@ -89,7 +89,9 @@ class SmsLoginView extends HookConsumerWidget {
     final geetest = useGeetest(
       ref: ref,
       onSuccess: (token, challenge, validate, seccode) async {
-        final key = await ref.read(authProvider.notifier).sendSms(
+        final key = await ref
+            .read(authProvider.notifier)
+            .sendSms(
               selectedCountry.value.id,
               phoneController.text,
               token,
@@ -114,13 +116,14 @@ class SmsLoginView extends HookConsumerWidget {
     }
 
     void onLogin() {
-      if (phoneController.text.isNotEmpty &&
-          codeController.text.isNotEmpty) {
+      if (phoneController.text.isNotEmpty && codeController.text.isNotEmpty) {
         if (captchaKey.value.isEmpty) {
           showAuthSnackBar(t.auth.get_code);
           return;
         }
-        ref.read(authProvider.notifier).loginWithSms(
+        ref
+            .read(authProvider.notifier)
+            .loginWithSms(
               selectedCountry.value.id,
               phoneController.text,
               codeController.text,
@@ -200,7 +203,9 @@ class SmsLoginView extends HookConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     foregroundColor: theme.colorScheme.primary,
-                    disabledForegroundColor: theme.colorScheme.onSurface.withValues(alpha: 0.38),
+                    disabledForegroundColor: theme.colorScheme.onSurface.withValues(
+                      alpha: 0.38,
+                    ),
                   ),
                   child: Text(
                     countdown.value == 0 ? t.auth.get_code : "${countdown.value}s",

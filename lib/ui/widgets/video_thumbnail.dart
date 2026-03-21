@@ -44,8 +44,7 @@ class VideoThumbnail extends StatelessWidget {
                 memCacheWidth:
                     memCacheWidth ??
                     (constraints.maxWidth.isFinite
-                        ? (constraints.maxWidth *
-                                  MediaQuery.of(context).devicePixelRatio)
+                        ? (constraints.maxWidth * MediaQuery.of(context).devicePixelRatio)
                               .toInt()
                         : null),
                 memCacheHeight:
@@ -71,10 +70,7 @@ class VideoThumbnail extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withValues(alpha: 0.5),
-                      ],
+                      colors: [Colors.transparent, Colors.black.withValues(alpha: 0.5)],
                     ),
                   ),
                 ),
@@ -126,11 +122,7 @@ class VideoThumbnailStats extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (viewCount != null) ...[
-          const Icon(
-            Icons.play_circle_outline_rounded,
-            size: 12,
-            color: Colors.white,
-          ),
+          const Icon(Icons.play_circle_outline_rounded, size: 12, color: Colors.white),
           const SizedBox(width: 3),
           Text(viewCount!.formatNumber, style: style),
         ],

@@ -30,11 +30,9 @@ sealed class HistoryCursor with _$HistoryCursor {
 
 @freezed
 sealed class HistoryTab with _$HistoryTab {
-  const factory HistoryTab({required String type, required String name}) =
-      _HistoryTab;
+  const factory HistoryTab({required String type, required String name}) = _HistoryTab;
 
-  factory HistoryTab.fromJson(Map<String, dynamic> json) =>
-      _$HistoryTabFromJson(json);
+  factory HistoryTab.fromJson(Map<String, dynamic> json) => _$HistoryTabFromJson(json);
 }
 
 @freezed
@@ -65,8 +63,7 @@ sealed class HistoryItem with _$HistoryItem {
     @JsonKey(name: 'live_status') required int liveStatus,
   }) = _HistoryItem;
 
-  factory HistoryItem.fromJson(Map<String, dynamic> json) =>
-      _$HistoryItemFromJson(json);
+  factory HistoryItem.fromJson(Map<String, dynamic> json) => _$HistoryItemFromJson(json);
 }
 
 @freezed

@@ -148,8 +148,7 @@ class _Content extends StatelessWidget {
     final message = content.message;
     final emote = content.emote;
     final members = content.members;
-    final isReply =
-        item.root != 0 && item.parent != 0 && item.parent != item.root;
+    final isReply = item.root != 0 && item.parent != 0 && item.parent != item.root;
 
     List<InlineSpan> spans = [];
 
@@ -206,12 +205,7 @@ class _Footer extends StatelessWidget {
   final VoidCallback? onDislike;
   final VoidCallback? onReply;
 
-  const _Footer({
-    required this.item,
-    this.onLike,
-    this.onDislike,
-    this.onReply,
-  });
+  const _Footer({required this.item, this.onLike, this.onDislike, this.onReply});
 
   @override
   Widget build(BuildContext context) {
@@ -244,17 +238,9 @@ class _Footer extends StatelessWidget {
           onTap: onLike,
         ),
         const SizedBox(width: 16),
-        _Action(
-          icon: Icons.thumb_down_outlined,
-          label: '',
-          onTap: onDislike,
-        ),
+        _Action(icon: Icons.thumb_down_outlined, label: '', onTap: onDislike),
         const SizedBox(width: 16),
-        _Action(
-          icon: Icons.chat_bubble_outline_rounded,
-          label: '',
-          onTap: onReply,
-        ),
+        _Action(icon: Icons.chat_bubble_outline_rounded, label: '', onTap: onReply),
         const SizedBox(width: 8),
         AppClickable(
           onTap: () {},
@@ -279,12 +265,7 @@ class _Action extends StatelessWidget {
   final Color? color;
   final VoidCallback? onTap;
 
-  const _Action({
-    required this.icon,
-    required this.label,
-    this.color,
-    this.onTap,
-  });
+  const _Action({required this.icon, required this.label, this.color, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -322,11 +303,7 @@ class _Replies extends StatelessWidget {
   final int rcount;
   final VoidCallback? onTap;
 
-  const _Replies({
-    required this.replies,
-    required this.rcount,
-    this.onTap,
-  });
+  const _Replies({required this.replies, required this.rcount, this.onTap});
 
   @override
   Widget build(BuildContext context) {

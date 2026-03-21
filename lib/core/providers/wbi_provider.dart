@@ -105,9 +105,7 @@ class WbiHelper {
 
       // Check for API error code
       if (data['code'] != 0) {
-        debugPrint(
-          'Nav API error: code=${data['code']}, message=${data['message']}',
-        );
+        debugPrint('Nav API error: code=${data['code']}, message=${data['message']}');
         // If risk control (-352), we might need to handle it or use fallback
         if (data['code'] == -352) {
           throw Exception('Nav API risk control (-352)');

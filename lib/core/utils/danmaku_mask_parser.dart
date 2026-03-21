@@ -42,9 +42,7 @@ class DanmakuMaskParser {
     for (int i = 0; i < segmentCount; i++) {
       final segment = segments[i];
       final startOffset = segment.offset;
-      final endOffset = (i == segmentCount - 1)
-          ? bytes.length
-          : segments[i + 1].offset;
+      final endOffset = (i == segmentCount - 1) ? bytes.length : segments[i + 1].offset;
 
       if (startOffset >= bytes.length || endOffset > bytes.length) continue;
 

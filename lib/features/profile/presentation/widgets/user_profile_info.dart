@@ -20,10 +20,7 @@ class UserProfileInfo extends HookConsumerWidget {
     if (url.isEmpty) return;
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ImagePreviewPage(
-          imageUrls: [url],
-          initialIndex: 0,
-        ),
+        builder: (context) => ImagePreviewPage(imageUrls: [url], initialIndex: 0),
       ),
     );
   }
@@ -43,8 +40,7 @@ class UserProfileInfo extends HookConsumerWidget {
     }
 
     final isSelf =
-        authState.isLoggedIn &&
-        authState.user?.id.toString() == profile!.id.toString();
+        authState.isLoggedIn && authState.user?.id.toString() == profile!.id.toString();
 
     const double bannerHeight = 160;
     const double avatarSize = 88;
@@ -74,9 +70,7 @@ class UserProfileInfo extends HookConsumerWidget {
               child: Container(
                 decoration: BoxDecoration(
                   color: theme.scaffoldBackgroundColor,
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(20),
-                  ),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
                 ),
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                 child: Column(
@@ -122,9 +116,7 @@ class UserProfileInfo extends HookConsumerWidget {
                                 ),
                                 const SizedBox(height: 8),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                  ),
+                                  padding: const EdgeInsets.symmetric(horizontal: 12),
                                   child: UserProfileButtons(
                                     profile: profile!,
                                     isSelf: isSelf,
@@ -191,14 +183,9 @@ class UserProfileInfo extends HookConsumerWidget {
 
                     // UID
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 6,
-                        vertical: 2,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                       decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerHighest.withValues(
-                          alpha: 0.5,
-                        ),
+                        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -226,9 +213,7 @@ class UserProfileInfo extends HookConsumerWidget {
                                   height: 1.4,
                                 ),
                                 maxLines: isExpanded.value ? null : 1,
-                                overflow: isExpanded.value
-                                    ? null
-                                    : TextOverflow.ellipsis,
+                                overflow: isExpanded.value ? null : TextOverflow.ellipsis,
                               ),
                             ),
                             if (profile!.bio!.length > 20)

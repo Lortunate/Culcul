@@ -70,11 +70,7 @@ class LiveInputSheet extends HookConsumerWidget {
                   shape: BoxShape.circle,
                 ),
                 child: IconButton(
-                  icon: const Icon(
-                    Icons.send_rounded,
-                    size: 20,
-                    color: Colors.white,
-                  ),
+                  icon: const Icon(Icons.send_rounded, size: 20, color: Colors.white),
                   onPressed: () {
                     if (controller.text.trim().isNotEmpty) {
                       ref

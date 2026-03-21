@@ -37,9 +37,9 @@ class PrivateSessionList extends _$PrivateSessionList {
     final currentState = state.value;
     if (currentState == null) return;
 
-    final result = await ref.read(notificationRepositoryProvider).getPrivateSessions(
-      endTs: _endTs,
-    );
+    final result = await ref
+        .read(notificationRepositoryProvider)
+        .getPrivateSessions(endTs: _endTs);
 
     switch (result) {
       case Success(value: final data):

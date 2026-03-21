@@ -59,10 +59,7 @@ class ProfileAppBar extends ConsumerWidget {
                       width: 2,
                     ),
                   ),
-                  child: AppAvatar(
-                    url: profile?.avatarUrl ?? user?.avatarUrl,
-                    size: 80,
-                  ),
+                  child: AppAvatar(url: profile?.avatarUrl ?? user?.avatarUrl, size: 80),
                 ),
               ),
               const SizedBox(width: 20),

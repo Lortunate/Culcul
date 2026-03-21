@@ -13,11 +13,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'danmaku_mask_provider.g.dart';
 
 @riverpod
-Future<DanmakuMasks?> danmakuMask(
-  Ref ref, {
-  required int oid,
-  required int pid,
-}) async {
+Future<DanmakuMasks?> danmakuMask(Ref ref, {required int oid, required int pid}) async {
   // 1. Fetch Player Info to get Mask URL
   final videoRepo = ref.read(videoRepositoryProvider);
   final playerInfoResult = await videoRepo.fetchPlayerInfo(aid: pid, cid: oid);
@@ -27,8 +23,7 @@ Future<DanmakuMasks?> danmakuMask(
   }
 
   // Cast to Success to access data
-  final playerInfo =
-      (playerInfoResult as Success<PlayerInfo, AppException>).value;
+  final playerInfo = (playerInfoResult as Success<PlayerInfo, AppException>).value;
   final dmMask = playerInfo.dmMask;
 
   if (dmMask == null) {
@@ -42,10 +37,7 @@ Future<DanmakuMasks?> danmakuMask(
   if (result case Success(value: final bytes)) {
     // 3. Parse
     try {
-      final paths = await compute(
-        _parseMaskData,
-        _ParseData(bytes, dmMask.fps),
-      );
+      final paths = await compute(_parseMaskData, _ParseData(bytes, dmMask.fps));
       return DanmakuMasks(paths, dmMask.fps);
     } catch (e) {
       debugPrint('Failed to parse mask data: $e');

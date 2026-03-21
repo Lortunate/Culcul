@@ -24,8 +24,7 @@ class AppSearchBar extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final decoration = BoxDecoration(
-      color: theme.inputDecorationTheme.fillColor ??
-          colorScheme.surfaceContainerHighest,
+      color: theme.inputDecorationTheme.fillColor ?? colorScheme.surfaceContainerHighest,
       borderRadius: BorderRadius.circular(22),
     );
 
@@ -61,15 +60,9 @@ class AppSearchBar extends StatelessWidget {
                 color: colorScheme.onSurfaceVariant,
               ),
             ),
-            prefixIconConstraints: const BoxConstraints(
-              minWidth: 0,
-              minHeight: 0,
-            ),
+            prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
             suffixIcon: suffixIcon,
-            suffixIconConstraints: const BoxConstraints(
-              minWidth: 44,
-              minHeight: 44,
-            ),
+            suffixIconConstraints: const BoxConstraints(minWidth: 44, minHeight: 44),
             border: InputBorder.none,
             enabledBorder: InputBorder.none,
             focusedBorder: InputBorder.none,
@@ -89,11 +82,7 @@ class AppSearchBar extends StatelessWidget {
         decoration: decoration,
         child: Row(
           children: [
-            Icon(
-              Icons.search_rounded,
-              size: 20,
-              color: colorScheme.onSurfaceVariant,
-            ),
+            Icon(Icons.search_rounded, size: 20, color: colorScheme.onSurfaceVariant),
             const SizedBox(width: 8),
             Expanded(
               child: Text(

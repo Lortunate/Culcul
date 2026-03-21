@@ -57,8 +57,7 @@ class Chat extends _$Chat {
         }
 
         // Filter out withdrawn notification messages (msg_type: 5)
-        final messages =
-            (response.messages ?? []).where((m) => m.msgType != 5).toList();
+        final messages = (response.messages ?? []).where((m) => m.msgType != 5).toList();
 
         return ChatState(messages: messages, emojiMap: emojiMap);
       }(),
@@ -169,9 +168,7 @@ class Chat extends _$Chat {
 
     if (currentState != null) {
       state = AsyncData(
-        currentState.copyWith(
-          messages: [tempMessage, ...currentState.messages],
-        ),
+        currentState.copyWith(messages: [tempMessage, ...currentState.messages]),
       );
     }
 

@@ -25,9 +25,7 @@ class SettingsPage extends HookConsumerWidget {
       appBar: AppBar(
         title: Text(
           t.settings.title,
-          style: theme.textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: colorScheme.surface,
@@ -63,12 +61,11 @@ class SettingsPage extends HookConsumerWidget {
             children: [
               SettingsItem(
                 title: t.settings.clear_cache,
-                value:
-                    cacheSizeAsync.when(
-                      data: (size) => size,
-                      loading: () => '...',
-                      error: (_, _) => '0 B',
-                    ),
+                value: cacheSizeAsync.when(
+                  data: (size) => size,
+                  loading: () => '...',
+                  error: (_, _) => '0 B',
+                ),
                 onTap: () => _handleClearCache(context, ref),
               ),
             ],
@@ -78,11 +75,7 @@ class SettingsPage extends HookConsumerWidget {
             children: [
               SettingsItem(title: t.settings.user_agreement, onTap: () {}),
               SettingsItem(title: t.settings.privacy_policy, onTap: () {}),
-              SettingsItem(
-                title: t.settings.version,
-                value: 'v1.0.0',
-                showArrow: false,
-              ),
+              SettingsItem(title: t.settings.version, value: 'v1.0.0', showArrow: false),
             ],
           ),
           const SizedBox(height: 32),
@@ -118,40 +111,34 @@ class SettingsPage extends HookConsumerWidget {
     _showSelectionSheet(
       context,
       title: t.settings.change_language,
-      children:
-          AppLocale.values.map((locale) {
-            return SelectionItem(
-              title: _getLanguageName(t, locale),
-              isSelected: LocaleSettings.currentLocale == locale,
-              onTap: () {
-                LocaleSettings.setLocale(locale);
-                context.pop();
-              },
-            );
-          }).toList(),
+      children: AppLocale.values.map((locale) {
+        return SelectionItem(
+          title: _getLanguageName(t, locale),
+          isSelected: LocaleSettings.currentLocale == locale,
+          onTap: () {
+            LocaleSettings.setLocale(locale);
+            context.pop();
+          },
+        );
+      }).toList(),
     );
   }
 
-  void _showThemeSelector(
-    BuildContext context,
-    WidgetRef ref,
-    ThemeMode currentMode,
-  ) {
+  void _showThemeSelector(BuildContext context, WidgetRef ref, ThemeMode currentMode) {
     final t = Translations.of(context);
     _showSelectionSheet(
       context,
       title: t.settings.appearance,
-      children:
-          ThemeMode.values.map((mode) {
-            return SelectionItem(
-              title: _getThemeName(t, mode),
-              isSelected: currentMode == mode,
-              onTap: () {
-                ref.read(themeModeProvider.notifier).setTheme(mode);
-                context.pop();
-              },
-            );
-          }).toList(),
+      children: ThemeMode.values.map((mode) {
+        return SelectionItem(
+          title: _getThemeName(t, mode),
+          isSelected: currentMode == mode,
+          onTap: () {
+            ref.read(themeModeProvider.notifier).setTheme(mode);
+            context.pop();
+          },
+        );
+      }).toList(),
     );
   }
 

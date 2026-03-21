@@ -27,9 +27,10 @@ class _AuthButtonState extends State<AuthButton> with SingleTickerProviderStateM
       vsync: this,
       duration: const Duration(milliseconds: 100),
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -48,31 +49,30 @@ class _AuthButtonState extends State<AuthButton> with SingleTickerProviderStateM
       onTapCancel: () => _controller.reverse(),
       child: AnimatedBuilder(
         animation: _scaleAnimation,
-        builder: (context, child) => Transform.scale(
-          scale: _scaleAnimation.value,
-          child: child,
-        ),
+        builder: (context, child) =>
+            Transform.scale(scale: _scaleAnimation.value, child: child),
         child: SizedBox(
           width: double.infinity,
           height: 52,
           child: FilledButton(
             onPressed: widget.isLoading ? null : widget.onPressed,
-            style: FilledButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 0,
-              backgroundColor: theme.colorScheme.primary,
-              foregroundColor: theme.colorScheme.onPrimary,
-              shadowColor: theme.colorScheme.primary.withValues(alpha: 0.4),
-              disabledBackgroundColor: theme.colorScheme.primary.withValues(alpha: 0.5),
-            ).copyWith(
-              elevation: WidgetStateProperty.resolveWith((states) {
-                if (states.contains(WidgetState.disabled)) return 0;
-                if (states.contains(WidgetState.pressed)) return 2;
-                return 8; // Subtle shadow for depth
-              }),
-            ),
+            style:
+                FilledButton.styleFrom(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  elevation: 0,
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
+                  shadowColor: theme.colorScheme.primary.withValues(alpha: 0.4),
+                  disabledBackgroundColor: theme.colorScheme.primary.withValues(
+                    alpha: 0.5,
+                  ),
+                ).copyWith(
+                  elevation: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.disabled)) return 0;
+                    if (states.contains(WidgetState.pressed)) return 2;
+                    return 8; // Subtle shadow for depth
+                  }),
+                ),
             child: widget.isLoading
                 ? SizedBox(
                     height: 24,

@@ -33,10 +33,7 @@ class _UserHomeTabState extends ConsumerState<UserHomeTab>
           sliver: StickyVideoSection(mid: widget.mid),
         ),
         MasterpieceSection(mid: widget.mid),
-        RecentVideoSection(
-          mid: widget.mid,
-          onSwitchToTab: widget.onSwitchToTab,
-        ),
+        RecentVideoSection(mid: widget.mid, onSwitchToTab: widget.onSwitchToTab),
         SliverToBoxAdapter(
           child: SizedBox(height: MediaQuery.paddingOf(context).bottom + 24),
         ),

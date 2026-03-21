@@ -52,9 +52,9 @@ class FavoritesPage extends HookConsumerWidget {
                     ref.invalidate(favCreatedFoldersProvider);
                   } catch (e) {
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Failed to add folder: $e')),
-                      );
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text('Failed to add folder: $e')));
                     }
                   }
                 }
@@ -62,10 +62,7 @@ class FavoritesPage extends HookConsumerWidget {
             ),
         ],
         bottom: authState.isLoggedIn
-            ? AppTabBar(
-                controller: tabController,
-                tabs: [t.fav.created, t.fav.collected],
-              )
+            ? AppTabBar(controller: tabController, tabs: [t.fav.created, t.fav.collected])
             : null,
       ),
       body: authState.isLoggedIn
@@ -76,10 +73,7 @@ class FavoritesPage extends HookConsumerWidget {
                 FavFolderList(type: FavFolderType.collected),
               ],
             )
-          : GuestView(
-              title: t.profile.not_logged_in,
-              message: t.profile.login_hint,
-            ),
+          : GuestView(title: t.profile.not_logged_in, message: t.profile.login_hint),
     );
   }
 }

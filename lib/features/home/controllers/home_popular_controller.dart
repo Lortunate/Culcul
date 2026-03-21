@@ -18,9 +18,7 @@ class HomePopular extends _$HomePopular with PagingMixin<VideoModel> {
 
   @override
   Future<List<VideoModel>> fetchItems(int page) async {
-    final result = await ref
-        .read(homeRepositoryProvider)
-        .fetchPopular(page: page);
+    final result = await ref.read(homeRepositoryProvider).fetchPopular(page: page);
     return switch (result) {
       Success(value: final list) => list,
       Failure(exception: final e) => throw e,
@@ -29,12 +27,12 @@ class HomePopular extends _$HomePopular with PagingMixin<VideoModel> {
 
   Future<void> refresh() async {
     state = AsyncLoading<List<VideoModel>>().copyWithPrevious(state);
-    
+
     state = await AsyncValue.guard(() async {
       final result = await ref
           .read(homeRepositoryProvider)
           .fetchPopular(page: 1, forceRefresh: true);
-          
+
       return switch (result) {
         Success(value: final list) => () {
           page = 1;
@@ -51,10 +49,6 @@ class HomePopular extends _$HomePopular with PagingMixin<VideoModel> {
     if (oldState is! AsyncData || !hasMore || oldState.isLoading) return;
 
     state = AsyncLoading<List<VideoModel>>().copyWithPrevious(oldState);
-    await handleLoadMore(
-      oldState,
-      (newState) => state = newState,
-      (item) => item.bvid,
-    );
+    await handleLoadMore(oldState, (newState) => state = newState, (item) => item.bvid);
   }
 }

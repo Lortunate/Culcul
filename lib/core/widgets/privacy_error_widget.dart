@@ -1,4 +1,3 @@
-
 import 'package:culcul/core/constants/app_dimens.dart';
 import 'package:flutter/material.dart';
 
@@ -23,11 +22,7 @@ class PrivacyErrorWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            size: AppDimens.iconHuge,
-            color: colorScheme.onSurfaceVariant,
-          ),
+          Icon(icon, size: AppDimens.iconHuge, color: colorScheme.onSurfaceVariant),
           const SizedBox(height: AppDimens.p16),
           Text(
             title,
@@ -39,9 +34,7 @@ class PrivacyErrorWidget extends StatelessWidget {
           const SizedBox(height: AppDimens.p8),
           Text(
             message,
-            style: textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
+            style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
           ),
         ],
       ),

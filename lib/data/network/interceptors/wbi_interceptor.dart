@@ -15,16 +15,12 @@ class WbiInterceptor extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     // Check for x-bili-wbi header (case-insensitive) or if path contains /wbi/
-    final hasWbiHeader = options.headers.keys.any(
-      (k) => k.toLowerCase() == 'x-bili-wbi',
-    );
+    final hasWbiHeader = options.headers.keys.any((k) => k.toLowerCase() == 'x-bili-wbi');
     final isWbiPath = options.uri.path.contains('/wbi/');
 
     if (hasWbiHeader || isWbiPath) {
       // Remove header if present
-      options.headers.removeWhere(
-        (key, value) => key.toLowerCase() == 'x-bili-wbi',
-      );
+      options.headers.removeWhere((key, value) => key.toLowerCase() == 'x-bili-wbi');
 
       _ensureCookieCount(options);
 
@@ -57,10 +53,7 @@ class WbiInterceptor extends Interceptor {
   void _ensureCookieCount(RequestOptions options) {
     final cookieHeader = options.headers[HttpHeaders.cookieHeader];
     if (cookieHeader is String) {
-      final count = cookieHeader
-          .split(';')
-          .where((e) => e.trim().isNotEmpty)
-          .length;
+      final count = cookieHeader.split(';').where((e) => e.trim().isNotEmpty).length;
       if (count < 3) {
         final sb = StringBuffer(cookieHeader);
         for (var i = 0; i < 3 - count; i++) {

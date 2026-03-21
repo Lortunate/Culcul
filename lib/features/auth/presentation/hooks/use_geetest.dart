@@ -31,13 +31,9 @@ UseGeetestResult useGeetest({
     isLoading.value = true;
     try {
       final captchaMap = await ref.read(authProvider.notifier).getCaptcha();
-      final geetest = captchaMap['geetest'] is Map
-          ? captchaMap['geetest']
-          : null;
+      final geetest = captchaMap['geetest'] is Map ? captchaMap['geetest'] : null;
       final gt = geetest != null ? geetest['gt'] : captchaMap['gt'];
-      final challenge = geetest != null
-          ? geetest['challenge']
-          : captchaMap['challenge'];
+      final challenge = geetest != null ? geetest['challenge'] : captchaMap['challenge'];
       final token = captchaMap['token'] ?? '';
 
       if (gt == null || challenge == null) {
@@ -49,8 +45,7 @@ UseGeetestResult useGeetest({
         onResult: (Map<String, dynamic> message) async {
           if (message['code'] == '1') {
             final captchaResult = message['result'] as Map<dynamic, dynamic>;
-            final Map<String, dynamic> result = captchaResult
-                .cast<String, dynamic>();
+            final Map<String, dynamic> result = captchaResult.cast<String, dynamic>();
 
             try {
               final validate =
@@ -61,8 +56,7 @@ UseGeetestResult useGeetest({
                   result['geetest_seccode'] as String? ??
                   result['gen_time'] as String? ??
                   '';
-              final resultChallenge =
-                  result['geetest_challenge'] as String? ?? challenge;
+              final resultChallenge = result['geetest_challenge'] as String? ?? challenge;
 
               await onSuccess(token, resultChallenge, validate, seccode);
             } catch (e) {
@@ -79,9 +73,7 @@ UseGeetestResult useGeetest({
           if (context.mounted) isLoading.value = false;
         },
       );
-      plugin.startCaptcha(
-        Gt3RegisterData(gt: gt, challenge: challenge, success: true),
-      );
+      plugin.startCaptcha(Gt3RegisterData(gt: gt, challenge: challenge, success: true));
     } catch (e) {
       onError?.call(e.toString());
       if (context.mounted) isLoading.value = false;

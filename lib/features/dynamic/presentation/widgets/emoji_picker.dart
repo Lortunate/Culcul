@@ -13,8 +13,7 @@ class EmojiPicker extends ConsumerStatefulWidget {
   ConsumerState<EmojiPicker> createState() => _EmojiPickerState();
 }
 
-class _EmojiPickerState extends ConsumerState<EmojiPicker>
-    with TickerProviderStateMixin {
+class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderStateMixin {
   TabController? _tabController;
 
   @override
@@ -30,12 +29,8 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker>
             return const Center(child: Text('暂无表情包'));
           }
 
-          if (_tabController == null ||
-              _tabController!.length != packages.length) {
-            _tabController = TabController(
-              length: packages.length,
-              vsync: this,
-            );
+          if (_tabController == null || _tabController!.length != packages.length) {
+            _tabController = TabController(length: packages.length, vsync: this);
           }
 
           return Column(
@@ -43,9 +38,7 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker>
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
-                  children: packages
-                      .map((package) => _buildEmojiGrid(package))
-                      .toList(),
+                  children: packages.map((package) => _buildEmojiGrid(package)).toList(),
                 ),
               ),
               TabBar(

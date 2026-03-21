@@ -10,8 +10,7 @@ class AppShimmer extends StatefulWidget {
   State<AppShimmer> createState() => _AppShimmerState();
 }
 
-class _AppShimmerState extends State<AppShimmer>
-    with SingleTickerProviderStateMixin {
+class _AppShimmerState extends State<AppShimmer> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -47,9 +46,7 @@ class _AppShimmerState extends State<AppShimmer>
     if (!widget.enabled) return widget.child;
 
     final colorScheme = Theme.of(context).colorScheme;
-    final baseColor = colorScheme.surfaceContainerHighest.withValues(
-      alpha: 0.6,
-    );
+    final baseColor = colorScheme.surfaceContainerHighest.withValues(alpha: 0.6);
     final highlightColor = colorScheme.surfaceContainerHighest;
 
     return AnimatedBuilder(
@@ -63,9 +60,7 @@ class _AppShimmerState extends State<AppShimmer>
               end: Alignment.bottomRight,
               colors: [baseColor, highlightColor, baseColor],
               stops: const [0.3, 0.5, 0.7],
-              transform: _SlidingGradientTransform(
-                slidePercent: _controller.value,
-              ),
+              transform: _SlidingGradientTransform(slidePercent: _controller.value),
             ).createShader(bounds);
           },
           child: widget.child,
@@ -80,12 +75,7 @@ class AppShimmerBox extends StatelessWidget {
   final double? height;
   final double borderRadius;
 
-  const AppShimmerBox({
-    super.key,
-    this.width,
-    this.height,
-    this.borderRadius = 4,
-  });
+  const AppShimmerBox({super.key, this.width, this.height, this.borderRadius = 4});
 
   @override
   Widget build(BuildContext context) {
@@ -107,10 +97,6 @@ class _SlidingGradientTransform extends GradientTransform {
 
   @override
   Matrix4? transform(Rect bounds, {TextDirection? textDirection}) {
-    return Matrix4.translationValues(
-      bounds.width * (slidePercent * 2 - 1),
-      0,
-      0,
-    );
+    return Matrix4.translationValues(bounds.width * (slidePercent * 2 - 1), 0, 0);
   }
 }

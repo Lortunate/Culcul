@@ -15,8 +15,6 @@ class HistoryRepository extends BaseRepository {
     String business = '',
     int ps = 20,
   }) {
-    return safeApiCall(
-      () => _api.getHistoryCursor(max, viewAt, business, ps),
-    );
+    return safeApiCall(() => _api.getHistoryCursor(max, viewAt, business, ps));
   }
 }

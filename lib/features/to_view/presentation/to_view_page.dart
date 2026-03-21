@@ -79,9 +79,7 @@ class ToViewPage extends ConsumerWidget {
                           child: const Icon(Icons.delete, color: Colors.white),
                         ),
                         onDismissed: (direction) {
-                          ref
-                              .read(toViewListProvider.notifier)
-                              .delete(item.aid!);
+                          ref.read(toViewListProvider.notifier).delete(item.aid!);
                         },
                         child: ToViewItem(
                           item: item,
@@ -104,10 +102,7 @@ class ToViewPage extends ConsumerWidget {
                 );
               },
             )
-          : GuestView(
-              title: t.profile.not_logged_in,
-              message: t.profile.login_hint,
-            ),
+          : GuestView(title: t.profile.not_logged_in, message: t.profile.login_hint),
     );
   }
 }

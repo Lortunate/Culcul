@@ -35,9 +35,7 @@ class GuestProfileView extends ConsumerWidget {
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: colorScheme.surfaceContainerHighest.withValues(
-                    alpha: 0.5,
-                  ),
+                  color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                 ),
                 child: Icon(
                   Icons.person_rounded,
@@ -58,9 +56,7 @@ class GuestProfileView extends ConsumerWidget {
                 onPressed: () => const LoginRoute().push(context),
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(200, 48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                 ),
                 child: Text(t.auth.login),
               ),

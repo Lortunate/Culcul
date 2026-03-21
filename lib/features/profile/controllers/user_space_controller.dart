@@ -27,10 +27,7 @@ class UserSpaceNotifier extends _$UserSpaceNotifier {
 
     final result = await ref
         .read(profileRepositoryProvider)
-        .modifyRelation(
-          mid: int.parse(currentProfile.id),
-          isFollow: newFollowStatus,
-        );
+        .modifyRelation(mid: int.parse(currentProfile.id), isFollow: newFollowStatus);
 
     if (result is Failure) {
       // Revert if failed

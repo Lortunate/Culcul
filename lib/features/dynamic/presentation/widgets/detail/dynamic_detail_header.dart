@@ -33,36 +33,25 @@ class DynamicDetailHeader extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 15,
-                      color:
-                          post.authorName == '哔哩哔哩番剧' ||
-                                  post.authorName == '哔哩哔哩漫画'
-                              ? colorScheme.primary
-                              : colorScheme.onSurface,
+                      color: post.authorName == '哔哩哔哩番剧' || post.authorName == '哔哩哔哩漫画'
+                          ? colorScheme.primary
+                          : colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     post.timeText,
-                    style: TextStyle(
-                      color: colorScheme.onSurfaceVariant,
-                      fontSize: 12,
-                    ),
+                    style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
                   ),
                 ],
               ),
             ),
             IconButton(
-              icon: Icon(
-                Icons.more_vert,
-                size: 20,
-                color: colorScheme.onSurfaceVariant,
-              ),
+              icon: Icon(Icons.more_vert, size: 20, color: colorScheme.onSurfaceVariant),
               onPressed: () {},
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
-              style: const ButtonStyle(
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
+              style: const ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
             ),
           ],
         ),

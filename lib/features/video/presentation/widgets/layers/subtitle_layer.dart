@@ -15,8 +15,7 @@ class SubtitleLayer extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final subtitleState = ref.watch(subtitleControllerProvider(bvid));
     final player = ref.watch(playerControllerProvider.notifier).player;
-    final playerPosition =
-        useStream(player.stream.position).data ?? Duration.zero;
+    final playerPosition = useStream(player.stream.position).data ?? Duration.zero;
 
     if (!subtitleState.isEnabled || subtitleState.content.isEmpty) {
       return const SizedBox();
@@ -29,8 +28,7 @@ class SubtitleLayer extends HookConsumerWidget {
     // For now, a simple iteration is fine for typical subtitle counts.
     final currentItem = subtitleState.content.firstWhere(
       (item) => item.from <= currentSeconds && item.to >= currentSeconds,
-      orElse: () =>
-          const SubtitleItem(from: 0, to: 0, location: 0, content: ''),
+      orElse: () => const SubtitleItem(from: 0, to: 0, location: 0, content: ''),
     );
 
     if (currentItem.content.isEmpty) {

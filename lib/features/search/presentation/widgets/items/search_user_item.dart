@@ -23,18 +23,10 @@ class SearchUserItem extends StatelessWidget {
       avatarUrl: item.upic ?? item.upicUrl ?? '',
       avatarSize: 60,
       name: FormatUtils.stripHtmlTags(item.uname ?? ''),
-      subtitle: item.usign != null
-          ? FormatUtils.stripHtmlTags(item.usign!)
-          : null,
+      subtitle: item.usign != null ? FormatUtils.stripHtmlTags(item.usign!) : null,
       stats: [
-        _UserMetaItem(
-          label: '粉丝',
-          value: FormatUtils.formatAnyNumber(item.fans),
-        ),
-        _UserMetaItem(
-          label: '视频',
-          value: FormatUtils.formatAnyNumber(item.videos),
-        ),
+        _UserMetaItem(label: '粉丝', value: FormatUtils.formatAnyNumber(item.fans)),
+        _UserMetaItem(label: '视频', value: FormatUtils.formatAnyNumber(item.videos)),
       ],
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
       trailing: SizedBox(
@@ -44,9 +36,7 @@ class SearchUserItem extends StatelessWidget {
           style: OutlinedButton.styleFrom(
             side: BorderSide(color: colorScheme.primary, width: 0.8),
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           ),
           child: Text(
             '关注',

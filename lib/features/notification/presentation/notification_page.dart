@@ -37,10 +37,7 @@ class NotificationPage extends ConsumerWidget {
                 Expanded(child: PrivateSessionList()),
               ],
             )
-          : GuestView(
-              title: t.profile.not_logged_in,
-              message: t.profile.login_hint,
-            ),
+          : GuestView(title: t.profile.not_logged_in, message: t.profile.login_hint),
     );
   }
 }

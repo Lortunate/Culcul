@@ -26,9 +26,7 @@ class SubtitleController extends _$SubtitleController {
   @override
   SubtitleState build(String bvid) {
     // Listen to video detail changes to initialize subtitles
-    final videoDetail = ref
-        .watch(videoDetailControllerProvider(bvid))
-        .videoDetail;
+    final videoDetail = ref.watch(videoDetailControllerProvider(bvid)).videoDetail;
 
     if (videoDetail?.subtitle?.list.isNotEmpty == true) {
       // If we have subtitles but haven't initialized them yet
@@ -45,8 +43,7 @@ class SubtitleController extends _$SubtitleController {
       state = state.copyWith(isEnabled: false);
     } else {
       state = state.copyWith(isEnabled: true);
-      if (state.selectedSubtitle == null &&
-          state.availableSubtitles.isNotEmpty) {
+      if (state.selectedSubtitle == null && state.availableSubtitles.isNotEmpty) {
         // Select first by default
         await selectSubtitle(state.availableSubtitles.first);
       } else if (state.content.isEmpty && state.selectedSubtitle != null) {
@@ -59,11 +56,7 @@ class SubtitleController extends _$SubtitleController {
   Future<void> selectSubtitle(SubtitleInfo info) async {
     if (state.selectedSubtitle == info && state.content.isNotEmpty) return;
 
-    state = state.copyWith(
-      selectedSubtitle: info,
-      isLoading: true,
-      error: null,
-    );
+    state = state.copyWith(selectedSubtitle: info, isLoading: true, error: null);
 
     await _loadSubtitleContent(info);
   }

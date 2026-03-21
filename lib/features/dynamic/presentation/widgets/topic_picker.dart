@@ -93,9 +93,7 @@ class TopicPicker extends HookConsumerWidget {
                         borderRadius: BorderRadius.circular(24),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                       isDense: true,
                     ),
                     onChanged: onSearchChanged,
@@ -147,9 +145,7 @@ class TopicPicker extends HookConsumerWidget {
                                   color: colorScheme.onPrimaryContainer,
                                 ),
                               ),
-                        title: Text(
-                          FormatUtils.stripHtmlTags(topic.title ?? ''),
-                        ),
+                        title: Text(FormatUtils.stripHtmlTags(topic.title ?? '')),
                         subtitle: topic.description != null
                             ? Text(
                                 FormatUtils.stripHtmlTags(topic.description!),
@@ -158,9 +154,7 @@ class TopicPicker extends HookConsumerWidget {
                               )
                             : null,
                         onTap: () {
-                          onTopicSelected(
-                            FormatUtils.stripHtmlTags(topic.title ?? ''),
-                          );
+                          onTopicSelected(FormatUtils.stripHtmlTags(topic.title ?? ''));
                         },
                       );
                     },

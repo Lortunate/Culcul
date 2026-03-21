@@ -27,10 +27,7 @@ class IconText extends StatelessWidget {
         color ?? theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6);
     final effectiveStyle =
         style ??
-        theme.textTheme.labelSmall?.copyWith(
-          color: effectiveColor,
-          fontSize: fontSize,
-        );
+        theme.textTheme.labelSmall?.copyWith(color: effectiveColor, fontSize: fontSize);
 
     return Row(
       mainAxisSize: MainAxisSize.min,

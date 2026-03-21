@@ -54,11 +54,7 @@ class SettingsItem extends StatelessWidget {
                 ),
               if (showArrow) ...[
                 const SizedBox(width: 4),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  size: 20,
-                  color: colorScheme.outline,
-                ),
+                Icon(Icons.chevron_right_rounded, size: 20, color: colorScheme.outline),
               ],
             ],
           ],

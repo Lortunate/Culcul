@@ -17,14 +17,10 @@ sealed class VideoModel with _$VideoModel {
     required int duration,
     @JsonKey(name: 'pubdate') required int pubDate,
     @Default('') String desc,
-    @JsonKey(name: 'rcmd_reason')
-    @RcmdReasonConverter()
-    @Default('')
-    String rcmdReason,
+    @JsonKey(name: 'rcmd_reason') @RcmdReasonConverter() @Default('') String rcmdReason,
   }) = _VideoModel;
 
-  factory VideoModel.fromJson(Map<String, dynamic> json) =>
-      _$VideoModelFromJson(json);
+  factory VideoModel.fromJson(Map<String, dynamic> json) => _$VideoModelFromJson(json);
 
   String get durationString => FormatUtils.formatDuration(duration);
   String get pubDateString => FormatUtils.formatTimestamp(pubDate);

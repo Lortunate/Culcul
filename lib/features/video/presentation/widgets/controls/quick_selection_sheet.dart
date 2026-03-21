@@ -77,9 +77,7 @@ class QuickSelectionSheet<T> extends StatelessWidget {
                         16,
                         isBottomSheet ? 8 : 8,
                         16,
-                        isBottomSheet
-                            ? MediaQuery.of(context).padding.bottom + 16
-                            : 16,
+                        isBottomSheet ? MediaQuery.of(context).padding.bottom + 16 : 16,
                       ),
                       shrinkWrap: true,
                       itemCount: items.length,
@@ -106,16 +104,12 @@ class QuickSelectionSheet<T> extends StatelessWidget {
                               ),
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? colorScheme.primary.withValues(
-                                        alpha: 0.15,
-                                      )
+                                    ? colorScheme.primary.withValues(alpha: 0.15)
                                     : Colors.transparent,
                                 borderRadius: BorderRadius.circular(12),
                                 border: isSelected
                                     ? Border.all(
-                                        color: colorScheme.primary.withValues(
-                                          alpha: 0.5,
-                                        ),
+                                        color: colorScheme.primary.withValues(alpha: 0.5),
                                       )
                                     : null,
                               ),

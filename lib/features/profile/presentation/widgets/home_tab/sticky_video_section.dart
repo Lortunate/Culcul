@@ -55,10 +55,7 @@ class StickyVideoSection extends ConsumerWidget {
                             child: Stack(
                               fit: StackFit.expand,
                               children: [
-                                AppNetworkImage(
-                                  url: video.pic,
-                                  fit: BoxFit.cover,
-                                ),
+                                AppNetworkImage(url: video.pic, fit: BoxFit.cover),
                                 Positioned(
                                   bottom: 4,
                                   right: 4,
@@ -68,15 +65,11 @@ class StickyVideoSection extends ConsumerWidget {
                                       vertical: 2,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.black.withValues(
-                                        alpha: 0.6,
-                                      ),
+                                      color: Colors.black.withValues(alpha: 0.6),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
-                                      FormatUtils.formatDuration(
-                                        video.duration,
-                                      ),
+                                      FormatUtils.formatDuration(video.duration),
                                       style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 10,
@@ -115,9 +108,7 @@ class StickyVideoSection extends ConsumerWidget {
                                       vertical: 2,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: colorScheme.primary.withValues(
-                                        alpha: 0.1,
-                                      ),
+                                      color: colorScheme.primary.withValues(alpha: 0.1),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Row(
@@ -131,12 +122,11 @@ class StickyVideoSection extends ConsumerWidget {
                                         const SizedBox(width: 2),
                                         Text(
                                           '置顶',
-                                          style: theme.textTheme.labelSmall
-                                              ?.copyWith(
-                                                color: colorScheme.primary,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 10,
-                                              ),
+                                          style: theme.textTheme.labelSmall?.copyWith(
+                                            color: colorScheme.primary,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 10,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -144,13 +134,10 @@ class StickyVideoSection extends ConsumerWidget {
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
-                                      FormatUtils.formatTimestamp(
-                                        video.pubDate,
+                                      FormatUtils.formatTimestamp(video.pubDate),
+                                      style: theme.textTheme.labelSmall?.copyWith(
+                                        color: colorScheme.onSurfaceVariant,
                                       ),
-                                      style: theme.textTheme.labelSmall
-                                          ?.copyWith(
-                                            color: colorScheme.onSurfaceVariant,
-                                          ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -162,16 +149,12 @@ class StickyVideoSection extends ConsumerWidget {
                                 children: [
                                   _StatIconText(
                                     icon: Icons.play_circle_outline_rounded,
-                                    text: FormatUtils.formatNumber(
-                                      video.stat.view,
-                                    ),
+                                    text: FormatUtils.formatNumber(video.stat.view),
                                   ),
                                   const SizedBox(width: 12),
                                   _StatIconText(
                                     icon: Icons.article_outlined,
-                                    text: FormatUtils.formatNumber(
-                                      video.stat.danmaku,
-                                    ),
+                                    text: FormatUtils.formatNumber(video.stat.danmaku),
                                   ),
                                 ],
                               ),
@@ -207,11 +190,7 @@ class _StatIconText extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon,
-          size: 14,
-          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-        ),
+        Icon(icon, size: 14, color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7)),
         const SizedBox(width: 4),
         Text(
           text,

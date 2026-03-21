@@ -21,10 +21,9 @@ class LikeList extends _$LikeList {
     if (currentList.isEmpty) return;
 
     final lastItem = currentList.last;
-    final result = await ref.read(notificationRepositoryProvider).getLikeList(
-      id: lastItem.id,
-      likeTime: lastItem.likeTime,
-    );
+    final result = await ref
+        .read(notificationRepositoryProvider)
+        .getLikeList(id: lastItem.id, likeTime: lastItem.likeTime);
 
     switch (result) {
       case Success(value: final data):

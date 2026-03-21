@@ -11,10 +11,7 @@ part 'danmaku_repository.g.dart';
 
 @riverpod
 DanmakuRepository danmakuRepository(Ref ref) {
-  return DanmakuRepository(
-    ref.watch(danmakuApiProvider),
-    ref.watch(resourceApiProvider),
-  );
+  return DanmakuRepository(ref.watch(danmakuApiProvider), ref.watch(resourceApiProvider));
 }
 
 class DanmakuRepository extends BaseRepository {
@@ -43,10 +40,7 @@ class DanmakuRepository extends BaseRepository {
     required int pid,
   }) {
     return safeCall(() async {
-      final response = await _api.fetchDanmakuView(
-        oid: oid,
-        pid: pid,
-      );
+      final response = await _api.fetchDanmakuView(oid: oid, pid: pid);
       return DmViewReply.fromBuffer(response);
     });
   }

@@ -19,18 +19,14 @@ class PlayerTheme {
     fontSize: 11,
     fontWeight: FontWeight.w500,
     fontFeatures: [FontFeature.tabularFigures()],
-    shadows: [
-      Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45),
-    ],
+    shadows: [Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45)],
   );
 
   static const TextStyle titleStyle = TextStyle(
     color: Colors.white,
     fontSize: 15,
     fontWeight: FontWeight.w500,
-    shadows: [
-      Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45),
-    ],
+    shadows: [Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45)],
   );
 
   static const TextStyle subtitleStyle = TextStyle(
@@ -49,10 +45,7 @@ class PlayerTheme {
   // Slider Theme
   static SliderThemeData get sliderTheme => SliderThemeData(
     trackHeight: 3,
-    thumbShape: const RoundSliderThumbShape(
-      enabledThumbRadius: 7,
-      elevation: 2,
-    ),
+    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7, elevation: 2),
     overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
     activeTrackColor: AppColors.primary,
     inactiveTrackColor: Colors.white24,
@@ -88,14 +81,10 @@ class PlayerTheme {
     textStyle: const TextStyle(
       fontSize: 13,
       fontWeight: FontWeight.w600,
-      shadows: [
-        Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45),
-      ],
+      shadows: [Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45)],
     ),
   );
 
   // Colors
-  static final Color overlayBackgroundColor = Colors.black.withValues(
-    alpha: 0.6,
-  );
+  static final Color overlayBackgroundColor = Colors.black.withValues(alpha: 0.6);
 }

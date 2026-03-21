@@ -36,6 +36,5 @@ sealed class WatchedShow with _$WatchedShow {
     @JsonKey(name: 'icon_web') required String iconWeb,
   }) = _WatchedShow;
 
-  factory WatchedShow.fromJson(Map<String, dynamic> json) =>
-      _$WatchedShowFromJson(json);
+  factory WatchedShow.fromJson(Map<String, dynamic> json) => _$WatchedShowFromJson(json);
 }

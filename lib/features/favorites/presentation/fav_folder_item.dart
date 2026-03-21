@@ -107,12 +107,11 @@ class FavFolderItem extends StatelessWidget {
                                     const SizedBox(width: 2),
                                     Text(
                                       '私密',
-                                      style: theme.textTheme.labelSmall
-                                          ?.copyWith(
-                                            color: colorScheme.onSurfaceVariant,
-                                            fontSize: 10,
-                                            height: 1,
-                                          ),
+                                      style: theme.textTheme.labelSmall?.copyWith(
+                                        color: colorScheme.onSurfaceVariant,
+                                        fontSize: 10,
+                                        height: 1,
+                                      ),
                                     ),
                                   ],
                                 ),

@@ -9,7 +9,7 @@ part 'category_ranking_provider.g.dart';
 Future<List<VideoModel>> categoryRankingList(Ref ref, {int? rid}) async {
   final repository = ref.watch(rankingRepositoryProvider);
   final result = await repository.getRanking(rid: rid);
-  
+
   return switch (result) {
     Success(value: final list) => list,
     Failure(exception: final e) => throw e,

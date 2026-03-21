@@ -31,12 +31,8 @@ class CommentImagesWidget extends StatelessWidget {
     // Single image logic
     // Limit max size to avoid taking too much space
     // Aspect ratio can be respected but with limits
-    final double? w = picture.imgWidth > 0
-        ? picture.imgWidth.toDouble()
-        : null;
-    final double? h = picture.imgHeight > 0
-        ? picture.imgHeight.toDouble()
-        : null;
+    final double? w = picture.imgWidth > 0 ? picture.imgWidth.toDouble() : null;
+    final double? h = picture.imgHeight > 0 ? picture.imgHeight.toDouble() : null;
 
     // Calculate aspect ratio
     double aspectRatio = 1.0;
@@ -113,8 +109,7 @@ class CommentImagesWidget extends StatelessWidget {
                       FormatUtils.formatImageUrl(pictures[index].imgSrc),
                       fit: BoxFit.cover,
                       cache: true,
-                      loadStateChanged: (state) =>
-                          _buildLoadState(context, state),
+                      loadStateChanged: (state) => _buildLoadState(context, state),
                     ),
                   ),
                 ),
@@ -129,9 +124,7 @@ class CommentImagesWidget extends StatelessWidget {
   Widget? _buildLoadState(BuildContext context, ExtendedImageState state) {
     switch (state.extendedImageLoadState) {
       case LoadState.loading:
-        return Container(
-          color: Theme.of(context).colorScheme.surfaceContainerHigh,
-        );
+        return Container(color: Theme.of(context).colorScheme.surfaceContainerHigh);
       case LoadState.completed:
         return null;
       case LoadState.failed:
@@ -145,8 +138,7 @@ class CommentImagesWidget extends StatelessWidget {
   void _openPreview(BuildContext context, List<String> imageUrls, int index) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) =>
-            ImagePreviewPage(imageUrls: imageUrls, initialIndex: index),
+        builder: (context) => ImagePreviewPage(imageUrls: imageUrls, initialIndex: index),
       ),
     );
   }

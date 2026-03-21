@@ -37,11 +37,7 @@ class _PrivateSessionSkeletonItem extends StatelessWidget {
               children: const [
                 AppShimmerBox(width: 120, height: 16, borderRadius: 4),
                 SizedBox(height: 8),
-                AppShimmerBox(
-                  width: double.infinity,
-                  height: 14,
-                  borderRadius: 4,
-                ),
+                AppShimmerBox(width: double.infinity, height: 14, borderRadius: 4),
               ],
             ),
           ),
@@ -88,9 +84,7 @@ class _ChatMessageSkeletonItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return AppShimmer(
       child: Row(
-        mainAxisAlignment: isSelf
-            ? MainAxisAlignment.end
-            : MainAxisAlignment.start,
+        mainAxisAlignment: isSelf ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!isSelf) ...[

@@ -68,10 +68,7 @@ class VideoInfoView extends ConsumerWidget {
                     VideoStatsRow(detail: d),
                     const SizedBox(height: 8),
                     // Consolidated Description & Tags
-                    ExpandableDescriptionAndTags(
-                      description: d.desc,
-                      tags: d.tag,
-                    ),
+                    ExpandableDescriptionAndTags(description: d.desc, tags: d.tag),
                   ],
                 ),
               ),
@@ -124,8 +121,7 @@ class VideoInfoView extends ConsumerWidget {
               childAspectRatio: 0.95,
             ),
             delegate: SliverChildBuilderDelegate(
-              (context, index) =>
-                  RecommendationItem(video: state.relatedVideos[index]),
+              (context, index) => RecommendationItem(video: state.relatedVideos[index]),
               childCount: state.relatedVideos.length,
             ),
           ),

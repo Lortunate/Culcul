@@ -32,14 +32,14 @@ sealed class User with _$User {
   }
 
   Map<String, dynamic> toJson() => {
-        'mid': id,
-        'uname': username,
-        'face': avatarUrl,
-        'email': email,
-        'level_info': {
-          'current_level': level,
-          'current_exp': currentExp,
-          'next_exp': nextExp,
-        },
-      };
+    'mid': id,
+    'uname': username,
+    'face': avatarUrl,
+    'email': email,
+    'level_info': {
+      'current_level': level,
+      'current_exp': currentExp,
+      'next_exp': nextExp,
+    },
+  };
 }

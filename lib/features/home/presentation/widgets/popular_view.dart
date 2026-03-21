@@ -5,10 +5,10 @@ import 'package:culcul/features/home/presentation/widgets/popular_video_card.dar
 import 'package:culcul/ui/widgets/skeletons/page_skeletons.dart';
 import 'package:culcul/ui/widgets/skeletons/video_list_skeleton.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
+import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:easy_refresh/easy_refresh.dart';
 
 class PopularView extends HookConsumerWidget {
   const PopularView({super.key});
@@ -16,23 +16,24 @@ class PopularView extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     useAutomaticKeepAlive();
+
     final popularAsync = ref.watch(homePopularProvider);
     final scrollController = useScrollController();
     final refreshController = useMemoized(() => EasyRefreshController());
 
     useHomeScrollManager(ref, scrollController, refreshController, 2);
 
-    const padding = EdgeInsets.symmetric(horizontal: 12, vertical: 8);
+    const padding = EdgeInsets.all(4);
 
     return SmartPagingView(
       provider: homePopularProvider,
       asyncValue: popularAsync,
       controller: refreshController,
-      onRefresh: () => ref.read(homePopularProvider.notifier).refresh(),
-      onLoadMore: () => ref.read(homePopularProvider.notifier).loadMore(),
+      // 使用方法撕裂 (Tear-off) 简化闭包调用
+      onRefresh: ref.read(homePopularProvider.notifier).refresh,
+      onLoadMore: ref.read(homePopularProvider.notifier).loadMore,
       skeleton: const ListSkeletonView(
         itemSkeleton: VideoListSkeleton(),
-        itemPadding: EdgeInsets.only(bottom: 8),
         padding: padding,
       ),
       builder: (context, items) => CustomScrollView(
@@ -41,19 +42,17 @@ class PopularView extends HookConsumerWidget {
         slivers: [
           SliverPadding(
             padding: padding,
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate((context, index) {
+            sliver: SliverList.separated(
+              itemCount: items.length,
+              itemBuilder: (context, index) {
                 final video = items[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: PopularVideoCard(
-                    key: ValueKey('popular_v_${video.bvid}_$index'),
-                    video: video,
-                    onTap: () =>
-                        VideoDetailRoute(bvid: video.bvid).push(context),
-                  ),
+                return PopularVideoCard(
+                  key: ValueKey('popular_v_${video.bvid}_$index'),
+                  video: video,
+                  onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
                 );
-              }, childCount: items.length),
+              },
+              separatorBuilder: (context, index) => const SizedBox(height: 4),
             ),
           ),
         ],

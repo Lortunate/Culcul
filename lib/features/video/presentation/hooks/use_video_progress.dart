@@ -5,12 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
 
-void useVideoProgressReport(
-  WidgetRef ref,
-  String bvid,
-  Player player,
-  bool isPlaying,
-) {
+void useVideoProgressReport(WidgetRef ref, String bvid, Player player, bool isPlaying) {
   final detailState = ref.watch(videoDetailControllerProvider(bvid));
   final aid = detailState.videoDetail?.aid;
   final cid = detailState.currentCid;
@@ -27,11 +22,7 @@ void useVideoProgressReport(
     final pos = player.state.position.inSeconds;
     final info = latestInfoRef.value;
     if (pos > 0 && info.aid != null && info.cid != 0) {
-      videoRepo.reportVideoProgress(
-        aid: info.aid!,
-        cid: info.cid,
-        progress: pos,
-      );
+      videoRepo.reportVideoProgress(aid: info.aid!, cid: info.cid, progress: pos);
     }
   }
 

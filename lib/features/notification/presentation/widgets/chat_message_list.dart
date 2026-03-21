@@ -81,9 +81,7 @@ class _ChatMessageListState extends State<ChatMessageList> {
               ChatMessageItem(
                 message: message,
                 isSelf: isSelf,
-                avatarUrl: isSelf
-                    ? widget.selfAvatarUrl
-                    : widget.otherAvatarUrl,
+                avatarUrl: isSelf ? widget.selfAvatarUrl : widget.otherAvatarUrl,
                 emojiMap: widget.emojiMap,
                 onAvatarTap: () {
                   if (!isSelf) {

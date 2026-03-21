@@ -21,11 +21,7 @@ class LiveRoomContent extends ConsumerWidget {
       return Center(
         child: AppErrorWidget(
           error: state.error,
-          onRetry:
-              () =>
-                  ref
-                      .read(liveRoomControllerProvider(roomId).notifier)
-                      .refresh(),
+          onRetry: () => ref.read(liveRoomControllerProvider(roomId).notifier).refresh(),
         ),
       );
     }

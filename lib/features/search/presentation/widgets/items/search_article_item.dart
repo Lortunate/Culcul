@@ -60,10 +60,7 @@ class SearchArticleItem extends StatelessWidget {
                 aspectRatio: 16 / 9,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: AppNetworkImage(
-                    url: item.imageUrls![0],
-                    borderRadius: 8,
-                  ),
+                  child: AppNetworkImage(url: item.imageUrls![0], borderRadius: 8),
                 ),
               ),
             const SizedBox(height: 10),
@@ -115,11 +112,7 @@ class _ArticleMetaItem extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon,
-          size: 12,
-          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
-        ),
+        Icon(icon, size: 12, color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4)),
         const SizedBox(width: 4),
         Text(
           value,

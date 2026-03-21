@@ -38,9 +38,7 @@ class ToViewItem extends StatelessWidget {
                   value: item.progressRatio,
                   minHeight: 3,
                   backgroundColor: Colors.transparent,
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                    Colors.pinkAccent,
-                  ),
+                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.pinkAccent),
                 ),
               ),
             )
@@ -62,11 +60,7 @@ class ToViewItem extends StatelessWidget {
               ),
             ),
           ] else ...[
-            Icon(
-              Icons.person_outline,
-              size: 14,
-              color: colorScheme.onSurfaceVariant,
-            ),
+            Icon(Icons.person_outline, size: 14, color: colorScheme.onSurfaceVariant),
             const SizedBox(width: 4),
             Expanded(
               child: Text(

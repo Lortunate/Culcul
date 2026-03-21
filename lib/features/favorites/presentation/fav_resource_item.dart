@@ -47,11 +47,7 @@ class FavResourceItem extends StatelessWidget {
               onTap: () {
                 // TODO: More actions
               },
-              child: Icon(
-                Icons.more_vert,
-                size: 16,
-                color: colorScheme.onSurfaceVariant,
-              ),
+              child: Icon(Icons.more_vert, size: 16, color: colorScheme.onSurfaceVariant),
             ),
           ],
         ),

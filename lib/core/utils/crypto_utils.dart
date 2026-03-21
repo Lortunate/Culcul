@@ -19,11 +19,7 @@ JNrRuoEUXpabUzGB8QIDAQAB
 
   /// Encrypts the password with the given hash and public key (PEM format).
   /// Used for password login.
-  static String encryptPassword(
-    String hash,
-    String password,
-    String publicKeyPem,
-  ) {
+  static String encryptPassword(String hash, String password, String publicKeyPem) {
     final parser = RSAKeyParser();
     final publicKey = parser.parse(publicKeyPem) as pc.RSAPublicKey;
     final encrypter = Encrypter(RSA(publicKey: publicKey));
@@ -34,8 +30,7 @@ JNrRuoEUXpabUzGB8QIDAQAB
   /// Generates the correspond path for cookie refreshing.
   static String generateCorrespondPath(int timestamp) {
     final parser = RSAKeyParser();
-    final publicKey =
-        parser.parse(_correspondPublicKeyPEM) as pc.RSAPublicKey;
+    final publicKey = parser.parse(_correspondPublicKeyPEM) as pc.RSAPublicKey;
 
     final engine = pc.OAEPEncoding(pc.RSAEngine())
       ..init(

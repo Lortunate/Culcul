@@ -27,18 +27,12 @@ mixin PagingMixin<T> {
         return;
       }
 
-      final mergedItems = ListUtils.mergeUnique(
-        previousItems,
-        newItems,
-        idGetter: getId,
-      );
+      final mergedItems = ListUtils.mergeUnique(previousItems, newItems, idGetter: getId);
 
       page = nextPage;
       updateState(AsyncValue.data(mergedItems));
     } catch (e, st) {
-      updateState(
-        AsyncValue<List<T>>.error(e, st).copyWithPrevious(currentState),
-      );
+      updateState(AsyncValue<List<T>>.error(e, st).copyWithPrevious(currentState));
     }
   }
 }

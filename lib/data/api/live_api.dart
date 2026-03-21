@@ -13,9 +13,7 @@ abstract class LiveApi {
   /// Get live room detail
   /// https://api.live.bilibili.com/room/v1/Room/get_info
   @GET('/room/v1/Room/get_info')
-  Future<ApiResponse<LiveRoomDetailModel>> getRoomInfo(
-    @Query('room_id') int roomId,
-  );
+  Future<ApiResponse<LiveRoomDetailModel>> getRoomInfo(@Query('room_id') int roomId);
 
   /// Get live stream url
   /// https://api.live.bilibili.com/room/v1/Room/playUrl
@@ -61,9 +59,7 @@ abstract class LiveApi {
   /// Get anchor info
   /// https://api.live.bilibili.com/live_user/v1/Master/info
   @GET('/live_user/v1/Master/info')
-  Future<ApiResponse<LiveAnchorInfoModel>> getAnchorInfo(
-    @Query('uid') int uid,
-  );
+  Future<ApiResponse<LiveAnchorInfoModel>> getAnchorInfo(@Query('uid') int uid);
 
   /// Get online gold rank
   /// https://api.live.bilibili.com/xlive/general-interface/v1/rank/getOnlineGoldRank

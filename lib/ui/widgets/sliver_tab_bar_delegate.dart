@@ -13,21 +13,14 @@ class SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => tabBar.preferredSize.height + topPadding;
 
   @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     final theme = Theme.of(context);
     return Container(
       padding: EdgeInsets.only(top: topPadding),
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,
         border: Border(
-          bottom: BorderSide(
-            color: theme.dividerColor.withValues(alpha: 0.05),
-            width: 1,
-          ),
+          bottom: BorderSide(color: theme.dividerColor.withValues(alpha: 0.05), width: 1),
         ),
       ),
       child: tabBar,

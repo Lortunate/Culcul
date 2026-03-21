@@ -21,8 +21,7 @@ class CountryCodeSelectionPage extends HookConsumerWidget {
     useEffect(() {
       Future<void> fetch() async {
         try {
-          final result =
-              await ref.read(authRepositoryProvider).getCountryList();
+          final result = await ref.read(authRepositoryProvider).getCountryList();
           switch (result) {
             case Success(value: final list):
               if (list.isNotEmpty) {
@@ -56,8 +55,7 @@ class CountryCodeSelectionPage extends HookConsumerWidget {
         return countryCodes.value;
       }
       return countryCodes.value.where((c) {
-        return c.name.toLowerCase().contains(query) ||
-            c.code.contains(query);
+        return c.name.toLowerCase().contains(query) || c.code.contains(query);
       }).toList();
     }, [countryCodes.value, searchQuery.value]);
 
@@ -93,35 +91,30 @@ class CountryCodeSelectionPage extends HookConsumerWidget {
             child: isLoading.value
                 ? const Center(child: CircularProgressIndicator())
                 : filteredList.isEmpty
-                    ? Center(
-                        child: Text(
-                          '未找到相关结果',
-                          style: TextStyle(
+                ? Center(
+                    child: Text(
+                      '未找到相关结果',
+                      style: TextStyle(color: colorScheme.onSurfaceVariant),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: filteredList.length,
+                    itemBuilder: (context, index) {
+                      final country = filteredList[index];
+                      return ListTile(
+                        onTap: () => Navigator.of(context).pop(country),
+                        title: Text(country.name, style: theme.textTheme.bodyLarge),
+                        trailing: Text(
+                          country.code,
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             color: colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'monospace',
                           ),
                         ),
-                      )
-                    : ListView.builder(
-                        itemCount: filteredList.length,
-                        itemBuilder: (context, index) {
-                          final country = filteredList[index];
-                          return ListTile(
-                            onTap: () => Navigator.of(context).pop(country),
-                            title: Text(
-                              country.name,
-                              style: theme.textTheme.bodyLarge,
-                            ),
-                            trailing: Text(
-                              country.code,
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'monospace',
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                      );
+                    },
+                  ),
           ),
         ],
       ),

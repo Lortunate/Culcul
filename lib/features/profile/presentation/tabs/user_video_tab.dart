@@ -19,8 +19,7 @@ class UserVideoTab extends ConsumerStatefulWidget {
 
 class _UserVideoTabState extends ConsumerState<UserVideoTab>
     with AutomaticKeepAliveClientMixin {
-  String _order =
-      'pubdate'; // pubdate (latest), click (popular), stow (most fav)
+  String _order = 'pubdate'; // pubdate (latest), click (popular), stow (most fav)
 
   @override
   bool get wantKeepAlive => true;
@@ -28,9 +27,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final videosAsync = ref.watch(
-      userSpaceVideosProvider(widget.mid, order: _order),
-    );
+    final videosAsync = ref.watch(userSpaceVideosProvider(widget.mid, order: _order));
     final notifier = ref.read(
       userSpaceVideosProvider(widget.mid, order: _order).notifier,
     );
@@ -78,9 +75,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
         videosAsync.when(
           data: (videos) {
             if (videos.isEmpty) {
-              return const SliverFillRemaining(
-                child: Center(child: Text('暂无视频')),
-              );
+              return const SliverFillRemaining(child: Center(child: Text('暂无视频')));
             }
             return SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
@@ -111,18 +106,14 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
                       title: video.title,
                       duration: video.duration,
                       showDefaultStats: false,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       stats: [
                         Text(
                           FormatUtils.formatTimestamp(video.pubDate),
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: colorScheme.outline,
-                                fontSize: 11,
-                              ),
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: colorScheme.outline,
+                            fontSize: 11,
+                          ),
                         ),
                         const Spacer(),
                         IconText(
@@ -145,9 +136,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
                         thickness: 0.5,
                         indent: 16,
                         endIndent: 16,
-                        color: colorScheme.outlineVariant.withValues(
-                          alpha: 0.2,
-                        ),
+                        color: colorScheme.outlineVariant.withValues(alpha: 0.2),
                       ),
                   ],
                 );
@@ -157,9 +146,8 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
           error: (err, stack) => SliverFillRemaining(
             child: AppErrorWidget(
               error: err,
-              onRetry: () => ref.refresh(
-                userSpaceVideosProvider(widget.mid, order: _order),
-              ),
+              onRetry: () =>
+                  ref.refresh(userSpaceVideosProvider(widget.mid, order: _order)),
             ),
           ),
           loading: () => SliverList(
@@ -212,9 +200,7 @@ class _SortChip extends StatelessWidget {
           label,
           style: TextStyle(
             fontSize: 13,
-            color: selected
-                ? colorScheme.primary
-                : colorScheme.onSurfaceVariant,
+            color: selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
             fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
           ),
         ),

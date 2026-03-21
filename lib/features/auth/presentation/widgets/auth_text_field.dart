@@ -73,7 +73,9 @@ class _AuthTextFieldState extends State<AuthTextField> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: colorScheme.shadow.withValues(alpha: isDark ? (_isFocused ? 0.3 : 0.2) : (_isFocused ? 0.1 : 0.05)),
+            color: colorScheme.shadow.withValues(
+              alpha: isDark ? (_isFocused ? 0.3 : 0.2) : (_isFocused ? 0.1 : 0.05),
+            ),
             blurRadius: _isFocused ? 16 : 10,
             offset: Offset(0, _isFocused ? 6 : 4),
           ),
@@ -103,24 +105,28 @@ class _AuthTextFieldState extends State<AuthTextField> {
               ),
               filled: true,
               // Optimized background color for better visibility while maintaining glass effect
-              fillColor: isDark 
+              fillColor: isDark
                   ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.3)
                   : colorScheme.surface.withValues(alpha: 0.6),
-              prefixIcon: widget.leading ?? (widget.prefixIcon != null
-                  ? Icon(widget.prefixIcon, size: 20, color: colorScheme.onSurfaceVariant)
-                  : null),
+              prefixIcon:
+                  widget.leading ??
+                  (widget.prefixIcon != null
+                      ? Icon(
+                          widget.prefixIcon,
+                          size: 20,
+                          color: colorScheme.onSurfaceVariant,
+                        )
+                      : null),
               prefix: widget.prefix,
-              suffixIcon: widget.suffixIcon ??
+              suffixIcon:
+                  widget.suffixIcon ??
                   (widget.suffix != null
                       ? Padding(
                           padding: const EdgeInsets.only(right: 12),
                           child: widget.suffix,
                         )
                       : null),
-              suffixIconConstraints: const BoxConstraints(
-                minWidth: 0,
-                minHeight: 0,
-              ),
+              suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
                 borderSide: BorderSide(
@@ -135,10 +141,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
                   width: 1.5,
                 ),
               ),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 20,
-                vertical: 18,
-              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
               isDense: true,
             ),
           ),

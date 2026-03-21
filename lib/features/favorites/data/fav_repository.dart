@@ -63,12 +63,7 @@ class FavRepository extends BaseRepository {
     String? cover,
   }) async {
     return safeApiCall(
-      () => _api.addFolder(
-        title,
-        intro: intro,
-        privacy: privacy,
-        cover: cover,
-      ),
+      () => _api.addFolder(title, intro: intro, privacy: privacy, cover: cover),
     );
   }
 
@@ -80,13 +75,7 @@ class FavRepository extends BaseRepository {
     String? cover,
   }) async {
     return safeApiCall(
-      () => _api.editFolder(
-        mediaId,
-        title,
-        intro: intro,
-        privacy: privacy,
-        cover: cover,
-      ),
+      () => _api.editFolder(mediaId, title, intro: intro, privacy: privacy, cover: cover),
     );
   }
 
@@ -100,17 +89,11 @@ class FavRepository extends BaseRepository {
     String platform = 'web',
   }) async {
     return safeVoidApiCall(
-      () => _api.batchDelResource(
-        resources,
-        mediaId,
-        platform: platform,
-      ),
+      () => _api.batchDelResource(resources, mediaId, platform: platform),
     );
   }
 
-  Future<Result<void, AppException>> cleanInvalidResources({
-    required int mediaId,
-  }) async {
+  Future<Result<void, AppException>> cleanInvalidResources({required int mediaId}) async {
     return safeVoidApiCall(() => _api.cleanInvalidResources(mediaId));
   }
 }

@@ -23,9 +23,7 @@ class AppTag extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    final defaultBgColor = colorScheme.surfaceContainerHighest.withValues(
-      alpha: 0.5,
-    );
+    final defaultBgColor = colorScheme.surfaceContainerHighest.withValues(alpha: 0.5);
     final defaultTextColor = colorScheme.onSurfaceVariant;
 
     return Container(

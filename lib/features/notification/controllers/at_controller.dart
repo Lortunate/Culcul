@@ -21,10 +21,9 @@ class AtList extends _$AtList {
     if (currentList.isEmpty) return;
 
     final lastItem = currentList.last;
-    final result = await ref.read(notificationRepositoryProvider).getAtList(
-      id: lastItem.id,
-      atTime: lastItem.replyTime ?? 0,
-    );
+    final result = await ref
+        .read(notificationRepositoryProvider)
+        .getAtList(id: lastItem.id, atTime: lastItem.replyTime ?? 0);
 
     switch (result) {
       case Success(value: final data):

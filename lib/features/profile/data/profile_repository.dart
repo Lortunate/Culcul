@@ -30,12 +30,14 @@ class ProfileRepository extends BaseRepository {
           final card = map['card'] as Map<String, dynamic>;
           final following = map['following'] as bool? ?? false;
 
-          return Success<UserCardModel, AppException>(UserCardModel(
-            mid: card['mid']?.toString() ?? mid.toString(),
-            name: card['name']?.toString() ?? '',
-            face: card['face']?.toString() ?? '',
-            isFollowed: following,
-          ));
+          return Success<UserCardModel, AppException>(
+            UserCardModel(
+              mid: card['mid']?.toString() ?? mid.toString(),
+              name: card['name']?.toString() ?? '',
+              face: card['face']?.toString() ?? '',
+              isFollowed: following,
+            ),
+          );
         } catch (e) {
           return Failure<UserCardModel, AppException>(
             UnknownException('Failed to parse user card', cause: e),
@@ -111,21 +113,21 @@ class ProfileRepository extends BaseRepository {
       }
 
       String? topPhoto = infoData['top_photo'] as String?;
-      
+
       // Try to get better banner from card API (space.l_img)
       if (cardResponse.code == 0) {
         final cardResponseData = cardResponse.data as Map<String, dynamic>;
         if (cardResponseData.containsKey('space')) {
-           final space = cardResponseData['space'] as Map<String, dynamic>;
-           final lImg = space['l_img'] as String?;
-           if (lImg != null && lImg.isNotEmpty) {
-             topPhoto = lImg;
-           } else {
-              final sImg = space['s_img'] as String?;
-              if (sImg != null && sImg.isNotEmpty) {
-                 topPhoto = sImg;
-              }
-           }
+          final space = cardResponseData['space'] as Map<String, dynamic>;
+          final lImg = space['l_img'] as String?;
+          if (lImg != null && lImg.isNotEmpty) {
+            topPhoto = lImg;
+          } else {
+            final sImg = space['s_img'] as String?;
+            if (sImg != null && sImg.isNotEmpty) {
+              topPhoto = sImg;
+            }
+          }
         }
       }
 
@@ -159,12 +161,7 @@ class ProfileRepository extends BaseRepository {
     String order = 'pubdate',
   }) async {
     final result = await safeApiCall(
-      () => api.getSpaceVideos(
-        mid: mid,
-        page: page,
-        pageSize: pageSize,
-        order: order,
-      ),
+      () => api.getSpaceVideos(mid: mid, page: page, pageSize: pageSize, order: order),
     );
 
     return switch (result) {
@@ -178,21 +175,19 @@ class ProfileRepository extends BaseRepository {
 
     return switch (result) {
       Success(value: final data) => Success(data),
-      Failure(exception: final e) => 
-        (e is ServerException && e.code == 53016)
-          ? const Success(null)
-          : Failure(e),
+      Failure(exception: final e) =>
+        (e is ServerException && e.code == 53016) ? const Success(null) : Failure(e),
     };
   }
 
-  Future<Result<List<UserSpaceVideoModel>, AppException>> getMasterpiece(
-    int vmid,
-  ) async {
+  Future<Result<List<UserSpaceVideoModel>, AppException>> getMasterpiece(int vmid) async {
     final result = await safeApiCall(() => api.getMasterpiece(vmid));
 
     return switch (result) {
       Success(value: final data) => Success(data),
-      Failure(exception: final _) => const Success([]), // Fallback to empty list as per original logic
+      Failure(exception: final _) => const Success(
+        [],
+      ), // Fallback to empty list as per original logic
     };
   }
 
@@ -200,8 +195,6 @@ class ProfileRepository extends BaseRepository {
     required int mid,
     required bool isFollow,
   }) {
-    return safeVoidApiCall(
-      () => api.modifyRelation(mid, isFollow ? 1 : 2, 11),
-    );
+    return safeVoidApiCall(() => api.modifyRelation(mid, isFollow ? 1 : 2, 11));
   }
 }

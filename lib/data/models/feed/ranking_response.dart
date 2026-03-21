@@ -6,8 +6,7 @@ part 'ranking_response.g.dart';
 
 @freezed
 sealed class RankingResponse with _$RankingResponse {
-  const factory RankingResponse({@Default([]) List<VideoModel> list}) =
-      _RankingResponse;
+  const factory RankingResponse({@Default([]) List<VideoModel> list}) = _RankingResponse;
 
   factory RankingResponse.fromJson(Map<String, dynamic> json) =>
       _$RankingResponseFromJson(json);

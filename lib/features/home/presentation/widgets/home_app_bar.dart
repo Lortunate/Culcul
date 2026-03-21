@@ -44,32 +44,18 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
       leading: Center(
         child: Padding(
           padding: const EdgeInsets.only(left: 12),
-          child: AppAvatar(
-            url: authState.user?.avatarUrl,
-            size: 32,
-            onTap: onAvatarTap,
-          ),
+          child: AppAvatar(url: authState.user?.avatarUrl, size: 32, onTap: onAvatarTap),
         ),
       ),
       title: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: AppSearchBar(
-          onTap: onSearchTap,
-          hintText: hintText ?? t.home.search_hint,
-        ),
+        child: AppSearchBar(onTap: onSearchTap, hintText: hintText ?? t.home.search_hint),
       ),
       actions: [
-        _AppBarButton(
-          icon: Icons.mail_outline_rounded,
-          onPressed: onMessageTap,
-        ),
+        _AppBarButton(icon: Icons.mail_outline_rounded, onPressed: onMessageTap),
         const SizedBox(width: 4),
       ],
-      bottom: HomeTabBar(
-        controller: tabController,
-        tabs: tabs,
-        onTap: onTabTap,
-      ),
+      bottom: HomeTabBar(controller: tabController, tabs: tabs, onTap: onTabTap),
     );
   }
 

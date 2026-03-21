@@ -22,8 +22,7 @@ class VideoDetailPage extends HookConsumerWidget {
     if (state.videoDetail != null &&
         state.videoDetail!.dimension.width != 0 &&
         state.videoDetail!.dimension.height != 0 &&
-        state.videoDetail!.dimension.width <
-            state.videoDetail!.dimension.height) {
+        state.videoDetail!.dimension.width < state.videoDetail!.dimension.height) {
       return VerticalVideoPage(bvid: bvid, videoDetail: state.videoDetail!);
     }
 

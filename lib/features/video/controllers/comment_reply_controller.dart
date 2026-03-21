@@ -48,11 +48,7 @@ class CommentReplyController extends _$CommentReplyController {
     state = state.copyWith(isLoading: true);
 
     final repo = ref.read(videoRepositoryProvider);
-    final result = await repo.fetchReply(
-      oid: oid,
-      root: rootId,
-      pn: state.page,
-    );
+    final result = await repo.fetchReply(oid: oid, root: rootId, pn: state.page);
 
     switch (result) {
       case Success(value: final response):
@@ -72,11 +68,7 @@ class CommentReplyController extends _$CommentReplyController {
 
     final action = isLiked ? 0 : 1;
     final repo = ref.read(videoRepositoryProvider);
-    final result = await repo.actionComment(
-      oid: oid,
-      rpid: rpid,
-      action: action,
-    );
+    final result = await repo.actionComment(oid: oid, rpid: rpid, action: action);
 
     if (result is Failure) {
       _updateCommentLikeStatus(rpid, isLiked);

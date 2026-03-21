@@ -58,9 +58,7 @@ class _VideoThumbnail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cacheWidth =
-        (MediaQuery.sizeOf(context).width /
-                2 *
-                MediaQuery.devicePixelRatioOf(context))
+        (MediaQuery.sizeOf(context).width / 2 * MediaQuery.devicePixelRatioOf(context))
             .toInt();
 
     return VideoThumbnail(

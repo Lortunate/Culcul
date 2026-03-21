@@ -16,9 +16,7 @@ class DynamicRepository extends BaseRepository {
   DynamicRepository(this._api, this._cookieJar);
 
   Future<String?> _getCsrfToken() async {
-    final cookies = await _cookieJar.loadForRequest(
-      Uri.parse('https://bilibili.com'),
-    );
+    final cookies = await _cookieJar.loadForRequest(Uri.parse('https://bilibili.com'));
     for (var cookie in cookies) {
       if (cookie.name == 'bili_jct') {
         return cookie.value;
@@ -34,9 +32,7 @@ class DynamicRepository extends BaseRepository {
   }) async {
     final params = _getCommentParams(post);
     if (params == null) {
-      return const Failure(
-        UnknownException('Unsupported dynamic type for comments'),
-      );
+      return const Failure(UnknownException('Unsupported dynamic type for comments'));
     }
 
     return safeApiCall(
@@ -58,9 +54,7 @@ class DynamicRepository extends BaseRepository {
   }) async {
     final params = _getCommentParams(post);
     if (params == null) {
-      return const Failure(
-        UnknownException('Unsupported dynamic type for comments'),
-      );
+      return const Failure(UnknownException('Unsupported dynamic type for comments'));
     }
 
     return safeApiCall(
@@ -81,9 +75,7 @@ class DynamicRepository extends BaseRepository {
   }) async {
     final params = _getCommentParams(post);
     if (params == null) {
-      return const Failure(
-        UnknownException('Unsupported dynamic type for comments'),
-      );
+      return const Failure(UnknownException('Unsupported dynamic type for comments'));
     }
 
     return safeVoidApiCall(
@@ -98,10 +90,7 @@ class DynamicRepository extends BaseRepository {
 
   Map<String, dynamic>? _getCommentParams(DynamicItem post) {
     if (post.commentId != null && post.commentType != null) {
-      return {
-        'oid': int.tryParse(post.commentId!) ?? 0,
-        'type': post.commentType!,
-      };
+      return {'oid': int.tryParse(post.commentId!) ?? 0, 'type': post.commentType!};
     }
 
     if (post.type == 'DYNAMIC_TYPE_AV') {
@@ -129,27 +118,21 @@ class DynamicRepository extends BaseRepository {
     String? offset,
     int page = 1,
   }) {
-    return safeApiCall(
-      () => _api.getDynamicFeed(type: type, offset: offset, page: page),
-    );
+    return safeApiCall(() => _api.getDynamicFeed(type: type, offset: offset, page: page));
   }
 
   Future<Result<DynamicData, AppException>> getSpaceDynamicFeed({
     required int hostMid,
     String? offset,
   }) {
-    return safeApiCall(
-      () => _api.getSpaceDynamicFeed(hostMid: hostMid, offset: offset),
-    );
+    return safeApiCall(() => _api.getSpaceDynamicFeed(hostMid: hostMid, offset: offset));
   }
 
   Future<Result<DynamicData, AppException>> getTopicFeed({
     required int topicId,
     String? offset,
   }) {
-    return safeApiCall(
-      () => _api.getTopicFeed(topicId: topicId, offset: offset),
-    );
+    return safeApiCall(() => _api.getTopicFeed(topicId: topicId, offset: offset));
   }
 
   Future<Result<DynamicItem, AppException>> getDetail(String id) async {
@@ -174,9 +157,7 @@ class DynamicRepository extends BaseRepository {
     });
   }
 
-  Future<Result<DynamicUploadImageData, AppException>> uploadImage(
-    File file,
-  ) async {
+  Future<Result<DynamicUploadImageData, AppException>> uploadImage(File file) async {
     return safeApiCall(() async {
       final csrf = await _getCsrfToken();
       return _api.uploadImage(file: file, csrf: csrf ?? '');
@@ -216,9 +197,9 @@ class DynamicRepository extends BaseRepository {
         csrf: csrf ?? '',
         body: {'dyn_req': dynReq},
       );
-      
+
       if (!response.isSuccess) {
-         throw ServerException(response.message, code: response.code);
+        throw ServerException(response.message, code: response.code);
       }
     });
   }

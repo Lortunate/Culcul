@@ -17,10 +17,7 @@ class RecentlyFollowed extends _$RecentlyFollowed {
 
     final repository = ref.read(relationRepositoryProvider);
     // orderType: '' for recently followed (default)
-    final result = await repository.getFollowings(
-      int.parse(authState.user!.id),
-      ps: 20,
-    );
+    final result = await repository.getFollowings(int.parse(authState.user!.id), ps: 20);
 
     return switch (result) {
       Success(value: final data) => data.list,

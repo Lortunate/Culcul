@@ -28,8 +28,7 @@ sealed class VideoDetail with _$VideoDetail {
     @JsonKey(name: 'req_user') ReqUser? reqUser,
   }) = _VideoDetail;
 
-  factory VideoDetail.fromJson(Map<String, dynamic> json) =>
-      _$VideoDetailFromJson(json);
+  factory VideoDetail.fromJson(Map<String, dynamic> json) => _$VideoDetailFromJson(json);
 }
 
 @freezed
@@ -39,8 +38,7 @@ sealed class ReqUser with _$ReqUser {
     @JsonKey(name: 'guest_attention') @Default(0) int guestAttention,
   }) = _ReqUser;
 
-  factory ReqUser.fromJson(Map<String, dynamic> json) =>
-      _$ReqUserFromJson(json);
+  factory ReqUser.fromJson(Map<String, dynamic> json) => _$ReqUserFromJson(json);
 }
 
 @freezed
@@ -56,8 +54,7 @@ sealed class VideoPage with _$VideoPage {
     @Default(VideoDimension()) VideoDimension dimension,
   }) = _VideoPage;
 
-  factory VideoPage.fromJson(Map<String, dynamic> json) =>
-      _$VideoPageFromJson(json);
+  factory VideoPage.fromJson(Map<String, dynamic> json) => _$VideoPageFromJson(json);
 }
 
 @freezed
@@ -100,8 +97,7 @@ sealed class VideoTag with _$VideoTag {
     @Default('') @JsonKey(name: 'head_cover') String headCover,
   }) = _VideoTag;
 
-  factory VideoTag.fromJson(Map<String, dynamic> json) =>
-      _$VideoTagFromJson(json);
+  factory VideoTag.fromJson(Map<String, dynamic> json) => _$VideoTagFromJson(json);
 }
 
 @freezed
@@ -112,6 +108,5 @@ sealed class TagCount with _$TagCount {
     @Default(0) int atten,
   }) = _TagCount;
 
-  factory TagCount.fromJson(Map<String, dynamic> json) =>
-      _$TagCountFromJson(json);
+  factory TagCount.fromJson(Map<String, dynamic> json) => _$TagCountFromJson(json);
 }

@@ -82,9 +82,7 @@ class PrivateSessionItem extends ConsumerWidget {
           ),
           const SizedBox(width: 8),
           Text(
-            DateTime.fromMicrosecondsSinceEpoch(
-              session.sessionTs,
-            ).toSimpleDate(),
+            DateTime.fromMicrosecondsSinceEpoch(session.sessionTs).toSimpleDate(),
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -119,9 +117,7 @@ class PrivateSessionItem extends ConsumerWidget {
       fit: BoxFit.cover,
       loadStateChanged: (state) {
         if (state.extendedImageLoadState == LoadState.loading) {
-          return Container(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          );
+          return Container(color: Theme.of(context).colorScheme.surfaceContainerHighest);
         }
         return null;
       },

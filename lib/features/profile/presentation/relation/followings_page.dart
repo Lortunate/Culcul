@@ -18,8 +18,7 @@ class FollowingsPage extends ConsumerWidget {
       body: RelationUserList(
         asyncValue: followingsAsync,
         onRefresh: () => ref.refresh(followingsProvider(vmid).future),
-        onLoadMore: () =>
-            ref.read(followingsProvider(vmid).notifier).loadMore(),
+        onLoadMore: () => ref.read(followingsProvider(vmid).notifier).loadMore(),
         hasMore: hasMore,
         emptyText: '暂无关注',
       ),

@@ -12,11 +12,7 @@ class TopicDetailPage extends HookConsumerWidget {
   final int topicId;
   final String topicName;
 
-  const TopicDetailPage({
-    super.key,
-    required this.topicId,
-    required this.topicName,
-  });
+  const TopicDetailPage({super.key, required this.topicId, required this.topicName});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,10 +30,7 @@ class TopicDetailPage extends HookConsumerWidget {
 
           if (state.hasError && !state.hasValue) {
             return Center(
-              child: AppErrorWidget(
-                error: state.error!,
-                onRetry: notifier.refresh,
-              ),
+              child: AppErrorWidget(error: state.error!, onRetry: notifier.refresh),
             );
           }
 
@@ -72,8 +65,7 @@ class TopicDetailPage extends HookConsumerWidget {
                       final post = items[index];
                       return DynamicPostCard(
                         post: post,
-                        onLike: (post) =>
-                            notifier.toggleLike(post.id, post.isLiked),
+                        onLike: (post) => notifier.toggleLike(post.id, post.isLiked),
                       );
                     },
                   ),

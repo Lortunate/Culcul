@@ -58,17 +58,13 @@ class BottomInputBar extends StatelessWidget {
                       Icon(
                         Icons.edit_outlined,
                         size: 16,
-                        color: colorScheme.onSurfaceVariant.withValues(
-                          alpha: 0.7,
-                        ),
+                        color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                       ),
                       const SizedBox(width: 10),
                       Text(
                         t.video.comment_hint,
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant.withValues(
-                            alpha: 0.7,
-                          ),
+                          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                         ),
                       ),
                     ],

@@ -12,11 +12,7 @@ class VideoActionsRow extends ConsumerWidget {
   final VideoDetailState state;
   final VideoDetailController notifier;
 
-  const VideoActionsRow({
-    super.key,
-    required this.state,
-    required this.notifier,
-  });
+  const VideoActionsRow({super.key, required this.state, required this.notifier});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

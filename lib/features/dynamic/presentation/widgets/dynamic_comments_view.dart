@@ -13,9 +13,7 @@ class DynamicCommentsSliver extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(dynamicCommentControllerProvider(post));
-    final controller = ref.read(
-      dynamicCommentControllerProvider(post).notifier,
-    );
+    final controller = ref.read(dynamicCommentControllerProvider(post).notifier);
 
     if (state.isLoading && state.comments.isEmpty) {
       return const SliverToBoxAdapter(
@@ -36,10 +34,7 @@ class DynamicCommentsSliver extends ConsumerWidget {
               children: [
                 Text('加载失败: ${state.error}'),
                 const SizedBox(height: 8),
-                ElevatedButton(
-                  onPressed: controller.refresh,
-                  child: const Text('重试'),
-                ),
+                ElevatedButton(onPressed: controller.refresh, child: const Text('重试')),
               ],
             ),
           ),
@@ -61,8 +56,7 @@ class DynamicCommentsSliver extends ConsumerWidget {
         final comment = state.comments[index];
         return CommentItemWidget(
           item: comment,
-          onLike: () =>
-              controller.toggleLike(comment.rpid, comment.action == 1),
+          onLike: () => controller.toggleLike(comment.rpid, comment.action == 1),
           onDislike: () {},
           onReply: () => _showReplySheet(context, ref, comment),
         );
@@ -70,11 +64,7 @@ class DynamicCommentsSliver extends ConsumerWidget {
     );
   }
 
-  void _showReplySheet(
-    BuildContext context,
-    WidgetRef ref,
-    CommentItem comment,
-  ) {
+  void _showReplySheet(BuildContext context, WidgetRef ref, CommentItem comment) {
     final theme = Theme.of(context);
     final controller = TextEditingController();
     final notifier = ref.read(dynamicCommentControllerProvider(post).notifier);
@@ -99,10 +89,7 @@ class DynamicCommentsSliver extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  Text(
-                    '回复 @${comment.member.uname}',
-                    style: theme.textTheme.titleMedium,
-                  ),
+                  Text('回复 @${comment.member.uname}', style: theme.textTheme.titleMedium),
                   const Spacer(),
                   IconButton(
                     icon: const Icon(Icons.close),
@@ -117,10 +104,7 @@ class DynamicCommentsSliver extends ConsumerWidget {
                 decoration: const InputDecoration(
                   hintText: '友善评论，文明发言',
                   border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 8,
-                  ),
+                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 ),
                 maxLines: 3,
                 minLines: 1,

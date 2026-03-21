@@ -38,5 +38,4 @@ class AppColors {
 
   static const Color splashColor = Color(0x1A7C4DFF);
   static const Color highlightColor = Color(0x00000000);
-
 }

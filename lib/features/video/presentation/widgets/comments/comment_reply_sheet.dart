@@ -7,11 +7,7 @@ class CommentReplySheet extends HookWidget {
   final CommentItem comment;
   final void Function(String text) onSend;
 
-  const CommentReplySheet({
-    super.key,
-    required this.comment,
-    required this.onSend,
-  });
+  const CommentReplySheet({super.key, required this.comment, required this.onSend});
 
   static void show(
     BuildContext context, {
@@ -21,13 +17,10 @@ class CommentReplySheet extends HookWidget {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder:
-          (context) => Padding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
-            ),
-            child: CommentReplySheet(comment: comment, onSend: onSend),
-          ),
+      builder: (context) => Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: CommentReplySheet(comment: comment, onSend: onSend),
+      ),
     );
   }
 

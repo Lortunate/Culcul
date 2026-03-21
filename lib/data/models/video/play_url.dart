@@ -10,18 +10,14 @@ sealed class PlayUrl with _$PlayUrl {
     required int quality,
     @JsonKey(name: 'timelength') required int timeLength,
     @JsonKey(name: 'accept_format') required String acceptFormat,
-    @JsonKey(name: 'accept_description')
-    required List<String> acceptDescription,
+    @JsonKey(name: 'accept_description') required List<String> acceptDescription,
     @JsonKey(name: 'accept_quality') required List<int> acceptQuality,
     @JsonKey(name: 'video_codecid') required int videoCodecId,
     required List<Durl> durl,
-    @JsonKey(name: 'support_formats')
-    @Default([])
-    List<SupportFormat> supportFormats,
+    @JsonKey(name: 'support_formats') @Default([]) List<SupportFormat> supportFormats,
   }) = _PlayUrl;
 
-  factory PlayUrl.fromJson(Map<String, dynamic> json) =>
-      _$PlayUrlFromJson(json);
+  factory PlayUrl.fromJson(Map<String, dynamic> json) => _$PlayUrlFromJson(json);
 }
 
 @freezed

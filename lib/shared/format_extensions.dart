@@ -42,15 +42,15 @@ extension FormatDateTimeExtension on DateTime {
   String toIsoDate() {
     return '$year-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';
   }
-  
+
   String toChatTime() {
-     final now = DateTime.now();
-     if (year == now.year && month == now.month && day == now.day) {
-       return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
-     } else if (year == now.year) {
-       return '$month月$day日 ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
-     } else {
-       return '$year年$month月$day日';
-     }
+    final now = DateTime.now();
+    if (year == now.year && month == now.month && day == now.day) {
+      return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+    } else if (year == now.year) {
+      return '$month月$day日 ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+    } else {
+      return '$year年$month月$day日';
+    }
   }
 }

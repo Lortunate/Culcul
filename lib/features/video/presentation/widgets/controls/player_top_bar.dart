@@ -19,9 +19,7 @@ class PlayerTopBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: PlayerTheme.topBarHeight,
-      padding: const EdgeInsets.symmetric(
-        horizontal: PlayerTheme.horizontalPadding,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: PlayerTheme.horizontalPadding),
       child: Row(
         children: [
           IconButton(

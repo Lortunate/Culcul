@@ -96,9 +96,7 @@ class _RelationUserItemState extends ConsumerState<RelationUserItem> {
         setState(() {
           _attribute = widget.user.attribute;
         });
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('操作失败: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('操作失败: $e')));
       }
     }
   }

@@ -121,12 +121,14 @@ class PlayerController extends _$PlayerController {
 
     if (!isQualitySwitch) {
       final audioHandler = ref.read(audioHandlerProvider);
-      await audioHandler.updateMediaItem(MediaItem(
-        id: url,
-        title: title ?? 'Unknown',
-        artist: artist,
-        artUri: coverUrl != null ? Uri.parse(coverUrl) : null,
-      ));
+      await audioHandler.updateMediaItem(
+        MediaItem(
+          id: url,
+          title: title ?? 'Unknown',
+          artist: artist,
+          artUri: coverUrl != null ? Uri.parse(coverUrl) : null,
+        ),
+      );
     }
 
     if (isQualitySwitch) {

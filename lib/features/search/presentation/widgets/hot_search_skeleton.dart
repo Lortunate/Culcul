@@ -23,11 +23,7 @@ class HotSearchSkeleton extends StatelessWidget {
               AppShimmerBox(width: 24, height: 18, borderRadius: 2),
               SizedBox(width: 4),
               Expanded(
-                child: AppShimmerBox(
-                  height: 16,
-                  width: double.infinity,
-                  borderRadius: 2,
-                ),
+                child: AppShimmerBox(height: 16, width: double.infinity, borderRadius: 2),
               ),
             ],
           );

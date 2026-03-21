@@ -16,6 +16,5 @@ sealed class AppSettings with _$AppSettings {
     DateTime? updatedAt,
   }) = _AppSettings;
 
-  factory AppSettings.fromJson(Map<String, dynamic> json) =>
-      _$AppSettingsFromJson(json);
+  factory AppSettings.fromJson(Map<String, dynamic> json) => _$AppSettingsFromJson(json);
 }

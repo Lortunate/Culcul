@@ -40,9 +40,7 @@ class HistoryItemWidget extends StatelessWidget {
                   value: item.progress / item.duration,
                   minHeight: 3,
                   backgroundColor: Colors.transparent,
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                    Colors.pinkAccent,
-                  ),
+                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.pinkAccent),
                 ),
               )
             : null,

@@ -35,8 +35,7 @@ class RecentlyFollowedWidget extends HookConsumerWidget {
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: users.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(width: 12),
+                  separatorBuilder: (context, index) => const SizedBox(width: 12),
                   itemBuilder: (context, index) {
                     final user = users[index];
                     return _UserItem(user: user);

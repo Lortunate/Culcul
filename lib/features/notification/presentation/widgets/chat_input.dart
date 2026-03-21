@@ -44,9 +44,7 @@ class ChatInput extends StatelessWidget {
                 ),
                 onPressed: () async {
                   final picker = ImagePicker();
-                  final pickedFile = await picker.pickImage(
-                    source: ImageSource.gallery,
-                  );
+                  final pickedFile = await picker.pickImage(source: ImageSource.gallery);
                   if (pickedFile != null) {
                     onSendImage(File(pickedFile.path));
                   }
@@ -74,10 +72,7 @@ class ChatInput extends StatelessWidget {
                   decoration: const InputDecoration(
                     hintText: '发个消息...',
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 10,
-                    ),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     isDense: true,
                   ),
                   textInputAction: TextInputAction.send,

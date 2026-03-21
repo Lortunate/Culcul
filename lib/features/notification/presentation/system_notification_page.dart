@@ -55,9 +55,7 @@ class _SystemNotificationCard extends StatelessWidget {
       color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-        ),
+        side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
       ),
       child: InkWell(
         onTap: item.uri != null
@@ -83,8 +81,7 @@ class _SystemNotificationCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
               ],
-              if (item.text != null)
-                Text(item.text!, style: theme.textTheme.bodyMedium),
+              if (item.text != null) Text(item.text!, style: theme.textTheme.bodyMedium),
               const SizedBox(height: 12),
               Row(
                 children: [
@@ -103,11 +100,7 @@ class _SystemNotificationCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 4),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      size: 12,
-                      color: colorScheme.primary,
-                    ),
+                    Icon(Icons.arrow_forward_ios, size: 12, color: colorScheme.primary),
                   ],
                 ],
               ),

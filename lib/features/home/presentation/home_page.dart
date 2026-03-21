@@ -18,16 +18,16 @@ class HomePage extends HookConsumerWidget {
     final t = Translations.of(context);
     final defaultSearchAsync = ref.watch(defaultSearchProvider);
 
-    final tabs = useMemoized(() => [
-      (title: t.home.tabs.live, view: const LiveView()),
-      (title: t.home.tabs.recommend, view: const RecommendView()),
-      (title: t.home.tabs.hot, view: const PopularView()),
-    ], [t]);
-
-    final tabController = useTabController(
-      initialLength: tabs.length,
-      initialIndex: 1,
+    final tabs = useMemoized(
+      () => [
+        (title: t.home.tabs.live, view: const LiveView()),
+        (title: t.home.tabs.recommend, view: const RecommendView()),
+        (title: t.home.tabs.hot, view: const PopularView()),
+      ],
+      [t],
     );
+
+    final tabController = useTabController(initialLength: tabs.length, initialIndex: 1);
 
     return Scaffold(
       appBar: HomeAppBar(
@@ -35,9 +35,7 @@ class HomePage extends HookConsumerWidget {
         tabs: tabs.map((e) => e.title).toList(),
         onTabTap: (index) {
           if (!tabController.indexIsChanging) {
-            ref
-                .read(homeTabTapProvider.notifier)
-                .update(HomeTabTapEvent(index));
+            ref.read(homeTabTapProvider.notifier).update(HomeTabTapEvent(index));
           }
         },
         onSearchTap: () => const SearchRoute().push(context),
