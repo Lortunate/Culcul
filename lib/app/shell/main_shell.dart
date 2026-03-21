@@ -12,10 +12,11 @@ class MainShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
     final t = Translations.of(context);
+
     final labels = [t.nav.home, t.nav.moments, t.nav.ranking, t.nav.mine];
+    const iconPadding = EdgeInsets.only(bottom: 4);
 
     return Scaffold(
       body: navigationShell,
@@ -23,7 +24,7 @@ class MainShell extends StatelessWidget {
       bottomNavigationBar: ClipRect(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
-          child: Container(
+          child: DecoratedBox(
             decoration: BoxDecoration(
               color: colorScheme.surface.withValues(alpha: 0.8),
               border: Border(
@@ -35,22 +36,18 @@ class MainShell extends StatelessWidget {
             ),
             child: BottomNavigationBar(
               currentIndex: navigationShell.currentIndex,
-              onTap: (index) => navigationShell.goBranch(index),
-              items: NavigationItems.items.asMap().entries.map((entry) {
-                final index = entry.key;
-                final item = entry.value;
-                return BottomNavigationBarItem(
-                  icon: Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: Icon(item.icon, size: 24),
+              onTap: navigationShell.goBranch,
+              items: [
+                for (final (index, item) in NavigationItems.items.indexed)
+                  BottomNavigationBarItem(
+                    icon: Padding(padding: iconPadding, child: Icon(item.icon, size: 24)),
+                    activeIcon: Padding(
+                      padding: iconPadding,
+                      child: Icon(item.selectedIcon, size: 24),
+                    ),
+                    label: labels[index],
                   ),
-                  activeIcon: Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
-                    child: Icon(item.selectedIcon, size: 24),
-                  ),
-                  label: labels[index],
-                );
-              }).toList(),
+              ],
               elevation: 0,
               backgroundColor: Colors.transparent,
               selectedItemColor: colorScheme.primary,

@@ -29,7 +29,6 @@ class PopularView extends HookConsumerWidget {
       provider: homePopularProvider,
       asyncValue: popularAsync,
       controller: refreshController,
-      // 使用方法撕裂 (Tear-off) 简化闭包调用
       onRefresh: ref.read(homePopularProvider.notifier).refresh,
       onLoadMore: ref.read(homePopularProvider.notifier).loadMore,
       skeleton: const ListSkeletonView(

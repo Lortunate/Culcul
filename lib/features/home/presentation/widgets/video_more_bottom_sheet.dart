@@ -15,41 +15,45 @@ class VideoMoreBottomSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    const topRadius = BorderRadius.vertical(top: Radius.circular(16));
 
     return ClipRRect(
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      borderRadius: topRadius,
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-        child: Container(
+        filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+        child: DecoratedBox(
           decoration: BoxDecoration(
-            color: colorScheme.surface.withValues(alpha: 0.2),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            color: colorScheme.surface.withValues(alpha: 0.8),
+            borderRadius: topRadius,
             border: Border(
               top: BorderSide(
-                color: colorScheme.outline.withValues(alpha: 0.1),
+                color: colorScheme.outlineVariant.withValues(alpha: 0.2),
                 width: 0.5,
               ),
             ),
           ),
           child: SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildDragHandle(colorScheme),
-                _ActionItem(
-                  icon: Icons.watch_later_outlined,
-                  text: '稍后再看',
-                  onTap: () => _addToWatchLater(context, ref),
-                ),
-                _ActionItem(
-                  icon: Icons.image_outlined,
-                  text: '下载封面',
-                  onTap: () => _downloadCover(context, ref),
-                ),
-                const SizedBox(height: 16),
-              ],
+            child: Material(
+              color: Colors.transparent,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildDragHandle(colorScheme),
+                  _ActionItem(
+                    icon: Icons.watch_later_outlined,
+                    text: '稍后再看',
+                    onTap: () => _addToWatchLater(context, ref),
+                  ),
+                  _ActionItem(
+                    icon: Icons.image_outlined,
+                    text: '下载封面',
+                    onTap: () => _downloadCover(context, ref),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
             ),
           ),
         ),
@@ -58,28 +62,28 @@ class VideoMoreBottomSheet extends ConsumerWidget {
   }
 
   Widget _buildDragHandle(ColorScheme colorScheme) {
-    return Center(
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 16),
-        width: 36,
-        height: 4,
-        decoration: BoxDecoration(
-          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(2),
-        ),
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      width: 36,
+      height: 4,
+      decoration: BoxDecoration(
+        color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(2),
       ),
     );
   }
 
   Future<void> _addToWatchLater(BuildContext context, WidgetRef ref) async {
+    final notifier = ref.read(toViewListProvider.notifier);
     Navigator.pop(context);
+
     try {
       final aid = IdUtils.bv2av(video.bvid);
       if (aid == 0) {
         ToastUtils.showError('无法获取视频ID');
         return;
       }
-      await ref.read(toViewListProvider.notifier).add(aid);
+      await notifier.add(aid);
       ToastUtils.show('已添加至稍后再看');
     } catch (e) {
       ToastUtils.showError('添加失败: $e');
@@ -87,9 +91,11 @@ class VideoMoreBottomSheet extends ConsumerWidget {
   }
 
   Future<void> _downloadCover(BuildContext context, WidgetRef ref) async {
+    final mediaService = ref.read(mediaServiceProvider);
     Navigator.pop(context);
+
     try {
-      await ref.read(mediaServiceProvider).saveImage(video.pic);
+      await mediaService.saveImage(video.pic);
       ToastUtils.show('封面已保存到相册');
     } catch (e) {
       ToastUtils.showError('下载失败: $e');

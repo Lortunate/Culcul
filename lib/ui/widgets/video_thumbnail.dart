@@ -30,10 +30,26 @@ class VideoThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final pixelRatio = MediaQuery.devicePixelRatioOf(context);
+
+    const textStyle = TextStyle(
+      color: Colors.white,
+      fontSize: 11,
+      fontWeight: FontWeight.w500,
+    );
+
     return AspectRatio(
       aspectRatio: aspectRatio,
       child: LayoutBuilder(
         builder: (context, constraints) {
+          int? calcCacheSize(int? explicitSize, double constraintSize) {
+            if (explicitSize != null) return explicitSize;
+            if (constraintSize.isFinite) {
+              return (constraintSize * pixelRatio).toInt();
+            }
+            return null;
+          }
+
           return Stack(
             fit: StackFit.expand,
             children: [
@@ -41,28 +57,18 @@ class VideoThumbnail extends StatelessWidget {
                 url: url,
                 width: width,
                 height: height,
-                memCacheWidth:
-                    memCacheWidth ??
-                    (constraints.maxWidth.isFinite
-                        ? (constraints.maxWidth * MediaQuery.of(context).devicePixelRatio)
-                              .toInt()
-                        : null),
-                memCacheHeight:
-                    memCacheHeight ??
-                    (constraints.maxHeight.isFinite
-                        ? (constraints.maxHeight *
-                                  MediaQuery.of(context).devicePixelRatio)
-                              .toInt()
-                        : null),
+                memCacheWidth: calcCacheSize(memCacheWidth, constraints.maxWidth),
+                memCacheHeight: calcCacheSize(memCacheHeight, constraints.maxHeight),
                 borderRadius: borderRadius,
                 fit: BoxFit.cover,
               ),
+
               Positioned(
                 left: 0,
                 right: 0,
                 bottom: 0,
                 height: 48,
-                child: Container(
+                child: DecoratedBox(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.vertical(
                       bottom: Radius.circular(borderRadius),
@@ -75,26 +81,22 @@ class VideoThumbnail extends StatelessWidget {
                   ),
                 ),
               ),
+
               if (viewCount != null || danmakuCount != null)
                 Positioned(
                   left: 8,
                   bottom: 8,
-                  child: VideoThumbnailStats(
+                  child: _VideoThumbnailStats(
                     viewCount: viewCount,
                     danmakuCount: danmakuCount,
+                    textStyle: textStyle,
                   ),
                 ),
+
               Positioned(
                 right: 8,
                 bottom: 8,
-                child: Text(
-                  duration.formatDuration,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                child: Text(duration.formatDuration, style: textStyle),
               ),
             ],
           );
@@ -104,33 +106,32 @@ class VideoThumbnail extends StatelessWidget {
   }
 }
 
-class VideoThumbnailStats extends StatelessWidget {
+class _VideoThumbnailStats extends StatelessWidget {
   final int? viewCount;
   final int? danmakuCount;
+  final TextStyle textStyle;
 
-  const VideoThumbnailStats({super.key, this.viewCount, this.danmakuCount});
+  const _VideoThumbnailStats({
+    this.viewCount,
+    this.danmakuCount,
+    required this.textStyle,
+  });
 
   @override
   Widget build(BuildContext context) {
-    const style = TextStyle(
-      color: Colors.white,
-      fontSize: 11,
-      fontWeight: FontWeight.w500,
-    );
-
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         if (viewCount != null) ...[
           const Icon(Icons.play_circle_outline_rounded, size: 12, color: Colors.white),
           const SizedBox(width: 3),
-          Text(viewCount!.formatNumber, style: style),
+          Text(viewCount!.formatNumber, style: textStyle),
         ],
         if (danmakuCount != null) ...[
           if (viewCount != null) const SizedBox(width: 8),
           const Icon(Icons.list_alt_rounded, size: 12, color: Colors.white),
           const SizedBox(width: 3),
-          Text(danmakuCount!.formatNumber, style: style),
+          Text(danmakuCount!.formatNumber, style: textStyle),
         ],
       ],
     );
