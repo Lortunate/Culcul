@@ -75,7 +75,7 @@ class FollowButton extends ConsumerWidget {
             Text(
               text ??
                   (isFollowed
-                      ? '已关注' // Use explicit text for now or verify translation
+                      ? t.video.actions.followed
                       : '+ ${t.video.actions.follow}'),
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
             ),

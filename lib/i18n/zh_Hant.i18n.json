@@ -45,7 +45,7 @@
     "system_mode": "跟隨系統",
     "dark_mode": "深色模式",
     "light_mode": "淺色模式",
-    "cache": "快取管理",
+    "cache": "儲存管理",
     "clear_cache": "清理快取",
     "user_agreement": "使用者協議",
     "privacy_policy": "隱私權政策",
@@ -99,7 +99,7 @@
       "download": "離線快取",
       "collection": "我的收藏",
       "later": "稍後再看",
-      "theme": "個人裝扮",
+      "theme": "外觀設定",
       "creative_center": "創作中心",
       "orders": "會員購訂單",
       "customer_service": "聯繫客服"
@@ -154,7 +154,7 @@
     },
     "playback": {
       "speed": "倍速",
-      "quality": "畫質",
+      "quality": "解析度",
       "danmaku": "彈幕",
       "full_screen": "全螢幕",
       "retry": "重試播放"

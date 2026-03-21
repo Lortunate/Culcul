@@ -10,7 +10,7 @@
       "live": "直播",
       "recommend": "推荐",
       "hot": "热门",
-      "anime": "动画",
+      "anime": "番剧",
       "cinema": "影视",
       "new_journey": "新征程"
     },
@@ -45,7 +45,7 @@
     "system_mode": "跟随系统",
     "dark_mode": "深色模式",
     "light_mode": "浅色模式",
-    "cache": "缓存管理",
+    "cache": "存储管理",
     "clear_cache": "清理缓存",
     "user_agreement": "用户协议",
     "privacy_policy": "隐私政策",
@@ -99,7 +99,7 @@
       "download": "离线缓存",
       "collection": "我的收藏",
       "later": "稍后再看",
-      "theme": "个性装扮",
+      "theme": "外观设置",
       "creative_center": "创作中心",
       "orders": "会员购订单",
       "customer_service": "联系客服"

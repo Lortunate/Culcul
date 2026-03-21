@@ -1,9 +1,9 @@
 {
   "nav": {
     "home": "Home",
-    "moments": "Moments",
+    "moments": "Feed",
     "ranking": "Ranking",
-    "mine": "Mine"
+    "mine": "Me"
   },
   "home": {
     "tabs": {
@@ -11,17 +11,17 @@
       "recommend": "For You",
       "hot": "Trending",
       "anime": "Anime",
-      "cinema": "Movies",
+      "cinema": "Movies & TV",
       "new_journey": "New Journey"
     },
     "search_hint": "Search..."
   },
   "moments": {
-    "title": "Moments",
+    "title": "Feed",
     "tabs": {
       "all": "All",
-      "video": "Video",
-      "comprehensive": "General"
+      "video": "Videos",
+      "comprehensive": "All"
     },
     "actions": {
       "forward": "Share",
@@ -29,7 +29,7 @@
       "like": "Like"
     },
     "like_coming_soon": "Like feature coming soon",
-    "empty": "$tab dynamic not implemented"
+    "empty": "$tab content not available"
   },
   "ranking": {
     "title": "Ranking"
@@ -37,15 +37,15 @@
   "settings": {
     "title": "Settings",
     "language": "General",
-    "change_language": "Change Language",
-    "chinese": "Simplified Chinese",
-    "traditional_chinese": "Traditional Chinese",
+    "change_language": "Language",
+    "chinese": "简体中文",
+    "traditional_chinese": "繁體中文",
     "english": "English",
     "appearance": "Appearance",
-    "system_mode": "Follow System",
+    "system_mode": "System Default",
     "dark_mode": "Dark Mode",
     "light_mode": "Light Mode",
-    "cache": "Cache Management",
+    "cache": "Storage",
     "clear_cache": "Clear Cache",
     "user_agreement": "User Agreement",
     "privacy_policy": "Privacy Policy",
@@ -59,30 +59,30 @@
     "sms_login": "SMS Login",
     "qr_login": "QR Login",
     "username": "Account",
-    "username_hint": "Phone/Email",
+    "username_hint": "Phone or Email",
     "password": "Password",
     "phone": "Phone Number",
-    "sms_code": "SMS Code",
+    "sms_code": "Verification Code",
     "get_code": "Get Code",
-    "get_code_retry": "Resend ($seconds s)",
+    "get_code_retry": "Resend in $seconds s",
     "qr_hint": "Scan with culcul app",
     "qr_refresh": "Refresh QR Code",
     "qr_status": {
       "loading": "Loading...",
       "success": "Login Successful",
-      "scanned": "Scanned. Confirm on phone.",
+      "scanned": "Scanned. Confirm on your phone.",
       "expired": "QR Code Expired",
-      "error": "Error loading QR Code"
+      "error": "Failed to load QR Code"
     },
-    "sms_sent": "SMS Code sent",
-    "subtitle": "Third-party lightweight client"
+    "sms_sent": "Code sent",
+    "subtitle": "A lightweight third-party client"
   },
   "profile": {
     "login": "Login",
-    "not_logged_in": "Not Logged In",
-    "login_hint": "Tap to login for more features",
+    "not_logged_in": "Not logged in",
+    "login_hint": "Sign in to explore more",
     "stats": {
-      "dynamic": "Moments",
+      "dynamic": "Posts",
       "following": "Following",
       "followers": "Followers",
       "likes": "Likes"
@@ -97,18 +97,18 @@
     "menu": {
       "history": "History",
       "download": "Downloads",
-      "collection": "My Favorites",
+      "collection": "Favorites",
       "later": "Watch Later",
-      "theme": "Theme",
-      "creative_center": "Creative Center",
+      "theme": "Appearance",
+      "creative_center": "Creator Center",
       "orders": "Orders",
-      "customer_service": "Customer Service"
+      "customer_service": "Support"
     }
   },
   "fav": {
-    "title": "My Favorites",
+    "title": "Favorites",
     "created": "Created",
-    "collected": "Collected",
+    "collected": "Saved",
     "private": "Private",
     "public": "Public",
     "play": "Play",
@@ -118,8 +118,8 @@
   "search": {
     "placeholder": "Trending: culcul",
     "button": "Search",
-    "history": "History",
-    "hot_search": "Hot Search",
+    "history": "Search History",
+    "hot_search": "Trending",
     "clear_history": "Clear History",
     "suggestion": "Suggestions",
     "no_result": "No results found",
@@ -127,16 +127,16 @@
   },
   "video": {
     "tabs": {
-      "info": "Info",
-      "comment": "Comment"
+      "info": "About",
+      "comment": "Comments"
     },
-    "recommend": "Recommendations",
-    "comment_empty": "Comments coming soon...",
+    "recommend": "Up Next",
+    "comment_empty": "No comments yet. Be the first to comment!",
     "comment_count": "$count comments",
-    "comment_sort_hot": "Hot",
+    "comment_sort_hot": "Top",
     "comment_sort_time": "Newest",
     "all_comments": "All Comments",
-    "comment_detail": "Comment Detail",
+    "comment_detail": "Comment Details",
     "related_replies": "Related Replies",
     "replies": "View all $count replies",
     "load_failed": "Failed to load video",
@@ -153,11 +153,11 @@
       "p144": "144P"
     },
     "playback": {
-      "speed": "Speed",
-      "quality": "Quality",
+      "speed": "Playback Speed",
+      "quality": "Resolution",
       "danmaku": "Danmaku",
       "full_screen": "Full Screen",
-      "retry": "Retry Playback"
+      "retry": "Retry"
     },
     "actions": {
       "like": "Like",
@@ -165,21 +165,21 @@
       "coin": "Coin",
       "favorite": "Favorite",
       "share": "Share",
-      "followed": "Followed",
+      "followed": "Following",
       "follow": "Follow",
       "reply": "Reply"
     },
-    "reply_to": "Reply @$name : ",
-    "parts": "Video Parts",
+    "reply_to": "Reply to @$name: ",
+    "parts": "Segments",
     "expand": "Expand",
     "collapse": "Collapse",
-    "comment_hint": "Write a friendly comment"
+    "comment_hint": "Leave a friendly comment..."
   },
   "common": {
-    "no_content": "No content available",
-    "coming_soon": "$tab Content Coming Soon",
+    "no_content": "No content",
+    "coming_soon": "$tab is coming soon",
     "loading": "Loading...",
-    "error": "Error occurred",
+    "error": "Something went wrong",
     "retry": "Retry",
     "refresh": "Refresh",
     "load_more": "Load More",
@@ -192,20 +192,20 @@
     "danmaku_count": "$count danmaku",
     "pull_down_to_refresh": "Pull to refresh",
     "release_to_refresh": "Release to refresh",
-    "refresh_completed": "Refresh completed",
+    "refresh_completed": "Refresh successful",
     "refresh_failed": "Refresh failed",
     "pull_up_to_load_more": "Pull up to load more",
     "release_to_load_more": "Release to load more",
-    "load_failed": "Load failed",
-    "load_completed": "Load completed",
-    "no_more_content": "No more content",
+    "load_failed": "Failed to load",
+    "load_completed": "Loaded",
+    "no_more_content": "You've reached the end.",
     "up": "UP"
   },
   "error": {
-    "connection_timeout": "Connection Timeout",
-    "send_timeout": "Send Timeout",
-    "receive_timeout": "Receive Timeout",
-    "bad_response": "Server Error: $code",
+    "connection_timeout": "Connection Timed Out",
+    "send_timeout": "Request Timed Out",
+    "receive_timeout": "Response Timed Out",
+    "bad_response": "Server Error ($code)",
     "cancel": "Request Canceled",
     "network": "Network Error"
   },
@@ -214,50 +214,50 @@
     "ten_thousand": "10K",
     "hours_ago": "$hours h ago",
     "minutes_ago": "$minutes m ago",
-    "just_now": "just now"
+    "just_now": "Just now"
   },
   "to_view": {
     "title": "Watch Later",
     "clear_all": "Clear All",
-    "clear_all_confirm": "Are you sure to clear watch later list?"
+    "clear_all_confirm": "Are you sure you want to clear your Watch Later list?"
   },
   "subscription": {
-    "title": "Subscription",
+    "title": "Subscriptions",
     "tabs": {
-      "video": "Video",
+      "video": "Videos",
       "anime": "Anime",
       "series": "Series"
     },
     "empty": "No content in $tab"
   },
   "notification": {
-    "title": "Messages",
+    "title": "Notifications",
     "types": {
-      "like": "Liked my comment",
-      "at": "Mentioned me",
-      "reply": "Replied to me",
-      "system": "System Notification"
+      "like": "liked your comment",
+      "at": "mentioned you",
+      "reply": "replied to you",
+      "system": "System"
     },
     "related_content": "Related Content",
-    "navigation_error": "Unable to navigate to content: $type $id",
+    "navigation_error": "Unable to open content: $type $id",
     "chat": {
-      "message_withdrawn": "Message withdrawn",
-      "unsupported_type": "[Unsupported message type: $type]"
+      "message_withdrawn": "Message unsent",
+      "unsupported_type": "[Unsupported message: $type]"
     }
   },
   "live": {
     "header": {
-      "online": "$count watched",
-      "guard": "$count fleet"
+      "online": "$count viewers",
+      "guard": "Fleet: $count"
     },
     "tags": {
-      "hot": "Hot",
+      "hot": "Top",
       "popularity": "Popular",
       "more_play": "More"
     },
     "danmaku": {
-      "system_notice": "System Notice",
-      "system_notice_colon": "System Notice:",
+      "system_notice": "Notice",
+      "system_notice_colon": "Notice: ",
       "admin": "Admin"
     }
   }
