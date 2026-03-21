@@ -1,10 +1,11 @@
-import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/auth/controllers/auth_controller.dart';
-import 'home_tab_bar.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/app_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+import 'home_tab_bar.dart';
 
 class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final TabController tabController;
@@ -33,27 +34,26 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
-    final authState = ref.watch(authProvider);
+
+    final avatarUrl = ref.watch(authProvider.select((state) => state.user?.avatarUrl));
 
     return AppBar(
       backgroundColor: colorScheme.surface,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
-      titleSpacing: 0,
+      titleSpacing: 12,
       centerTitle: false,
-      leading: Center(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 12),
-          child: AppAvatar(url: authState.user?.avatarUrl, size: 32, onTap: onAvatarTap),
+      leadingWidth: 44,
+      leading: Padding(
+        padding: const EdgeInsets.only(left: 12),
+        child: Center(
+          child: AppAvatar(url: avatarUrl, size: 32, onTap: onAvatarTap),
         ),
       ),
-      title: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: AppSearchBar(onTap: onSearchTap, hintText: hintText ?? t.home.search_hint),
-      ),
+      title: AppSearchBar(onTap: onSearchTap, hintText: hintText ?? t.home.search_hint),
       actions: [
         _AppBarButton(icon: Icons.mail_outline_rounded, onPressed: onMessageTap),
-        const SizedBox(width: 4),
+        const SizedBox(width: 8),
       ],
       bottom: HomeTabBar(controller: tabController, tabs: tabs, onTap: onTabTap),
     );
@@ -71,12 +71,11 @@ class _AppBarButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return IconButton(
       icon: Icon(
         icon,
         size: 24,
-        color: colorScheme.onSurfaceVariant.withValues(alpha: 0.9),
+        color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.9),
       ),
       onPressed: onPressed,
       visualDensity: VisualDensity.compact,
