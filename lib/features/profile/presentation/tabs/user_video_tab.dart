@@ -109,7 +109,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       stats: [
                         Text(
-                          FormatUtils.formatTimestamp(video.pubDate),
+                          FormatUtils.formatTimeAgo(video.pubDate),
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: colorScheme.outline,
                             fontSize: 11,

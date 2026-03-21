@@ -1,4 +1,4 @@
-import 'package:culcul/core/constants/api_cache_config.dart';
+import 'package:culcul/core/constants/api_constants.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 
@@ -24,8 +24,8 @@ class CacheInterceptor extends Interceptor {
       return handler.next(options);
     }
 
-    if (ApiCacheConfig.config.containsKey(options.path)) {
-      final duration = ApiCacheConfig.config[options.path]!;
+    if (ApiConstants.cacheConfig.containsKey(options.path)) {
+      final duration = ApiConstants.cacheConfig[options.path]!;
       final cacheOptions = CacheOptions(
         store: _store,
         policy: CachePolicy.forceCache,

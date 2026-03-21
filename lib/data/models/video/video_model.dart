@@ -23,7 +23,7 @@ sealed class VideoModel with _$VideoModel {
   factory VideoModel.fromJson(Map<String, dynamic> json) => _$VideoModelFromJson(json);
 
   String get durationString => FormatUtils.formatDuration(duration);
-  String get pubDateString => FormatUtils.formatTimestamp(pubDate);
+  String get pubDateString => FormatUtils.formatTimeAgo(pubDate);
 }
 
 @freezed

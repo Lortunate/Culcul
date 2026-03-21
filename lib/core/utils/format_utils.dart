@@ -1,8 +1,20 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/core/utils/timeago_utils.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
+/// Internal utility class for formatting.
+/// Use the extensions in `format_extensions.dart` for a more idiomatic way to format data.
 class FormatUtils {
   FormatUtils._();
+
+  static bool _timeagoInitialized = false;
+
+  static void _ensureTimeagoInitialized() {
+    if (_timeagoInitialized) return;
+    timeago.setLocaleMessages('zh_CN', timeago.ZhCnMessages());
+    timeago.setLocaleMessages('zh_TW', timeago.ZhMessages());
+    timeago.setLocaleMessages('en_short', timeago.EnShortMessages());
+    _timeagoInitialized = true;
+  }
 
   // String utilities
   static String stripHtmlTags(String htmlString) {
@@ -79,8 +91,25 @@ class FormatUtils {
   }
 
   // Date/time formatting
-  static String formatTimestamp(int timestamp) {
-    return TimeAgoUtils.formatTimeAgo(timestamp);
+  static String formatTimeAgo(int timestamp, {String? locale}) {
+    _ensureTimeagoInitialized();
+    final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+    return formatDateTime(date, locale: locale);
+  }
+
+  static String formatDateTime(DateTime dateTime, {String? locale}) {
+    _ensureTimeagoInitialized();
+    final effectiveLocale = locale ?? _getAppLocale();
+    return timeago.format(dateTime, locale: effectiveLocale);
+  }
+
+  static String _getAppLocale() {
+    final currentLocale = LocaleSettings.currentLocale;
+    return switch (currentLocale) {
+      AppLocale.zh => 'zh_CN',
+      AppLocale.zhHant => 'zh_TW',
+      AppLocale.en => 'en_short',
+    };
   }
 
   // Additional formatting utilities

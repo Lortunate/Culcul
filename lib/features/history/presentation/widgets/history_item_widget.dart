@@ -68,7 +68,7 @@ class HistoryItemWidget extends StatelessWidget {
             ),
           IconText(
             icon: Icons.access_time_rounded,
-            text: FormatUtils.formatTimestamp(item.viewAt),
+            text: FormatUtils.formatTimeAgo(item.viewAt),
             iconSize: 14,
             style: theme.textTheme.bodySmall?.copyWith(
               color: colorScheme.onSurfaceVariant,

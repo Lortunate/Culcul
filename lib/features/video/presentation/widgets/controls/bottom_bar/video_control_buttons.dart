@@ -2,7 +2,7 @@ import 'package:culcul/features/video/controllers/danmaku_settings_controller.da
 import 'package:culcul/features/video/controllers/player_controller.dart';
 import 'package:culcul/features/video/controllers/subtitle_controller.dart';
 import 'package:culcul/features/video/controllers/video_detail_controller.dart';
-import 'package:culcul/shared/format_extensions.dart';
+import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/controls_utils.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/player_theme.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/quick_selection_sheet.dart';

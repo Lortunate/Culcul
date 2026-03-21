@@ -3,11 +3,11 @@ import 'package:culcul/core/utils/format_utils.dart';
 extension FormatIntExtension on int {
   String get formatNumber => FormatUtils.formatNumber(this);
   String get formatDuration => FormatUtils.formatDuration(this);
-  String formatTimestamp() => FormatUtils.formatTimestamp(this);
+  String formatTimestamp() => FormatUtils.formatTimeAgo(this);
   String get formatFileSize => FormatUtils.formatFileSize(this);
 
   /// Convenience method to format timestamp using timeago
-  String get timeAgo => FormatUtils.formatTimestamp(this);
+  String get timeAgo => FormatUtils.formatTimeAgo(this);
 }
 
 extension FormatDurationExtension on Duration {

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:culcul/core/providers/storage_provider.dart';
-import 'package:culcul/shared/format_extensions.dart';
+import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path_provider/path_provider.dart';

@@ -1,7 +1,7 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/data/models/notification/private_message_model.dart';
 import 'package:culcul/features/profile/providers/profile_provider.dart';
-import 'package:culcul/shared/format_extensions.dart';
+import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';

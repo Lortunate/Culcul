@@ -1,4 +1,4 @@
-import 'package:culcul/shared/format_extensions.dart';
+import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:flutter/material.dart';
 
 class ChatTimeDivider extends StatelessWidget {

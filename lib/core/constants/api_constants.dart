@@ -1,45 +1,54 @@
-import 'app_constants.dart';
-
 class ApiConstants {
   ApiConstants._();
 
-  // API endpoints and configuration
-  static const String baseUrl = AppConstants.baseUrl;
-  static const String liveBaseUrl = AppConstants.liveBaseUrl;
-  static const String nav = AppConstants.nav;
-  static const String feedRcmd = AppConstants.feedRcmd;
-  static const String popular = AppConstants.popular;
-  static const String ranking = AppConstants.ranking;
-  static const String videoView = AppConstants.videoView;
-  static const String videoPlayUrl = AppConstants.videoPlayUrl;
-  static const String playerInfo = AppConstants.playerInfo;
-  static const String related = AppConstants.related;
-  static const String videoTags = AppConstants.videoTags;
-  static const String reply = AppConstants.reply;
-  static const String replyReply = AppConstants.replyReply;
-  static const String replyAction = AppConstants.replyAction;
-  static const String replyHate = AppConstants.replyHate;
-  static const String replyAdd = AppConstants.replyAdd;
-  static const String historyReport = AppConstants.historyReport;
-  static const String historyCursor = AppConstants.historyCursor;
+  // Base URLs
+  static const String baseUrl = 'https://api.bilibili.com';
+  static const String liveBaseUrl = 'https://api.live.bilibili.com';
+  static const String passportBaseUrl = 'https://passport.bilibili.com';
 
-  static const String favCreatedList = AppConstants.favCreatedList;
-  static const String favCollectedList = AppConstants.favCollectedList;
-  static const String favResourceList = AppConstants.favResourceList;
-  static const String favFolderAdd = AppConstants.favFolderAdd;
-  static const String favFolderEdit = AppConstants.favFolderEdit;
-  static const String favFolderDel = AppConstants.favFolderDel;
-  static const String favResourceBatchDel = AppConstants.favResourceBatchDel;
-  static const String favResourceClean = AppConstants.favResourceClean;
-  static const String userAgent = AppConstants.userAgent;
-  static const String referer = AppConstants.referer;
-  static const String passportBaseUrl = AppConstants.passportBaseUrl;
-  static const String captcha = AppConstants.captcha;
-  static const String smsSend = AppConstants.smsSend;
-  static const String smsLogin = AppConstants.smsLogin;
-  static const String qrGenerate = AppConstants.qrGenerate;
-  static const String qrPoll = AppConstants.qrPoll;
-  static const String userInfo = AppConstants.userInfo;
-  static const String cookieInfo = AppConstants.cookieInfo;
-  static const String cookieRefresh = AppConstants.cookieRefresh;
+  // API Endpoints
+  static const String nav = '/x/web-interface/nav';
+  static const String userInfo = '/x/web-interface/nav';
+  static const String feedRcmd = '/x/web-interface/wbi/index/top/feed/rcmd';
+  static const String popular = '/x/web-interface/popular';
+  static const String ranking = '/x/web-interface/ranking/v2';
+  static const String videoView = '/x/web-interface/view';
+  static const String videoPlayUrl = '/x/player/wbi/playurl';
+  static const String playerInfo = '/x/player/wbi/v2';
+  static const String related = '/x/web-interface/archive/related';
+  static const String videoTags = '/x/tag/archive/tags';
+  static const String reply = '/x/v2/reply';
+  static const String replyReply = '/x/v2/reply/reply';
+  static const String replyAction = '/x/v2/reply/action';
+  static const String replyHate = '/x/v2/reply/hate';
+  static const String replyAdd = '/x/v2/reply/add';
+  static const String historyReport = '/x/v2/history/report';
+  static const String historyCursor = '/x/web-interface/history/cursor';
+
+  // Favorite List API
+  static const String favCreatedList = '/x/v3/fav/folder/created/list-all';
+  static const String favCollectedList = '/x/v3/fav/folder/collected/list';
+  static const String favResourceList = '/x/v3/fav/resource/list';
+  static const String favFolderAdd = '/x/v3/fav/folder/add';
+  static const String favFolderEdit = '/x/v3/fav/folder/edit';
+  static const String favFolderDel = '/x/v3/fav/folder/del';
+  static const String favResourceBatchDel = '/x/v3/fav/resource/batch-del';
+  static const String favResourceClean = '/x/v3/fav/resource/clean';
+
+  // Auth API
+  static const String captcha = '/x/passport-login/captcha?source=main_web';
+  static const String smsSend = '/x/passport-login/web/sms/send';
+  static const String smsLogin = '/x/passport-login/web/login/sms';
+  static const String qrGenerate = '/x/passport-login/web/qrcode/generate';
+  static const String qrPoll = '/x/passport-login/web/qrcode/poll';
+  static const String cookieInfo = '/x/passport-login/web/cookie/info';
+  static const String cookieRefresh = '/x/passport-login/web/cookie/refresh';
+
+  // Network Configuration
+  static const String userAgent =
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36';
+  static const String referer = 'https://www.bilibili.com/';
+
+  // Cache Configuration
+  static const Map<String, int> cacheConfig = {};
 }

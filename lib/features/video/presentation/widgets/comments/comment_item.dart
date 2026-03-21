@@ -216,7 +216,7 @@ class _Footer extends StatelessWidget {
     return Row(
       children: [
         Text(
-          FormatUtils.formatTimestamp(item.ctime),
+          FormatUtils.formatTimeAgo(item.ctime),
           style: theme.textTheme.labelSmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),

@@ -1,6 +1,6 @@
 import 'package:culcul/data/models/notification/system_notification_model.dart';
 import 'package:culcul/features/notification/controllers/system_notification_controller.dart';
-import 'package:culcul/shared/format_extensions.dart';
+import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

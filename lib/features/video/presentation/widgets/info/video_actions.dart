@@ -2,7 +2,7 @@ import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/auth/controllers/auth_controller.dart';
 import 'package:culcul/features/video/controllers/video_detail_controller.dart';
 import 'package:culcul/features/video/controllers/video_detail_state.dart';
-import 'package:culcul/shared/format_extensions.dart';
+import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

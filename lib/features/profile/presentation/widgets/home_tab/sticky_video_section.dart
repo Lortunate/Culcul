@@ -134,7 +134,7 @@ class StickyVideoSection extends ConsumerWidget {
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
-                                      FormatUtils.formatTimestamp(video.pubDate),
+                                      FormatUtils.formatTimeAgo(video.pubDate),
                                       style: theme.textTheme.labelSmall?.copyWith(
                                         color: colorScheme.onSurfaceVariant,
                                       ),

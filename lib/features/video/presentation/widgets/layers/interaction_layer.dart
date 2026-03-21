@@ -1,6 +1,6 @@
 import 'package:culcul/features/video/controllers/player_controller.dart';
 import 'package:culcul/features/video/controllers/video_detail_controller.dart';
-import 'package:culcul/shared/format_extensions.dart';
+import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/player_constants.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/seek_ripple_overlay.dart';
 import 'package:culcul/features/video/presentation/widgets/layers/gesture_feedback_overlay.dart';

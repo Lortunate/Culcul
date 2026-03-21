@@ -5,7 +5,7 @@ import 'package:culcul/features/notification/presentation/notification_list_page
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:culcul/shared/format_extensions.dart';
+import 'package:culcul/core/utils/format_extensions.dart';
 
 class NotificationItemWidget extends StatelessWidget {
   final ReplyItem item;
