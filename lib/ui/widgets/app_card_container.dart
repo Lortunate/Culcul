@@ -14,7 +14,7 @@ class AppCardContainer extends StatelessWidget {
     required this.child,
     this.onTap,
     this.onLongPress,
-    this.borderRadius = 12,
+    this.borderRadius = 8,
     this.padding,
     this.color,
   });

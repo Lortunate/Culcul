@@ -25,85 +25,84 @@ class _RankingListViewState extends ConsumerState<RankingListView>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final rankingListAsync = ref.watch(
-      categoryRankingListProvider(rid: widget.category.rid),
-    );
+
+    final provider = categoryRankingListProvider(rid: widget.category.rid);
+    final rankingListAsync = ref.watch(provider);
+
+    final theme = Theme.of(context);
+    const separator = SizedBox(height: 2);
+    const listPadding = EdgeInsets.all(4);
 
     return EasyRefresh(
       header: const AppRefreshHeader(),
       onRefresh: () async {
-        final _ = await ref.refresh(
-          categoryRankingListProvider(rid: widget.category.rid).future,
-        );
+        await ref.refresh(provider.future);
         return IndicatorResult.success;
       },
       child: rankingListAsync.when(
         data: (items) {
           if (items.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.inbox_outlined, size: 64, color: Colors.grey[400]),
-                  const SizedBox(height: 16),
-                  Text(
-                    t.common.no_content,
-                    style: Theme.of(
-                      context,
-                    ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
-                  ),
-                ],
-              ),
-            );
+            return _buildEmptyView(theme);
           }
           return ListView.separated(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: listPadding,
             itemCount: items.length,
-            separatorBuilder: (context, index) =>
-                const Divider(height: 1, indent: 16, endIndent: 16),
-            itemBuilder: (context, index) {
-              return RankingItemCard(video: items[index], rank: index + 1);
-            },
+            separatorBuilder: (_, __) => separator,
+            itemBuilder: (context, index) =>
+                RankingItemCard(video: items[index], rank: index + 1),
           );
         },
         loading: () => ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: listPadding,
           itemCount: 10,
-          separatorBuilder: (context, index) =>
-              const Divider(height: 1, indent: 16, endIndent: 16),
-          itemBuilder: (context, index) => const RankingSkeletonItem(),
+          separatorBuilder: (_, __) => separator,
+          itemBuilder: (_, __) => const RankingSkeletonItem(),
         ),
-        error: (error, stack) => Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
-              const SizedBox(height: 16),
-              Text(
-                t.common.load_failed,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyLarge?.copyWith(color: Colors.grey[700]),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                error.toString().split(':')[0],
-                style: Theme.of(
-                  context,
-                ).textTheme.labelSmall?.copyWith(color: Colors.grey[500]),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: () => ref.refresh(
-                  categoryRankingListProvider(rid: widget.category.rid).future,
-                ),
-                icon: const Icon(Icons.refresh),
-                label: Text(t.common.retry),
-              ),
-            ],
+        error: (error, _) => _buildErrorView(theme, error, provider),
+      ),
+    );
+  }
+
+  Widget _buildEmptyView(ThemeData theme) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.inbox_outlined, size: 64, color: Colors.grey[400]),
+          const SizedBox(height: 16),
+          Text(
+            t.common.no_content,
+            style: theme.textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
           ),
-        ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorView(ThemeData theme, Object error, dynamic provider) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
+          const SizedBox(height: 16),
+          Text(
+            t.common.load_failed,
+            style: theme.textTheme.bodyLarge?.copyWith(color: Colors.grey[700]),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            error.toString().split(':')[0],
+            style: theme.textTheme.labelSmall?.copyWith(color: Colors.grey[500]),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton.icon(
+            onPressed: () => ref.refresh(provider.future),
+            icon: const Icon(Icons.refresh),
+            label: Text(t.common.retry),
+          ),
+        ],
       ),
     );
   }

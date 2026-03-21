@@ -23,11 +23,11 @@ class RecommendView extends HookConsumerWidget {
 
     useHomeScrollManager(ref, scrollController, refreshController, 1);
 
-    const padding = EdgeInsets.all(4);
+    const padding = EdgeInsets.all(8);
     const gridDelegate = SliverGridDelegateWithFixedCrossAxisCount(
       crossAxisCount: 2,
-      mainAxisSpacing: 4,
-      crossAxisSpacing: 4,
+      mainAxisSpacing: 6,
+      crossAxisSpacing: 6,
       childAspectRatio: 0.94,
     );
 

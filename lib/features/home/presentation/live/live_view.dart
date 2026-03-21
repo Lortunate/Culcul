@@ -22,14 +22,13 @@ class LiveView extends HookConsumerWidget {
 
     useHomeScrollManager(ref, scrollController, refreshController, 0);
 
+    const padding = EdgeInsets.all(8);
     const gridDelegate = SliverGridDelegateWithFixedCrossAxisCount(
       crossAxisCount: 2,
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
+      mainAxisSpacing: 6,
+      crossAxisSpacing: 6,
       childAspectRatio: 0.95,
     );
-
-    const padding = EdgeInsets.all(12);
 
     return SmartPagingView(
       provider: liveRecommendProvider,

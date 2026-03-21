@@ -4,9 +4,8 @@ import 'package:culcul/ui/widgets/app_card_container.dart';
 import 'package:culcul/ui/widgets/app_tag.dart';
 import 'package:culcul/ui/widgets/video_thumbnail.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class VideoCard extends HookConsumerWidget {
+class VideoCard extends StatelessWidget {
   final VideoModel video;
   final VoidCallback? onTap;
   final bool showAuthor;
@@ -21,34 +20,32 @@ class VideoCard extends HookConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return AppCardContainer(
       onTap: onTap,
-      onLongPress: () {
-        showModalBottomSheet(
-          context: context,
-          backgroundColor: Colors.transparent,
-          barrierColor: Colors.transparent,
-          isScrollControlled: true,
-          builder: (context) => VideoMoreBottomSheet(video: video),
-        );
-      },
+      onLongPress: () => showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        barrierColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (context) => VideoMoreBottomSheet(video: video),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _VideoThumbnail(video: video),
-          _VideoContent(
-            video: video,
+          VideoCardContent(
+            title: video.title,
+            author: video.owner.name,
+            reason: video.rcmdReason,
+            description: showDescription ? video.desc : null,
             showAuthor: showAuthor,
-            showDescription: showDescription,
           ),
         ],
       ),
     );
   }
 }
-
-// VideoCardContainer class removed as it is replaced by AppCardContainer
 
 class _VideoThumbnail extends StatelessWidget {
   final VideoModel video;
@@ -66,31 +63,8 @@ class _VideoThumbnail extends StatelessWidget {
       duration: video.duration,
       viewCount: video.stat.view,
       danmakuCount: video.stat.danmaku,
-      borderRadius: 12,
+      borderRadius: 0,
       memCacheWidth: cacheWidth,
-    );
-  }
-}
-
-class _VideoContent extends StatelessWidget {
-  final VideoModel video;
-  final bool showAuthor;
-  final bool showDescription;
-
-  const _VideoContent({
-    required this.video,
-    required this.showAuthor,
-    required this.showDescription,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return VideoCardContent(
-      title: video.title,
-      author: video.owner.name,
-      reason: video.rcmdReason,
-      description: showDescription ? video.desc : null,
-      showAuthor: showAuthor,
     );
   }
 }
@@ -135,7 +109,7 @@ class VideoCardContent extends StatelessWidget {
                 color: colorScheme.onSurface,
               ),
             ),
-            if (reason != null && reason!.isNotEmpty) ...[
+            if (reason?.isNotEmpty == true) ...[
               const SizedBox(height: 6),
               AppTag(
                 text: reason!,
@@ -144,7 +118,7 @@ class VideoCardContent extends StatelessWidget {
                 fontSize: 10,
               ),
             ],
-            if (description != null && description!.isNotEmpty) ...[
+            if (description?.isNotEmpty == true) ...[
               const SizedBox(height: 4),
               Text(
                 description!,
@@ -157,8 +131,9 @@ class VideoCardContent extends StatelessWidget {
               ),
             ],
             if (extra != null) ...extra!,
+
+            const Spacer(),
             if (showAuthor) ...[
-              const Spacer(),
               const SizedBox(height: 6),
               Row(
                 children: [
@@ -180,8 +155,6 @@ class VideoCardContent extends StatelessWidget {
                   ),
                 ],
               ),
-            ] else ...[
-              const Spacer(), // Ensure consistent height if needed, or remove if auto-height
             ],
           ],
         ),
