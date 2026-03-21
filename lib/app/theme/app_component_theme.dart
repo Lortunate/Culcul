@@ -5,7 +5,6 @@ import 'app_colors.dart';
 class AppComponentTheme {
   AppComponentTheme._();
 
-  static const String fontFamily = 'PingFang SC';
 
   static AppBarTheme appBar(bool isDark) {
     final surface = isDark ? AppColors.darkSurface : AppColors.surface;
@@ -24,7 +23,6 @@ class AppComponentTheme {
         color: text,
         fontSize: 17,
         fontWeight: FontWeight.w600,
-        fontFamily: fontFamily,
       ),
       iconTheme: IconThemeData(color: text, size: 24),
       systemOverlayStyle: overlayStyle.copyWith(
@@ -44,12 +42,10 @@ class AppComponentTheme {
       labelStyle: const TextStyle(
         fontSize: 15,
         fontWeight: FontWeight.w600,
-        fontFamily: fontFamily,
       ),
       unselectedLabelStyle: const TextStyle(
         fontSize: 15,
         fontWeight: FontWeight.w500,
-        fontFamily: fontFamily,
       ),
       indicatorSize: TabBarIndicatorSize.label,
       indicatorColor: AppColors.primary,

@@ -6,7 +6,6 @@ import 'app_component_theme.dart';
 class AppTheme {
   AppTheme._();
 
-  static const String _fontFamily = 'PingFang SC';
 
   static ThemeData get light {
     final colorScheme = ColorScheme.light(
@@ -25,7 +24,6 @@ class AppTheme {
 
     return ThemeData(
       useMaterial3: true,
-      fontFamily: _fontFamily,
       brightness: Brightness.light,
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.background,
@@ -66,7 +64,6 @@ class AppTheme {
 
     return ThemeData(
       useMaterial3: true,
-      fontFamily: _fontFamily,
       brightness: Brightness.dark,
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.darkBackground,
