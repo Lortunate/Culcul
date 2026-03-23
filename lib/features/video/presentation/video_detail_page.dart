@@ -38,7 +38,7 @@ class VideoDetailPage extends HookConsumerWidget {
     final tabController = useTabController(initialLength: 2);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: PopScope(
         canPop: !isFullscreen,
         onPopInvokedWithResult: (didPop, result) {

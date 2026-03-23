@@ -1,8 +1,8 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/video/controllers/video_detail_controller.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_item.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_reply_sheet.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
@@ -17,44 +17,34 @@ class VideoCommentsView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(videoDetailControllerProvider(bvid));
     final notifier = ref.read(videoDetailControllerProvider(bvid).notifier);
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final t = Translations.of(context);
-    final upperMid = state.videoDetail?.owner.mid;
 
     if (state.isCommentLoading && state.comments.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
 
     if (state.comments.isEmpty && !state.isCommentLoading) {
-      return Center(
-        child: GestureDetector(
-          onTap: notifier.refreshComments,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                t.video.comment_empty,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Icon(Icons.refresh, color: colorScheme.primary),
-            ],
-          ),
-        ),
-      );
+      return _buildEmptyState(context, notifier);
     }
+
+    final upperMid = state.videoDetail?.owner.mid;
 
     return EasyRefresh(
       onRefresh: notifier.refreshComments,
       onLoad: state.hasMoreComments ? notifier.loadMoreComments : null,
       header: AppRefreshHeader(),
       footer: AppLoadFooter(),
-      child: ListView.builder(
+      child: ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: 4),
         itemCount: state.comments.length,
+        separatorBuilder: (context, index) {
+          return Divider(
+            height: 1,
+            thickness: 0.5,
+            indent: 16,
+            endIndent: 16,
+            color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
+          );
+        },
         itemBuilder: (context, index) {
           final comment = state.comments[index];
           return CommentItemWidget(
@@ -81,15 +71,43 @@ class VideoCommentsView extends ConsumerWidget {
               );
             },
             onTapReplies: () {
-              CommentReplyRoute(
-                bvid: bvid,
-                oid: state.videoDetail!.aid,
-                rootId: comment.rpid,
-                $extra: {'comment': comment, 'upperMid': upperMid},
-              ).push(context);
+              if (state.videoDetail?.aid != null) {
+                CommentReplyRoute(
+                  bvid: bvid,
+                  oid: state.videoDetail!.aid,
+                  rootId: comment.rpid,
+                  $extra: {'comment': comment, 'upperMid': upperMid},
+                ).push(context);
+              }
             },
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context, dynamic notifier) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final t = Translations.of(context);
+
+    return Center(
+      child: GestureDetector(
+        onTap: notifier.refreshComments,
+        behavior: HitTestBehavior.opaque,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              t.video.comment_empty,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Icon(Icons.refresh, color: colorScheme.primary),
+          ],
+        ),
       ),
     );
   }

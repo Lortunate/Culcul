@@ -1,7 +1,7 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/data/models/comment/comment_model.dart';
-import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_images.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:culcul/ui/widgets/bilibili_emoji_text.dart';
@@ -35,7 +35,7 @@ class CommentItemWidget extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _Avatar(url: item.member.avatar),
+          AppAvatar(url: item.member.avatar, size: 38),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -68,17 +68,6 @@ class CommentItemWidget extends StatelessWidget {
   }
 }
 
-class _Avatar extends StatelessWidget {
-  final String url;
-
-  const _Avatar({required this.url});
-
-  @override
-  Widget build(BuildContext context) {
-    return AppAvatar(url: url, size: 38);
-  }
-}
-
 class _Header extends StatelessWidget {
   final CommentMember member;
   final int? upperMid;
@@ -89,9 +78,10 @@ class _Header extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = Translations.of(context);
+
     final isVip = member.vip.vipStatus == 1;
     final isUpper = upperMid != null && member.mid == upperMid.toString();
-    final t = Translations.of(context);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -140,24 +130,24 @@ class _Content extends StatelessWidget {
 
   const _Content({required this.content, required this.item});
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+  List<InlineSpan> _buildTextSpans(BuildContext context, ThemeData theme) {
     final t = Translations.of(context);
-    final message = content.message;
-    final emote = content.emote;
-    final members = content.members;
     final isReply = item.root != 0 && item.parent != 0 && item.parent != item.root;
+    final textStyle =
+        theme.textTheme.bodyMedium?.copyWith(
+          height: 1.5,
+          color: theme.colorScheme.onSurface,
+        ) ??
+        const TextStyle();
 
     List<InlineSpan> spans = [];
 
-    if (isReply && members.isNotEmpty) {
+    if (isReply && content.members.isNotEmpty) {
       spans.add(
         TextSpan(
-          text: t.video.reply_to(name: members.first.uname),
+          text: t.video.reply_to(name: content.members.first.uname),
           style: theme.textTheme.bodyMedium?.copyWith(
-            color: colorScheme.primary,
+            color: theme.colorScheme.primary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -166,28 +156,31 @@ class _Content extends StatelessWidget {
 
     spans.add(
       BilibiliEmojiText.buildEmojiTextSpan(
-        text: message,
-        emojiMap: emote ?? {},
-        style:
-            theme.textTheme.bodyMedium?.copyWith(
-              height: 1.5,
-              color: theme.colorScheme.onSurface,
-            ) ??
-            const TextStyle(),
+        text: content.message,
+        emojiMap: content.emote ?? {},
+        style: textStyle,
         emojiSize: 20,
       ),
     );
+
+    return spans;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SelectableText.rich(
+          scrollPhysics: const NeverScrollableScrollPhysics(),
           TextSpan(
             style: theme.textTheme.bodyMedium?.copyWith(
               height: 1.5,
               color: theme.colorScheme.onSurface,
             ),
-            children: spans,
+            children: _buildTextSpans(context, theme),
           ),
         ),
         if (content.pictures.isNotEmpty) ...[
@@ -218,7 +211,7 @@ class _Footer extends StatelessWidget {
         Text(
           FormatUtils.formatTimeAgo(item.ctime),
           style: theme.textTheme.labelSmall?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
+            color: colorScheme.onSurfaceVariant,
           ),
         ),
         if (item.content.device.isNotEmpty) ...[
@@ -226,7 +219,7 @@ class _Footer extends StatelessWidget {
           Text(
             item.content.device,
             style: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
+              color: colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -250,7 +243,7 @@ class _Footer extends StatelessWidget {
             child: Icon(
               Icons.more_vert_rounded,
               size: 16,
-              color: theme.colorScheme.onSurfaceVariant,
+              color: colorScheme.onSurfaceVariant,
             ),
           ),
         ),
@@ -276,7 +269,7 @@ class _Action extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(4),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+        padding: const EdgeInsets.all(4),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -305,6 +298,35 @@ class _Replies extends StatelessWidget {
 
   const _Replies({required this.replies, required this.rcount, this.onTap});
 
+  Widget _buildReplyItem(BuildContext context, CommentItem reply, ThemeData theme) {
+    final colorScheme = theme.colorScheme;
+    final textStyle = theme.textTheme.bodySmall?.copyWith(
+      fontSize: 13,
+      height: 1.4,
+      color: colorScheme.onSurface,
+    );
+
+    return RichText(
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      text: TextSpan(
+        style: textStyle,
+        children: [
+          TextSpan(
+            text: '${reply.member.uname} ',
+            style: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.bold),
+          ),
+          BilibiliEmojiText.buildEmojiTextSpan(
+            text: reply.content.message,
+            emojiMap: reply.content.emote ?? {},
+            style: textStyle ?? const TextStyle(),
+            emojiSize: 14,
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -314,71 +336,38 @@ class _Replies extends StatelessWidget {
     return AppClickable(
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
-      backgroundColor: colorScheme.surfaceContainerLow,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ...replies.take(2).map((reply) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: RichText(
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  text: TextSpan(
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      fontSize: 13,
-                      height: 1.4,
-                      color: colorScheme.onSurface,
-                    ),
+      backgroundColor: theme.scaffoldBackgroundColor,
+      child: SizedBox(
+        width: double.infinity,
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ...replies.take(2).map((reply) => _buildReplyItem(context, reply, theme)),
+              if (rcount > 2)
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child: Row(
                     children: [
-                      TextSpan(
-                        text: '${reply.member.uname} ',
-                        style: TextStyle(
+                      Text(
+                        t.video.replies(count: rcount),
+                        style: theme.textTheme.labelSmall?.copyWith(
                           color: colorScheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      BilibiliEmojiText.buildEmojiTextSpan(
-                        text: reply.content.message,
-                        emojiMap: reply.content.emote ?? {},
-                        style:
-                            theme.textTheme.bodySmall?.copyWith(
-                              fontSize: 13,
-                              height: 1.4,
-                              color: colorScheme.onSurface,
-                            ) ??
-                            const TextStyle(),
-                        emojiSize: 14,
+                      const SizedBox(width: 2),
+                      Icon(
+                        Icons.chevron_right_rounded,
+                        size: 14,
+                        color: colorScheme.primary,
                       ),
                     ],
                   ),
                 ),
-              );
-            }),
-            if (rcount > 2)
-              Padding(
-                padding: const EdgeInsets.only(top: 2),
-                child: Row(
-                  children: [
-                    Text(
-                      t.video.replies(count: rcount),
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(width: 2),
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      size: 14,
-                      color: colorScheme.primary,
-                    ),
-                  ],
-                ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
