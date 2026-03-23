@@ -1,4 +1,4 @@
-import 'package:culcul/app/theme/app_colors.dart';
+import 'package:culcul/app/theme/culcul_colors.dart';
 import 'package:flutter/material.dart';
 
 class PlayerTheme {
@@ -19,14 +19,18 @@ class PlayerTheme {
     fontSize: 11,
     fontWeight: FontWeight.w500,
     fontFeatures: [FontFeature.tabularFigures()],
-    shadows: [Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45)],
+    shadows: [
+      Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45),
+    ],
   );
 
   static const TextStyle titleStyle = TextStyle(
     color: Colors.white,
     fontSize: 15,
     fontWeight: FontWeight.w500,
-    shadows: [Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45)],
+    shadows: [
+      Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45),
+    ],
   );
 
   static const TextStyle subtitleStyle = TextStyle(
@@ -45,13 +49,16 @@ class PlayerTheme {
   // Slider Theme
   static SliderThemeData get sliderTheme => SliderThemeData(
     trackHeight: 3,
-    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7, elevation: 2),
+    thumbShape: const RoundSliderThumbShape(
+      enabledThumbRadius: 7,
+      elevation: 2,
+    ),
     overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
-    activeTrackColor: AppColors.primary,
+    activeTrackColor: CulculColors.brand,
     inactiveTrackColor: Colors.white24,
     secondaryActiveTrackColor: Colors.white54,
     thumbColor: Colors.white,
-    overlayColor: AppColors.primary.withValues(alpha: 0.2),
+    overlayColor: CulculColors.brand.withValues(alpha: 0.2),
     trackShape: const RectangularSliderTrackShape(),
     activeTickMarkColor: Colors.transparent,
     inactiveTickMarkColor: Colors.transparent,
@@ -81,10 +88,14 @@ class PlayerTheme {
     textStyle: const TextStyle(
       fontSize: 13,
       fontWeight: FontWeight.w600,
-      shadows: [Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45)],
+      shadows: [
+        Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45),
+      ],
     ),
   );
 
   // Colors
-  static final Color overlayBackgroundColor = Colors.black.withValues(alpha: 0.6);
+  static final Color overlayBackgroundColor = Colors.black.withValues(
+    alpha: 0.6,
+  );
 }

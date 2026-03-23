@@ -9,7 +9,6 @@ import 'package:culcul/features/video/presentation/widgets/layers/danmaku_layer.
 import 'package:culcul/features/video/presentation/widgets/layers/interaction_layer.dart';
 import 'package:culcul/features/video/presentation/widgets/layers/subtitle_layer.dart';
 import 'package:culcul/features/video/presentation/widgets/layers/video_layer.dart';
-import 'package:culcul/app/theme/app_colors.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -22,7 +21,11 @@ class VerticalVideoPage extends HookConsumerWidget {
   final String bvid;
   final VideoDetail videoDetail;
 
-  const VerticalVideoPage({super.key, required this.bvid, required this.videoDetail});
+  const VerticalVideoPage({
+    super.key,
+    required this.bvid,
+    required this.videoDetail,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -68,7 +71,11 @@ class VerticalVideoPage extends HookConsumerWidget {
             child: SafeArea(child: _buildTopBar(context)),
           ),
 
-          Positioned(right: 8, bottom: 120, child: _buildRightBar(context, videoDetail)),
+          Positioned(
+            right: 8,
+            bottom: 120,
+            child: _buildRightBar(context, videoDetail),
+          ),
 
           Positioned(
             left: 0,
@@ -92,7 +99,11 @@ class VerticalVideoPage extends HookConsumerWidget {
         children: [
           GestureDetector(
             onTap: () => context.pop(),
-            child: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
+            child: const Icon(
+              Icons.arrow_back_ios_new,
+              color: Colors.white,
+              size: 20,
+            ),
           ),
           const SizedBox(width: 8),
           const Text(
@@ -160,6 +171,7 @@ class _BottomBar extends HookWidget {
     final durationSnapshot = useStream(player.stream.duration);
     final position = positionSnapshot.data ?? Duration.zero;
     final duration = durationSnapshot.data ?? Duration.zero;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
       decoration: const BoxDecoration(
@@ -197,9 +209,12 @@ class _BottomBar extends HookWidget {
               ),
               const SizedBox(width: 12),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
+                  color: colorScheme.primary,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: const Text(
@@ -225,13 +240,21 @@ class _BottomBar extends HookWidget {
                 ),
               ),
               const SizedBox(width: 4),
-              const Icon(Icons.keyboard_arrow_down, color: Colors.white70, size: 20),
+              const Icon(
+                Icons.keyboard_arrow_down,
+                color: Colors.white70,
+                size: 20,
+              ),
             ],
           ),
           const SizedBox(height: 4),
           Row(
             children: [
-              const Icon(Icons.play_circle_outline, size: 12, color: Colors.white60),
+              const Icon(
+                Icons.play_circle_outline,
+                size: 12,
+                color: Colors.white60,
+              ),
               const SizedBox(width: 4),
               Text(
                 '${FormatUtils.formatNumber(videoDetail.stat.view)}播放',

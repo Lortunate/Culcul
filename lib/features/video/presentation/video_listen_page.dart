@@ -4,7 +4,6 @@ import 'package:culcul/features/video/controllers/player_controller.dart';
 import 'package:culcul/features/video/controllers/video_detail_controller.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/player_settings_sheet.dart';
-import 'package:culcul/app/theme/app_colors.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -26,6 +25,7 @@ class VideoListenPage extends HookConsumerWidget {
     final durationSnapshot = useStream(player.stream.duration);
     final position = positionSnapshot.data ?? Duration.zero;
     final duration = durationSnapshot.data ?? Duration.zero;
+    final colorScheme = Theme.of(context).colorScheme;
 
     final detail = state.videoDetail;
 
@@ -128,7 +128,10 @@ class VideoListenPage extends HookConsumerWidget {
                       border: Border.all(color: Colors.white12, width: 4),
                     ),
                     child: ClipOval(
-                      child: AppNetworkImage(url: detail.pic, fit: BoxFit.cover),
+                      child: AppNetworkImage(
+                        url: detail.pic,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 48),
@@ -156,15 +159,18 @@ class VideoListenPage extends HookConsumerWidget {
                   if (sleepTimerText != null) ...[
                     const SizedBox(height: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white10,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         sleepTimerText,
-                        style: const TextStyle(
-                          color: AppColors.primary,
+                        style: TextStyle(
+                          color: colorScheme.primary,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
@@ -180,12 +186,18 @@ class VideoListenPage extends HookConsumerWidget {
                       SliderTheme(
                         data: SliderThemeData(
                           trackHeight: 2,
-                          activeTrackColor: AppColors.primary,
+                          activeTrackColor: colorScheme.primary,
                           inactiveTrackColor: Colors.white24,
                           thumbColor: Colors.white,
-                          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-                          overlayColor: AppColors.primary.withValues(alpha: 0.2),
-                          overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
+                          thumbShape: const RoundSliderThumbShape(
+                            enabledThumbRadius: 6,
+                          ),
+                          overlayColor: colorScheme.primary.withValues(
+                            alpha: 0.2,
+                          ),
+                          overlayShape: const RoundSliderOverlayShape(
+                            overlayRadius: 16,
+                          ),
                         ),
                         child: Slider(
                           value: position.inMilliseconds.toDouble().clamp(
@@ -196,7 +208,9 @@ class VideoListenPage extends HookConsumerWidget {
                               ? duration.inMilliseconds.toDouble()
                               : 1.0,
                           onChanged: (value) {
-                            playerController.seek(Duration(milliseconds: value.toInt()));
+                            playerController.seek(
+                              Duration(milliseconds: value.toInt()),
+                            );
                           },
                         ),
                       ),
@@ -255,8 +269,8 @@ class VideoListenPage extends HookConsumerWidget {
                       Container(
                         width: 72,
                         height: 72,
-                        decoration: const BoxDecoration(
-                          color: AppColors.primary,
+                        decoration: BoxDecoration(
+                          color: colorScheme.primary,
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
@@ -274,7 +288,9 @@ class VideoListenPage extends HookConsumerWidget {
                         onPressed: () {
                           // +15s
                           final newPos = position + const Duration(seconds: 15);
-                          playerController.seek(newPos > duration ? duration : newPos);
+                          playerController.seek(
+                            newPos > duration ? duration : newPos,
+                          );
                         },
                         icon: const Icon(
                           Icons.forward_10_rounded,

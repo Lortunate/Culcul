@@ -1,8 +1,8 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/app/theme/culcul_theme.dart';
 import 'package:culcul/core/utils/toast_utils.dart';
 import 'package:culcul/features/settings/controllers/settings_controller.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -18,8 +18,8 @@ class CulculApp extends HookConsumerWidget {
     return MaterialApp.router(
       title: 'Culcul',
       scaffoldMessengerKey: globalScaffoldMessengerKey,
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
+      theme: CulculTheme.light,
+      darkTheme: CulculTheme.dark,
       themeMode: themeMode,
       routerConfig: router,
       debugShowCheckedModeBanner: false,
