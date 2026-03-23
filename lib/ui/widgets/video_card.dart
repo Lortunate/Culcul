@@ -113,7 +113,7 @@ class VideoCardContent extends StatelessWidget {
               const SizedBox(height: 6),
               AppTag(
                 text: reason!,
-                color: colorScheme.primaryContainer.withValues(alpha: 0.5),
+                color: colorScheme.primaryContainer.withValues(alpha: 0.188),
                 textColor: colorScheme.primary,
                 fontSize: 10,
               ),
