@@ -44,7 +44,6 @@ class QrLoginView extends HookConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const SizedBox(height: 20),
-                // QR Code Container
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
@@ -108,13 +107,6 @@ class QrLoginView extends HookConsumerWidget {
                           color: theme.colorScheme.onSurface,
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        t.auth.qr_hint,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
