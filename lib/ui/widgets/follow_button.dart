@@ -1,5 +1,5 @@
-import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/auth/controllers/auth_controller.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -38,10 +38,8 @@ class FollowButton extends ConsumerWidget {
       },
       style: FilledButton.styleFrom(
         backgroundColor: isFollowed
-            ? colorScheme.surfaceContainerHighest.withValues(
-                alpha: 0.5,
-              ) // Lighter grey for followed
-            : colorScheme.primary, // Theme primary color for follow
+            ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
+            : colorScheme.primary,
         foregroundColor: isFollowed
             ? colorScheme.onSurfaceVariant
             : colorScheme.onPrimary,
@@ -74,9 +72,7 @@ class FollowButton extends ConsumerWidget {
             ],
             Text(
               text ??
-                  (isFollowed
-                      ? t.video.actions.followed
-                      : '+ ${t.video.actions.follow}'),
+                  (isFollowed ? t.video.actions.followed : '+ ${t.video.actions.follow}'),
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
             ),
           ],

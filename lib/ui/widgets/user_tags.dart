@@ -74,7 +74,7 @@ class LevelTag extends StatelessWidget {
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
       decoration: BoxDecoration(
         border: Border.all(color: levelColor, width: 1.5),
         borderRadius: BorderRadius.circular(4),
@@ -82,7 +82,7 @@ class LevelTag extends StatelessWidget {
       child: Text(
         'LV$level',
         style: TextStyle(
-          fontSize: 10,
+          fontSize: 8,
           fontWeight: FontWeight.w900,
           color: levelColor,
           fontStyle: FontStyle.italic,

@@ -25,26 +25,21 @@ Future<UserProfile> myProfile(Ref ref) async {
 class UserProfileNotifier extends _$UserProfileNotifier {
   @override
   Future<UserProfile> build(String userId) async {
-    // 1. Try cache
     final cacheService = await ref.watch(userInfoCacheServiceProvider.future);
     final cachedUser = cacheService.getUser(userId);
 
     if (cachedUser != null) {
-      // Trigger background refresh
       _refreshInBackground(userId);
       return cachedUser;
     }
 
-    // 2. No cache, fetch from network
     return _fetchAndSave(userId);
   }
 
   Future<void> _refreshInBackground(String userId) async {
     try {
-      // Wait a bit to ensure UI has rendered cached data
       await Future.delayed(Duration.zero);
       final user = await _fetchAndSave(userId);
-      // Update state with fresh data
       state = AsyncData(user);
     } catch (e) {
       // Ignore errors in background refresh
