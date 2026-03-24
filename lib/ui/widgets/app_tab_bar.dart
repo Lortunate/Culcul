@@ -14,6 +14,26 @@ class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
     this.onTap,
   });
 
+  BoxDecoration _buildDecoration(ColorScheme colorScheme) {
+    return BoxDecoration(
+      color: colorScheme.surface,
+      border: Border(
+        bottom: BorderSide(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+          width: 0.5,
+        ),
+      ),
+    );
+  }
+
+  UnderlineTabIndicator _buildIndicator(Color color) {
+    return UnderlineTabIndicator(
+      borderSide: BorderSide(width: 3, color: color),
+      insets: const EdgeInsets.symmetric(horizontal: 8),
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -21,15 +41,7 @@ class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
 
     return Container(
       height: 44,
-      decoration: BoxDecoration(
-        color: colorScheme.surface,
-        border: Border(
-          bottom: BorderSide(
-            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-            width: 0.5,
-          ),
-        ),
-      ),
+      decoration: _buildDecoration(colorScheme),
       child: TabBar(
         controller: controller,
         isScrollable: isScrollable,
@@ -44,11 +56,7 @@ class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
           fontWeight: FontWeight.normal,
         ),
         indicatorSize: TabBarIndicatorSize.label,
-        indicator: UnderlineTabIndicator(
-          borderSide: BorderSide(width: 3, color: colorScheme.primary),
-          insets: const EdgeInsets.symmetric(horizontal: 8),
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
-        ),
+        indicator: _buildIndicator(colorScheme.primary),
         labelPadding: const EdgeInsets.symmetric(horizontal: 14),
         splashFactory: NoSplash.splashFactory,
         overlayColor: WidgetStateProperty.all(Colors.transparent),

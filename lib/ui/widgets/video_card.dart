@@ -5,6 +5,10 @@ import 'package:culcul/ui/widgets/app_tag.dart';
 import 'package:culcul/ui/widgets/video_thumbnail.dart';
 import 'package:flutter/material.dart';
 
+part 'video_card/content.dart';
+part 'video_card/footer.dart';
+part 'video_card/thumbnail.dart';
+
 class VideoCard extends StatelessWidget {
   final VideoModel video;
   final VoidCallback? onTap;
@@ -19,52 +23,35 @@ class VideoCard extends StatelessWidget {
     this.showDescription = false,
   });
 
+  Future<void> _showMoreSheet(BuildContext context) {
+    return showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => VideoMoreBottomSheet(video: video),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppCardContainer(
       onTap: onTap,
-      onLongPress: () => showModalBottomSheet(
-        context: context,
-        backgroundColor: Colors.transparent,
-        barrierColor: Colors.transparent,
-        isScrollControlled: true,
-        builder: (context) => VideoMoreBottomSheet(video: video),
-      ),
+      onLongPress: () => _showMoreSheet(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _VideoThumbnail(video: video),
-          VideoCardContent(
+          _VideoCardThumbnail(video: video),
+          _VideoCardContent(
             title: video.title,
             author: video.owner.name,
             reason: video.rcmdReason,
             description: showDescription ? video.desc : null,
             showAuthor: showAuthor,
+            extra: null,
           ),
         ],
       ),
-    );
-  }
-}
-
-class _VideoThumbnail extends StatelessWidget {
-  final VideoModel video;
-
-  const _VideoThumbnail({required this.video});
-
-  @override
-  Widget build(BuildContext context) {
-    final cacheWidth =
-        (MediaQuery.sizeOf(context).width / 2 * MediaQuery.devicePixelRatioOf(context))
-            .toInt();
-
-    return VideoThumbnail(
-      url: video.pic,
-      duration: video.duration,
-      viewCount: video.stat.view,
-      danmakuCount: video.stat.danmaku,
-      borderRadius: 0,
-      memCacheWidth: cacheWidth,
     );
   }
 }
@@ -89,76 +76,13 @@ class VideoCardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              title,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w500,
-                height: 1.25,
-                fontSize: 13,
-                color: colorScheme.onSurface,
-              ),
-            ),
-            if (reason?.isNotEmpty == true) ...[
-              const SizedBox(height: 6),
-              AppTag(
-                text: reason!,
-                color: colorScheme.primaryContainer.withValues(alpha: 0.188),
-                textColor: colorScheme.primary,
-                fontSize: 10,
-              ),
-            ],
-            if (description?.isNotEmpty == true) ...[
-              const SizedBox(height: 4),
-              Text(
-                description!,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                  fontSize: 11,
-                ),
-              ),
-            ],
-            if (extra != null) ...extra!,
-
-            const Spacer(),
-            if (showAuthor) ...[
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      author,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                        fontSize: 11,
-                      ),
-                    ),
-                  ),
-                  Icon(
-                    Icons.more_vert_rounded,
-                    size: 14,
-                    color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-                  ),
-                ],
-              ),
-            ],
-          ],
-        ),
-      ),
+    return _VideoCardContent(
+      title: title,
+      author: author,
+      reason: reason,
+      description: description,
+      showAuthor: showAuthor,
+      extra: extra,
     );
   }
 }

@@ -18,24 +18,30 @@ class AppTag extends StatelessWidget {
     this.borderRadius = 4,
   });
 
+  Color _backgroundColor(ColorScheme colorScheme) {
+    return color ??
+        colorScheme.surfaceContainerHighest.withValues(alpha: 0.5);
+  }
+
+  Color _foregroundColor(ColorScheme colorScheme) {
+    return textColor ?? colorScheme.onSurfaceVariant;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    final defaultBgColor = colorScheme.surfaceContainerHighest.withValues(alpha: 0.5);
-    final defaultTextColor = colorScheme.onSurfaceVariant;
-
     return Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: color ?? defaultBgColor,
+        color: _backgroundColor(colorScheme),
         borderRadius: BorderRadius.circular(borderRadius),
       ),
       child: Text(
         text,
         style: theme.textTheme.labelSmall?.copyWith(
-          color: textColor ?? defaultTextColor,
+          color: _foregroundColor(colorScheme),
           fontSize: fontSize,
           fontWeight: FontWeight.w500,
         ),

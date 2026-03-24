@@ -5,6 +5,24 @@ import 'package:flutter/material.dart';
 class VideoCardSkeleton extends StatelessWidget {
   const VideoCardSkeleton({super.key});
 
+  Widget _buildContent() {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+            AppShimmerBox(height: 14, width: double.infinity),
+            SizedBox(height: 6),
+            AppShimmerBox(height: 14, width: 100),
+            Spacer(),
+            AppShimmerBox(height: 10, width: 60),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppCardContainer(
@@ -16,21 +34,7 @@ class VideoCardSkeleton extends StatelessWidget {
               aspectRatio: 16 / 10,
               child: AppShimmerBox(borderRadius: 12),
             ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    AppShimmerBox(height: 14, width: double.infinity),
-                    SizedBox(height: 6),
-                    AppShimmerBox(height: 14, width: 100),
-                    Spacer(),
-                    AppShimmerBox(height: 10, width: 60),
-                  ],
-                ),
-              ),
-            ),
+            _buildContent(),
           ],
         ),
       ),

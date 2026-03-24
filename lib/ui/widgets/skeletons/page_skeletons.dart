@@ -14,6 +14,13 @@ class GridSkeletonView extends StatelessWidget {
     this.padding = const EdgeInsets.all(8),
   });
 
+  SliverChildBuilderDelegate _buildDelegate() {
+    return SliverChildBuilderDelegate(
+      (context, index) => itemSkeleton,
+      childCount: itemCount,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -23,10 +30,7 @@ class GridSkeletonView extends StatelessWidget {
           padding: padding,
           sliver: SliverGrid(
             gridDelegate: gridDelegate,
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => itemSkeleton,
-              childCount: itemCount,
-            ),
+            delegate: _buildDelegate(),
           ),
         ),
       ],
@@ -48,6 +52,16 @@ class ListSkeletonView extends StatelessWidget {
     this.itemPadding = const EdgeInsets.symmetric(vertical: 8),
   });
 
+  SliverChildBuilderDelegate _buildDelegate() {
+    return SliverChildBuilderDelegate(
+      (context, index) => Padding(
+        padding: itemPadding,
+        child: itemSkeleton,
+      ),
+      childCount: itemCount,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScrollView(
@@ -56,10 +70,7 @@ class ListSkeletonView extends StatelessWidget {
         SliverPadding(
           padding: padding,
           sliver: SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => Padding(padding: itemPadding, child: itemSkeleton),
-              childCount: itemCount,
-            ),
+            delegate: _buildDelegate(),
           ),
         ),
       ],

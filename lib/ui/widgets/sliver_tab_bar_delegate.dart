@@ -6,11 +6,13 @@ class SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
 
   SliverTabBarDelegate(this.tabBar, {this.topPadding = 0});
 
-  @override
-  double get minExtent => tabBar.preferredSize.height + topPadding;
+  double get _extent => tabBar.preferredSize.height + topPadding;
 
   @override
-  double get maxExtent => tabBar.preferredSize.height + topPadding;
+  double get minExtent => _extent;
+
+  @override
+  double get maxExtent => _extent;
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {

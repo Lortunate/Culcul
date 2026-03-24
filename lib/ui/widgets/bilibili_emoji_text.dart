@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 
 class BilibiliEmojiText extends StatelessWidget {
   final String text;
-  final Map emojiMap; // Can be Map<String, String> or Map<String, CommentEmote>
+  final Map emojiMap;
   final TextStyle? style;
   final double emojiSize;
   final bool selectable;
   final int? maxLines;
   final TextOverflow? overflow;
-  final ValueChanged<String>? onEmojiTap; // Callback when an emoji is tapped (optional)
+  final ValueChanged<String>? onEmojiTap;
 
   const BilibiliEmojiText({
     super.key,
@@ -25,13 +25,10 @@ class BilibiliEmojiText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final defaultStyle = DefaultTextStyle.of(context).style;
-    final effectiveStyle = style ?? defaultStyle;
-
     final span = buildEmojiTextSpan(
       text: text,
       emojiMap: emojiMap,
-      style: effectiveStyle,
+      style: style ?? DefaultTextStyle.of(context).style,
       emojiSize: emojiSize,
       onEmojiTap: onEmojiTap,
     );
@@ -40,6 +37,48 @@ class BilibiliEmojiText extends StatelessWidget {
       return SelectableText.rich(span, maxLines: maxLines);
     }
     return Text.rich(span, maxLines: maxLines, overflow: overflow);
+  }
+
+  static String? _resolveEmojiUrl(dynamic emojiData) {
+    if (emojiData is String) {
+      return emojiData;
+    }
+    if (emojiData == null) {
+      return null;
+    }
+
+    try {
+      return (emojiData as dynamic).url as String?;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static InlineSpan _buildEmojiSpan({
+    required String url,
+    required double emojiSize,
+    required String matchText,
+    ValueChanged<String>? onEmojiTap,
+  }) {
+    final image = ExtendedImage.network(
+      url,
+      width: emojiSize,
+      height: emojiSize,
+      fit: BoxFit.contain,
+    );
+
+    return WidgetSpan(
+      alignment: PlaceholderAlignment.middle,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 1),
+        child: onEmojiTap == null
+            ? image
+            : GestureDetector(
+                onTap: () => onEmojiTap(matchText),
+                child: image,
+              ),
+      ),
+    );
   }
 
   static TextSpan buildEmojiTextSpan({
@@ -60,34 +99,15 @@ class BilibiliEmojiText extends StatelessWidget {
       regex,
       onMatch: (Match m) {
         final matchText = m[0]!;
-        String? url;
-
-        // Handle different types of emoji map values
-        final emojiData = emojiMap[matchText];
-        if (emojiData is String) {
-          url = emojiData;
-        } else if (emojiData != null) {
-          // Try to access 'url' property dynamically if it's an object (like CommentEmote)
-          try {
-            url = (emojiData as dynamic).url;
-          } catch (e) {
-            // Ignore
-          }
-        }
+        final url = _resolveEmojiUrl(emojiMap[matchText]);
 
         if (url != null) {
           spans.add(
-            WidgetSpan(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 1),
-                child: ExtendedImage.network(
-                  url,
-                  width: emojiSize,
-                  height: emojiSize,
-                  fit: BoxFit.contain,
-                ),
-              ),
-              alignment: PlaceholderAlignment.middle,
+            _buildEmojiSpan(
+              url: url,
+              emojiSize: emojiSize,
+              matchText: matchText,
+              onEmojiTap: onEmojiTap,
             ),
           );
         } else {

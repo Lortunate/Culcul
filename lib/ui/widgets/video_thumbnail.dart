@@ -28,11 +28,24 @@ class VideoThumbnail extends StatelessWidget {
     this.aspectRatio = 16 / 10,
   });
 
+  int? _resolveCacheSize(
+    int? explicitSize,
+    double constraintSize,
+    double pixelRatio,
+  ) {
+    if (explicitSize != null) {
+      return explicitSize;
+    }
+    if (constraintSize.isFinite) {
+      return (constraintSize * pixelRatio).toInt();
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final pixelRatio = MediaQuery.devicePixelRatioOf(context);
-
-    const textStyle = TextStyle(
+    final overlayTextStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
       color: Colors.white,
       fontSize: 11,
       fontWeight: FontWeight.w500,
@@ -42,14 +55,6 @@ class VideoThumbnail extends StatelessWidget {
       aspectRatio: aspectRatio,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          int? calcCacheSize(int? explicitSize, double constraintSize) {
-            if (explicitSize != null) return explicitSize;
-            if (constraintSize.isFinite) {
-              return (constraintSize * pixelRatio).toInt();
-            }
-            return null;
-          }
-
           return Stack(
             fit: StackFit.expand,
             children: [
@@ -57,31 +62,20 @@ class VideoThumbnail extends StatelessWidget {
                 url: url,
                 width: width,
                 height: height,
-                memCacheWidth: calcCacheSize(memCacheWidth, constraints.maxWidth),
-                memCacheHeight: calcCacheSize(memCacheHeight, constraints.maxHeight),
+                memCacheWidth: _resolveCacheSize(
+                  memCacheWidth,
+                  constraints.maxWidth,
+                  pixelRatio,
+                ),
+                memCacheHeight: _resolveCacheSize(
+                  memCacheHeight,
+                  constraints.maxHeight,
+                  pixelRatio,
+                ),
                 borderRadius: borderRadius,
                 fit: BoxFit.cover,
               ),
-
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                height: 48,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.vertical(
-                      bottom: Radius.circular(borderRadius),
-                    ),
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.transparent, Colors.black.withValues(alpha: 0.5)],
-                    ),
-                  ),
-                ),
-              ),
-
+              _ThumbnailBottomOverlay(borderRadius: borderRadius),
               if (viewCount != null || danmakuCount != null)
                 Positioned(
                   left: 8,
@@ -89,14 +83,16 @@ class VideoThumbnail extends StatelessWidget {
                   child: _VideoThumbnailStats(
                     viewCount: viewCount,
                     danmakuCount: danmakuCount,
-                    textStyle: textStyle,
+                    textStyle: overlayTextStyle,
                   ),
                 ),
-
               Positioned(
                 right: 8,
                 bottom: 8,
-                child: Text(duration.formatDuration, style: textStyle),
+                child: _ThumbnailDuration(
+                  durationText: duration.formatDuration,
+                  textStyle: overlayTextStyle,
+                ),
               ),
             ],
           );
@@ -106,10 +102,56 @@ class VideoThumbnail extends StatelessWidget {
   }
 }
 
+class _ThumbnailBottomOverlay extends StatelessWidget {
+  final double borderRadius;
+
+  const _ThumbnailBottomOverlay({required this.borderRadius});
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: 0,
+      height: 48,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(borderRadius),
+          ),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.transparent,
+              Colors.black.withValues(alpha: 0.5),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ThumbnailDuration extends StatelessWidget {
+  final String durationText;
+  final TextStyle? textStyle;
+
+  const _ThumbnailDuration({
+    required this.durationText,
+    required this.textStyle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(durationText, style: textStyle);
+  }
+}
+
 class _VideoThumbnailStats extends StatelessWidget {
   final int? viewCount;
   final int? danmakuCount;
-  final TextStyle textStyle;
+  final TextStyle? textStyle;
 
   const _VideoThumbnailStats({
     this.viewCount,
@@ -123,16 +165,48 @@ class _VideoThumbnailStats extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (viewCount != null) ...[
-          const Icon(Icons.play_circle_outline_rounded, size: 12, color: Colors.white),
-          const SizedBox(width: 3),
-          Text(viewCount!.formatNumber, style: textStyle),
+          _ThumbnailStatItem(
+            icon: Icons.play_circle_outline_rounded,
+            text: viewCount!.formatNumber,
+            textStyle: textStyle,
+          ),
         ],
         if (danmakuCount != null) ...[
           if (viewCount != null) const SizedBox(width: 8),
-          const Icon(Icons.list_alt_rounded, size: 12, color: Colors.white),
-          const SizedBox(width: 3),
-          Text(danmakuCount!.formatNumber, style: textStyle),
+          _ThumbnailStatItem(
+            icon: Icons.list_alt_rounded,
+            text: danmakuCount!.formatNumber,
+            textStyle: textStyle,
+          ),
         ],
+      ],
+    );
+  }
+}
+
+class _ThumbnailStatItem extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  final TextStyle? textStyle;
+
+  const _ThumbnailStatItem({
+    required this.icon,
+    required this.text,
+    required this.textStyle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          icon,
+          size: 12,
+          color: Colors.white,
+        ),
+        const SizedBox(width: 3),
+        Text(text, style: textStyle),
       ],
     );
   }

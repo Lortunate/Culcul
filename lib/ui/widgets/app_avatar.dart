@@ -10,18 +10,37 @@ class AppAvatar extends StatelessWidget {
 
   const AppAvatar({super.key, this.url, this.size = 32, this.onTap, this.border});
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    final hasUrl = url?.isNotEmpty == true;
-
-    final fallbackIcon = Icon(
+  Icon _buildFallbackIcon(ColorScheme colorScheme) {
+    return Icon(
       Icons.account_circle,
       color: colorScheme.primary,
       size: size,
     );
+  }
+
+  List<BoxShadow> _buildShadows(ColorScheme colorScheme) {
+    return [
+      BoxShadow(
+        color: colorScheme.shadow.withValues(alpha: 0.08),
+        blurRadius: size * 0.15,
+        offset: Offset(0, size * 0.05),
+      ),
+    ];
+  }
+
+  BoxBorder _buildBorder(ColorScheme colorScheme) {
+    return border ??
+        Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+          width: 0.5,
+        );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final hasUrl = url?.isNotEmpty == true;
+    final fallbackIcon = _buildFallbackIcon(colorScheme);
 
     return AppClickable(
       onTap: onTap,
@@ -33,19 +52,8 @@ class AppAvatar extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: colorScheme.surface,
-          boxShadow: [
-            BoxShadow(
-              color: colorScheme.shadow.withValues(alpha: 0.08),
-              blurRadius: size * 0.15,
-              offset: Offset(0, size * 0.05),
-            ),
-          ],
-          border:
-              border ??
-              Border.all(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.2),
-                width: 0.5,
-              ),
+          boxShadow: _buildShadows(colorScheme),
+          border: _buildBorder(colorScheme),
         ),
         child: hasUrl
             ? AppNetworkImage(

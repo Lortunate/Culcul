@@ -30,10 +30,66 @@ class UserListTile extends StatelessWidget {
     this.titleBadge,
   });
 
+  Widget _buildTitle(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Text(
+      name,
+      style: theme.textTheme.titleMedium?.copyWith(
+        fontWeight: FontWeight.w600,
+        fontSize: 15,
+      ),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Widget _buildTitleRow(BuildContext context) {
+    return Row(
+      children: [
+        Flexible(child: _buildTitle(context)),
+        if (titleBadge != null) ...[
+          const SizedBox(width: AppDimens.p4),
+          titleBadge!,
+        ],
+      ],
+    );
+  }
+
+  Widget? _buildStatsRow() {
+    if (stats == null || stats!.isEmpty) {
+      return null;
+    }
+
+    return Row(
+      children: [
+        for (int index = 0; index < stats!.length; index++) ...[
+          if (index > 0) const SizedBox(width: AppDimens.p12),
+          stats![index],
+        ],
+      ],
+    );
+  }
+
+  Widget? _buildSubtitle(BuildContext context) {
+    if (subtitle == null || subtitle!.isEmpty) {
+      return null;
+    }
+
+    return Text(
+      subtitle!,
+      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final statsRow = _buildStatsRow();
+    final subtitleView = _buildSubtitle(context);
 
     return AppClickable(
       onTap: onTap,
@@ -48,46 +104,14 @@ class UserListTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
-                    children: [
-                      Flexible(
-                        child: Text(
-                          name,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15, // TODO: Use text theme properly
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      if (titleBadge != null) ...[
-                        const SizedBox(width: AppDimens.p4),
-                        titleBadge!,
-                      ],
-                    ],
-                  ),
-                  if (stats != null && stats!.isNotEmpty) ...[
+                  _buildTitleRow(context),
+                  if (statsRow != null) ...[
                     const SizedBox(height: AppDimens.p4),
-                    Row(
-                      children: [
-                        for (int i = 0; i < stats!.length; i++) ...[
-                          if (i > 0) const SizedBox(width: AppDimens.p12),
-                          stats![i],
-                        ],
-                      ],
-                    ),
+                    statsRow,
                   ],
-                  if (subtitle != null && subtitle!.isNotEmpty) ...[
+                  if (subtitleView != null) ...[
                     const SizedBox(height: AppDimens.p4),
-                    Text(
-                      subtitle!,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                    subtitleView,
                   ],
                 ],
               ),

@@ -46,8 +46,6 @@ class _AppShimmerState extends State<AppShimmer> with SingleTickerProviderStateM
     if (!widget.enabled) return widget.child;
 
     final colorScheme = Theme.of(context).colorScheme;
-    final baseColor = colorScheme.surfaceContainerHighest.withValues(alpha: 0.6);
-    final highlightColor = colorScheme.surfaceContainerHighest;
 
     return AnimatedBuilder(
       animation: _controller,
@@ -55,17 +53,30 @@ class _AppShimmerState extends State<AppShimmer> with SingleTickerProviderStateM
         return ShaderMask(
           blendMode: BlendMode.srcIn,
           shaderCallback: (bounds) {
-            return LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [baseColor, highlightColor, baseColor],
-              stops: const [0.3, 0.5, 0.7],
-              transform: _SlidingGradientTransform(slidePercent: _controller.value),
+            return _buildGradient(
+              colorScheme,
+              _SlidingGradientTransform(slidePercent: _controller.value),
             ).createShader(bounds);
           },
           child: widget.child,
         );
       },
+    );
+  }
+
+  LinearGradient _buildGradient(
+    ColorScheme colorScheme,
+    GradientTransform transform,
+  ) {
+    final baseColor = colorScheme.surfaceContainerHighest.withValues(alpha: 0.6);
+    final highlightColor = colorScheme.surfaceContainerHighest;
+
+    return LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [baseColor, highlightColor, baseColor],
+      stops: const [0.3, 0.5, 0.7],
+      transform: transform,
     );
   }
 }

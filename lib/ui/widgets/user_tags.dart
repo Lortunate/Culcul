@@ -7,6 +7,20 @@ class VipTag extends StatelessWidget {
 
   const VipTag({super.key, required this.type, this.showShadow = false});
 
+  List<BoxShadow>? _buildShadow(Color color) {
+    if (!showShadow) {
+      return null;
+    }
+
+    return [
+      BoxShadow(
+        color: color.withValues(alpha: 0.3),
+        blurRadius: 4,
+        offset: const Offset(0, 2),
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);
@@ -18,15 +32,7 @@ class VipTag extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(4),
-        boxShadow: showShadow
-            ? [
-                BoxShadow(
-                  color: color.withValues(alpha: 0.3),
-                  blurRadius: 4,
-                  offset: const Offset(0, 2),
-                ),
-              ]
-            : null,
+        boxShadow: _buildShadow(color),
       ),
       child: Text(
         isYear ? t.profile.vip.annual_premium : t.profile.vip.premium,
@@ -46,32 +52,29 @@ class LevelTag extends StatelessWidget {
 
   const LevelTag({super.key, required this.level});
 
-  @override
-  Widget build(BuildContext context) {
-    final Color levelColor;
+  Color _resolveLevelColor(ColorScheme colorScheme) {
     switch (level) {
       case 0:
       case 1:
-        levelColor = const Color(0xFFBFBFBF);
-        break;
+        return colorScheme.outline;
       case 2:
-        levelColor = const Color(0xFF95DDB2);
-        break;
+        return colorScheme.tertiary;
       case 3:
-        levelColor = const Color(0xFF92D1E5);
-        break;
+        return colorScheme.secondary;
       case 4:
-        levelColor = const Color(0xFFFFB37C);
-        break;
+        return colorScheme.primaryContainer;
       case 5:
-        levelColor = const Color(0xFFFF6C00);
-        break;
+        return colorScheme.primary;
       case 6:
-        levelColor = const Color(0xFFFF0000);
-        break;
+        return colorScheme.error;
       default:
-        levelColor = const Color(0xFFBFBFBF);
+        return colorScheme.outline;
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final levelColor = _resolveLevelColor(Theme.of(context).colorScheme);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),

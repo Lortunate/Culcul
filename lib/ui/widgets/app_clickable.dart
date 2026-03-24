@@ -31,22 +31,38 @@ class AppClickable extends StatelessWidget {
     this.margin,
   });
 
+  VoidCallback? _buildTapHandler() {
+    if (onTap == null) {
+      return null;
+    }
+
+    return () {
+      if (haptic) {
+        HapticFeedback.lightImpact();
+      }
+      onTap?.call();
+    };
+  }
+
+  VoidCallback? _buildLongPressHandler() {
+    if (onLongPress == null) {
+      return null;
+    }
+
+    return () {
+      if (haptic) {
+        HapticFeedback.mediumImpact();
+      }
+      onLongPress?.call();
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget content = InkWell(
-      onTap: onTap != null
-          ? () {
-              if (haptic) HapticFeedback.lightImpact();
-              onTap?.call();
-            }
-          : null,
-      onLongPress: onLongPress != null
-          ? () {
-              if (haptic) HapticFeedback.mediumImpact();
-              onLongPress?.call();
-            }
-          : null,
-      borderRadius: borderRadius, // 兼容旧代码，避免水波纹溢出圆角
+      onTap: _buildTapHandler(),
+      onLongPress: _buildLongPressHandler(),
+      borderRadius: borderRadius,
       child: padding != null && padding != EdgeInsets.zero
           ? Padding(padding: padding!, child: child)
           : child,

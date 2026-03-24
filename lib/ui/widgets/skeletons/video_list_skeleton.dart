@@ -16,6 +16,39 @@ class VideoListSkeleton extends StatelessWidget {
     this.padding = const EdgeInsets.all(12),
   });
 
+  Widget _buildThumbnail() {
+    return SizedBox(
+      width: thumbnailWidth,
+      child: AspectRatio(
+        aspectRatio: aspectRatio,
+        child: const AppShimmerBox(borderRadius: 8),
+      ),
+    );
+  }
+
+  Widget _buildContent() {
+    return const Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          AppShimmerBox(height: 14, width: double.infinity),
+          SizedBox(height: 6),
+          AppShimmerBox(height: 14, width: 150),
+          SizedBox(height: 12),
+          AppShimmerBox(height: 12, width: 100),
+          Spacer(),
+          Row(
+            children: [
+              AppShimmerBox(height: 10, width: 60),
+              SizedBox(width: 12),
+              AppShimmerBox(height: 10, width: 60),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppCardContainer(
@@ -27,34 +60,9 @@ class VideoListSkeleton extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  width: thumbnailWidth,
-                  child: AspectRatio(
-                    aspectRatio: aspectRatio,
-                    child: const AppShimmerBox(borderRadius: 8),
-                  ),
-                ),
+                _buildThumbnail(),
                 const SizedBox(width: 12),
-                const Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AppShimmerBox(height: 14, width: double.infinity),
-                      SizedBox(height: 6),
-                      AppShimmerBox(height: 14, width: 150),
-                      SizedBox(height: 12),
-                      AppShimmerBox(height: 12, width: 100),
-                      Spacer(),
-                      Row(
-                        children: [
-                          AppShimmerBox(height: 10, width: 60),
-                          SizedBox(width: 12),
-                          AppShimmerBox(height: 10, width: 60),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
+                _buildContent(),
               ],
             ),
           ),

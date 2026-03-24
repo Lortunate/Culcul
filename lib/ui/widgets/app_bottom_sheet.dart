@@ -6,8 +6,7 @@ Future<T?> showAppModalBottomSheet<T>({
   bool isScrollControlled = false,
   bool useRootNavigator = false,
 }) {
-  final theme = Theme.of(context);
-  final colorScheme = theme.colorScheme;
+  final colorScheme = Theme.of(context).colorScheme;
 
   return showModalBottomSheet<T>(
     context: context,

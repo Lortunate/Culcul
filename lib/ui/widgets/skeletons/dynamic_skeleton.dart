@@ -4,6 +4,49 @@ import 'package:flutter/material.dart';
 class DynamicSkeleton extends StatelessWidget {
   const DynamicSkeleton({super.key});
 
+  Widget _buildHeader() {
+    return Row(
+      children: [
+        const AppShimmerBox(width: 40, height: 40, borderRadius: 20),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              AppShimmerBox(height: 14, width: 100),
+              SizedBox(height: 6),
+              AppShimmerBox(height: 12, width: 60),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildContent() {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppShimmerBox(height: 14, width: double.infinity),
+        SizedBox(height: 8),
+        AppShimmerBox(height: 14, width: double.infinity),
+        SizedBox(height: 8),
+        AppShimmerBox(height: 14, width: 200),
+      ],
+    );
+  }
+
+  Widget _buildFooter() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: const [
+        AppShimmerBox(height: 20, width: 60),
+        AppShimmerBox(height: 20, width: 60),
+        AppShimmerBox(height: 20, width: 60),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -17,40 +60,11 @@ class DynamicSkeleton extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
-              Row(
-                children: [
-                  const AppShimmerBox(width: 40, height: 40, borderRadius: 20),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        AppShimmerBox(height: 14, width: 100),
-                        SizedBox(height: 6),
-                        AppShimmerBox(height: 12, width: 60),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              _buildHeader(),
               const SizedBox(height: 12),
-              // Content
-              const AppShimmerBox(height: 14, width: double.infinity),
-              const SizedBox(height: 8),
-              const AppShimmerBox(height: 14, width: double.infinity),
-              const SizedBox(height: 8),
-              const AppShimmerBox(height: 14, width: 200),
+              _buildContent(),
               const SizedBox(height: 12),
-              // Footer
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  AppShimmerBox(height: 20, width: 60),
-                  AppShimmerBox(height: 20, width: 60),
-                  AppShimmerBox(height: 20, width: 60),
-                ],
-              ),
+              _buildFooter(),
             ],
           ),
         ),

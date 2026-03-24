@@ -5,15 +5,15 @@ class RenderDanmakuItem {
   final String id;
   final String text;
   final TextPainter textPainter;
-  final TextPainter? strokePainter; // Optimized stroke rendering
+  final TextPainter? strokePainter;
   final DanmakuItemType type;
-  int creationTime; // ms
+  int creationTime;
 
   double x = 0;
   double y = 0;
   double width = 0;
   double height = 0;
-  double velocity = 0; // pixels per ms
+  double velocity = 0;
   bool isMeasure = false;
 
   RenderDanmakuItem({
@@ -41,28 +41,28 @@ class DanmakuPainter extends CustomPainter {
 
   DanmakuPainter({required this.items, required this.opacity});
 
+  bool _isVisible(RenderDanmakuItem item, Size size) {
+    return !(item.x > size.width || item.x + item.width < 0);
+  }
+
+  void _paintItem(Canvas canvas, RenderDanmakuItem item) {
+    final offset = Offset(item.x, item.y);
+    item.strokePainter?.paint(canvas, offset);
+    item.textPainter.paint(canvas, offset);
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
     if (items.isEmpty) return;
 
     for (var item in items) {
-      // Skip if off-screen (though controller should handle this)
-      if (item.x > size.width || item.x + item.width < 0) continue;
-
-      final offset = Offset(item.x, item.y);
-
-      // Draw stroke first if available
-      if (item.strokePainter != null) {
-        item.strokePainter!.paint(canvas, offset);
-      }
-
-      // Draw text
-      item.textPainter.paint(canvas, offset);
+      if (!_isVisible(item, size)) continue;
+      _paintItem(canvas, item);
     }
   }
 
   @override
   bool shouldRepaint(covariant DanmakuPainter oldDelegate) {
-    return true; // Always repaint as positions change every frame
+    return true;
   }
 }

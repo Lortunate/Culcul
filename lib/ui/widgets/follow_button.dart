@@ -22,20 +22,27 @@ class FollowButton extends ConsumerWidget {
     this.shape,
   });
 
+  void _handlePressed(BuildContext context, WidgetRef ref) {
+    final authState = ref.read(authProvider);
+    if (!authState.isLoggedIn) {
+      context.push('/login');
+      return;
+    }
+    onTap();
+  }
+
+  String _resolveLabel(Translations t) {
+    return text ?? (isFollowed ? t.actions.followed : '+ ${t.actions.follow}');
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = Translations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
-    final authState = ref.watch(authProvider);
+    ref.watch(authProvider);
 
     return FilledButton(
-      onPressed: () {
-        if (!authState.isLoggedIn) {
-          context.push('/login');
-          return;
-        }
-        onTap();
-      },
+      onPressed: () => _handlePressed(context, ref),
       style: FilledButton.styleFrom(
         backgroundColor: isFollowed ? colorScheme.primaryContainer : colorScheme.primary,
         foregroundColor: isFollowed
@@ -61,7 +68,7 @@ class FollowButton extends ConsumerWidget {
           key: ValueKey<bool>(isFollowed),
           children: [
             Text(
-              text ?? (isFollowed ? t.actions.followed : '+ ${t.actions.follow}'),
+              _resolveLabel(t),
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
             ),
           ],

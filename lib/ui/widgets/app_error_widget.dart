@@ -18,15 +18,64 @@ class AppErrorWidget extends StatelessWidget {
     this.icon,
   });
 
+  String _resolveDisplayMessage(BuildContext context) {
+    final t = Translations.of(context);
+    return message ??
+        (error != null
+            ? ErrorHandler.getErrorMessage(context, error)
+            : t.common.error);
+  }
+
+  Future<void> _showErrorDetails(BuildContext context) {
+    final t = Translations.of(context);
+
+    return showDialog<void>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Error Details'),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Error: $error',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              if (stackTrace != null) ...[
+                const SizedBox(height: 8),
+                const Text(
+                  'Stack Trace:',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                SelectableText(
+                  stackTrace.toString(),
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontFamily: 'Courier',
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(t.common.confirm),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
-
-    final displayMessage =
-        message ??
-        (error != null ? ErrorHandler.getErrorMessage(context, error) : t.common.error);
+    final displayMessage = _resolveDisplayMessage(context);
 
     return Center(
       child: SingleChildScrollView(
@@ -49,66 +98,58 @@ class AppErrorWidget extends StatelessWidget {
             ),
             if (error != null) ...[
               const SizedBox(height: 8),
-              TextButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      title: const Text('Error Details'),
-                      content: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'Error: $error',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            if (stackTrace != null) ...[
-                              const SizedBox(height: 8),
-                              const Text(
-                                'Stack Trace:',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 4),
-                              SelectableText(
-                                stackTrace.toString(),
-                                style: const TextStyle(
-                                  fontSize: 10,
-                                  fontFamily: 'Courier',
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: Text(t.common.confirm),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                child: const Text('View Details', style: TextStyle(fontSize: 12)),
-              ),
+              _ErrorDetailsButton(onPressed: () => _showErrorDetails(context)),
             ],
             if (onRetry != null) ...[
               const SizedBox(height: 24),
-              OutlinedButton.icon(
-                onPressed: onRetry,
-                icon: const Icon(Icons.refresh_rounded, size: 18),
-                label: Text(t.common.retry),
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: colorScheme.outlineVariant),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                ),
+              _RetryButton(
+                label: t.common.retry,
+                onPressed: onRetry!,
+                borderColor: colorScheme.outlineVariant,
               ),
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ErrorDetailsButton extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const _ErrorDetailsButton({required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: onPressed,
+      child: const Text('View Details', style: TextStyle(fontSize: 12)),
+    );
+  }
+}
+
+class _RetryButton extends StatelessWidget {
+  final String label;
+  final VoidCallback onPressed;
+  final Color borderColor;
+
+  const _RetryButton({
+    required this.label,
+    required this.onPressed,
+    required this.borderColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return OutlinedButton.icon(
+      onPressed: onPressed,
+      icon: const Icon(Icons.refresh_rounded, size: 18),
+      label: Text(label),
+      style: OutlinedButton.styleFrom(
+        side: BorderSide(color: borderColor),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       ),
     );
   }

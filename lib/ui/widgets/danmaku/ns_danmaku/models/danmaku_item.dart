@@ -7,7 +7,8 @@ class DanmakuItem {
   final Color color;
   final int time;
   final DanmakuItemType type;
-  DanmakuItem(
+
+  const DanmakuItem(
     this.text, {
     this.color = Colors.white,
     this.time = 0,

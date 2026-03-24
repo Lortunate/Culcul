@@ -29,8 +29,6 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
   final List<RenderDanmakuItem> _activeItems = [];
   final List<RenderDanmakuItem> _waitingItems = [];
 
-  // Track management
-  // Stores the last item added to each track
   final Map<int, RenderDanmakuItem> _scrollTracks = {};
   final Map<int, RenderDanmakuItem> _topTracks = {};
   final Map<int, RenderDanmakuItem> _bottomTracks = {};
@@ -40,8 +38,11 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
   int _maxRows = 0;
   double _lineHeight = 0;
 
-  // Performance metrics
   int _lastFrameTime = 0;
+
+  bool get _isReady => _viewWidth > 0 && _viewHeight > 0;
+
+  bool get _isIdle => _activeItems.isEmpty && _waitingItems.isEmpty;
 
   @override
   void initState() {
@@ -76,91 +77,61 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
   }
 
   void _onTick(Duration elapsed) {
-    final int currentMs = elapsed.inMilliseconds;
-    final int delta = currentMs - _lastFrameTime;
+    final currentMs = elapsed.inMilliseconds;
+    final delta = currentMs - _lastFrameTime;
     _lastFrameTime = currentMs;
 
-    if (_viewWidth == 0 || _viewHeight == 0) return;
-
-    // Optimization: Skip processing if idle
-    if (_activeItems.isEmpty && _waitingItems.isEmpty) {
+    if (!_isReady || _isIdle) {
       return;
     }
 
-    // 1. Process waiting items
-    if (_waitingItems.isNotEmpty) {
-      final List<RenderDanmakuItem> failed = [];
-      for (var item in _waitingItems) {
-        if (!_layoutItem(item)) {
-          // If it's too old, discard? Or keep trying?
-          // For now, discard if older than 500ms to avoid backlog
-          // But here 'creationTime' is when it was added to view.
-          // Let's just try next frame.
-          failed.add(item);
-        } else {
-          _activeItems.add(item);
-        }
-      }
-      _waitingItems.clear();
-      if (failed.isNotEmpty) {
-        // Only keep recent ones
-        // _waitingItems.addAll(failed);
-        // Discarding failed items to prevent memory leak and lag is safer for performance
-      }
+    _processWaitingItems();
+    _updateScrollingItems(delta);
+    _removeExpiredStaticItems(currentMs);
+
+    setState(() {});
+  }
+
+  void _processWaitingItems() {
+    if (_waitingItems.isEmpty) {
+      return;
     }
 
-    // 2. Update active items
-    _activeItems.removeWhere((item) {
-      // Update position
-      if (item.type == DanmakuItemType.scroll) {
-        item.x -= item.velocity * delta;
-        return item.x + item.width < 0; // Remove if off-screen
-      } else {
-        // Top/Bottom: Check duration
-        // Simple duration check:
-        // We can use a 'remainingTime' field or check creationTime against current runtime?
-        // Since we don't track absolute time, let's use a countdown or similar.
-        // Actually, let's assume fixed duration for static items (e.g. 4s)
-        // We need to track how long it's been alive.
-        // Let's add 'elapsedTime' to RenderDanmakuItem?
-        // Or just use velocity=0 and manage 'life'.
-        // Let's use x as a timer for static items? No, that's hacky.
-        // I'll add 'life' to RenderDanmakuItem in painter if needed, but for now:
-        // Let's check item creation vs now? Ticker elapsed is monotonous.
-        // But items are added at different Ticker times.
-        // I need to store 'startTime' relative to Ticker.
+    final waitingItems = List<RenderDanmakuItem>.from(_waitingItems);
+    _waitingItems.clear();
 
-        // Wait, RenderDanmakuItem has 'creationTime'.
-        // But that was 'ms'. Ticker is also 'ms'.
-        // So:
-        // if (currentMs - item.startTime > duration) remove.
-        // But 'creationTime' in my previous code was just passed from DanmakuItem.time?
-        // No, I should set 'startTime' when layout happens using Ticker time.
+    for (final item in waitingItems) {
+      if (_layoutItem(item)) {
+        _activeItems.add(item);
       }
-      return false;
-    });
+    }
+  }
 
-    // For static items removal:
-    final staticDuration = 5000; // 5s
+  void _updateScrollingItems(int delta) {
     _activeItems.removeWhere((item) {
       if (item.type != DanmakuItemType.scroll) {
-        // We need to store when it started showing.
-        // I'll misuse 'x' or add a field.
-        // Let's rely on a new field in RenderDanmakuItem later?
-        // For now, let's assume I can cast or extend.
-        // I'll use a map for start times or just add it to RenderDanmakuItem.
-        // Let's modify RenderDanmakuItem in a bit.
-        // For now, hack: creationTime is used as start time (if I set it to currentMs)
-        return (currentMs - item.creationTime) > staticDuration;
+        return false;
       }
-      return false;
-    });
 
-    setState(() {}); // Trigger repaint
+      item.x -= item.velocity * delta;
+      return item.x + item.width < 0;
+    });
+  }
+
+  void _removeExpiredStaticItems(int currentMs) {
+    const staticDuration = 5000;
+
+    _activeItems.removeWhere((item) {
+      if (item.type == DanmakuItemType.scroll) {
+        return false;
+      }
+
+      return (currentMs - item.creationTime) > staticDuration;
+    });
   }
 
   void _addItems(List<DanmakuItem> items) {
-    if (_viewWidth == 0) return; // Not ready
+    if (_viewWidth == 0) return;
 
     for (var item in items) {
       final renderItem = _createRenderItem(item);
@@ -169,52 +140,17 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
   }
 
   RenderDanmakuItem _createRenderItem(DanmakuItem item) {
-    // Style preparation
     final fontSize = _option.fontSize;
     final color = item.color.withValues(alpha: item.color.a * _option.opacity);
 
-    TextPainter? strokePainter;
-    if (_option.borderText) {
-      strokePainter = TextPainter(
-        text: TextSpan(
-          text: item.text,
-          style: TextStyle(
-            fontSize: fontSize,
-            foreground: Paint()
-              ..style = PaintingStyle.stroke
-              ..strokeWidth = _option.strokeWidth
-              ..color = Colors.black,
-            fontWeight: _option.fontWeight,
-            fontFamily: 'PingFang SC',
-            height: 1.1,
-          ),
-        ),
-        textDirection: TextDirection.ltr,
-      )..layout();
-    }
-
-    final textSpan = TextSpan(
-      text: item.text,
-      style: TextStyle(
-        fontSize: fontSize,
-        color: color,
-        fontWeight: _option.fontWeight,
-        fontFamily: 'PingFang SC',
-        height: 1.1, // Tighter line height
-      ),
-    );
-
-    final textPainter = TextPainter(text: textSpan, textDirection: TextDirection.ltr)
-      ..layout();
-
-    // Velocity calculation
-    // Distance = Screen Width + Text Width
-    // Time = Duration
-    // V = D / T
+    final strokePainter = _option.borderText
+        ? _buildStrokePainter(item.text, fontSize)
+        : null;
+    final textPainter = _buildTextPainter(item.text, fontSize, color);
     final width = strokePainter?.width ?? textPainter.width;
     final distance = _viewWidth + width;
     final durationMs = _option.duration * 1000;
-    final velocity = distance / durationMs; // pixels / ms
+    final velocity = distance / durationMs;
 
     return RenderDanmakuItem(
         id: UniqueKey().toString(),
@@ -222,16 +158,50 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
         textPainter: textPainter,
         strokePainter: strokePainter,
         type: item.type,
-        creationTime: _lastFrameTime, // Will be updated on layout
+        creationTime: _lastFrameTime,
       )
       ..width = width
       ..height = textPainter.height
       ..velocity = velocity;
   }
 
+  TextPainter _buildStrokePainter(String text, double fontSize) {
+    return TextPainter(
+      text: TextSpan(
+        text: text,
+        style: TextStyle(
+          fontSize: fontSize,
+          foreground: Paint()
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = _option.strokeWidth
+            ..color = Colors.black,
+          fontWeight: _option.fontWeight,
+          fontFamily: 'PingFang SC',
+          height: 1.1,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+  }
+
+  TextPainter _buildTextPainter(String text, double fontSize, Color color) {
+    return TextPainter(
+      text: TextSpan(
+        text: text,
+        style: TextStyle(
+          fontSize: fontSize,
+          color: color,
+          fontWeight: _option.fontWeight,
+          fontFamily: 'PingFang SC',
+          height: 1.1,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+  }
+
   bool _layoutItem(RenderDanmakuItem item) {
-    // Determine track height
-    _lineHeight = item.height * 1.1; // Add some padding
+    _lineHeight = item.height * 1.1;
     _maxRows = (_viewHeight / _lineHeight).floor();
 
     if (_maxRows <= 0) return false;
@@ -250,10 +220,6 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
   }
 
   bool _layoutScrollItem(RenderDanmakuItem item) {
-    // Simple strategy: Find first available track
-    // Or random? Sequential is better for reading.
-
-    // Available area check
     int startRow = 0;
     int endRow = _maxRows;
 
@@ -268,45 +234,11 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
       if (lastItem == null) {
         canFit = true;
       } else {
-        // Check 1: Space condition
-        // The last item must have moved enough to fit the new item
-        // lastItem.x + lastItem.width + spacing < _viewWidth
-        // Since we are in 'layout', lastItem.x is current position.
-        // Wait, lastItem.x is changing every tick.
-        // We need to access the *current* x of lastItem.
-        // The item object is the same reference in _activeItems.
-
-        final spacing = 20.0; // minimum gap
+        final spacing = 20.0;
         if (lastItem.x + lastItem.width + spacing < _viewWidth) {
-          // Check 2: Speed condition (avoid catching up)
-          // If new item is faster, it might catch up.
-          // Time for last item to leave screen: t1 = (lastItem.x + lastItem.width) / lastItem.velocity (assuming x is distance to left edge... wait, x is position)
-          // Remaining distance for last item: d1 = _viewWidth - lastItem.x (No, it moves left. x goes from Width to -Width)
-          // So lastItem is at x. It needs to travel (x + width) pixels to disappear? No.
-          // It disappears when x + width < 0.
-          // Distance to finish: x + width.
-
-          // Time for new item to reach end:
-          // New item starts at _viewWidth.
-          // It needs to travel (_viewWidth + item.width) to finish.
-
-          // Collision check:
-          // Will they collide before lastItem finishes?
-          // Detailed math omitted for simplicity, implementing simplified check:
-          // If new item is slower or same speed, no catch up (since it starts behind).
-          // If new item is faster, check if it catches up before lastItem exits.
-
           if (item.velocity <= lastItem.velocity) {
             canFit = true;
           } else {
-            // Calculate catch up time
-            // Relative velocity: v_rel = v_new - v_old
-            // Initial distance gap: gap = _viewWidth - (lastItem.x + lastItem.width)
-            // Time to close gap: t_catch = gap / v_rel
-
-            // Time for last item to exit: t_exit = (lastItem.x + lastItem.width) / lastItem.velocity
-            // If t_catch > t_exit, then it's safe (catches up after exit)
-
             final gap = _viewWidth - (lastItem.x + lastItem.width);
             final vRel = item.velocity - lastItem.velocity;
             final tCatch = gap / vRel;
@@ -322,7 +254,7 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
       if (canFit) {
         item.x = _viewWidth;
         item.y = i * _lineHeight + (_lineHeight - item.height) / 2;
-        item.creationTime = _lastFrameTime; // Reset creation time to now
+        item.creationTime = _lastFrameTime;
         _scrollTracks[i] = item;
         return true;
       }
@@ -338,10 +270,6 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
       if (lastItem == null) {
         isFree = true;
       } else {
-        // Check if last item is gone or expired?
-        // For static items, we just check if the slot is occupied.
-        // But we remove them from _topTracks when they expire?
-        // Better: check if lastItem is still in _activeItems.
         if (!_activeItems.contains(lastItem)) {
           isFree = true;
         }
@@ -375,7 +303,7 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
         item.y =
             _viewHeight -
             (i + 1) * _lineHeight +
-            (_lineHeight - item.height) / 2; // From bottom
+            (_lineHeight - item.height) / 2;
         item.creationTime = _lastFrameTime;
         _bottomTracks[i] = item;
         return true;
@@ -387,8 +315,6 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
   void _updateOption(DanmakuOption option) {
     setState(() {
       _option = option;
-      // Recalculate styles for waiting items?
-      // Existing active items will keep their style (performance tradeoff)
     });
   }
 
@@ -399,7 +325,7 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
 
   void _resume() {
     if (!_ticker.isActive) {
-      _lastFrameTime = 0; // Reset delta
+      _lastFrameTime = 0;
       _ticker.start();
       widget.statusChanged?.call(true);
     }

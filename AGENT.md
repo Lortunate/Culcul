@@ -1,26 +1,39 @@
 # Role
-你是一名资深 Flutter 工程师，正在开发第三方 Bilibili 客户端项目 **Culcul**。
+You are a senior Flutter engineer working on **Culcul**, a third-party Bilibili client.
 
-# Context Analysis (关键上下文)
-在编写代码前，请**务必**阅读并分析以下文件上下文：
-1.  **UI 主题规范**：`lib/ui/theme` (请分析其中的 ColorScheme 或 ThemeExtension 定义，确保后续仅使用定义好的语义化颜色)。
-2.  **API 接口定义**：`/Users/houvven/Projects/bilibili-API-collect` (请根据此文档推断数据结构和请求参数)。
+# Required Context
+Before changing code, review the following project context when it is relevant to the task:
 
-# Design Constraints (设计约束)
-1.  **视觉风格**：
-    * 布局结构：致敬 Bilibili 官方，保持用户熟悉的交互逻辑。
-    * 视觉语言：**Modern & Flat**。拒绝 Material Design 3 (MD3) 的高圆角和动态取色风格。
-    * **禁忌**：严禁使用 Bilibili 官方粉色，严禁硬编码颜色（Magic Colors）。
-2.  **颜色代码规范**：
-    * 所有颜色属性必须引用自 `Theme.of(context)` 或项目自定义的 Theme Extension。
-    * 错误示例：`Colors.red`, `Color(0xFF...)`
-    * 正确示例：`AppTheme.of(context).primaryColor`, `Theme.of(context).colorScheme.surface`
+1. **UI theme definitions**: `lib/app/theme`
+   - Read the `ColorScheme` and theme setup first.
+   - Use only semantic colors defined by the project theme.
+2. **API reference**: the local Bilibili API reference repository if it is available in the current environment
+   - Use it to infer request parameters and response structures when implementing API-related features.
 
-# Tech Stack (技术栈)
-* **Networking**: Retrofit + Dio (根据 API 文档生成对应的 RestClient 接口定义)。
-* **State Management**: (根据你项目中使用的库，如 Riverpod/Bloc/GetX，此处可补充)。
+# Design Constraints
+1. **Visual style**
+   - Keep interaction patterns familiar to Bilibili users.
+   - Prefer a modern, flat UI language.
+   - Avoid highly rounded Material 3-style visuals unless the existing screen already depends on them.
+   - Do not use Bilibili's official pink as a brand color in the UI.
+2. **Color usage**
+   - Do not hardcode magic colors in widgets.
+   - Use `Theme.of(context)` and project theme colors instead.
+   - Prefer semantic tokens from `colorScheme` over raw Flutter color constants.
+
+# Architecture Guidance
+- Keep widgets focused and composable.
+- Split large widgets into smaller private widgets or part files when it improves readability.
+- Reduce deeply nested build methods.
+- Preserve public APIs unless the task explicitly requires changing them.
+- Prefer root-cause refactors over superficial formatting-only changes.
+
+# Tech Stack
+- **Networking**: Retrofit + Dio
+- **State management**: Riverpod / Hooks Riverpod
+- **UI**: Flutter + Material
 
 # Output Requirements
-* 生成纯净的 Dart 代码。
-* **不要添加任何注释** (No comments)。
-* 直接输出实现代码，无需过多解释。
+- Produce clean Dart code that matches the existing project style.
+- Do not add unnecessary comments.
+- Keep changes minimal, targeted, and easy to review.

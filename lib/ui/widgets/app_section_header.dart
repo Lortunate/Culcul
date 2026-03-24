@@ -15,10 +15,29 @@ class AppSectionHeader extends StatelessWidget {
     this.onTrailingTap,
   });
 
+  List<Widget> _buildTrailing() {
+    if (trailing == null) {
+      return const [];
+    }
+
+    return [
+      AppClickable(
+        onTap: onTrailingTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.all(4),
+          child: trailing!,
+        ),
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
+    final trailingView = _buildTrailing();
 
     return Padding(
       padding: padding ?? const EdgeInsets.symmetric(vertical: 12),
@@ -32,12 +51,7 @@ class AppSectionHeader extends StatelessWidget {
               color: colorScheme.onSurface,
             ),
           ),
-          if (trailing != null)
-            AppClickable(
-              onTap: onTrailingTap,
-              borderRadius: BorderRadius.circular(8),
-              child: Padding(padding: const EdgeInsets.all(4), child: trailing!),
-            ),
+          ...trailingView,
         ],
       ),
     );

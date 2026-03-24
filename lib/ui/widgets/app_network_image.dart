@@ -32,6 +32,37 @@ class AppNetworkImage extends StatelessWidget {
     this.useShimmer = true,
   });
 
+  int? _resolveCacheSize(int? explicit, double? logicalSize, double pixelRatio) {
+    if (explicit != null) {
+      return explicit;
+    }
+    if (logicalSize != null) {
+      return (logicalSize * pixelRatio).toInt();
+    }
+    return null;
+  }
+
+  BoxDecoration _buildDecoration(ColorScheme colorScheme) {
+    return BoxDecoration(
+      color: colorScheme.surfaceContainerHighest,
+      borderRadius: BorderRadius.circular(borderRadius),
+    );
+  }
+
+  Widget _buildLoadingPlaceholder(ColorScheme colorScheme) {
+    final placeholderChild = Container(
+      width: width,
+      height: height,
+      decoration: _buildDecoration(colorScheme),
+    );
+
+    if (!useShimmer) {
+      return placeholderChild;
+    }
+
+    return AppShimmer(child: placeholderChild);
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -42,10 +73,8 @@ class AppNetworkImage extends StatelessWidget {
     }
 
     final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
-    final int? cacheW =
-        memCacheWidth ?? (width != null ? (width! * devicePixelRatio).toInt() : null);
-    final int? cacheH =
-        memCacheHeight ?? (height != null ? (height! * devicePixelRatio).toInt() : null);
+    final cacheW = _resolveCacheSize(memCacheWidth, width, devicePixelRatio);
+    final cacheH = _resolveCacheSize(memCacheHeight, height, devicePixelRatio);
 
     return ExtendedImage.network(
       FormatUtils.formatImageUrl(url),
@@ -66,26 +95,7 @@ class AppNetworkImage extends StatelessWidget {
         switch (state.extendedImageLoadState) {
           case LoadState.loading:
             if (placeholder != null) return placeholder;
-            if (useShimmer) {
-              return AppShimmer(
-                child: Container(
-                  width: width,
-                  height: height,
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(borderRadius),
-                  ),
-                ),
-              );
-            }
-            return Container(
-              width: width,
-              height: height,
-              decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(borderRadius),
-              ),
-            );
+            return _buildLoadingPlaceholder(colorScheme);
           case LoadState.failed:
             return _buildErrorWidget(colorScheme);
           case LoadState.completed:
@@ -100,10 +110,7 @@ class AppNetworkImage extends StatelessWidget {
         Container(
           width: width,
           height: height,
-          decoration: BoxDecoration(
-            color: colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(borderRadius),
-          ),
+          decoration: _buildDecoration(colorScheme),
           child: Icon(
             Icons.broken_image_outlined,
             color: colorScheme.outline,
