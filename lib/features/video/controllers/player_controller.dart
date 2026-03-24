@@ -16,8 +16,6 @@ sealed class PlayerUiState with _$PlayerUiState {
   const factory PlayerUiState({
     @Default(false) bool isPlaying,
     @Default(false) bool isBuffering,
-    // Position, duration, and buffer are now accessed directly from the player stream
-    // to avoid frequent state updates and rebuilds.
     @Default(false) bool isFullscreen,
     @Default(false) bool isLocked,
     @Default(true) bool showControls,
@@ -50,10 +48,8 @@ class PlayerController extends _$PlayerController {
       }
     });
 
-    // Initialize the timer to hide controls
     _startHideTimer();
 
-    // Setup listeners after build returns to avoid accessing state during build
     Future.microtask(() {
       if (!_mounted) return;
       _subscriptions.addAll([
@@ -137,7 +133,6 @@ class PlayerController extends _$PlayerController {
 
       await player.open(media, play: false);
 
-      // Wait for duration to be available if needed
       if (player.state.duration == Duration.zero) {
         try {
           await player.stream.duration

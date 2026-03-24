@@ -64,6 +64,7 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
 
   @override
   void dispose() {
+    _controller.dispose();
     _ticker.dispose();
     super.dispose();
   }
@@ -89,6 +90,7 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
     _updateScrollingItems(delta);
     _removeExpiredStaticItems(currentMs);
 
+    if (!mounted) return;
     setState(() {});
   }
 
@@ -206,17 +208,17 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
 
     if (_maxRows <= 0) return false;
 
-    if (item.type == DanmakuItemType.scroll) {
-      if (_option.hideScroll) return false;
-      return _layoutScrollItem(item);
-    } else if (item.type == DanmakuItemType.top) {
-      if (_option.hideTop) return false;
-      return _layoutTopItem(item);
-    } else if (item.type == DanmakuItemType.bottom) {
-      if (_option.hideBottom) return false;
-      return _layoutBottomItem(item);
+    switch (item.type) {
+      case DanmakuItemType.scroll:
+        if (_option.hideScroll) return false;
+        return _layoutScrollItem(item);
+      case DanmakuItemType.top:
+        if (_option.hideTop) return false;
+        return _layoutTopItem(item);
+      case DanmakuItemType.bottom:
+        if (_option.hideBottom) return false;
+        return _layoutBottomItem(item);
     }
-    return false;
   }
 
   bool _layoutScrollItem(RenderDanmakuItem item) {
@@ -264,48 +266,36 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
   }
 
   bool _layoutTopItem(RenderDanmakuItem item) {
-    for (int i = 0; i < _maxRows; i++) {
-      final lastItem = _topTracks[i];
-      bool isFree = false;
-      if (lastItem == null) {
-        isFree = true;
-      } else {
-        if (!_activeItems.contains(lastItem)) {
-          isFree = true;
-        }
-      }
-
-      if (isFree) {
-        item.x = (_viewWidth - item.width) / 2;
-        item.y = i * _lineHeight + (_lineHeight - item.height) / 2;
-        item.creationTime = _lastFrameTime;
-        _topTracks[i] = item;
-        return true;
-      }
-    }
-    return false;
+    return _layoutStaticItem(
+      item: item,
+      tracks: _topTracks,
+      rowToY: (row) => row * _lineHeight + (_lineHeight - item.height) / 2,
+    );
   }
 
   bool _layoutBottomItem(RenderDanmakuItem item) {
+    return _layoutStaticItem(
+      item: item,
+      tracks: _bottomTracks,
+      rowToY: (row) =>
+          _viewHeight - (row + 1) * _lineHeight + (_lineHeight - item.height) / 2,
+    );
+  }
+
+  bool _layoutStaticItem({
+    required RenderDanmakuItem item,
+    required Map<int, RenderDanmakuItem> tracks,
+    required double Function(int row) rowToY,
+  }) {
     for (int i = 0; i < _maxRows; i++) {
-      final lastItem = _bottomTracks[i];
-      bool isFree = false;
-      if (lastItem == null) {
-        isFree = true;
-      } else {
-        if (!_activeItems.contains(lastItem)) {
-          isFree = true;
-        }
-      }
+      final lastItem = tracks[i];
+      final isFree = lastItem == null || !_activeItems.contains(lastItem);
 
       if (isFree) {
         item.x = (_viewWidth - item.width) / 2;
-        item.y =
-            _viewHeight -
-            (i + 1) * _lineHeight +
-            (_lineHeight - item.height) / 2;
+        item.y = rowToY(i);
         item.creationTime = _lastFrameTime;
-        _bottomTracks[i] = item;
+        tracks[i] = item;
         return true;
       }
     }
@@ -313,6 +303,7 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
   }
 
   void _updateOption(DanmakuOption option) {
+    if (!mounted) return;
     setState(() {
       _option = option;
     });
@@ -337,6 +328,7 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
     _scrollTracks.clear();
     _topTracks.clear();
     _bottomTracks.clear();
+    if (!mounted) return;
     setState(() {});
   }
 

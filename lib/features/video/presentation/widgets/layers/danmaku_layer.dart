@@ -11,6 +11,8 @@ import 'package:culcul/ui/widgets/danmaku/ns_danmaku/danmaku_view.dart';
 import 'package:culcul/ui/widgets/danmaku/ns_danmaku/models/danmaku_item.dart';
 import 'package:culcul/ui/widgets/danmaku/ns_danmaku/models/danmaku_option.dart';
 
+const int _segmentDurationMs = 360000;
+
 class DanmakuLayer extends HookConsumerWidget {
   final String bvid;
 
@@ -31,109 +33,67 @@ class DanmakuLayer extends HookConsumerWidget {
 
     final settings = ref.watch(danmakuSettingsControllerProvider);
     final maskProvider = ref.watch(danmakuMaskProvider(oid: currentCid, pid: aid ?? 0));
+    final danmakuOption = _buildDanmakuOption(settings);
 
     final player = ref.read(playerControllerProvider.notifier).player;
 
-    final loadedSegments = useRef<Set<int>>({});
-    final allItems = useRef<List<DanmakuItem>>([]);
-    final cursor = useRef<int>(0);
-    final lastPosition = useRef<int>(0);
+    final timelineRef = useRef<_DanmakuTimelineBuffer>(_DanmakuTimelineBuffer());
     final maskPathNotifier = useRef<ValueNotifier<Path?>>(ValueNotifier(null));
 
-    int findCursor(List<DanmakuItem> items, int targetTime) {
-      int left = 0;
-      int right = items.length - 1;
-      int result = items.length;
-
-      while (left <= right) {
-        int mid = left + (right - left) ~/ 2;
-        if (items[mid].time >= targetTime) {
-          result = mid;
-          right = mid - 1;
-        } else {
-          left = mid + 1;
-        }
-      }
-      return result;
-    }
-
     useEffect(() {
+      final timeline = timelineRef.value;
+      timeline.reset();
+      controllerRef.value?.clear();
+
       final subPosition = player.stream.position.listen((pos) {
         final currentPosMs = pos.inMilliseconds;
-        final segmentIndex = (currentPosMs / 360000).ceil();
+        final segmentIndex = (currentPosMs / _segmentDurationMs).ceil();
         final index = segmentIndex < 1 ? 1 : segmentIndex;
 
-        if (aid != null && currentCid != 0 && !loadedSegments.value.contains(index)) {
-          loadedSegments.value.add(index);
+        if (aid != null && currentCid != 0 && timeline.tryMarkSegmentLoading(index)) {
           ref
               .read(danmakuProviderProvider.notifier)
               .loadSegment(oid: currentCid, pid: aid, segmentIndex: index)
               .then((elems) {
                 final newItems = elems.map((e) {
-                  DanmakuItemType type = DanmakuItemType.scroll;
-                  if (e.mode == 4) type = DanmakuItemType.bottom;
-                  if (e.mode == 5) type = DanmakuItemType.top;
-
                   return DanmakuItem(
                     e.content,
                     time: e.progress,
-                    color: Color(0xFF000000 | e.color),
-                    type: type,
+                    color: _toOpaqueDanmakuColor(e.color),
+                    type: _toDanmakuItemType(e.mode),
                   );
                 }).toList();
-
-                allItems.value.addAll(newItems);
-                allItems.value.sort((a, b) => a.time.compareTo(b.time));
-                cursor.value = findCursor(allItems.value, currentPosMs);
+                timeline.appendItems(newItems, currentPosMs);
               })
               .catchError((e) {
-                loadedSegments.value.remove(index);
+                timeline.markSegmentLoadFailed(index);
                 debugPrint('Failed to load danmaku segment $index: $e');
               });
         }
 
-        if ((currentPosMs - lastPosition.value).abs() > 1500) {
+        if (timeline.hasLargeJump(currentPosMs)) {
           controllerRef.value?.clear();
-          cursor.value = findCursor(allItems.value, currentPosMs);
+          timeline.seek(currentPosMs);
         }
 
         if (player.state.playing) {
-          final itemsToAdd = <DanmakuItem>[];
-          int processed = 0;
-
-          while (cursor.value < allItems.value.length && processed < 50) {
-            final item = allItems.value[cursor.value];
-
-            if (item.time <= currentPosMs) {
-              if (currentPosMs - item.time < 3000) {
-                itemsToAdd.add(item);
-              }
-              cursor.value++;
-              processed++;
-            } else {
-              break;
-            }
-          }
+          final itemsToAdd = timeline.collectDueItems(currentPosMs);
 
           if (itemsToAdd.isNotEmpty) {
             controllerRef.value?.addItems(itemsToAdd);
           }
         }
 
-        if (settings.enableAiMask &&
-            maskProvider.hasValue &&
-            maskProvider.value != null) {
-          final path = maskProvider.value!.getPath(currentPosMs);
-          if (path != maskPathNotifier.value.value) {
-            maskPathNotifier.value.value = path;
-          }
-        } else {
-          if (maskPathNotifier.value.value != null) {
-            maskPathNotifier.value.value = null;
-          }
+        final nextMaskPath = _resolveMaskPath(
+          settings: settings,
+          maskProvider: maskProvider,
+          currentPosMs: currentPosMs,
+        );
+        if (nextMaskPath != maskPathNotifier.value.value) {
+          maskPathNotifier.value.value = nextMaskPath;
         }
 
-        lastPosition.value = currentPosMs;
+        timeline.updateLastPosition(currentPosMs);
       });
 
       final subPlaying = player.stream.playing.listen((isPlaying) {
@@ -152,25 +112,16 @@ class DanmakuLayer extends HookConsumerWidget {
 
     useEffect(() {
       final controller = controllerRef.value;
-      if (controller == null) return;
+      if (controller == null || !settings.isEnabled) return;
 
-      controller.updateOption(
-        DanmakuOption(
-          opacity: settings.opacity,
-          area: settings.area,
-          fontSize: 15 * settings.fontSizeScale,
-          duration: 10 / settings.speed,
-          hideTop: !settings.showTop,
-          hideBottom: !settings.showBottom,
-          hideScroll: !settings.showScroll,
-          strokeWidth: settings.strokeWidth == 0 ? 1.5 : settings.strokeWidth,
-          fontWeight: FontWeight.w500,
-        ),
-      );
+      controller.updateOption(danmakuOption);
       return null;
     }, [settings]);
 
-    if (!settings.isEnabled) return const SizedBox();
+    if (!settings.isEnabled) {
+      controllerRef.value = null;
+      return const SizedBox();
+    }
 
     return RepaintBoundary(
       child: LayoutBuilder(
@@ -182,7 +133,6 @@ class DanmakuLayer extends HookConsumerWidget {
               return ClipPath(
                 clipper: DanmakuMaskClipper(
                   maskPath: maskPath,
-                  viewSize: Size(constraints.maxWidth, constraints.maxHeight),
                   videoSize: Size(
                     (videoDimension?.width ?? 1920).toDouble(),
                     (videoDimension?.height ?? 1080).toDouble(),
@@ -196,17 +146,7 @@ class DanmakuLayer extends HookConsumerWidget {
                 controllerRef.value = controller;
                 if (player.state.playing) controller.resume();
               },
-              option: DanmakuOption(
-                opacity: settings.opacity,
-                area: settings.area,
-                fontSize: (15 * settings.fontSizeScale).toDouble(),
-                duration: (10 / settings.speed).toDouble(),
-                hideTop: !settings.showTop,
-                hideBottom: !settings.showBottom,
-                hideScroll: !settings.showScroll,
-                strokeWidth: settings.strokeWidth == 0 ? 1.5 : settings.strokeWidth,
-                fontWeight: FontWeight.w500,
-              ),
+              option: danmakuOption,
             ),
           );
         },
@@ -215,16 +155,128 @@ class DanmakuLayer extends HookConsumerWidget {
   }
 }
 
+DanmakuOption _buildDanmakuOption(DanmakuSettings settings) {
+  return DanmakuOption(
+    opacity: settings.opacity,
+    area: settings.area,
+    fontSize: 15 * settings.fontSizeScale,
+    duration: 10 / settings.speed,
+    hideTop: !settings.showTop,
+    hideBottom: !settings.showBottom,
+    hideScroll: !settings.showScroll,
+    strokeWidth: settings.strokeWidth == 0 ? 1.5 : settings.strokeWidth,
+    fontWeight: FontWeight.w500,
+  );
+}
+
+DanmakuItemType _toDanmakuItemType(int mode) {
+  return switch (mode) {
+    4 => DanmakuItemType.bottom,
+    5 => DanmakuItemType.top,
+    _ => DanmakuItemType.scroll,
+  };
+}
+
+Color _toOpaqueDanmakuColor(int colorValue) {
+  return Color(0xFF000000 | colorValue);
+}
+
+Path? _resolveMaskPath({
+  required DanmakuSettings settings,
+  required AsyncValue<DanmakuMasks?> maskProvider,
+  required int currentPosMs,
+}) {
+  if (!settings.enableAiMask || !maskProvider.hasValue || maskProvider.value == null) {
+    return null;
+  }
+  return maskProvider.value!.getPath(currentPosMs);
+}
+
+class _DanmakuTimelineBuffer {
+  static const int _seekToleranceMs = 1500;
+  static const int _emitWindowMs = 3000;
+  static const int _maxItemsPerTick = 50;
+
+  final Set<int> _loadedSegments = <int>{};
+  final List<DanmakuItem> _items = <DanmakuItem>[];
+
+  int _cursor = 0;
+  int _lastPosition = 0;
+
+  void reset() {
+    _loadedSegments.clear();
+    _items.clear();
+    _cursor = 0;
+    _lastPosition = 0;
+  }
+
+  bool tryMarkSegmentLoading(int segmentIndex) {
+    return _loadedSegments.add(segmentIndex);
+  }
+
+  void markSegmentLoadFailed(int segmentIndex) {
+    _loadedSegments.remove(segmentIndex);
+  }
+
+  void appendItems(List<DanmakuItem> newItems, int currentPosMs) {
+    if (newItems.isEmpty) return;
+    _items.addAll(newItems);
+    _items.sort((a, b) => a.time.compareTo(b.time));
+    _cursor = _findCursor(currentPosMs);
+  }
+
+  bool hasLargeJump(int currentPosMs) {
+    return (currentPosMs - _lastPosition).abs() > _seekToleranceMs;
+  }
+
+  void seek(int currentPosMs) {
+    _cursor = _findCursor(currentPosMs);
+  }
+
+  List<DanmakuItem> collectDueItems(int currentPosMs) {
+    final itemsToAdd = <DanmakuItem>[];
+    var processed = 0;
+
+    while (_cursor < _items.length && processed < _maxItemsPerTick) {
+      final item = _items[_cursor];
+      if (item.time > currentPosMs) break;
+
+      if (currentPosMs - item.time < _emitWindowMs) {
+        itemsToAdd.add(item);
+      }
+      _cursor++;
+      processed++;
+    }
+    return itemsToAdd;
+  }
+
+  void updateLastPosition(int currentPosMs) {
+    _lastPosition = currentPosMs;
+  }
+
+  int _findCursor(int targetTime) {
+    var left = 0;
+    var right = _items.length - 1;
+    var result = _items.length;
+
+    while (left <= right) {
+      final mid = left + (right - left) ~/ 2;
+      if (_items[mid].time >= targetTime) {
+        result = mid;
+        right = mid - 1;
+      } else {
+        left = mid + 1;
+      }
+    }
+    return result;
+  }
+}
+
 class DanmakuMaskClipper extends CustomClipper<Path> {
   final Path? maskPath;
-  final Size viewSize;
   final Size videoSize;
 
-  DanmakuMaskClipper({
-    required this.maskPath,
-    required this.viewSize,
-    required this.videoSize,
-  });
+  DanmakuMaskClipper({required this.maskPath, required this.videoSize});
 
   @override
   Path getClip(Size size) {
@@ -244,8 +296,6 @@ class DanmakuMaskClipper extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(covariant DanmakuMaskClipper oldClipper) {
-    return oldClipper.maskPath != maskPath ||
-        oldClipper.viewSize != viewSize ||
-        oldClipper.videoSize != videoSize;
+    return oldClipper.maskPath != maskPath || oldClipper.videoSize != videoSize;
   }
 }

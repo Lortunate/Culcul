@@ -2,35 +2,28 @@ import 'package:culcul/app/theme/culcul_colors.dart';
 import 'package:flutter/material.dart';
 
 class PlayerTheme {
-  // Dimensions
   static const double topBarHeight = 48.0;
   static const double bottomBarHeight = 82.0;
   static const double iconSize = 24.0;
   static const double smallIconSize = 20.0;
   static const double centerPlayBtnSize = 48.0;
 
-  // Spacing
   static const double horizontalPadding = 12.0;
   static const double elementSpacing = 16.0;
 
-  // Text Styles
   static const TextStyle timeStyle = TextStyle(
     color: Colors.white,
     fontSize: 11,
     fontWeight: FontWeight.w500,
     fontFeatures: [FontFeature.tabularFigures()],
-    shadows: [
-      Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45),
-    ],
+    shadows: [Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45)],
   );
 
   static const TextStyle titleStyle = TextStyle(
     color: Colors.white,
     fontSize: 15,
     fontWeight: FontWeight.w500,
-    shadows: [
-      Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45),
-    ],
+    shadows: [Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45)],
   );
 
   static const TextStyle subtitleStyle = TextStyle(
@@ -46,13 +39,9 @@ class PlayerTheme {
     ],
   );
 
-  // Slider Theme
   static SliderThemeData get sliderTheme => SliderThemeData(
     trackHeight: 3,
-    thumbShape: const RoundSliderThumbShape(
-      enabledThumbRadius: 7,
-      elevation: 2,
-    ),
+    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7, elevation: 2),
     overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
     activeTrackColor: CulculColors.brand,
     inactiveTrackColor: Colors.white24,
@@ -64,7 +53,21 @@ class PlayerTheme {
     inactiveTickMarkColor: Colors.transparent,
   );
 
-  // Gradients
+  static SliderThemeData progressSliderTheme(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return sliderTheme.copyWith(
+      activeTrackColor: colorScheme.primary,
+      inactiveTrackColor: colorScheme.onSurface.withValues(alpha: 0.2),
+      secondaryActiveTrackColor: colorScheme.onSurface.withValues(alpha: 0.35),
+      thumbColor: colorScheme.primary,
+      overlayColor: colorScheme.primary.withValues(alpha: 0.18),
+      overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
+      showValueIndicator: ShowValueIndicator.onDrag,
+      valueIndicatorTextStyle: const TextStyle(color: Colors.white, fontSize: 12),
+      valueIndicatorColor: colorScheme.primary,
+    );
+  }
+
   static const LinearGradient topGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
@@ -79,7 +82,6 @@ class PlayerTheme {
     stops: [0.0, 0.4, 1.0],
   );
 
-  // Button Styles
   static final ButtonStyle textButtonStyle = TextButton.styleFrom(
     foregroundColor: Colors.white,
     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -88,14 +90,9 @@ class PlayerTheme {
     textStyle: const TextStyle(
       fontSize: 13,
       fontWeight: FontWeight.w600,
-      shadows: [
-        Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45),
-      ],
+      shadows: [Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45)],
     ),
   );
 
-  // Colors
-  static final Color overlayBackgroundColor = Colors.black.withValues(
-    alpha: 0.6,
-  );
+  static final Color overlayBackgroundColor = Colors.black.withValues(alpha: 0.6);
 }

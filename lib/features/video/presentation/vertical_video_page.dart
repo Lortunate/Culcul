@@ -1,5 +1,6 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/data/models/video/video_detail.dart';
+import 'package:culcul/features/video/controllers/playback_snapshot_controller.dart';
 import 'package:culcul/features/video/controllers/player_controller.dart';
 import 'package:culcul/features/video/controllers/video_detail_controller.dart';
 import 'package:culcul/features/video/presentation/hooks/use_player_system_settings.dart';
@@ -14,7 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:media_kit/media_kit.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 typedef _VideoAction = ({IconData icon, int count, String label});
@@ -72,7 +72,6 @@ class VerticalVideoPage extends HookConsumerWidget {
             bottom: 0,
             child: _BottomBar(
               videoDetail: videoDetail,
-              player: player,
               playerController: playerController,
             ),
           ),
@@ -96,10 +95,7 @@ class _TopBar extends StatelessWidget {
             child: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
           ),
           const SizedBox(width: 8),
-          const Text(
-            '12人正在看', // TODO: Real data
-            style: TextStyle(color: Colors.white70, fontSize: 12),
-          ),
+          const Text('12人正在看', style: TextStyle(color: Colors.white70, fontSize: 12)),
           const Spacer(),
           const Icon(Icons.search, color: Colors.white, size: 24),
           const SizedBox(width: 16),
@@ -161,23 +157,16 @@ class _RightActionItem extends StatelessWidget {
   }
 }
 
-class _BottomBar extends HookWidget {
+class _BottomBar extends ConsumerWidget {
   final VideoDetail videoDetail;
-  final Player player;
   final PlayerController playerController;
 
-  const _BottomBar({
-    required this.videoDetail,
-    required this.player,
-    required this.playerController,
-  });
+  const _BottomBar({required this.videoDetail, required this.playerController});
 
   @override
-  Widget build(BuildContext context) {
-    final positionSnapshot = useStream(player.stream.position);
-    final durationSnapshot = useStream(player.stream.duration);
-    final position = positionSnapshot.data ?? Duration.zero;
-    final duration = durationSnapshot.data ?? Duration.zero;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final position = ref.watch(playbackPositionProvider);
+    final duration = ref.watch(playbackDurationProvider);
     final maxValue = duration.inSeconds > 0 ? duration.inSeconds.toDouble() : 1.0;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -223,10 +212,7 @@ class _BottomBar extends HookWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const Text(
-              '504.4万粉丝', // TODO: Real data
-              style: TextStyle(color: Colors.white70, fontSize: 12),
-            ),
+            const Text('504.4万粉丝', style: TextStyle(color: Colors.white70, fontSize: 12)),
           ],
         ),
         const SizedBox(width: 12),

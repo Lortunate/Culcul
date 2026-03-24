@@ -15,26 +15,34 @@ class DanmakuController {
     required this.onClear,
   });
 
-  bool running = true;
-  DanmakuOption option = DanmakuOption();
+  bool _disposed = false;
+
+  void dispose() {
+    _disposed = true;
+  }
 
   void pause() {
+    if (_disposed) return;
     onPause.call();
   }
 
   void resume() {
+    if (_disposed) return;
     onResume.call();
   }
 
   void clear() {
+    if (_disposed) return;
     onClear.call();
   }
 
   void addItems(List<DanmakuItem> items) {
+    if (_disposed) return;
     onAddItems.call(items);
   }
 
   void updateOption(DanmakuOption option) {
+    if (_disposed) return;
     onUpdateOption.call(option);
   }
 }

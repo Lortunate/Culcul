@@ -6,12 +6,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
 
 void useVideoProgressReport(WidgetRef ref, String bvid, Player player, bool isPlaying) {
-  final detailState = ref.watch(videoDetailControllerProvider(bvid));
-  final aid = detailState.videoDetail?.aid;
-  final cid = detailState.currentCid;
+  final info = ref.watch(
+    videoDetailControllerProvider(
+      bvid,
+    ).select((state) => (aid: state.videoDetail?.aid, cid: state.currentCid)),
+  );
 
-  final latestInfoRef = useRef((aid: aid, cid: cid));
-  latestInfoRef.value = (aid: aid, cid: cid);
+  final latestInfoRef = useRef(info);
+  latestInfoRef.value = info;
 
   final isPlayingRef = useRef(isPlaying);
   isPlayingRef.value = isPlaying;
@@ -20,9 +22,9 @@ void useVideoProgressReport(WidgetRef ref, String bvid, Player player, bool isPl
 
   void reportProgress() {
     final pos = player.state.position.inSeconds;
-    final info = latestInfoRef.value;
-    if (pos > 0 && info.aid != null && info.cid != 0) {
-      videoRepo.reportVideoProgress(aid: info.aid!, cid: info.cid, progress: pos);
+    final current = latestInfoRef.value;
+    if (pos > 0 && current.aid != null && current.cid != 0) {
+      videoRepo.reportVideoProgress(aid: current.aid!, cid: current.cid, progress: pos);
     }
   }
 
