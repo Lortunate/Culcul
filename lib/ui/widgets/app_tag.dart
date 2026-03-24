@@ -19,8 +19,7 @@ class AppTag extends StatelessWidget {
   });
 
   Color _backgroundColor(ColorScheme colorScheme) {
-    return color ??
-        colorScheme.surfaceContainerHighest.withValues(alpha: 0.5);
+    return color ?? colorScheme.surfaceContainerHighest.withValues(alpha: 0.5);
   }
 
   Color _foregroundColor(ColorScheme colorScheme) {

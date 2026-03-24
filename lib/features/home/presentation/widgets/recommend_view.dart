@@ -1,4 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/data/models/video/video_model.dart';
 import 'package:culcul/features/home/controllers/home_recommend_controller.dart';
 import 'package:culcul/features/home/presentation/logic/home_scroll_manager.dart';
 import 'package:culcul/ui/widgets/skeletons/page_skeletons.dart';
@@ -9,6 +10,14 @@ import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+const _recommendPadding = EdgeInsets.all(8);
+const _recommendGridDelegate = SliverGridDelegateWithFixedCrossAxisCount(
+  crossAxisCount: 2,
+  mainAxisSpacing: 6,
+  crossAxisSpacing: 6,
+  childAspectRatio: 0.94,
+);
 
 class RecommendView extends HookConsumerWidget {
   const RecommendView({super.key});
@@ -23,14 +32,6 @@ class RecommendView extends HookConsumerWidget {
 
     useHomeScrollManager(ref, scrollController, refreshController, 1);
 
-    const padding = EdgeInsets.all(8);
-    const gridDelegate = SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 2,
-      mainAxisSpacing: 6,
-      crossAxisSpacing: 6,
-      childAspectRatio: 0.94,
-    );
-
     return SmartPagingView(
       provider: homeRecommendProvider,
       asyncValue: recommendAsync,
@@ -39,30 +40,43 @@ class RecommendView extends HookConsumerWidget {
       onLoadMore: ref.read(homeRecommendProvider.notifier).loadMore,
       skeleton: const GridSkeletonView(
         itemSkeleton: VideoCardSkeleton(),
-        gridDelegate: gridDelegate,
-        padding: padding,
+        gridDelegate: _recommendGridDelegate,
+        padding: _recommendPadding,
       ),
-      builder: (context, items) => CustomScrollView(
-        controller: scrollController,
-        cacheExtent: 1500,
-        slivers: [
-          SliverPadding(
-            padding: padding,
-            sliver: SliverGrid.builder(
-              gridDelegate: gridDelegate,
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                final video = items[index];
-                return VideoCard(
-                  key: ValueKey('recommend_v_${video.bvid}_$index'),
-                  video: video,
-                  onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
-                );
-              },
-            ),
+      builder: (context, items) =>
+          _RecommendVideoGrid(items: items, scrollController: scrollController),
+    );
+  }
+}
+
+class _RecommendVideoGrid extends StatelessWidget {
+  const _RecommendVideoGrid({required this.items, required this.scrollController});
+
+  final List<VideoModel> items;
+  final ScrollController scrollController;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomScrollView(
+      controller: scrollController,
+      cacheExtent: 1500,
+      slivers: [
+        SliverPadding(
+          padding: _recommendPadding,
+          sliver: SliverGrid.builder(
+            gridDelegate: _recommendGridDelegate,
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              final video = items[index];
+              return VideoCard(
+                key: ValueKey('recommend_v_${video.bvid}_$index'),
+                video: video,
+                onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
+              );
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

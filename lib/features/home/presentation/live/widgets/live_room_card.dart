@@ -2,6 +2,7 @@ import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/data/models/live/live_room_model.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/app_card_container.dart';
+import 'package:culcul/ui/widgets/app_min_lines_text.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -107,46 +108,49 @@ class LiveRoomCard extends StatelessWidget {
             ],
           ),
           // Content Info
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  room.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w500,
-                    height: 1.25,
-                    fontSize: 13,
-                    color: colorScheme.onSurface,
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppMinLinesText(
+                    room.title,
+                    minLines: 2,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      height: 1.2,
+                      fontSize: 12.5,
+                      color: colorScheme.onSurface,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    AppAvatar(
-                      url: room.face,
-                      size: 18,
-                      border: Border.all(style: BorderStyle.none),
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        room.uname,
-                        style: textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                  const Spacer(),
+                  Row(
+                    children: [
+                      AppAvatar(
+                        url: room.face,
+                        size: 16,
+                        border: Border.all(style: BorderStyle.none),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: Text(
+                          room.uname,
+                          style: textTheme.bodySmall?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],

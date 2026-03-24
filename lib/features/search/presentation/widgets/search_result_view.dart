@@ -8,6 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+const _searchTabs = ['综合', '视频', '番剧', '用户', '专栏'];
+const _searchTypeConfigs = ['all', 'video', 'media_bangumi', 'bili_user', 'article'];
+
 class SearchResultView extends HookConsumerWidget {
   final String keyword;
 
@@ -16,18 +19,15 @@ class SearchResultView extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return DefaultTabController(
-      length: 5,
+      length: _searchTabs.length,
       child: Column(
         children: [
-          const AppTabBar(tabs: ['综合', '视频', '番剧', '用户', '专栏']),
+          const AppTabBar(tabs: _searchTabs),
           Expanded(
             child: TabBarView(
               children: [
-                SearchResultTab(keyword: keyword, searchType: 'all'),
-                SearchResultTab(keyword: keyword, searchType: 'video'),
-                SearchResultTab(keyword: keyword, searchType: 'media_bangumi'),
-                SearchResultTab(keyword: keyword, searchType: 'bili_user'),
-                SearchResultTab(keyword: keyword, searchType: 'article'),
+                for (final searchType in _searchTypeConfigs)
+                  SearchResultTab(keyword: keyword, searchType: searchType),
               ],
             ),
           ),
@@ -49,6 +49,7 @@ class SearchResultTab extends HookConsumerWidget {
 
     final order = useState('totalrank');
     final duration = useState(0);
+    final showFilter = searchType == 'video' || searchType == 'article';
 
     final provider = searchResultProvider(
       keyword,
@@ -61,7 +62,7 @@ class SearchResultTab extends HookConsumerWidget {
 
     return Column(
       children: [
-        if (searchType == 'video' || searchType == 'article')
+        if (showFilter)
           SearchFilterBar(
             order: order.value,
             duration: duration.value,
@@ -84,16 +85,8 @@ class SearchResultTab extends HookConsumerWidget {
                 onRetry: () => ref.refresh(provider),
               );
             },
-            loading: () {
-              // If we have previous data, show it (handled by when data case if properly set up)
-              // But AsyncValue.when usually distinguishes data/loading/error strictly unless using .hasValue check.
-              // However, since we use copyWithPrevious in provider, loading state will also have data.
-              // So 'loading' callback here is only called for INITIAL loading.
-              return const SearchResultSkeleton();
-            },
+            loading: () => const SearchResultSkeleton(),
             error: (error, stack) {
-              // Similarly, if we have previous data, we might want to show it?
-              // But here let's show error widget.
               debugPrint('SearchResultView Error: $error\n$stack');
               return AppErrorWidget(
                 error: error,
@@ -101,8 +94,6 @@ class SearchResultTab extends HookConsumerWidget {
                 onRetry: () => ref.refresh(provider),
               );
             },
-            // skipLoadingOnReload: true, // This makes it not go to loading state on refresh if data exists
-            // But we handled state transition in provider manually with copyWithPrevious.
           ),
         ),
       ],

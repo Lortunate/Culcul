@@ -1,11 +1,11 @@
 import 'package:culcul/features/auth/controllers/auth_controller.dart';
 import 'package:culcul/features/to_view/controllers/to_view_controller.dart';
-import 'package:culcul/features/to_view/presentation/to_view_item.dart';
+import 'package:culcul/features/to_view/presentation/widgets/to_view_list.dart';
+import 'package:culcul/features/to_view/presentation/widgets/to_view_page_app_bar.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/guest_view.dart';
-import 'package:flutter/material.dart';
-import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
+import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:go_router/go_router.dart';
@@ -15,94 +15,88 @@ class ToViewPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final toViewListAsync = ref.watch(toViewListProvider);
     final authState = ref.watch(authProvider);
+    final isLoggedIn = authState.isLoggedIn;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(t.watch_later.title),
-        actions: [
-          if (authState.isLoggedIn)
-            IconButton(
-              icon: const Icon(Icons.delete_sweep_outlined),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text(t.watch_later.clear_all),
-                    content: Text(t.watch_later.clear_all_confirm),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: Text(t.common.cancel),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          ref.read(toViewListProvider.notifier).clear();
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(t.common.confirm),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-        ],
+      appBar: ToViewPageAppBar(
+        isLoggedIn: isLoggedIn,
+        onClearAll: () => _showClearAllDialog(context, ref),
       ),
-      body: authState.isLoggedIn
-          ? toViewListAsync.when(
-              data: (list) {
-                if (list.isEmpty) {
-                  return Center(child: Text(t.common.no_content));
-                }
-                return EasyRefresh(
-                  header: const AppRefreshHeader(),
-                  onRefresh: () async {
-                    final _ = await ref.refresh(toViewListProvider.future);
-                    return IndicatorResult.success;
-                  },
-                  child: ListView.builder(
-                    itemCount: list.length,
-                    itemBuilder: (context, index) {
-                      final item = list[index];
-                      if (item.aid == null || item.bvid == null) {
-                        return const SizedBox.shrink();
-                      }
-                      return Dismissible(
-                        key: Key(item.aid.toString()),
-                        direction: DismissDirection.endToStart,
-                        background: Container(
-                          color: Colors.red,
-                          alignment: Alignment.centerRight,
-                          padding: const EdgeInsets.only(right: 20),
-                          child: const Icon(Icons.delete, color: Colors.white),
-                        ),
-                        onDismissed: (direction) {
-                          ref.read(toViewListProvider.notifier).delete(item.aid!);
-                        },
-                        child: ToViewItem(
-                          item: item,
-                          onTap: () {
-                            context.push('/video/${item.bvid!}');
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
-              loading: () => const Center(child: CircularProgressIndicator()),
-              error: (err, stack) {
-                debugPrint('ToViewPage Error: $err\n$stack');
-                return AppErrorWidget(
-                  error: err,
-                  stackTrace: stack,
-                  onRetry: () => ref.refresh(toViewListProvider),
-                );
-              },
+      body: isLoggedIn
+          ? _ToViewBody(
+              onRefresh: () => _refreshList(ref),
+              onDelete: (aid) => ref.read(toViewListProvider.notifier).delete(aid),
+              onOpenVideo: (bvid) => context.push('/video/$bvid'),
             )
           : GuestView(title: t.profile.not_logged_in, message: t.profile.login_hint),
     );
+  }
+
+  Future<void> _showClearAllDialog(BuildContext context, WidgetRef ref) async {
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: Text(t.watch_later.clear_all),
+          content: Text(t.watch_later.clear_all_confirm),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(t.common.cancel),
+            ),
+            TextButton(
+              onPressed: () {
+                ref.read(toViewListProvider.notifier).clear();
+                Navigator.of(dialogContext).pop();
+              },
+              child: Text(t.common.confirm),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<IndicatorResult> _refreshList(WidgetRef ref) async {
+    final refreshedItems = await ref.refresh(toViewListProvider.future);
+    if (refreshedItems.isNotEmpty) {
+      return IndicatorResult.success;
+    }
+    return IndicatorResult.success;
+  }
+}
+
+class _ToViewBody extends ConsumerWidget {
+  const _ToViewBody({
+    required this.onRefresh,
+    required this.onDelete,
+    required this.onOpenVideo,
+  });
+
+  final Future<IndicatorResult> Function() onRefresh;
+  final ValueChanged<int> onDelete;
+  final ValueChanged<String> onOpenVideo;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final toViewListAsync = ref.watch(toViewListProvider);
+    return switch (toViewListAsync) {
+      AsyncData(:final value) when value.isEmpty => Center(
+        child: Text(t.common.no_content),
+      ),
+      AsyncData(:final value) => ToViewListView(
+        items: value,
+        onRefresh: onRefresh,
+        onDelete: onDelete,
+        onOpenVideo: onOpenVideo,
+      ),
+      AsyncError(:final error, :final stackTrace) => AppErrorWidget(
+        error: error,
+        stackTrace: stackTrace,
+        onRetry: () => ref.invalidate(toViewListProvider),
+      ),
+      _ => const Center(child: CircularProgressIndicator()),
+    };
   }
 }

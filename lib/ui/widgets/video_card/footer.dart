@@ -2,17 +2,14 @@ part of '../video_card.dart';
 
 class _VideoCardFooter extends StatelessWidget {
   final String author;
-  final ThemeData theme;
-  final ColorScheme colorScheme;
 
-  const _VideoCardFooter({
-    required this.author,
-    required this.theme,
-    required this.colorScheme,
-  });
+  const _VideoCardFooter({required this.author});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Row(
       children: [
         Expanded(

@@ -1,5 +1,6 @@
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/features/favorites/controllers/favorites_controller.dart';
+import 'package:culcul/data/models/fav/index.dart';
+import 'package:culcul/features/favorites/logic/favorites_controller.dart';
 import 'package:culcul/features/favorites/presentation/fav_resource_item.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/auth/controllers/auth_controller.dart';
@@ -29,8 +30,7 @@ class FavoriteDetailPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final provider = favFolderResourcesProvider(mediaId);
     final asyncValue = ref.watch(provider);
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
+    final colorScheme = Theme.of(context).colorScheme;
     final authState = ref.watch(authProvider);
 
     final isMine = authState.isLoggedIn && authState.user?.id == mid.toString();
@@ -154,9 +154,12 @@ class FavoriteDetailPage extends HookConsumerWidget {
               itemBuilder: (context) => [
                 const PopupMenuItem(value: 'edit', child: Text('Edit Info')),
                 const PopupMenuItem(value: 'manage', child: Text('Manage Resources')),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'delete',
-                  child: Text('Delete Folder', style: TextStyle(color: Colors.red)),
+                  child: Text(
+                    'Delete Folder',
+                    style: TextStyle(color: colorScheme.error),
+                  ),
                 ),
               ],
             ),
@@ -179,64 +182,7 @@ class FavoriteDetailPage extends HookConsumerWidget {
             child: CustomScrollView(
               slivers: [
                 if (info != null)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: AppNetworkImage(
-                              url: info.cover,
-                              width: 100,
-                              height: 100,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  info.title,
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    ClipOval(
-                                      child: AppNetworkImage(
-                                        url: info.upper.face,
-                                        width: 20,
-                                        height: 20,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      info.upper.name,
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: colorScheme.onSurfaceVariant,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  '${info.mediaCount} resources',
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  SliverToBoxAdapter(child: _FavoriteFolderHeader(info: info)),
                 if (items.isEmpty)
                   SliverFillRemaining(
                     child: Center(
@@ -250,46 +196,31 @@ class FavoriteDetailPage extends HookConsumerWidget {
                   SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
                       final item = items[index];
-                      return Column(
-                        children: [
-                          Row(
-                            children: [
-                              if (isSelectionMode.value)
-                                Checkbox(
-                                  value: selectedItems.value.contains(item.id),
-                                  onChanged: (value) {
-                                    final newSet = Set<int>.from(selectedItems.value);
-                                    if (value == true) {
-                                      newSet.add(item.id);
-                                    } else {
-                                      newSet.remove(item.id);
-                                    }
-                                    selectedItems.value = newSet;
-                                  },
-                                ),
-                              Expanded(
-                                child: FavResourceItem(
-                                  item: item,
-                                  onTap: () {
-                                    if (isSelectionMode.value) {
-                                      final newSet = Set<int>.from(selectedItems.value);
-                                      if (newSet.contains(item.id)) {
-                                        newSet.remove(item.id);
-                                      } else {
-                                        newSet.add(item.id);
-                                      }
-                                      selectedItems.value = newSet;
-                                    } else {
-                                      // TODO: Navigate to video detail
-                                      // context.push('/video/${item.bvid}');
-                                    }
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Divider(height: 1, indent: 16, endIndent: 16),
-                        ],
+                      return _FavoriteResourceRow(
+                        item: item,
+                        isSelectionMode: isSelectionMode.value,
+                        isSelected: selectedItems.value.contains(item.id),
+                        onSelectionChanged: (selected) {
+                          final newSet = Set<int>.from(selectedItems.value);
+                          if (selected) {
+                            newSet.add(item.id);
+                          } else {
+                            newSet.remove(item.id);
+                          }
+                          selectedItems.value = newSet;
+                        },
+                        onTap: () {
+                          if (!isSelectionMode.value) {
+                            return;
+                          }
+                          final newSet = Set<int>.from(selectedItems.value);
+                          if (newSet.contains(item.id)) {
+                            newSet.remove(item.id);
+                          } else {
+                            newSet.add(item.id);
+                          }
+                          selectedItems.value = newSet;
+                        },
                       );
                     }, childCount: items.length),
                   ),
@@ -304,17 +235,121 @@ class FavoriteDetailPage extends HookConsumerWidget {
             onRetry: () => ref.refresh(provider.future),
           ),
         ),
-        loading: () => const _Skeleton(),
+        loading: () => const _FavoriteDetailSkeleton(),
       ),
     );
   }
 }
 
-class _Skeleton extends StatelessWidget {
-  const _Skeleton();
+class _FavoriteFolderHeader extends StatelessWidget {
+  final FavFolderInfoModel info;
+
+  const _FavoriteFolderHeader({required this.info});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: AppNetworkImage(
+              url: info.cover,
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  info.title,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    ClipOval(
+                      child: AppNetworkImage(url: info.upper.face, width: 20, height: 20),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      info.upper.name,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '${info.mediaCount} resources',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FavoriteResourceRow extends StatelessWidget {
+  final FavResourceModel item;
+  final bool isSelectionMode;
+  final bool isSelected;
+  final ValueChanged<bool> onSelectionChanged;
+  final VoidCallback onTap;
+
+  const _FavoriteResourceRow({
+    required this.item,
+    required this.isSelectionMode,
+    required this.isSelected,
+    required this.onSelectionChanged,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            if (isSelectionMode)
+              Checkbox(
+                value: isSelected,
+                onChanged: (value) => onSelectionChanged(value ?? false),
+              ),
+            Expanded(
+              child: FavResourceItem(item: item, onTap: onTap),
+            ),
+          ],
+        ),
+        const Divider(height: 1, indent: 16, endIndent: 16),
+      ],
+    );
+  }
+}
+
+class _FavoriteDetailSkeleton extends StatelessWidget {
+  const _FavoriteDetailSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: 12),
       itemCount: 10,
@@ -331,7 +366,7 @@ class _Skeleton extends StatelessWidget {
                   width: 160,
                   height: 90,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: colorScheme.surfaceContainerHigh,
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
@@ -340,9 +375,13 @@ class _Skeleton extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(height: 16, color: Colors.white),
+                      Container(height: 16, color: colorScheme.surfaceContainerHigh),
                       const SizedBox(height: 8),
-                      Container(height: 16, width: 100, color: Colors.white),
+                      Container(
+                        height: 16,
+                        width: 100,
+                        color: colorScheme.surfaceContainerHigh,
+                      ),
                     ],
                   ),
                 ),

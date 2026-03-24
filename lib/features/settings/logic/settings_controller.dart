@@ -16,14 +16,13 @@ class ThemeModeNotifier extends Notifier<ThemeMode> {
   @override
   ThemeMode build() {
     final box = ref.read(storageBoxProvider);
-    final themeString = box.get(_themeKey) as String?;
-    if (themeString != null) {
-      return ThemeMode.values.firstWhere(
+    return switch (box.get(_themeKey) as String?) {
+      final themeString? => ThemeMode.values.firstWhere(
         (e) => e.toString() == themeString,
         orElse: () => ThemeMode.system,
-      );
-    }
-    return ThemeMode.system;
+      ),
+      null => ThemeMode.system,
+    };
   }
 
   Future<void> setTheme(ThemeMode mode) async {

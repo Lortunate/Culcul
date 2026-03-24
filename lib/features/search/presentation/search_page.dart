@@ -7,44 +7,14 @@ import 'package:culcul/features/search/presentation/widgets/search_suggestion_vi
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+const _searchPagePadding = EdgeInsets.symmetric(horizontal: 16, vertical: 12);
+
 class SearchPage extends HookConsumerWidget {
   const SearchPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final search = useSearchController(ref);
-
-    Widget buildBody() {
-      if (search.focusNode.hasFocus) {
-        if (search.controller.text.isNotEmpty) {
-          return SearchSuggestionView(
-            term: search.suggestionTerm,
-            onSuggestionTap: search.onSearch,
-          );
-        }
-        return ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          children: [
-            SearchHistorySection(onTap: search.onSearch),
-            const SizedBox(height: 32),
-            HotSearchSection(onTap: search.onSearch),
-          ],
-        );
-      }
-
-      if (search.confirmedKeyword != null) {
-        return SearchResultView(keyword: search.confirmedKeyword!);
-      }
-
-      return ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        children: [
-          SearchHistorySection(onTap: search.onSearch),
-          const SizedBox(height: 32),
-          HotSearchSection(onTap: search.onSearch),
-        ],
-      );
-    }
 
     return Scaffold(
       appBar: SearchAppBar(
@@ -54,7 +24,52 @@ class SearchPage extends HookConsumerWidget {
         onClear: search.onClear,
         onSearch: search.onSearch,
       ),
-      body: buildBody(),
+      body: _buildSearchBody(search),
+    );
+  }
+}
+
+Widget _buildSearchBody(
+  ({
+    TextEditingController controller,
+    FocusNode focusNode,
+    String suggestionTerm,
+    String? confirmedKeyword,
+    VoidCallback onClear,
+    void Function(String) onSearch,
+    String? defaultSearchHint,
+  })
+  search,
+) {
+  if (search.focusNode.hasFocus && search.controller.text.isNotEmpty) {
+    return SearchSuggestionView(
+      term: search.suggestionTerm,
+      onSuggestionTap: search.onSearch,
+    );
+  }
+
+  final keyword = search.confirmedKeyword;
+  if (!search.focusNode.hasFocus && keyword != null) {
+    return SearchResultView(keyword: keyword);
+  }
+
+  return _SearchLandingContent(onTap: search.onSearch);
+}
+
+class _SearchLandingContent extends StatelessWidget {
+  const _SearchLandingContent({required this.onTap});
+
+  final ValueChanged<String> onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: _searchPagePadding,
+      children: [
+        SearchHistorySection(onTap: onTap),
+        const SizedBox(height: 32),
+        HotSearchSection(onTap: onTap),
+      ],
     );
   }
 }

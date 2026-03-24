@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:culcul/data/models/video/video_model.dart';
 import 'package:culcul/features/ranking/data/models/ranking_category.dart';
-import 'package:culcul/features/ranking/providers/category_ranking_provider.dart';
+import 'package:culcul/features/ranking/logic/category_ranking_provider.dart';
 import 'package:culcul/features/ranking/presentation/widgets/ranking_item_card.dart';
 import 'package:culcul/features/ranking/presentation/widgets/ranking_skeleton_item.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';
@@ -26,81 +27,133 @@ class _RankingListViewState extends ConsumerState<RankingListView>
   Widget build(BuildContext context) {
     super.build(context);
 
+    final t = Translations.of(context);
     final provider = categoryRankingListProvider(rid: widget.category.rid);
     final rankingListAsync = ref.watch(provider);
-
-    final theme = Theme.of(context);
-    const separator = SizedBox(height: 2);
-    const listPadding = EdgeInsets.all(4);
 
     return EasyRefresh(
       header: const AppRefreshHeader(),
       onRefresh: () async {
-        await ref.refresh(provider.future);
+        ref.invalidate(provider);
         return IndicatorResult.success;
       },
-      child: rankingListAsync.when(
-        data: (items) {
-          if (items.isEmpty) {
-            return _buildEmptyView(theme);
-          }
-          return ListView.separated(
-            padding: listPadding,
-            itemCount: items.length,
-            separatorBuilder: (_, __) => separator,
-            itemBuilder: (context, index) =>
-                RankingItemCard(video: items[index], rank: index + 1),
-          );
-        },
-        loading: () => ListView.separated(
-          padding: listPadding,
-          itemCount: 10,
-          separatorBuilder: (_, __) => separator,
-          itemBuilder: (_, __) => const RankingSkeletonItem(),
+      child: switch (rankingListAsync) {
+        AsyncData(:final value) when value.isEmpty => _RankingEmptyView(
+          message: t.common.no_content,
         ),
-        error: (error, _) => _buildErrorView(theme, error, provider),
-      ),
+        AsyncData(:final value) => _RankingItemsList(items: value),
+        AsyncError(:final error) => _RankingErrorView(
+          error: error,
+          retryLabel: t.common.retry,
+          loadFailedLabel: t.common.load_failed,
+          onRetry: () => ref.invalidate(provider),
+        ),
+        _ => const _RankingSkeletonList(),
+      },
     );
   }
+}
 
-  Widget _buildEmptyView(ThemeData theme) {
+class _RankingItemsList extends StatelessWidget {
+  final List<VideoModel> items;
+
+  const _RankingItemsList({required this.items});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      padding: const EdgeInsets.all(4),
+      itemCount: items.length,
+      separatorBuilder: (_, _) => const SizedBox(height: 2),
+      itemBuilder: (context, index) =>
+          RankingItemCard(video: items[index], rank: index + 1),
+    );
+  }
+}
+
+class _RankingSkeletonList extends StatelessWidget {
+  const _RankingSkeletonList();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+      padding: const EdgeInsets.all(4),
+      itemCount: 10,
+      separatorBuilder: (_, _) => const SizedBox(height: 2),
+      itemBuilder: (_, _) => const RankingSkeletonItem(),
+    );
+  }
+}
+
+class _RankingEmptyView extends StatelessWidget {
+  final String message;
+
+  const _RankingEmptyView({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.inbox_outlined, size: 64, color: Colors.grey[400]),
+          Icon(Icons.inbox_outlined, size: 64, color: colorScheme.outline),
           const SizedBox(height: 16),
           Text(
-            t.common.no_content,
-            style: theme.textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
+            message,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildErrorView(ThemeData theme, Object error, dynamic provider) {
+class _RankingErrorView extends StatelessWidget {
+  final Object error;
+  final String retryLabel;
+  final String loadFailedLabel;
+  final VoidCallback onRetry;
+
+  const _RankingErrorView({
+    required this.error,
+    required this.retryLabel,
+    required this.loadFailedLabel,
+    required this.onRetry,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
+          Icon(Icons.error_outline, size: 64, color: colorScheme.error),
           const SizedBox(height: 16),
           Text(
-            t.common.load_failed,
-            style: theme.textTheme.bodyLarge?.copyWith(color: Colors.grey[700]),
+            loadFailedLabel,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
-            error.toString().split(':')[0],
-            style: theme.textTheme.labelSmall?.copyWith(color: Colors.grey[500]),
+            error.toString().split(':').first,
+            style: theme.textTheme.labelSmall?.copyWith(color: colorScheme.outline),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           ElevatedButton.icon(
-            onPressed: () => ref.refresh(provider.future),
+            onPressed: onRetry,
             icon: const Icon(Icons.refresh),
-            label: Text(t.common.retry),
+            label: Text(retryLabel),
           ),
         ],
       ),

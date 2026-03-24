@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/data/models/fav/index.dart';
-import 'package:culcul/features/favorites/controllers/favorites_controller.dart';
+import 'package:culcul/features/favorites/logic/favorites_controller.dart';
 import 'package:culcul/features/favorites/presentation/fav_folder_item.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
@@ -9,7 +9,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 enum FavFolderType { created, collected }
 
-class FavFolderList extends HookConsumerWidget {
+class FavFolderList extends ConsumerWidget {
   final FavFolderType type;
 
   const FavFolderList({super.key, required this.type});
@@ -34,10 +34,10 @@ class FavFolderList extends HookConsumerWidget {
       provider: provider,
       asyncValue: asyncValue,
       onRefresh: () async {
-        return ref.refresh(
+        ref.invalidate(
           type == FavFolderType.created
-              ? favCreatedFoldersProvider.future
-              : favCollectedFoldersProvider.future,
+              ? favCreatedFoldersProvider
+              : favCollectedFoldersProvider,
         );
       },
       onLoadMore: onLoadMore,
@@ -71,6 +71,8 @@ class _Skeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: 10,
@@ -84,7 +86,7 @@ class _Skeleton extends StatelessWidget {
                 width: 88,
                 height: 88,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: colorScheme.surfaceContainerHigh,
                   borderRadius: BorderRadius.circular(6),
                 ),
               ),
@@ -93,9 +95,13 @@ class _Skeleton extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(height: 16, color: Colors.white),
+                    Container(height: 16, color: colorScheme.surfaceContainerHigh),
                     const SizedBox(height: 8),
-                    Container(height: 14, width: 100, color: Colors.white),
+                    Container(
+                      height: 14,
+                      width: 100,
+                      color: colorScheme.surfaceContainerHigh,
+                    ),
                   ],
                 ),
               ),

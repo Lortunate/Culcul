@@ -15,59 +15,66 @@ class LiveRoomPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(liveRoomControllerProvider(roomId));
-
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
+    final provider = liveRoomControllerProvider(roomId);
+    final state = ref.watch(provider);
+    final notifier = ref.read(provider.notifier);
 
     return Scaffold(
       backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // 1. Top Header
-            LiveHeader(
-              roomInfo: state.roomInfo,
-              anchorInfo: state.anchorInfo,
-              liveAnchorInfo: state.liveAnchorInfo,
-              guardList: state.guardList,
-              goldRank: state.goldRank,
-              onFollow: () =>
-                  ref.read(liveRoomControllerProvider(roomId).notifier).toggleFollow(),
-            ),
-
-            // 2. Video Player
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Container(
-                color: Colors.black,
-                child: LivePlayerView(roomId: roomId),
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.light,
+        child: SafeArea(
+          child: Column(
+            children: [
+              LiveHeader(
+                roomInfo: state.roomInfo,
+                anchorInfo: state.anchorInfo,
+                liveAnchorInfo: state.liveAnchorInfo,
+                guardList: state.guardList,
+                goldRank: state.goldRank,
+                onFollow: notifier.toggleFollow,
               ),
-            ),
-
-            // 3. Room Info & Danmaku
-            Expanded(
-              child: LiveRoomContent(roomId: roomId, state: state),
-            ),
-
-            // 4. Bottom Input Bar
-            LiveBottomBar(
-              onTapInput: () => _showInputSheet(context, roomId),
-              onGift: () {},
-              onShare: () {},
-              onLike: () {},
-            ),
-          ],
+              _LivePlayerSection(roomId: roomId),
+              Expanded(
+                child: LiveRoomContent(roomId: roomId, state: state),
+              ),
+              LiveBottomBar(
+                onTapInput: () => _showInputSheet(context),
+                onGift: () {},
+                onShare: () {},
+                onLike: () {},
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  void _showInputSheet(BuildContext context, int roomId) {
+  void _showInputSheet(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF1A1A1A), // Dark background
+      backgroundColor: colorScheme.surfaceContainerHighest,
       builder: (context) => LiveInputSheet(roomId: roomId),
+    );
+  }
+}
+
+class _LivePlayerSection extends StatelessWidget {
+  const _LivePlayerSection({required this.roomId});
+
+  final int roomId;
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: ColoredBox(
+        color: Colors.black,
+        child: LivePlayerView(roomId: roomId),
+      ),
     );
   }
 }

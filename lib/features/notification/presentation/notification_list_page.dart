@@ -10,6 +10,13 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 enum NotificationType { reply, at, like, system }
 
+const _notificationTitles = {
+  NotificationType.reply: '回复我的',
+  NotificationType.at: '@我',
+  NotificationType.like: '收到的赞',
+  NotificationType.system: '系统通知',
+};
+
 class NotificationListPage extends ConsumerStatefulWidget {
   final NotificationType type;
 
@@ -59,58 +66,29 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
     }
   }
 
-  AsyncValue<List<ReplyItem>> _getProviderState() {
-    switch (widget.type) {
-      case NotificationType.reply:
-        return ref.watch(replyListProvider);
-      case NotificationType.at:
-        return ref.watch(atListProvider);
-      case NotificationType.like:
-        return ref.watch(likeListProvider);
-      case NotificationType.system:
-        return const AsyncValue.data([]); // TODO
-    }
-  }
-
-  String _getTitle() {
-    switch (widget.type) {
-      case NotificationType.reply:
-        return '回复我的';
-      case NotificationType.at:
-        return '@我';
-      case NotificationType.like:
-        return '收到的赞';
-      case NotificationType.system:
-        return '系统通知';
-    }
-  }
+  AsyncValue<List<ReplyItem>> _providerState(NotificationType type) => switch (type) {
+    NotificationType.reply => ref.watch(replyListProvider),
+    NotificationType.at => ref.watch(atListProvider),
+    NotificationType.like => ref.watch(likeListProvider),
+    NotificationType.system => const AsyncValue.data([]),
+  };
 
   @override
   Widget build(BuildContext context) {
-    final state = _getProviderState();
+    final state = _providerState(widget.type);
+    final title = _notificationTitles[widget.type] ?? '';
 
     return Scaffold(
-      appBar: AppBar(title: Text(_getTitle())),
+      appBar: AppBar(title: Text(title)),
       body: state.when(
         data: (items) {
-          if (items.isEmpty) {
-            return const Center(child: Text('暂无消息'));
-          }
-          return EasyRefresh(
-            controller: _erController,
-            footer: const MaterialFooter(),
-            onLoad: () async {
-              _loadMore();
-              return IndicatorResult.success;
-            },
-            child: ListView.separated(
-              controller: _scrollController,
-              itemCount: items.length,
-              separatorBuilder: (context, index) => const Divider(height: 1),
-              itemBuilder: (context, index) {
-                return _buildItem(context, items[index]);
-              },
-            ),
+          if (items.isEmpty) return const _EmptyNotificationView();
+          return _NotificationListView(
+            items: items,
+            scrollController: _scrollController,
+            refreshController: _erController,
+            onLoadMore: _loadMore,
+            itemBuilder: _buildItem,
           );
         },
         error: (e, s) {
@@ -142,5 +120,48 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
 
   Widget _buildItem(BuildContext context, ReplyItem item) {
     return NotificationItemWidget(item: item, type: widget.type);
+  }
+}
+
+class _NotificationListView extends StatelessWidget {
+  const _NotificationListView({
+    required this.items,
+    required this.scrollController,
+    required this.refreshController,
+    required this.onLoadMore,
+    required this.itemBuilder,
+  });
+
+  final List<ReplyItem> items;
+  final ScrollController scrollController;
+  final EasyRefreshController refreshController;
+  final VoidCallback onLoadMore;
+  final Widget Function(BuildContext context, ReplyItem item) itemBuilder;
+
+  @override
+  Widget build(BuildContext context) {
+    return EasyRefresh(
+      controller: refreshController,
+      footer: const MaterialFooter(),
+      onLoad: () async {
+        onLoadMore();
+        return IndicatorResult.success;
+      },
+      child: ListView.separated(
+        controller: scrollController,
+        itemCount: items.length,
+        separatorBuilder: (_, _) => const Divider(height: 1),
+        itemBuilder: (context, index) => itemBuilder(context, items[index]),
+      ),
+    );
+  }
+}
+
+class _EmptyNotificationView extends StatelessWidget {
+  const _EmptyNotificationView();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text('暂无消息'));
   }
 }

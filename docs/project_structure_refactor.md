@@ -241,12 +241,13 @@ lib/
 
 ### 小 feature
 
-适用于 `scanner`、`to_view` 这类轻模块：
+适用于 `to_view` 这类轻模块：
 
 ```text
-features/scanner/
-├── scanner_page.dart
-└── scanner_route.dart
+features/to_view/
+├── data/
+├── logic/
+└── presentation/
 ```
 
 ### 中等 feature

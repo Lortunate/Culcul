@@ -25,23 +25,14 @@ class ChatPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final chatState = ref.watch(chatProvider(talkerId, sessionType));
+    final provider = chatProvider(talkerId, sessionType);
+    final chatState = ref.watch(provider);
     final currentUser = ref.watch(authProvider).user;
+    final notifier = ref.read(provider.notifier);
 
-    // 获取对方信息
-    String displayAvatarUrl = avatarUrl ?? '';
-    String displayName = name ?? 'Chat';
-
-    if (sessionType == 1) {
-      final profileAsync = ref.watch(userProfileProvider(talkerId.toString()));
-      if (profileAsync.hasValue) {
-        final profile = profileAsync.value!;
-        if (displayAvatarUrl.isEmpty) {
-          displayAvatarUrl = profile.avatarUrl ?? '';
-        }
-        displayName = profile.username;
-      }
-    }
+    final displayInfo = _resolveDisplayInfo(ref);
+    final displayAvatarUrl = displayInfo.avatarUrl;
+    final displayName = displayInfo.name;
 
     final textController = useTextEditingController();
     final scrollController = useScrollController();
@@ -64,10 +55,7 @@ class ChatPage extends HookConsumerWidget {
                 selfAvatarUrl: currentUser?.avatarUrl ?? '',
                 otherAvatarUrl: displayAvatarUrl,
                 scrollController: scrollController,
-                onLoadMore: () async {
-                  final notifier = ref.read(chatProvider(talkerId, sessionType).notifier);
-                  await notifier.loadMore();
-                },
+                onLoadMore: notifier.loadMore,
               ),
               error: (err, stack) => Center(child: Text('Error: $err')),
               loading: () => const ChatMessageSkeletonList(),
@@ -75,53 +63,89 @@ class ChatPage extends HookConsumerWidget {
           ),
           ChatInput(
             controller: textController,
-            onSendImage: (File image) async {
-              try {
-                await ref
-                    .read(chatProvider(talkerId, sessionType).notifier)
-                    .sendImage(image);
-                if (scrollController.hasClients) {
-                  scrollController.animateTo(
-                    0,
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeOut,
-                  );
-                }
-              } catch (e) {
-                if (context.mounted) {
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text('发送图片失�? $e')));
-                }
-              }
-            },
+            onSendImage: (File image) => _sendImage(
+              context: context,
+              notifier: notifier,
+              scrollController: scrollController,
+              image: image,
+            ),
             onSend: () async {
-              if (textController.text.isNotEmpty) {
-                try {
-                  await ref
-                      .read(chatProvider(talkerId, sessionType).notifier)
-                      .sendMessage(textController.text);
-                  textController.clear();
-                  // Scroll to bottom (which is 0 in reverse list)
-                  if (scrollController.hasClients) {
-                    scrollController.animateTo(
-                      0,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeOut,
-                    );
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(SnackBar(content: Text('发送失�? $e')));
-                  }
-                }
-              }
+              final text = textController.text;
+              if (text.isEmpty) return;
+              await _sendText(
+                context: context,
+                notifier: notifier,
+                scrollController: scrollController,
+                textController: textController,
+                text: text,
+              );
             },
           ),
         ],
       ),
     );
+  }
+
+  ({String avatarUrl, String name}) _resolveDisplayInfo(WidgetRef ref) {
+    var displayAvatarUrl = avatarUrl ?? '';
+    var displayName = name ?? 'Chat';
+
+    if (sessionType != 1) return (avatarUrl: displayAvatarUrl, name: displayName);
+
+    final profileAsync = ref.watch(userProfileProvider(talkerId.toString()));
+    if (!profileAsync.hasValue) return (avatarUrl: displayAvatarUrl, name: displayName);
+
+    final profile = profileAsync.value!;
+    if (displayAvatarUrl.isEmpty) {
+      displayAvatarUrl = profile.avatarUrl ?? '';
+    }
+    displayName = profile.username;
+    return (avatarUrl: displayAvatarUrl, name: displayName);
+  }
+
+  Future<void> _sendImage({
+    required BuildContext context,
+    required Chat notifier,
+    required ScrollController scrollController,
+    required File image,
+  }) async {
+    try {
+      await notifier.sendImage(image);
+      await _scrollToBottom(scrollController);
+    } catch (e) {
+      if (!context.mounted) return;
+      _showSendError(context, '发送图片失败: $e');
+    }
+  }
+
+  Future<void> _sendText({
+    required BuildContext context,
+    required Chat notifier,
+    required ScrollController scrollController,
+    required TextEditingController textController,
+    required String text,
+  }) async {
+    try {
+      await notifier.sendMessage(text);
+      textController.clear();
+      await _scrollToBottom(scrollController);
+    } catch (e) {
+      if (!context.mounted) return;
+      _showSendError(context, '发送失败: $e');
+    }
+  }
+
+  Future<void> _scrollToBottom(ScrollController controller) async {
+    if (!controller.hasClients) return;
+    await controller.animateTo(
+      0,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
+
+  void _showSendError(BuildContext context, String message) {
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 }

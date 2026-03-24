@@ -1,12 +1,12 @@
 import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:flutter/material.dart';
 
-class SelectionItem extends StatelessWidget {
+class SettingsSelectionItem extends StatelessWidget {
   final String title;
   final bool isSelected;
   final VoidCallback onTap;
 
-  const SelectionItem({
+  const SettingsSelectionItem({
     super.key,
     required this.title,
     required this.isSelected,

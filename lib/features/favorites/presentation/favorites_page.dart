@@ -1,9 +1,9 @@
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/features/favorites/controllers/favorites_controller.dart';
+import 'package:culcul/features/favorites/logic/favorites_controller.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
-import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/auth/controllers/auth_controller.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_tab_bar.dart';
 import 'package:culcul/ui/widgets/guest_view.dart';
 import 'package:flutter/material.dart';
@@ -30,50 +30,80 @@ class FavoritesPage extends HookConsumerWidget {
         backgroundColor: colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         actions: [
-          if (authState.isLoggedIn && tabController.index == 0)
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () async {
-                final result = await showDialog<Map<String, dynamic>>(
-                  context: context,
-                  builder: (context) => const FavFolderDialog(),
-                );
-
-                if (result != null) {
-                  try {
-                    await ref
-                        .read(favRepositoryProvider)
-                        .addFolder(
-                          title: result['title']! as String,
-                          intro: result['intro'] as String?,
-                          privacy: result['privacy'] as int?,
-                        );
-                    // Refresh the list
-                    ref.invalidate(favCreatedFoldersProvider);
-                  } catch (e) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(
-                        context,
-                      ).showSnackBar(SnackBar(content: Text('Failed to add folder: $e')));
-                    }
-                  }
-                }
-              },
-            ),
+          _AddFolderAction(isVisible: authState.isLoggedIn && tabController.index == 0),
         ],
         bottom: authState.isLoggedIn
-            ? AppTabBar(controller: tabController, tabs: [t.favorites.created, t.favorites.collected])
+            ? AppTabBar(
+                controller: tabController,
+                tabs: [t.favorites.created, t.favorites.collected],
+              )
             : null,
       ),
       body: authState.isLoggedIn
-          ? TabBarView(
-              controller: tabController,
-              children: const [
-                FavFolderList(type: FavFolderType.created),
-                FavFolderList(type: FavFolderType.collected),
-              ],
-            )
+          ? _FavoritesTabView(controller: tabController)
           : GuestView(title: t.profile.not_logged_in, message: t.profile.login_hint),
+    );
+  }
+}
+
+class _FavoritesTabView extends StatelessWidget {
+  final TabController controller;
+
+  const _FavoritesTabView({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return TabBarView(
+      controller: controller,
+      children: const [
+        FavFolderList(type: FavFolderType.created),
+        FavFolderList(type: FavFolderType.collected),
+      ],
+    );
+  }
+}
+
+class _AddFolderAction extends ConsumerWidget {
+  final bool isVisible;
+
+  const _AddFolderAction({required this.isVisible});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!isVisible) {
+      return const SizedBox.shrink();
+    }
+
+    return IconButton(
+      icon: const Icon(Icons.add),
+      onPressed: () async {
+        final result = await showDialog<Map<String, dynamic>>(
+          context: context,
+          builder: (_) => const FavFolderDialog(),
+        );
+
+        if (result == null) {
+          return;
+        }
+
+        try {
+          await ref
+              .read(favRepositoryProvider)
+              .addFolder(
+                title: result['title']! as String,
+                intro: result['intro'] as String?,
+                privacy: result['privacy'] as int?,
+              );
+          ref.invalidate(favCreatedFoldersProvider);
+        } catch (error) {
+          if (!context.mounted) {
+            return;
+          }
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Failed to add folder: $error')));
+        }
+      },
     );
   }
 }

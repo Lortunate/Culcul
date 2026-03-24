@@ -18,7 +18,6 @@ import 'package:culcul/features/profile/presentation/relation/followers_page.dar
 import 'package:culcul/features/profile/presentation/relation/followings_page.dart';
 import 'package:culcul/features/profile/presentation/user_profile_page.dart';
 import 'package:culcul/features/ranking/presentation/ranking_page.dart';
-import 'package:culcul/features/scanner/presentation/scanner_page.dart';
 import 'package:culcul/features/search/presentation/search_page.dart';
 import 'package:culcul/features/settings/presentation/settings_page.dart';
 import 'package:culcul/features/to_view/presentation/to_view_page.dart';
@@ -469,21 +468,6 @@ class ChatRoute extends GoRouteData with $ChatRoute {
       key: state.pageKey,
       child: build(context, state),
     );
-  }
-}
-
-@TypedGoRoute<ScannerRoute>(path: '/scan')
-class ScannerRoute extends GoRouteData with $ScannerRoute {
-  const ScannerRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) {
-    return const ScannerPage();
-  }
-
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }
 

@@ -4,6 +4,8 @@ import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:culcul/features/dynamic/controllers/dynamic_controller.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/emoji_picker.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/publish_dynamic_bottom_toolbar.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/publish_dynamic_image_grid.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/topic_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -17,7 +19,10 @@ class PublishDynamicPage extends ConsumerStatefulWidget {
 }
 
 class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
+  static const _maxImages = 9;
+
   final TextEditingController _controller = TextEditingController();
+  final ImagePicker _imagePicker = ImagePicker();
   final List<File> _images = [];
   bool _isPublishing = false;
   final FocusNode _focusNode = FocusNode();
@@ -30,15 +35,12 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
   }
 
   Future<void> _pickImage() async {
-    if (_images.length >= 9) return;
+    if (_images.length >= _maxImages) return;
 
-    final picker = ImagePicker();
-    final picked = await picker.pickMultiImage(limit: 9 - _images.length);
+    final picked = await _imagePicker.pickMultiImage(limit: _maxImages - _images.length);
 
     if (picked.isNotEmpty) {
-      setState(() {
-        _images.addAll(picked.map((e) => File(e.path)));
-      });
+      setState(() => _images.addAll(picked.map((item) => File(item.path))));
     }
   }
 
@@ -166,7 +168,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final isPostable = _controller.text.trim().isNotEmpty || _images.isNotEmpty;
+    final isPostable = _hasDraft;
 
     return PopScope(
       canPop: false,
@@ -245,131 +247,27 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
                     onChanged: (_) => setState(() {}),
                   ),
                   const SizedBox(height: 12),
-                  if (_images.isNotEmpty)
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 8,
-                        mainAxisSpacing: 8,
-                      ),
-                      itemCount: _images.length + (_images.length < 9 ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (index == _images.length) {
-                          return _buildAddImageButton(colorScheme);
-                        }
-                        return _buildImageItem(index, colorScheme);
-                      },
-                    ),
+                  PublishDynamicImageGrid(
+                    images: _images,
+                    maxImages: _maxImages,
+                    onAddTap: _pickImage,
+                    onRemoveAt: (index) => setState(() => _images.removeAt(index)),
+                  ),
                 ],
               ),
             ),
-            _buildBottomToolbar(colorScheme),
+            PublishDynamicBottomToolbar(
+              charCount: _controller.text.length,
+              onPickImage: _pickImage,
+              onInsertMention: () => _insertText('@'),
+              onPickTopic: _showTopicPicker,
+              onPickEmoji: _showEmojiPicker,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildImageItem(int index, ColorScheme colorScheme) {
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.file(_images[index], fit: BoxFit.cover),
-          ),
-        ),
-        Positioned(
-          top: 4,
-          right: 4,
-          child: GestureDetector(
-            onTap: () => setState(() => _images.removeAt(index)),
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.5),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(Icons.close, size: 16, color: Colors.white),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAddImageButton(ColorScheme colorScheme) {
-    return InkWell(
-      onTap: _pickImage,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Icon(Icons.add, size: 32, color: colorScheme.onSurfaceVariant),
-      ),
-    );
-  }
-
-  Widget _buildBottomToolbar(ColorScheme colorScheme) {
-    return Container(
-      padding: EdgeInsets.only(
-        left: 20,
-        right: 20,
-        top: 12,
-        bottom: MediaQuery.of(context).padding.bottom + 12,
-      ),
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        border: Border(
-          top: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.2)),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              _ToolbarAction(icon: Icons.image_outlined, onTap: _pickImage),
-              const SizedBox(width: 24),
-              _ToolbarAction(icon: Icons.alternate_email, onTap: () => _insertText('@')),
-              const SizedBox(width: 24),
-              _ToolbarAction(icon: Icons.tag, onTap: _showTopicPicker),
-              const SizedBox(width: 24),
-              _ToolbarAction(
-                icon: Icons.sentiment_satisfied_alt,
-                onTap: _showEmojiPicker,
-              ),
-            ],
-          ),
-          Text(
-            '${_controller.text.length}',
-            style: TextStyle(color: colorScheme.outline, fontSize: 12),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ToolbarAction extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _ToolbarAction({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: Icon(icon, size: 26, color: Theme.of(context).colorScheme.onSurface),
-      ),
-    );
-  }
+  bool get _hasDraft => _controller.text.trim().isNotEmpty || _images.isNotEmpty;
 }

@@ -14,6 +14,7 @@ class HistoryItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final progressColor = colorScheme.primary;
 
     return DefaultTextStyle.merge(
       style: theme.textTheme.titleMedium?.copyWith(
@@ -40,7 +41,7 @@ class HistoryItemWidget extends StatelessWidget {
                   value: item.progress / item.duration,
                   minHeight: 3,
                   backgroundColor: Colors.transparent,
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.pinkAccent),
+                  valueColor: AlwaysStoppedAnimation<Color>(progressColor),
                 ),
               )
             : null,
@@ -63,7 +64,10 @@ class HistoryItemWidget extends StatelessWidget {
               ),
               child: Text(
                 item.badge,
-                style: TextStyle(color: colorScheme.primary, fontSize: 10),
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: colorScheme.primary,
+                  fontSize: 10,
+                ),
               ),
             ),
           IconText(

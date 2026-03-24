@@ -38,7 +38,7 @@ class ToViewItem extends StatelessWidget {
                   value: item.progressRatio,
                   minHeight: 3,
                   backgroundColor: Colors.transparent,
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.pinkAccent),
+                  valueColor: AlwaysStoppedAnimation<Color>(colorScheme.primary),
                 ),
               ),
             )
@@ -50,7 +50,7 @@ class ToViewItem extends StatelessWidget {
             const SizedBox(width: 4),
             Expanded(
               child: Text(
-                '观看�?${FormatUtils.formatDuration(item.progress ?? 0)}',
+                '观看至 ${FormatUtils.formatDuration(item.progress ?? 0)}',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                   fontSize: 12,

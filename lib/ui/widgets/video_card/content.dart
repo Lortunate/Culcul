@@ -3,48 +3,34 @@ part of '../video_card.dart';
 class _VideoCardContent extends StatelessWidget {
   final String title;
   final String author;
-  final String? reason;
   final String? description;
   final bool showAuthor;
-  final List<Widget>? extra;
+  final List<Widget> extra;
 
   const _VideoCardContent({
     required this.title,
     required this.author,
-    required this.reason,
-    required this.description,
-    required this.showAuthor,
-    required this.extra,
+    this.description,
+    this.showAuthor = true,
+    this.extra = const [],
   });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _VideoCardTitle(title: title),
-            if (reason?.isNotEmpty == true) ...[
-              const SizedBox(height: 6),
-              _VideoCardReasonTag(reason: reason!),
-            ],
-            if (description?.isNotEmpty == true) ...[
-              const SizedBox(height: 4),
-              _VideoCardDescription(description: description!),
-            ],
-            if (extra != null) ...extra!,
-            const Spacer(),
-            if (showAuthor) ...[
-              const SizedBox(height: 6),
-              _VideoCardFooter(author: author, colorScheme: colorScheme, theme: theme),
-            ],
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _VideoCardTitle(title: title),
+          if (description?.isNotEmpty == true) ...[
+            const SizedBox(height: 4),
+            _VideoCardDescription(description: description!),
           ],
-        ),
+          ...extra,
+          const Spacer(),
+          if (showAuthor) _VideoCardFooter(author: author),
+        ],
       ),
     );
   }
@@ -70,24 +56,6 @@ class _VideoCardTitle extends StatelessWidget {
         fontSize: 13,
         color: colorScheme.onSurface,
       ),
-    );
-  }
-}
-
-class _VideoCardReasonTag extends StatelessWidget {
-  final String reason;
-
-  const _VideoCardReasonTag({required this.reason});
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return AppTag(
-      text: reason,
-      color: colorScheme.primaryContainer.withValues(alpha: 0.188),
-      textColor: colorScheme.primary,
-      fontSize: 10,
     );
   }
 }

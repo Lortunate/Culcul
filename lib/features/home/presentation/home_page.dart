@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+typedef _HomeTabItem = ({String title, Widget view});
+
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
 
@@ -21,14 +23,7 @@ class HomePage extends HookConsumerWidget {
     final defaultSearchAsync = ref.watch(defaultSearchProvider);
     final authState = ref.watch(authProvider);
 
-    final tabs = useMemoized(
-      () => [
-        (title: t.home.tabs.live, view: const LiveView()),
-        (title: t.home.tabs.recommend, view: const RecommendView()),
-        (title: t.home.tabs.hot, view: const PopularView()),
-      ],
-      [t],
-    );
+    final tabs = useMemoized(() => _buildTabs(t), [t]);
 
     final tabController = useTabController(initialLength: tabs.length, initialIndex: 1);
 
@@ -36,20 +31,11 @@ class HomePage extends HookConsumerWidget {
       appBar: HomeAppBar(
         tabController: tabController,
         tabs: tabs.map((e) => e.title).toList(),
-        onTabTap: (index) {
-          if (!tabController.indexIsChanging) {
-            ref.read(homeTabTapProvider.notifier).update(HomeTabTapEvent(index));
-          }
-        },
+        onTabTap: (index) =>
+            _handleTabTap(index: index, controller: tabController, ref: ref),
         onSearchTap: () => const SearchRoute().push(context),
         hintText: defaultSearchAsync.asData?.value?.showName,
-        onAvatarTap: () {
-          if (authState.isLoggedIn) {
-            const ProfileRoute().go(context);
-          } else {
-            LoginDialog.show(context);
-          }
-        },
+        onAvatarTap: () => _handleAvatarTap(context, authState.isLoggedIn),
         onMessageTap: () => const NotificationRoute().push(context),
         onGameTap: () {},
       ),
@@ -58,5 +44,28 @@ class HomePage extends HookConsumerWidget {
         children: tabs.map((e) => e.view).toList(),
       ),
     );
+  }
+
+  List<_HomeTabItem> _buildTabs(Translations t) => [
+    (title: t.home.tabs.live, view: const LiveView()),
+    (title: t.home.tabs.recommend, view: const RecommendView()),
+    (title: t.home.tabs.hot, view: const PopularView()),
+  ];
+
+  void _handleTabTap({
+    required int index,
+    required TabController controller,
+    required WidgetRef ref,
+  }) {
+    if (controller.indexIsChanging) return;
+    ref.read(homeTabTapProvider.notifier).update(HomeTabTapEvent(index));
+  }
+
+  void _handleAvatarTap(BuildContext context, bool isLoggedIn) {
+    if (isLoggedIn) {
+      const ProfileRoute().go(context);
+      return;
+    }
+    LoginDialog.show(context);
   }
 }

@@ -35,21 +35,21 @@ class VideoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final content = _VideoCardContent(
+      title: video.title,
+      author: video.owner.name,
+      description: showDescription ? video.desc : null,
+      showAuthor: showAuthor,
+    );
+
     return AppCardContainer(
       onTap: onTap,
       onLongPress: () => _showMoreSheet(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _VideoCardThumbnail(video: video),
-          _VideoCardContent(
-            title: video.title,
-            author: video.owner.name,
-            reason: video.rcmdReason,
-            description: showDescription ? video.desc : null,
-            showAuthor: showAuthor,
-            extra: null,
-          ),
+          _VideoCardThumbnail(video: video, reason: video.rcmdReason),
+          Expanded(child: content),
         ],
       ),
     );
@@ -59,19 +59,17 @@ class VideoCard extends StatelessWidget {
 class VideoCardContent extends StatelessWidget {
   final String title;
   final String author;
-  final String? reason;
   final String? description;
   final bool showAuthor;
-  final List<Widget>? extra;
+  final List<Widget> extra;
 
   const VideoCardContent({
     super.key,
     required this.title,
     required this.author,
-    this.reason,
     this.description,
     this.showAuthor = true,
-    this.extra,
+    this.extra = const [],
   });
 
   @override
@@ -79,7 +77,6 @@ class VideoCardContent extends StatelessWidget {
     return _VideoCardContent(
       title: title,
       author: author,
-      reason: reason,
       description: description,
       showAuthor: showAuthor,
       extra: extra,

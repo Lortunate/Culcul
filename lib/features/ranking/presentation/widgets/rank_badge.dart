@@ -5,24 +5,6 @@ class RankBadge extends StatelessWidget {
 
   const RankBadge({super.key, required this.rank});
 
-  static const _rank1Gradient = LinearGradient(
-    colors: [Color(0xFFD32F2F), Color(0xFFEF5350)], // Material Red 700 -> 400
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-
-  static const _rank2Gradient = LinearGradient(
-    colors: [Color(0xFFFFA502), Color(0xFFFFC048)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-
-  static const _rank3Gradient = LinearGradient(
-    colors: [Color(0xFF3742FA), Color(0xFF5352ED)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-
   static const _shadowOffset = Offset(0, 2);
   static const _borderRadius = BorderRadius.only(
     topLeft: Radius.circular(8),
@@ -31,61 +13,73 @@ class RankBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BoxDecoration decoration;
-    double size = 20;
-    double fontSize = 12;
-
-    if (rank == 1) {
-      size = 24;
-      fontSize = 14;
-      decoration = const BoxDecoration(
-        gradient: _rank1Gradient,
-        borderRadius: _borderRadius,
-        boxShadow: [
-          BoxShadow(color: Color(0x4DD32F2F), blurRadius: 4, offset: _shadowOffset),
-        ],
-      );
-    } else if (rank == 2) {
-      size = 24;
-      fontSize = 14;
-      decoration = const BoxDecoration(
-        gradient: _rank2Gradient,
-        borderRadius: _borderRadius,
-        boxShadow: [
-          BoxShadow(color: Color(0x4DFFA502), blurRadius: 4, offset: _shadowOffset),
-        ],
-      );
-    } else if (rank == 3) {
-      size = 24;
-      fontSize = 14;
-      decoration = const BoxDecoration(
-        gradient: _rank3Gradient,
-        borderRadius: _borderRadius,
-        boxShadow: [
-          BoxShadow(color: Color(0x4D3742FA), blurRadius: 4, offset: _shadowOffset),
-        ],
-      );
-    } else {
-      decoration = BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.4),
-        borderRadius: _borderRadius,
-      );
-    }
+    final colorScheme = Theme.of(context).colorScheme;
+    final style = _RankBadgeStyle.resolve(rank, colorScheme);
 
     return Container(
-      width: size,
-      height: size,
+      width: style.size,
+      height: style.size,
       alignment: Alignment.center,
-      decoration: decoration,
+      decoration: style.decoration,
       child: Text(
         '$rank',
         style: TextStyle(
-          color: Colors.white,
+          color: colorScheme.onPrimary,
           fontWeight: FontWeight.bold,
-          fontSize: fontSize,
+          fontSize: style.fontSize,
           fontStyle: FontStyle.italic,
           height: 1,
         ),
+      ),
+    );
+  }
+}
+
+class _RankBadgeStyle {
+  final double size;
+  final double fontSize;
+  final BoxDecoration decoration;
+
+  const _RankBadgeStyle({
+    required this.size,
+    required this.fontSize,
+    required this.decoration,
+  });
+
+  static _RankBadgeStyle resolve(int rank, ColorScheme colorScheme) {
+    return switch (rank) {
+      1 => _buildTopStyle(colorScheme.error),
+      2 => _buildTopStyle(colorScheme.tertiary),
+      3 => _buildTopStyle(colorScheme.primary),
+      _ => _RankBadgeStyle(
+        size: 20,
+        fontSize: 12,
+        decoration: BoxDecoration(
+          color: colorScheme.scrim.withValues(alpha: 0.4),
+          borderRadius: RankBadge._borderRadius,
+        ),
+      ),
+    };
+  }
+
+  static _RankBadgeStyle _buildTopStyle(Color baseColor) {
+    return _RankBadgeStyle(
+      size: 24,
+      fontSize: 14,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [baseColor, baseColor.withValues(alpha: 0.78)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: RankBadge._borderRadius,
+        boxShadow: [
+          BoxShadow(
+            color: baseColor.withValues(alpha: 0.3),
+            blurRadius: 4,
+            offset: RankBadge._shadowOffset,
+          ),
+        ],
       ),
     );
   }
