@@ -37,21 +37,15 @@ class FollowButton extends ConsumerWidget {
         onTap();
       },
       style: FilledButton.styleFrom(
-        backgroundColor: isFollowed
-            ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
-            : colorScheme.primary,
+        backgroundColor: isFollowed ? colorScheme.primaryContainer : colorScheme.primary,
         foregroundColor: isFollowed
-            ? colorScheme.onSurfaceVariant
+            ? colorScheme.onPrimaryContainer
             : colorScheme.onPrimary,
         elevation: 0,
         minimumSize: Size(width ?? 56, height ?? 32),
         fixedSize: height != null ? Size.fromHeight(height!) : null,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        shape:
-            shape ??
-            (isFollowed
-                ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))
-                : const StadiumBorder()),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        shape: shape ?? const StadiumBorder(),
         visualDensity: VisualDensity.compact,
       ),
       child: AnimatedSwitcher(
@@ -66,13 +60,8 @@ class FollowButton extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           key: ValueKey<bool>(isFollowed),
           children: [
-            if (isFollowed) ...[
-              const Icon(Icons.menu, size: 16),
-              const SizedBox(width: 4),
-            ],
             Text(
-              text ??
-                  (isFollowed ? t.actions.followed : '+ ${t.actions.follow}'),
+              text ?? (isFollowed ? t.actions.followed : '+ ${t.actions.follow}'),
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
             ),
           ],

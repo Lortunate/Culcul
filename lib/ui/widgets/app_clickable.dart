@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// A unified clickable widget that provides consistent inkwell feedback.
-/// Wraps [InkWell] with [Material] to ensure the ripple effect works correctly
-/// even when the child has its own background color.
 class AppClickable extends StatelessWidget {
   final Widget child;
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
   final bool haptic;
+
+  @Deprecated('请在外部或 child 中自行处理 borderRadius')
   final BorderRadius? borderRadius;
+
+  @Deprecated('请在外部或 child 中自行处理 backgroundColor')
   final Color? backgroundColor;
+
+  @Deprecated('请在外部或 child 内部使用 Padding 处理')
   final EdgeInsetsGeometry? padding;
+
+  @Deprecated('请在外部使用 Container/Padding 处理 margin')
   final EdgeInsetsGeometry? margin;
 
   const AppClickable({
@@ -28,29 +33,38 @@ class AppClickable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: margin,
-      child: Material(
+    Widget content = InkWell(
+      onTap: onTap != null
+          ? () {
+              if (haptic) HapticFeedback.lightImpact();
+              onTap?.call();
+            }
+          : null,
+      onLongPress: onLongPress != null
+          ? () {
+              if (haptic) HapticFeedback.mediumImpact();
+              onLongPress?.call();
+            }
+          : null,
+      borderRadius: borderRadius, // 兼容旧代码，避免水波纹溢出圆角
+      child: padding != null && padding != EdgeInsets.zero
+          ? Padding(padding: padding!, child: child)
+          : child,
+    );
+
+    if (backgroundColor != null || borderRadius != null) {
+      content = Material(
         color: backgroundColor ?? Colors.transparent,
         borderRadius: borderRadius,
         clipBehavior: borderRadius != null ? Clip.antiAlias : Clip.none,
-        child: InkWell(
-          onTap: onTap != null
-              ? () {
-                  if (haptic) HapticFeedback.lightImpact();
-                  onTap?.call();
-                }
-              : null,
-          onLongPress: onLongPress != null
-              ? () {
-                  if (haptic) HapticFeedback.mediumImpact();
-                  onLongPress?.call();
-                }
-              : null,
-          borderRadius: borderRadius,
-          child: Padding(padding: padding ?? EdgeInsets.zero, child: child),
-        ),
-      ),
-    );
+        child: content,
+      );
+    }
+
+    if (margin != null && margin != EdgeInsets.zero) {
+      content = Container(margin: margin, child: content);
+    }
+
+    return content;
   }
 }
