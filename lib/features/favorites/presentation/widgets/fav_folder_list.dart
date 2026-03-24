@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/data/models/fav/index.dart';
-import 'package:culcul/features/favorites/logic/favorites_controller.dart';
+import 'package:culcul/features/favorites/controllers/favorites_controller.dart';
 import 'package:culcul/features/favorites/presentation/fav_folder_item.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
@@ -16,29 +16,18 @@ class FavFolderList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<List<FavFolderModel>> asyncValue;
-    final dynamic provider;
-    Future<void> Function()? onLoadMore;
-
-    if (type == FavFolderType.created) {
-      provider = favCreatedFoldersProvider;
-      asyncValue = ref.watch(favCreatedFoldersProvider);
-      onLoadMore = null;
-    } else {
-      provider = favCollectedFoldersProvider;
-      asyncValue = ref.watch(favCollectedFoldersProvider);
-      onLoadMore = () => ref.read(favCollectedFoldersProvider.notifier).loadMore();
-    }
+    final isCreated = type == FavFolderType.created;
+    final provider = isCreated ? favCreatedFoldersProvider : favCollectedFoldersProvider;
+    final asyncValue = ref.watch(provider);
+    final onLoadMore = isCreated
+        ? null
+        : () => ref.read(favCollectedFoldersProvider.notifier).loadMore();
 
     return SmartPagingView<FavFolderModel>(
       provider: provider,
       asyncValue: asyncValue,
       onRefresh: () async {
-        ref.invalidate(
-          type == FavFolderType.created
-              ? favCreatedFoldersProvider
-              : favCollectedFoldersProvider,
-        );
+        ref.invalidate(provider);
       },
       onLoadMore: onLoadMore,
       builder: (context, list) {

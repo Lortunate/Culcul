@@ -1,7 +1,7 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/data/models/video/video_model.dart';
 import 'package:culcul/features/home/controllers/home_recommend_controller.dart';
-import 'package:culcul/features/home/presentation/logic/home_scroll_manager.dart';
+import 'package:culcul/features/home/presentation/controllers/home_scroll_controller.dart';
 import 'package:culcul/ui/widgets/skeletons/page_skeletons.dart';
 import 'package:culcul/ui/widgets/skeletons/video_card_skeleton.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
@@ -30,7 +30,7 @@ class RecommendView extends HookConsumerWidget {
     final scrollController = useScrollController();
     final refreshController = useMemoized(() => EasyRefreshController());
 
-    useHomeScrollManager(ref, scrollController, refreshController, 1);
+    useHomeScrollController(ref, scrollController, refreshController, 1);
 
     return SmartPagingView(
       provider: homeRecommendProvider,

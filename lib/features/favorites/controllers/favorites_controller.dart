@@ -23,17 +23,13 @@ class FavCreatedFolders extends _$FavCreatedFolders {
         final folders = response.list ?? [];
         if (folders.isEmpty) return <FavFolderModel>[];
 
-        // Fetch covers for created folders as they don't come with covers
         final foldersWithCovers = await Future.wait(
           folders.map((folder) async {
-            // If cover exists and is not empty, use it
             if (folder.cover != null && folder.cover!.isNotEmpty) {
               return folder;
             }
 
             try {
-              // Fetch folder info to get the cover
-              // Use ps: 1 because we only need the info or the first video's cover
               final resResult = await repository.getFolderResources(
                 mediaId: folder.id,
                 pn: 1,
@@ -43,7 +39,6 @@ class FavCreatedFolders extends _$FavCreatedFolders {
               if (resResult case Success(value: final resources)) {
                 String cover = resources.info.cover;
 
-                // If info cover is empty, try to get from the first media
                 if (cover.isEmpty &&
                     resources.medias != null &&
                     resources.medias!.isNotEmpty) {
@@ -54,8 +49,8 @@ class FavCreatedFolders extends _$FavCreatedFolders {
                   return folder.copyWith(cover: cover);
                 }
               }
-            } catch (e) {
-              // Ignore errors for individual folder info fetch
+            } catch (_) {
+              return folder;
             }
 
             return folder;
@@ -94,8 +89,6 @@ class FavCollectedFolders extends _$FavCollectedFolders {
 
     return switch (result) {
       Success(value: final response) => () {
-        // Check if we have more data based on count or list size
-        // API returns count, but we can also just check if list size < pageSize
         if ((response.list?.length ?? 0) < _pageSize) {
           _hasMore = false;
         }
@@ -114,7 +107,6 @@ class FavCollectedFolders extends _$FavCollectedFolders {
       _page++;
       state = AsyncValue.data([...currentList, ...newItems]);
     } catch (e) {
-      // Don't set state to error to preserve current list
       rethrow;
     }
   }
