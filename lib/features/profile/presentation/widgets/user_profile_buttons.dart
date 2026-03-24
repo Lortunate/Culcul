@@ -66,7 +66,6 @@ class UserProfileButtons extends ConsumerWidget {
             ),
           ),
         ),
-        const SizedBox(width: 6),
         UserProfileActionButton(
           icon: Icons.mail_outline_rounded,
           onTap: () {

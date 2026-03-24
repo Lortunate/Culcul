@@ -14,10 +14,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class UserProfileInfo extends HookConsumerWidget {
   final UserProfile? profile;
 
+  static const double _bannerHeight = 160.0;
+  static const double _avatarSize = 88.0;
+  static const double _borderRadius = 20.0;
+
   const UserProfileInfo({super.key, required this.profile});
 
-  void _showImagePreview(BuildContext context, String url) {
-    if (url.isEmpty) return;
+  void _showImagePreview(BuildContext context, String? url) {
+    if (url == null || url.isEmpty) return;
     Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => ImagePreviewPage(imageUrls: [url], initialIndex: 0),
@@ -27,220 +31,68 @@ class UserProfileInfo extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final isExpanded = useState(false);
-    final authState = ref.watch(authProvider);
-
-    if (profile == null) {
+    final user = profile;
+    if (user == null) {
       return const SizedBox(
         height: 200,
         child: Center(child: CircularProgressIndicator()),
       );
     }
 
-    final isSelf =
-        authState.isLoggedIn && authState.user?.id.toString() == profile!.id.toString();
-
-    const double bannerHeight = 160;
-    const double avatarSize = 88;
+    final theme = Theme.of(context);
+    final isExpanded = useState(false);
+    final authState = ref.watch(authProvider);
+    final isSelf = authState.isLoggedIn &&
+        authState.user?.id.toString() == user.id.toString();
 
     return Column(
       children: [
         Stack(
           clipBehavior: Clip.none,
           children: [
-            // Banner
             SizedBox(
-              height: bannerHeight + 20,
+              height: _bannerHeight + 20,
               width: double.infinity,
               child: UserProfileBanner(
-                bannerUrl: profile!.bannerUrl,
-                onTap: () {
-                  if (profile!.bannerUrl != null) {
-                    _showImagePreview(context, profile!.bannerUrl!);
-                  }
-                },
+                bannerUrl: user.bannerUrl,
+                onTap: () => _showImagePreview(context, user.bannerUrl),
               ),
             ),
-
-            // Content
             Padding(
-              padding: const EdgeInsets.only(top: bannerHeight),
+              padding: const EdgeInsets.only(top: _bannerHeight),
               child: Container(
                 decoration: BoxDecoration(
                   color: theme.scaffoldBackgroundColor,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(_borderRadius),
+                  ),
                 ),
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Avatar Placeholder & Stats
-                    Padding(
-                      padding: const EdgeInsets.only(top: 12, bottom: 12),
-                      child: Row(
-                        children: [
-                          // Spacer for Avatar
-                          const SizedBox(width: avatarSize + 12),
-                          // Stats
-                          Expanded(
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                  children: [
-                                    UserProfileStatItem(
-                                      count: profile!.followingCount,
-                                      label: '关注',
-                                      onTap: () {
-                                        FollowingsRoute(
-                                          vmid: int.parse(profile!.id),
-                                        ).push(context);
-                                      },
-                                    ),
-                                    UserProfileStatItem(
-                                      count: profile!.followersCount,
-                                      label: '粉丝',
-                                      onTap: () {
-                                        FollowersRoute(
-                                          vmid: int.parse(profile!.id),
-                                        ).push(context);
-                                      },
-                                    ),
-                                    UserProfileStatItem(
-                                      count: profile!.likesCount,
-                                      label: '获赞',
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                                  child: UserProfileButtons(
-                                    profile: profile!,
-                                    isSelf: isSelf,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                    _StatsRow(
+                      user: user,
+                      isSelf: isSelf,
+                      avatarSize: _avatarSize,
                     ),
-
-                    // Username & Badges
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            profile!.username,
-                            style: theme.textTheme.headlineSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 22,
-                              color: colorScheme.onSurface,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        if (profile!.vipStatus == 1) ...[
-                          VipTag(type: profile!.vipType),
-                          const SizedBox(width: 6),
-                        ],
-                        LevelTag(level: profile!.level),
-                      ],
-                    ),
-
-                    // Verified Badge
-                    if (profile!.isVerified) ...[
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.verified_rounded,
-                            size: 16,
-                            color: const Color(0xFFFB7299),
-                          ),
-                          const SizedBox(width: 4),
-                          Expanded(
-                            child: Text(
-                              'bilibili认证',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                                fontSize: 12,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-
+                    _UserIdentity(user: user),
+                    if (user.isVerified) const _VerifiedBadge(),
                     const SizedBox(height: 12),
-
-                    // UID
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(4),
+                    _UidTag(uid: user.id),
+                    if (user.bio != null && user.bio!.isNotEmpty)
+                      _BioSection(
+                        bio: user.bio!,
+                        isExpanded: isExpanded.value,
+                        onToggle: () => isExpanded.value = !isExpanded.value,
                       ),
-                      child: Text(
-                        'UID: ${profile!.id}',
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-
-                    if (profile!.bio != null && profile!.bio!.isNotEmpty) ...[
-                      const SizedBox(height: 12),
-                      GestureDetector(
-                        onTap: () => isExpanded.value = !isExpanded.value,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                profile!.bio!,
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: colorScheme.onSurfaceVariant,
-                                  height: 1.4,
-                                ),
-                                maxLines: isExpanded.value ? null : 1,
-                                overflow: isExpanded.value ? null : TextOverflow.ellipsis,
-                              ),
-                            ),
-                            if (profile!.bio!.length > 20)
-                              Padding(
-                                padding: const EdgeInsets.only(left: 4, top: 2),
-                                child: Icon(
-                                  isExpanded.value
-                                      ? Icons.expand_less
-                                      : Icons.expand_more,
-                                  size: 16,
-                                  color: colorScheme.outline,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ],
-
                     const SizedBox(height: 12),
                   ],
                 ),
               ),
             ),
-
-            // Avatar Overlay
             Positioned(
-              top: bannerHeight - (avatarSize * 0.4), // 40% overlapping banner
+              top: _bannerHeight - (_avatarSize * 0.4),
               left: 20,
               child: Container(
                 padding: const EdgeInsets.all(3),
@@ -249,19 +101,214 @@ class UserProfileInfo extends HookConsumerWidget {
                   shape: BoxShape.circle,
                 ),
                 child: AppAvatar(
-                  url: profile!.avatarUrl,
-                  size: avatarSize,
-                  onTap: () {
-                    if (profile!.avatarUrl != null) {
-                      _showImagePreview(context, profile!.avatarUrl!);
-                    }
-                  },
+                  url: user.avatarUrl,
+                  size: _avatarSize,
+                  onTap: () => _showImagePreview(context, user.avatarUrl),
                 ),
               ),
             ),
           ],
         ),
       ],
+    );
+  }
+}
+
+class _StatsRow extends StatelessWidget {
+  final UserProfile user;
+  final bool isSelf;
+  final double avatarSize;
+
+  const _StatsRow({
+    required this.user,
+    required this.isSelf,
+    required this.avatarSize,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          SizedBox(width: avatarSize + 12),
+          Expanded(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    UserProfileStatItem(
+                      count: user.followingCount,
+                      label: '关注',
+                      onTap: () => FollowingsRoute(vmid: int.parse(user.id)).push(context),
+                    ),
+                    UserProfileStatItem(
+                      count: user.followersCount,
+                      label: '粉丝',
+                      onTap: () => FollowersRoute(vmid: int.parse(user.id)).push(context),
+                    ),
+                    UserProfileStatItem(
+                      count: user.likesCount,
+                      label: '获赞',
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                UserProfileButtons(profile: user, isSelf: isSelf),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _UserIdentity extends StatelessWidget {
+  final UserProfile user;
+
+  const _UserIdentity({required this.user});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Row(
+      children: [
+        Flexible(
+          child: Text(
+            user.username,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 22,
+              color: colorScheme.onSurface,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(width: 8),
+        if (user.vipStatus == 1) ...[
+          VipTag(type: user.vipType),
+          const SizedBox(width: 6),
+        ],
+        LevelTag(level: user.level),
+      ],
+    );
+  }
+}
+
+class _VerifiedBadge extends StatelessWidget {
+  const _VerifiedBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.verified_rounded,
+            size: 16,
+            color: Color(0xFFFB7299),
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: Text(
+              'bilibili认证',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+                fontSize: 12,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _UidTag extends StatelessWidget {
+  final String uid;
+
+  const _UidTag({required this.uid});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        'UID: $uid',
+        style: theme.textTheme.labelSmall?.copyWith(
+          color: colorScheme.onSurfaceVariant,
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+}
+
+class _BioSection extends StatelessWidget {
+  final String bio;
+  final bool isExpanded;
+  final VoidCallback onToggle;
+
+  const _BioSection({
+    required this.bio,
+    required this.isExpanded,
+    required this.onToggle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: GestureDetector(
+        onTap: onToggle,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Text(
+                bio,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                  height: 1.4,
+                ),
+                maxLines: isExpanded ? null : 1,
+                overflow: isExpanded ? null : TextOverflow.ellipsis,
+              ),
+            ),
+            if (bio.length > 20)
+              Padding(
+                padding: const EdgeInsets.only(left: 4, top: 2),
+                child: Icon(
+                  isExpanded ? Icons.expand_less : Icons.expand_more,
+                  size: 16,
+                  color: colorScheme.outline,
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }
