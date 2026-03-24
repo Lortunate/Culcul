@@ -8,7 +8,6 @@ class _VideoCardThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     final mediaQuery = MediaQuery.of(context);
     final cacheWidth = (mediaQuery.size.width / 2 * mediaQuery.devicePixelRatio).toInt();
 
@@ -23,16 +22,7 @@ class _VideoCardThumbnail extends StatelessWidget {
           memCacheWidth: cacheWidth,
         ),
         if (reason case final reasonText? when reasonText.isNotEmpty)
-          Positioned(
-            top: 8,
-            right: 8,
-            child: AppTag(
-              text: reasonText,
-              color: Colors.black.withValues(alpha: 0.5),
-              textColor: Colors.white,
-              fontSize: 10
-            ),
-          ),
+          Positioned(top: 8, right: 8, child: AppOverlayTag(text: reasonText)),
       ],
     );
   }

@@ -1,7 +1,7 @@
 import 'package:culcul/data/models/video/video_model.dart';
 import 'package:culcul/features/home/presentation/widgets/video_more_bottom_sheet.dart';
 import 'package:culcul/ui/widgets/app_card_container.dart';
-import 'package:culcul/ui/widgets/app_tag.dart';
+import 'package:culcul/ui/widgets/app_overlay_tag.dart';
 import 'package:culcul/ui/widgets/video_thumbnail.dart';
 import 'package:flutter/material.dart';
 

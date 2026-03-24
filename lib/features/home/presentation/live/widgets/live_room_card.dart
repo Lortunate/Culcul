@@ -4,6 +4,7 @@ import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/app_card_container.dart';
 import 'package:culcul/ui/widgets/app_min_lines_text.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
+import 'package:culcul/ui/widgets/app_overlay_tag.dart';
 import 'package:flutter/material.dart';
 
 class LiveRoomCard extends StatelessWidget {
@@ -23,91 +24,7 @@ class LiveRoomCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Stack(
-            children: [
-              AspectRatio(
-                aspectRatio: 16 / 9,
-                child: AppNetworkImage(url: room.cover, fit: BoxFit.cover),
-              ),
-              Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.transparent, Colors.black.withValues(alpha: 0.6)],
-                      stops: const [0.6, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-              // Area Tag
-              Positioned(
-                right: 6,
-                top: 6,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.5),
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.1),
-                      width: 0.5,
-                    ),
-                  ),
-                  child: Text(
-                    room.areaName,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
-                      height: 1,
-                    ),
-                  ),
-                ),
-              ),
-              // Online Count
-              Positioned(
-                left: 8,
-                bottom: 6,
-                child: Row(
-                  children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color: colorScheme.primary,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: colorScheme.primary.withValues(alpha: 0.5),
-                            blurRadius: 4,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      FormatUtils.formatNumber(room.online),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        shadows: [
-                          Shadow(
-                            offset: Offset(0, 1),
-                            blurRadius: 2,
-                            color: Colors.black45,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          // Content Info
+          _LiveRoomCover(room: room, colorScheme: colorScheme),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(8),
@@ -155,6 +72,86 @@ class LiveRoomCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _LiveRoomCover extends StatelessWidget {
+  final LiveRoomModel room;
+  final ColorScheme colorScheme;
+
+  const _LiveRoomCover({required this.room, required this.colorScheme});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        AspectRatio(
+          aspectRatio: 16 / 9,
+          child: AppNetworkImage(url: room.cover, fit: BoxFit.cover),
+        ),
+        const Positioned.fill(child: _LiveRoomCoverGradient()),
+        Positioned(right: 6, top: 6, child: AppOverlayTag(text: room.areaName)),
+        Positioned(
+          left: 8,
+          bottom: 6,
+          child: _LiveRoomOnlineCount(online: room.online, colorScheme: colorScheme),
+        ),
+      ],
+    );
+  }
+}
+
+class _LiveRoomCoverGradient extends StatelessWidget {
+  const _LiveRoomCoverGradient();
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Colors.transparent, Colors.black.withValues(alpha: 0.6)],
+          stops: const [0.6, 1.0],
+        ),
+      ),
+    );
+  }
+}
+
+class _LiveRoomOnlineCount extends StatelessWidget {
+  final int online;
+  final ColorScheme colorScheme;
+
+  const _LiveRoomOnlineCount({required this.online, required this.colorScheme});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 6,
+          height: 6,
+          decoration: BoxDecoration(
+            color: colorScheme.primary,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(color: colorScheme.primary.withValues(alpha: 0.5), blurRadius: 4),
+            ],
+          ),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          FormatUtils.formatNumber(online),
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            shadows: [Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45)],
+          ),
+        ),
+      ],
     );
   }
 }
