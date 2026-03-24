@@ -20,7 +20,7 @@ class ToViewPage extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(t.to_view.title),
+        title: Text(t.watch_later.title),
         actions: [
           if (authState.isLoggedIn)
             IconButton(
@@ -29,8 +29,8 @@ class ToViewPage extends ConsumerWidget {
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
-                    title: Text(t.to_view.clear_all),
-                    content: Text(t.to_view.clear_all_confirm),
+                    title: Text(t.watch_later.clear_all),
+                    content: Text(t.watch_later.clear_all_confirm),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),

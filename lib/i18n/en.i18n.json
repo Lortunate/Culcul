@@ -1,9 +1,9 @@
 {
   "nav": {
     "home": "Home",
-    "moments": "Feed",
+    "moments": "Moments",
     "ranking": "Ranking",
-    "mine": "Me"
+    "profile": "Profile"
   },
   "home": {
     "tabs": {
@@ -17,47 +17,49 @@
     "search_hint": "Search..."
   },
   "moments": {
-    "title": "Feed",
+    "title": "Moments",
     "tabs": {
       "all": "All",
       "video": "Videos",
-      "comprehensive": "All"
-    },
-    "actions": {
-      "forward": "Share",
-      "comment": "Comment",
-      "like": "Like"
+      "pgc": "Anime/Media"
     },
     "like_coming_soon": "Like feature coming soon",
-    "empty": "$tab content not available"
+    "empty": "No content available in $tab"
   },
   "ranking": {
     "title": "Ranking"
   },
   "settings": {
     "title": "Settings",
-    "language": "General",
-    "change_language": "Language",
+    "sections": {
+      "general": "General",
+      "appearance": "Appearance",
+      "storage": "Storage",
+      "about": "About"
+    },
+    "language": "Language",
+    "appearance": "Appearance",
     "chinese": "简体中文",
     "traditional_chinese": "繁體中文",
     "english": "English",
-    "appearance": "Appearance",
-    "system_mode": "System Default",
-    "dark_mode": "Dark Mode",
-    "light_mode": "Light Mode",
-    "cache": "Storage",
+    "theme_mode": {
+      "system": "System Default",
+      "dark": "Dark Mode",
+      "light": "Light Mode"
+    },
     "clear_cache": "Clear Cache",
     "user_agreement": "User Agreement",
     "privacy_policy": "Privacy Policy",
-    "about": "About",
     "version": "Version"
   },
   "auth": {
     "login": "Login",
     "logout": "Logout",
-    "account_login": "Account Login",
-    "sms_login": "SMS Login",
-    "qr_login": "QR Login",
+    "methods": {
+      "account": "Account",
+      "sms": "SMS",
+      "qr": "QR Code"
+    },
     "username": "Account",
     "username_hint": "Phone or Email",
     "password": "Password",
@@ -82,7 +84,7 @@
     "not_logged_in": "Not logged in",
     "login_hint": "Sign in to explore more",
     "stats": {
-      "dynamic": "Posts",
+      "posts": "Posts",
       "following": "Following",
       "followers": "Followers",
       "likes": "Likes"
@@ -97,15 +99,15 @@
     "menu": {
       "history": "History",
       "download": "Downloads",
-      "collection": "Favorites",
-      "later": "Watch Later",
-      "theme": "Appearance",
+      "favorites": "Favorites",
+      "watch_later": "Watch Later",
+      "appearance": "Appearance",
       "creative_center": "Creator Center",
       "orders": "Orders",
-      "customer_service": "Support"
+      "support": "Support"
     }
   },
-  "fav": {
+  "favorites": {
     "title": "Favorites",
     "created": "Created",
     "collected": "Saved",
@@ -118,7 +120,7 @@
   "search": {
     "placeholder": "Trending: culcul",
     "button": "Search",
-    "history": "Search History",
+    "history": "History",
     "hot_search": "Trending",
     "clear_history": "Clear History",
     "suggestion": "Suggestions",
@@ -131,14 +133,17 @@
       "comment": "Comments"
     },
     "recommend": "Up Next",
-    "comment_empty": "No comments yet. Be the first to comment!",
-    "comment_count": "$count comments",
-    "comment_sort_hot": "Top",
-    "comment_sort_time": "Newest",
-    "all_comments": "All Comments",
-    "comment_detail": "Comment Details",
-    "related_replies": "Related Replies",
-    "replies": "View all $count replies",
+    "comment": {
+      "empty": "No comments yet. Be the first to comment!",
+      "count": "$count comments",
+      "sort_hot": "Top",
+      "sort_time": "Newest",
+      "all": "All Comments",
+      "detail": "Comment Details",
+      "related_replies": "Related Replies",
+      "replies": "View all $count replies",
+      "hint": "Leave a friendly comment..."
+    },
     "load_failed": "Failed to load video",
     "tags": "Tags",
     "no_desc": "No description",
@@ -152,7 +157,7 @@
       "p240": "240P",
       "p144": "144P"
     },
-    "playback": {
+    "player": {
       "speed": "Playback Speed",
       "quality": "Resolution",
       "danmaku": "Danmaku",
@@ -160,24 +165,27 @@
       "retry": "Retry"
     },
     "actions": {
-      "like": "Like",
-      "unlike": "Dislike",
       "coin": "Coin",
-      "favorite": "Favorite",
-      "share": "Share",
-      "followed": "Following",
-      "follow": "Follow",
-      "reply": "Reply"
+      "favorite": "Favorite"
     },
     "reply_to": "Reply to @$name: ",
     "parts": "Segments",
     "expand": "Expand",
-    "collapse": "Collapse",
-    "comment_hint": "Leave a friendly comment..."
+    "collapse": "Collapse"
+  },
+  "actions": {
+    "like": "Like",
+    "unlike": "Dislike",
+    "follow": "Follow",
+    "followed": "Following",
+    "share": "Share",
+    "reply": "Reply",
+    "comment": "Comment",
+    "forward": "Forward"
   },
   "common": {
     "no_content": "No content",
-    "coming_soon": "$tab is coming soon",
+    "coming_soon": "Coming soon: $tab",
     "loading": "Loading...",
     "error": "Something went wrong",
     "retry": "Retry",
@@ -216,7 +224,7 @@
     "minutes_ago": "$minutes m ago",
     "just_now": "Just now"
   },
-  "to_view": {
+  "watch_later": {
     "title": "Watch Later",
     "clear_all": "Clear All",
     "clear_all_confirm": "Are you sure you want to clear your Watch Later list?"
@@ -226,7 +234,7 @@
     "tabs": {
       "video": "Videos",
       "anime": "Anime",
-      "series": "Series"
+      "cinema": "Cinema"
     },
     "empty": "No content in $tab"
   },

@@ -18,7 +18,7 @@ class DynamicPage extends HookConsumerWidget {
     final colorScheme = theme.colorScheme;
     final authState = ref.watch(authProvider);
 
-    final tabs = [t.moments.tabs.all, t.moments.tabs.video, t.moments.tabs.comprehensive];
+    final tabs = [t.moments.tabs.all, t.moments.tabs.video, t.moments.tabs.pgc];
     final tabController = useTabController(initialLength: tabs.length);
 
     return Scaffold(

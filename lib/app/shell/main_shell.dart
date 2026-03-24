@@ -15,7 +15,7 @@ class MainShell extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final t = Translations.of(context);
 
-    final labels = [t.nav.home, t.nav.moments, t.nav.ranking, t.nav.mine];
+    final labels = [t.nav.home, t.nav.moments, t.nav.ranking, t.nav.profile];
     const iconPadding = EdgeInsets.only(bottom: 4);
 
     return Scaffold(

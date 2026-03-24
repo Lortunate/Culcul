@@ -40,7 +40,7 @@ class VideoActionsRow extends ConsumerWidget {
           ),
           ActionButton(
             icon: Icons.thumb_down_outlined,
-            label: t.video.actions.unlike,
+            label: t.actions.unlike,
             onTap: () => checkLoginAndAction(() => notifier.toggleDislike()),
           ),
           ActionButton(

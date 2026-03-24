@@ -37,17 +37,17 @@ class SettingsPage extends HookConsumerWidget {
       body: ListView(
         children: [
           SettingsGroup(
-            title: t.settings.language,
+            title: t.settings.sections.general,
             children: [
               SettingsItem(
-                title: t.settings.change_language,
+                title: t.settings.language,
                 value: _getLanguageName(t, LocaleSettings.currentLocale),
                 onTap: () => _showLanguageSelector(context),
               ),
             ],
           ),
           SettingsGroup(
-            title: t.settings.appearance,
+            title: t.settings.sections.appearance,
             children: [
               SettingsItem(
                 title: t.settings.appearance,
@@ -57,7 +57,7 @@ class SettingsPage extends HookConsumerWidget {
             ],
           ),
           SettingsGroup(
-            title: t.settings.cache,
+            title: t.settings.sections.storage,
             children: [
               SettingsItem(
                 title: t.settings.clear_cache,
@@ -71,7 +71,7 @@ class SettingsPage extends HookConsumerWidget {
             ],
           ),
           SettingsGroup(
-            title: t.settings.about,
+            title: t.settings.sections.about,
             children: [
               SettingsItem(title: t.settings.user_agreement, onTap: () {}),
               SettingsItem(title: t.settings.privacy_policy, onTap: () {}),
@@ -98,11 +98,11 @@ class SettingsPage extends HookConsumerWidget {
   String _getThemeName(Translations t, ThemeMode mode) {
     switch (mode) {
       case ThemeMode.system:
-        return t.settings.system_mode;
+        return t.settings.theme_mode.system;
       case ThemeMode.light:
-        return t.settings.light_mode;
+        return t.settings.theme_mode.light;
       case ThemeMode.dark:
-        return t.settings.dark_mode;
+        return t.settings.theme_mode.dark;
     }
   }
 
@@ -110,7 +110,7 @@ class SettingsPage extends HookConsumerWidget {
     final t = Translations.of(context);
     _showSelectionSheet(
       context,
-      title: t.settings.change_language,
+      title: t.settings.language,
       children: AppLocale.values.map((locale) {
         return SelectionItem(
           title: _getLanguageName(t, locale),
@@ -128,7 +128,7 @@ class SettingsPage extends HookConsumerWidget {
     final t = Translations.of(context);
     _showSelectionSheet(
       context,
-      title: t.settings.appearance,
+      title: t.settings.sections.appearance,
       children: ThemeMode.values.map((mode) {
         return SelectionItem(
           title: _getThemeName(t, mode),

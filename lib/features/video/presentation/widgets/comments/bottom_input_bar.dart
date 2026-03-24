@@ -62,7 +62,7 @@ class BottomInputBar extends StatelessWidget {
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        t.video.comment_hint,
+                        t.video.comment.hint,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                         ),

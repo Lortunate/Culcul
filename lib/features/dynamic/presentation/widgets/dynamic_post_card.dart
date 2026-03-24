@@ -119,7 +119,7 @@ class DynamicPostCard extends StatelessWidget {
             context,
             Icons.reply_rounded,
             post.forwardCount,
-            t.moments.actions.forward,
+            t.actions.forward,
             () async {
               await ShareUtils.shareDynamic(post.id, post.description ?? '');
             },
@@ -130,7 +130,7 @@ class DynamicPostCard extends StatelessWidget {
             context,
             Icons.chat_bubble_outline_rounded,
             post.commentCount,
-            t.moments.actions.comment,
+            t.actions.comment,
             () {
               DynamicDetailRoute(id: post.id).push(context);
             },
@@ -141,7 +141,7 @@ class DynamicPostCard extends StatelessWidget {
             context,
             post.isLiked ? Icons.thumb_up_alt_rounded : Icons.thumb_up_alt_outlined,
             post.likeCount,
-            t.moments.actions.like,
+            t.actions.like,
             () {
               if (onLike != null) {
                 onLike!(post);

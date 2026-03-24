@@ -34,12 +34,12 @@ class ProfileActionGrid extends StatelessWidget {
               ),
               _GridItem(
                 icon: Icons.star_outline_rounded,
-                label: t.profile.menu.collection,
+                label: t.profile.menu.favorites,
                 onTap: () => const FavoritesRoute().push(context),
               ),
               _GridItem(
                 icon: Icons.play_circle_outline_rounded,
-                label: t.profile.menu.later,
+                label: t.profile.menu.watch_later,
                 onTap: () => const ToViewRoute().push(context),
               ),
             ],

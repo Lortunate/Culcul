@@ -351,7 +351,7 @@ class _Replies extends StatelessWidget {
                   child: Row(
                     children: [
                       Text(
-                        t.video.replies(count: rcount),
+                        t.video.comment.replies(count: rcount),
                         style: theme.textTheme.labelSmall?.copyWith(
                           color: colorScheme.primary,
                           fontWeight: FontWeight.bold,

@@ -63,7 +63,7 @@ class LoginPage extends HookConsumerWidget {
       curve: const Interval(0.4, 1.0, curve: Curves.easeOutQuart),
     );
 
-    final tabs = ["SMS", "Account", "QR"];
+    final tabs = [t.auth.methods.sms, t.auth.methods.account, t.auth.methods.qr];
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),

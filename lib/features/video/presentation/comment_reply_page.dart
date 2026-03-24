@@ -60,7 +60,7 @@ class CommentReplyPage extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          t.video.comment_detail,
+          t.video.comment.detail,
           style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -121,7 +121,7 @@ class CommentReplyPage extends HookConsumerWidget {
                             child: Row(
                               children: [
                                 Text(
-                                  t.video.related_replies,
+                                  t.video.comment.related_replies,
                                   style: theme.textTheme.titleSmall?.copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: colorScheme.onSurface,

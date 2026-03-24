@@ -159,7 +159,7 @@ class LiveHeader extends StatelessWidget {
         isFollowed: false,
         onTap: onFollow ?? () {},
         height: 32,
-        text: '+ ${t.video.actions.follow}',
+        text: '+ ${t.actions.follow}',
       ),
     );
   }

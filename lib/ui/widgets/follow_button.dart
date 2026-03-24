@@ -72,7 +72,7 @@ class FollowButton extends ConsumerWidget {
             ],
             Text(
               text ??
-                  (isFollowed ? t.video.actions.followed : '+ ${t.video.actions.follow}'),
+                  (isFollowed ? t.actions.followed : '+ ${t.actions.follow}'),
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
             ),
           ],

@@ -3,7 +3,7 @@
     "home": "首页",
     "moments": "动态",
     "ranking": "排行榜",
-    "mine": "我的"
+    "profile": "我的"
   },
   "home": {
     "tabs": {
@@ -21,12 +21,7 @@
     "tabs": {
       "all": "全部",
       "video": "视频",
-      "comprehensive": "综合"
-    },
-    "actions": {
-      "forward": "转发",
-      "comment": "评论",
-      "like": "点赞"
+      "pgc": "番剧/影视"
     },
     "like_coming_soon": "点赞功能开发中",
     "empty": "$tab 动态暂未实现"
@@ -36,28 +31,35 @@
   },
   "settings": {
     "title": "设置",
-    "language": "通用设置",
-    "change_language": "切换语言",
+    "sections": {
+      "general": "通用设置",
+      "appearance": "外观设置",
+      "storage": "存储管理",
+      "about": "关于"
+    },
+    "language": "切换语言",
+    "appearance": "外观设置",
     "chinese": "简体中文",
     "traditional_chinese": "繁体中文",
     "english": "English",
-    "appearance": "外观设置",
-    "system_mode": "跟随系统",
-    "dark_mode": "深色模式",
-    "light_mode": "浅色模式",
-    "cache": "存储管理",
+    "theme_mode": {
+      "system": "跟随系统",
+      "dark": "深色模式",
+      "light": "浅色模式"
+    },
     "clear_cache": "清理缓存",
     "user_agreement": "用户协议",
     "privacy_policy": "隐私政策",
-    "about": "关于",
     "version": "当前版本"
   },
   "auth": {
     "login": "登录",
     "logout": "退出登录",
-    "account_login": "账号登录",
-    "sms_login": "验证码登录",
-    "qr_login": "二维码登录",
+    "methods": {
+      "account": "账号登录",
+      "sms": "验证码登录",
+      "qr": "二维码登录"
+    },
     "username": "账号",
     "username_hint": "手机号/邮箱",
     "password": "密码",
@@ -82,7 +84,7 @@
     "not_logged_in": "未登录",
     "login_hint": "点击登录体验更多功能",
     "stats": {
-      "dynamic": "动态",
+      "posts": "动态",
       "following": "关注",
       "followers": "粉丝",
       "likes": "获赞"
@@ -97,15 +99,15 @@
     "menu": {
       "history": "历史记录",
       "download": "离线缓存",
-      "collection": "我的收藏",
-      "later": "稍后再看",
-      "theme": "外观设置",
+      "favorites": "我的收藏",
+      "watch_later": "稍后再看",
+      "appearance": "外观设置",
       "creative_center": "创作中心",
       "orders": "会员购订单",
-      "customer_service": "联系客服"
+      "support": "联系客服"
     }
   },
-  "fav": {
+  "favorites": {
     "title": "我的收藏",
     "created": "创建的",
     "collected": "收藏的",
@@ -131,14 +133,17 @@
       "comment": "评论"
     },
     "recommend": "推荐视频",
-    "comment_empty": "评论区建设中...",
-    "comment_count": "$count 条评论",
-    "comment_sort_hot": "按热度",
-    "comment_sort_time": "按时间",
-    "all_comments": "全部评论",
-    "comment_detail": "评论详情",
-    "related_replies": "相关回复",
-    "replies": "查看全部 $count 条回复",
+    "comment": {
+      "empty": "暂无评论，快来抢沙发吧！",
+      "count": "$count 条评论",
+      "sort_hot": "按热度",
+      "sort_time": "按时间",
+      "all": "全部评论",
+      "detail": "评论详情",
+      "related_replies": "相关回复",
+      "replies": "查看全部 $count 条回复",
+      "hint": "发个友善的评论"
+    },
     "load_failed": "视频加载失败",
     "tags": "标签",
     "no_desc": "暂无简介",
@@ -152,7 +157,7 @@
       "p240": "240P 流畅",
       "p144": "144P 极速"
     },
-    "playback": {
+    "player": {
       "speed": "倍速",
       "quality": "清晰度",
       "danmaku": "弹幕",
@@ -160,20 +165,23 @@
       "retry": "重试播放"
     },
     "actions": {
-      "like": "点赞",
-      "unlike": "不喜欢",
       "coin": "投币",
-      "favorite": "收藏",
-      "share": "分享",
-      "followed": "已关注",
-      "follow": "关注",
-      "reply": "回复"
+      "favorite": "收藏"
     },
     "reply_to": "回复 @$name : ",
     "parts": "视频分段",
     "expand": "展开",
-    "collapse": "收起",
-    "comment_hint": "发个友善的评论"
+    "collapse": "收起"
+  },
+  "actions": {
+    "like": "点赞",
+    "unlike": "不喜欢",
+    "follow": "关注",
+    "followed": "已关注",
+    "share": "分享",
+    "reply": "回复",
+    "comment": "评论",
+    "forward": "转发"
   },
   "common": {
     "no_content": "暂无内容",
@@ -216,7 +224,7 @@
     "minutes_ago": "$minutes分钟前",
     "just_now": "刚刚"
   },
-  "to_view": {
+  "watch_later": {
     "title": "稍后再看",
     "clear_all": "清空稍后再看",
     "clear_all_confirm": "确定要清空稍后再看列表吗？"
@@ -226,7 +234,7 @@
     "tabs": {
       "video": "视频",
       "anime": "番剧",
-      "series": "影视"
+      "cinema": "影视"
     },
     "empty": "$tab 暂无内容"
   },

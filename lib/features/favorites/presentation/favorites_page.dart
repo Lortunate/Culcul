@@ -24,7 +24,7 @@ class FavoritesPage extends HookConsumerWidget {
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: Text(t.fav.title),
+        title: Text(t.favorites.title),
         centerTitle: true,
         elevation: 0,
         backgroundColor: colorScheme.surface,
@@ -62,7 +62,7 @@ class FavoritesPage extends HookConsumerWidget {
             ),
         ],
         bottom: authState.isLoggedIn
-            ? AppTabBar(controller: tabController, tabs: [t.fav.created, t.fav.collected])
+            ? AppTabBar(controller: tabController, tabs: [t.favorites.created, t.favorites.collected])
             : null,
       ),
       body: authState.isLoggedIn

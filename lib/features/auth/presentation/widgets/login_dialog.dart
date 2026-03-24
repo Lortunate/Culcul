@@ -60,7 +60,7 @@ class LoginDialog extends HookConsumerWidget {
       }
     });
 
-    final tabs = ["SMS", "Account", "QR"];
+    final tabs = [t.auth.methods.sms, t.auth.methods.account, t.auth.methods.qr];
 
     return Material(
       color: Colors.transparent,

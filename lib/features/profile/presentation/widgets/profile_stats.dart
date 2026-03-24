@@ -16,7 +16,7 @@ class ProfileStats extends ConsumerWidget {
     final t = Translations.of(context);
     final profileAsync = ref.watch(myProfileProvider);
 
-    final dynamicCount = profileAsync.maybeWhen(
+    final postsCount = profileAsync.maybeWhen(
       data: (profile) => FormatUtils.formatNumber(profile.dynamicCount),
       orElse: () => '-',
     );
@@ -44,8 +44,8 @@ class ProfileStats extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _StatItem(
-              count: dynamicCount,
-              label: t.profile.stats.dynamic,
+              count: postsCount,
+              label: t.profile.stats.posts,
               onTap: () {
                 // TODO: Dynamic page
               },

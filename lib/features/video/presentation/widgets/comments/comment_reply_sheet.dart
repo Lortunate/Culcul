@@ -60,7 +60,7 @@ class CommentReplySheet extends HookWidget {
             minLines: 1,
             maxLines: 5,
             decoration: InputDecoration(
-              hintText: t.video.comment_hint,
+              hintText: t.video.comment.hint,
               border: InputBorder.none,
             ),
           ),
