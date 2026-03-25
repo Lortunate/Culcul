@@ -13,12 +13,12 @@ class LiveSystemMessage extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 8),
       decoration: BoxDecoration(
-        color: colorScheme.scrim.withValues(alpha: 0.9),
-        borderRadius: BorderRadius.circular(8),
+        color: colorScheme.scrim.withValues(alpha: 0.86),
+        borderRadius: BorderRadius.circular(7),
         border: Border.all(
-          color: colorScheme.onPrimary.withValues(alpha: 0.1),
+          color: colorScheme.onPrimary.withValues(alpha: 0.08),
           width: 0.5,
         ),
       ),
@@ -28,18 +28,18 @@ class LiveSystemMessage extends StatelessWidget {
           Text(
             t.live.danmaku.system_notice_colon,
             style: TextStyle(
-              color: theme.colorScheme.primary,
+              color: theme.colorScheme.primary.withValues(alpha: 0.88),
               fontWeight: FontWeight.bold,
-              fontSize: 13,
+              fontSize: 12,
             ),
           ),
           const SizedBox(height: 4),
           Text(
             item.text,
             style: TextStyle(
-              color: colorScheme.onPrimary.withValues(alpha: 0.9),
-              fontSize: 13,
-              height: 1.4,
+              color: colorScheme.onPrimary.withValues(alpha: 0.84),
+              fontSize: 12,
+              height: 1.3,
             ),
           ),
         ],

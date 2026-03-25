@@ -20,16 +20,18 @@ class LiveInteractMessage extends StatelessWidget {
             TextSpan(
               text: item.nickname,
               style: TextStyle(
-                color: semanticColors.warning,
+                color: semanticColors.warning.withValues(alpha: 0.9),
                 fontWeight: FontWeight.w600,
-                fontSize: 13,
+                fontSize: 12.5,
+                height: 1.25,
               ),
             ),
             TextSpan(
               text: ' ${item.text}',
               style: TextStyle(
-                color: colorScheme.onPrimary.withValues(alpha: 0.7),
-                fontSize: 13,
+                color: colorScheme.onPrimary.withValues(alpha: 0.72),
+                fontSize: 12.5,
+                height: 1.25,
               ),
             ),
           ],

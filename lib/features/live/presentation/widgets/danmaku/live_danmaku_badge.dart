@@ -25,13 +25,13 @@ class LiveGuardBadge extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(right: 4),
-      padding: const EdgeInsets.all(2),
+      padding: const EdgeInsets.all(1.5),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.2),
-        border: Border.all(color: color, width: 1),
+        color: color.withValues(alpha: 0.15),
+        border: Border.all(color: color.withValues(alpha: 0.8), width: 0.8),
         borderRadius: BorderRadius.circular(4),
       ),
-      child: Icon(icon, size: 10, color: color),
+      child: Icon(icon, size: 9, color: color.withValues(alpha: 0.92)),
     );
   }
 }
@@ -64,31 +64,38 @@ class LiveMedalBadge extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(right: 4),
       decoration: BoxDecoration(
-        border: Border.all(color: color, width: 0.8),
+        color: color.withValues(alpha: 0.12),
+        border: Border.all(color: color.withValues(alpha: 0.75), width: 0.7),
         borderRadius: BorderRadius.circular(3),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1.5),
             child: Text(
               name,
-              style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                color: color.withValues(alpha: 0.92),
+                fontSize: 9.5,
+                fontWeight: FontWeight.w600,
+                height: 1.1,
+              ),
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1.5),
             decoration: BoxDecoration(
-              color: color,
+              color: color.withValues(alpha: 0.78),
               borderRadius: const BorderRadius.horizontal(right: Radius.circular(2)),
             ),
             child: Text(
               level,
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onPrimary,
-                fontSize: 10,
+                fontSize: 9.5,
                 fontWeight: FontWeight.bold,
+                height: 1.1,
               ),
             ),
           ),
@@ -105,16 +112,17 @@ class LiveAdminBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 0.5),
+      padding: const EdgeInsets.symmetric(horizontal: 3.5, vertical: 1.2),
       decoration: BoxDecoration(
-        color: colorScheme.error,
+        color: colorScheme.error.withValues(alpha: 0.82),
+        border: Border.all(color: colorScheme.error.withValues(alpha: 0.9), width: 0.7),
         borderRadius: BorderRadius.circular(3),
       ),
       child: Text(
         t.live.danmaku.admin,
         style: TextStyle(
           color: colorScheme.onError,
-          fontSize: 10,
+          fontSize: 9.5,
           fontWeight: FontWeight.bold,
           height: 1.1,
         ),

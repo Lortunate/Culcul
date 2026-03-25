@@ -17,12 +17,12 @@ class LiveDanmakuView extends StatelessWidget {
     return ListView.builder(
       controller: controller,
       physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       reverse: true,
       itemCount: history.length,
       itemBuilder: (context, index) {
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 3),
+          padding: const EdgeInsets.symmetric(vertical: 2),
           child: _buildItem(context, history[index]),
         );
       },

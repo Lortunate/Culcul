@@ -13,9 +13,13 @@ class LiveGiftMessage extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 2),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
       decoration: BoxDecoration(
-        color: colorScheme.primary.withValues(alpha: 0.1),
+        color: colorScheme.primary.withValues(alpha: 0.12),
+        border: Border.all(
+          color: colorScheme.primary.withValues(alpha: 0.22),
+          width: 0.6,
+        ),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Row(
@@ -28,14 +32,19 @@ class LiveGiftMessage extends StatelessWidget {
                   TextSpan(
                     text: item.nickname,
                     style: TextStyle(
-                      color: colorScheme.primary,
+                      color: colorScheme.primary.withValues(alpha: 0.95),
                       fontWeight: FontWeight.w600,
-                      fontSize: 13,
+                      fontSize: 12.5,
+                      height: 1.2,
                     ),
                   ),
                   TextSpan(
                     text: ' ${item.text}',
-                    style: TextStyle(color: colorScheme.primary, fontSize: 13),
+                    style: TextStyle(
+                      color: colorScheme.primary.withValues(alpha: 0.88),
+                      fontSize: 12.5,
+                      height: 1.2,
+                    ),
                   ),
                 ],
               ),

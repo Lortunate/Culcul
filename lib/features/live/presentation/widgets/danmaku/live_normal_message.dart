@@ -49,9 +49,10 @@ class LiveNormalMessage extends StatelessWidget {
       TextSpan(
         text: '${item.nickname}：',
         style: TextStyle(
-          color: colorScheme.onPrimary.withValues(alpha: 0.7),
+          color: colorScheme.onPrimary.withValues(alpha: 0.66),
           fontWeight: FontWeight.w500,
-          fontSize: 14,
+          fontSize: 13,
+          height: 1.25,
         ),
       ),
     );
@@ -59,7 +60,11 @@ class LiveNormalMessage extends StatelessWidget {
     spans.add(
       TextSpan(
         text: item.text,
-        style: TextStyle(color: colorScheme.onPrimary, fontSize: 14, height: 1.4),
+        style: TextStyle(
+          color: colorScheme.onPrimary.withValues(alpha: 0.92),
+          fontSize: 13,
+          height: 1.25,
+        ),
       ),
     );
 
