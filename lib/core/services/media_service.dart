@@ -21,14 +21,46 @@ class MediaService {
 
   Future<void> saveImage(String url) async {
     final formattedUrl = FormatUtils.formatImageUrl(url);
+    if (formattedUrl.isEmpty) {
+      throw Exception('图片地址无效');
+    }
+
     final tempDir = await getTemporaryDirectory();
-    // Handle query parameters or other chars in url for filename
     final uri = Uri.parse(formattedUrl);
-    final fileName = uri.pathSegments.last;
+    final fileName = _buildFileName(uri);
     final savePath = '${tempDir.path}/$fileName';
 
-    final bytes = await _resourceApi.fetchBytes(formattedUrl);
-    await File(savePath).writeAsBytes(bytes, flush: true);
-    await Gal.putImage(savePath);
+    final tempFile = File(savePath);
+    try {
+      final bytes = await _resourceApi.fetchBytes(formattedUrl);
+      await tempFile.writeAsBytes(bytes, flush: true);
+      await Gal.putImage(savePath);
+    } finally {
+      if (await tempFile.exists()) {
+        await tempFile.delete();
+      }
+    }
+  }
+
+  String _buildFileName(Uri uri) {
+    final fallbackName = 'culcul_image_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    if (uri.pathSegments.isEmpty) {
+      return fallbackName;
+    }
+
+    final rawName = uri.pathSegments.last.trim();
+    if (rawName.isEmpty) {
+      return fallbackName;
+    }
+
+    final dotIndex = rawName.lastIndexOf('.');
+    final hasValidExt = dotIndex > 0 && dotIndex < rawName.length - 1;
+    final extension = hasValidExt ? rawName.substring(dotIndex).toLowerCase() : '.jpg';
+    final baseName = hasValidExt ? rawName.substring(0, dotIndex) : rawName;
+    final safeBaseName = baseName.replaceAll(RegExp(r'[^A-Za-z0-9_-]'), '_');
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final normalizedBase = safeBaseName.isEmpty ? 'culcul_image' : safeBaseName;
+
+    return '${normalizedBase}_$timestamp$extension';
   }
 }

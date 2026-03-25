@@ -4,7 +4,7 @@ import 'package:culcul/features/auth/controllers/auth_controller.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_stat_item.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_banner.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_buttons.dart';
-import 'package:culcul/features/video/presentation/widgets/image_preview_page.dart';
+import 'package:culcul/ui/widgets/app_image_preview.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/user_tags.dart';
 import 'package:flutter/material.dart';
@@ -22,11 +22,7 @@ class UserProfileInfo extends HookConsumerWidget {
 
   void _showImagePreview(BuildContext context, String? url) {
     if (url == null || url.isEmpty) return;
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ImagePreviewPage(imageUrls: [url], initialIndex: 0),
-      ),
-    );
+    AppImagePreview.open(context, imageUrls: [url], initialIndex: 0);
   }
 
   @override

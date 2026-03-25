@@ -1,3 +1,4 @@
+import 'package:culcul/ui/widgets/app_image_preview.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
@@ -9,47 +10,8 @@ class ChatImageMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Scaffold(
-              backgroundColor: colorScheme.scrim,
-              appBar: AppBar(
-                backgroundColor: Colors.transparent,
-                iconTheme: IconThemeData(color: colorScheme.onPrimary),
-              ),
-              body: ExtendedImageGesturePageView.builder(
-                itemCount: 1,
-                controller: ExtendedPageController(),
-                itemBuilder: (BuildContext context, int index) {
-                  return ExtendedImage.network(
-                    url,
-                    fit: BoxFit.contain,
-                    cache: true,
-                    mode: ExtendedImageMode.gesture,
-                    initGestureConfigHandler: (state) {
-                      return GestureConfig(
-                        minScale: 0.9,
-                        animationMinScale: 0.7,
-                        maxScale: 3.0,
-                        animationMaxScale: 3.5,
-                        speed: 1.0,
-                        inertialSpeed: 100.0,
-                        initialScale: 1.0,
-                        inPageView: true,
-                      );
-                    },
-                  );
-                },
-              ),
-            ),
-          ),
-        );
-      },
+      onTap: () => AppImagePreview.open(context, imageUrls: [url]),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8),
         child: ExtendedImage.network(

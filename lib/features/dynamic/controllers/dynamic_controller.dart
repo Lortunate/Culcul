@@ -40,7 +40,8 @@ class DynamicNotifier extends _$DynamicNotifier {
     if (!_hasMore) return;
 
     final repo = ref.read(dynamicRepositoryProvider);
-    final result = await repo.getFeed(type: _type, offset: _offset);
+    final apiType = _type == 'all' ? null : _type;
+    final result = await repo.getFeed(type: apiType, offset: _offset);
 
     // Use ResultUtils to handle the result
     switch (result) {

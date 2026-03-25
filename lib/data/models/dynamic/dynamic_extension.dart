@@ -3,6 +3,18 @@ import 'package:culcul/data/models/dynamic/dynamic_view_models.dart';
 
 extension DynamicItemExtension on DynamicItem {
   String get id => idStr;
+  String? get majorType => modules.moduleDynamic.major?.type;
+  bool get isArticleType =>
+      type == 'DYNAMIC_TYPE_ARTICLE' || majorType == 'MAJOR_TYPE_ARTICLE';
+  bool get preferLinkCardDisplay => switch (majorType) {
+    'MAJOR_TYPE_ARTICLE' ||
+    'MAJOR_TYPE_COMMON' ||
+    'MAJOR_TYPE_PGC' ||
+    'MAJOR_TYPE_COURSES' ||
+    'MAJOR_TYPE_MUSIC' ||
+    'MAJOR_TYPE_LIVE' => true,
+    _ => isArticleType,
+  };
 
   int get authorMid => modules.moduleAuthor.mid;
   String get authorName => modules.moduleAuthor.name;
@@ -10,14 +22,33 @@ extension DynamicItemExtension on DynamicItem {
   String get timeText => modules.moduleAuthor.pubTime;
 
   String? get description => modules.moduleDynamic.desc?.text;
+  String? get contentText {
+    final descText = modules.moduleDynamic.desc?.text;
+    if (descText != null && descText.isNotEmpty) return descText;
+
+    final opusSummaryText = modules.moduleDynamic.major?.opus?.summary?.text;
+    if (opusSummaryText != null && opusSummaryText.isNotEmpty) return opusSummaryText;
+
+    final opusTitle = modules.moduleDynamic.major?.opus?.title;
+    if (opusTitle != null && opusTitle.isNotEmpty) return opusTitle;
+
+    return null;
+  }
 
   List<String>? get images {
+    if (isArticleType) return null;
     final dynamicModule = modules.moduleDynamic;
-    return dynamicModule.major?.draw?.items.map((e) => e.src).toList() ??
-        dynamicModule.major?.opus?.pics
-            ?.map((e) => e.url ?? '')
-            .where((e) => e.isNotEmpty)
-            .toList();
+    final drawImages = dynamicModule.major?.draw?.items
+        .map((e) => e.src.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+    if (drawImages != null && drawImages.isNotEmpty) return drawImages;
+
+    return dynamicModule.major?.opus?.pics
+        ?.map((e) => e.url ?? '')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
   }
 
   int get likeCount => modules.moduleStat?.like.count ?? 0;
@@ -154,6 +185,28 @@ extension DynamicItemExtension on DynamicItem {
         cover: major.live!.cover,
         desc: major.live!.descSecond,
         url: major.live!.jumpUrl,
+      );
+    }
+
+    if (major.opus != null && (major.opus!.jumpUrl?.isNotEmpty ?? false)) {
+      final summaryText = major.opus!.summary?.text ?? '';
+      final hasSummary = summaryText.isNotEmpty;
+      final hasPics = (major.opus!.pics?.isNotEmpty ?? false);
+      if (!isArticleType && (hasSummary || hasPics)) return null;
+
+      final cover =
+          major.opus!.pics
+              ?.map((e) => e.url ?? '')
+              .where((e) => e.isNotEmpty)
+              .firstOrNull ??
+          '';
+      return DynamicLinkCard(
+        title: (major.opus!.title != null && major.opus!.title!.isNotEmpty)
+            ? major.opus!.title!
+            : '专栏动态',
+        cover: cover,
+        desc: major.opus!.summary?.text,
+        url: major.opus!.jumpUrl!,
       );
     }
 

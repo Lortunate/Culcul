@@ -1,6 +1,6 @@
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/features/video/presentation/widgets/image_preview_page.dart';
 import 'package:culcul/data/models/comment/comment_model.dart';
+import 'package:culcul/ui/widgets/app_image_preview.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
@@ -136,10 +136,6 @@ class CommentImagesWidget extends StatelessWidget {
   }
 
   void _openPreview(BuildContext context, List<String> imageUrls, int index) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => ImagePreviewPage(imageUrls: imageUrls, initialIndex: index),
-      ),
-    );
+    AppImagePreview.open(context, imageUrls: imageUrls, initialIndex: index);
   }
 }

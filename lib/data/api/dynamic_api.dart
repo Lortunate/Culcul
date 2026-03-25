@@ -14,12 +14,14 @@ abstract class DynamicApi {
   @GET('/x/polymer/web-dynamic/v1/feed/all')
   @Headers({'x-bili-wbi': 'true'})
   Future<ApiResponse<DynamicData>> getDynamicFeed({
-    @Query('type') String type = 'all',
+    @Query('type') String? type,
     @Query('offset') String? offset,
     @Query('timezone_offset') int timezoneOffset = -480,
     @Query('features')
     String features =
         'itemOpusStyle,listOnlyfans,opusBigCover,onlyfansVote,decorationCard,onlyfansAssetsV2,forwardListHidden,ugcDelete',
+    @Query('platform') String platform = 'web',
+    @Query('web_location') String webLocation = '333.1365',
     @Query('page') int page = 1,
   });
 

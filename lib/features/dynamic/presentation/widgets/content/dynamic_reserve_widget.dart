@@ -1,4 +1,5 @@
 import 'package:culcul/data/models/dynamic/dynamic_view_models.dart';
+import 'package:culcul/features/dynamic/presentation/utils/dynamic_navigation.dart';
 import 'package:flutter/material.dart';
 
 class DynamicReserveWidget extends StatelessWidget {
@@ -42,7 +43,9 @@ class DynamicReserveWidget extends StatelessWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: additional.jumpUrl == null || additional.jumpUrl!.isEmpty
+                ? null
+                : () => DynamicNavigation.open(context, url: additional.jumpUrl),
             style: ElevatedButton.styleFrom(
               backgroundColor: colorScheme.primary,
               foregroundColor: colorScheme.onPrimary,

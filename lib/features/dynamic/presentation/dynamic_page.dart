@@ -1,5 +1,6 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/auth/controllers/auth_controller.dart';
+import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/dynamic/presentation/publish_dynamic_page.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_list_view.dart';
 import 'package:culcul/ui/widgets/app_tab_bar.dart';
@@ -16,9 +17,20 @@ class DynamicPage extends HookConsumerWidget {
     final t = Translations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final locale = Localizations.localeOf(context);
     final authState = ref.watch(authProvider);
 
-    final tabs = [t.moments.tabs.all, t.moments.tabs.video, t.moments.tabs.pgc];
+    final articleTab = switch (locale.languageCode) {
+      'en' => 'Articles',
+      'zh' when locale.countryCode == 'TW' || locale.scriptCode == 'Hant' => '專欄',
+      _ => '专栏',
+    };
+    final tabs = [
+      t.moments.tabs.all,
+      t.moments.tabs.video,
+      t.moments.tabs.pgc,
+      articleTab,
+    ];
     final tabController = useTabController(initialLength: tabs.length);
 
     return Scaffold(
@@ -43,7 +55,10 @@ class DynamicPage extends HookConsumerWidget {
                 );
               },
             ),
-          IconButton(icon: const Icon(Icons.search_rounded, size: 24), onPressed: () {}),
+          IconButton(
+            icon: const Icon(Icons.search_rounded, size: 24),
+            onPressed: () => const SearchRoute().push(context),
+          ),
           const SizedBox(width: 8),
         ],
         bottom: authState.isLoggedIn
@@ -57,6 +72,7 @@ class DynamicPage extends HookConsumerWidget {
                 DynamicListView(type: 'all'),
                 DynamicListView(type: 'video'),
                 DynamicListView(type: 'pgc'),
+                DynamicListView(type: 'article'),
               ],
             )
           : GuestView(title: t.profile.not_logged_in, message: t.profile.login_hint),

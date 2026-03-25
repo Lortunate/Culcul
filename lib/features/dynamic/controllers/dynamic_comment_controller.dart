@@ -1,4 +1,5 @@
 import 'package:culcul/core/providers/api_provider.dart';
+import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:culcul/features/dynamic/controllers/dynamic_comment_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -22,10 +23,11 @@ class DynamicCommentController extends _$DynamicCommentController {
 
     result.when(
       success: (data) {
+        final hasMore = _resolveHasMore(data, currentPage: 1);
         state = state.copyWith(
           comments: data.replies,
           isLoading: false,
-          hasMore: !data.cursor!.isEnd,
+          hasMore: hasMore,
           page: 1,
         );
       },
@@ -49,9 +51,10 @@ class DynamicCommentController extends _$DynamicCommentController {
 
     result.when(
       success: (data) {
+        final hasMore = _resolveHasMore(data, currentPage: nextPage);
         state = state.copyWith(
           comments: [...state.comments, ...data.replies],
-          hasMore: !data.cursor!.isEnd,
+          hasMore: hasMore,
           page: nextPage,
         );
       },
@@ -101,5 +104,20 @@ class DynamicCommentController extends _$DynamicCommentController {
       // Refresh to show new comment
       refresh();
     }
+  }
+
+  bool _resolveHasMore(CommentResponse data, {required int currentPage}) {
+    final cursor = data.cursor;
+    if (cursor != null) {
+      return !cursor.isEnd;
+    }
+
+    final page = data.page;
+    if (page != null && page.size > 0 && page.count > 0) {
+      return currentPage * page.size < page.count;
+    }
+
+    // Fallback: if no pagination metadata, treat short page as end.
+    return data.replies.length >= 20;
   }
 }

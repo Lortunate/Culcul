@@ -21,6 +21,23 @@ class DynamicContentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final contentText = post.contentText;
+    final hasText = contentText != null && contentText.isNotEmpty;
+    final hasImages = post.images != null && post.images!.isNotEmpty;
+    final hasVideo = post.videoContent != null;
+    final hasLinkCard = post.linkCard != null;
+    final showLinkCard =
+        hasLinkCard && (post.preferLinkCardDisplay || (!hasImages && !hasVideo));
+    final showImages = hasImages && !showLinkCard;
+    final showText =
+        hasText &&
+        !(showLinkCard &&
+            ((post.linkCard!.desc != null && contentText == post.linkCard!.desc) ||
+                contentText == post.linkCard!.title));
+    final showAdditional =
+        post.additional != null &&
+        !(post.additional!.type == 'ADDITIONAL_TYPE_UGC' && (hasVideo || showLinkCard));
+
     final additionalWidget = post.additional != null
         ? _buildAdditional(context, post.additional!)
         : null;
@@ -28,9 +45,9 @@ class DynamicContentWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (post.description != null && post.description!.isNotEmpty) ...[
+        if (showText) ...[
           BilibiliEmojiText(
-            text: post.description!,
+            text: contentText,
             emojiMap: const {},
             style: Theme.of(
               context,
@@ -39,23 +56,19 @@ class DynamicContentWidget extends StatelessWidget {
           ),
           const SizedBox(height: 8),
         ],
-        if (post.images != null && post.images!.isNotEmpty)
-          DynamicImagesWidget(images: post.images!),
+        if (showImages) DynamicImagesWidget(images: post.images!),
         if (post.videoContent != null)
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: DynamicVideoWidget(video: post.videoContent!),
           ),
-        if (post.linkCard != null)
+        if (showLinkCard)
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: DynamicLinkCardWidget(card: post.linkCard!),
           ),
-        if (additionalWidget != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: additionalWidget,
-          ),
+        if (showAdditional && additionalWidget != null)
+          Padding(padding: const EdgeInsets.only(top: 8.0), child: additionalWidget),
         if (post.orig != null)
           Padding(
             padding: const EdgeInsets.only(top: 8.0),

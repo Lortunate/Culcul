@@ -114,7 +114,7 @@ class DynamicRepository extends BaseRepository {
   }
 
   Future<Result<DynamicData, AppException>> getFeed({
-    String type = 'all',
+    String? type,
     String? offset,
     int page = 1,
   }) {

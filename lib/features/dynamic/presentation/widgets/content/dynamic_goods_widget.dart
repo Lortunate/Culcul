@@ -1,4 +1,5 @@
 import 'package:culcul/data/models/dynamic/dynamic_view_models.dart';
+import 'package:culcul/features/dynamic/presentation/utils/dynamic_navigation.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -34,6 +35,7 @@ class DynamicGoodsWidget extends StatelessWidget {
             ),
           ...additional.goodsItems!.map(
             (item) => ListTile(
+              onTap: () => DynamicNavigation.open(context, url: item.jumpUrl),
               leading: AppNetworkImage(
                 url: item.cover,
                 width: 50,

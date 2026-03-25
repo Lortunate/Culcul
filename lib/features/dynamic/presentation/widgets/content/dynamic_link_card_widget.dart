@@ -1,4 +1,5 @@
 import 'package:culcul/data/models/dynamic/dynamic_view_models.dart';
+import 'package:culcul/features/dynamic/presentation/utils/dynamic_navigation.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -21,9 +22,7 @@ class DynamicLinkCardWidget extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(6),
-          onTap: () {
-            // TODO: Open URL
-          },
+          onTap: () => DynamicNavigation.open(context, url: card.url),
           child: Row(
             children: [
               ClipRRect(

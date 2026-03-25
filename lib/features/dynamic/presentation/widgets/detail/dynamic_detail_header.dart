@@ -1,8 +1,11 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
+import 'package:culcul/features/dynamic/presentation/utils/dynamic_navigation.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class DynamicDetailHeader extends StatelessWidget {
   final DynamicItem post;
@@ -48,7 +51,7 @@ class DynamicDetailHeader extends StatelessWidget {
             ),
             IconButton(
               icon: Icon(Icons.more_vert, size: 20, color: colorScheme.onSurfaceVariant),
-              onPressed: () {},
+              onPressed: () => _showMoreActions(context),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
               style: const ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
@@ -57,5 +60,55 @@ class DynamicDetailHeader extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _showMoreActions(BuildContext context) async {
+    final link = 'https://t.bilibili.com/${post.id}';
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.share_outlined),
+              title: const Text('分享动态'),
+              onTap: () => Navigator.pop(context, 'share'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.copy_all_rounded),
+              title: const Text('复制链接'),
+              onTap: () => Navigator.pop(context, 'copy'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.open_in_browser_rounded),
+              title: const Text('浏览器打开'),
+              onTap: () => Navigator.pop(context, 'open'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (!context.mounted) return;
+
+    switch (action) {
+      case 'share':
+        await ShareUtils.shareDynamic(post.id, post.contentText ?? '');
+        break;
+      case 'copy':
+        await Clipboard.setData(ClipboardData(text: link));
+        if (context.mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('已复制动态链接')));
+        }
+        break;
+      case 'open':
+        await DynamicNavigation.open(context, url: link);
+        break;
+      default:
+        break;
+    }
   }
 }

@@ -17,8 +17,9 @@ sealed class DynamicData with _$DynamicData {
   const factory DynamicData({
     @JsonKey(name: 'has_more') required bool hasMore,
     required List<DynamicItem> items,
-    required String offset,
-    @JsonKey(name: 'update_baseline') required String updateBaseline,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String offset,
+    @JsonKey(name: 'update_baseline', fromJson: JsonUtils.parseStringWithDefault)
+    required String updateBaseline,
     @JsonKey(name: 'update_num', fromJson: JsonUtils.parseIntWithDefault)
     required int updateNum,
   }) = _DynamicData;
@@ -29,8 +30,9 @@ sealed class DynamicData with _$DynamicData {
 @freezed
 sealed class DynamicItem with _$DynamicItem {
   const factory DynamicItem({
-    @JsonKey(name: 'id_str') required String idStr,
-    required String type,
+    @JsonKey(name: 'id_str', fromJson: JsonUtils.parseStringWithDefault)
+    required String idStr,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String type,
     required bool visible,
     required DynamicModules modules,
     DynamicItem? orig,
@@ -43,9 +45,10 @@ sealed class DynamicItem with _$DynamicItem {
 @freezed
 sealed class DynamicBasic with _$DynamicBasic {
   const factory DynamicBasic({
-    @JsonKey(name: 'comment_id_str') required String commentIdStr,
+    @JsonKey(name: 'comment_id_str', fromJson: JsonUtils.parseStringWithDefault)
+    required String commentIdStr,
     @JsonKey(name: 'comment_type') required int commentType,
-    @JsonKey(name: 'rid_str') required String ridStr,
+    @JsonKey(name: 'rid_str', fromJson: JsonUtils.parseStringWithDefault) required String ridStr,
   }) = _DynamicBasic;
 
   factory DynamicBasic.fromJson(Map<String, dynamic> json) =>
@@ -68,10 +71,13 @@ sealed class DynamicModules with _$DynamicModules {
 sealed class ModuleAuthor with _$ModuleAuthor {
   const factory ModuleAuthor({
     required int mid,
-    required String name,
-    @JsonKey(name: 'face') required String avatar,
-    @JsonKey(name: 'pub_time') required String pubTime,
-    @JsonKey(name: 'pub_action') required String pubAction,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String name,
+    @JsonKey(name: 'face', fromJson: JsonUtils.parseStringWithDefault)
+    required String avatar,
+    @JsonKey(name: 'pub_time', fromJson: JsonUtils.parseStringWithDefault)
+    required String pubTime,
+    @JsonKey(name: 'pub_action', fromJson: JsonUtils.parseStringWithDefault)
+    required String pubAction,
   }) = _ModuleAuthor;
 
   factory ModuleAuthor.fromJson(Map<String, dynamic> json) =>
@@ -94,7 +100,7 @@ sealed class ModuleDynamic with _$ModuleDynamic {
 @freezed
 sealed class ModuleAdditional with _$ModuleAdditional {
   const factory ModuleAdditional({
-    required String type,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String type,
     AdditionalCommon? common,
     AdditionalReserve? reserve,
     AdditionalGoods? goods,
@@ -109,12 +115,14 @@ sealed class ModuleAdditional with _$ModuleAdditional {
 @freezed
 sealed class AdditionalCommon with _$AdditionalCommon {
   const factory AdditionalCommon({
-    required String title,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String title,
     String? desc1,
     String? desc2,
-    required String cover,
-    @JsonKey(name: 'jump_url') required String jumpUrl,
-    @JsonKey(name: 'sub_type') required String subType,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String cover,
+    @JsonKey(name: 'jump_url', fromJson: JsonUtils.parseStringWithDefault)
+    required String jumpUrl,
+    @JsonKey(name: 'sub_type', fromJson: JsonUtils.parseStringWithDefault)
+    required String subType,
     @JsonKey(name: 'head_text') String? headText,
   }) = _AdditionalCommon;
 
@@ -125,8 +133,9 @@ sealed class AdditionalCommon with _$AdditionalCommon {
 @freezed
 sealed class AdditionalReserve with _$AdditionalReserve {
   const factory AdditionalReserve({
-    required String title,
-    @JsonKey(name: 'jump_url') required String jumpUrl,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String title,
+    @JsonKey(name: 'jump_url', fromJson: JsonUtils.parseStringWithDefault)
+    required String jumpUrl,
     @JsonKey(name: 'reserve_total') required int reserveTotal,
     required int state,
     ReserveDesc? desc1,
@@ -139,7 +148,10 @@ sealed class AdditionalReserve with _$AdditionalReserve {
 
 @freezed
 sealed class ReserveDesc with _$ReserveDesc {
-  const factory ReserveDesc({required String text, required int style}) = _ReserveDesc;
+  const factory ReserveDesc({
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String text,
+    required int style,
+  }) = _ReserveDesc;
 
   factory ReserveDesc.fromJson(Map<String, dynamic> json) => _$ReserveDescFromJson(json);
 }
@@ -147,9 +159,11 @@ sealed class ReserveDesc with _$ReserveDesc {
 @freezed
 sealed class AdditionalGoods with _$AdditionalGoods {
   const factory AdditionalGoods({
-    @JsonKey(name: 'head_text') required String headText,
+    @JsonKey(name: 'head_text', fromJson: JsonUtils.parseStringWithDefault)
+    required String headText,
     required List<GoodsItem> items,
-    @JsonKey(name: 'jump_url') required String jumpUrl,
+    @JsonKey(name: 'jump_url', fromJson: JsonUtils.parseStringWithDefault)
+    required String jumpUrl,
   }) = _AdditionalGoods;
 
   factory AdditionalGoods.fromJson(Map<String, dynamic> json) =>
@@ -159,10 +173,11 @@ sealed class AdditionalGoods with _$AdditionalGoods {
 @freezed
 sealed class GoodsItem with _$GoodsItem {
   const factory GoodsItem({
-    required String name,
-    required String price,
-    required String cover,
-    @JsonKey(name: 'jump_url') required String jumpUrl,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String name,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String price,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String cover,
+    @JsonKey(name: 'jump_url', fromJson: JsonUtils.parseStringWithDefault)
+    required String jumpUrl,
   }) = _GoodsItem;
 
   factory GoodsItem.fromJson(Map<String, dynamic> json) => _$GoodsItemFromJson(json);
@@ -171,7 +186,7 @@ sealed class GoodsItem with _$GoodsItem {
 @freezed
 sealed class AdditionalVote with _$AdditionalVote {
   const factory AdditionalVote({
-    required String desc,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String desc,
     @JsonKey(name: 'end_time') required int endTime,
     @JsonKey(name: 'join_num') required int joinNum,
     @JsonKey(name: 'vote_id') required int voteId,
@@ -186,11 +201,13 @@ sealed class AdditionalVote with _$AdditionalVote {
 @freezed
 sealed class AdditionalUgc with _$AdditionalUgc {
   const factory AdditionalUgc({
-    required String title,
-    required String cover,
-    @JsonKey(name: 'desc_second') required String descSecond,
-    required String duration,
-    @JsonKey(name: 'jump_url') required String jumpUrl,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String title,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String cover,
+    @JsonKey(name: 'desc_second', fromJson: JsonUtils.parseStringWithDefault)
+    required String descSecond,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String duration,
+    @JsonKey(name: 'jump_url', fromJson: JsonUtils.parseStringWithDefault)
+    required String jumpUrl,
   }) = _AdditionalUgc;
 
   factory AdditionalUgc.fromJson(Map<String, dynamic> json) =>
@@ -200,7 +217,7 @@ sealed class AdditionalUgc with _$AdditionalUgc {
 @freezed
 sealed class ModuleDesc with _$ModuleDesc {
   const factory ModuleDesc({
-    required String text,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String text,
     @JsonKey(name: 'rich_text_nodes') List<dynamic>? richTextNodes,
   }) = _ModuleDesc;
 
@@ -210,7 +227,7 @@ sealed class ModuleDesc with _$ModuleDesc {
 @freezed
 sealed class ModuleMajor with _$ModuleMajor {
   const factory ModuleMajor({
-    required String type,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String type,
     MajorArchive? archive,
     MajorDraw? draw,
     @JsonKey(name: 'ugc_season') MajorArchive? ugcSeason,
@@ -230,14 +247,16 @@ sealed class ModuleMajor with _$ModuleMajor {
 @freezed
 sealed class MajorArchive with _$MajorArchive {
   const factory MajorArchive({
-    required String cover,
-    required String title,
-    required String desc,
-    @JsonKey(name: 'duration_text') required String durationText,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String cover,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String title,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String desc,
+    @JsonKey(name: 'duration_text', fromJson: JsonUtils.parseStringWithDefault)
+    required String durationText,
     required MajorStat stat,
-    required String aid,
-    required String bvid,
-    @JsonKey(name: 'jump_url') required String jumpUrl,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String aid,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String bvid,
+    @JsonKey(name: 'jump_url', fromJson: JsonUtils.parseStringWithDefault)
+    required String jumpUrl,
   }) = _MajorArchive;
 
   factory MajorArchive.fromJson(Map<String, dynamic> json) =>
@@ -254,7 +273,7 @@ sealed class MajorDraw with _$MajorDraw {
 @freezed
 sealed class DrawItem with _$DrawItem {
   const factory DrawItem({
-    required String src,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String src,
     required int width,
     required int height,
     required int size,
@@ -267,11 +286,12 @@ sealed class DrawItem with _$DrawItem {
 sealed class MajorArticle with _$MajorArticle {
   const factory MajorArticle({
     required int id,
-    required String title,
-    required String desc,
-    required List<String> covers,
-    required String label,
-    @JsonKey(name: 'jump_url') required String jumpUrl,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String title,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String desc,
+    @JsonKey(fromJson: JsonUtils.parseStringListWithDefault) required List<String> covers,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String label,
+    @JsonKey(name: 'jump_url', fromJson: JsonUtils.parseStringWithDefault)
+    required String jumpUrl,
   }) = _MajorArticle;
 
   factory MajorArticle.fromJson(Map<String, dynamic> json) =>
@@ -281,11 +301,12 @@ sealed class MajorArticle with _$MajorArticle {
 @freezed
 sealed class MajorCommon with _$MajorCommon {
   const factory MajorCommon({
-    required String title,
-    required String desc,
-    required String cover,
-    @JsonKey(name: 'jump_url') required String jumpUrl,
-    required String label,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String title,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String desc,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String cover,
+    @JsonKey(name: 'jump_url', fromJson: JsonUtils.parseStringWithDefault)
+    required String jumpUrl,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String label,
   }) = _MajorCommon;
 
   factory MajorCommon.fromJson(Map<String, dynamic> json) => _$MajorCommonFromJson(json);
@@ -293,7 +314,10 @@ sealed class MajorCommon with _$MajorCommon {
 
 @freezed
 sealed class MajorStat with _$MajorStat {
-  const factory MajorStat({required String play, required String danmaku}) = _MajorStat;
+  const factory MajorStat({
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String play,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String danmaku,
+  }) = _MajorStat;
 
   factory MajorStat.fromJson(Map<String, dynamic> json) => _$MajorStatFromJson(json);
 }
@@ -326,8 +350,9 @@ sealed class StatCommon with _$StatCommon {
 @freezed
 sealed class ModuleTopic with _$ModuleTopic {
   const factory ModuleTopic({
-    required String name,
-    @JsonKey(name: 'jump_url') required String jumpUrl,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String name,
+    @JsonKey(name: 'jump_url', fromJson: JsonUtils.parseStringWithDefault)
+    required String jumpUrl,
   }) = _ModuleTopic;
 
   factory ModuleTopic.fromJson(Map<String, dynamic> json) => _$ModuleTopicFromJson(json);
@@ -336,9 +361,10 @@ sealed class ModuleTopic with _$ModuleTopic {
 @freezed
 sealed class MajorPgc with _$MajorPgc {
   const factory MajorPgc({
-    required String cover,
-    required String title,
-    @JsonKey(name: 'jump_url') required String jumpUrl,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String cover,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String title,
+    @JsonKey(name: 'jump_url', fromJson: JsonUtils.parseStringWithDefault)
+    required String jumpUrl,
     required MajorStat stat,
     @JsonKey(name: 'season_id') required int seasonId,
     @JsonKey(name: 'epid') required int epid,
@@ -352,11 +378,13 @@ sealed class MajorPgc with _$MajorPgc {
 @freezed
 sealed class MajorCourses with _$MajorCourses {
   const factory MajorCourses({
-    required String cover,
-    required String title,
-    @JsonKey(name: 'sub_title') required String subTitle,
-    required String desc,
-    @JsonKey(name: 'jump_url') required String jumpUrl,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String cover,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String title,
+    @JsonKey(name: 'sub_title', fromJson: JsonUtils.parseStringWithDefault)
+    required String subTitle,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String desc,
+    @JsonKey(name: 'jump_url', fromJson: JsonUtils.parseStringWithDefault)
+    required String jumpUrl,
     required int id,
   }) = _MajorCourses;
 
@@ -367,10 +395,11 @@ sealed class MajorCourses with _$MajorCourses {
 @freezed
 sealed class MajorMusic with _$MajorMusic {
   const factory MajorMusic({
-    required String cover,
-    required String title,
-    required String label,
-    @JsonKey(name: 'jump_url') required String jumpUrl,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String cover,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String title,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String label,
+    @JsonKey(name: 'jump_url', fromJson: JsonUtils.parseStringWithDefault)
+    required String jumpUrl,
     required int id,
   }) = _MajorMusic;
 
@@ -409,12 +438,15 @@ sealed class OpusPic with _$OpusPic {
 @freezed
 sealed class MajorLive with _$MajorLive {
   const factory MajorLive({
-    required String cover,
-    required String title,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String cover,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String title,
     @JsonKey(name: 'live_state') required int liveState,
-    @JsonKey(name: 'jump_url') required String jumpUrl,
-    @JsonKey(name: 'desc_first') required String descFirst,
-    @JsonKey(name: 'desc_second') required String descSecond,
+    @JsonKey(name: 'jump_url', fromJson: JsonUtils.parseStringWithDefault)
+    required String jumpUrl,
+    @JsonKey(name: 'desc_first', fromJson: JsonUtils.parseStringWithDefault)
+    required String descFirst,
+    @JsonKey(name: 'desc_second', fromJson: JsonUtils.parseStringWithDefault)
+    required String descSecond,
   }) = _MajorLive;
 
   factory MajorLive.fromJson(Map<String, dynamic> json) => _$MajorLiveFromJson(json);
@@ -423,7 +455,7 @@ sealed class MajorLive with _$MajorLive {
 @freezed
 sealed class MajorLiveRcmd with _$MajorLiveRcmd {
   const factory MajorLiveRcmd({
-    required String content,
+    @JsonKey(fromJson: JsonUtils.parseStringWithDefault) required String content,
     @JsonKey(name: 'reserve_type') required int reserveType,
   }) = _MajorLiveRcmd;
 
@@ -434,7 +466,8 @@ sealed class MajorLiveRcmd with _$MajorLiveRcmd {
 @freezed
 sealed class DynamicPublishData with _$DynamicPublishData {
   const factory DynamicPublishData({
-    @JsonKey(name: 'dyn_id_str') required String dynIdStr,
+    @JsonKey(name: 'dyn_id_str', fromJson: JsonUtils.parseStringWithDefault)
+    required String dynIdStr,
   }) = _DynamicPublishData;
 
   factory DynamicPublishData.fromJson(Map<String, dynamic> json) =>
@@ -444,7 +477,8 @@ sealed class DynamicPublishData with _$DynamicPublishData {
 @freezed
 sealed class DynamicUploadImageData with _$DynamicUploadImageData {
   const factory DynamicUploadImageData({
-    @JsonKey(name: 'image_url') required String imageUrl,
+    @JsonKey(name: 'image_url', fromJson: JsonUtils.parseStringWithDefault)
+    required String imageUrl,
     @JsonKey(name: 'image_width') required int width,
     @JsonKey(name: 'image_height') required int height,
   }) = _DynamicUploadImageData;
