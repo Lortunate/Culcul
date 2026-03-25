@@ -1,4 +1,5 @@
 import 'package:culcul/data/models/fav/index.dart';
+import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ class FavFolderItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = i18n(context);
 
     return AppClickable(
       onTap: onTap,
@@ -80,7 +82,7 @@ class FavFolderItem extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              '${item.mediaCount}个内容',
+                              t.favorites.folder_item_count(count: item.mediaCount.toString()),
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: colorScheme.onSurfaceVariant,
                                 fontSize: 11,
@@ -106,7 +108,7 @@ class FavFolderItem extends StatelessWidget {
                                     ),
                                     const SizedBox(width: 2),
                                     Text(
-                                      '私密',
+                                      t.favorites.private,
                                       style: theme.textTheme.labelSmall?.copyWith(
                                         color: colorScheme.onSurfaceVariant,
                                         fontSize: 10,
@@ -150,3 +152,4 @@ class FavFolderItem extends StatelessWidget {
     );
   }
 }
+

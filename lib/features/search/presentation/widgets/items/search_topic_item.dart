@@ -1,5 +1,6 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/data/models/search/search_result.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/dynamic/presentation/topic_detail_page.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ class SearchTopicItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = Translations.of(context);
 
     return GestureDetector(
       onTap: () {
@@ -73,7 +75,7 @@ class SearchTopicItem extends StatelessWidget {
                   const SizedBox(height: 8),
                   if (item.update != null)
                     Text(
-                      '更新 ${item.update} 条动态',
+                      t.moments.topic_updates(count: item.update!.toString()),
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: colorScheme.primary,
                       ),
@@ -87,3 +89,4 @@ class SearchTopicItem extends StatelessWidget {
     );
   }
 }
+

@@ -1,4 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -23,7 +24,9 @@ class DynamicNavigation {
 
     final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!launched && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('无法打开链接')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(Translations.of(context).moments.open_link_failed)),
+      );
     }
   }
 
@@ -106,3 +109,4 @@ class DynamicNavigation {
     return Uri.tryParse(normalized);
   }
 }
+

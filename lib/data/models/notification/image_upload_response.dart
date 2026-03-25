@@ -14,3 +14,4 @@ sealed class ImageUploadResponse with _$ImageUploadResponse {
   factory ImageUploadResponse.fromJson(Map<String, dynamic> json) =>
       _$ImageUploadResponseFromJson(json);
 }
+

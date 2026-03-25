@@ -4,6 +4,7 @@ import 'package:culcul/features/live/controllers/live_room_state.dart';
 import 'package:culcul/features/live/data/live_repository.dart';
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/features/live/data/live_socket_service.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'live_room_controller.g.dart';
@@ -26,8 +27,8 @@ class LiveRoomController extends _$LiveRoomController {
 
     // Add welcome message
     final welcomeItem = LiveDanmakuItem(
-      text: '欢迎来到直播间~ 喜欢主播点个关注哦',
-      nickname: '系统消息',
+      text: t.live.danmaku.welcome,
+      nickname: t.live.danmaku.system_notice,
       uid: 0,
       dmType: 3, // System Notice
       guardLevel: 0,
@@ -176,3 +177,4 @@ class LiveRoomController extends _$LiveRoomController {
     await _init(state.roomId);
   }
 }
+

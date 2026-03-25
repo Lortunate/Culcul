@@ -1,3 +1,4 @@
+import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/data/models/notification/reply_model.dart';
 import 'package:culcul/features/notification/controllers/at_controller.dart';
 import 'package:culcul/features/notification/controllers/like_controller.dart';
@@ -9,13 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 enum NotificationType { reply, at, like, system }
-
-const _notificationTitles = {
-  NotificationType.reply: '回复我的',
-  NotificationType.at: '@我',
-  NotificationType.like: '收到的赞',
-  NotificationType.system: '系统通知',
-};
 
 class NotificationListPage extends ConsumerStatefulWidget {
   final NotificationType type;
@@ -76,7 +70,13 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
   @override
   Widget build(BuildContext context) {
     final state = _providerState(widget.type);
-    final title = _notificationTitles[widget.type] ?? '';
+    final t = i18n(context);
+    final title = switch (widget.type) {
+      NotificationType.reply => t.notification.types.reply,
+      NotificationType.at => t.notification.types.at,
+      NotificationType.like => t.notification.types.like,
+      NotificationType.system => t.notification.types.system,
+    };
 
     return Scaffold(
       appBar: AppBar(title: Text(title)),
@@ -169,6 +169,8 @@ class _EmptyNotificationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('暂无消息'));
+    final t = i18n(context);
+    return Center(child: Text(t.notification.chat.no_message));
   }
 }
+

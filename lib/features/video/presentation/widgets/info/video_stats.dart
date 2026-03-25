@@ -34,3 +34,4 @@ class VideoStatsRow extends StatelessWidget {
     );
   }
 }
+

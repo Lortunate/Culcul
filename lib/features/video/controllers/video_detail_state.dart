@@ -25,3 +25,4 @@ sealed class VideoDetailState with _$VideoDetailState {
     @Default([]) List<int> availableQualities,
   }) = _VideoDetailState;
 }
+

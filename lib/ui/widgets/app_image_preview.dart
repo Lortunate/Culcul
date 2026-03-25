@@ -1,5 +1,7 @@
 import 'package:culcul/core/services/media_service.dart';
 import 'package:culcul/core/utils/format_utils.dart';
+import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -56,14 +58,15 @@ class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
     if (_isSaving) return;
     setState(() => _isSaving = true);
     final messenger = ScaffoldMessenger.of(context);
+    final t = i18n(context);
 
     try {
       messenger
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(
-            content: Text('正在保存图片...'),
-            duration: Duration(seconds: 20),
+          SnackBar(
+            content: Text(t.common.saving),
+            duration: const Duration(seconds: 20),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -72,7 +75,7 @@ class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
       messenger
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          const SnackBar(content: Text('已保存到系统相册'), behavior: SnackBarBehavior.floating),
+          SnackBar(content: Text(t.common.save_success), behavior: SnackBarBehavior.floating),
         );
     } catch (error) {
       if (!mounted) return;
@@ -80,7 +83,7 @@ class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
       messenger
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          SnackBar(content: Text('保存失败：$message'), behavior: SnackBarBehavior.floating),
+          SnackBar(content: Text(t.common.save_failed(message: message)), behavior: SnackBarBehavior.floating),
         );
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -91,6 +94,7 @@ class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final mediaQuery = MediaQuery.of(context);
+    final t = i18n(context);
 
     return Scaffold(
       backgroundColor: colorScheme.scrim,
@@ -98,8 +102,8 @@ class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
         children: [
           _buildImagePageView(colorScheme),
           _buildTopBar(colorScheme, mediaQuery),
-          _buildSaveButton(colorScheme, mediaQuery),
-          if (widget.imageUrls.length > 1) _buildSwipeHint(colorScheme, mediaQuery),
+          _buildSaveButton(colorScheme, mediaQuery, t),
+          if (widget.imageUrls.length > 1) _buildSwipeHint(colorScheme, mediaQuery, t),
         ],
       ),
     );
@@ -183,7 +187,7 @@ class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
     );
   }
 
-  Widget _buildSaveButton(ColorScheme colorScheme, MediaQueryData mediaQuery) {
+  Widget _buildSaveButton(ColorScheme colorScheme, MediaQueryData mediaQuery, Translations t) {
     return Positioned(
       bottom: mediaQuery.padding.bottom + 16,
       left: 16,
@@ -205,12 +209,12 @@ class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
                 ),
               )
             : const Icon(Icons.download_rounded),
-        label: Text(_isSaving ? '保存中...' : '保存图片'),
+        label: Text(_isSaving ? t.common.saving : t.common.save_image),
       ),
     );
   }
 
-  Widget _buildSwipeHint(ColorScheme colorScheme, MediaQueryData mediaQuery) {
+  Widget _buildSwipeHint(ColorScheme colorScheme, MediaQueryData mediaQuery, Translations t) {
     return Positioned(
       bottom: mediaQuery.padding.bottom + 76,
       left: 0,
@@ -223,7 +227,7 @@ class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
             borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
-            '左右滑动切换',
+            t.common.slide_to_switch,
             style: TextStyle(color: colorScheme.onPrimary, fontSize: 12),
           ),
         ),
@@ -231,3 +235,4 @@ class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
     );
   }
 }
+

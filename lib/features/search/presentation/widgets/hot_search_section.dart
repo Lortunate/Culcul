@@ -130,3 +130,4 @@ class _HotSearchItem extends StatelessWidget {
     );
   }
 }
+

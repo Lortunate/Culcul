@@ -1,6 +1,7 @@
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/result.dart';
 import 'package:culcul/domain/entities/country_code.dart';
+import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/ui/widgets/app_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -59,10 +60,12 @@ class CountryCodeSelectionPage extends HookConsumerWidget {
       }).toList();
     }, [countryCodes.value, searchQuery.value]);
 
+    final t = i18n(context);
+
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        title: const Text('选择地区'),
+        title: Text(t.auth.select_country),
         centerTitle: true,
         surfaceTintColor: Colors.transparent,
       ),
@@ -73,7 +76,7 @@ class CountryCodeSelectionPage extends HookConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: AppSearchBar(
               controller: searchController,
-              hintText: '搜索国家或地区',
+              hintText: t.auth.search_country_hint,
               suffixIcon: searchQuery.value.isNotEmpty
                   ? GestureDetector(
                       onTap: () => searchController.clear(),
@@ -93,7 +96,7 @@ class CountryCodeSelectionPage extends HookConsumerWidget {
                 : filteredList.isEmpty
                 ? Center(
                     child: Text(
-                      '未找到相关结果',
+                      t.auth.no_search_result,
                       style: TextStyle(color: colorScheme.onSurfaceVariant),
                     ),
                   )
@@ -121,3 +124,4 @@ class CountryCodeSelectionPage extends HookConsumerWidget {
     );
   }
 }
+

@@ -37,14 +37,14 @@ class ChatMessageItem extends StatelessWidget {
     }
 
     if (message.msgType == 10) {
-      // 系统通知
+      // System notice
       final content =
           message.contentMap?['text'] as String? ?? t.notification.types.system;
       return ChatSystemMessage(content: content);
     }
 
     if (message.msgType == 18) {
-      // 系统提示 (e.g. 关注前限制)
+      // System tip, such as follow restrictions
       final tips = message.systemTipContent;
       if (tips != null && tips.isNotEmpty) {
         final text = tips.map((e) => e['text'] as String? ?? '').join('');
@@ -131,3 +131,4 @@ class ChatMessageItem extends StatelessWidget {
     }
   }
 }
+

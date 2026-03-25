@@ -1,6 +1,7 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/data/models/search/search_result.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/user_list_tile.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +14,7 @@ class SearchUserItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = Translations.of(context);
 
     return UserListTile(
       onTap: () {
@@ -25,8 +27,8 @@ class SearchUserItem extends StatelessWidget {
       name: FormatUtils.stripHtmlTags(item.uname ?? ''),
       subtitle: item.usign != null ? FormatUtils.stripHtmlTags(item.usign!) : null,
       stats: [
-        _UserMetaItem(label: '粉丝', value: FormatUtils.formatAnyNumber(item.fans)),
-        _UserMetaItem(label: '视频', value: FormatUtils.formatAnyNumber(item.videos)),
+        _UserMetaItem(label: t.profile.stats.followers, value: FormatUtils.formatAnyNumber(item.fans)),
+        _UserMetaItem(label: t.search.tabs.video, value: FormatUtils.formatAnyNumber(item.videos)),
       ],
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
       trailing: SizedBox(
@@ -39,7 +41,7 @@ class SearchUserItem extends StatelessWidget {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           ),
           child: Text(
-            '关注',
+            t.actions.follow,
             style: TextStyle(
               color: colorScheme.primary,
               fontSize: 13,
@@ -85,3 +87,4 @@ class _UserMetaItem extends StatelessWidget {
     );
   }
 }
+

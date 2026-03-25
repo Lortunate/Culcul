@@ -27,3 +27,4 @@ class _VideoCardThumbnail extends StatelessWidget {
     );
   }
 }
+

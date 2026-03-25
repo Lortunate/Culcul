@@ -45,3 +45,4 @@ class _VideoListCardMedia extends StatelessWidget {
     );
   }
 }
+

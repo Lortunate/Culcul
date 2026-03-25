@@ -1,3 +1,4 @@
+import 'package:culcul/i18n/i18n.dart';
 import 'dart:ui';
 
 import 'package:culcul/app/theme/app_theme.dart';
@@ -27,13 +28,14 @@ class VideoListenPage extends ConsumerWidget {
     final semanticColors = context.semanticColors;
 
     final detail = state.videoDetail;
+    final t = i18n(context);
 
     final sleepTimerTarget = playerState.sleepTimerTarget;
     String? sleepTimerText;
     if (sleepTimerTarget != null) {
       final remaining = sleepTimerTarget.difference(DateTime.now());
       if (remaining.inSeconds > 0) {
-        sleepTimerText = '定时关闭: ${remaining.formatDuration}';
+        sleepTimerText = t.video.sleep_timer_remaining(remaining: remaining.formatDuration);
       }
     }
 
@@ -56,7 +58,7 @@ class VideoListenPage extends ConsumerWidget {
         ),
         centerTitle: true,
         title: Text(
-          '听视频',
+          t.video.listen,
           style: TextStyle(
             color: colorScheme.onPrimary,
             fontSize: 17,
@@ -291,3 +293,4 @@ class VideoListenPage extends ConsumerWidget {
     );
   }
 }
+

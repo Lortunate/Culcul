@@ -15,3 +15,4 @@ class DanmakuItem {
     this.type = DanmakuItemType.scroll,
   });
 }
+

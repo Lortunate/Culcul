@@ -106,3 +106,4 @@ class UserDynamicNotifier extends _$UserDynamicNotifier {
     }
   }
 }
+

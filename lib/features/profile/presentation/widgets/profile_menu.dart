@@ -33,9 +33,7 @@ class ProfileMenu extends ConsumerWidget {
                   context: context,
                   builder: (context) => AlertDialog(
                     title: Text(t.auth.logout),
-                    content: Text(
-                      'Are you sure you want to logout?',
-                    ), // TODO: Add to strings
+                    content: Text(t.profile.logout_confirm),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.of(context).pop(),
@@ -111,3 +109,4 @@ class _MenuItem extends StatelessWidget {
     );
   }
 }
+

@@ -24,3 +24,4 @@ class ChatTextMessage extends StatelessWidget {
     );
   }
 }
+

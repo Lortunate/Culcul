@@ -10,3 +10,4 @@ Future<dynamic> jsonDecodeCompute(String text) async {
 dynamic _parseAndDecode(String encoded) {
   return jsonDecode(encoded);
 }
+

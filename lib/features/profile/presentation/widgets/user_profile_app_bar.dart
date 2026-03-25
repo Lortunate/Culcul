@@ -1,5 +1,6 @@
 import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/data/models/user/user_profile_model.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_bottom_sheet.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
     return ValueListenableBuilder<double>(
       valueListenable: scrollOffset,
       builder: (context, offset, child) {
@@ -95,7 +97,7 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                   backgroundColor: iconBackgroundColor,
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Search in Space: Coming Soon')),
+                      SnackBar(content: Text(t.profile.space_search_coming_soon)),
                     );
                   },
                 ),
@@ -123,7 +125,7 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
         children: [
           ListTile(
             leading: const Icon(Icons.share_outlined),
-            title: const Text('分享'),
+            title: Text(t.actions.share),
             onTap: () {
               Navigator.pop(context);
               if (profile != null) {
@@ -133,7 +135,7 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           ListTile(
             leading: const Icon(Icons.block_outlined),
-            title: const Text('加入黑名单'),
+            title: Text(t.profile.menu.blacklist),
             onTap: () {
               Navigator.pop(context);
               // TODO: Block
@@ -141,7 +143,7 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
           ListTile(
             leading: const Icon(Icons.report_gmailerrorred_outlined),
-            title: const Text('举报'),
+            title: Text(t.profile.menu.report),
             onTap: () {
               Navigator.pop(context);
               // TODO: Report
@@ -172,3 +174,4 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
+

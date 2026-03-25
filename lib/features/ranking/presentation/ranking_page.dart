@@ -10,7 +10,7 @@ class RankingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);
-    final tabs = rankingCategoriesV2.map((category) => category.name).toList();
+    final tabs = rankingCategoriesV2.map((category) => category.label(t)).toList();
 
     return DefaultTabController(
       length: rankingCategoriesV2.length,
@@ -62,3 +62,4 @@ class _RankingAppBar extends StatelessWidget {
     );
   }
 }
+

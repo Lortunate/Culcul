@@ -33,3 +33,4 @@ sealed class DefaultSearchData with _$DefaultSearchData {
   factory DefaultSearchData.fromJson(Map<String, dynamic> json) =>
       _$DefaultSearchDataFromJson(json);
 }
+

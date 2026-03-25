@@ -56,3 +56,4 @@ sealed class LiveGuardUserBase with _$LiveGuardUserBase {
   factory LiveGuardUserBase.fromJson(Map<String, dynamic> json) =>
       _$LiveGuardUserBaseFromJson(json);
 }
+

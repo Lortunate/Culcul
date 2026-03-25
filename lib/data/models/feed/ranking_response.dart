@@ -11,3 +11,4 @@ sealed class RankingResponse with _$RankingResponse {
   factory RankingResponse.fromJson(Map<String, dynamic> json) =>
       _$RankingResponseFromJson(json);
 }
+

@@ -104,3 +104,4 @@ class DynamicNotifier extends _$DynamicNotifier {
     }
   }
 }
+

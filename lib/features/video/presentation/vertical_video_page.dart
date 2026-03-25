@@ -1,5 +1,7 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/data/models/video/video_detail.dart';
+import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/video/controllers/playback_snapshot_controller.dart';
 import 'package:culcul/features/video/controllers/player_controller.dart';
 import 'package:culcul/features/video/controllers/video_detail_controller.dart';
@@ -89,6 +91,7 @@ class _TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final t = i18n(context);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -100,7 +103,7 @@ class _TopBar extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Text(
-            '12人正在看',
+            t.video.watching_count(count: '12'),
             style: TextStyle(
               color: colorScheme.onPrimary.withValues(alpha: 0.7),
               fontSize: 12,
@@ -123,12 +126,13 @@ class _RightBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = i18n(context);
     final actions = <_VideoAction>[
-      (icon: Icons.thumb_up_rounded, count: videoDetail.stat.like, label: '点赞'),
-      (icon: Icons.comment_rounded, count: videoDetail.stat.reply, label: '评论'),
-      (icon: Icons.thumb_down_alt_rounded, count: 438, label: '不喜欢'),
-      (icon: Icons.star_rounded, count: videoDetail.stat.favorite, label: '收藏'),
-      (icon: Icons.share_rounded, count: videoDetail.stat.share, label: '转发'),
+      (icon: Icons.thumb_up_rounded, count: videoDetail.stat.like, label: t.actions.like),
+      (icon: Icons.comment_rounded, count: videoDetail.stat.reply, label: t.actions.reply),
+      (icon: Icons.thumb_down_alt_rounded, count: 438, label: t.actions.unlike),
+      (icon: Icons.star_rounded, count: videoDetail.stat.favorite, label: t.video.actions.favorite),
+      (icon: Icons.share_rounded, count: videoDetail.stat.share, label: t.actions.share),
     ];
 
     return Column(
@@ -181,6 +185,7 @@ class _BottomBar extends ConsumerWidget {
     final duration = ref.watch(playbackDurationProvider);
     final maxValue = duration.inSeconds > 0 ? duration.inSeconds.toDouble() : 1.0;
     final colorScheme = Theme.of(context).colorScheme;
+    final t = i18n(context);
 
     return Container(
       decoration: BoxDecoration(
@@ -195,20 +200,20 @@ class _BottomBar extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildAuthorRow(colorScheme),
+          _buildAuthorRow(colorScheme, t),
           const SizedBox(height: 12),
           _buildTitleRow(colorScheme),
           const SizedBox(height: 4),
-          _buildPlayCountRow(colorScheme),
+          _buildPlayCountRow(colorScheme, t),
           const SizedBox(height: 12),
           _buildProgressBar(position, maxValue, colorScheme),
-          _buildActionRow(colorScheme),
+          _buildActionRow(colorScheme, t),
         ],
       ),
     );
   }
 
-  Widget _buildAuthorRow(ColorScheme colorScheme) {
+  Widget _buildAuthorRow(ColorScheme colorScheme, Translations t) {
     return Row(
       children: [
         AppAvatar(url: videoDetail.owner.face, size: 36, onTap: () {}),
@@ -225,7 +230,7 @@ class _BottomBar extends ConsumerWidget {
               ),
             ),
             Text(
-              '504.4万粉丝',
+              '${t.profile.stats.followers} 504.4${t.format.ten_thousand}',
               style: TextStyle(
                 color: colorScheme.onPrimary.withValues(alpha: 0.7),
                 fontSize: 12,
@@ -241,7 +246,7 @@ class _BottomBar extends ConsumerWidget {
             borderRadius: BorderRadius.circular(16),
           ),
           child: Text(
-            '+ 关注',
+            '+ ${t.actions.follow}',
             style: TextStyle(
               color: colorScheme.onPrimary,
               fontSize: 12,
@@ -275,7 +280,7 @@ class _BottomBar extends ConsumerWidget {
     );
   }
 
-  Widget _buildPlayCountRow(ColorScheme colorScheme) {
+  Widget _buildPlayCountRow(ColorScheme colorScheme, Translations t) {
     return Row(
       children: [
         Icon(
@@ -285,7 +290,7 @@ class _BottomBar extends ConsumerWidget {
         ),
         const SizedBox(width: 4),
         Text(
-          '${FormatUtils.formatNumber(videoDetail.stat.view)}播放',
+          t.common.view_count(count: FormatUtils.formatNumber(videoDetail.stat.view)),
           style: TextStyle(
             color: colorScheme.onPrimary.withValues(alpha: 0.6),
             fontSize: 12,
@@ -316,7 +321,7 @@ class _BottomBar extends ConsumerWidget {
     );
   }
 
-  Widget _buildActionRow(ColorScheme colorScheme) {
+  Widget _buildActionRow(ColorScheme colorScheme, Translations t) {
     return Row(
       children: [
         Expanded(
@@ -330,7 +335,7 @@ class _BottomBar extends ConsumerWidget {
             child: Row(
               children: [
                 Text(
-                  '已关闭弹幕',
+                  t.video.player.danmaku_closed,
                   style: TextStyle(
                     color: colorScheme.onPrimary.withValues(alpha: 0.54),
                     fontSize: 12,
@@ -350,7 +355,7 @@ class _BottomBar extends ConsumerWidget {
             borderRadius: BorderRadius.circular(4),
           ),
           child: Text(
-            '详情页',
+            t.video.detail_page,
             style: TextStyle(color: colorScheme.onPrimary, fontSize: 10),
           ),
         ),
@@ -360,3 +365,4 @@ class _BottomBar extends ConsumerWidget {
     );
   }
 }
+

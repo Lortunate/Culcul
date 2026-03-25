@@ -1,5 +1,6 @@
 import 'package:culcul/data/models/relation/relation_model.dart';
 import 'package:culcul/features/dynamic/providers/recently_followed_provider.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -8,6 +9,7 @@ class RecentlyFollowedWidget extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = Translations.of(context);
     final recentlyFollowed = ref.watch(recentlyFollowedProvider);
 
     return recentlyFollowed.when(
@@ -21,9 +23,9 @@ class RecentlyFollowedWidget extends HookConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                child: Text(
-                  '最近关注',
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              child: Text(
+                  t.moments.recently_followed,
                   style: Theme.of(
                     context,
                   ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
@@ -93,3 +95,4 @@ class _UserItem extends StatelessWidget {
     );
   }
 }
+

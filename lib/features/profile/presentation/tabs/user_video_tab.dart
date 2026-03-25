@@ -2,6 +2,7 @@ import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/data/models/video/video_model.dart';
 import 'package:culcul/features/profile/controllers/user_space_videos_controller.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/skeletons/video_list_skeleton.dart';
 import 'package:culcul/ui/widgets/video_list_card.dart';
@@ -27,6 +28,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final t = Translations.of(context);
     final videosAsync = ref.watch(userSpaceVideosProvider(widget.mid, order: _order));
     final notifier = ref.read(
       userSpaceVideosProvider(widget.mid, order: _order).notifier,
@@ -46,7 +48,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
             child: Row(
               children: [
                 _SortChip(
-                  label: '最新发布',
+                  label: t.search.filter.sort_newest,
                   selected: _order == 'pubdate',
                   onSelected: (val) {
                     if (val) setState(() => _order = 'pubdate');
@@ -54,7 +56,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
                 ),
                 const SizedBox(width: 12),
                 _SortChip(
-                  label: '最多播放',
+                  label: t.search.filter.sort_click,
                   selected: _order == 'click',
                   onSelected: (val) {
                     if (val) setState(() => _order = 'click');
@@ -62,7 +64,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
                 ),
                 const SizedBox(width: 12),
                 _SortChip(
-                  label: '最多收藏',
+                  label: t.search.filter.sort_favorite,
                   selected: _order == 'stow',
                   onSelected: (val) {
                     if (val) setState(() => _order = 'stow');
@@ -75,7 +77,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
         videosAsync.when(
           data: (videos) {
             if (videos.isEmpty) {
-              return const SliverFillRemaining(child: Center(child: Text('暂无视频')));
+              return SliverFillRemaining(child: Center(child: Text(t.common.no_content)));
             }
             return SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
@@ -208,3 +210,4 @@ class _SortChip extends StatelessWidget {
     );
   }
 }
+

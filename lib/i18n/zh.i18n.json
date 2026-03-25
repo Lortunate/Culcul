@@ -14,7 +14,15 @@
       "cinema": "影视",
       "new_journey": "新征程"
     },
-    "search_hint": "搜索视频..."
+    "search_hint": "搜索视频...",
+    "video_more": {
+      "watch_later": "稍后再看",
+      "download_cover": "下载封面",
+      "invalid_video_id": "无法获取视频ID",
+      "added_to_watch_later": "已添加至稍后再看",
+      "add_failed": "添加失败: $error",
+      "download_failed": "下载失败: $error"
+    }
   },
   "moments": {
     "title": "动态",
@@ -24,10 +32,79 @@
       "pgc": "番剧/影视"
     },
     "like_coming_soon": "点赞功能开发中",
-    "empty": "$tab 动态暂未实现"
+    "empty": "$tab 动态暂未实现",
+    "recently_followed": "最近关注",
+    "topic_search_hint": "搜索话题",
+    "topic_search_empty": "输入关键词搜索话题",
+    "topic_search_no_result": "未找到相关话题",
+    "topic_updates": "更新 $count 条动态",
+    "no_comments": "暂无评论，快来抢沙发吧~",
+    "comment_hint": "友善评论，文明发言",
+    "publish": "发布",
+    "publish_title": "发布动态",
+    "publish_action": "发布",
+    "publish_hint": "分享你的新鲜事...",
+    "publish_success": "发布成功",
+    "publish_failed": "发布失败: $error",
+    "discard_title": "提示",
+    "discard_confirm": "确定要放弃编辑吗？",
+    "discard_action": "放弃",
+    "forward_post": "转发动态",
+    "reserve": "预约",
+    "reserved": "已预约",
+    "vote": "投票",
+    "vote_stats": "$participants人参与 · $options个选项",
+    "copy_link": "复制链接",
+    "open_in_browser": "浏览器打开",
+    "copied_link": "已复制动态链接",
+    "open_link_failed": "无法打开链接",
+    "operation_failed": "操作失败: $message",
+    "detail_title": "动态详情"
   },
   "ranking": {
-    "title": "排行榜"
+    "title": "排行榜",
+    "categories": {
+      "all": "全站",
+      "animation": "动画",
+      "bangumi": "番剧",
+      "guochuang": "国创",
+      "music": "音乐",
+      "dance": "舞蹈",
+      "game": "游戏",
+      "knowledge": "知识",
+      "technology": "科技",
+      "sports": "运动",
+      "car": "汽车",
+      "life": "生活",
+      "food": "美食",
+      "animal": "动物",
+      "kichiku": "鬼畜",
+      "fashion": "时尚",
+      "information": "资讯",
+      "entertainment": "娱乐",
+      "film": "影视",
+      "documentary": "纪录片",
+      "movie": "电影",
+      "tv": "电视剧",
+      "tech_digital": "科技数码",
+      "short_play": "小剧场",
+      "fashion_beauty": "时尚美妆",
+      "sports_fitness": "体育运动",
+      "vlog": "vlog",
+      "painting": "绘画",
+      "ai": "人工智能",
+      "home": "家装房产",
+      "outdoor": "户外潮流",
+      "fitness": "健身",
+      "craft": "手工",
+      "travel": "旅游出行",
+      "three_rural": "三农",
+      "parenting": "亲子",
+      "health": "健康",
+      "emotion": "情感",
+      "life_interest": "生活兴趣",
+      "life_experience": "生活经验"
+    }
   },
   "settings": {
     "title": "设置",
@@ -77,7 +154,10 @@
       "error": "加载二维码失败"
     },
     "sms_sent": "验证码已发送",
-    "subtitle": "第三方轻量化客户端"
+    "subtitle": "第三方轻量化客户端",
+    "select_country": "选择地区",
+    "search_country_hint": "搜索国家或地区",
+    "no_search_result": "未找到相关结果"
   },
   "profile": {
     "login": "登录",
@@ -90,7 +170,8 @@
       "likes": "获赞"
     },
     "actions": {
-      "message": "私信"
+      "message": "私信",
+      "edit_profile": "编辑资料"
     },
     "vip": {
       "premium": "大会员",
@@ -104,8 +185,43 @@
       "appearance": "外观设置",
       "creative_center": "创作中心",
       "orders": "会员购订单",
-      "support": "联系客服"
-    }
+      "support": "联系客服",
+      "blacklist": "加入黑名单",
+      "report": "举报"
+    },
+    "tabs": {
+      "home": "主页",
+      "moments": "动态",
+      "contribution": "投稿"
+    },
+    "home_tab": {
+      "recent_videos": "视频 $count",
+      "view_more": "查看更多",
+      "empty": "暂无内容",
+      "sticky": "置顶视频",
+      "sticky_tag": "置顶",
+      "masterpiece": "代表作"
+    },
+    "followings": {
+      "title": "我的关注",
+      "empty": "暂无关注"
+    },
+    "followers": {
+      "title": "我的粉丝",
+      "empty": "暂无粉丝"
+    },
+    "relation": {
+      "none": "关注",
+      "followed": "已关注",
+      "mutual": "互粉",
+      "blacklisted": "已拉黑",
+      "failed": "操作失败: $error"
+    },
+    "privacy_title": "该用户设置了隐私",
+    "privacy_message": "无法查看关注/粉丝列表",
+    "verified_badge": "bilibili认证",
+    "logout_confirm": "确定要退出登录吗？",
+    "space_search_coming_soon": "空间搜索开发中"
   },
   "favorites": {
     "title": "我的收藏",
@@ -115,7 +231,8 @@
     "public": "公开",
     "play": "播放",
     "count": "共 $count 个内容",
-    "search_hint": "搜索收藏内容"
+    "search_hint": "搜索收藏内容",
+    "folder_item_count": "$count个内容"
   },
   "search": {
     "placeholder": "大家都在搜：culcul",
@@ -125,7 +242,31 @@
     "clear_history": "清空历史",
     "suggestion": "搜索建议",
     "no_result": "没有找到相关内容",
-    "trending": "大家都在搜"
+    "trending": "大家都在搜",
+    "tabs": {
+      "all": "综合",
+      "video": "视频",
+      "anime": "番剧",
+      "user": "用户",
+      "article": "专栏"
+    },
+    "status": {
+      "loading": "正在获取建议...",
+      "empty": "未发现相关搜索建议",
+      "failed": "获取建议失败"
+    },
+    "filter": {
+      "sort_default": "综合排序",
+      "sort_newest": "最新发布",
+      "sort_click": "最多点击",
+      "sort_danmaku": "最多弹幕",
+      "sort_favorite": "最多收藏",
+      "duration_all": "全部时长",
+      "duration_short": "10分钟以下",
+      "duration_medium": "10-30分钟",
+      "duration_long": "30-60分钟",
+      "duration_extra_long": "60分钟以上"
+    }
   },
   "video": {
     "tabs": {
@@ -149,20 +290,46 @@
     "no_desc": "暂无简介",
     "expand_all": "展开全部",
     "quality": {
+      "p8k": "8K 超高清",
+      "p_dolby": "杜比视界",
+      "p_hdr": "HDR 真彩",
       "p4k": "4K 超清",
+      "p1080_60": "1080P 60帧",
+      "p1080_high": "1080P 高码率",
       "p1080": "1080P 高清",
+      "p720_60": "720P 60帧",
       "p720": "720P 高清",
       "p480": "480P 清晰",
       "p360": "360P 流畅",
       "p240": "240P 流畅",
-      "p144": "144P 极速"
+      "p144": "144P 极速",
+      "unknown": "未知",
+      "auto": "自动"
     },
     "player": {
       "speed": "倍速",
       "quality": "清晰度",
       "danmaku": "弹幕",
       "full_screen": "全屏",
-      "retry": "重试播放"
+      "retry": "重试播放",
+      "brightness": "亮度",
+      "volume": "音量",
+      "sleep_timer": "定时停止",
+      "sleep_timer_off": "不开启",
+      "sleep_timer_min": "$minutes分钟",
+      "danmaku_settings": "弹幕设置",
+      "danmaku_opacity": "不透明度",
+      "danmaku_scale": "字号缩放",
+      "danmaku_area": "显示区域",
+      "danmaku_speed": "弹幕速度",
+      "danmaku_type_scroll": "滚动",
+      "danmaku_type_top": "顶部",
+      "danmaku_type_bottom": "底部",
+      "danmaku_type_color": "彩色",
+      "speed_playing": "$speedx 倍速播放中",
+      "choose_quality": "选择画质",
+      "choose_speed": "播放速度",
+      "danmaku_closed": "已关闭弹幕"
     },
     "actions": {
       "coin": "投币",
@@ -171,7 +338,11 @@
     "reply_to": "回复 @$name : ",
     "parts": "视频分段",
     "expand": "展开",
-    "collapse": "收起"
+    "collapse": "收起",
+    "listen": "听视频",
+    "sleep_timer_remaining": "定时关闭: $remaining",
+    "watching_count": "$count人正在看",
+    "detail_page": "详情页"
   },
   "actions": {
     "like": "点赞",
@@ -207,7 +378,13 @@
     "load_failed": "加载失败",
     "load_completed": "加载完成",
     "no_more_content": "没有更多内容了",
-    "up": "UP"
+    "up": "UP",
+    "save_image": "保存图片",
+    "saving": "保存中...",
+    "save_success": "已保存到系统相册",
+    "save_failed": "保存失败：$message",
+    "slide_to_switch": "左右滑动切换",
+    "no_data": "暂无数据"
   },
   "error": {
     "connection_timeout": "连接超时",
@@ -227,7 +404,9 @@
   "watch_later": {
     "title": "稍后再看",
     "clear_all": "清空稍后再看",
-    "clear_all_confirm": "确定要清空稍后再看列表吗？"
+    "clear_all_confirm": "确定要清空稍后再看列表吗？",
+    "watch_to": "观看至 $progress",
+    "add_success": "已添加至稍后再看"
   },
   "subscription": {
     "title": "订阅",
@@ -241,17 +420,30 @@
   "notification": {
     "title": "消息",
     "types": {
-      "like": "赞了我的评论",
-      "at": "@了我",
-      "reply": "回复了我",
+      "like": "收到的赞",
+      "at": "@我",
+      "reply": "回复我的",
       "system": "系统通知"
     },
     "related_content": "相关内容",
     "navigation_error": "无法跳转到内容: $type $id",
     "chat": {
       "message_withdrawn": "消息已撤回",
-      "unsupported_type": "[不支持的消息类型: $type]"
-    }
+      "unsupported_type": "[不支持的消息类型: $type]",
+      "no_message": "暂无消息",
+      "input_hint": "发个消息...",
+      "page_not_developed": "用户详情页暂未开发",
+      "send_failed": "发送失败: $error",
+      "summary_text": "文本消息",
+      "summary_image": "图片",
+      "summary_notice": "系统通知",
+      "summary_video": "视频",
+      "summary_article": "专栏",
+      "summary_card": "卡片",
+      "summary_share": "分享",
+      "summary_unknown": "未知消息"
+    },
+    "empty": "暂无通知"
   },
   "live": {
     "header": {
@@ -264,9 +456,19 @@
       "more_play": "更多帮玩"
     },
     "danmaku": {
-      "system_notice": "系统提示",
+      "system_notice": "系统消息",
       "system_notice_colon": "系统提示:",
-      "admin": "房管"
+      "admin": "房管",
+      "input_hint": "发个弹幕呗~",
+      "support_hint": "弹幕支持下~",
+      "welcome": "欢迎来到直播间~ 喜欢主播点个关注哦",
+      "enter_room": "进入直播间",
+      "followed": "关注了主播",
+      "shared": "分享了直播间",
+      "gift_feed": "投喂了 $giftName x$num"
     }
+  },
+  "history": {
+    "empty": "暂无历史记录"
   }
 }

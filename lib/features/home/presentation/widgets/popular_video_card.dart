@@ -70,7 +70,7 @@ class _PopularTag extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final isMillion = text.contains('百万');
+    final isMillion = text.contains('M');
 
     return AppTag(
       text: text,
@@ -84,3 +84,4 @@ class _PopularTag extends StatelessWidget {
     );
   }
 }
+

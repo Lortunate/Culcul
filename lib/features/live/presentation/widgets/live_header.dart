@@ -289,3 +289,4 @@ class LiveHeader extends StatelessWidget {
     return FormatUtils.formatNumber(num);
   }
 }
+

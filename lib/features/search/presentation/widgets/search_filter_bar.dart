@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:culcul/i18n/strings.g.dart';
 
 class SearchFilterBar extends StatelessWidget {
   final String order;
@@ -20,6 +21,7 @@ class SearchFilterBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = Translations.of(context);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
@@ -39,27 +41,27 @@ class SearchFilterBar extends StatelessWidget {
             child: Row(
               children: [
                 _FilterChip(
-                  label: '综合排序',
+                  label: t.search.filter.sort_default,
                   selected: order == 'totalrank',
                   onSelected: (_) => onOrderChanged('totalrank'),
                 ),
                 _FilterChip(
-                  label: '最新发布',
+                  label: t.search.filter.sort_newest,
                   selected: order == 'pubdate',
                   onSelected: (_) => onOrderChanged('pubdate'),
                 ),
                 _FilterChip(
-                  label: '最多点击',
+                  label: t.search.filter.sort_click,
                   selected: order == 'click',
                   onSelected: (_) => onOrderChanged('click'),
                 ),
                 _FilterChip(
-                  label: '最多弹幕',
+                  label: t.search.filter.sort_danmaku,
                   selected: order == 'dm',
                   onSelected: (_) => onOrderChanged('dm'),
                 ),
                 _FilterChip(
-                  label: '最多收藏',
+                  label: t.search.filter.sort_favorite,
                   selected: order == 'stow',
                   onSelected: (_) => onOrderChanged('stow'),
                 ),
@@ -73,27 +75,27 @@ class SearchFilterBar extends StatelessWidget {
               child: Row(
                 children: [
                   _FilterChip(
-                    label: '全部时长',
+                    label: t.search.filter.duration_all,
                     selected: duration == 0,
                     onSelected: (_) => onDurationChanged(0),
                   ),
                   _FilterChip(
-                    label: '10分钟以下',
+                    label: t.search.filter.duration_short,
                     selected: duration == 1,
                     onSelected: (_) => onDurationChanged(1),
                   ),
                   _FilterChip(
-                    label: '10-30分钟',
+                    label: t.search.filter.duration_medium,
                     selected: duration == 2,
                     onSelected: (_) => onDurationChanged(2),
                   ),
                   _FilterChip(
-                    label: '30-60分钟',
+                    label: t.search.filter.duration_long,
                     selected: duration == 3,
                     onSelected: (_) => onDurationChanged(3),
                   ),
                   _FilterChip(
-                    label: '60分钟以上',
+                    label: t.search.filter.duration_extra_long,
                     selected: duration == 4,
                     onSelected: (_) => onDurationChanged(4),
                   ),
@@ -145,3 +147,4 @@ class _FilterChip extends StatelessWidget {
     );
   }
 }
+

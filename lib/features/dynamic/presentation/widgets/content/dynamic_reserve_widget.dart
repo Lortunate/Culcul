@@ -1,4 +1,5 @@
 import 'package:culcul/data/models/dynamic/dynamic_view_models.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/dynamic/presentation/utils/dynamic_navigation.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +12,7 @@ class DynamicReserveWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = Translations.of(context);
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -25,7 +27,7 @@ class DynamicReserveWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  additional.title ?? '预约',
+                  additional.title ?? t.moments.reserve,
                   style: theme.textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
@@ -52,10 +54,11 @@ class DynamicReserveWidget extends StatelessWidget {
               elevation: 0,
               padding: const EdgeInsets.symmetric(horizontal: 16),
             ),
-            child: Text(additional.state == 1 ? '已预约' : '预约'),
+            child: Text(additional.state == 1 ? t.moments.reserved : t.moments.reserve),
           ),
         ],
       ),
     );
   }
 }
+

@@ -24,3 +24,4 @@ class ToViewPageAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
+

@@ -1,4 +1,5 @@
 import 'package:culcul/data/models/emote/emote_response.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/dynamic/providers/emote_provider.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderSt
   @override
   Widget build(BuildContext context) {
     final emotesAsync = ref.watch(emotePackagesProvider);
+    final t = Translations.of(context);
 
     return Container(
       height: 300,
@@ -26,7 +28,7 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderSt
       child: emotesAsync.when(
         data: (packages) {
           if (packages.isEmpty) {
-            return const Center(child: Text('暂无表情包'));
+            return Center(child: Text(t.common.no_content));
           }
 
           if (_tabController == null || _tabController!.length != packages.length) {
@@ -62,7 +64,7 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderSt
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('加载失败: $err')),
+        error: (err, stack) => Center(child: Text(t.common.load_failed)),
       ),
     );
   }
@@ -87,3 +89,4 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderSt
     );
   }
 }
+

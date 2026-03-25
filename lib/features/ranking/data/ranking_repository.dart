@@ -18,3 +18,4 @@ class RankingRepository extends BaseRepository {
     };
   }
 }
+

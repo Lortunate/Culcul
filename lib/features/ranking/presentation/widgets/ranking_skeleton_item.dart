@@ -86,3 +86,4 @@ class RankingSkeletonItem extends StatelessWidget {
     );
   }
 }
+

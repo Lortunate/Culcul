@@ -66,3 +66,4 @@ class DanmakuPainter extends CustomPainter {
     return true;
   }
 }
+

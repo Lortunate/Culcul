@@ -25,3 +25,4 @@ class RecentlyFollowed extends _$RecentlyFollowed {
     };
   }
 }
+

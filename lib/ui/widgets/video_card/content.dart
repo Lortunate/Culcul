@@ -80,3 +80,4 @@ class _VideoCardDescription extends StatelessWidget {
     );
   }
 }
+

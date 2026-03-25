@@ -14,7 +14,15 @@
       "cinema": "影視",
       "new_journey": "新征程"
     },
-    "search_hint": "搜尋影片..."
+    "search_hint": "搜尋影片...",
+    "video_more": {
+      "watch_later": "稍後再看",
+      "download_cover": "下載封面",
+      "invalid_video_id": "無法獲取視頻ID",
+      "added_to_watch_later": "已添加至稍後再看",
+      "add_failed": "添加失敗: $error",
+      "download_failed": "下載失敗: $error"
+    }
   },
   "moments": {
     "title": "動態",
@@ -24,10 +32,79 @@
       "pgc": "番劇/影視"
     },
     "like_coming_soon": "按讚功能開發中",
-    "empty": "$tab 動態暫未實現"
+    "empty": "$tab 動態暫未實現",
+    "recently_followed": "最近關注",
+    "topic_search_hint": "搜索話題",
+    "topic_search_empty": "輸入關鍵詞搜索話題",
+    "topic_search_no_result": "未找到相關話題",
+    "topic_updates": "更新 $count 條動態",
+    "no_comments": "暫無評論，快來搶沙發吧~",
+    "comment_hint": "友善評論，文明發言",
+    "publish": "發佈",
+    "publish_title": "發佈動態",
+    "publish_action": "發佈",
+    "publish_hint": "分享你的新鮮事...",
+    "publish_success": "發佈成功",
+    "publish_failed": "發佈失敗: $error",
+    "discard_title": "提示",
+    "discard_confirm": "確定要放棄編輯嗎？",
+    "discard_action": "放棄",
+    "forward_post": "轉發動態",
+    "reserve": "預約",
+    "reserved": "已預約",
+    "vote": "投票",
+    "vote_stats": "$participants人蔘與 · $options個選項",
+    "copy_link": "複製鏈接",
+    "open_in_browser": "瀏覽器打開",
+    "copied_link": "已複製動態鏈接",
+    "open_link_failed": "無法打開鏈接",
+    "operation_failed": "操作失敗: $message",
+    "detail_title": "動態詳情"
   },
   "ranking": {
-    "title": "排行榜"
+    "title": "排行榜",
+    "categories": {
+      "all": "全站",
+      "animation": "動畫",
+      "bangumi": "番劇",
+      "guochuang": "國創",
+      "music": "音樂",
+      "dance": "舞蹈",
+      "game": "遊戲",
+      "knowledge": "知識",
+      "technology": "科技",
+      "sports": "運動",
+      "car": "汽車",
+      "life": "生活",
+      "food": "美食",
+      "animal": "動物",
+      "kichiku": "鬼畜",
+      "fashion": "時尚",
+      "information": "資訊",
+      "entertainment": "娛樂",
+      "film": "影視",
+      "documentary": "紀錄片",
+      "movie": "電影",
+      "tv": "電視劇",
+      "tech_digital": "科技數碼",
+      "short_play": "小劇場",
+      "fashion_beauty": "時尚美妝",
+      "sports_fitness": "體育運動",
+      "vlog": "vlog",
+      "painting": "繪畫",
+      "ai": "人工智能",
+      "home": "家裝房產",
+      "outdoor": "戶外潮流",
+      "fitness": "健身",
+      "craft": "手工",
+      "travel": "旅遊出行",
+      "three_rural": "三農",
+      "parenting": "親子",
+      "health": "健康",
+      "emotion": "情感",
+      "life_interest": "生活興趣",
+      "life_experience": "生活經驗"
+    }
   },
   "settings": {
     "title": "設定",
@@ -77,7 +154,10 @@
       "error": "載入 QR Code 失敗"
     },
     "sms_sent": "驗證碼已發送",
-    "subtitle": "第三方輕量化客戶端"
+    "subtitle": "第三方輕量化客戶端",
+    "select_country": "選擇地區",
+    "search_country_hint": "搜索國家或地區",
+    "no_search_result": "未找到相關結果"
   },
   "profile": {
     "login": "登入",
@@ -90,7 +170,8 @@
       "likes": "獲讚"
     },
     "actions": {
-      "message": "私訊"
+      "message": "私訊",
+      "edit_profile": "編輯資料"
     },
     "vip": {
       "premium": "大會員",
@@ -104,8 +185,43 @@
       "appearance": "外觀設定",
       "creative_center": "創作中心",
       "orders": "會員購訂單",
-      "support": "聯繫客服"
-    }
+      "support": "聯繫客服",
+      "blacklist": "加入黑名單",
+      "report": "舉報"
+    },
+    "tabs": {
+      "home": "主頁",
+      "moments": "動態",
+      "contribution": "投稿"
+    },
+    "home_tab": {
+      "recent_videos": "視頻 $count",
+      "view_more": "查看更多",
+      "empty": "暫無內容",
+      "sticky": "置頂視頻",
+      "sticky_tag": "置頂",
+      "masterpiece": "代表作"
+    },
+    "followings": {
+      "title": "我的關注",
+      "empty": "暫無關注"
+    },
+    "followers": {
+      "title": "我的粉絲",
+      "empty": "暫無粉絲"
+    },
+    "relation": {
+      "none": "關注",
+      "followed": "已關注",
+      "mutual": "互粉",
+      "blacklisted": "已拉黑",
+      "failed": "操作失敗: $error"
+    },
+    "privacy_title": "該用戶設置了隱私",
+    "privacy_message": "無法查看關注/粉絲列表",
+    "verified_badge": "bilibili認證",
+    "logout_confirm": "確定要退出登錄嗎？",
+    "space_search_coming_soon": "空間搜索開發中"
   },
   "favorites": {
     "title": "我的收藏",
@@ -115,7 +231,8 @@
     "public": "公開",
     "play": "播放",
     "count": "共 $count 個內容",
-    "search_hint": "搜尋收藏內容"
+    "search_hint": "搜尋收藏內容",
+    "folder_item_count": "$count個內容"
   },
   "search": {
     "placeholder": "大家都在搜：culcul",
@@ -125,7 +242,31 @@
     "clear_history": "清空歷史",
     "suggestion": "搜尋建議",
     "no_result": "沒有找到相關內容",
-    "trending": "大家都在搜"
+    "trending": "大家都在搜",
+    "tabs": {
+      "all": "綜合",
+      "video": "視頻",
+      "anime": "番劇",
+      "user": "用戶",
+      "article": "專欄"
+    },
+    "status": {
+      "loading": "正在獲取建議...",
+      "empty": "未發現相關搜索建議",
+      "failed": "獲取建議失敗"
+    },
+    "filter": {
+      "sort_default": "綜合排序",
+      "sort_newest": "最新發布",
+      "sort_click": "最多點擊",
+      "sort_danmaku": "最多彈幕",
+      "sort_favorite": "最多收藏",
+      "duration_all": "全部時長",
+      "duration_short": "10分鐘以下",
+      "duration_medium": "10-30分鐘",
+      "duration_long": "30-60分鐘",
+      "duration_extra_long": "60分鐘以上"
+    }
   },
   "video": {
     "tabs": {
@@ -155,14 +296,40 @@
       "p480": "480P 清晰",
       "p360": "360P 流暢",
       "p240": "240P 流暢",
-      "p144": "144P 极速"
+      "p144": "144P 极速",
+      "p8k": "8K 超高清",
+      "p_dolby": "杜比視界",
+      "p_hdr": "HDR 真彩",
+      "p1080_60": "1080P 60幀",
+      "p1080_high": "1080P 高碼率",
+      "p720_60": "720P 60幀",
+      "unknown": "未知",
+      "auto": "自動"
     },
     "player": {
       "speed": "倍速",
       "quality": "解析度",
       "danmaku": "彈幕",
       "full_screen": "全螢幕",
-      "retry": "重試播放"
+      "retry": "重試播放",
+      "brightness": "亮度",
+      "volume": "音量",
+      "sleep_timer": "定時停止",
+      "sleep_timer_off": "不開啓",
+      "sleep_timer_min": "$minutes分鐘",
+      "danmaku_settings": "彈幕設置",
+      "danmaku_opacity": "不透明度",
+      "danmaku_scale": "字號縮放",
+      "danmaku_area": "顯示區域",
+      "danmaku_speed": "彈幕速度",
+      "danmaku_type_scroll": "滾動",
+      "danmaku_type_top": "頂部",
+      "danmaku_type_bottom": "底部",
+      "danmaku_type_color": "彩色",
+      "speed_playing": "$speedx 倍速播放中",
+      "choose_quality": "選擇畫質",
+      "choose_speed": "播放速度",
+      "danmaku_closed": "已關閉彈幕"
     },
     "actions": {
       "coin": "投幣",
@@ -171,7 +338,11 @@
     "reply_to": "回覆 @$name : ",
     "parts": "影片分段",
     "expand": "展開",
-    "collapse": "收起"
+    "collapse": "收起",
+    "listen": "聽視頻",
+    "sleep_timer_remaining": "定時關閉: $remaining",
+    "watching_count": "$count人正在看",
+    "detail_page": "詳情頁"
   },
   "actions": {
     "like": "讚",
@@ -207,7 +378,13 @@
     "load_failed": "載入失敗",
     "load_completed": "載入完成",
     "no_more_content": "沒有更多內容了",
-    "up": "UP"
+    "up": "UP",
+    "save_image": "保存圖片",
+    "saving": "保存中...",
+    "save_success": "已保存到系統相冊",
+    "save_failed": "保存失敗：$message",
+    "slide_to_switch": "左右滑動切換",
+    "no_data": "暫無數據"
   },
   "error": {
     "connection_timeout": "連線逾時",
@@ -227,7 +404,9 @@
   "watch_later": {
     "title": "稍後再看",
     "clear_all": "清空稍後再看",
-    "clear_all_confirm": "確定要清空稍後再看列表嗎？"
+    "clear_all_confirm": "確定要清空稍後再看列表嗎？",
+    "watch_to": "觀看至 $progress",
+    "add_success": "已添加至稍後再看"
   },
   "subscription": {
     "title": "訂閱",
@@ -250,8 +429,21 @@
     "navigation_error": "無法跳轉到內容: $type $id",
     "chat": {
       "message_withdrawn": "訊息已撤回",
-      "unsupported_type": "[不支援的訊息類型: $type]"
-    }
+      "unsupported_type": "[不支援的訊息類型: $type]",
+      "no_message": "暫無消息",
+      "input_hint": "發個消息...",
+      "page_not_developed": "用戶詳情頁暫未開發",
+      "send_failed": "發送失敗: $error",
+      "summary_text": "文字訊息",
+      "summary_image": "圖片",
+      "summary_notice": "系統通知",
+      "summary_video": "影片",
+      "summary_article": "專欄",
+      "summary_card": "卡片",
+      "summary_share": "分享內容",
+      "summary_unknown": "未知訊息"
+    },
+    "empty": "暫無通知"
   },
   "live": {
     "header": {
@@ -266,7 +458,17 @@
     "danmaku": {
       "system_notice": "系統提示",
       "system_notice_colon": "系統提示:",
-      "admin": "房管"
+      "admin": "房管",
+      "input_hint": "發個彈幕唄~",
+      "support_hint": "彈幕支持下~",
+      "welcome": "歡迎來到直播間~ 喜歡主播點個關注哦",
+      "enter_room": "進入直播間",
+      "followed": "關注了主播",
+      "shared": "分享了直播間",
+      "gift_feed": "投餵了 $giftName x$num"
     }
+  },
+  "history": {
+    "empty": "暫無歷史記錄"
   }
 }

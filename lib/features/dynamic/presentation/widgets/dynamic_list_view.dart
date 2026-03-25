@@ -3,6 +3,7 @@ import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:culcul/features/dynamic/controllers/dynamic_controller.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_card.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/recently_followed_widget.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/skeletons/video_list_skeleton.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:flutter/material.dart';
@@ -15,6 +16,7 @@ class DynamicListView extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = Translations.of(context);
     final provider = dynamicProvider(type);
     final state = ref.watch(provider);
     final notifier = ref.read(provider.notifier);
@@ -25,7 +27,7 @@ class DynamicListView extends HookConsumerWidget {
       onRefresh: notifier.refresh,
       onLoadMore: notifier.loadMore,
       skeleton: const VideoListSkeleton(),
-      emptyText: '暂无内容',
+      emptyText: t.common.no_content,
       builder: (context, items) {
         return ListView.separated(
           padding: const EdgeInsets.all(8),
@@ -51,3 +53,4 @@ class DynamicListView extends HookConsumerWidget {
     );
   }
 }
+

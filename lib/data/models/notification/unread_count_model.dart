@@ -22,3 +22,4 @@ sealed class UnreadCountModel with _$UnreadCountModel {
   factory UnreadCountModel.fromJson(Map<String, dynamic> json) =>
       _$UnreadCountModelFromJson(json);
 }
+

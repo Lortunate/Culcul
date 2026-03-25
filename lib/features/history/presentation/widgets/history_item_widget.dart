@@ -84,3 +84,4 @@ class HistoryItemWidget extends StatelessWidget {
     );
   }
 }
+

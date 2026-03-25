@@ -98,3 +98,4 @@ class SearchRepository extends BaseRepository {
     };
   }
 }
+

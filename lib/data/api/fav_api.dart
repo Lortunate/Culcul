@@ -78,3 +78,4 @@ abstract class FavApi {
     @Field('csrf') String? csrf,
   });
 }
+

@@ -111,3 +111,4 @@ Map<String, dynamic> _normalizeUserSpaceVideoJson(Map<String, dynamic> json) {
 
   return adjusted;
 }
+

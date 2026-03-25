@@ -52,3 +52,4 @@ class HomeRecommend extends _$HomeRecommend with PagingMixin<VideoModel> {
     await handleLoadMore(oldState, (newState) => state = newState, (item) => item.bvid);
   }
 }
+

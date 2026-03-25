@@ -96,3 +96,4 @@ class _AuthButtonState extends State<AuthButton> with SingleTickerProviderStateM
     );
   }
 }
+

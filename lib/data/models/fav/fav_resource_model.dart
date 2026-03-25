@@ -80,3 +80,4 @@ sealed class FavFolderInfoModel with _$FavFolderInfoModel {
   factory FavFolderInfoModel.fromJson(Map<String, dynamic> json) =>
       _$FavFolderInfoModelFromJson(json);
 }
+

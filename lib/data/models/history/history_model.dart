@@ -82,3 +82,4 @@ sealed class HistoryDetail with _$HistoryDetail {
   factory HistoryDetail.fromJson(Map<String, dynamic> json) =>
       _$HistoryDetailFromJson(json);
 }
+

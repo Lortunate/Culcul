@@ -1,3 +1,4 @@
+import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/features/notification/controllers/unread_count_controller.dart';
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/app/theme/app_theme.dart';
@@ -12,6 +13,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final unreadCount = ref.watch(unreadCountProvider);
     final semanticColors = context.semanticColors;
+    final t = i18n(context);
 
     return unreadCount.when(
       data: (data) => Padding(
@@ -22,7 +24,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
             _buildCategoryItem(
               context,
               icon: Icons.reply,
-              label: '回复我的',
+              label: t.notification.types.reply,
               count: data.reply,
               color: semanticColors.success,
               onTap: () => context.push('/notification/reply'),
@@ -30,7 +32,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
             _buildCategoryItem(
               context,
               icon: Icons.alternate_email,
-              label: '@我',
+              label: t.notification.types.at,
               count: data.at,
               color: semanticColors.warning,
               onTap: () => context.push('/notification/at'),
@@ -38,7 +40,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
             _buildCategoryItem(
               context,
               icon: Icons.thumb_up_alt_outlined,
-              label: '收到的赞',
+              label: t.notification.types.like,
               count: data.like,
               color: Theme.of(context).colorScheme.primary,
               onTap: () => context.push('/notification/like'),
@@ -46,7 +48,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
             _buildCategoryItem(
               context,
               icon: Icons.notifications_none,
-              label: '系统通知',
+              label: t.notification.types.system,
               count: data.sysMsg,
               color: semanticColors.info,
               onTap: () => const SystemNotificationRoute().push(context),
@@ -120,3 +122,4 @@ class NotificationCategoryGrid extends ConsumerWidget {
     );
   }
 }
+

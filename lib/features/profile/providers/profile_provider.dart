@@ -60,3 +60,4 @@ class UserProfileNotifier extends _$UserProfileNotifier {
     };
   }
 }
+

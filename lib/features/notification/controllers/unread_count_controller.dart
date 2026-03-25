@@ -21,3 +21,4 @@ class UnreadCount extends _$UnreadCount {
     state = await AsyncValue.guard(() async => await build());
   }
 }
+

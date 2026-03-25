@@ -504,3 +504,4 @@ class PublishDynamicRoute extends GoRouteData with $PublishDynamicRoute {
     );
   }
 }
+

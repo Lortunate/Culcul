@@ -23,3 +23,4 @@ class SystemNotificationList extends _$SystemNotificationList {
     state = await AsyncValue.guard(() => build());
   }
 }
+

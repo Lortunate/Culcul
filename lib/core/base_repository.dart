@@ -152,3 +152,4 @@ abstract class BaseRepository {
     return Success(allResults);
   }
 }
+

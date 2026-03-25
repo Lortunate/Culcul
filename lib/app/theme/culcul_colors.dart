@@ -120,3 +120,4 @@ extension CulculThemeDataX on ThemeData {
 extension CulculBuildContextThemeX on BuildContext {
   CulculSemanticColors get semanticColors => Theme.of(this).semanticColors;
 }
+

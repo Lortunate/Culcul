@@ -96,3 +96,4 @@ abstract class LiveApi {
     @Field('bubble') int bubble = 0,
   });
 }
+

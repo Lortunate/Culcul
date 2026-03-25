@@ -22,7 +22,7 @@ class MediaService {
   Future<void> saveImage(String url) async {
     final formattedUrl = FormatUtils.formatImageUrl(url);
     if (formattedUrl.isEmpty) {
-      throw Exception('图片地址无效');
+      throw Exception('Invalid image URL');
     }
 
     final tempDir = await getTemporaryDirectory();
@@ -64,3 +64,4 @@ class MediaService {
     return '${normalizedBase}_$timestamp$extension';
   }
 }
+

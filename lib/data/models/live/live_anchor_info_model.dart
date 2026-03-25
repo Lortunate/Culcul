@@ -64,3 +64,4 @@ sealed class LiveMasterLevel with _$LiveMasterLevel {
   factory LiveMasterLevel.fromJson(Map<String, dynamic> json) =>
       _$LiveMasterLevelFromJson(json);
 }
+

@@ -7,6 +7,7 @@ import 'package:culcul/features/dynamic/presentation/widgets/emoji_picker.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/publish_dynamic_bottom_toolbar.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/publish_dynamic_image_grid.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/topic_picker.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -128,12 +129,16 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
 
       if (mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('发布成功')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(t.moments.publish_success)),
+        );
         ref.invalidate(dynamicProvider);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('发布失败: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(t.moments.publish_failed(error: e.toString()))),
+        );
       }
     } finally {
       if (mounted) setState(() => _isPublishing = false);
@@ -141,20 +146,21 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
   }
 
   Future<bool> _onWillPop() async {
+    final t = Translations.of(context);
     if (_controller.text.isNotEmpty || _images.isNotEmpty) {
       final result = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('提示'),
-          content: const Text('确定要放弃编辑吗？'),
+          title: Text(t.moments.discard_title),
+          content: Text(t.moments.discard_confirm),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('取消'),
+              child: Text(t.common.cancel),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('放弃'),
+              child: Text(t.moments.discard_action),
             ),
           ],
         ),
@@ -168,6 +174,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = Translations.of(context);
     final isPostable = _hasDraft;
 
     return PopScope(
@@ -193,7 +200,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
             },
           ),
           title: Text(
-            '发布动态',
+            t.moments.publish_title,
             style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
@@ -221,7 +228,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
                           color: colorScheme.onSurfaceVariant,
                         ),
                       )
-                    : const Text('发布', style: TextStyle(fontWeight: FontWeight.bold)),
+                    : Text(t.moments.publish_action, style: const TextStyle(fontWeight: FontWeight.bold)),
               ),
             ),
           ],
@@ -238,8 +245,8 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
                     maxLines: null,
                     minLines: 5,
                     style: theme.textTheme.bodyLarge?.copyWith(fontSize: 16),
-                    decoration: const InputDecoration(
-                      hintText: '分享你的新鲜�?..',
+                    decoration: InputDecoration(
+                      hintText: t.moments.publish_hint,
                       border: InputBorder.none,
                       isDense: true,
                       contentPadding: EdgeInsets.zero,
@@ -271,3 +278,4 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
 
   bool get _hasDraft => _controller.text.trim().isNotEmpty || _images.isNotEmpty;
 }
+

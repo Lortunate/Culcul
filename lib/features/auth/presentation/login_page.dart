@@ -308,3 +308,4 @@ class _LoginContentSwitcher extends StatelessWidget {
     );
   }
 }
+

@@ -1,3 +1,4 @@
+import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/data/models/notification/system_notification_model.dart';
 import 'package:culcul/features/notification/controllers/system_notification_controller.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
@@ -12,13 +13,14 @@ class SystemNotificationPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(systemNotificationListProvider);
+    final t = i18n(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('系统通知')),
+      appBar: AppBar(title: Text(t.notification.types.system)),
       body: state.when(
         data: (items) {
           if (items.isEmpty) {
-            return const Center(child: Text('暂无通知'));
+            return Center(child: Text(t.notification.empty));
           }
           return ListView.separated(
             padding: const EdgeInsets.all(12),
@@ -111,3 +113,4 @@ class _SystemNotificationCard extends StatelessWidget {
     );
   }
 }
+

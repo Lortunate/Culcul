@@ -18,3 +18,4 @@ sealed class SystemNotificationItem with _$SystemNotificationItem {
   factory SystemNotificationItem.fromJson(Map<String, dynamic> json) =>
       _$SystemNotificationItemFromJson(json);
 }
+

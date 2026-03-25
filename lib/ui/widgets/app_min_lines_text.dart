@@ -62,3 +62,4 @@ class AppMinLinesText extends StatelessWidget {
     );
   }
 }
+

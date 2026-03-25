@@ -73,3 +73,4 @@ class SubtitleController extends _$SubtitleController {
     }
   }
 }
+

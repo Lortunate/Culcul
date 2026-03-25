@@ -59,3 +59,4 @@ class _VideoListCardStatsRow extends StatelessWidget {
     );
   }
 }
+

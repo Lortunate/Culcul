@@ -103,46 +103,35 @@ sealed class PrivateMessageDetail with _$PrivateMessageDetail {
 
   bool get isWithdrawn => msgStatus == 1;
 
-  String get summary {
+  PrivateMessageSummaryKind get summaryKind {
     if (msgStatus == 1) {
-      return '[撤回了一条消息]';
+      return PrivateMessageSummaryKind.withdrawn;
     }
 
-    final contentMap = this.contentMap;
-
-    switch (msgType) {
-      case 1: // Text
-        return contentMap?['content']?.toString() ?? '[文本消息]';
-      case 2: // Picture
-      case 6: // Emoji
-        return '[图片]';
-      case 5: // Withdraw
-        return '[撤回了一条消息]';
-      case 10: // Notice
-        return contentMap?['title']?.toString() ??
-            contentMap?['text']?.toString() ??
-            '[系统通知]';
-      case 11: // Video Push
-        return '[视频] ${contentMap?['title']?.toString() ?? ''}';
-      case 12: // Article Push
-        return '[专栏] ${contentMap?['title']?.toString() ?? ''}';
-      case 13: // Picture Card
-        return '[卡片] ${contentMap?['title']?.toString() ?? ''}';
-      case 14: // Share (Live etc)
-        return '[分享] ${contentMap?['title']?.toString() ?? ''}';
-      default:
-        // Try to guess from content
-        if (contentMap != null) {
-          if (contentMap.containsKey('content')) {
-            return contentMap['content'].toString();
-          }
-          if (contentMap.containsKey('title')) {
-            return contentMap['title'].toString();
-          }
-        }
-        return '[未知消息]';
-    }
+    return switch (msgType) {
+      1 => PrivateMessageSummaryKind.text,
+      2 || 6 => PrivateMessageSummaryKind.image,
+      5 => PrivateMessageSummaryKind.withdrawn,
+      10 => PrivateMessageSummaryKind.notice,
+      11 => PrivateMessageSummaryKind.video,
+      12 => PrivateMessageSummaryKind.article,
+      13 => PrivateMessageSummaryKind.card,
+      14 => PrivateMessageSummaryKind.share,
+      _ => PrivateMessageSummaryKind.unknown,
+    };
   }
+}
+
+enum PrivateMessageSummaryKind {
+  withdrawn,
+  text,
+  image,
+  notice,
+  video,
+  article,
+  card,
+  share,
+  unknown,
 }
 
 @freezed
@@ -194,3 +183,4 @@ sealed class PrivateMessageAccountInfo with _$PrivateMessageAccountInfo {
   factory PrivateMessageAccountInfo.fromJson(Map<String, dynamic> json) =>
       _$PrivateMessageAccountInfoFromJson(json);
 }
+

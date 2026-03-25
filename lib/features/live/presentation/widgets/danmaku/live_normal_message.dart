@@ -75,3 +75,4 @@ class LiveNormalMessage extends StatelessWidget {
     );
   }
 }
+

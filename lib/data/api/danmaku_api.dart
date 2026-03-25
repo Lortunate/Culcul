@@ -25,3 +25,4 @@ abstract class DanmakuApi {
     @Query('pid') required int pid,
   });
 }
+

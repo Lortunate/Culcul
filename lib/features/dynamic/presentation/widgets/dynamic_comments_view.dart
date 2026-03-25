@@ -1,6 +1,7 @@
 import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:culcul/features/dynamic/controllers/dynamic_comment_controller.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_item.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -12,6 +13,7 @@ class DynamicCommentsSliver extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = Translations.of(context);
     final state = ref.watch(dynamicCommentControllerProvider(post));
     final controller = ref.read(dynamicCommentControllerProvider(post).notifier);
 
@@ -32,9 +34,9 @@ class DynamicCommentsSliver extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('加载失败: ${state.error}'),
+                Text(t.common.load_failed),
                 const SizedBox(height: 8),
-                ElevatedButton(onPressed: controller.refresh, child: const Text('重试')),
+                ElevatedButton(onPressed: controller.refresh, child: Text(t.common.retry)),
               ],
             ),
           ),
@@ -43,10 +45,10 @@ class DynamicCommentsSliver extends ConsumerWidget {
     }
 
     if (state.comments.isEmpty) {
-      return const SliverToBoxAdapter(
+      return SliverToBoxAdapter(
         child: Padding(
           padding: EdgeInsets.all(32.0),
-          child: Center(child: Text('暂无评论，快来抢沙发吧~')),
+          child: Center(child: Text(t.moments.no_comments)),
         ),
       );
     }
@@ -89,7 +91,7 @@ class DynamicCommentsSliver extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  Text('回复 @${comment.member.uname}', style: theme.textTheme.titleMedium),
+                  Text(t.video.reply_to(name: comment.member.uname), style: theme.textTheme.titleMedium),
                   const Spacer(),
                   IconButton(
                     icon: const Icon(Icons.close),
@@ -101,10 +103,10 @@ class DynamicCommentsSliver extends ConsumerWidget {
               TextField(
                 controller: controller,
                 autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: '友善评论，文明发言',
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: InputDecoration(
+                  hintText: t.moments.comment_hint,
+                  border: const OutlineInputBorder(),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 ),
                 maxLines: 3,
                 minLines: 1,
@@ -120,7 +122,7 @@ class DynamicCommentsSliver extends ConsumerWidget {
                       Navigator.pop(context);
                     }
                   },
-                  child: const Text('发布'),
+                  child: Text(t.moments.publish),
                 ),
               ),
               const SizedBox(height: 16),
@@ -131,3 +133,4 @@ class DynamicCommentsSliver extends ConsumerWidget {
     );
   }
 }
+

@@ -54,3 +54,4 @@ sealed class LiveDanmakuMode with _$LiveDanmakuMode {
   factory LiveDanmakuMode.fromJson(Map<String, dynamic> json) =>
       _$LiveDanmakuModeFromJson(json);
 }
+

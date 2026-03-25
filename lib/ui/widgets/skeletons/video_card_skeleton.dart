@@ -41,3 +41,4 @@ class VideoCardSkeleton extends StatelessWidget {
     );
   }
 }
+

@@ -24,3 +24,4 @@ sealed class RelatedVideo with _$RelatedVideo {
   factory RelatedVideo.fromJson(Map<String, dynamic> json) =>
       _$RelatedVideoFromJson(json);
 }
+

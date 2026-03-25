@@ -1,5 +1,6 @@
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_content_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +11,7 @@ class DynamicForwardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -34,7 +36,7 @@ class DynamicForwardWidget extends StatelessWidget {
                 ),
                 if (post.description == null || post.description!.isEmpty) ...[
                   const TextSpan(text: ' : '),
-                  const TextSpan(text: '转发动态', style: TextStyle(fontSize: 15)),
+                  TextSpan(text: t.moments.forward_post, style: const TextStyle(fontSize: 15)),
                 ],
               ],
             ),
@@ -46,3 +48,4 @@ class DynamicForwardWidget extends StatelessWidget {
     );
   }
 }
+

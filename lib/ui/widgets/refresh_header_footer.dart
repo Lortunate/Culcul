@@ -7,3 +7,4 @@ class AppRefreshHeader extends ClassicHeader {
 class AppLoadFooter extends ClassicFooter {
   const AppLoadFooter() : super();
 }
+

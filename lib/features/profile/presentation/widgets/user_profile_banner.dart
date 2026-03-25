@@ -37,3 +37,4 @@ class UserProfileBanner extends StatelessWidget {
     );
   }
 }
+

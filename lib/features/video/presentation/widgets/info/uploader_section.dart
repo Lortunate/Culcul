@@ -21,7 +21,7 @@ class UploaderSection extends StatelessWidget {
     return UserListTile(
       avatarUrl: owner.face,
       name: owner.name,
-      subtitle: '12.5万粉丝 · 168视频', // TODO: Fetch real stats if available
+      subtitle: '12.5W followers · 168 videos', // TODO: Fetch real stats if available
       avatarSize: 34,
       padding: EdgeInsets.zero,
       onTap: () => UserProfileRoute(mid: owner.mid).push(context),
@@ -29,3 +29,4 @@ class UploaderSection extends StatelessWidget {
     );
   }
 }
+

@@ -14,7 +14,15 @@
       "cinema": "Movies & TV",
       "new_journey": "New Journey"
     },
-    "search_hint": "Search..."
+    "search_hint": "Search...",
+    "video_more": {
+      "watch_later": "Watch Later",
+      "download_cover": "Download Cover",
+      "invalid_video_id": "Unable to resolve video ID",
+      "added_to_watch_later": "Added to Watch Later",
+      "add_failed": "Failed to add: $error",
+      "download_failed": "Download failed: $error"
+    }
   },
   "moments": {
     "title": "Moments",
@@ -24,10 +32,79 @@
       "pgc": "Anime/Media"
     },
     "like_coming_soon": "Like feature coming soon",
-    "empty": "No content available in $tab"
+    "empty": "No content available in $tab",
+    "recently_followed": "Recently Followed",
+    "topic_search_hint": "Search topics",
+    "topic_search_empty": "Type keywords to search topics",
+    "topic_search_no_result": "No topics found",
+    "topic_updates": "Updated $count posts",
+    "no_comments": "No comments yet. Be the first to comment.",
+    "comment_hint": "Leave a friendly comment...",
+    "publish": "Post",
+    "publish_title": "Create Post",
+    "publish_action": "Post",
+    "publish_hint": "Share what is new...",
+    "publish_success": "Posted successfully",
+    "publish_failed": "Post failed: $error",
+    "discard_title": "Tip",
+    "discard_confirm": "Discard your draft?",
+    "discard_action": "Discard",
+    "forward_post": "Forward post",
+    "reserve": "Reserve",
+    "reserved": "Reserved",
+    "vote": "Vote",
+    "vote_stats": "$participants participants · $options options",
+    "copy_link": "Copy link",
+    "open_in_browser": "Open in browser",
+    "copied_link": "Dynamic link copied",
+    "open_link_failed": "Unable to open link",
+    "operation_failed": "Operation failed: $message",
+    "detail_title": "Moment Details"
   },
   "ranking": {
-    "title": "Ranking"
+    "title": "Ranking",
+    "categories": {
+      "all": "All",
+      "animation": "Animation",
+      "bangumi": "Bangumi",
+      "guochuang": "Chinese Original",
+      "music": "Music",
+      "dance": "Dance",
+      "game": "Games",
+      "knowledge": "Knowledge",
+      "technology": "Technology",
+      "sports": "Sports",
+      "car": "Auto",
+      "life": "Lifestyle",
+      "food": "Food",
+      "animal": "Animals",
+      "kichiku": "Kichiku",
+      "fashion": "Fashion",
+      "information": "News",
+      "entertainment": "Entertainment",
+      "film": "Film & TV",
+      "documentary": "Documentaries",
+      "movie": "Movies",
+      "tv": "TV Series",
+      "tech_digital": "Tech & Digital",
+      "short_play": "Short Plays",
+      "fashion_beauty": "Fashion & Beauty",
+      "sports_fitness": "Sports & Fitness",
+      "vlog": "Vlog",
+      "painting": "Drawing",
+      "ai": "AI",
+      "home": "Home & Living",
+      "outdoor": "Outdoor",
+      "fitness": "Fitness",
+      "craft": "Craft",
+      "travel": "Travel",
+      "three_rural": "Rural Life",
+      "parenting": "Parenting",
+      "health": "Health",
+      "emotion": "Relationships",
+      "life_interest": "Lifestyle Interests",
+      "life_experience": "Life Experiences"
+    }
   },
   "settings": {
     "title": "Settings",
@@ -77,7 +154,10 @@
       "error": "Failed to load QR Code"
     },
     "sms_sent": "Code sent",
-    "subtitle": "A lightweight third-party client"
+    "subtitle": "A lightweight third-party client",
+    "select_country": "Select Country/Region",
+    "search_country_hint": "Search country or region",
+    "no_search_result": "No results found"
   },
   "profile": {
     "login": "Login",
@@ -90,7 +170,8 @@
       "likes": "Likes"
     },
     "actions": {
-      "message": "Message"
+      "message": "Message",
+      "edit_profile": "Edit Profile"
     },
     "vip": {
       "premium": "Premium",
@@ -104,8 +185,43 @@
       "appearance": "Appearance",
       "creative_center": "Creator Center",
       "orders": "Orders",
-      "support": "Support"
-    }
+      "support": "Support",
+      "blacklist": "Add to blacklist",
+      "report": "Report"
+    },
+    "tabs": {
+      "home": "Home",
+      "moments": "Moments",
+      "contribution": "Contributions"
+    },
+    "home_tab": {
+      "recent_videos": "Videos $count",
+      "view_more": "View More",
+      "empty": "No content",
+      "sticky": "Sticky Video",
+      "sticky_tag": "Sticky",
+      "masterpiece": "Masterpiece"
+    },
+    "followings": {
+      "title": "Following",
+      "empty": "No following yet"
+    },
+    "followers": {
+      "title": "Followers",
+      "empty": "No followers yet"
+    },
+    "relation": {
+      "none": "Follow",
+      "followed": "Following",
+      "mutual": "Mutual",
+      "blacklisted": "Blacklisted",
+      "failed": "Failed: $error"
+    },
+    "privacy_title": "Privacy enabled",
+    "privacy_message": "This user hides their following and followers lists",
+    "verified_badge": "Verified by bilibili",
+    "logout_confirm": "Are you sure you want to log out?",
+    "space_search_coming_soon": "Search in Space: coming soon"
   },
   "favorites": {
     "title": "Favorites",
@@ -115,7 +231,8 @@
     "public": "Public",
     "play": "Play",
     "count": "$count items",
-    "search_hint": "Search favorites"
+    "search_hint": "Search favorites",
+    "folder_item_count": "$count items"
   },
   "search": {
     "placeholder": "Trending: culcul",
@@ -125,7 +242,31 @@
     "clear_history": "Clear History",
     "suggestion": "Suggestions",
     "no_result": "No results found",
-    "trending": "Trending Now"
+    "trending": "Trending Now",
+    "tabs": {
+      "all": "All",
+      "video": "Videos",
+      "anime": "Anime",
+      "user": "Users",
+      "article": "Articles"
+    },
+    "status": {
+      "loading": "Loading suggestions...",
+      "empty": "No suggestions found",
+      "failed": "Failed to load suggestions"
+    },
+    "filter": {
+      "sort_default": "Default",
+      "sort_newest": "Newest",
+      "sort_click": "Most Views",
+      "sort_danmaku": "Most Danmaku",
+      "sort_favorite": "Most Favorites",
+      "duration_all": "All Durations",
+      "duration_short": "<10m",
+      "duration_medium": "10-30m",
+      "duration_long": "30-60m",
+      "duration_extra_long": ">60m"
+    }
   },
   "video": {
     "tabs": {
@@ -149,20 +290,46 @@
     "no_desc": "No description",
     "expand_all": "Expand All",
     "quality": {
+      "p8k": "8K Ultra HD",
+      "p_dolby": "Dolby Vision",
+      "p_hdr": "HDR",
       "p4k": "4K Ultra HD",
+      "p1080_60": "1080P 60FPS",
+      "p1080_high": "1080P High Quality",
       "p1080": "1080P Full HD",
+      "p720_60": "720P 60FPS",
       "p720": "720P HD",
       "p480": "480P SD",
       "p360": "360P",
       "p240": "240P",
-      "p144": "144P"
+      "p144": "144P",
+      "unknown": "Unknown",
+      "auto": "Auto"
     },
     "player": {
       "speed": "Playback Speed",
       "quality": "Resolution",
       "danmaku": "Danmaku",
       "full_screen": "Full Screen",
-      "retry": "Retry"
+      "retry": "Retry",
+      "brightness": "Brightness",
+      "volume": "Volume",
+      "sleep_timer": "Sleep Timer",
+      "sleep_timer_off": "Off",
+      "sleep_timer_min": "$minutes min",
+      "danmaku_settings": "Danmaku Settings",
+      "danmaku_opacity": "Opacity",
+      "danmaku_scale": "Scale",
+      "danmaku_area": "Display Area",
+      "danmaku_speed": "Speed",
+      "danmaku_type_scroll": "Scroll",
+      "danmaku_type_top": "Top",
+      "danmaku_type_bottom": "Bottom",
+      "danmaku_type_color": "Colorful",
+      "speed_playing": "$speedx speed playing",
+      "choose_quality": "Select Quality",
+      "choose_speed": "Playback Speed",
+      "danmaku_closed": "Danmaku Disabled"
     },
     "actions": {
       "coin": "Coin",
@@ -171,7 +338,11 @@
     "reply_to": "Reply to @$name: ",
     "parts": "Segments",
     "expand": "Expand",
-    "collapse": "Collapse"
+    "collapse": "Collapse",
+    "listen": "Listen Only",
+    "sleep_timer_remaining": "Sleep Timer: $remaining",
+    "watching_count": "$count watching",
+    "detail_page": "Detail Page"
   },
   "actions": {
     "like": "Like",
@@ -207,7 +378,13 @@
     "load_failed": "Failed to load",
     "load_completed": "Loaded",
     "no_more_content": "You've reached the end.",
-    "up": "UP"
+    "up": "UP",
+    "save_image": "Save Image",
+    "saving": "Saving...",
+    "save_success": "Saved to gallery",
+    "save_failed": "Failed to save: $message",
+    "slide_to_switch": "Swipe to switch",
+    "no_data": "No data"
   },
   "error": {
     "connection_timeout": "Connection Timed Out",
@@ -227,7 +404,9 @@
   "watch_later": {
     "title": "Watch Later",
     "clear_all": "Clear All",
-    "clear_all_confirm": "Are you sure you want to clear your Watch Later list?"
+    "clear_all_confirm": "Are you sure you want to clear your Watch Later list?",
+    "watch_to": "Watch to $progress",
+    "add_success": "Added to Watch Later"
   },
   "subscription": {
     "title": "Subscriptions",
@@ -241,17 +420,30 @@
   "notification": {
     "title": "Notifications",
     "types": {
-      "like": "liked your comment",
-      "at": "mentioned you",
-      "reply": "replied to you",
+      "like": "Likes",
+      "at": "@Me",
+      "reply": "Replies",
       "system": "System"
     },
     "related_content": "Related Content",
     "navigation_error": "Unable to open content: $type $id",
     "chat": {
       "message_withdrawn": "Message unsent",
-      "unsupported_type": "[Unsupported message: $type]"
-    }
+      "unsupported_type": "[Unsupported message: $type]",
+      "no_message": "No messages",
+      "input_hint": "Type a message...",
+      "page_not_developed": "Profile page not developed yet",
+      "send_failed": "Failed to send: $error",
+      "summary_text": "Text message",
+      "summary_image": "Image",
+      "summary_notice": "System notice",
+      "summary_video": "Video",
+      "summary_article": "Article",
+      "summary_card": "Card",
+      "summary_share": "Shared content",
+      "summary_unknown": "Unknown message"
+    },
+    "empty": "No notifications"
   },
   "live": {
     "header": {
@@ -264,9 +456,19 @@
       "more_play": "More"
     },
     "danmaku": {
-      "system_notice": "Notice",
+      "system_notice": "System Notice",
       "system_notice_colon": "Notice: ",
-      "admin": "Admin"
+      "admin": "Admin",
+      "input_hint": "Say something...",
+      "support_hint": "Send a danmaku...",
+      "welcome": "Welcome! Tap follow to support the host.",
+      "enter_room": "entered the room",
+      "followed": "followed the host",
+      "shared": "shared the room",
+      "gift_feed": "fed $giftName x$num"
     }
+  },
+  "history": {
+    "empty": "No history found"
   }
 }

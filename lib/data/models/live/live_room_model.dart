@@ -38,3 +38,4 @@ sealed class WatchedShow with _$WatchedShow {
 
   factory WatchedShow.fromJson(Map<String, dynamic> json) => _$WatchedShowFromJson(json);
 }
+

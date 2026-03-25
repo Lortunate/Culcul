@@ -47,3 +47,4 @@ class LiveRecommend extends _$LiveRecommend {
     }
   }
 }
+

@@ -97,3 +97,4 @@ class FavRepository extends BaseRepository {
     return safeVoidApiCall(() => _api.cleanInvalidResources(mediaId));
   }
 }
+

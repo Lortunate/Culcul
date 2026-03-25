@@ -14,3 +14,4 @@ sealed class CommentReplyState with _$CommentReplyState {
     Object? error,
   }) = _CommentReplyState;
 }
+

@@ -41,3 +41,4 @@ class ToViewRepository extends BaseRepository {
     return safeCall(() => _api.clearToView());
   }
 }
+

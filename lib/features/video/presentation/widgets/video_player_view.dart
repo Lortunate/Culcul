@@ -78,3 +78,4 @@ class VideoPlayerView extends HookConsumerWidget {
     );
   }
 }
+

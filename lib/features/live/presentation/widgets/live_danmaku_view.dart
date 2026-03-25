@@ -34,8 +34,7 @@ class LiveDanmakuView extends StatelessWidget {
 
   bool _isSystemMessage(LiveDanmakuItem item) {
     return item.dmType == 3 ||
-        item.nickname == t.live.danmaku.system_notice ||
-        item.nickname == '系统消息';
+        item.nickname == t.live.danmaku.system_notice;
   }
 
   Widget _buildItem(BuildContext context, LiveDanmakuItem item) {
@@ -54,3 +53,4 @@ class LiveDanmakuView extends StatelessWidget {
     return LiveNormalMessage(item: item);
   }
 }
+

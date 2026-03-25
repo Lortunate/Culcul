@@ -126,3 +126,4 @@ class VideoRepository extends BaseRepository {
     );
   }
 }
+

@@ -144,3 +144,4 @@ class _SearchResultConverter implements JsonConverter<List<SearchResultItem>, dy
   @override
   dynamic toJson(List<SearchResultItem> object) => object.map((e) => e.toJson()).toList();
 }
+

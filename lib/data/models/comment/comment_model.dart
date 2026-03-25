@@ -235,3 +235,4 @@ sealed class CommentEmote with _$CommentEmote {
   factory CommentEmote.fromJson(Map<String, dynamic> json) =>
       _$CommentEmoteFromJson(json);
 }
+

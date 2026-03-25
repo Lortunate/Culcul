@@ -193,3 +193,4 @@ class NotificationItemWidget extends StatelessWidget {
     return t.notification.related_content;
   }
 }
+

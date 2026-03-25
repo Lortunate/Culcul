@@ -4,6 +4,7 @@ import 'package:culcul/features/video/controllers/playback_snapshot_controller.d
 import 'package:culcul/features/video/controllers/subtitle_controller.dart';
 import 'package:culcul/features/video/controllers/video_detail_controller.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/controls_utils.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/player_theme.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/quick_selection_sheet.dart';
@@ -30,13 +31,14 @@ class VideoControlButtons extends ConsumerWidget {
     List<int> availableQualities,
     Map<int, String> qualityLabels,
   ) {
+    final t = Translations.of(context);
     showSidePanel(
       context,
       QuickSelectionSheet<int>(
-        title: '选择画质',
+        title: t.video.player.choose_quality,
         items: availableQualities,
         selectedItem: selectedQuality,
-        labelBuilder: (q) => qualityLabels[q] ?? '未知',
+        labelBuilder: (q) => qualityLabels[q] ?? t.video.quality.unknown,
         onSelected: (q) {
           ref.read(videoDetailControllerProvider(bvid).notifier).switchQuality(q);
         },
@@ -47,10 +49,11 @@ class VideoControlButtons extends ConsumerWidget {
 
   void _showSpeedMenu(BuildContext context, WidgetRef ref, double currentSpeed) {
     const speeds = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+    final t = Translations.of(context);
     showSidePanel(
       context,
       QuickSelectionSheet<double>(
-        title: '播放速度',
+        title: t.video.player.choose_speed,
         items: speeds,
         selectedItem: currentSpeed,
         labelBuilder: (s) => '${s}x',
@@ -66,6 +69,7 @@ class VideoControlButtons extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
+    final t = Translations.of(context);
 
     final isPlaying = ref.watch(playerControllerProvider.select((s) => s.isPlaying));
     final isFullscreen = ref.watch(
@@ -116,7 +120,7 @@ class VideoControlButtons extends ConsumerWidget {
             ),
             const SizedBox(width: 8),
             PlayerCapsuleButton(
-              text: qualityLabels[selectedQuality] ?? '自动',
+              text: qualityLabels[selectedQuality] ?? t.video.quality.auto,
               onTap: () => _showQualityMenu(
                 context,
                 ref,
@@ -270,3 +274,4 @@ class PlayerCapsuleButton extends StatelessWidget {
     );
   }
 }
+

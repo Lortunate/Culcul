@@ -72,3 +72,4 @@ class VideoDetailPage extends HookConsumerWidget {
     );
   }
 }
+

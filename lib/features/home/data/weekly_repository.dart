@@ -13,3 +13,4 @@ class WeeklyRepository extends BaseRepository {
     return safeApiCall(() => _api.getWeeklyList());
   }
 }
+

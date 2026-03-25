@@ -10,3 +10,4 @@ sealed class WeeklyModel with _$WeeklyModel {
 
   factory WeeklyModel.fromJson(Map<String, dynamic> json) => _$WeeklyModelFromJson(json);
 }
+

@@ -32,3 +32,4 @@ sealed class LikeTotal with _$LikeTotal {
 
   factory LikeTotal.fromJson(Map<String, dynamic> json) => _$LikeTotalFromJson(json);
 }
+

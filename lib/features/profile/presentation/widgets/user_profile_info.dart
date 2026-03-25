@@ -1,6 +1,7 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/data/models/user/user_profile_model.dart';
 import 'package:culcul/features/auth/controllers/auth_controller.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_stat_item.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_banner.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_buttons.dart';
@@ -128,16 +129,16 @@ class _StatsRow extends StatelessWidget {
                   children: [
                     UserProfileStatItem(
                       count: user.followingCount,
-                      label: '关注',
+                      label: t.profile.stats.following,
                       onTap: () =>
                           FollowingsRoute(vmid: int.parse(user.id)).push(context),
                     ),
                     UserProfileStatItem(
                       count: user.followersCount,
-                      label: '粉丝',
+                      label: t.profile.stats.followers,
                       onTap: () => FollowersRoute(vmid: int.parse(user.id)).push(context),
                     ),
-                    UserProfileStatItem(count: user.likesCount, label: '获赞'),
+                    UserProfileStatItem(count: user.likesCount, label: t.profile.stats.likes),
                   ],
                 ),
                 const SizedBox(height: 4),
@@ -202,7 +203,7 @@ class _VerifiedBadge extends StatelessWidget {
           const SizedBox(width: 4),
           Expanded(
             child: Text(
-              'bilibili认证',
+              t.profile.verified_badge,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: colorScheme.onSurfaceVariant,
                 fontSize: 12,
@@ -294,3 +295,4 @@ class _BioSection extends StatelessWidget {
     );
   }
 }
+

@@ -1,15 +1,16 @@
 import 'package:culcul/core/constants/app_dimens.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 
 class PrivacyErrorWidget extends StatelessWidget {
-  final String title;
-  final String message;
+  final String? title;
+  final String? message;
   final IconData icon;
 
   const PrivacyErrorWidget({
     super.key,
-    this.title = '该用户设置了隐私',
-    this.message = '无法查看关注/粉丝列表',
+    this.title,
+    this.message,
     this.icon = Icons.lock_outline_rounded,
   });
 
@@ -17,6 +18,7 @@ class PrivacyErrorWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final t = Translations.of(context);
 
     return Center(
       child: Column(
@@ -25,7 +27,7 @@ class PrivacyErrorWidget extends StatelessWidget {
           Icon(icon, size: AppDimens.iconHuge, color: colorScheme.onSurfaceVariant),
           const SizedBox(height: AppDimens.p16),
           Text(
-            title,
+            title ?? t.profile.privacy_title,
             style: textTheme.titleMedium?.copyWith(
               color: colorScheme.onSurface,
               fontWeight: FontWeight.bold,
@@ -33,7 +35,7 @@ class PrivacyErrorWidget extends StatelessWidget {
           ),
           const SizedBox(height: AppDimens.p8),
           Text(
-            message,
+            message ?? t.profile.privacy_message,
             style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
           ),
         ],
@@ -41,3 +43,4 @@ class PrivacyErrorWidget extends StatelessWidget {
     );
   }
 }
+

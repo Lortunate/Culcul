@@ -67,3 +67,4 @@ abstract class AuthApi {
   @GET('${ApiConstants.baseUrl}${ApiConstants.userInfo}')
   Future<ApiResponse<dynamic>> getCurrentUser();
 }
+

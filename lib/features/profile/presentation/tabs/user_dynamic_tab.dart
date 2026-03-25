@@ -1,5 +1,6 @@
 import 'package:culcul/features/dynamic/controllers/user_dynamic_controller.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_card.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/skeletons/dynamic_skeleton.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,7 @@ class _UserDynamicTabState extends ConsumerState<UserDynamicTab>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final t = Translations.of(context);
     final feedAsync = ref.watch(userDynamicProvider(widget.mid));
     final notifier = ref.read(userDynamicProvider(widget.mid).notifier);
 
@@ -33,7 +35,7 @@ class _UserDynamicTabState extends ConsumerState<UserDynamicTab>
         feedAsync.when(
           data: (items) {
             if (items.isEmpty) {
-              return const SliverFillRemaining(child: Center(child: Text('暂无动态')));
+              return SliverFillRemaining(child: Center(child: Text(t.common.no_content)));
             }
             final contentCount = items.length * 2 - 1;
             final totalCount = contentCount + 1;
@@ -89,3 +91,4 @@ class _UserDynamicTabState extends ConsumerState<UserDynamicTab>
     );
   }
 }
+

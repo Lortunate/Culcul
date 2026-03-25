@@ -41,3 +41,4 @@ class NotificationPage extends ConsumerWidget {
     );
   }
 }
+

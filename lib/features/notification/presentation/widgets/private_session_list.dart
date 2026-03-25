@@ -1,3 +1,4 @@
+import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/features/notification/controllers/private_session_controller.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_skeletons.dart';
 import 'package:culcul/features/notification/presentation/widgets/private_session_item.dart';
@@ -11,6 +12,7 @@ class PrivateSessionList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sessionListAsync = ref.watch(privateSessionListProvider);
+    final t = i18n(context);
 
     return sessionListAsync.when(
       data: (sessions) {
@@ -28,7 +30,7 @@ class PrivateSessionList extends ConsumerWidget {
                       physics: const AlwaysScrollableScrollPhysics(),
                       child: ConstrainedBox(
                         constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                        child: const Center(child: Text('暂无消息')),
+                        child: Center(child: Text(t.notification.chat.no_message)),
                       ),
                     );
                   },
@@ -53,13 +55,13 @@ class PrivateSessionList extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('加载失败: $e'),
+                  Text('${t.common.load_failed}: $e'),
                   const SizedBox(height: 8),
                   ElevatedButton(
                     onPressed: () {
                       ref.invalidate(privateSessionListProvider);
                     },
-                    child: const Text('重试'),
+                    child: Text(t.common.retry),
                   ),
                 ],
               ),
@@ -71,3 +73,4 @@ class PrivateSessionList extends ConsumerWidget {
     );
   }
 }
+

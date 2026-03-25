@@ -41,3 +41,4 @@ class SettingsSelectionItem extends StatelessWidget {
     );
   }
 }
+

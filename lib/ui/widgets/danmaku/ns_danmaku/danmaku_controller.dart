@@ -46,3 +46,4 @@ class DanmakuController {
     onUpdateOption.call(option);
   }
 }
+

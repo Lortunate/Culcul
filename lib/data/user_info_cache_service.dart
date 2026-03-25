@@ -33,3 +33,4 @@ Future<UserInfoCacheService> userInfoCacheService(Ref ref) async {
   final box = await Hive.openBox<String>(UserInfoCacheService.boxName);
   return UserInfoCacheService(box);
 }
+

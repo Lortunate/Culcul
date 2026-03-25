@@ -97,3 +97,4 @@ class SearchResult extends _$SearchResult {
     });
   }
 }
+

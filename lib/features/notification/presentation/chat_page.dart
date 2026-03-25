@@ -1,3 +1,4 @@
+import 'package:culcul/i18n/i18n.dart';
 import 'dart:io';
 import 'package:culcul/features/notification/controllers/chat_controller.dart';
 import 'package:culcul/features/auth/controllers/auth_controller.dart';
@@ -37,7 +38,7 @@ class ChatPage extends HookConsumerWidget {
     final textController = useTextEditingController();
     final scrollController = useScrollController();
 
-    // 当前用户 ID (Int)
+    // Current user ID (int)
     final currentUserId = useMemoized(() {
       return int.tryParse(currentUser?.id ?? '0') ?? 0;
     }, [currentUser?.id]);
@@ -114,7 +115,8 @@ class ChatPage extends HookConsumerWidget {
       await _scrollToBottom(scrollController);
     } catch (e) {
       if (!context.mounted) return;
-      _showSendError(context, '发送图片失败: $e');
+      final t = i18n(context);
+      _showSendError(context, t.notification.chat.send_failed(error: e.toString()));
     }
   }
 
@@ -131,7 +133,8 @@ class ChatPage extends HookConsumerWidget {
       await _scrollToBottom(scrollController);
     } catch (e) {
       if (!context.mounted) return;
-      _showSendError(context, '发送失败: $e');
+      final t = i18n(context);
+      _showSendError(context, t.notification.chat.send_failed(error: e.toString()));
     }
   }
 
@@ -149,3 +152,4 @@ class ChatPage extends HookConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 }
+

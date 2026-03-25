@@ -393,3 +393,4 @@ class _FavoriteDetailSkeleton extends StatelessWidget {
     );
   }
 }
+

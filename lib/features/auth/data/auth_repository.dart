@@ -285,3 +285,4 @@ class AuthRepository extends BaseRepository {
     return result is Success;
   }
 }
+

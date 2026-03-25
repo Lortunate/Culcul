@@ -40,3 +40,4 @@ sealed class LiveDanmakuItem with _$LiveDanmakuItem {
   factory LiveDanmakuItem.fromJson(Map<String, dynamic> json) =>
       _$LiveDanmakuItemFromJson(json);
 }
+

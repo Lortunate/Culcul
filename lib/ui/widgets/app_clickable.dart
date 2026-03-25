@@ -7,16 +7,16 @@ class AppClickable extends StatelessWidget {
   final VoidCallback? onLongPress;
   final bool haptic;
 
-  @Deprecated('请在外部或 child 中自行处理 borderRadius')
+  @Deprecated('Handle borderRadius outside this widget or in child.')
   final BorderRadius? borderRadius;
 
-  @Deprecated('请在外部或 child 中自行处理 backgroundColor')
+  @Deprecated('Handle backgroundColor outside this widget or in child.')
   final Color? backgroundColor;
 
-  @Deprecated('请在外部或 child 内部使用 Padding 处理')
+  @Deprecated('Use Padding outside this widget or inside child.')
   final EdgeInsetsGeometry? padding;
 
-  @Deprecated('请在外部使用 Container/Padding 处理 margin')
+  @Deprecated('Use Container/Padding outside this widget for margin.')
   final EdgeInsetsGeometry? margin;
 
   const AppClickable({
@@ -84,3 +84,4 @@ class AppClickable extends StatelessWidget {
     return content;
   }
 }
+

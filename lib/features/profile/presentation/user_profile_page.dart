@@ -5,13 +5,12 @@ import 'package:culcul/features/profile/presentation/tabs/user_video_tab.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_app_bar.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_info.dart';
 import 'package:culcul/data/models/user/user_profile_model.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/sliver_tab_bar_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-const _userProfileTabs = [Tab(text: '主页'), Tab(text: '动态'), Tab(text: '投稿')];
 
 class UserProfilePage extends HookConsumerWidget {
   final int mid;
@@ -19,6 +18,7 @@ class UserProfilePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = Translations.of(context);
     final provider = userSpaceProvider('$mid');
     final profileAsync = ref.watch(provider);
     final theme = Theme.of(context);
@@ -27,6 +27,12 @@ class UserProfilePage extends HookConsumerWidget {
     final tabController = useTabController(initialLength: 3);
     final scrollOffsetNotifier = useValueNotifier(0.0);
     final topPadding = MediaQuery.paddingOf(context).top + kToolbarHeight;
+
+    final userProfileTabs = [
+      Tab(text: t.profile.tabs.home),
+      Tab(text: t.profile.tabs.moments),
+      Tab(text: t.profile.tabs.contribution),
+    ];
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -40,6 +46,7 @@ class UserProfilePage extends HookConsumerWidget {
               theme: theme,
               colorScheme: colorScheme,
               tabController: tabController,
+              tabs: userProfileTabs,
               topPadding: topPadding,
               scrollOffsetNotifier: scrollOffsetNotifier,
               onRefresh: () => ref.refresh(provider.future),
@@ -71,6 +78,7 @@ class _UserProfileContent extends StatelessWidget {
     required this.theme,
     required this.colorScheme,
     required this.tabController,
+    required this.tabs,
     required this.topPadding,
     required this.scrollOffsetNotifier,
     required this.onRefresh,
@@ -81,6 +89,7 @@ class _UserProfileContent extends StatelessWidget {
   final ThemeData theme;
   final ColorScheme colorScheme;
   final TabController tabController;
+  final List<Tab> tabs;
   final double topPadding;
   final ValueNotifier<double> scrollOffsetNotifier;
   final RefreshCallback onRefresh;
@@ -116,6 +125,7 @@ class _UserProfileContent extends StatelessWidget {
                   _buildUserProfileTabBar(
                     tabController: tabController,
                     colorScheme: colorScheme,
+                    tabs: tabs,
                   ),
                   topPadding: topPadding,
                 ),
@@ -140,9 +150,10 @@ class _UserProfileContent extends StatelessWidget {
 TabBar _buildUserProfileTabBar({
   required TabController tabController,
   required ColorScheme colorScheme,
+  required List<Tab> tabs,
 }) => TabBar(
   controller: tabController,
-  tabs: _userProfileTabs,
+  tabs: tabs,
   labelColor: colorScheme.primary,
   labelStyle: const TextStyle(
     fontWeight: FontWeight.bold,
@@ -161,3 +172,4 @@ TabBar _buildUserProfileTabBar({
   splashFactory: NoSplash.splashFactory,
   overlayColor: WidgetStateProperty.all(Colors.transparent),
 );
+

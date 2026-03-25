@@ -17,19 +17,12 @@ class DynamicPage extends HookConsumerWidget {
     final t = Translations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final locale = Localizations.localeOf(context);
     final authState = ref.watch(authProvider);
-
-    final articleTab = switch (locale.languageCode) {
-      'en' => 'Articles',
-      'zh' when locale.countryCode == 'TW' || locale.scriptCode == 'Hant' => '專欄',
-      _ => '专栏',
-    };
     final tabs = [
       t.moments.tabs.all,
       t.moments.tabs.video,
       t.moments.tabs.pgc,
-      articleTab,
+      t.search.tabs.article,
     ];
     final tabController = useTabController(initialLength: tabs.length);
 
@@ -79,3 +72,4 @@ class DynamicPage extends HookConsumerWidget {
     );
   }
 }
+

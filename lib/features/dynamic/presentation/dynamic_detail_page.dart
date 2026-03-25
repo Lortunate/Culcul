@@ -7,6 +7,7 @@ import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_deta
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_detail_header.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_comments_view.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_content_widget.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class DynamicDetailPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = Translations.of(context);
     final post = useState<DynamicItem?>(null);
     final isLoading = useState(true);
     final error = useState<String?>(null);
@@ -86,12 +88,12 @@ class DynamicDetailPage extends HookConsumerWidget {
           .read(dynamicRepositoryProvider)
           .likeDynamic(item.id, newStatus);
 
-      if (result.isFailure) {
+        if (result.isFailure) {
         // Revert
         post.value = item;
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('操作失败: ${(result as Failure).exception}')),
+            SnackBar(content: Text(t.moments.operation_failed(message: (result as Failure).exception.toString()))),
           );
         }
       }
@@ -103,7 +105,7 @@ class DynamicDetailPage extends HookConsumerWidget {
 
     if (error.value != null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('动态详情')),
+        appBar: AppBar(title: Text(t.moments.detail_title)),
         body: Center(child: Text(error.value!)),
       );
     }
@@ -111,7 +113,7 @@ class DynamicDetailPage extends HookConsumerWidget {
     if (post.value == null) return const SizedBox();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('动态详情')),
+      appBar: AppBar(title: Text(t.moments.detail_title)),
       body: EasyRefresh(
         onRefresh: () async {
           await loadDetail();
@@ -156,3 +158,4 @@ class DynamicDetailPage extends HookConsumerWidget {
     );
   }
 }
+

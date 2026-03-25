@@ -165,3 +165,4 @@ class FavFolderResources extends _$FavFolderResources {
     }
   }
 }
+

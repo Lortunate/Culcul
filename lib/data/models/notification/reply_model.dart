@@ -88,3 +88,4 @@ sealed class ReplyItemDetail with _$ReplyItemDetail {
   factory ReplyItemDetail.fromJson(Map<String, dynamic> json) =>
       _$ReplyItemDetailFromJson(json);
 }
+

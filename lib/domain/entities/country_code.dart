@@ -23,3 +23,4 @@ const List<CountryCode> defaultCountryCodes = [
   CountryCode(id: 852, name: '中国香港', code: '+852'),
   CountryCode(id: 853, name: '中国澳门', code: '+853'),
 ];
+

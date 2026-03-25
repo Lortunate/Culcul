@@ -48,9 +48,11 @@ extension FormatDateTimeExtension on DateTime {
     if (year == now.year && month == now.month && day == now.day) {
       return '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
     } else if (year == now.year) {
-      return '$month月$day日 ${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
+      return '${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')} '
+          '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}';
     } else {
-      return '$year年$month月$day日';
+      return '$year-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';
     }
   }
 }
+

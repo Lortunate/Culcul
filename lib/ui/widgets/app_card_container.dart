@@ -55,3 +55,4 @@ class AppCardContainer extends StatelessWidget {
     );
   }
 }
+

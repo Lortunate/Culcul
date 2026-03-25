@@ -19,3 +19,4 @@ abstract class HistoryApi {
     @Query('ps') int ps,
   );
 }
+

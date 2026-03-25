@@ -72,3 +72,4 @@ class DynamicSkeleton extends StatelessWidget {
     );
   }
 }
+

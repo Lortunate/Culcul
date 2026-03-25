@@ -7,3 +7,4 @@ part 'cookie_jar_provider.g.dart';
 CookieJar cookieJar(Ref ref) {
   throw UnimplementedError('cookieJarProvider must be overridden');
 }
+

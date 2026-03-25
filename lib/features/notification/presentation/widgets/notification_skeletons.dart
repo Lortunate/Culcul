@@ -113,3 +113,4 @@ class _ChatMessageSkeletonItem extends StatelessWidget {
     );
   }
 }
+

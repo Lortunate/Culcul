@@ -1,4 +1,5 @@
 import 'package:culcul/features/live/controllers/live_room_controller.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -13,6 +14,7 @@ class LiveInputSheet extends HookConsumerWidget {
     final controller = useTextEditingController();
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = Translations.of(context);
 
     return Padding(
       padding: EdgeInsets.only(
@@ -39,7 +41,7 @@ class LiveInputSheet extends HookConsumerWidget {
                     style: TextStyle(color: colorScheme.onPrimary),
                     cursorColor: colorScheme.primary,
                     decoration: InputDecoration(
-                      hintText: '发个弹幕呗~',
+                      hintText: t.live.danmaku.input_hint,
                       hintStyle: TextStyle(
                         color: colorScheme.onPrimary.withValues(alpha: 0.4),
                         fontSize: 14,
@@ -90,3 +92,4 @@ class LiveInputSheet extends HookConsumerWidget {
     );
   }
 }
+

@@ -32,3 +32,4 @@ sealed class UserProfile with _$UserProfile {
 
   factory UserProfile.fromJson(Map<String, dynamic> json) => _$UserProfileFromJson(json);
 }
+

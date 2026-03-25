@@ -18,3 +18,4 @@ class HistoryRepository extends BaseRepository {
     return safeApiCall(() => _api.getHistoryCursor(max, viewAt, business, ps));
   }
 }
+

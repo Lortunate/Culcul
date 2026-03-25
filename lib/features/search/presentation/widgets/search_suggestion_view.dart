@@ -1,4 +1,5 @@
 import 'package:culcul/features/search/controllers/search_controller.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -19,6 +20,7 @@ class SearchSuggestionView extends HookConsumerWidget {
 
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = Translations.of(context);
     final suggestionAsync = ref.watch(searchSuggestionsProvider(term));
 
     return Container(
@@ -46,8 +48,12 @@ class SearchSuggestionView extends HookConsumerWidget {
             },
           );
         },
-        loading: () => const _LoadingState(),
-        error: (error, _) => _ErrorState(colorScheme: colorScheme, theme: theme),
+        loading: () => _LoadingState(text: t.search.status.loading),
+        error: (error, _) => _ErrorState(
+          colorScheme: colorScheme,
+          theme: theme,
+          text: t.search.status.failed,
+        ),
       ),
     );
   }
@@ -195,7 +201,9 @@ class _AnimatedSuggestionItem extends HookWidget {
 }
 
 class _LoadingState extends StatelessWidget {
-  const _LoadingState();
+  final String text;
+
+  const _LoadingState({required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -210,7 +218,7 @@ class _LoadingState extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            '正在获取建议...',
+            text,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
               color: Theme.of(
                 context,
@@ -242,7 +250,7 @@ class _EmptyState extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            '未发现相关搜索建议',
+            Translations.of(context).search.status.empty,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
               fontWeight: FontWeight.w500,
@@ -257,8 +265,9 @@ class _EmptyState extends StatelessWidget {
 class _ErrorState extends StatelessWidget {
   final ColorScheme colorScheme;
   final ThemeData theme;
+  final String text;
 
-  const _ErrorState({required this.colorScheme, required this.theme});
+  const _ErrorState({required this.colorScheme, required this.theme, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -280,7 +289,7 @@ class _ErrorState extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            '获取建议失败',
+            text,
             style: theme.textTheme.bodySmall?.copyWith(
               color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
             ),
@@ -290,3 +299,4 @@ class _ErrorState extends StatelessWidget {
     );
   }
 }
+

@@ -1,6 +1,7 @@
 import 'package:culcul/core/constants/app_dimens.dart';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/data/models/relation/relation_model.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/presentation/relation/widgets/relation_user_item.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
@@ -20,18 +21,19 @@ class RelationUserList extends StatelessWidget {
     required this.asyncValue,
     required this.onRefresh,
     required this.onLoadMore,
-    this.emptyText = '暂无数据',
+    this.emptyText = '',
     this.hasMore = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
     return SmartPagingView<RelationUser>(
       asyncValue: asyncValue,
       onRefresh: onRefresh,
       onLoadMore: onLoadMore,
       hasMore: hasMore,
-      emptyText: emptyText,
+      emptyText: emptyText.isEmpty ? t.common.no_data : emptyText,
       skeleton: const Center(child: CircularProgressIndicator()), // TODO: Better skeleton
       errorBuilder: (context, error, stack) {
         if (error is AppException && error.code == 22115) {
@@ -54,3 +56,4 @@ class RelationUserList extends StatelessWidget {
     );
   }
 }
+

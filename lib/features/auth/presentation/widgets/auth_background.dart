@@ -148,3 +148,4 @@ class _AuthBackgroundState extends State<AuthBackground>
     );
   }
 }
+

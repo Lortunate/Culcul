@@ -30,3 +30,4 @@ class PlayerBottomBar extends ConsumerWidget {
     );
   }
 }
+

@@ -3,8 +3,8 @@ import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
-import 'package:culcul/features/dynamic/presentation/utils/dynamic_navigation.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/features/dynamic/presentation/utils/dynamic_navigation.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_content_widget.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:flutter/material.dart';
@@ -199,17 +199,17 @@ class DynamicPostCard extends StatelessWidget {
           children: [
             ListTile(
               leading: const Icon(Icons.share_outlined),
-              title: const Text('分享动态'),
+              title: Text(t.actions.share),
               onTap: () => Navigator.pop(context, 'share'),
             ),
             ListTile(
               leading: const Icon(Icons.copy_all_rounded),
-              title: const Text('复制链接'),
+              title: Text(t.moments.copy_link),
               onTap: () => Navigator.pop(context, 'copy'),
             ),
             ListTile(
               leading: const Icon(Icons.open_in_browser_rounded),
-              title: const Text('浏览器打开'),
+              title: Text(t.moments.open_in_browser),
               onTap: () => Navigator.pop(context, 'open'),
             ),
           ],
@@ -227,7 +227,7 @@ class DynamicPostCard extends StatelessWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(const SnackBar(content: Text('已复制动态链接')));
+          ).showSnackBar(SnackBar(content: Text(t.moments.copied_link)));
         }
         break;
       case 'open':
@@ -238,3 +238,4 @@ class DynamicPostCard extends StatelessWidget {
     }
   }
 }
+

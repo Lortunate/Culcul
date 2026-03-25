@@ -62,3 +62,4 @@ class HomeRepository extends BaseRepository {
     };
   }
 }
+

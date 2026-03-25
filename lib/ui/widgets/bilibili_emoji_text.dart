@@ -123,3 +123,4 @@ class BilibiliEmojiText extends StatelessWidget {
     return TextSpan(children: spans);
   }
 }
+

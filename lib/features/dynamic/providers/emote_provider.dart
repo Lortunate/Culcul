@@ -9,3 +9,4 @@ Future<List<EmotePackage>> emotePackages(Ref ref) async {
   final result = await ref.watch(emoteRepositoryProvider).getUserEmotes();
   return result.when(success: (data) => data.packages, failure: (e) => throw e);
 }
+

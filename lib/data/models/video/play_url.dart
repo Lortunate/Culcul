@@ -47,3 +47,4 @@ sealed class SupportFormat with _$SupportFormat {
   factory SupportFormat.fromJson(Map<String, dynamic> json) =>
       _$SupportFormatFromJson(json);
 }
+

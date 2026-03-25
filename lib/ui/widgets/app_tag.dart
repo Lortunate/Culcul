@@ -48,3 +48,4 @@ class AppTag extends StatelessWidget {
     );
   }
 }
+

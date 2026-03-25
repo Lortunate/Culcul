@@ -15,3 +15,4 @@ sealed class UserCardModel with _$UserCardModel {
   factory UserCardModel.fromJson(Map<String, dynamic> json) =>
       _$UserCardModelFromJson(json);
 }
+

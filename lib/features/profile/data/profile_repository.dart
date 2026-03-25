@@ -198,3 +198,4 @@ class ProfileRepository extends BaseRepository {
     return safeVoidApiCall(() => api.modifyRelation(mid, isFollow ? 1 : 2, 11));
   }
 }
+

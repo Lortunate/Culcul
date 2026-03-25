@@ -486,3 +486,4 @@ sealed class DynamicUploadImageData with _$DynamicUploadImageData {
   factory DynamicUploadImageData.fromJson(Map<String, dynamic> json) =>
       _$DynamicUploadImageDataFromJson(json);
 }
+

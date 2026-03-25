@@ -203,7 +203,7 @@ extension DynamicItemExtension on DynamicItem {
       return DynamicLinkCard(
         title: (major.opus!.title != null && major.opus!.title!.isNotEmpty)
             ? major.opus!.title!
-            : '专栏动态',
+            : 'Article Post',
         cover: cover,
         desc: major.opus!.summary?.text,
         url: major.opus!.jumpUrl!,
@@ -282,3 +282,4 @@ extension DynamicItemExtension on DynamicItem {
     return null;
   }
 }
+

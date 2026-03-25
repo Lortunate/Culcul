@@ -17,3 +17,4 @@ abstract class ResourceApi {
   @DioResponseType(ResponseType.bytes)
   Future<List<int>> fetchBytes(@Path('url') String url);
 }
+

@@ -51,3 +51,4 @@ class CacheInterceptor extends Interceptor {
     return 'api_cache_${options.path}_$sortedParams';
   }
 }
+

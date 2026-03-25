@@ -73,6 +73,7 @@ class _HistoryEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = Translations.of(context);
 
     return Center(
       child: Padding(
@@ -83,7 +84,7 @@ class _HistoryEmptyState extends StatelessWidget {
             Icon(Icons.history_rounded, size: 40, color: colorScheme.outline),
             const SizedBox(height: 12),
             Text(
-              '暂无历史记录',
+              t.history.empty,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: colorScheme.onSurfaceVariant,
               ),
@@ -94,3 +95,4 @@ class _HistoryEmptyState extends StatelessWidget {
     );
   }
 }
+

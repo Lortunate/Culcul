@@ -29,3 +29,4 @@ class CulculApp extends ConsumerWidget {
     );
   }
 }
+

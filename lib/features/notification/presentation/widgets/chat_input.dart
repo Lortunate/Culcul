@@ -1,3 +1,4 @@
+import 'package:culcul/i18n/i18n.dart';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class ChatInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final t = i18n(context);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -69,10 +71,10 @@ class ChatInput extends StatelessWidget {
                   controller: controller,
                   maxLines: 5,
                   minLines: 1,
-                  decoration: const InputDecoration(
-                    hintText: '发个消息...',
+                  decoration: InputDecoration(
+                    hintText: t.notification.chat.input_hint,
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     isDense: true,
                   ),
                   textInputAction: TextInputAction.send,
@@ -100,3 +102,4 @@ class ChatInput extends StatelessWidget {
     );
   }
 }
+

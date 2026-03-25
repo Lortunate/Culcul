@@ -31,3 +31,4 @@ sealed class Emote with _$Emote {
 
   factory Emote.fromJson(Map<String, dynamic> json) => _$EmoteFromJson(json);
 }
+

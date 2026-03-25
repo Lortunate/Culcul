@@ -1,3 +1,4 @@
+import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/data/models/notification/private_message_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_message_item.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_time_divider.dart';
@@ -34,6 +35,7 @@ class ChatMessageList extends StatefulWidget {
 class _ChatMessageListState extends State<ChatMessageList> {
   @override
   Widget build(BuildContext context) {
+    final t = i18n(context);
     if (widget.messages.isEmpty) {
       return EasyRefresh(
         onRefresh: widget.onRefresh,
@@ -43,7 +45,7 @@ class _ChatMessageListState extends State<ChatMessageList> {
               physics: const AlwaysScrollableScrollPhysics(),
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                child: const Center(child: Text('暂无消息')),
+                child: Center(child: Text(t.notification.chat.no_message)),
               ),
             );
           },
@@ -87,9 +89,9 @@ class _ChatMessageListState extends State<ChatMessageList> {
                 onAvatarTap: () {
                   if (!isSelf) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('用户详情页暂未开发'),
-                        duration: Duration(seconds: 1),
+                      SnackBar(
+                        content: Text(t.notification.chat.page_not_developed),
+                        duration: const Duration(seconds: 1),
                       ),
                     );
                   }
@@ -102,3 +104,4 @@ class _ChatMessageListState extends State<ChatMessageList> {
     );
   }
 }
+

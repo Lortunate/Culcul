@@ -14,3 +14,4 @@ Future<WeeklyModel> weeklyList(Ref ref) async {
     Failure(exception: final e) => throw e,
   };
 }
+

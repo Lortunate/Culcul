@@ -48,3 +48,4 @@ void useVideoProgressReport(WidgetRef ref, String bvid, Player player, bool isPl
     return reportProgress;
   }, []);
 }
+

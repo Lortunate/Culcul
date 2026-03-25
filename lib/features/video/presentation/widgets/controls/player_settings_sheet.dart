@@ -1,6 +1,9 @@
+import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/video/controllers/danmaku_settings_controller.dart';
 import 'package:culcul/features/video/controllers/player_controller.dart';
 import 'package:culcul/features/video/controllers/video_detail_controller.dart';
+import 'package:culcul/features/video/presentation/widgets/controls/player_constants.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/video_overlay_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -21,6 +24,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = i18n(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final bottomPadding = MediaQuery.of(context).padding.bottom;
@@ -84,9 +88,10 @@ class PlayerSettingsSheet extends ConsumerWidget {
                             danmakuSettings,
                             danmakuNotifier,
                             colorScheme,
+                            t,
                           ),
                           const SizedBox(height: 32),
-                          _buildSectionTitle('播放速度', colorScheme),
+                          _buildSectionTitle(t.video.player.choose_speed, colorScheme),
                           const SizedBox(height: 16),
                           _buildSpeedOptions(
                             colorScheme,
@@ -100,7 +105,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
                             },
                           ),
                           const SizedBox(height: 32),
-                          _buildSectionTitle('清晰度', colorScheme),
+                          _buildSectionTitle(t.video.player.quality, colorScheme),
                           const SizedBox(height: 16),
                           _buildQualityOptions(
                             colorScheme,
@@ -108,11 +113,12 @@ class PlayerSettingsSheet extends ConsumerWidget {
                             videoDetailState.availableQualities,
                             qualityLabels,
                             (q) => videoDetailNotifier.switchQuality(q),
+                            t,
                           ),
                           const SizedBox(height: 32),
-                          _buildSectionTitle('定时停止', colorScheme),
+                          _buildSectionTitle(t.video.player.sleep_timer, colorScheme),
                           const SizedBox(height: 16),
-                          _buildSleepTimerOptions(colorScheme, context),
+                          _buildSleepTimerOptions(colorScheme, context, t),
                         ],
                       ),
                     ),
@@ -130,6 +136,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
     dynamic settings,
     dynamic notifier,
     ColorScheme colorScheme,
+    Translations t,
   ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,7 +144,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildSectionTitle('弹幕设置', colorScheme),
+            _buildSectionTitle(t.video.player.danmaku_settings, colorScheme),
             Transform.scale(
               scale: 0.8,
               child: Switch(
@@ -155,7 +162,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
           const SizedBox(height: 16),
           // Settings Grid
           _buildSliderRow(
-            '不透明度',
+            t.video.player.danmaku_opacity,
             '${(settings.opacity * 100).toInt()}%',
             settings.opacity,
             (v) => notifier.setOpacity(v),
@@ -166,7 +173,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
           _buildSliderRow(
-            '字号缩放',
+            t.video.player.danmaku_scale,
             '${(settings.fontSizeScale * 100).toInt()}%',
             settings.fontSizeScale,
             (v) => notifier.setFontSizeScale(v),
@@ -177,7 +184,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
           _buildSliderRow(
-            '显示区域',
+            t.video.player.danmaku_area,
             '${(settings.area * 100).toInt()}%',
             settings.area,
             (v) => notifier.setArea(v),
@@ -188,7 +195,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
           ),
           const SizedBox(height: 12),
           _buildSliderRow(
-            '弹幕速度',
+            t.video.player.danmaku_speed,
             '${(settings.speed * 100).toInt()}%',
             settings.speed,
             (v) => notifier.setSpeed(v),
@@ -204,25 +211,25 @@ class PlayerSettingsSheet extends ConsumerWidget {
             runSpacing: 12,
             children: [
               _ModernFilterChip(
-                label: '滚动',
+                label: t.video.player.danmaku_type_scroll,
                 isSelected: settings.showScroll,
                 onTap: notifier.toggleScroll,
                 colorScheme: colorScheme,
               ),
               _ModernFilterChip(
-                label: '顶部',
+                label: t.video.player.danmaku_type_top,
                 isSelected: settings.showTop,
                 onTap: notifier.toggleTop,
                 colorScheme: colorScheme,
               ),
               _ModernFilterChip(
-                label: '底部',
+                label: t.video.player.danmaku_type_bottom,
                 isSelected: settings.showBottom,
                 onTap: notifier.toggleBottom,
                 colorScheme: colorScheme,
               ),
               _ModernFilterChip(
-                label: '彩色',
+                label: t.video.player.danmaku_type_color,
                 isSelected: settings.showColor,
                 onTap: notifier.toggleColor,
                 colorScheme: colorScheme,
@@ -247,7 +254,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
     return Row(
       children: [
         SizedBox(
-          width: 60,
+          width: 70,
           child: Text(
             label,
             style: TextStyle(
@@ -321,7 +328,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
     );
   }
 
-  Widget _buildSleepTimerOptions(ColorScheme colorScheme, BuildContext context) {
+  Widget _buildSleepTimerOptions(ColorScheme colorScheme, BuildContext context, Translations t) {
     final options = [
       null,
       const Duration(minutes: 15),
@@ -330,8 +337,8 @@ class PlayerSettingsSheet extends ConsumerWidget {
     ];
 
     String getLabel(Duration? d) {
-      if (d == null) return '不开启';
-      return '${d.inMinutes}分钟';
+      if (d == null) return t.video.player.sleep_timer_off;
+      return t.video.player.sleep_timer_min(minutes: d.inMinutes.toString());
     }
 
     return Wrap(
@@ -361,13 +368,14 @@ class PlayerSettingsSheet extends ConsumerWidget {
     List<int> availableQualities,
     Map<int, String> qualityLabels,
     ValueChanged<int> onQualityChanged,
+    Translations t,
   ) {
     return Wrap(
       spacing: 12,
       runSpacing: 12,
       children: availableQualities.map((quality) {
         final isSelected = selectedQuality == quality;
-        final label = qualityLabels[quality] ?? '未知';
+        final label = qualityLabels[quality] ?? getQualityLabel(quality, t);
         final shortLabel = label.split(' ').first;
 
         return _CompactOptionChip(
@@ -483,3 +491,4 @@ class _ModernFilterChip extends StatelessWidget {
     );
   }
 }
+

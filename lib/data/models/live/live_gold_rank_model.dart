@@ -47,3 +47,4 @@ sealed class LiveRankMedalInfo with _$LiveRankMedalInfo {
   factory LiveRankMedalInfo.fromJson(Map<String, dynamic> json) =>
       _$LiveRankMedalInfoFromJson(json);
 }
+

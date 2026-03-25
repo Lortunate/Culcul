@@ -15,3 +15,4 @@ abstract class EmoteApi {
     @Query('business') String business = 'dynamic',
   });
 }
+

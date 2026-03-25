@@ -1,4 +1,5 @@
 import 'package:culcul/data/models/dynamic/dynamic_view_models.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 
 class DynamicVoteWidget extends StatelessWidget {
@@ -10,6 +11,7 @@ class DynamicVoteWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = Translations.of(context);
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -21,7 +23,7 @@ class DynamicVoteWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            additional.title ?? '投票',
+            additional.title ?? t.moments.vote,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
               fontSize: 16,
@@ -29,7 +31,10 @@ class DynamicVoteWidget extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            '${additional.voteJoinNum}人参与 · ${additional.voteChoiceCnt}个选项',
+            t.moments.vote_stats(
+              participants: additional.voteJoinNum.toString(),
+              options: additional.voteChoiceCnt.toString(),
+            ),
             style: theme.textTheme.bodySmall?.copyWith(
               color: colorScheme.onSurfaceVariant,
             ),
@@ -39,3 +44,4 @@ class DynamicVoteWidget extends StatelessWidget {
     );
   }
 }
+

@@ -1,5 +1,6 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/data/models/toview/to_view_model.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/icon_text.dart';
 import 'package:culcul/ui/widgets/video_list_card.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class ToViewItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = Translations.of(context);
 
     return VideoListCard(
       onTap: onTap,
@@ -50,7 +52,7 @@ class ToViewItem extends StatelessWidget {
             const SizedBox(width: 4),
             Expanded(
               child: Text(
-                '观看至 ${FormatUtils.formatDuration(item.progress ?? 0)}',
+                t.watch_later.watch_to(progress: FormatUtils.formatDuration(item.progress ?? 0)),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                   fontSize: 12,
@@ -99,3 +101,4 @@ class ToViewItem extends StatelessWidget {
     );
   }
 }
+

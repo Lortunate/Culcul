@@ -34,3 +34,4 @@ class SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
     return tabBar != oldDelegate.tabBar || topPadding != oldDelegate.topPadding;
   }
 }
+

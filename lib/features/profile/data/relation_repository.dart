@@ -35,3 +35,4 @@ class RelationRepository extends BaseRepository {
     return safeVoidApiCall(() => _api.modifyRelation(fid, act));
   }
 }
+

@@ -1,5 +1,6 @@
 import 'package:culcul/features/dynamic/controllers/topic_dynamic_controller.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_card.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';
@@ -16,6 +17,7 @@ class TopicDetailPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = Translations.of(context);
     final provider = topicDynamicProvider(topicId: topicId);
     final state = ref.watch(provider);
     final notifier = ref.read(provider.notifier);
@@ -50,8 +52,8 @@ class TopicDetailPage extends HookConsumerWidget {
                     slivers: [
                       SliverFillRemaining(
                         child: Center(
-                          child: AppErrorWidget(
-                            message: '暂无内容',
+                            child: AppErrorWidget(
+                            message: t.common.no_content,
                             onRetry: notifier.refresh,
                           ),
                         ),
@@ -76,3 +78,4 @@ class TopicDetailPage extends HookConsumerWidget {
     );
   }
 }
+

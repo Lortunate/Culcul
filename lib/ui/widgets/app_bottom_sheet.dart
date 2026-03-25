@@ -20,3 +20,4 @@ Future<T?> showAppModalBottomSheet<T>({
     clipBehavior: Clip.antiAlias,
   );
 }
+

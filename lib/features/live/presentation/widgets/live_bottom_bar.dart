@@ -1,3 +1,4 @@
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 
 class LiveBottomBar extends StatelessWidget {
@@ -19,6 +20,7 @@ class LiveBottomBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final t = Translations.of(context);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
@@ -50,7 +52,7 @@ class LiveBottomBar extends StatelessWidget {
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
-                          '弹幕支持下~',
+                          t.live.danmaku.support_hint,
                           style: TextStyle(
                             color: colorScheme.onPrimary.withValues(alpha: 0.42),
                             fontSize: 13,
@@ -65,43 +67,10 @@ class LiveBottomBar extends StatelessWidget {
                 ),
               ),
             ),
-            // const SizedBox(width: 10),
-            // _buildIconButton(
-            //   context,
-            //   icon: Icons.shopping_bag_outlined, // Shop/Bag
-            //   onPressed: () {},
-            // ),
-            // _buildIconButton(
-            //   context,
-            //   icon: Icons.local_florist_rounded, // Rose/Flower
-            //   color: colorScheme.primary,
-            //   onPressed: () {},
-            // ),
-            // _buildIconButton(
-            //   context,
-            //   icon: Icons.card_giftcard_rounded, // Gift Box
-            //   color: colorScheme.primary,
-            //   onPressed: onGift,
-            // ),
           ],
         ),
       ),
     );
   }
-
-  Widget _buildIconButton(
-    BuildContext context, {
-    required IconData icon,
-    Color? color,
-    VoidCallback? onPressed,
-  }) {
-    return IconButton(
-      icon: Icon(icon),
-      onPressed: onPressed ?? () {},
-      color: color ?? Theme.of(context).colorScheme.onPrimary,
-      iconSize: 24,
-      constraints: const BoxConstraints(minWidth: 34, minHeight: 34),
-      padding: EdgeInsets.zero,
-    );
-  }
 }
+

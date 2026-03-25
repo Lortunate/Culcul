@@ -2,13 +2,13 @@ import 'package:culcul/features/search/controllers/search_controller.dart';
 import 'package:culcul/features/search/presentation/widgets/search_filter_bar.dart';
 import 'package:culcul/features/search/presentation/widgets/search_result_list.dart';
 import 'package:culcul/features/search/presentation/widgets/search_result_skeleton.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/app_tab_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-const _searchTabs = ['综合', '视频', '番剧', '用户', '专栏'];
 const _searchTypeConfigs = ['all', 'video', 'media_bangumi', 'bili_user', 'article'];
 
 class SearchResultView extends HookConsumerWidget {
@@ -18,11 +18,20 @@ class SearchResultView extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = Translations.of(context);
+    final searchTabs = [
+      t.search.tabs.all,
+      t.search.tabs.video,
+      t.search.tabs.anime,
+      t.search.tabs.user,
+      t.search.tabs.article,
+    ];
+
     return DefaultTabController(
-      length: _searchTabs.length,
+      length: searchTabs.length,
       child: Column(
         children: [
-          const AppTabBar(tabs: _searchTabs),
+          AppTabBar(tabs: searchTabs),
           Expanded(
             child: TabBarView(
               children: [
@@ -100,3 +109,4 @@ class SearchResultTab extends HookConsumerWidget {
     );
   }
 }
+

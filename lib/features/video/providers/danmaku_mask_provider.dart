@@ -120,3 +120,4 @@ Path? _parsePath(String base64Svg) {
   }
   return null;
 }
+

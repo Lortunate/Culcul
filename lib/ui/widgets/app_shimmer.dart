@@ -108,3 +108,4 @@ class _SlidingGradientTransform extends GradientTransform {
     return Matrix4.translationValues(bounds.width * (slidePercent * 2 - 1), 0, 0);
   }
 }
+

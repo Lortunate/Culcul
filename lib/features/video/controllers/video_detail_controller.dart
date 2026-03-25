@@ -307,3 +307,4 @@ class VideoDetailController extends _$VideoDetailController {
     await ShareUtils.shareVideo(detail.bvid, detail.title, detail.pic);
   }
 }
+

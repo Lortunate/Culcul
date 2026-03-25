@@ -89,3 +89,4 @@ class Followers extends _$Followers with PagingMixin<RelationUser> {
     );
   }
 }
+

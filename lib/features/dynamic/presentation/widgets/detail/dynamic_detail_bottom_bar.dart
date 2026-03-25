@@ -1,6 +1,7 @@
 import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 
 class DynamicDetailBottomBar extends StatelessWidget {
@@ -19,6 +20,7 @@ class DynamicDetailBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -49,8 +51,8 @@ class DynamicDetailBottomBar extends StatelessWidget {
               alignment: Alignment.centerLeft,
               child: TextField(
                 controller: commentController,
-                decoration: const InputDecoration(
-                  hintText: '发一条友善的评论',
+                decoration: InputDecoration(
+                  hintText: t.moments.comment_hint,
                   border: InputBorder.none,
                   isDense: true,
                   contentPadding: EdgeInsets.zero,
@@ -110,3 +112,4 @@ class DynamicDetailBottomBar extends StatelessWidget {
     );
   }
 }
+

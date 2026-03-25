@@ -1,3 +1,4 @@
+import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/features/video/controllers/player_controller.dart';
 import 'package:culcul/features/video/controllers/video_detail_controller.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
@@ -25,6 +26,7 @@ class InteractionLayer extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = i18n(context);
     final playerController = ref.watch(playerControllerProvider.notifier);
     final isLocked = ref.watch(playerControllerProvider.select((s) => s.isLocked));
     final detailState = ref.watch(videoDetailControllerProvider(bvid));
@@ -139,7 +141,7 @@ class InteractionLayer extends HookConsumerWidget {
                 ScreenBrightness().setApplicationScreenBrightness(newBrightness);
 
                 indicatorIcon.value = Icons.brightness_6_rounded;
-                indicatorLabel.value = '亮度';
+                indicatorLabel.value = t.video.player.brightness;
                 indicatorValue.value = brightness.value;
                 indicatorTextValue.value = null;
               } else {
@@ -151,7 +153,7 @@ class InteractionLayer extends HookConsumerWidget {
                 player.setVolume(newVolume);
 
                 indicatorIcon.value = Icons.volume_up_rounded;
-                indicatorLabel.value = '音量';
+                indicatorLabel.value = t.video.player.volume;
                 indicatorValue.value = newVolume / 100;
                 indicatorTextValue.value = null;
               }
@@ -199,3 +201,4 @@ class InteractionLayer extends HookConsumerWidget {
     );
   }
 }
+

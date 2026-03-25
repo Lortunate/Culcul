@@ -2,6 +2,7 @@ import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/data/models/video/video_model.dart';
 import 'package:culcul/features/profile/controllers/user_space_controller.dart';
 import 'package:culcul/features/profile/controllers/user_space_videos_controller.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/video_card.dart';
 import 'package:culcul/ui/widgets/skeletons/video_card_skeleton.dart';
@@ -74,7 +75,7 @@ class _SectionHeader extends StatelessWidget {
         child: Row(
           children: [
             Text(
-              '视频 $videoCount',
+              t.profile.home_tab.recent_videos(count: videoCount.toString()),
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 color: colorScheme.onSurface,
@@ -87,7 +88,7 @@ class _SectionHeader extends StatelessWidget {
               child: Row(
                 children: [
                   Text(
-                    '查看更多',
+                    t.profile.home_tab.view_more,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: colorScheme.onSurfaceVariant,
                     ),
@@ -166,8 +167,8 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SliverToBoxAdapter(
-      child: SizedBox(height: 100, child: Center(child: Text('暂无内容'))),
+    return SliverToBoxAdapter(
+      child: SizedBox(height: 100, child: Center(child: Text(Translations.of(context).common.no_content))),
     );
   }
 }
@@ -219,3 +220,4 @@ class _LoadingGrid extends StatelessWidget {
     );
   }
 }
+

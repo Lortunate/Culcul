@@ -184,3 +184,4 @@ class PlayerController extends _$PlayerController {
     state = state.copyWith(sleepTimerTarget: null);
   }
 }
+

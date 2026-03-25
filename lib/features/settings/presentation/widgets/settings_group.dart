@@ -32,3 +32,4 @@ class SettingsGroup extends StatelessWidget {
     );
   }
 }
+

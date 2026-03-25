@@ -5,6 +5,7 @@ import 'package:culcul/core/utils/id_utils.dart';
 import 'package:culcul/core/utils/toast_utils.dart';
 import 'package:culcul/data/models/video/video_model.dart';
 import 'package:culcul/features/to_view/controllers/to_view_controller.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -16,6 +17,7 @@ class VideoMoreBottomSheet extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
+    final t = Translations.of(context);
 
     const topRadius = BorderRadius.vertical(top: Radius.circular(16));
 
@@ -43,12 +45,12 @@ class VideoMoreBottomSheet extends ConsumerWidget {
                   _buildDragHandle(colorScheme),
                   _ActionItem(
                     icon: Icons.watch_later_outlined,
-                    text: '稍后再看',
+                    text: t.home.video_more.watch_later,
                     onTap: () => _addToWatchLater(context, ref),
                   ),
                   _ActionItem(
                     icon: Icons.image_outlined,
-                    text: '下载封面',
+                    text: t.home.video_more.download_cover,
                     onTap: () => _downloadCover(context, ref),
                   ),
                   const SizedBox(height: 16),
@@ -75,30 +77,32 @@ class VideoMoreBottomSheet extends ConsumerWidget {
 
   Future<void> _addToWatchLater(BuildContext context, WidgetRef ref) async {
     final notifier = ref.read(toViewListProvider.notifier);
+    final t = Translations.of(context);
     Navigator.pop(context);
 
     try {
       final aid = IdUtils.bv2av(video.bvid);
       if (aid == 0) {
-        ToastUtils.showError('无法获取视频ID');
+        ToastUtils.showError(t.home.video_more.invalid_video_id);
         return;
       }
       await notifier.add(aid);
-      ToastUtils.show('已添加至稍后再看');
+      ToastUtils.show(t.home.video_more.added_to_watch_later);
     } catch (e) {
-      ToastUtils.showError('添加失败: $e');
+      ToastUtils.showError(t.home.video_more.add_failed(error: e.toString()));
     }
   }
 
   Future<void> _downloadCover(BuildContext context, WidgetRef ref) async {
     final mediaService = ref.read(mediaServiceProvider);
+    final t = Translations.of(context);
     Navigator.pop(context);
 
     try {
       await mediaService.saveImage(video.pic);
-      ToastUtils.show('封面已保存到相册');
+      ToastUtils.show(t.common.save_success);
     } catch (e) {
-      ToastUtils.showError('下载失败: $e');
+      ToastUtils.showError(t.home.video_more.download_failed(error: e.toString()));
     }
   }
 }
@@ -138,3 +142,4 @@ class _ActionItem extends StatelessWidget {
     );
   }
 }
+

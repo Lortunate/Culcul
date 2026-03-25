@@ -47,3 +47,4 @@ class UserProfileStatItem extends StatelessWidget {
     );
   }
 }
+

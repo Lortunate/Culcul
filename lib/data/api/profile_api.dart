@@ -66,3 +66,4 @@ abstract class ProfileApi {
     @Field('re_src') int reSrc,
   );
 }
+

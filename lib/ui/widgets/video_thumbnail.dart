@@ -199,3 +199,4 @@ class _ThumbnailStatItem extends StatelessWidget {
     );
   }
 }
+

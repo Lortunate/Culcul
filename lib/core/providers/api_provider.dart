@@ -174,3 +174,4 @@ DanmakuRepository danmakuRepository(Ref ref) {
 LiveApi liveApi(Ref ref) {
   return LiveApi(ref.watch(dioClientProvider));
 }
+

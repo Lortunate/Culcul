@@ -15,3 +15,4 @@ sealed class DynamicCommentState with _$DynamicCommentState {
     AppException? error,
   }) = _DynamicCommentState;
 }
+

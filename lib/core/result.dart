@@ -64,3 +64,4 @@ extension ResultExtensions<T, E extends Exception> on Result<T, E> {
     };
   }
 }
+

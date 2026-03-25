@@ -52,3 +52,4 @@ class HomePopular extends _$HomePopular with PagingMixin<VideoModel> {
     await handleLoadMore(oldState, (newState) => state = newState, (item) => item.bvid);
   }
 }
+

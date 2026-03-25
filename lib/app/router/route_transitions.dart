@@ -94,3 +94,4 @@ class SlideFromLeftTransitionPage extends CustomTransitionPage {
             },
       );
 }
+

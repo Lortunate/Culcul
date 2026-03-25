@@ -109,3 +109,4 @@ abstract class DynamicApi {
     @Part(name: 'csrf') required String csrf,
   });
 }
+

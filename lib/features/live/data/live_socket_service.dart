@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:culcul/data/models/live/index.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -193,9 +194,9 @@ class LiveSocketService {
       final uname = data['uname'] as String;
       final msgType = data['msg_type'] as int;
 
-      String text = '进入直播间';
-      if (msgType == 2) text = '关注了主播';
-      if (msgType == 3) text = '分享了直播间';
+      String text = t.live.danmaku.enter_room;
+      if (msgType == 2) text = t.live.danmaku.followed;
+      if (msgType == 3) text = t.live.danmaku.shared;
 
       final item = LiveDanmakuItem(
         text: text,
@@ -221,7 +222,7 @@ class LiveSocketService {
       if (msg != null && msg.isNotEmpty) {
         final item = LiveDanmakuItem(
           text: msg,
-          nickname: '系统消息',
+          nickname: t.live.danmaku.system_notice,
           uid: 0,
           dmType: 3, // System Notice
         );
@@ -233,8 +234,8 @@ class LiveSocketService {
       final giftName = data['giftName'] as String;
       final num = data['num'] as int;
 
-      final item = LiveDanmakuItem(
-        text: '投喂了 $giftName x$num',
+        final item = LiveDanmakuItem(
+        text: t.live.danmaku.gift_feed(giftName: giftName, num: num.toString()),
         nickname: uname,
         uid: data['uid'] as int,
         dmType: 2, // Gift
@@ -258,3 +259,4 @@ class LiveSocketService {
     _danmakuController.close();
   }
 }
+

@@ -1,4 +1,5 @@
 import 'package:culcul/data/models/video/video_detail.dart';
+import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -18,6 +19,7 @@ class ExpandableDescriptionAndTags extends HookWidget {
     final isExpanded = useState(false);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = i18n(context);
 
     return AppClickable(
       onTap: () => isExpanded.value = !isExpanded.value,
@@ -35,7 +37,7 @@ class ExpandableDescriptionAndTags extends HookWidget {
               children: [
                 Expanded(
                   child: Text(
-                    description.isEmpty ? '暂无简介' : description,
+                    description.isEmpty ? t.video.no_desc : description,
                     maxLines: isExpanded.value ? null : 1,
                     overflow: isExpanded.value ? null : TextOverflow.ellipsis,
                     style: theme.textTheme.bodyMedium?.copyWith(
@@ -95,3 +97,4 @@ class CompactTag extends StatelessWidget {
     );
   }
 }
+

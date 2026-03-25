@@ -16,3 +16,4 @@ sealed class FeedResponse with _$FeedResponse {
   factory FeedResponse.fromJson(Map<String, dynamic> json) =>
       _$FeedResponseFromJson(json);
 }
+

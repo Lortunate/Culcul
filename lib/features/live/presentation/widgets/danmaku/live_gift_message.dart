@@ -54,3 +54,4 @@ class LiveGiftMessage extends StatelessWidget {
     );
   }
 }
+

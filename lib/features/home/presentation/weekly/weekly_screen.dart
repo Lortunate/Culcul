@@ -28,3 +28,4 @@ class WeeklyScreen extends ConsumerWidget {
     );
   }
 }
+

@@ -22,3 +22,4 @@ class HistoryList extends _$HistoryList {
     };
   }
 }
+

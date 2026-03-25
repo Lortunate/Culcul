@@ -64,3 +64,4 @@ class _SearchTag extends StatelessWidget {
     );
   }
 }
+

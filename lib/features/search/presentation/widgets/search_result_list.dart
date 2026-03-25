@@ -78,3 +78,4 @@ class SearchResultList extends StatelessWidget {
     );
   }
 }
+

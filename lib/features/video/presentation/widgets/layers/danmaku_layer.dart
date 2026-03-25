@@ -304,3 +304,4 @@ class DanmakuMaskClipper extends CustomClipper<Path> {
     return oldClipper.maskPath != maskPath || oldClipper.videoSize != videoSize;
   }
 }
+

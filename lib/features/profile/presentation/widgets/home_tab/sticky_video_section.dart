@@ -1,5 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/utils/format_utils.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/providers/user_space_extras_provider.dart';
 import 'package:culcul/features/profile/presentation/widgets/home_tab/section_header.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
@@ -15,6 +16,7 @@ class StickyVideoSection extends ConsumerWidget {
     final stickyAsync = ref.watch(userStickyVideoProvider(mid));
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = Translations.of(context);
 
     return stickyAsync.when(
       data: (video) {
@@ -25,7 +27,7 @@ class StickyVideoSection extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SectionHeader(title: '置顶视频'),
+              SectionHeader(title: t.profile.home_tab.sticky),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: InkWell(
@@ -121,7 +123,7 @@ class StickyVideoSection extends ConsumerWidget {
                                         ),
                                         const SizedBox(width: 2),
                                         Text(
-                                          '置顶',
+                                          t.profile.home_tab.sticky_tag,
                                           style: theme.textTheme.labelSmall?.copyWith(
                                             color: colorScheme.primary,
                                             fontWeight: FontWeight.bold,
@@ -202,3 +204,4 @@ class _StatIconText extends StatelessWidget {
     );
   }
 }
+

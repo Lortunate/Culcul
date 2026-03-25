@@ -24,3 +24,4 @@ class EmoteRepository extends BaseRepository {
     return safeApiCall(() => _api.getUserEmotes(business: business));
   }
 }
+

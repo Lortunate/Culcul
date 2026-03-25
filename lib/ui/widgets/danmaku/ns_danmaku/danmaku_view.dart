@@ -349,3 +349,4 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
     );
   }
 }
+

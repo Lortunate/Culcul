@@ -189,3 +189,4 @@ class Chat extends _$Chat {
     }
   }
 }
+

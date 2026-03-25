@@ -15,3 +15,4 @@ Future<List<VideoModel>> categoryRankingList(Ref ref, {int? rid}) async {
     Failure(exception: final e) => throw e,
   };
 }
+

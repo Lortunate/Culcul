@@ -144,3 +144,4 @@ extension FutureResultAsyncValueExtensions<T, E extends Exception>
     return result.toAsyncValue();
   }
 }
+

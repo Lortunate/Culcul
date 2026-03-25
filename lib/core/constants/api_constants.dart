@@ -52,3 +52,4 @@ class ApiConstants {
   // Cache Configuration
   static const Map<String, int> cacheConfig = {};
 }
+

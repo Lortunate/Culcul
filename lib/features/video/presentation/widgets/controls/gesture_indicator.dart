@@ -112,3 +112,4 @@ class GestureIndicator extends StatelessWidget {
     );
   }
 }
+

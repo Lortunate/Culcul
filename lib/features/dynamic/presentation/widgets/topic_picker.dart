@@ -3,6 +3,7 @@ import 'package:culcul/core/result.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/data/models/search/search_result.dart';
 import 'package:culcul/features/search/data/search_repository.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -17,6 +18,7 @@ class TopicPicker extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = Translations.of(context);
     final searchController = useTextEditingController();
     final searchKeyword = useState('');
     final searchResults = useState<List<SearchTopicModel>>([]);
@@ -83,7 +85,7 @@ class TopicPicker extends HookConsumerWidget {
                   child: TextField(
                     controller: searchController,
                     decoration: InputDecoration(
-                      hintText: '搜索话题',
+                      hintText: t.moments.topic_search_hint,
                       prefixIcon: const Icon(Icons.search),
                       filled: true,
                       fillColor: colorScheme.surfaceContainerHighest.withValues(
@@ -103,7 +105,7 @@ class TopicPicker extends HookConsumerWidget {
                 const SizedBox(width: 12),
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('取消'),
+                  child: Text(t.common.cancel),
                 ),
               ],
             ),
@@ -114,7 +116,9 @@ class TopicPicker extends HookConsumerWidget {
                 : searchResults.value.isEmpty
                 ? Center(
                     child: Text(
-                      searchKeyword.value.isEmpty ? '输入关键词搜索话题' : '未找到相关话题',
+                      searchKeyword.value.isEmpty
+                          ? t.moments.topic_search_empty
+                          : t.moments.topic_search_no_result,
                       style: TextStyle(color: colorScheme.onSurfaceVariant),
                     ),
                   )
@@ -165,3 +169,4 @@ class TopicPicker extends HookConsumerWidget {
     );
   }
 }
+

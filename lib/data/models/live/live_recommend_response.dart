@@ -13,3 +13,4 @@ sealed class LiveRecommendResponse with _$LiveRecommendResponse {
   factory LiveRecommendResponse.fromJson(Map<String, dynamic> json) =>
       _$LiveRecommendResponseFromJson(json);
 }
+

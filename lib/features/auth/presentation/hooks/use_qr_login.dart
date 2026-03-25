@@ -79,3 +79,4 @@ UseQrLoginResult useQrLogin(WidgetRef ref) {
     refresh: refresh,
   );
 }
+

@@ -1,4 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/providers/user_space_extras_provider.dart';
 import 'package:culcul/features/profile/presentation/widgets/home_tab/section_header.dart';
 import 'package:culcul/ui/widgets/video_thumbnail.dart';
@@ -11,6 +12,7 @@ class MasterpieceSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = Translations.of(context);
     final masterpieceAsync = ref.watch(userMasterpiecesProvider(mid));
 
     return masterpieceAsync.when(
@@ -22,7 +24,7 @@ class MasterpieceSection extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SectionHeader(title: '代表作'),
+              SectionHeader(title: t.profile.home_tab.masterpiece),
               SizedBox(
                 height: 180,
                 child: ListView.separated(
@@ -78,3 +80,4 @@ class MasterpieceSection extends ConsumerWidget {
     );
   }
 }
+

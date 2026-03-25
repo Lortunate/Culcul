@@ -15,3 +15,4 @@ class VideoLayer extends ConsumerWidget {
     return Video(controller: controller, controls: (state) => const SizedBox(), fit: fit);
   }
 }
+

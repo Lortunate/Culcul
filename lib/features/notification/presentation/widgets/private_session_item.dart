@@ -2,6 +2,7 @@ import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/data/models/notification/private_message_model.dart';
 import 'package:culcul/features/profile/providers/profile_provider.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -56,8 +57,8 @@ class PrivateSessionItem extends ConsumerWidget {
       );
     }
 
-    // 2. Parse Content
-    final content = session.lastMsg?.summary ?? '';
+    final t = Translations.of(context);
+    final content = _buildMessageSummary(t, session.lastMsg);
 
     return ListTile(
       onTap: () {
@@ -99,6 +100,50 @@ class PrivateSessionItem extends ConsumerWidget {
       ),
       trailing: _buildUnreadBadge(context, session.unreadCount),
     );
+  }
+
+  String _buildMessageSummary(Translations t, PrivateMessageDetail? message) {
+    if (message == null) return '';
+    if (message.isWithdrawn) {
+      return t.notification.chat.message_withdrawn;
+    }
+
+    final contentMap = message.contentMap;
+
+    return switch (message.summaryKind) {
+      PrivateMessageSummaryKind.text =>
+        contentMap?['content']?.toString() ?? t.notification.chat.summary_text,
+      PrivateMessageSummaryKind.image => t.notification.chat.summary_image,
+      PrivateMessageSummaryKind.notice =>
+        contentMap?['title']?.toString() ??
+            contentMap?['text']?.toString() ??
+            t.notification.chat.summary_notice,
+      PrivateMessageSummaryKind.video =>
+        '${t.notification.chat.summary_video} ${contentMap?['title']?.toString() ?? ''}',
+      PrivateMessageSummaryKind.article =>
+        '${t.notification.chat.summary_article} ${contentMap?['title']?.toString() ?? ''}',
+      PrivateMessageSummaryKind.card =>
+        '${t.notification.chat.summary_card} ${contentMap?['title']?.toString() ?? ''}',
+      PrivateMessageSummaryKind.share =>
+        '${t.notification.chat.summary_share} ${contentMap?['title']?.toString() ?? ''}',
+      PrivateMessageSummaryKind.withdrawn => t.notification.chat.message_withdrawn,
+      PrivateMessageSummaryKind.unknown => _guessFallbackSummary(t, contentMap),
+    };
+  }
+
+  String _guessFallbackSummary(
+    Translations t,
+    Map<String, dynamic>? contentMap,
+  ) {
+    if (contentMap != null) {
+      if (contentMap.containsKey('content')) {
+        return contentMap['content'].toString();
+      }
+      if (contentMap.containsKey('title')) {
+        return contentMap['title'].toString();
+      }
+    }
+    return t.notification.chat.summary_unknown;
   }
 
   Widget _buildAvatar(String url, int mid, BuildContext context) {
@@ -143,3 +188,4 @@ class PrivateSessionItem extends ConsumerWidget {
     );
   }
 }
+

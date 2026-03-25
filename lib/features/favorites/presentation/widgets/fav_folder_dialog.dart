@@ -67,3 +67,4 @@ class FavFolderDialog extends HookWidget {
     );
   }
 }
+

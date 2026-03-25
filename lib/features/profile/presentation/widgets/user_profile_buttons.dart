@@ -1,6 +1,7 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/data/models/user/user_profile_model.dart';
 import 'package:culcul/features/profile/controllers/user_space_controller.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_action_button.dart';
 import 'package:culcul/ui/widgets/follow_button.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class UserProfileButtons extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
+    final t = Translations.of(context);
 
     if (isSelf) {
       return Row(
@@ -42,9 +44,9 @@ class UserProfileButtons extends ConsumerWidget {
                 foregroundColor: colorScheme.onSurface,
                 elevation: 0,
               ),
-              child: const Text(
-                '编辑资料',
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+              child: Text(
+                t.profile.actions.edit_profile,
+                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
               ),
             ),
           ),
@@ -81,3 +83,4 @@ class UserProfileButtons extends ConsumerWidget {
     );
   }
 }
+
