@@ -10,19 +10,16 @@ class ChatSystemMessage extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          decoration: BoxDecoration(
-            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Text(
-            content,
-            style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
-            textAlign: TextAlign.center,
-          ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        decoration: BoxDecoration(
+          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(
+          content,
+          style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
+          textAlign: TextAlign.center,
         ),
       ),
     );

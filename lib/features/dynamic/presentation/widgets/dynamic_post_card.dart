@@ -18,10 +18,9 @@ class DynamicPostCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
             color: colorScheme.shadow.withValues(alpha: 0.04),
@@ -31,29 +30,26 @@ class DynamicPostCard extends StatelessWidget {
         ],
       ),
       clipBehavior: Clip.antiAlias,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            DynamicDetailRoute(id: post.id).push(context);
-          },
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(context),
-                const SizedBox(height: 12),
-                DynamicContentWidget(post: post),
-                const SizedBox(height: 12),
-                Divider(
-                  height: 1,
-                  thickness: 0.5,
-                  color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-                ),
-                _buildFooter(context),
-              ],
-            ),
+      child: InkWell(
+        onTap: () {
+          DynamicDetailRoute(id: post.id).push(context);
+        },
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(context),
+              const SizedBox(height: 12),
+              DynamicContentWidget(post: post),
+              const SizedBox(height: 12),
+              Divider(
+                height: 1,
+                thickness: 0.5,
+                color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+              ),
+              _buildFooter(context),
+            ],
           ),
         ),
       ),

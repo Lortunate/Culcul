@@ -77,9 +77,9 @@ class _RankingSkeletonList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
       itemCount: 10,
-      separatorBuilder: (_, _) => const SizedBox(height: 2),
+      separatorBuilder: (_, _) => const SizedBox(height: 18),
       itemBuilder: (_, _) => const RankingSkeletonItem(),
     );
   }

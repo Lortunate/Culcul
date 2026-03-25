@@ -21,20 +21,25 @@ class LiveDanmakuView extends StatelessWidget {
       reverse: true,
       itemCount: history.length,
       itemBuilder: (context, index) {
+        final item = history[index];
         return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 2),
-          child: _buildItem(context, history[index]),
+          padding: EdgeInsets.symmetric(
+            vertical: _isSystemMessage(item) ? 6 : 4,
+          ),
+          child: _buildItem(context, item),
         );
       },
     );
   }
 
-  Widget _buildItem(BuildContext context, LiveDanmakuItem item) {
-    if (item.dmType == 3) {
-      return LiveSystemMessage(item: item);
-    }
+  bool _isSystemMessage(LiveDanmakuItem item) {
+    return item.dmType == 3 ||
+        item.nickname == t.live.danmaku.system_notice ||
+        item.nickname == '系统消息';
+  }
 
-    if (item.nickname == t.live.danmaku.system_notice || item.nickname == '系统消息') {
+  Widget _buildItem(BuildContext context, LiveDanmakuItem item) {
+    if (_isSystemMessage(item)) {
       return LiveSystemMessage(item: item);
     }
 

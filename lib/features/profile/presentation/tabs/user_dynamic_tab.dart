@@ -35,24 +35,32 @@ class _UserDynamicTabState extends ConsumerState<UserDynamicTab>
             if (items.isEmpty) {
               return const SliverFillRemaining(child: Center(child: Text('暂无动态')));
             }
-            return SliverList(
-              delegate: SliverChildBuilderDelegate((context, index) {
-                if (index == items.length) {
-                  notifier.loadMore();
-                  return const Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Center(child: CircularProgressIndicator()),
+            final contentCount = items.length * 2 - 1;
+            final totalCount = contentCount + 1;
+            return SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  if (index == contentCount) {
+                    notifier.loadMore();
+                    return const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  }
+                  if (index.isOdd) {
+                    return const SizedBox(height: 16);
+                  }
+                  final item = items[index ~/ 2];
+                  return DynamicPostCard(
+                    post: item,
+                    onLike: (post) => notifier.toggleLike(
+                      post.idStr,
+                      post.modules.moduleStat?.like.status ?? false,
+                    ),
                   );
-                }
-                final item = items[index];
-                return DynamicPostCard(
-                  post: item,
-                  onLike: (post) => notifier.toggleLike(
-                    post.idStr,
-                    post.modules.moduleStat?.like.status ?? false,
-                  ),
-                );
-              }, childCount: items.length + 1),
+                }, childCount: totalCount),
+              ),
             );
           },
           error: (err, stack) => SliverFillRemaining(
@@ -61,12 +69,21 @@ class _UserDynamicTabState extends ConsumerState<UserDynamicTab>
               onRetry: () => ref.refresh(userDynamicProvider(widget.mid)),
             ),
           ),
-          loading: () => SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, index) => const DynamicSkeleton(),
-              childCount: 5,
-            ),
-          ),
+          loading: () {
+            const skeletonCount = 5;
+            const childCount = skeletonCount * 2 - 1;
+            return SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  if (index.isOdd) {
+                    return const SizedBox(height: 16);
+                  }
+                  return const DynamicSkeleton();
+                }, childCount: childCount),
+              ),
+            );
+          },
         ),
       ],
     );

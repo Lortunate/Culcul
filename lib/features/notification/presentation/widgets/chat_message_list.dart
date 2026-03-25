@@ -56,11 +56,12 @@ class _ChatMessageListState extends State<ChatMessageList> {
       onLoad: widget.onLoadMore,
       header: null,
       footer: AppLoadFooter(),
-      child: ListView.builder(
+      child: ListView.separated(
         controller: widget.scrollController,
         reverse: true,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         itemCount: widget.messages.length,
+        separatorBuilder: (_, _) => const SizedBox(height: 16),
         itemBuilder: (context, index) {
           final message = widget.messages[index];
           final isSelf = message.isMe(widget.currentUserId);

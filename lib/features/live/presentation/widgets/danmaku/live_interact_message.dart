@@ -12,30 +12,27 @@ class LiveInteractMessage extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final semanticColors = context.semanticColors;
 
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 2),
-      child: RichText(
-        text: TextSpan(
-          children: [
-            TextSpan(
-              text: item.nickname,
-              style: TextStyle(
-                color: semanticColors.warning.withValues(alpha: 0.9),
-                fontWeight: FontWeight.w600,
-                fontSize: 12.5,
-                height: 1.25,
-              ),
+    return RichText(
+      text: TextSpan(
+        children: [
+          TextSpan(
+            text: item.nickname,
+            style: TextStyle(
+              color: semanticColors.warning.withValues(alpha: 0.9),
+              fontWeight: FontWeight.w600,
+              fontSize: 12.5,
+              height: 1.25,
             ),
-            TextSpan(
-              text: ' ${item.text}',
-              style: TextStyle(
-                color: colorScheme.onPrimary.withValues(alpha: 0.72),
-                fontSize: 12.5,
-                height: 1.25,
-              ),
+          ),
+          TextSpan(
+            text: ' ${item.text}',
+            style: TextStyle(
+              color: colorScheme.onPrimary.withValues(alpha: 0.72),
+              fontSize: 12.5,
+              height: 1.25,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

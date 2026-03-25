@@ -29,12 +29,9 @@ class ChatMessageItem extends StatelessWidget {
 
     if (message.isWithdrawn) {
       return Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Text(
-            t.notification.chat.message_withdrawn,
-            style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
-          ),
+        child: Text(
+          t.notification.chat.message_withdrawn,
+          style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
         ),
       );
     }
@@ -55,17 +52,14 @@ class ChatMessageItem extends StatelessWidget {
       }
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-      child: Row(
-        mainAxisAlignment: isSelf ? MainAxisAlignment.end : MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (!isSelf) ...[_buildAvatar(context, avatarUrl), const SizedBox(width: 8)],
-          Flexible(child: _buildContent(context)),
-          if (isSelf) ...[const SizedBox(width: 8), _buildAvatar(context, avatarUrl)],
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: isSelf ? MainAxisAlignment.end : MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (!isSelf) ...[_buildAvatar(context, avatarUrl), const SizedBox(width: 8)],
+        Flexible(child: _buildContent(context)),
+        if (isSelf) ...[const SizedBox(width: 8), _buildAvatar(context, avatarUrl)],
+      ],
     );
   }
 

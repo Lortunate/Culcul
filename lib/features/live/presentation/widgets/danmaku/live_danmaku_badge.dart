@@ -24,7 +24,6 @@ class LiveGuardBadge extends StatelessWidget {
         : Icons.shield;
 
     return Container(
-      margin: const EdgeInsets.only(right: 4),
       padding: const EdgeInsets.all(1.5),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
@@ -62,7 +61,6 @@ class LiveMedalBadge extends StatelessWidget {
         : Theme.of(context).colorScheme.primary;
 
     return Container(
-      margin: const EdgeInsets.only(right: 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.12),
         border: Border.all(color: color.withValues(alpha: 0.75), width: 0.7),

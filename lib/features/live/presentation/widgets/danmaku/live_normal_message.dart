@@ -68,13 +68,10 @@ class LiveNormalMessage extends StatelessWidget {
       ),
     );
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: RichText(
-        text: TextSpan(children: spans),
-        maxLines: 5,
-        overflow: TextOverflow.ellipsis,
-      ),
+    return RichText(
+      text: TextSpan(children: spans),
+      maxLines: 5,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }

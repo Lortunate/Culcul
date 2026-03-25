@@ -11,7 +11,6 @@ class DynamicForwardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 8.0),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Theme.of(

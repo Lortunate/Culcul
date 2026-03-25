@@ -149,8 +149,15 @@ class _NotificationListView extends StatelessWidget {
       },
       child: ListView.separated(
         controller: scrollController,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         itemCount: items.length,
-        separatorBuilder: (_, _) => const Divider(height: 1),
+        separatorBuilder: (_, _) => const Column(
+          children: [
+            SizedBox(height: 12),
+            Divider(height: 1),
+            SizedBox(height: 12),
+          ],
+        ),
         itemBuilder: (context, index) => itemBuilder(context, items[index]),
       ),
     );

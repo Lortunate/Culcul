@@ -52,7 +52,7 @@ class DynamicSkeleton extends StatelessWidget {
     return Card(
       elevation: 0,
       color: Theme.of(context).colorScheme.surface,
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: EdgeInsets.zero,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       child: AppShimmer(
         child: Padding(

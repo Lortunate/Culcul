@@ -58,8 +58,8 @@ class TopicDetailPage extends HookConsumerWidget {
                       ),
                     ],
                   )
-                : ListView.builder(
-                    padding: EdgeInsets.zero,
+                : ListView.separated(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       final post = items[index];
@@ -68,6 +68,7 @@ class TopicDetailPage extends HookConsumerWidget {
                         onLike: (post) => notifier.toggleLike(post.id, post.isLiked),
                       );
                     },
+                    separatorBuilder: (context, index) => const SizedBox(height: 16),
                   ),
           );
         },

@@ -13,7 +13,6 @@ class DynamicLinkCardWidget extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Container(
-      margin: const EdgeInsets.only(top: 8.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(6),
         color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),

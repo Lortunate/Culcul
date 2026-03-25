@@ -21,6 +21,10 @@ class DynamicContentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final additionalWidget = post.additional != null
+        ? _buildAdditional(context, post.additional!)
+        : null;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -37,10 +41,26 @@ class DynamicContentWidget extends StatelessWidget {
         ],
         if (post.images != null && post.images!.isNotEmpty)
           DynamicImagesWidget(images: post.images!),
-        if (post.videoContent != null) DynamicVideoWidget(video: post.videoContent!),
-        if (post.linkCard != null) DynamicLinkCardWidget(card: post.linkCard!),
-        if (post.additional != null) _buildAdditional(context, post.additional!),
-        if (post.orig != null) DynamicForwardWidget(post: post.orig!),
+        if (post.videoContent != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: DynamicVideoWidget(video: post.videoContent!),
+          ),
+        if (post.linkCard != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: DynamicLinkCardWidget(card: post.linkCard!),
+          ),
+        if (additionalWidget != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: additionalWidget,
+          ),
+        if (post.orig != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: DynamicForwardWidget(post: post.orig!),
+          ),
         if (post.topicName != null)
           Padding(
             padding: const EdgeInsets.only(top: 8.0),
@@ -89,7 +109,7 @@ class DynamicContentWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildAdditional(BuildContext context, DynamicAdditional additional) {
+  Widget? _buildAdditional(BuildContext context, DynamicAdditional additional) {
     if (additional.type == 'ADDITIONAL_TYPE_VOTE') {
       return DynamicVoteWidget(additional: additional);
     } else if (additional.type == 'ADDITIONAL_TYPE_GOODS') {
@@ -101,6 +121,6 @@ class DynamicContentWidget extends StatelessWidget {
     } else if (additional.type == 'ADDITIONAL_TYPE_COMMON') {
       return DynamicCommonWidget(additional: additional);
     }
-    return const SizedBox.shrink();
+    return null;
   }
 }

@@ -28,111 +28,106 @@ class NotificationItemWidget extends StatelessWidget {
 
     return InkWell(
       onTap: () => _handleTap(context, detail),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Avatar
-            GestureDetector(
-              onTap: () {
-                if (user.mid != 0) {
-                  UserProfileRoute(mid: user.mid).push(context);
-                }
-              },
-              child: AppAvatar(url: user.avatar, size: 40),
-            ),
-            const SizedBox(width: 12),
-            // Content
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header: Name + Action + Time
-                  Row(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Avatar
+          GestureDetector(
+            onTap: () {
+              if (user.mid != 0) {
+                UserProfileRoute(mid: user.mid).push(context);
+              }
+            },
+            child: AppAvatar(url: user.avatar, size: 40),
+          ),
+          const SizedBox(width: 12),
+          // Content
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header: Name + Action + Time
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        user.nickname,
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      _getActionText(),
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: colorScheme.outline,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      time.toSimpleDate(),
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: colorScheme.outline,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                // Main Content (Reply message or "Liked your comment")
+                if (type != NotificationType.like) ...[
+                  Text(
+                    detail.message.isNotEmpty ? detail.message : detail.targetReplyContent,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface,
+                      height: 1.5,
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8),
+                ],
+                // Source/Quote Context
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Row(
                     children: [
                       Expanded(
                         child: Text(
-                          user.nickname,
-                          style: theme.textTheme.titleSmall?.copyWith(
-                            color: colorScheme.primary,
-                            fontWeight: FontWeight.bold,
+                          _getSourceText(detail),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colorScheme.onSurfaceVariant,
                           ),
-                          maxLines: 1,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        _getActionText(),
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          color: colorScheme.outline,
+                      if (detail.image.isNotEmpty) ...[
+                        const SizedBox(width: 8),
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: AppNetworkImage(
+                            url: detail.image,
+                            width: 40,
+                            height: 40,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        time.toSimpleDate(),
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: colorScheme.outline,
-                        ),
-                      ),
+                      ],
                     ],
                   ),
-                  const SizedBox(height: 6),
-                  // Main Content (Reply message or "Liked your comment")
-                  if (type != NotificationType.like) ...[
-                    Text(
-                      detail.message.isNotEmpty
-                          ? detail.message
-                          : detail.targetReplyContent,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: colorScheme.onSurface,
-                        height: 1.5,
-                      ),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 8),
-                  ],
-                  // Source/Quote Context
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            _getSourceText(detail),
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        if (detail.image.isNotEmpty) ...[
-                          const SizedBox(width: 8),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                            child: AppNetworkImage(
-                              url: detail.image,
-                              width: 40,
-                              height: 40,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

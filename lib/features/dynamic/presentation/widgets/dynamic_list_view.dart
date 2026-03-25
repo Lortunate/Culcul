@@ -27,14 +27,12 @@ class DynamicListView extends HookConsumerWidget {
       skeleton: const VideoListSkeleton(),
       emptyText: '暂无内容',
       builder: (context, items) {
-        return ListView.builder(
-          padding: EdgeInsets.zero,
+        return ListView.separated(
+          padding: const EdgeInsets.all(8),
           itemCount: items.length + (type == 'all' ? 1 : 0),
           itemBuilder: (context, index) {
             if (type == 'all') {
-              if (index == 0) {
-                return const RecentlyFollowedWidget();
-              }
+              if (index == 0) return const RecentlyFollowedWidget();
               final post = items[index - 1];
               return DynamicPostCard(
                 post: post,
@@ -47,6 +45,7 @@ class DynamicListView extends HookConsumerWidget {
               onLike: (post) => notifier.toggleLike(post.id, post.isLiked),
             );
           },
+          separatorBuilder: (context, index) => const SizedBox(height: 8),
         );
       },
     );
