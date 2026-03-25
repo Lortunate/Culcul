@@ -5,6 +5,7 @@ import 'package:culcul/features/video/presentation/widgets/controls/player_botto
 import 'package:culcul/features/video/presentation/widgets/controls/player_settings_sheet.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/player_theme.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/player_top_bar.dart';
+import 'package:culcul/features/video/presentation/widgets/controls/video_overlay_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -138,6 +139,8 @@ class _LockButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -146,12 +149,12 @@ class _LockButton extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.4),
+            color: VideoOverlayStyles.panelBackground(colorScheme).withValues(alpha: 0.4),
             shape: BoxShape.circle,
           ),
           child: Icon(
             isLocked ? Icons.lock_rounded : Icons.lock_open_rounded,
-            color: isLocked ? Theme.of(context).primaryColor : Colors.white,
+            color: isLocked ? colorScheme.primary : colorScheme.onPrimary,
             size: 22,
           ),
         ),

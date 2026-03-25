@@ -1,5 +1,6 @@
 import 'package:culcul/features/notification/controllers/unread_count_controller.dart';
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -10,6 +11,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final unreadCount = ref.watch(unreadCountProvider);
+    final semanticColors = context.semanticColors;
 
     return unreadCount.when(
       data: (data) => Padding(
@@ -22,7 +24,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
               icon: Icons.reply,
               label: '回复我的',
               count: data.reply,
-              color: Colors.green,
+              color: semanticColors.success,
               onTap: () => context.push('/notification/reply'),
             ),
             _buildCategoryItem(
@@ -30,7 +32,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
               icon: Icons.alternate_email,
               label: '@我',
               count: data.at,
-              color: Colors.orange,
+              color: semanticColors.warning,
               onTap: () => context.push('/notification/at'),
             ),
             _buildCategoryItem(
@@ -38,7 +40,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
               icon: Icons.thumb_up_alt_outlined,
               label: '收到的赞',
               count: data.like,
-              color: Colors.pink,
+              color: Theme.of(context).colorScheme.primary,
               onTap: () => context.push('/notification/like'),
             ),
             _buildCategoryItem(
@@ -46,7 +48,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
               icon: Icons.notifications_none,
               label: '系统通知',
               count: data.sysMsg,
-              color: Colors.blue,
+              color: semanticColors.info,
               onTap: () => const SystemNotificationRoute().push(context),
             ),
           ],

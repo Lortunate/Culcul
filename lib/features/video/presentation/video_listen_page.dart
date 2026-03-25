@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:culcul/app/theme/app_theme.dart';
 import 'package:culcul/features/video/controllers/playback_snapshot_controller.dart';
 import 'package:culcul/features/video/controllers/player_controller.dart';
 import 'package:culcul/features/video/controllers/video_detail_controller.dart';
@@ -23,6 +24,7 @@ class VideoListenPage extends ConsumerWidget {
     final position = ref.watch(playbackPositionProvider);
     final duration = ref.watch(playbackDurationProvider);
     final colorScheme = Theme.of(context).colorScheme;
+    final semanticColors = context.semanticColors;
 
     final detail = state.videoDetail;
 
@@ -45,25 +47,25 @@ class VideoListenPage extends ConsumerWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.keyboard_arrow_down_rounded,
-            color: Colors.white,
+            color: colorScheme.onPrimary,
             size: 32,
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         centerTitle: true,
-        title: const Text(
+        title: Text(
           '听视频',
           style: TextStyle(
-            color: Colors.white,
+            color: colorScheme.onPrimary,
             fontSize: 17,
             fontWeight: FontWeight.w600,
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.more_horiz_rounded, color: Colors.white),
+            icon: Icon(Icons.more_horiz_rounded, color: colorScheme.onPrimary),
             onPressed: () {
               showModalBottomSheet(
                 context: context,
@@ -97,7 +99,7 @@ class VideoListenPage extends ConsumerWidget {
           Positioned.fill(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-              child: Container(color: Colors.black.withValues(alpha: 0.6)),
+              child: Container(color: semanticColors.overlayBackground),
             ),
           ),
 
@@ -115,12 +117,15 @@ class VideoListenPage extends ConsumerWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.3),
+                          color: colorScheme.shadow.withValues(alpha: 0.3),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
                       ],
-                      border: Border.all(color: Colors.white12, width: 4),
+                      border: Border.all(
+                        color: colorScheme.onPrimary.withValues(alpha: 0.12),
+                        width: 4,
+                      ),
                     ),
                     child: ClipOval(
                       child: AppNetworkImage(url: detail.pic, fit: BoxFit.cover),
@@ -133,8 +138,8 @@ class VideoListenPage extends ConsumerWidget {
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: colorScheme.onPrimary,
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
@@ -143,7 +148,7 @@ class VideoListenPage extends ConsumerWidget {
                   Text(
                     detail.owner.name,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.7),
+                      color: colorScheme.onPrimary.withValues(alpha: 0.7),
                       fontSize: 15,
                     ),
                   ),
@@ -152,7 +157,7 @@ class VideoListenPage extends ConsumerWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.white10,
+                        color: colorScheme.onPrimary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -195,14 +200,14 @@ class VideoListenPage extends ConsumerWidget {
                             Text(
                               position.formatDuration,
                               style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.5),
+                                color: colorScheme.onPrimary.withValues(alpha: 0.5),
                                 fontSize: 12,
                               ),
                             ),
                             Text(
                               duration.formatDuration,
                               style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.5),
+                                color: colorScheme.onPrimary.withValues(alpha: 0.5),
                                 fontSize: 12,
                               ),
                             ),
@@ -221,7 +226,7 @@ class VideoListenPage extends ConsumerWidget {
                         onPressed: () {},
                         icon: Icon(
                           Icons.repeat_rounded,
-                          color: Colors.white.withValues(alpha: 0.5),
+                          color: colorScheme.onPrimary.withValues(alpha: 0.5),
                         ),
                       ),
                       IconButton(
@@ -231,9 +236,9 @@ class VideoListenPage extends ConsumerWidget {
                             newPos < Duration.zero ? Duration.zero : newPos,
                           );
                         },
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.replay_10_rounded,
-                          color: Colors.white,
+                          color: colorScheme.onPrimary,
                           size: 28,
                         ),
                       ),
@@ -250,7 +255,7 @@ class VideoListenPage extends ConsumerWidget {
                             playerState.isPlaying
                                 ? Icons.pause_rounded
                                 : Icons.play_arrow_rounded,
-                            color: Colors.white,
+                            color: colorScheme.onPrimary,
                             size: 36,
                           ),
                         ),
@@ -260,9 +265,9 @@ class VideoListenPage extends ConsumerWidget {
                           final newPos = position + const Duration(seconds: 15);
                           playerController.seek(newPos > duration ? duration : newPos);
                         },
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.forward_10_rounded,
-                          color: Colors.white,
+                          color: colorScheme.onPrimary,
                           size: 28,
                         ),
                       ),
@@ -270,7 +275,7 @@ class VideoListenPage extends ConsumerWidget {
                         onPressed: () {},
                         icon: Icon(
                           Icons.playlist_play_rounded,
-                          color: Colors.white.withValues(alpha: 0.5),
+                          color: colorScheme.onPrimary.withValues(alpha: 0.5),
                         ),
                       ),
                     ],

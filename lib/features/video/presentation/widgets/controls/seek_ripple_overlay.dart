@@ -13,6 +13,7 @@ class SeekRippleOverlay extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final controller = useAnimationController(
       duration: const Duration(milliseconds: 600),
     );
@@ -30,7 +31,7 @@ class SeekRippleOverlay extends HookWidget {
           return Opacity(
             opacity: 1.0 - controller.value,
             child: Container(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: colorScheme.onPrimary.withValues(alpha: 0.2),
               alignment: isForward ? Alignment.centerRight : Alignment.centerLeft,
               padding: const EdgeInsets.symmetric(horizontal: 40),
               child: Column(
@@ -38,14 +39,14 @@ class SeekRippleOverlay extends HookWidget {
                 children: [
                   Icon(
                     isForward ? Icons.fast_forward_rounded : Icons.fast_rewind_rounded,
-                    color: Colors.white,
+                    color: colorScheme.onPrimary,
                     size: 40,
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     '10s',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: colorScheme.onPrimary,
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),

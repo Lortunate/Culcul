@@ -17,13 +17,15 @@ class ChatInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: colorScheme.shadow.withValues(alpha: 0.08),
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -39,7 +41,7 @@ class ChatInput extends StatelessWidget {
               child: IconButton(
                 icon: Icon(
                   Icons.add_circle_outline,
-                  color: Theme.of(context).colorScheme.outline,
+                  color: colorScheme.outline,
                   size: 28,
                 ),
                 onPressed: () async {
@@ -60,9 +62,7 @@ class ChatInput extends StatelessWidget {
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                  color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: TextField(
@@ -87,8 +87,8 @@ class ChatInput extends StatelessWidget {
                 icon: const Icon(Icons.send_rounded, size: 20),
                 onPressed: onSend,
                 style: IconButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
                   padding: const EdgeInsets.all(10),
                   minimumSize: const Size(40, 40),
                 ),

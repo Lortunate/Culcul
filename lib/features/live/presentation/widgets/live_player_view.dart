@@ -13,6 +13,7 @@ class LivePlayerView extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
     final state = ref.watch(liveRoomControllerProvider(roomId));
 
     final player = useMemoized(() => Player());
@@ -42,7 +43,7 @@ class LivePlayerView extends HookConsumerWidget {
     }, [state.playUrl]);
 
     return Container(
-      color: Colors.black,
+      color: colorScheme.scrim,
       child: Stack(
         children: [
           Video(
@@ -50,7 +51,7 @@ class LivePlayerView extends HookConsumerWidget {
             controls: (state) => AdaptiveVideoControls(state),
           ),
           if (state.isLoading)
-            const Center(child: CircularProgressIndicator(color: Colors.white)),
+            Center(child: CircularProgressIndicator(color: colorScheme.onPrimary)),
         ],
       ),
     );

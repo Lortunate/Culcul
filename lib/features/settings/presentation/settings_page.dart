@@ -245,18 +245,13 @@ class _AboutSettingsSection extends StatelessWidget {
   final String title;
   final String versionTitle;
 
-  const _AboutSettingsSection({
-    required this.title,
-    required this.versionTitle,
-  });
+  const _AboutSettingsSection({required this.title, required this.versionTitle});
 
   @override
   Widget build(BuildContext context) {
     return SettingsGroup(
       title: title,
-      children: [
-        SettingsItem(title: versionTitle, value: 'v1.0.0', showArrow: false),
-      ],
+      children: [SettingsItem(title: versionTitle, value: 'v1.0.0', showArrow: false)],
     );
   }
 }

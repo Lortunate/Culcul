@@ -1,3 +1,4 @@
+import 'package:culcul/app/theme/app_theme.dart';
 import 'package:culcul/data/models/live/index.dart';
 import 'package:flutter/material.dart';
 
@@ -8,6 +9,9 @@ class LiveInteractMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final semanticColors = context.semanticColors;
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 2),
       child: RichText(
@@ -15,15 +19,18 @@ class LiveInteractMessage extends StatelessWidget {
           children: [
             TextSpan(
               text: item.nickname,
-              style: const TextStyle(
-                color: Color(0xFFFFB74D), // Orange for username
+              style: TextStyle(
+                color: semanticColors.warning,
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
               ),
             ),
             TextSpan(
               text: ' ${item.text}',
-              style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 13),
+              style: TextStyle(
+                color: colorScheme.onPrimary.withValues(alpha: 0.7),
+                fontSize: 13,
+              ),
             ),
           ],
         ),

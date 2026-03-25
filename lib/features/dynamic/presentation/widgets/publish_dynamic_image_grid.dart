@@ -54,6 +54,7 @@ class _ImageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Stack(
       children: [
         Positioned.fill(
@@ -70,10 +71,10 @@ class _ImageItem extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.5),
+                color: colorScheme.scrim.withValues(alpha: 0.5),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.close, size: 16, color: Colors.white),
+              child: Icon(Icons.close, size: 16, color: colorScheme.onPrimary),
             ),
           ),
         ),

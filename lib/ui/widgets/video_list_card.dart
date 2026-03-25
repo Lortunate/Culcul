@@ -78,17 +78,9 @@ class VideoListCard extends StatelessWidget {
     );
 
     if (flat) {
-      return AppClickable(
-        onTap: onTap,
-        onLongPress: onLongPress,
-        child: content,
-      );
+      return AppClickable(onTap: onTap, onLongPress: onLongPress, child: content);
     }
 
-    return AppCardContainer(
-      onTap: onTap,
-      onLongPress: onLongPress,
-      child: content,
-    );
+    return AppCardContainer(onTap: onTap, onLongPress: onLongPress, child: content);
   }
 }

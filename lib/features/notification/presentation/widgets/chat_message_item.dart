@@ -25,13 +25,15 @@ class ChatMessageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     if (message.isWithdrawn) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Text(
             t.notification.chat.message_withdrawn,
-            style: const TextStyle(color: Colors.grey, fontSize: 12),
+            style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
           ),
         ),
       );
@@ -59,15 +61,17 @@ class ChatMessageItem extends StatelessWidget {
         mainAxisAlignment: isSelf ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (!isSelf) ...[_buildAvatar(avatarUrl), const SizedBox(width: 8)],
+          if (!isSelf) ...[_buildAvatar(context, avatarUrl), const SizedBox(width: 8)],
           Flexible(child: _buildContent(context)),
-          if (isSelf) ...[const SizedBox(width: 8), _buildAvatar(avatarUrl)],
+          if (isSelf) ...[const SizedBox(width: 8), _buildAvatar(context, avatarUrl)],
         ],
       ),
     );
   }
 
-  Widget _buildAvatar(String url) {
+  Widget _buildAvatar(BuildContext context, String url) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return GestureDetector(
       onTap: onAvatarTap,
       child: ClipOval(
@@ -81,12 +85,12 @@ class ChatMessageItem extends StatelessWidget {
                   cache: true,
                   loadStateChanged: (state) {
                     if (state.extendedImageLoadState == LoadState.failed) {
-                      return const Icon(Icons.person, color: Colors.grey);
+                      return Icon(Icons.person, color: colorScheme.onSurfaceVariant);
                     }
                     return null;
                   },
                 )
-              : const Icon(Icons.person, color: Colors.grey),
+              : Icon(Icons.person, color: colorScheme.onSurfaceVariant),
         ),
       ),
     );

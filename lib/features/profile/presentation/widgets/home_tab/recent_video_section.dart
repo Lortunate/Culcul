@@ -33,10 +33,7 @@ class RecentVideoSection extends ConsumerWidget {
         }
         return SliverMainAxisGroup(
           slivers: [
-            _SectionHeader(
-              videoCount: videoCount,
-              onSwitchToTab: onSwitchToTab,
-            ),
+            _SectionHeader(videoCount: videoCount, onSwitchToTab: onSwitchToTab),
             _VideoGrid(
               videos: videos,
               maxItems: _maxDisplayCount,
@@ -64,10 +61,7 @@ class _SectionHeader extends StatelessWidget {
   final int videoCount;
   final ValueChanged<int>? onSwitchToTab;
 
-  const _SectionHeader({
-    required this.videoCount,
-    this.onSwitchToTab,
-  });
+  const _SectionHeader({required this.videoCount, this.onSwitchToTab});
 
   @override
   Widget build(BuildContext context) {
@@ -142,29 +136,26 @@ class _VideoGrid extends StatelessWidget {
           crossAxisSpacing: spacing,
           childAspectRatio: aspectRatio,
         ),
-        delegate: SliverChildBuilderDelegate(
-              (context, index) {
-            final spaceVideo = videos[index];
-            final video = VideoModel(
-              bvid: spaceVideo.bvid,
-              title: spaceVideo.title,
-              pic: spaceVideo.pic,
-              owner: spaceVideo.owner,
-              stat: spaceVideo.stat,
-              duration: spaceVideo.duration,
-              pubDate: spaceVideo.pubDate,
-              desc: spaceVideo.desc,
-              rcmdReason: spaceVideo.reason,
-            );
-            return VideoCard(
-              video: video,
-              onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
-              showAuthor: false,
-              showDescription: false,
-            );
-          },
-          childCount: displayCount,
-        ),
+        delegate: SliverChildBuilderDelegate((context, index) {
+          final spaceVideo = videos[index];
+          final video = VideoModel(
+            bvid: spaceVideo.bvid,
+            title: spaceVideo.title,
+            pic: spaceVideo.pic,
+            owner: spaceVideo.owner,
+            stat: spaceVideo.stat,
+            duration: spaceVideo.duration,
+            pubDate: spaceVideo.pubDate,
+            desc: spaceVideo.desc,
+            rcmdReason: spaceVideo.reason,
+          );
+          return VideoCard(
+            video: video,
+            onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
+            showAuthor: false,
+            showDescription: false,
+          );
+        }, childCount: displayCount),
       ),
     );
   }
@@ -176,12 +167,7 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const SliverToBoxAdapter(
-      child: SizedBox(
-        height: 100,
-        child: Center(
-          child: Text('暂无内容'),
-        ),
-      ),
+      child: SizedBox(height: 100, child: Center(child: Text('暂无内容'))),
     );
   }
 }
@@ -190,20 +176,14 @@ class _ErrorState extends StatelessWidget {
   final Object error;
   final VoidCallback onRetry;
 
-  const _ErrorState({
-    required this.error,
-    required this.onRetry,
-  });
+  const _ErrorState({required this.error, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: AppErrorWidget(
-          error: error,
-          onRetry: onRetry,
-        ),
+        child: AppErrorWidget(error: error, onRetry: onRetry),
       ),
     );
   }
@@ -232,7 +212,7 @@ class _LoadingGrid extends StatelessWidget {
           childAspectRatio: aspectRatio,
         ),
         delegate: SliverChildBuilderDelegate(
-              (context, index) => const VideoCardSkeleton(),
+          (context, index) => const VideoCardSkeleton(),
           childCount: 4,
         ),
       ),

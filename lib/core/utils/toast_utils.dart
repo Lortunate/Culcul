@@ -22,10 +22,11 @@ class ToastUtils {
   static void showError(String message) {
     final state = globalScaffoldMessengerKey.currentState;
     if (state != null) {
+      final colorScheme = Theme.of(state.context).colorScheme;
       state.showSnackBar(
         SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.redAccent,
+          content: Text(message, style: TextStyle(color: colorScheme.onError)),
+          backgroundColor: colorScheme.error,
           behavior: SnackBarBehavior.floating,
           duration: const Duration(milliseconds: 3000),
           margin: const EdgeInsets.all(16),

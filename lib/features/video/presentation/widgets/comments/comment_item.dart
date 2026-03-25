@@ -114,7 +114,7 @@ class _Header extends StatelessWidget {
               t.common.up,
               style: theme.textTheme.labelSmall?.copyWith(
                 fontSize: 9,
-                color: Colors.white,
+                color: colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),

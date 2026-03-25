@@ -46,8 +46,10 @@ class _ImagePreviewPageState extends ConsumerState<ImagePreviewPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: colorScheme.scrim,
       body: Stack(
         children: [
           ExtendedImageGesturePageView.builder(
@@ -81,14 +83,14 @@ class _ImagePreviewPageState extends ConsumerState<ImagePreviewPage> {
                   loadStateChanged: (ExtendedImageState state) {
                     switch (state.extendedImageLoadState) {
                       case LoadState.loading:
-                        return const Center(
-                          child: CircularProgressIndicator(color: Colors.white),
+                        return Center(
+                          child: CircularProgressIndicator(color: colorScheme.onPrimary),
                         );
                       case LoadState.completed:
                         return null; // default
                       case LoadState.failed:
-                        return const Center(
-                          child: Icon(Icons.broken_image, color: Colors.white),
+                        return Center(
+                          child: Icon(Icons.broken_image, color: colorScheme.onPrimary),
                         );
                     }
                   },
@@ -101,7 +103,7 @@ class _ImagePreviewPageState extends ConsumerState<ImagePreviewPage> {
             top: MediaQuery.of(context).padding.top + 10,
             left: 10,
             child: IconButton(
-              icon: const Icon(Icons.close, color: Colors.white),
+              icon: Icon(Icons.close, color: colorScheme.onPrimary),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
@@ -113,8 +115,8 @@ class _ImagePreviewPageState extends ConsumerState<ImagePreviewPage> {
             child: Center(
               child: Text(
                 '${_currentIndex + 1} / ${widget.imageUrls.length}',
-                style: const TextStyle(
-                  color: Colors.white,
+                style: TextStyle(
+                  color: colorScheme.onPrimary,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -126,7 +128,7 @@ class _ImagePreviewPageState extends ConsumerState<ImagePreviewPage> {
             bottom: MediaQuery.of(context).padding.bottom + 20,
             right: 20,
             child: IconButton(
-              icon: const Icon(Icons.download_rounded, color: Colors.white, size: 28),
+              icon: Icon(Icons.download_rounded, color: colorScheme.onPrimary, size: 28),
               onPressed: () => _saveImage(widget.imageUrls[_currentIndex]),
             ),
           ),

@@ -1,3 +1,4 @@
+import 'package:culcul/features/video/presentation/widgets/controls/video_overlay_styles.dart';
 import 'package:flutter/material.dart';
 
 class QuickSelectionSheet<T> extends StatelessWidget {
@@ -20,6 +21,7 @@ class QuickSelectionSheet<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     // Panel width for side menu (landscape)
     const double panelWidth = 280.0;
 
@@ -35,7 +37,7 @@ class QuickSelectionSheet<T> extends StatelessWidget {
             ? const BorderRadius.vertical(top: Radius.circular(24))
             : const BorderRadius.horizontal(left: Radius.circular(24)),
         child: Container(
-          color: const Color(0xE61E1E1E),
+          color: VideoOverlayStyles.panelBackground(colorScheme),
           child: Material(
             color: Colors.transparent,
             child: SafeArea(
@@ -47,24 +49,14 @@ class QuickSelectionSheet<T> extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (isBottomSheet)
-                    Center(
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 16),
-                        width: 36,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(2),
-                        ),
-                      ),
-                    )
+                    VideoOverlayStyles.dragHandle(colorScheme)
                   else
                     Padding(
                       padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
                       child: Text(
                         title,
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: VideoOverlayStyles.foreground(colorScheme),
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -91,9 +83,6 @@ class QuickSelectionSheet<T> extends StatelessWidget {
                           child: InkWell(
                             onTap: () {
                               onSelected(item);
-                              // Close after selection? Usually yes for quick actions
-                              // But let the parent handle closing if needed, or we pop here
-                              // Typically we want to pop.
                               Navigator.of(context).pop();
                             },
                             borderRadius: BorderRadius.circular(12),
@@ -121,7 +110,9 @@ class QuickSelectionSheet<T> extends StatelessWidget {
                                       style: TextStyle(
                                         color: isSelected
                                             ? colorScheme.primary
-                                            : Colors.white70,
+                                            : colorScheme.onPrimary.withValues(
+                                                alpha: 0.7,
+                                              ),
                                         fontSize: 15,
                                         fontWeight: isSelected
                                             ? FontWeight.w600

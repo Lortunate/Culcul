@@ -28,11 +28,7 @@ class VideoThumbnail extends StatelessWidget {
     this.aspectRatio = 16 / 10,
   });
 
-  int? _resolveCacheSize(
-    int? explicitSize,
-    double constraintSize,
-    double pixelRatio,
-  ) {
+  int? _resolveCacheSize(int? explicitSize, double constraintSize, double pixelRatio) {
     if (explicitSize != null) {
       return explicitSize;
     }
@@ -45,8 +41,9 @@ class VideoThumbnail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pixelRatio = MediaQuery.devicePixelRatioOf(context);
+    final colorScheme = Theme.of(context).colorScheme;
     final overlayTextStyle = Theme.of(context).textTheme.labelSmall?.copyWith(
-      color: Colors.white,
+      color: colorScheme.onPrimary,
       fontSize: 11,
       fontWeight: FontWeight.w500,
     );
@@ -116,15 +113,13 @@ class _ThumbnailBottomOverlay extends StatelessWidget {
       height: 48,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(borderRadius),
-          ),
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(borderRadius)),
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
               Colors.transparent,
-              Colors.black.withValues(alpha: 0.5),
+              Theme.of(context).colorScheme.scrim.withValues(alpha: 0.5),
             ],
           ),
         ),
@@ -137,10 +132,7 @@ class _ThumbnailDuration extends StatelessWidget {
   final String durationText;
   final TextStyle? textStyle;
 
-  const _ThumbnailDuration({
-    required this.durationText,
-    required this.textStyle,
-  });
+  const _ThumbnailDuration({required this.durationText, required this.textStyle});
 
   @override
   Widget build(BuildContext context) {
@@ -200,11 +192,7 @@ class _ThumbnailStatItem extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
-          icon,
-          size: 12,
-          color: Colors.white,
-        ),
+        Icon(icon, size: 12, color: Theme.of(context).colorScheme.onPrimary),
         const SizedBox(width: 3),
         Text(text, style: textStyle),
       ],

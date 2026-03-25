@@ -44,10 +44,7 @@ class SmartPagingView<T> extends HookConsumerWidget {
         controller ?? useMemoized(() => EasyRefreshController(), []);
 
     if (asyncValue.isLoading && !asyncValue.hasValue) {
-      return KeyedSubtree(
-        key: const ValueKey('paging_loading'),
-        child: skeleton,
-      );
+      return KeyedSubtree(key: const ValueKey('paging_loading'), child: skeleton);
     }
 
     final items = asyncValue.value ?? <T>[];

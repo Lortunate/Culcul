@@ -88,10 +88,7 @@ class _VideoListCardBody extends StatelessWidget {
                 stats: _resolvedStats,
               ),
             ),
-            if (trailing != null) ...[
-              const SizedBox(width: 12),
-              trailing!,
-            ],
+            if (trailing != null) ...[const SizedBox(width: 12), trailing!],
           ],
         ),
       ),

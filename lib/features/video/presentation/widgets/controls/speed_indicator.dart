@@ -1,3 +1,4 @@
+import 'package:culcul/features/video/presentation/widgets/controls/video_overlay_styles.dart';
 import 'package:flutter/material.dart';
 
 class SpeedIndicator extends StatelessWidget {
@@ -5,6 +6,8 @@ class SpeedIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Positioned(
       top: 24,
       left: 0,
@@ -13,18 +16,22 @@ class SpeedIndicator extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.6),
+            color: VideoOverlayStyles.panelBackground(colorScheme).withValues(alpha: 0.6),
             borderRadius: BorderRadius.circular(20),
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.fast_forward_rounded, color: Colors.white, size: 16),
-              SizedBox(width: 8),
+              Icon(
+                Icons.fast_forward_rounded,
+                color: VideoOverlayStyles.foreground(colorScheme),
+                size: 16,
+              ),
+              const SizedBox(width: 8),
               Text(
                 '2.0x 倍速播放中',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: VideoOverlayStyles.foreground(colorScheme),
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),

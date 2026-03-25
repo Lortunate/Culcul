@@ -32,3 +32,91 @@ class CulculColors {
   static const Color darkBorder = Color(0xFF273244);
   static const Color darkDivider = Color(0xFF222B3A);
 }
+
+@immutable
+class CulculSemanticColors extends ThemeExtension<CulculSemanticColors> {
+  final Color success;
+  final Color warning;
+  final Color info;
+  final Color overlayBackground;
+  final Color overlayBorder;
+  final Color overlayForeground;
+
+  const CulculSemanticColors({
+    required this.success,
+    required this.warning,
+    required this.info,
+    required this.overlayBackground,
+    required this.overlayBorder,
+    required this.overlayForeground,
+  });
+
+  static const CulculSemanticColors light = CulculSemanticColors(
+    success: CulculColors.success,
+    warning: CulculColors.warning,
+    info: CulculColors.info,
+    overlayBackground: Color(0x80000000),
+    overlayBorder: Color(0x1AFFFFFF),
+    overlayForeground: Colors.white,
+  );
+
+  static const CulculSemanticColors dark = CulculSemanticColors(
+    success: CulculColors.success,
+    warning: CulculColors.warning,
+    info: CulculColors.info,
+    overlayBackground: Color(0xA6000000),
+    overlayBorder: Color(0x1AFFFFFF),
+    overlayForeground: Colors.white,
+  );
+
+  @override
+  CulculSemanticColors copyWith({
+    Color? success,
+    Color? warning,
+    Color? info,
+    Color? overlayBackground,
+    Color? overlayBorder,
+    Color? overlayForeground,
+  }) {
+    return CulculSemanticColors(
+      success: success ?? this.success,
+      warning: warning ?? this.warning,
+      info: info ?? this.info,
+      overlayBackground: overlayBackground ?? this.overlayBackground,
+      overlayBorder: overlayBorder ?? this.overlayBorder,
+      overlayForeground: overlayForeground ?? this.overlayForeground,
+    );
+  }
+
+  @override
+  CulculSemanticColors lerp(
+    covariant ThemeExtension<CulculSemanticColors>? other,
+    double t,
+  ) {
+    if (other is! CulculSemanticColors) {
+      return this;
+    }
+    return CulculSemanticColors(
+      success: Color.lerp(success, other.success, t) ?? success,
+      warning: Color.lerp(warning, other.warning, t) ?? warning,
+      info: Color.lerp(info, other.info, t) ?? info,
+      overlayBackground:
+          Color.lerp(overlayBackground, other.overlayBackground, t) ?? overlayBackground,
+      overlayBorder: Color.lerp(overlayBorder, other.overlayBorder, t) ?? overlayBorder,
+      overlayForeground:
+          Color.lerp(overlayForeground, other.overlayForeground, t) ?? overlayForeground,
+    );
+  }
+}
+
+extension CulculThemeDataX on ThemeData {
+  CulculSemanticColors get semanticColors =>
+      extension<CulculSemanticColors>() ??
+      (brightness == Brightness.dark
+          ? CulculSemanticColors.dark
+          : CulculSemanticColors.light);
+}
+
+extension CulculBuildContextThemeX on BuildContext {
+  CulculSemanticColors get semanticColors => Theme.of(this).semanticColors;
+}

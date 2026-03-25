@@ -42,8 +42,8 @@ class UserProfileInfo extends HookConsumerWidget {
     final theme = Theme.of(context);
     final isExpanded = useState(false);
     final authState = ref.watch(authProvider);
-    final isSelf = authState.isLoggedIn &&
-        authState.user?.id.toString() == user.id.toString();
+    final isSelf =
+        authState.isLoggedIn && authState.user?.id.toString() == user.id.toString();
 
     return Column(
       children: [
@@ -71,11 +71,7 @@ class UserProfileInfo extends HookConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _StatsRow(
-                      user: user,
-                      isSelf: isSelf,
-                      avatarSize: _avatarSize,
-                    ),
+                    _StatsRow(user: user, isSelf: isSelf, avatarSize: _avatarSize),
                     _UserIdentity(user: user),
                     if (user.isVerified) const _VerifiedBadge(),
                     const SizedBox(height: 12),
@@ -119,11 +115,7 @@ class _StatsRow extends StatelessWidget {
   final bool isSelf;
   final double avatarSize;
 
-  const _StatsRow({
-    required this.user,
-    required this.isSelf,
-    required this.avatarSize,
-  });
+  const _StatsRow({required this.user, required this.isSelf, required this.avatarSize});
 
   @override
   Widget build(BuildContext context) {
@@ -141,17 +133,15 @@ class _StatsRow extends StatelessWidget {
                     UserProfileStatItem(
                       count: user.followingCount,
                       label: '关注',
-                      onTap: () => FollowingsRoute(vmid: int.parse(user.id)).push(context),
+                      onTap: () =>
+                          FollowingsRoute(vmid: int.parse(user.id)).push(context),
                     ),
                     UserProfileStatItem(
                       count: user.followersCount,
                       label: '粉丝',
                       onTap: () => FollowersRoute(vmid: int.parse(user.id)).push(context),
                     ),
-                    UserProfileStatItem(
-                      count: user.likesCount,
-                      label: '获赞',
-                    ),
+                    UserProfileStatItem(count: user.likesCount, label: '获赞'),
                   ],
                 ),
                 const SizedBox(height: 4),
@@ -212,11 +202,7 @@ class _VerifiedBadge extends StatelessWidget {
       padding: const EdgeInsets.only(top: 8),
       child: Row(
         children: [
-          const Icon(
-            Icons.verified_rounded,
-            size: 16,
-            color: Color(0xFFFB7299),
-          ),
+          Icon(Icons.verified_rounded, size: 16, color: colorScheme.primary),
           const SizedBox(width: 4),
           Expanded(
             child: Text(

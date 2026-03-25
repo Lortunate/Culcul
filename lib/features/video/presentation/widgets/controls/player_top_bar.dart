@@ -17,13 +17,15 @@ class PlayerTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       height: PlayerTheme.topBarHeight,
       padding: const EdgeInsets.symmetric(horizontal: PlayerTheme.horizontalPadding),
       child: Row(
         children: [
           IconButton(
-            icon: const Icon(Icons.arrow_back_rounded, color: Colors.white),
+            icon: Icon(Icons.arrow_back_rounded, color: colorScheme.onPrimary),
             iconSize: PlayerTheme.iconSize,
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
@@ -32,7 +34,7 @@ class PlayerTopBar extends StatelessWidget {
           ),
           if (onListen != null)
             IconButton(
-              icon: const Icon(Icons.headphones_rounded, color: Colors.white),
+              icon: Icon(Icons.headphones_rounded, color: colorScheme.onPrimary),
               iconSize: PlayerTheme.iconSize,
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
@@ -45,8 +47,8 @@ class PlayerTopBar extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Text(
                   title!,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: colorScheme.onPrimary,
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
@@ -57,7 +59,7 @@ class PlayerTopBar extends StatelessWidget {
             ),
           if (title == null) const Spacer(),
           IconButton(
-            icon: const Icon(Icons.more_vert_rounded, color: Colors.white),
+            icon: Icon(Icons.more_vert_rounded, color: colorScheme.onPrimary),
             iconSize: PlayerTheme.iconSize,
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(minWidth: 40, minHeight: 40),

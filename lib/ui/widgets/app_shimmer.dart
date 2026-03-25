@@ -64,10 +64,7 @@ class _AppShimmerState extends State<AppShimmer> with SingleTickerProviderStateM
     );
   }
 
-  LinearGradient _buildGradient(
-    ColorScheme colorScheme,
-    GradientTransform transform,
-  ) {
+  LinearGradient _buildGradient(ColorScheme colorScheme, GradientTransform transform) {
     final baseColor = colorScheme.surfaceContainerHighest.withValues(alpha: 0.6);
     final highlightColor = colorScheme.surfaceContainerHighest;
 

@@ -25,18 +25,13 @@ Future<IndicatorResult> _handleLoadMore<T>({
       return IndicatorResult.success;
     }
 
-    return nextCount > previousCount
-        ? IndicatorResult.success
-        : IndicatorResult.noMore;
+    return nextCount > previousCount ? IndicatorResult.success : IndicatorResult.noMore;
   } catch (_) {
     return IndicatorResult.fail;
   }
 }
 
-int? _readItemCount<T>({
-  required WidgetRef ref,
-  required dynamic provider,
-}) {
+int? _readItemCount<T>({required WidgetRef ref, required dynamic provider}) {
   if (provider == null) {
     return null;
   }

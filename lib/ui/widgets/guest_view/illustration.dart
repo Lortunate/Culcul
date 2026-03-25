@@ -15,11 +15,7 @@ class _GuestIllustration extends StatelessWidget {
         children: [
           _GuestGlow(colorScheme: colorScheme),
           _GuestBadgeBackground(colorScheme: colorScheme),
-          Icon(
-            Icons.lock_person_rounded,
-            size: 56,
-            color: colorScheme.primary,
-          ),
+          Icon(Icons.lock_person_rounded, size: 56, color: colorScheme.primary),
           Positioned(
             top: 40,
             right: 40,

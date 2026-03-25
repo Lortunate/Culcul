@@ -38,6 +38,7 @@ class _LiveRoomTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     if (title == null || title!.isEmpty) return const SizedBox.shrink();
 
     return Container(
@@ -45,8 +46,8 @@ class _LiveRoomTitle extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Text(
         title!,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: colorScheme.onPrimary,
           fontSize: 19,
           fontWeight: FontWeight.w600,
           height: 1.3,
@@ -79,6 +80,7 @@ class _DanmakuTopGradient extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Positioned(
       top: 0,
       left: 0,
@@ -90,7 +92,7 @@ class _DanmakuTopGradient extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Colors.black, Colors.black.withValues(alpha: 0)],
+              colors: [colorScheme.scrim, colorScheme.scrim.withValues(alpha: 0)],
             ),
           ),
         ),

@@ -25,7 +25,8 @@ class VipTag extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = Translations.of(context);
     final isYear = type == 2;
-    final color = Theme.of(context).colorScheme.primary;
+    final colorScheme = Theme.of(context).colorScheme;
+    final color = colorScheme.primary;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -36,10 +37,10 @@ class VipTag extends StatelessWidget {
       ),
       child: Text(
         isYear ? t.profile.vip.annual_premium : t.profile.vip.premium,
-        style: const TextStyle(
+        style: TextStyle(
           fontSize: 10,
           fontWeight: FontWeight.bold,
-          color: Colors.white,
+          color: colorScheme.onPrimary,
           height: 1.1,
         ),
       ),

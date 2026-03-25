@@ -4,10 +4,7 @@ class _GuestMessage extends StatelessWidget {
   final String title;
   final String? message;
 
-  const _GuestMessage({
-    required this.title,
-    required this.message,
-  });
+  const _GuestMessage({required this.title, required this.message});
 
   @override
   Widget build(BuildContext context) {

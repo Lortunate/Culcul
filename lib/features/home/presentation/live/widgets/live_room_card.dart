@@ -107,12 +107,13 @@ class _LiveRoomCoverGradient extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return DecoratedBox(
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Colors.transparent, Colors.black.withValues(alpha: 0.6)],
+          colors: [Colors.transparent, colorScheme.scrim.withValues(alpha: 0.6)],
           stops: const [0.6, 1.0],
         ),
       ),
@@ -128,6 +129,7 @@ class _LiveRoomOnlineCount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Row(
       children: [
         Container(
@@ -144,11 +146,17 @@ class _LiveRoomOnlineCount extends StatelessWidget {
         const SizedBox(width: 4),
         Text(
           FormatUtils.formatNumber(online),
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: theme.colorScheme.onPrimary,
             fontSize: 11,
             fontWeight: FontWeight.w600,
-            shadows: [Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45)],
+            shadows: [
+              Shadow(
+                offset: const Offset(0, 1),
+                blurRadius: 2,
+                color: theme.colorScheme.shadow.withValues(alpha: 0.45),
+              ),
+            ],
           ),
         ),
       ],

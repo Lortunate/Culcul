@@ -27,6 +27,8 @@ class VerticalVideoPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     final playerController = ref.watch(playerControllerProvider.notifier);
     final playerState = ref.watch(playerControllerProvider);
     final player = playerController.player;
@@ -45,7 +47,7 @@ class VerticalVideoPage extends HookConsumerWidget {
     final currentVolume = volumeSnapshot.data ?? player.state.volume;
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: colorScheme.scrim,
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
@@ -86,20 +88,28 @@ class _TopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
         children: [
           GestureDetector(
             onTap: context.pop,
-            child: const Icon(Icons.arrow_back_ios_new, color: Colors.white, size: 20),
+            child: Icon(Icons.arrow_back_ios_new, color: colorScheme.onPrimary, size: 20),
           ),
           const SizedBox(width: 8),
-          const Text('12人正在看', style: TextStyle(color: Colors.white70, fontSize: 12)),
+          Text(
+            '12人正在看',
+            style: TextStyle(
+              color: colorScheme.onPrimary.withValues(alpha: 0.7),
+              fontSize: 12,
+            ),
+          ),
           const Spacer(),
-          const Icon(Icons.search, color: Colors.white, size: 24),
+          Icon(Icons.search, color: colorScheme.onPrimary, size: 24),
           const SizedBox(width: 16),
-          const Icon(Icons.more_vert, color: Colors.white, size: 24),
+          Icon(Icons.more_vert, color: colorScheme.onPrimary, size: 24),
         ],
       ),
     );
@@ -140,14 +150,16 @@ class _RightActionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       children: [
-        Icon(action.icon, color: Colors.white, size: 32),
+        Icon(action.icon, color: colorScheme.onPrimary, size: 32),
         const SizedBox(height: 4),
         Text(
           FormatUtils.formatNumber(action.count),
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: colorScheme.onPrimary,
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),
@@ -171,11 +183,11 @@ class _BottomBar extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [Colors.transparent, Colors.black87],
+          colors: [Colors.transparent, colorScheme.scrim.withValues(alpha: 0.87)],
         ),
       ),
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
@@ -185,12 +197,12 @@ class _BottomBar extends ConsumerWidget {
         children: [
           _buildAuthorRow(colorScheme),
           const SizedBox(height: 12),
-          _buildTitleRow(),
+          _buildTitleRow(colorScheme),
           const SizedBox(height: 4),
-          _buildPlayCountRow(),
+          _buildPlayCountRow(colorScheme),
           const SizedBox(height: 12),
-          _buildProgressBar(position, maxValue),
-          _buildActionRow(),
+          _buildProgressBar(position, maxValue, colorScheme),
+          _buildActionRow(colorScheme),
         ],
       ),
     );
@@ -206,13 +218,19 @@ class _BottomBar extends ConsumerWidget {
           children: [
             Text(
               videoDetail.owner.name,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: colorScheme.onPrimary,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const Text('504.4万粉丝', style: TextStyle(color: Colors.white70, fontSize: 12)),
+            Text(
+              '504.4万粉丝',
+              style: TextStyle(
+                color: colorScheme.onPrimary.withValues(alpha: 0.7),
+                fontSize: 12,
+              ),
+            ),
           ],
         ),
         const SizedBox(width: 12),
@@ -222,10 +240,10 @@ class _BottomBar extends ConsumerWidget {
             color: colorScheme.primary,
             borderRadius: BorderRadius.circular(16),
           ),
-          child: const Text(
+          child: Text(
             '+ 关注',
             style: TextStyle(
-              color: Colors.white,
+              color: colorScheme.onPrimary,
               fontSize: 12,
               fontWeight: FontWeight.bold,
             ),
@@ -235,37 +253,49 @@ class _BottomBar extends ConsumerWidget {
     );
   }
 
-  Widget _buildTitleRow() {
+  Widget _buildTitleRow(ColorScheme colorScheme) {
+    // Keep high contrast for on-video readability.
     return Row(
       children: [
         Expanded(
           child: Text(
             videoDetail.title,
-            style: const TextStyle(color: Colors.white, fontSize: 14),
+            style: TextStyle(color: colorScheme.onPrimary, fontSize: 14),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
         ),
         const SizedBox(width: 4),
-        const Icon(Icons.keyboard_arrow_down, color: Colors.white70, size: 20),
-      ],
-    );
-  }
-
-  Widget _buildPlayCountRow() {
-    return Row(
-      children: [
-        const Icon(Icons.play_circle_outline, size: 12, color: Colors.white60),
-        const SizedBox(width: 4),
-        Text(
-          '${FormatUtils.formatNumber(videoDetail.stat.view)}播放',
-          style: const TextStyle(color: Colors.white60, fontSize: 12),
+        Icon(
+          Icons.keyboard_arrow_down,
+          color: colorScheme.onPrimary.withValues(alpha: 0.7),
+          size: 20,
         ),
       ],
     );
   }
 
-  Widget _buildProgressBar(Duration position, double maxValue) {
+  Widget _buildPlayCountRow(ColorScheme colorScheme) {
+    return Row(
+      children: [
+        Icon(
+          Icons.play_circle_outline,
+          size: 12,
+          color: colorScheme.onPrimary.withValues(alpha: 0.6),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          '${FormatUtils.formatNumber(videoDetail.stat.view)}播放',
+          style: TextStyle(
+            color: colorScheme.onPrimary.withValues(alpha: 0.6),
+            fontSize: 12,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProgressBar(Duration position, double maxValue, ColorScheme colorScheme) {
     return SizedBox(
       height: 20,
       child: SliderTheme(
@@ -273,9 +303,9 @@ class _BottomBar extends ConsumerWidget {
           trackHeight: 2,
           thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 4),
           overlayShape: const RoundSliderOverlayShape(overlayRadius: 8),
-          activeTrackColor: Colors.white,
-          inactiveTrackColor: Colors.white24,
-          thumbColor: Colors.white,
+          activeTrackColor: colorScheme.onPrimary,
+          inactiveTrackColor: colorScheme.onPrimary.withValues(alpha: 0.24),
+          thumbColor: colorScheme.onPrimary,
         ),
         child: Slider(
           value: position.inSeconds.toDouble().clamp(0, maxValue),
@@ -286,7 +316,7 @@ class _BottomBar extends ConsumerWidget {
     );
   }
 
-  Widget _buildActionRow() {
+  Widget _buildActionRow(ColorScheme colorScheme) {
     return Row(
       children: [
         Expanded(
@@ -294,29 +324,38 @@ class _BottomBar extends ConsumerWidget {
             height: 36,
             padding: const EdgeInsets.symmetric(horizontal: 12),
             decoration: BoxDecoration(
-              color: Colors.white12,
+              color: colorScheme.onPrimary.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(18),
             ),
-            child: const Row(
+            child: Row(
               children: [
-                Text('已关闭弹幕', style: TextStyle(color: Colors.white54, fontSize: 12)),
+                Text(
+                  '已关闭弹幕',
+                  style: TextStyle(
+                    color: colorScheme.onPrimary.withValues(alpha: 0.54),
+                    fontSize: 12,
+                  ),
+                ),
               ],
             ),
           ),
         ),
         const SizedBox(width: 12),
-        const Icon(Icons.notes, color: Colors.white, size: 24),
+        Icon(Icons.notes, color: colorScheme.onPrimary, size: 24),
         const SizedBox(width: 16),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.white30),
+            border: Border.all(color: colorScheme.onPrimary.withValues(alpha: 0.3)),
             borderRadius: BorderRadius.circular(4),
           ),
-          child: const Text('详情页', style: TextStyle(color: Colors.white, fontSize: 10)),
+          child: Text(
+            '详情页',
+            style: TextStyle(color: colorScheme.onPrimary, fontSize: 10),
+          ),
         ),
         const SizedBox(width: 16),
-        const Icon(Icons.fullscreen, color: Colors.white, size: 24),
+        Icon(Icons.fullscreen, color: colorScheme.onPrimary, size: 24),
       ],
     );
   }

@@ -11,11 +11,7 @@ class AppAvatar extends StatelessWidget {
   const AppAvatar({super.key, this.url, this.size = 32, this.onTap, this.border});
 
   Icon _buildFallbackIcon(ColorScheme colorScheme) {
-    return Icon(
-      Icons.account_circle,
-      color: colorScheme.primary,
-      size: size,
-    );
+    return Icon(Icons.account_circle, color: colorScheme.primary, size: size);
   }
 
   List<BoxShadow> _buildShadows(ColorScheme colorScheme) {
@@ -30,10 +26,7 @@ class AppAvatar extends StatelessWidget {
 
   BoxBorder _buildBorder(ColorScheme colorScheme) {
     return border ??
-        Border.all(
-          color: colorScheme.outlineVariant.withValues(alpha: 0.2),
-          width: 0.5,
-        );
+        Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.2), width: 0.5);
   }
 
   @override

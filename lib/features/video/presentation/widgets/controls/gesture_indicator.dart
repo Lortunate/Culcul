@@ -18,12 +18,14 @@ class GestureIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: colorScheme.shadow.withValues(alpha: 0.3),
             blurRadius: 32,
             offset: const Offset(0, 8),
           ),
@@ -36,32 +38,43 @@ class GestureIndicator extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
             decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.5),
+              color: colorScheme.scrim.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
+              border: Border.all(
+                color: colorScheme.onPrimary.withValues(alpha: 0.1),
+                width: 0.5,
+              ),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(
                   icon,
-                  color: Colors.white,
+                  color: colorScheme.onPrimary,
                   size: 36,
-                  shadows: const [
-                    Shadow(blurRadius: 8, color: Colors.black26, offset: Offset(0, 2)),
+                  shadows: [
+                    Shadow(
+                      blurRadius: 8,
+                      color: colorScheme.shadow.withValues(alpha: 0.26),
+                      offset: const Offset(0, 2),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 12),
                 Text(
                   label,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: colorScheme.onPrimary,
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.5,
                     decoration: TextDecoration.none,
                     shadows: [
-                      Shadow(blurRadius: 4, color: Colors.black45, offset: Offset(0, 1)),
+                      Shadow(
+                        blurRadius: 4,
+                        color: colorScheme.shadow.withValues(alpha: 0.45),
+                        offset: const Offset(0, 1),
+                      ),
                     ],
                   ),
                 ),
@@ -69,8 +82,8 @@ class GestureIndicator extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     textValue!,
-                    style: const TextStyle(
-                      color: Colors.white70,
+                    style: TextStyle(
+                      color: colorScheme.onPrimary.withValues(alpha: 0.7),
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                     ),
@@ -85,8 +98,8 @@ class GestureIndicator extends StatelessWidget {
                       borderRadius: BorderRadius.circular(3),
                       child: LinearProgressIndicator(
                         value: value,
-                        backgroundColor: Colors.white.withValues(alpha: 0.15),
-                        valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                        backgroundColor: colorScheme.onPrimary.withValues(alpha: 0.15),
+                        valueColor: AlwaysStoppedAnimation<Color>(colorScheme.onPrimary),
                       ),
                     ),
                   ),

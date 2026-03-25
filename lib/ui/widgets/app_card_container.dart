@@ -19,10 +19,10 @@ class AppCardContainer extends StatelessWidget {
     this.color,
   });
 
-  BoxShadow _buildShadow(Brightness brightness) {
+  BoxShadow _buildShadow(ThemeData theme) {
     return BoxShadow(
-      color: Colors.black.withValues(
-        alpha: brightness == Brightness.dark ? 0.2 : 0.05,
+      color: theme.colorScheme.shadow.withValues(
+        alpha: theme.brightness == Brightness.dark ? 0.3 : 0.08,
       ),
       blurRadius: 10,
       offset: const Offset(0, 4),
@@ -33,7 +33,7 @@ class AppCardContainer extends StatelessWidget {
     return BoxDecoration(
       color: color ?? theme.colorScheme.surface,
       borderRadius: BorderRadius.circular(borderRadius),
-      boxShadow: [_buildShadow(theme.brightness)],
+      boxShadow: [_buildShadow(theme)],
     );
   }
 

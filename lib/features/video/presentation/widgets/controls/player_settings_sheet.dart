@@ -1,6 +1,7 @@
 import 'package:culcul/features/video/controllers/danmaku_settings_controller.dart';
 import 'package:culcul/features/video/controllers/player_controller.dart';
 import 'package:culcul/features/video/controllers/video_detail_controller.dart';
+import 'package:culcul/features/video/presentation/widgets/controls/video_overlay_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -55,7 +56,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
             ? const BorderRadius.vertical(top: Radius.circular(24))
             : const BorderRadius.horizontal(left: Radius.circular(24)),
         child: Container(
-          color: const Color(0xE61E1E1E), // Slightly lighter, modern dark grey
+          color: VideoOverlayStyles.panelBackground(colorScheme),
           child: Material(
             color: Colors.transparent,
             child: SafeArea(
@@ -65,7 +66,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (isBottomSheet) _buildDragHandle(),
+                  if (isBottomSheet) VideoOverlayStyles.dragHandle(colorScheme),
                   Flexible(
                     child: SingleChildScrollView(
                       padding: EdgeInsets.fromLTRB(
@@ -85,7 +86,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
                             colorScheme,
                           ),
                           const SizedBox(height: 32),
-                          _buildSectionTitle('播放速度'),
+                          _buildSectionTitle('播放速度', colorScheme),
                           const SizedBox(height: 16),
                           _buildSpeedOptions(
                             colorScheme,
@@ -99,7 +100,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
                             },
                           ),
                           const SizedBox(height: 32),
-                          _buildSectionTitle('清晰度'),
+                          _buildSectionTitle('清晰度', colorScheme),
                           const SizedBox(height: 16),
                           _buildQualityOptions(
                             colorScheme,
@@ -109,7 +110,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
                             (q) => videoDetailNotifier.switchQuality(q),
                           ),
                           const SizedBox(height: 32),
-                          _buildSectionTitle('定时停止'),
+                          _buildSectionTitle('定时停止', colorScheme),
                           const SizedBox(height: 16),
                           _buildSleepTimerOptions(colorScheme, context),
                         ],
@@ -136,7 +137,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildSectionTitle('弹幕设置'),
+            _buildSectionTitle('弹幕设置', colorScheme),
             Transform.scale(
               scale: 0.8,
               child: Switch(
@@ -144,8 +145,8 @@ class PlayerSettingsSheet extends ConsumerWidget {
                 onChanged: (v) => notifier.setEnabled(v),
                 activeThumbColor: colorScheme.primary,
                 activeTrackColor: colorScheme.primary.withValues(alpha: 0.3),
-                inactiveThumbColor: Colors.grey,
-                inactiveTrackColor: Colors.white10,
+                inactiveThumbColor: colorScheme.outline,
+                inactiveTrackColor: colorScheme.onSurface.withValues(alpha: 0.1),
               ),
             ),
           ],
@@ -249,8 +250,8 @@ class PlayerSettingsSheet extends ConsumerWidget {
           width: 60,
           child: Text(
             label,
-            style: const TextStyle(
-              color: Colors.white70,
+            style: TextStyle(
+              color: colorScheme.onPrimary.withValues(alpha: 0.7),
               fontSize: 13,
               fontWeight: FontWeight.w500,
             ),
@@ -265,8 +266,8 @@ class PlayerSettingsSheet extends ConsumerWidget {
                 thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
                 overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
                 activeTrackColor: colorScheme.primary,
-                inactiveTrackColor: Colors.white10,
-                thumbColor: Colors.white,
+                inactiveTrackColor: colorScheme.onSurface.withValues(alpha: 0.1),
+                thumbColor: colorScheme.onPrimary,
                 trackShape: const RoundedRectSliderTrackShape(),
               ),
               child: Slider(
@@ -284,8 +285,8 @@ class PlayerSettingsSheet extends ConsumerWidget {
           child: Text(
             valueText,
             textAlign: TextAlign.end,
-            style: const TextStyle(
-              color: Colors.white54,
+            style: TextStyle(
+              color: colorScheme.onPrimary.withValues(alpha: 0.54),
               fontSize: 12,
               fontFeatures: [FontFeature.tabularFigures()],
             ),
@@ -295,30 +296,8 @@ class PlayerSettingsSheet extends ConsumerWidget {
     );
   }
 
-  Widget _buildDragHandle() {
-    return Center(
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 16),
-        width: 36,
-        height: 4,
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(2),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 15,
-        fontWeight: FontWeight.w600,
-        letterSpacing: 0.5,
-      ),
-    );
+  Widget _buildSectionTitle(String title, ColorScheme colorScheme) {
+    return Text(title, style: VideoOverlayStyles.titleStyle(colorScheme));
   }
 
   Widget _buildSpeedOptions(
@@ -429,19 +408,21 @@ class _CompactOptionChip extends StatelessWidget {
           decoration: BoxDecoration(
             color: isSelected
                 ? colorScheme.primary
-                : Colors.white.withValues(alpha: 0.08),
+                : colorScheme.onPrimary.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: isSelected
                   ? Colors.transparent
-                  : Colors.white.withValues(alpha: 0.1),
+                  : colorScheme.onPrimary.withValues(alpha: 0.1),
               width: 1,
             ),
           ),
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? colorScheme.onPrimary : Colors.white70,
+              color: isSelected
+                  ? colorScheme.onPrimary
+                  : colorScheme.onPrimary.withValues(alpha: 0.7),
               fontSize: 13,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             ),
@@ -481,14 +462,18 @@ class _ModernFilterChip extends StatelessWidget {
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: isSelected ? colorScheme.primary : Colors.white24,
+              color: isSelected
+                  ? colorScheme.primary
+                  : colorScheme.onPrimary.withValues(alpha: 0.24),
               width: 1,
             ),
           ),
           child: Text(
             label,
             style: TextStyle(
-              color: isSelected ? colorScheme.primary : Colors.white70,
+              color: isSelected
+                  ? colorScheme.primary
+                  : colorScheme.onPrimary.withValues(alpha: 0.7),
               fontSize: 12,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             ),

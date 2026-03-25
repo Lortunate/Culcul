@@ -73,10 +73,7 @@ class BilibiliEmojiText extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 1),
         child: onEmojiTap == null
             ? image
-            : GestureDetector(
-                onTap: () => onEmojiTap(matchText),
-                child: image,
-              ),
+            : GestureDetector(onTap: () => onEmojiTap(matchText), child: image),
       ),
     );
   }

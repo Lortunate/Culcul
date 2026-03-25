@@ -10,7 +10,7 @@ class DanmakuItem {
 
   const DanmakuItem(
     this.text, {
-    this.color = Colors.white,
+    this.color = const Color.fromARGB(255, 255, 255, 255),
     this.time = 0,
     this.type = DanmakuItemType.scroll,
   });

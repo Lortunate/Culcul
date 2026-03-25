@@ -25,6 +25,7 @@ class VideoPlayerView extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
     final state = ref.watch(videoDetailControllerProvider(bvid));
     final playerController = ref.watch(playerControllerProvider.notifier);
     final isFullscreen = ref.watch(
@@ -50,7 +51,7 @@ class VideoPlayerView extends HookConsumerWidget {
     return AspectRatio(
       aspectRatio: isFullscreen ? MediaQuery.of(context).size.aspectRatio : aspectRatio,
       child: Container(
-        color: Colors.black,
+        color: colorScheme.scrim,
         child: Stack(
           children: [
             InteractionLayer(

@@ -1,4 +1,3 @@
-import 'package:culcul/app/theme/culcul_colors.dart';
 import 'package:flutter/material.dart';
 
 class PlayerTheme {
@@ -11,51 +10,66 @@ class PlayerTheme {
   static const double horizontalPadding = 12.0;
   static const double elementSpacing = 16.0;
 
-  static const TextStyle timeStyle = TextStyle(
-    color: Colors.white,
+  static TextStyle timeStyle(ColorScheme colorScheme) => TextStyle(
+    color: colorScheme.onPrimary,
     fontSize: 11,
     fontWeight: FontWeight.w500,
-    fontFeatures: [FontFeature.tabularFigures()],
-    shadows: [Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45)],
+    fontFeatures: const [FontFeature.tabularFigures()],
+    shadows: [
+      Shadow(
+        offset: const Offset(0, 1),
+        blurRadius: 2,
+        color: colorScheme.shadow.withValues(alpha: 0.45),
+      ),
+    ],
   );
 
-  static const TextStyle titleStyle = TextStyle(
-    color: Colors.white,
+  static TextStyle titleStyle(ColorScheme colorScheme) => TextStyle(
+    color: colorScheme.onPrimary,
     fontSize: 15,
     fontWeight: FontWeight.w500,
-    shadows: [Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45)],
+    shadows: [
+      Shadow(
+        offset: const Offset(0, 1),
+        blurRadius: 2,
+        color: colorScheme.shadow.withValues(alpha: 0.45),
+      ),
+    ],
   );
 
-  static const TextStyle subtitleStyle = TextStyle(
-    color: Colors.white,
+  static TextStyle subtitleStyle(ColorScheme colorScheme) => TextStyle(
+    color: colorScheme.onPrimary,
     fontSize: 16,
     height: 1.2,
     fontWeight: FontWeight.w600,
     shadows: [
-      Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black),
-      Shadow(offset: Offset(0, -1), blurRadius: 2, color: Colors.black),
-      Shadow(offset: Offset(1, 0), blurRadius: 2, color: Colors.black),
-      Shadow(offset: Offset(-1, 0), blurRadius: 2, color: Colors.black),
+      Shadow(offset: const Offset(0, 1), blurRadius: 2, color: colorScheme.shadow),
+      Shadow(offset: const Offset(0, -1), blurRadius: 2, color: colorScheme.shadow),
+      Shadow(offset: const Offset(1, 0), blurRadius: 2, color: colorScheme.shadow),
+      Shadow(offset: const Offset(-1, 0), blurRadius: 2, color: colorScheme.shadow),
     ],
   );
 
-  static SliderThemeData get sliderTheme => SliderThemeData(
-    trackHeight: 3,
-    thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7, elevation: 2),
-    overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
-    activeTrackColor: CulculColors.brand,
-    inactiveTrackColor: Colors.white24,
-    secondaryActiveTrackColor: Colors.white54,
-    thumbColor: Colors.white,
-    overlayColor: CulculColors.brand.withValues(alpha: 0.2),
-    trackShape: const RectangularSliderTrackShape(),
-    activeTickMarkColor: Colors.transparent,
-    inactiveTickMarkColor: Colors.transparent,
-  );
+  static SliderThemeData sliderTheme(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return SliderThemeData(
+      trackHeight: 3,
+      thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 7, elevation: 2),
+      overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
+      activeTrackColor: colorScheme.primary,
+      inactiveTrackColor: colorScheme.onSurface.withValues(alpha: 0.2),
+      secondaryActiveTrackColor: colorScheme.onSurface.withValues(alpha: 0.35),
+      thumbColor: colorScheme.primary,
+      overlayColor: colorScheme.primary.withValues(alpha: 0.2),
+      trackShape: const RectangularSliderTrackShape(),
+      activeTickMarkColor: Colors.transparent,
+      inactiveTickMarkColor: Colors.transparent,
+    );
+  }
 
   static SliderThemeData progressSliderTheme(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return sliderTheme.copyWith(
+    return sliderTheme(context).copyWith(
       activeTrackColor: colorScheme.primary,
       inactiveTrackColor: colorScheme.onSurface.withValues(alpha: 0.2),
       secondaryActiveTrackColor: colorScheme.onSurface.withValues(alpha: 0.35),
@@ -63,7 +77,7 @@ class PlayerTheme {
       overlayColor: colorScheme.primary.withValues(alpha: 0.18),
       overlayShape: const RoundSliderOverlayShape(overlayRadius: 14),
       showValueIndicator: ShowValueIndicator.onDrag,
-      valueIndicatorTextStyle: const TextStyle(color: Colors.white, fontSize: 12),
+      valueIndicatorTextStyle: TextStyle(color: colorScheme.onPrimary, fontSize: 12),
       valueIndicatorColor: colorScheme.primary,
     );
   }
@@ -71,28 +85,43 @@ class PlayerTheme {
   static const LinearGradient topGradient = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Colors.black87, Colors.black54, Colors.transparent],
+    colors: [
+      Color.fromRGBO(0, 0, 0, 0.87),
+      Color.fromRGBO(0, 0, 0, 0.54),
+      Colors.transparent,
+    ],
     stops: [0.0, 0.4, 1.0],
   );
 
   static const LinearGradient bottomGradient = LinearGradient(
     begin: Alignment.bottomCenter,
     end: Alignment.topCenter,
-    colors: [Colors.black87, Colors.black54, Colors.transparent],
+    colors: [
+      Color.fromRGBO(0, 0, 0, 0.87),
+      Color.fromRGBO(0, 0, 0, 0.54),
+      Colors.transparent,
+    ],
     stops: [0.0, 0.4, 1.0],
   );
 
-  static final ButtonStyle textButtonStyle = TextButton.styleFrom(
-    foregroundColor: Colors.white,
+  static ButtonStyle textButtonStyle(ColorScheme colorScheme) => TextButton.styleFrom(
+    foregroundColor: colorScheme.onPrimary,
     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     minimumSize: Size.zero,
     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-    textStyle: const TextStyle(
+    textStyle: TextStyle(
       fontSize: 13,
       fontWeight: FontWeight.w600,
-      shadows: [Shadow(offset: Offset(0, 1), blurRadius: 2, color: Colors.black45)],
+      shadows: [
+        Shadow(
+          offset: const Offset(0, 1),
+          blurRadius: 2,
+          color: colorScheme.shadow.withValues(alpha: 0.45),
+        ),
+      ],
     ),
   );
 
-  static final Color overlayBackgroundColor = Colors.black.withValues(alpha: 0.6);
+  static Color overlayBackgroundColor(ColorScheme colorScheme) =>
+      colorScheme.scrim.withValues(alpha: 0.6);
 }

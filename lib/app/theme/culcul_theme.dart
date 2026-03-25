@@ -6,43 +6,15 @@ import 'culcul_colors.dart';
 class CulculTheme {
   CulculTheme._();
 
-  static ThemeData get light => _buildTheme(
-    brightness: Brightness.light,
-    background: CulculColors.lightBackground,
-    surface: CulculColors.lightSurface,
-    surfaceLow: CulculColors.lightSurfaceLow,
-    surfaceHighest: CulculColors.lightSurfaceHighest,
-    textPrimary: CulculColors.lightTextPrimary,
-    textSecondary: CulculColors.lightTextSecondary,
-    textTertiary: CulculColors.lightTextTertiary,
-    border: CulculColors.lightBorder,
-    divider: CulculColors.lightDivider,
-  );
+  static ThemeData get light =>
+      _buildTheme(brightness: Brightness.light, palette: _ThemePalette.light);
 
-  static ThemeData get dark => _buildTheme(
-    brightness: Brightness.dark,
-    background: CulculColors.darkBackground,
-    surface: CulculColors.darkSurface,
-    surfaceLow: CulculColors.darkSurfaceLow,
-    surfaceHighest: CulculColors.darkSurfaceHighest,
-    textPrimary: CulculColors.darkTextPrimary,
-    textSecondary: CulculColors.darkTextSecondary,
-    textTertiary: CulculColors.darkTextTertiary,
-    border: CulculColors.darkBorder,
-    divider: CulculColors.darkDivider,
-  );
+  static ThemeData get dark =>
+      _buildTheme(brightness: Brightness.dark, palette: _ThemePalette.dark);
 
   static ThemeData _buildTheme({
     required Brightness brightness,
-    required Color background,
-    required Color surface,
-    required Color surfaceLow,
-    required Color surfaceHighest,
-    required Color textPrimary,
-    required Color textSecondary,
-    required Color textTertiary,
-    required Color border,
-    required Color divider,
+    required _ThemePalette palette,
   }) {
     final baseScheme = ColorScheme.fromSeed(
       seedColor: CulculColors.brand,
@@ -55,16 +27,16 @@ class CulculTheme {
       onSecondary: Colors.white,
       tertiary: CulculColors.brandTertiary,
       onTertiary: Colors.white,
-      surface: surface,
-      onSurface: textPrimary,
-      surfaceContainerLowest: background,
-      surfaceContainerLow: surfaceLow,
-      surfaceContainer: surface,
-      surfaceContainerHigh: surfaceHighest,
-      surfaceContainerHighest: surfaceHighest,
-      onSurfaceVariant: textSecondary,
-      outline: border,
-      outlineVariant: divider,
+      surface: palette.surface,
+      onSurface: palette.textPrimary,
+      surfaceContainerLowest: palette.background,
+      surfaceContainerLow: palette.surfaceLow,
+      surfaceContainer: palette.surface,
+      surfaceContainerHigh: palette.surfaceHighest,
+      surfaceContainerHighest: palette.surfaceHighest,
+      onSurfaceVariant: palette.textSecondary,
+      outline: palette.border,
+      outlineVariant: palette.divider,
       error: CulculColors.error,
       onError: Colors.white,
       shadow: Colors.black,
@@ -76,14 +48,14 @@ class CulculTheme {
       brightness: brightness,
       colorScheme: colorScheme,
       primaryColor: CulculColors.brand,
-      scaffoldBackgroundColor: background,
+      scaffoldBackgroundColor: palette.background,
       splashColor: CulculColors.brand.withValues(alpha: 0.10),
       highlightColor: Colors.transparent,
-      iconTheme: IconThemeData(color: textPrimary, size: 24),
+      iconTheme: IconThemeData(color: palette.textPrimary, size: 24),
       textTheme: _buildTextTheme(
-        primary: textPrimary,
-        secondary: textSecondary,
-        tertiary: textTertiary,
+        primary: palette.textPrimary,
+        secondary: palette.textSecondary,
+        tertiary: palette.textTertiary,
       ),
       appBarTheme: _appBarTheme(colorScheme),
       tabBarTheme: _tabBarTheme(colorScheme),
@@ -94,6 +66,11 @@ class CulculTheme {
       outlinedButtonTheme: _outlinedButtonTheme(colorScheme),
       inputDecorationTheme: _inputDecorationTheme(colorScheme),
       dividerTheme: _dividerTheme(colorScheme),
+      extensions: [
+        brightness == Brightness.dark
+            ? CulculSemanticColors.dark
+            : CulculSemanticColors.light,
+      ],
       visualDensity: VisualDensity.standard,
     );
   }
@@ -134,44 +111,16 @@ class CulculTheme {
         fontWeight: FontWeight.w600,
         letterSpacing: -0.3,
       ),
-      headlineSmall: TextStyle(
-        color: primary,
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
-      ),
-      titleLarge: TextStyle(
-        color: primary,
-        fontSize: 17,
-        fontWeight: FontWeight.w600,
-      ),
-      titleMedium: TextStyle(
-        color: primary,
-        fontSize: 15,
-        fontWeight: FontWeight.w600,
-      ),
-      titleSmall: TextStyle(
-        color: primary,
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-      ),
+      headlineSmall: TextStyle(color: primary, fontSize: 18, fontWeight: FontWeight.w600),
+      titleLarge: TextStyle(color: primary, fontSize: 17, fontWeight: FontWeight.w600),
+      titleMedium: TextStyle(color: primary, fontSize: 15, fontWeight: FontWeight.w600),
+      titleSmall: TextStyle(color: primary, fontSize: 14, fontWeight: FontWeight.w500),
       bodyLarge: TextStyle(color: primary, fontSize: 15, height: 1.45),
       bodyMedium: TextStyle(color: secondary, fontSize: 14, height: 1.45),
       bodySmall: TextStyle(color: tertiary, fontSize: 12, height: 1.35),
-      labelLarge: TextStyle(
-        color: primary,
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-      ),
-      labelMedium: TextStyle(
-        color: secondary,
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
-      ),
-      labelSmall: TextStyle(
-        color: tertiary,
-        fontSize: 11,
-        fontWeight: FontWeight.w500,
-      ),
+      labelLarge: TextStyle(color: primary, fontSize: 14, fontWeight: FontWeight.w600),
+      labelMedium: TextStyle(color: secondary, fontSize: 12, fontWeight: FontWeight.w500),
+      labelSmall: TextStyle(color: tertiary, fontSize: 11, fontWeight: FontWeight.w500),
     );
   }
 
@@ -193,9 +142,7 @@ class CulculTheme {
         fontWeight: FontWeight.w600,
       ),
       iconTheme: IconThemeData(color: colorScheme.onSurface, size: 24),
-      systemOverlayStyle: overlayStyle.copyWith(
-        statusBarColor: Colors.transparent,
-      ),
+      systemOverlayStyle: overlayStyle.copyWith(statusBarColor: Colors.transparent),
     );
   }
 
@@ -204,34 +151,21 @@ class CulculTheme {
       labelColor: colorScheme.primary,
       unselectedLabelColor: colorScheme.onSurfaceVariant,
       labelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-      unselectedLabelStyle: const TextStyle(
-        fontSize: 15,
-        fontWeight: FontWeight.w500,
-      ),
+      unselectedLabelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
       indicatorSize: TabBarIndicatorSize.label,
       indicatorColor: colorScheme.primary,
       dividerColor: Colors.transparent,
-      overlayColor: WidgetStatePropertyAll(
-        colorScheme.primary.withValues(alpha: 0.08),
-      ),
+      overlayColor: WidgetStatePropertyAll(colorScheme.primary.withValues(alpha: 0.08)),
     );
   }
 
-  static BottomNavigationBarThemeData _bottomNavigationBarTheme(
-    ColorScheme colorScheme,
-  ) {
+  static BottomNavigationBarThemeData _bottomNavigationBarTheme(ColorScheme colorScheme) {
     return BottomNavigationBarThemeData(
       backgroundColor: colorScheme.surface,
       selectedItemColor: colorScheme.primary,
       unselectedItemColor: colorScheme.onSurfaceVariant,
-      selectedLabelStyle: const TextStyle(
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-      ),
-      unselectedLabelStyle: const TextStyle(
-        fontSize: 11,
-        fontWeight: FontWeight.w500,
-      ),
+      selectedLabelStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+      unselectedLabelStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
       type: BottomNavigationBarType.fixed,
       elevation: 0,
       showSelectedLabels: true,
@@ -291,10 +225,7 @@ class CulculTheme {
       filled: true,
       fillColor: colorScheme.surfaceContainerLow,
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      border: OutlineInputBorder(
-        borderRadius: radius,
-        borderSide: BorderSide.none,
-      ),
+      border: OutlineInputBorder(borderRadius: radius, borderSide: BorderSide.none),
       enabledBorder: OutlineInputBorder(
         borderRadius: radius,
         borderSide: BorderSide(color: colorScheme.outlineVariant),
@@ -316,10 +247,54 @@ class CulculTheme {
   }
 
   static DividerThemeData _dividerTheme(ColorScheme colorScheme) {
-    return DividerThemeData(
-      color: colorScheme.outlineVariant,
-      thickness: 1,
-      space: 1,
-    );
+    return DividerThemeData(color: colorScheme.outlineVariant, thickness: 1, space: 1);
   }
+}
+
+class _ThemePalette {
+  final Color background;
+  final Color surface;
+  final Color surfaceLow;
+  final Color surfaceHighest;
+  final Color textPrimary;
+  final Color textSecondary;
+  final Color textTertiary;
+  final Color border;
+  final Color divider;
+
+  const _ThemePalette({
+    required this.background,
+    required this.surface,
+    required this.surfaceLow,
+    required this.surfaceHighest,
+    required this.textPrimary,
+    required this.textSecondary,
+    required this.textTertiary,
+    required this.border,
+    required this.divider,
+  });
+
+  static const light = _ThemePalette(
+    background: CulculColors.lightBackground,
+    surface: CulculColors.lightSurface,
+    surfaceLow: CulculColors.lightSurfaceLow,
+    surfaceHighest: CulculColors.lightSurfaceHighest,
+    textPrimary: CulculColors.lightTextPrimary,
+    textSecondary: CulculColors.lightTextSecondary,
+    textTertiary: CulculColors.lightTextTertiary,
+    border: CulculColors.lightBorder,
+    divider: CulculColors.lightDivider,
+  );
+
+  static const dark = _ThemePalette(
+    background: CulculColors.darkBackground,
+    surface: CulculColors.darkSurface,
+    surfaceLow: CulculColors.darkSurfaceLow,
+    surfaceHighest: CulculColors.darkSurfaceHighest,
+    textPrimary: CulculColors.darkTextPrimary,
+    textSecondary: CulculColors.darkTextSecondary,
+    textTertiary: CulculColors.darkTextTertiary,
+    border: CulculColors.darkBorder,
+    divider: CulculColors.darkDivider,
+  );
 }

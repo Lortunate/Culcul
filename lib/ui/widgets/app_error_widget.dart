@@ -21,9 +21,7 @@ class AppErrorWidget extends StatelessWidget {
   String _resolveDisplayMessage(BuildContext context) {
     final t = Translations.of(context);
     return message ??
-        (error != null
-            ? ErrorHandler.getErrorMessage(context, error)
-            : t.common.error);
+        (error != null ? ErrorHandler.getErrorMessage(context, error) : t.common.error);
   }
 
   Future<void> _showErrorDetails(BuildContext context) {
@@ -38,23 +36,14 @@ class AppErrorWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                'Error: $error',
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
+              Text('Error: $error', style: const TextStyle(fontWeight: FontWeight.bold)),
               if (stackTrace != null) ...[
                 const SizedBox(height: 8),
-                const Text(
-                  'Stack Trace:',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                const Text('Stack Trace:', style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 SelectableText(
                   stackTrace.toString(),
-                  style: const TextStyle(
-                    fontSize: 10,
-                    fontFamily: 'Courier',
-                  ),
+                  style: const TextStyle(fontSize: 10, fontFamily: 'Courier'),
                 ),
               ],
             ],

@@ -1,3 +1,4 @@
+import 'package:culcul/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class AppOverlayTag extends StatelessWidget {
@@ -7,17 +8,19 @@ class AppOverlayTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final semanticColors = context.semanticColors;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.5),
+        color: semanticColors.overlayBackground,
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
+        border: Border.all(color: semanticColors.overlayBorder, width: 0.5),
       ),
       child: Text(
         text,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: semanticColors.overlayForeground,
           fontSize: 10,
           fontWeight: FontWeight.w500,
           height: 1,

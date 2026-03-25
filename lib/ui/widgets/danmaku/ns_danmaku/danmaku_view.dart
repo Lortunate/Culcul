@@ -176,7 +176,7 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
           foreground: Paint()
             ..style = PaintingStyle.stroke
             ..strokeWidth = _option.strokeWidth
-            ..color = Colors.black,
+            ..color = const Color.fromARGB(255, 0, 0, 0),
           fontWeight: _option.fontWeight,
           fontFamily: 'PingFang SC',
           height: 1.1,

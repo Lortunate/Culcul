@@ -10,13 +10,17 @@ class LiveSystemMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: const Color(0xFF1F1F1F).withValues(alpha: 0.9),
+        color: colorScheme.scrim.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 0.5),
+        border: Border.all(
+          color: colorScheme.onPrimary.withValues(alpha: 0.1),
+          width: 0.5,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,7 +37,7 @@ class LiveSystemMessage extends StatelessWidget {
           Text(
             item.text,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.9),
+              color: colorScheme.onPrimary.withValues(alpha: 0.9),
               fontSize: 13,
               height: 1.4,
             ),

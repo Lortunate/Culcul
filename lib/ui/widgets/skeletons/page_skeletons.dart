@@ -28,10 +28,7 @@ class GridSkeletonView extends StatelessWidget {
       slivers: [
         SliverPadding(
           padding: padding,
-          sliver: SliverGrid(
-            gridDelegate: gridDelegate,
-            delegate: _buildDelegate(),
-          ),
+          sliver: SliverGrid(gridDelegate: gridDelegate, delegate: _buildDelegate()),
         ),
       ],
     );
@@ -54,10 +51,7 @@ class ListSkeletonView extends StatelessWidget {
 
   SliverChildBuilderDelegate _buildDelegate() {
     return SliverChildBuilderDelegate(
-      (context, index) => Padding(
-        padding: itemPadding,
-        child: itemSkeleton,
-      ),
+      (context, index) => Padding(padding: itemPadding, child: itemSkeleton),
       childCount: itemCount,
     );
   }
@@ -69,9 +63,7 @@ class ListSkeletonView extends StatelessWidget {
       slivers: [
         SliverPadding(
           padding: padding,
-          sliver: SliverList(
-            delegate: _buildDelegate(),
-          ),
+          sliver: SliverList(delegate: _buildDelegate()),
         ),
       ],
     );

@@ -7,18 +7,20 @@ class ChatSystemMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
-            color: Colors.grey.withValues(alpha: 0.2),
+            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Text(
             content,
-            style: TextStyle(color: Colors.grey[600], fontSize: 12),
+            style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
             textAlign: TextAlign.center,
           ),
         ),

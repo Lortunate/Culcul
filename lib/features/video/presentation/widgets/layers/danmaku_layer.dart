@@ -178,7 +178,12 @@ DanmakuItemType _toDanmakuItemType(int mode) {
 }
 
 Color _toOpaqueDanmakuColor(int colorValue) {
-  return Color(0xFF000000 | colorValue);
+  return Color.fromARGB(
+    255,
+    (colorValue >> 16) & 0xFF,
+    (colorValue >> 8) & 0xFF,
+    colorValue & 0xFF,
+  );
 }
 
 Path? _resolveMaskPath({

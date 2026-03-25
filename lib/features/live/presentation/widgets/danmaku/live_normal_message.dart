@@ -9,6 +9,7 @@ class LiveNormalMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final spans = <InlineSpan>[];
 
     if (item.guardLevel > 0) {
@@ -48,7 +49,7 @@ class LiveNormalMessage extends StatelessWidget {
       TextSpan(
         text: '${item.nickname}：',
         style: TextStyle(
-          color: Colors.white.withValues(alpha: 0.7),
+          color: colorScheme.onPrimary.withValues(alpha: 0.7),
           fontWeight: FontWeight.w500,
           fontSize: 14,
         ),
@@ -58,7 +59,7 @@ class LiveNormalMessage extends StatelessWidget {
     spans.add(
       TextSpan(
         text: item.text,
-        style: const TextStyle(color: Colors.white, fontSize: 14, height: 1.4),
+        style: TextStyle(color: colorScheme.onPrimary, fontSize: 14, height: 1.4),
       ),
     );
 

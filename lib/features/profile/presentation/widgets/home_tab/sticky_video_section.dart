@@ -65,13 +65,13 @@ class StickyVideoSection extends ConsumerWidget {
                                       vertical: 2,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.black.withValues(alpha: 0.6),
+                                      color: colorScheme.scrim.withValues(alpha: 0.6),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
                                     child: Text(
                                       FormatUtils.formatDuration(video.duration),
-                                      style: const TextStyle(
-                                        color: Colors.white,
+                                      style: TextStyle(
+                                        color: colorScheme.onPrimary,
                                         fontSize: 10,
                                         fontWeight: FontWeight.w600,
                                       ),

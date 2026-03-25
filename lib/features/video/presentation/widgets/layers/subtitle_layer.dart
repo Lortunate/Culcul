@@ -13,6 +13,7 @@ class SubtitleLayer extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
     final subtitleState = ref.watch(subtitleControllerProvider(bvid));
     final player = ref.watch(playerControllerProvider.notifier).player;
     final playerPosition = useStream(player.stream.position).data ?? Duration.zero;
@@ -43,13 +44,13 @@ class SubtitleLayer extends HookConsumerWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.3),
+              color: colorScheme.scrim.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
               currentItem.content,
               textAlign: TextAlign.center,
-              style: PlayerTheme.subtitleStyle,
+              style: PlayerTheme.subtitleStyle(colorScheme),
             ),
           ),
         ),

@@ -1,5 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/app/theme/culcul_theme.dart';
+import 'package:culcul/app/theme/app_theme.dart';
 import 'package:culcul/core/utils/toast_utils.dart';
 import 'package:culcul/features/settings/controllers/settings_controller.dart';
 import 'package:culcul/i18n/strings.g.dart';

@@ -73,11 +73,14 @@ class _DismissibleToViewItem extends StatelessWidget {
       direction: DismissDirection.endToStart,
       background: ColoredBox(
         color: errorColor,
-        child: const Align(
+        child: Align(
           alignment: Alignment.centerRight,
           child: Padding(
             padding: EdgeInsets.only(right: 20),
-            child: Icon(Icons.delete_outline, color: Colors.white),
+            child: Icon(
+              Icons.delete_outline,
+              color: Theme.of(context).colorScheme.onError,
+            ),
           ),
         ),
       ),

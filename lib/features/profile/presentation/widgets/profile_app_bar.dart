@@ -204,8 +204,8 @@ class _ExpBar extends StatelessWidget {
               widthFactor: progress,
               child: Container(
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFF3CB2D), Color(0xFFFF9E00)],
+                  gradient: LinearGradient(
+                    colors: [colorScheme.tertiary, colorScheme.primary],
                   ),
                   borderRadius: BorderRadius.circular(3),
                 ),

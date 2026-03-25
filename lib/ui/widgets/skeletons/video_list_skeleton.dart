@@ -59,11 +59,7 @@ class VideoListSkeleton extends StatelessWidget {
             height: height,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildThumbnail(),
-                const SizedBox(width: 12),
-                _buildContent(),
-              ],
+              children: [_buildThumbnail(), const SizedBox(width: 12), _buildContent()],
             ),
           ),
         ),

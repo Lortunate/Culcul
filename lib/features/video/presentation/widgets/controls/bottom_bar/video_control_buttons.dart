@@ -133,7 +133,7 @@ class VideoControlButtons extends ConsumerWidget {
                     .setEnabled(!danmakuEnabled);
               },
               icon: danmakuEnabled ? Icons.notes_rounded : Icons.notes_outlined,
-              color: danmakuEnabled ? colorScheme.primary : Colors.white,
+              color: danmakuEnabled ? colorScheme.primary : colorScheme.onPrimary,
               size: 20,
             ),
             const SizedBox(width: 4),
@@ -145,7 +145,9 @@ class VideoControlButtons extends ConsumerWidget {
                 icon: subtitleState.isEnabled
                     ? Icons.closed_caption_rounded
                     : Icons.closed_caption_off_rounded,
-                color: subtitleState.isEnabled ? colorScheme.primary : Colors.white,
+                color: subtitleState.isEnabled
+                    ? colorScheme.primary
+                    : colorScheme.onPrimary,
                 size: 20,
               ),
               const SizedBox(width: 4),
@@ -173,7 +175,9 @@ class TimeText extends ConsumerWidget {
     return RepaintBoundary(
       child: Text(
         '${position.inSeconds.formatDuration} / ${duration.inSeconds.formatDuration}',
-        style: PlayerTheme.timeStyle.copyWith(fontSize: 10),
+        style: PlayerTheme.timeStyle(
+          Theme.of(context).colorScheme,
+        ).copyWith(fontSize: 10),
       ),
     );
   }
@@ -183,18 +187,20 @@ class ControlButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final IconData icon;
   final double size;
-  final Color color;
+  final Color? color;
 
   const ControlButton({
     super.key,
     this.onPressed,
     required this.icon,
     required this.size,
-    this.color = Colors.white,
+    this.color,
   });
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = color ?? Theme.of(context).colorScheme.onPrimary;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -212,10 +218,14 @@ class ControlButton extends StatelessWidget {
             child: Icon(
               icon,
               key: ValueKey(icon),
-              color: color,
+              color: resolvedColor,
               size: size,
-              shadows: const [
-                BoxShadow(color: Colors.black26, blurRadius: 4, spreadRadius: 1),
+              shadows: [
+                BoxShadow(
+                  color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.26),
+                  blurRadius: 4,
+                  spreadRadius: 1,
+                ),
               ],
             ),
           ),
@@ -242,12 +252,15 @@ class PlayerCapsuleButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: Colors.white24, width: 1),
+            border: Border.all(
+              color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.24),
+              width: 1,
+            ),
           ),
           child: Text(
             text,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onPrimary,
               fontSize: 11,
               fontWeight: FontWeight.w500,
             ),

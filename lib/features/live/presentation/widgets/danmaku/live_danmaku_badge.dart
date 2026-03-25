@@ -1,3 +1,4 @@
+import 'package:culcul/app/theme/app_theme.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 
@@ -8,11 +9,13 @@ class LiveGuardBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final semanticColors = context.semanticColors;
     final color = level == 1
-        ? const Color(0xFFD32F2F) // Material Red 700
+        ? semanticColors.warning
         : level == 2
-        ? const Color(0xFF7B1FA2) // Material Purple 700
-        : const Color(0xFF1976D2); // Material Blue 700
+        ? colorScheme.secondary
+        : semanticColors.info;
 
     final icon = level == 1
         ? Icons.local_police
@@ -50,7 +53,12 @@ class LiveMedalBadge extends StatelessWidget {
     }
 
     final color = colorInt != 0
-        ? Color(0xFF000000 + colorInt)
+        ? Color.fromARGB(
+            255,
+            (colorInt >> 16) & 0xFF,
+            (colorInt >> 8) & 0xFF,
+            colorInt & 0xFF,
+          )
         : Theme.of(context).colorScheme.primary;
 
     return Container(
@@ -77,8 +85,8 @@ class LiveMedalBadge extends StatelessWidget {
             ),
             child: Text(
               level,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary,
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
               ),
@@ -95,16 +103,17 @@ class LiveAdminBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 0.5),
       decoration: BoxDecoration(
-        color: const Color(0xFFFF5252),
+        color: colorScheme.error,
         borderRadius: BorderRadius.circular(3),
       ),
       child: Text(
         t.live.danmaku.admin,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: colorScheme.onError,
           fontSize: 10,
           fontWeight: FontWeight.bold,
           height: 1.1,

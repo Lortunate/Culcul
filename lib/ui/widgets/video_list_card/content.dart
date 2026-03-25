@@ -32,19 +32,10 @@ class _VideoListCardContent extends StatelessWidget {
             height: 1.3,
           ),
         ),
-        if (badge != null) ...[
-          const SizedBox(height: 4),
-          badge!,
-        ],
-        if (middleContent != null) ...[
-          const SizedBox(height: 4),
-          middleContent!,
-        ],
+        if (badge != null) ...[const SizedBox(height: 4), badge!],
+        if (middleContent != null) ...[const SizedBox(height: 4), middleContent!],
         const Spacer(),
-        if (author != null) ...[
-          author!,
-          if (stats.isNotEmpty) const SizedBox(height: 2),
-        ],
+        if (author != null) ...[author!, if (stats.isNotEmpty) const SizedBox(height: 2)],
         if (stats.isNotEmpty) _VideoListCardStatsRow(stats: stats),
       ],
     );

@@ -9,16 +9,18 @@ class ChatImageMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => Scaffold(
-              backgroundColor: Colors.black,
+              backgroundColor: colorScheme.scrim,
               appBar: AppBar(
                 backgroundColor: Colors.transparent,
-                iconTheme: const IconThemeData(color: Colors.white),
+                iconTheme: IconThemeData(color: colorScheme.onPrimary),
               ),
               body: ExtendedImageGesturePageView.builder(
                 itemCount: 1,

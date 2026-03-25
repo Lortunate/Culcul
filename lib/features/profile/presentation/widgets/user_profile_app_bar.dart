@@ -34,10 +34,12 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
         final Color backgroundColor = theme.scaffoldBackgroundColor.withValues(
           alpha: opacity,
         );
-        final Color contentColor = isScrolled ? colorScheme.onSurface : Colors.white;
+        final Color contentColor = isScrolled
+            ? colorScheme.onSurface
+            : colorScheme.onPrimary;
         final Color iconBackgroundColor = isScrolled
             ? Colors.transparent
-            : Colors.black.withValues(alpha: 0.3);
+            : colorScheme.scrim.withValues(alpha: 0.3);
 
         final SystemUiOverlayStyle overlayStyle = isScrolled
             ? (theme.brightness == Brightness.dark

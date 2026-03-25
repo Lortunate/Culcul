@@ -28,9 +28,10 @@ class LiveHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.fromLTRB(4, 4, 12, 4),
-      decoration: const BoxDecoration(color: Colors.black),
+      decoration: BoxDecoration(color: colorScheme.scrim),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,20 +40,21 @@ class LiveHeader extends StatelessWidget {
           _buildAnchorRow(context),
 
           // Row 2: Tags & "More"
-          if (roomInfo != null) _buildTagsRow(),
+          if (roomInfo != null) _buildTagsRow(context),
         ],
       ),
     );
   }
 
   Widget _buildAnchorRow(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back_ios_new_rounded,
             size: 20,
-            color: Colors.white,
+            color: colorScheme.onPrimary,
           ),
           onPressed: onBack ?? () => Navigator.of(context).maybePop(),
         ),
@@ -61,9 +63,9 @@ class LiveHeader extends StatelessWidget {
           const SizedBox(width: 8),
           _buildNameAndOnline(context),
           _buildFollowButton(context),
-          _buildViewerStack(),
+          _buildViewerStack(context),
           const SizedBox(width: 8),
-          _buildMoreButton(),
+          _buildMoreButton(context),
         ],
       ],
     );
@@ -93,10 +95,10 @@ class LiveHeader extends StatelessWidget {
               Flexible(
                 child: Text(
                   anchorInfo?.name ?? '${roomInfo!.uid}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
-                    color: Colors.white,
+                    color: colorScheme.onPrimary,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -112,8 +114,8 @@ class LiveHeader extends StatelessWidget {
                   ),
                   child: Text(
                     '${t.common.up} ${liveAnchorInfo!.exp.masterLevel.level}',
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: colorScheme.onPrimary,
                       fontSize: 9,
                       fontWeight: FontWeight.bold,
                     ),
@@ -128,7 +130,7 @@ class LiveHeader extends StatelessWidget {
               Text(
                 t.live.header.online(count: _formatNumber(roomInfo!.online)),
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: colorScheme.onPrimary.withValues(alpha: 0.7),
                   fontSize: 10,
                 ),
               ),
@@ -137,7 +139,7 @@ class LiveHeader extends StatelessWidget {
                 Text(
                   t.live.header.guard(count: guardList!.info.num),
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: colorScheme.onPrimary.withValues(alpha: 0.7),
                     fontSize: 11,
                   ),
                 ),
@@ -164,7 +166,8 @@ class LiveHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildViewerStack() {
+  Widget _buildViewerStack(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     if (goldRank == null || goldRank!.list.isEmpty) {
       // Fallback or empty if no data yet
       return const SizedBox.shrink();
@@ -192,13 +195,13 @@ class LiveHeader extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
+              color: colorScheme.onPrimary.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Text(
               _formatNumber(goldRank!.onlineNum),
               style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.9),
+                color: colorScheme.onPrimary.withValues(alpha: 0.9),
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
               ),
@@ -209,23 +212,25 @@ class LiveHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildMoreButton() {
+  Widget _buildMoreButton(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return IconButton(
-      icon: const Icon(Icons.more_vert_rounded, color: Colors.white),
+      icon: Icon(Icons.more_vert_rounded, color: colorScheme.onPrimary),
       onPressed: () {},
       padding: EdgeInsets.zero,
       constraints: const BoxConstraints(),
     );
   }
 
-  Widget _buildTagsRow() {
+  Widget _buildTagsRow(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.only(left: 48, top: 8, bottom: 4),
       child: Row(
         children: [
-          _buildTag(t.live.tags.hot),
+          _buildTag(context, t.live.tags.hot),
           const SizedBox(width: 6),
-          _buildTag(t.live.tags.popularity),
+          _buildTag(context, t.live.tags.popularity),
           const Spacer(),
           GestureDetector(
             onTap: () {},
@@ -235,14 +240,14 @@ class LiveHeader extends StatelessWidget {
                 Text(
                   t.live.tags.more_play,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: colorScheme.onPrimary.withValues(alpha: 0.7),
                     fontSize: 11,
                   ),
                 ),
                 Icon(
                   Icons.chevron_right_rounded,
                   size: 14,
-                  color: Colors.white.withValues(alpha: 0.7),
+                  color: colorScheme.onPrimary.withValues(alpha: 0.7),
                 ),
               ],
             ),
@@ -261,17 +266,18 @@ class LiveHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildTag(String text) {
+  Widget _buildTag(BuildContext context, String text) {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.15),
+        color: colorScheme.onPrimary.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
         text,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: colorScheme.onPrimary,
           fontSize: 10,
           fontWeight: FontWeight.w500,
         ),

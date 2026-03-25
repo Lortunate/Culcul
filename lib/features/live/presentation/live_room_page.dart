@@ -15,12 +15,13 @@ class LiveRoomPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
     final provider = liveRoomControllerProvider(roomId);
     final state = ref.watch(provider);
     final notifier = ref.read(provider.notifier);
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: colorScheme.scrim,
       body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.light,
         child: SafeArea(
@@ -69,10 +70,11 @@ class _LivePlayerSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     return AspectRatio(
       aspectRatio: 16 / 9,
       child: ColoredBox(
-        color: Colors.black,
+        color: colorScheme.scrim,
         child: LivePlayerView(roomId: roomId),
       ),
     );

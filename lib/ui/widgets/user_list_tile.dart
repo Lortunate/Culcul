@@ -48,10 +48,7 @@ class UserListTile extends StatelessWidget {
     return Row(
       children: [
         Flexible(child: _buildTitle(context)),
-        if (titleBadge != null) ...[
-          const SizedBox(width: AppDimens.p4),
-          titleBadge!,
-        ],
+        if (titleBadge != null) ...[const SizedBox(width: AppDimens.p4), titleBadge!],
       ],
     );
   }

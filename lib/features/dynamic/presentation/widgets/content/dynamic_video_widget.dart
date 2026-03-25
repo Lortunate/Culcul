@@ -46,12 +46,12 @@ class DynamicVideoWidget extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                       decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.6),
+                        color: colorScheme.scrim.withValues(alpha: 0.6),
                         borderRadius: BorderRadius.circular(2),
                       ),
                       child: Text(
                         video.duration,
-                        style: const TextStyle(color: Colors.white, fontSize: 10),
+                        style: TextStyle(color: colorScheme.onPrimary, fontSize: 10),
                       ),
                     ),
                   ),

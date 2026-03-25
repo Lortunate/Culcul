@@ -18,12 +18,14 @@ class LiveBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.black, // Force black background
+        color: colorScheme.scrim,
         border: Border(
-          top: BorderSide(color: Colors.white.withValues(alpha: 0.05), width: 1),
+          top: BorderSide(color: colorScheme.onPrimary.withValues(alpha: 0.05), width: 1),
         ),
       ),
       child: SafeArea(
@@ -37,7 +39,7 @@ class LiveBottomBar extends StatelessWidget {
                   height: 36,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: colorScheme.onPrimary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(18),
                   ),
                   child: Row(
@@ -47,7 +49,7 @@ class LiveBottomBar extends StatelessWidget {
                         child: Text(
                           '弹幕支持下~',
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.4),
+                            color: colorScheme.onPrimary.withValues(alpha: 0.4),
                             fontSize: 14,
                           ),
                           maxLines: 1,
@@ -68,13 +70,13 @@ class LiveBottomBar extends StatelessWidget {
             _buildIconButton(
               context,
               icon: Icons.local_florist_rounded, // Rose/Flower
-              color: Theme.of(context).colorScheme.primary,
+              color: colorScheme.primary,
               onPressed: () {},
             ),
             _buildIconButton(
               context,
               icon: Icons.card_giftcard_rounded, // Gift Box
-              color: Theme.of(context).colorScheme.primary,
+              color: colorScheme.primary,
               onPressed: onGift,
             ),
           ],
@@ -92,7 +94,7 @@ class LiveBottomBar extends StatelessWidget {
     return IconButton(
       icon: Icon(icon),
       onPressed: onPressed ?? () {},
-      color: color ?? Colors.white,
+      color: color ?? Theme.of(context).colorScheme.onPrimary,
       iconSize: 26, // Slightly larger
       constraints: const BoxConstraints(minWidth: 38, minHeight: 38),
       padding: EdgeInsets.zero,

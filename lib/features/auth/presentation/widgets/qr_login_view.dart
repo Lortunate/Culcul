@@ -12,6 +12,7 @@ class QrLoginView extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final t = Translations.of(context);
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final qrState = useQrLogin(ref);
 
     // Entry animation
@@ -63,7 +64,7 @@ class QrLoginView extends HookConsumerWidget {
                       if (qrState.qrUrl != null)
                         Container(
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: colorScheme.onPrimary,
                             borderRadius: BorderRadius.circular(16),
                           ),
                           padding: const EdgeInsets.all(12),
@@ -71,13 +72,13 @@ class QrLoginView extends HookConsumerWidget {
                             data: qrState.qrUrl!,
                             version: QrVersions.auto,
                             size: 200,
-                            eyeStyle: const QrEyeStyle(
+                            eyeStyle: QrEyeStyle(
                               eyeShape: QrEyeShape.square,
-                              color: Colors.black,
+                              color: colorScheme.scrim,
                             ),
-                            dataModuleStyle: const QrDataModuleStyle(
+                            dataModuleStyle: QrDataModuleStyle(
                               dataModuleShape: QrDataModuleShape.square,
-                              color: Colors.black,
+                              color: colorScheme.scrim,
                             ),
                             padding: EdgeInsets.zero,
                           ),

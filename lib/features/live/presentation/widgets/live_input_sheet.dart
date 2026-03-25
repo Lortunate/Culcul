@@ -12,6 +12,7 @@ class LiveInputSheet extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = useTextEditingController();
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Padding(
       padding: EdgeInsets.only(
@@ -29,18 +30,18 @@ class LiveInputSheet extends HookConsumerWidget {
                 child: Container(
                   height: 40,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: colorScheme.onPrimary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: TextField(
                     controller: controller,
                     autofocus: true,
-                    style: const TextStyle(color: Colors.white),
-                    cursorColor: theme.colorScheme.primary,
+                    style: TextStyle(color: colorScheme.onPrimary),
+                    cursorColor: colorScheme.primary,
                     decoration: InputDecoration(
                       hintText: '发个弹幕呗~',
                       hintStyle: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.4),
+                        color: colorScheme.onPrimary.withValues(alpha: 0.4),
                         fontSize: 14,
                       ),
                       border: InputBorder.none,
@@ -66,11 +67,11 @@ class LiveInputSheet extends HookConsumerWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primary,
+                  color: colorScheme.primary,
                   shape: BoxShape.circle,
                 ),
                 child: IconButton(
-                  icon: const Icon(Icons.send_rounded, size: 20, color: Colors.white),
+                  icon: Icon(Icons.send_rounded, size: 20, color: colorScheme.onPrimary),
                   onPressed: () {
                     if (controller.text.trim().isNotEmpty) {
                       ref
