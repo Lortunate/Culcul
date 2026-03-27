@@ -63,7 +63,7 @@ class SmsLoginView extends HookConsumerWidget {
             margin: const EdgeInsets.all(16),
             backgroundColor: theme.colorScheme.inverseSurface,
             action: SnackBarAction(
-              label: 'OK',
+              label: t.auth.ok,
               textColor: theme.colorScheme.onInverseSurface,
               onPressed: () {},
             ),

@@ -9,12 +9,12 @@ class ErrorHandler {
     if (error is NetworkException) {
       return t.error.network;
     } else if (error is AuthException) {
-      return 'Authentication failed';
+      return t.error.auth_failed;
     } else if (error is ServerException) {
       if (error.code != null) {
         return t.error.bad_response(code: error.code!);
       }
-      return 'Server error';
+      return t.error.server_error;
     } else if (error is CancelException) {
       return t.error.cancel;
     } else if (error is AppException) {

@@ -12,7 +12,8 @@
       "hot": "熱門",
       "anime": "動畫",
       "cinema": "影視",
-      "new_journey": "新征程"
+      "new_journey": "新征程",
+      "weekly_must_watch": "每週必看"
     },
     "search_hint": "搜尋影片...",
     "video_more": {
@@ -157,7 +158,10 @@
     "subtitle": "第三方輕量化客戶端",
     "select_country": "選擇地區",
     "search_country_hint": "搜索國家或地區",
-    "no_search_result": "未找到相關結果"
+    "no_search_result": "未找到相關結果",
+    "welcome_back": "歡迎回來",
+    "please_enter_username_password": "請輸入帳號和密碼",
+    "ok": "確定"
   },
   "profile": {
     "login": "登入",
@@ -232,7 +236,17 @@
     "play": "播放",
     "count": "共 $count 個內容",
     "search_hint": "搜尋收藏內容",
-    "folder_item_count": "$count個內容"
+    "folder_item_count": "$count個內容",
+    "new_folder": "新建收藏夾",
+    "edit_folder": "編輯收藏夾",
+    "delete_folder": "刪除收藏夾",
+    "delete_folder_confirm": "確定要刪除這個收藏夾嗎？",
+    "delete_with_count": "刪除 ($count)",
+    "edit_info": "編輯信息",
+    "manage_resources": "管理內容",
+    "only_visible_to_me": "僅自己可見",
+    "folder_title": "標題",
+    "folder_intro": "簡介"
   },
   "search": {
     "placeholder": "大家都在搜：culcul",
@@ -392,7 +406,12 @@
     "receive_timeout": "回應逾時",
     "bad_response": "伺服器回應錯誤: $code",
     "cancel": "請求取消",
-    "network": "網路連線異常"
+    "network": "網路連線異常",
+    "auth_failed": "登入失效，請重新登入",
+    "server_error": "伺服器請求異常",
+    "details": "錯誤詳情",
+    "view_details": "查看詳情",
+    "stack_trace": "堆疊資訊"
   },
   "format": {
     "hundred_million": "億",

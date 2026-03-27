@@ -1,5 +1,6 @@
 import 'package:culcul/features/home/providers/weekly_provider.dart';
 import 'package:culcul/features/home/presentation/widgets/popular_video_card.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -9,9 +10,10 @@ class WeeklyScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final weeklyListAsync = ref.watch(weeklyListProvider);
+    final t = Translations.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Weekly Must-Watch')),
+      appBar: AppBar(title: Text(t.home.tabs.weekly_must_watch)),
       body: weeklyListAsync.when(
         data: (weeklyModel) {
           return ListView.builder(
@@ -23,7 +25,7 @@ class WeeklyScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stack) => Center(child: Text('Error: $error')),
+        error: (error, stack) => Center(child: Text('${t.common.error}: $error')),
       ),
     );
   }

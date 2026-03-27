@@ -31,16 +31,16 @@ class AppErrorWidget extends StatelessWidget {
     return showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Error Details'),
+        title: Text(t.error.details),
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Error: $error', style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text('${t.common.error}: $error', style: const TextStyle(fontWeight: FontWeight.bold)),
               if (stackTrace != null) ...[
                 const SizedBox(height: 8),
-                const Text('Stack Trace:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('${t.error.stack_trace}:', style: const TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 AppSelectableText(
                   stackTrace.toString(),
@@ -112,9 +112,10 @@ class _ErrorDetailsButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
     return TextButton(
       onPressed: onPressed,
-      child: const Text('View Details', style: TextStyle(fontSize: 12)),
+      child: Text(t.error.view_details, style: const TextStyle(fontSize: 12)),
     );
   }
 }

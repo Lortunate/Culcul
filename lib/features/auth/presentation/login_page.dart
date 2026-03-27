@@ -189,7 +189,7 @@ class _AuthHeader extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Welcome back to Cilixili',
+              Translations.of(context).auth.welcome_back,
               style: theme.textTheme.bodyLarge?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
                 fontSize: 16,

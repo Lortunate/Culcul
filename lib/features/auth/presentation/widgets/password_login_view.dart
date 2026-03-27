@@ -57,7 +57,7 @@ class PasswordLoginView extends HookConsumerWidget {
             margin: const EdgeInsets.all(16),
             backgroundColor: theme.colorScheme.inverseSurface,
             action: SnackBarAction(
-              label: 'OK',
+              label: t.auth.ok,
               textColor: theme.colorScheme.onInverseSurface,
               onPressed: () {},
             ),
@@ -88,7 +88,7 @@ class PasswordLoginView extends HookConsumerWidget {
       final password = passwordController.text;
 
       if (username.isEmpty || password.isEmpty) {
-        showAuthSnackBar('Please enter username and password');
+        showAuthSnackBar(t.auth.please_enter_username_password);
         return;
       }
       geetest.start();

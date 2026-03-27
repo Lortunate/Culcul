@@ -63,11 +63,11 @@ class FavoriteDetailPage extends HookConsumerWidget {
                         if (context.mounted) {
                           ScaffoldMessenger.of(
                             context,
-                          ).showSnackBar(SnackBar(content: Text('Failed to delete: $e')));
+                          ).showSnackBar(SnackBar(content: Text('${t.common.error}: $e')));
                         }
                       }
                     },
-              child: Text('Delete (${selectedItems.value.length})'),
+              child: Text(t.favorites.delete_with_count(count: selectedItems.value.length)),
             ),
             IconButton(
               icon: const Icon(Icons.close),
@@ -108,7 +108,7 @@ class FavoriteDetailPage extends HookConsumerWidget {
                       if (context.mounted) {
                         ScaffoldMessenger.of(
                           context,
-                        ).showSnackBar(SnackBar(content: Text('Failed to edit: $e')));
+                        ).showSnackBar(SnackBar(content: Text('${t.common.error}: $e')));
                       }
                     }
                   }
@@ -118,16 +118,16 @@ class FavoriteDetailPage extends HookConsumerWidget {
                   final confirm = await showDialog<bool>(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: const Text('Delete Folder'),
-                      content: const Text('Are you sure you want to delete this folder?'),
+                      title: Text(t.favorites.delete_folder),
+                      content: Text(t.favorites.delete_folder_confirm),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context, false),
-                          child: const Text('Cancel'),
+                          child: Text(t.common.cancel),
                         ),
                         TextButton(
                           onPressed: () => Navigator.pop(context, true),
-                          child: const Text('Delete'),
+                          child: Text(t.common.delete),
                         ),
                       ],
                     ),
@@ -145,19 +145,19 @@ class FavoriteDetailPage extends HookConsumerWidget {
                       if (context.mounted) {
                         ScaffoldMessenger.of(
                           context,
-                        ).showSnackBar(SnackBar(content: Text('Failed to delete: $e')));
+                        ).showSnackBar(SnackBar(content: Text('${t.common.error}: $e')));
                       }
                     }
                   }
                 }
               },
               itemBuilder: (context) => [
-                const PopupMenuItem(value: 'edit', child: Text('Edit Info')),
-                const PopupMenuItem(value: 'manage', child: Text('Manage Resources')),
+                PopupMenuItem(value: 'edit', child: Text(t.favorites.edit_info)),
+                PopupMenuItem(value: 'manage', child: Text(t.favorites.manage_resources)),
                 PopupMenuItem(
                   value: 'delete',
                   child: Text(
-                    'Delete Folder',
+                    t.favorites.delete_folder,
                     style: TextStyle(color: colorScheme.error),
                   ),
                 ),
@@ -187,7 +187,7 @@ class FavoriteDetailPage extends HookConsumerWidget {
                   SliverFillRemaining(
                     child: Center(
                       child: AppErrorWidget(
-                        message: 'No content',
+                        message: t.common.no_content,
                         onRetry: () => ref.refresh(provider.future),
                       ),
                     ),
@@ -292,7 +292,7 @@ class _FavoriteFolderHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  '${info.mediaCount} resources',
+                  t.favorites.folder_item_count(count: info.mediaCount),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                   ),

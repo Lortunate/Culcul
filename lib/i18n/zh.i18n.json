@@ -12,7 +12,8 @@
       "hot": "热门",
       "anime": "番剧",
       "cinema": "影视",
-      "new_journey": "新征程"
+      "new_journey": "新征程",
+      "weekly_must_watch": "每周必看"
     },
     "search_hint": "搜索视频...",
     "video_more": {
@@ -157,7 +158,10 @@
     "subtitle": "第三方轻量化客户端",
     "select_country": "选择地区",
     "search_country_hint": "搜索国家或地区",
-    "no_search_result": "未找到相关结果"
+    "no_search_result": "未找到相关结果",
+    "welcome_back": "欢迎回来",
+    "please_enter_username_password": "请输入账号和密码",
+    "ok": "确定"
   },
   "profile": {
     "login": "登录",
@@ -232,7 +236,17 @@
     "play": "播放",
     "count": "共 $count 个内容",
     "search_hint": "搜索收藏内容",
-    "folder_item_count": "$count个内容"
+    "folder_item_count": "$count个内容",
+    "new_folder": "新建收藏夹",
+    "edit_folder": "编辑收藏夹",
+    "delete_folder": "删除收藏夹",
+    "delete_folder_confirm": "确定要删除这个收藏夹吗？",
+    "delete_with_count": "删除 ($count)",
+    "edit_info": "编辑信息",
+    "manage_resources": "管理内容",
+    "only_visible_to_me": "仅自己可见",
+    "folder_title": "标题",
+    "folder_intro": "简介"
   },
   "search": {
     "placeholder": "大家都在搜：culcul",
@@ -392,7 +406,12 @@
     "receive_timeout": "响应超时",
     "bad_response": "服务器响应错误: $code",
     "cancel": "请求取消",
-    "network": "网络连接异常"
+    "network": "网络连接异常",
+    "auth_failed": "登录失效，请重新登录",
+    "server_error": "服务器请求异常",
+    "details": "错误详情",
+    "view_details": "查看详情",
+    "stack_trace": "堆栈信息"
   },
   "format": {
     "hundred_million": "亿",
