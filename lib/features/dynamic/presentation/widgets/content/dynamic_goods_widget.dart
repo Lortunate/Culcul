@@ -1,5 +1,6 @@
 import 'package:culcul/data/models/dynamic/dynamic_view_models.dart';
 import 'package:culcul/features/dynamic/presentation/utils/dynamic_navigation.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_content_surface.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 
@@ -17,17 +18,15 @@ class DynamicGoodsWidget extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(8),
-      ),
+    return DynamicContentSurface(
+      padding: const EdgeInsets.only(top: 8),
+      borderRadius: BorderRadius.circular(8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (additional.headText != null)
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
               child: Text(
                 additional.headText!,
                 style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
@@ -36,11 +35,15 @@ class DynamicGoodsWidget extends StatelessWidget {
           ...additional.goodsItems!.map(
             (item) => ListTile(
               onTap: () => DynamicNavigation.open(context, url: item.jumpUrl),
-              leading: AppNetworkImage(
-                url: item.cover,
-                width: 50,
-                height: 50,
-                fit: BoxFit.cover,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              leading: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: AppNetworkImage(
+                  url: item.cover,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                ),
               ),
               title: Text(
                 item.name,
@@ -55,6 +58,10 @@ class DynamicGoodsWidget extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              trailing: Icon(
+                Icons.chevron_right_rounded,
+                color: colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
         ],
@@ -62,4 +69,3 @@ class DynamicGoodsWidget extends StatelessWidget {
     );
   }
 }
-

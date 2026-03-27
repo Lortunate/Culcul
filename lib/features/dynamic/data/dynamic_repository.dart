@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:cookie_jar/cookie_jar.dart';
@@ -5,15 +6,18 @@ import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/result.dart';
 import 'package:culcul/data/api/dynamic_api.dart';
+import 'package:culcul/features/dynamic/data/article_detail_data.dart';
 import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
+import 'package:dio/dio.dart';
 
 class DynamicRepository extends BaseRepository {
   final DynamicApi _api;
+  final Dio _dio;
   final CookieJar _cookieJar;
 
-  DynamicRepository(this._api, this._cookieJar);
+  DynamicRepository(this._api, this._dio, this._cookieJar);
 
   Future<String?> _getCsrfToken() async {
     final cookies = await _cookieJar.loadForRequest(Uri.parse('https://bilibili.com'));
@@ -35,14 +39,12 @@ class DynamicRepository extends BaseRepository {
       return const Failure(UnknownException('Unsupported dynamic type for comments'));
     }
 
-    return safeApiCall(
-      () => _api.getComments(
-        oid: params['oid'] as int,
-        type: params['type'] as int,
-        sort: sort,
-        pn: page,
-        ps: 20,
-      ),
+    return getCommentList(
+      oid: params['oid'] as String,
+      type: params['type'] as int,
+      sort: sort,
+      page: page,
+      referer: _getCommentReferer(post),
     );
   }
 
@@ -57,14 +59,13 @@ class DynamicRepository extends BaseRepository {
       return const Failure(UnknownException('Unsupported dynamic type for comments'));
     }
 
-    return safeApiCall(
-      () => _api.addReply(
-        oid: params['oid'] as int,
-        type: params['type'] as int,
-        root: root,
-        parent: parent,
-        message: message,
-      ),
+    return addCommentReply(
+      oid: params['oid'] as String,
+      type: params['type'] as int,
+      root: root,
+      parent: parent,
+      message: message,
+      referer: _getCommentReferer(post),
     );
   }
 
@@ -78,25 +79,101 @@ class DynamicRepository extends BaseRepository {
       return const Failure(UnknownException('Unsupported dynamic type for comments'));
     }
 
+    return likeCommentByTarget(
+      oid: params['oid'] as String,
+      type: params['type'] as int,
+      rpid: rpid,
+      isLiked: isLiked,
+      referer: _getCommentReferer(post),
+    );
+  }
+
+  Future<Result<CommentResponse, AppException>> getCommentList({
+    required String oid,
+    required int type,
+    int sort = 1,
+    int page = 1,
+    String? referer,
+  }) {
+    return safeApiCall(
+      () => _api.getComments(
+        oid: oid,
+        type: type,
+        sort: sort,
+        pn: page,
+        ps: 20,
+        referer: referer,
+        origin: referer == null ? null : 'https://www.bilibili.com',
+      ),
+    );
+  }
+
+  Future<Result<CommentResponse, AppException>> getArticleCommentList({
+    required String oid,
+    int mode = 3,
+    int? next,
+    String? referer,
+  }) {
+    return safeApiCall(
+      () => _api.getArticleComments(
+        oid: oid,
+        mode: mode,
+        next: next,
+        referer: referer,
+        origin: referer == null ? null : 'https://www.bilibili.com',
+      ),
+    );
+  }
+
+  Future<Result<CommentItem, AppException>> addCommentReply({
+    required String oid,
+    required int type,
+    required int root,
+    required int parent,
+    required String message,
+    String? referer,
+  }) {
+    return safeApiCall(
+      () => _api.addReply(
+        oid: oid,
+        type: type,
+        root: root,
+        parent: parent,
+        message: message,
+        referer: referer,
+        origin: referer == null ? null : 'https://www.bilibili.com',
+      ),
+    );
+  }
+
+  Future<Result<void, AppException>> likeCommentByTarget({
+    required String oid,
+    required int type,
+    required int rpid,
+    required bool isLiked,
+    String? referer,
+  }) {
     return safeVoidApiCall(
       () => _api.actionComment(
-        oid: params['oid'] as int,
-        type: params['type'] as int,
+        oid: oid,
+        type: type,
         rpid: rpid,
         action: isLiked ? 1 : 0,
+        referer: referer,
+        origin: referer == null ? null : 'https://www.bilibili.com',
       ),
     );
   }
 
   Map<String, dynamic>? _getCommentParams(DynamicItem post) {
     if (post.commentId != null && post.commentType != null) {
-      return {'oid': int.tryParse(post.commentId!) ?? 0, 'type': post.commentType!};
+      return {'oid': post.commentId!, 'type': post.commentType!};
     }
 
     if (post.type == 'DYNAMIC_TYPE_AV') {
       if (post.videoContent != null) {
         // Use AID as oid, type 1
-        return {'oid': int.tryParse(post.videoContent!.aid ?? '') ?? 0, 'type': 1};
+        return {'oid': post.videoContent!.aid ?? '0', 'type': 1};
       }
     } else if (post.type == 'DYNAMIC_TYPE_DRAW' ||
         post.type == 'DYNAMIC_TYPE_WORD' ||
@@ -104,13 +181,70 @@ class DynamicRepository extends BaseRepository {
       // Use dynamic ID (parsed) as oid, type 11 (draw) or 17 (word/forward)
       int type = 17;
       if (post.type == 'DYNAMIC_TYPE_DRAW') type = 11;
-      return {'oid': int.tryParse(post.id) ?? 0, 'type': type};
+      return {'oid': post.id, 'type': type};
     } else if (post.type == 'DYNAMIC_TYPE_ARTICLE') {
-      // Article needs cvid (article ID).
+      final articleOid = _extractArticleOid(post);
+      if (articleOid != null) {
+        return {'oid': articleOid, 'type': 12};
+      }
     }
 
     // Fallback: try parsing ID and assume type 17 (most common for modern dynamics)
-    return {'oid': int.tryParse(post.id) ?? 0, 'type': 17};
+    return {'oid': post.id, 'type': 17};
+  }
+
+  String? _getCommentReferer(DynamicItem post) {
+    if (post.type == 'DYNAMIC_TYPE_ARTICLE') {
+      final articleUrl = _extractArticleUrl(post);
+      if (articleUrl != null) return articleUrl;
+    }
+
+    final linkCardUrl = post.linkCard?.url;
+    if (linkCardUrl != null && linkCardUrl.isNotEmpty) {
+      return linkCardUrl;
+    }
+
+    return 'https://www.bilibili.com/';
+  }
+
+  String? _extractArticleUrl(DynamicItem post) {
+    final candidate =
+        post.linkCard?.url ??
+        post.modules.moduleDynamic.major?.article?.jumpUrl ??
+        post.modules.moduleDynamic.major?.opus?.jumpUrl ??
+        '';
+    if (candidate.isEmpty) return null;
+
+    final uri = Uri.tryParse(candidate);
+    if (uri == null) return candidate;
+    final articleId = _extractArticleId(uri);
+    if (articleId == null) return candidate;
+    return 'https://www.bilibili.com/read/cv$articleId/';
+  }
+
+  String? _extractArticleOid(DynamicItem post) {
+    final candidate =
+        post.linkCard?.url ??
+        post.modules.moduleDynamic.major?.article?.jumpUrl ??
+        post.modules.moduleDynamic.major?.opus?.jumpUrl ??
+        '';
+    final uri = candidate.isNotEmpty ? Uri.tryParse(candidate) : null;
+
+    if (uri != null) {
+      final articleId = _extractArticleId(uri);
+      if (articleId != null) {
+        return articleId.toString();
+      }
+    }
+
+    if (post.id.isNotEmpty) {
+      final articleId = int.tryParse(post.id);
+      if (articleId != null) {
+        return articleId.toString();
+      }
+    }
+
+    return null;
   }
 
   Future<Result<DynamicData, AppException>> getFeed({
@@ -141,6 +275,95 @@ class DynamicRepository extends BaseRepository {
       Success(value: final data) => Success(data.item),
       Failure(exception: final e) => Failure(e),
     };
+  }
+
+  Future<ArticleDetailData> getArticleDetail(String url) async {
+    final uri = Uri.parse(url);
+    if (uri.path.contains('/opus/')) {
+      return _getOpusDetail(uri);
+    }
+
+    if (uri.path.contains('/read/cv')) {
+      return _getReadArticleDetail(uri);
+    }
+
+    throw const UnknownException('Unsupported article url');
+  }
+
+  Future<ArticleDetailData> _getReadArticleDetail(Uri uri) async {
+    final articleId = _extractArticleId(uri);
+    if (articleId == null) {
+      throw const UnknownException('Invalid article url');
+    }
+
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/x/article/view',
+      queryParameters: {'id': articleId},
+      options: Options(
+        headers: {'Referer': uri.toString(), 'Origin': 'https://www.bilibili.com'},
+      ),
+    );
+
+    final payload = response.data ?? const <String, dynamic>{};
+    if (payload['code'] != 0) {
+      throw ServerException(payload['message']?.toString() ?? 'Failed to load article');
+    }
+
+    final data = payload['data'];
+    if (data is! Map<String, dynamic>) {
+      throw const UnknownException('Invalid article payload');
+    }
+
+    return ArticleDetailData.fromArticleView(sourceUri: uri, data: data);
+  }
+
+  Future<ArticleDetailData> _getOpusDetail(Uri uri) async {
+    final response = await _dio.get<String>(
+      uri.toString(),
+      options: Options(
+        responseType: ResponseType.plain,
+        headers: {
+          'Referer': uri.toString(),
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        },
+      ),
+    );
+
+    final html = response.data ?? '';
+    final initialState = _extractInitialState(html);
+    if (initialState == null) {
+      throw const UnknownException('Failed to parse article page');
+    }
+
+    return ArticleDetailData.fromOpusState(sourceUri: uri, state: initialState);
+  }
+
+  Map<String, dynamic>? _extractInitialState(String html) {
+    final match = RegExp(
+      r'window\.__INITIAL_STATE__\s*=\s*(\{.*?\})\s*;\s*\(function',
+      dotAll: true,
+    ).firstMatch(html);
+    if (match == null) return null;
+
+    try {
+      final data = match.group(1);
+      if (data == null || data.isEmpty) return null;
+      final decoded = jsonDecode(data);
+      if (decoded is Map<String, dynamic>) return decoded;
+      if (decoded is Map) return decoded.cast<String, dynamic>();
+    } catch (_) {
+      return null;
+    }
+    return null;
+  }
+
+  int? _extractArticleId(Uri uri) {
+    final path = uri.path;
+    final match = RegExp(r'/cv(\d+)').firstMatch(path);
+    if (match != null) return int.tryParse(match.group(1)!);
+    final opusMatch = RegExp(r'/opus/(\d+)').firstMatch(path);
+    if (opusMatch != null) return int.tryParse(opusMatch.group(1)!);
+    return int.tryParse(uri.queryParameters['id'] ?? '');
   }
 
   Future<Result<void, AppException>> likeDynamic(String id, bool like) async {
@@ -204,4 +427,3 @@ class DynamicRepository extends BaseRepository {
     });
   }
 }
-

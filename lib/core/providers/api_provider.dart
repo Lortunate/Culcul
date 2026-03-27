@@ -107,7 +107,11 @@ DynamicApi dynamicApi(Ref ref) {
 
 @riverpod
 DynamicRepository dynamicRepository(Ref ref) {
-  return DynamicRepository(ref.watch(dynamicApiProvider), ref.watch(cookieJarProvider));
+  return DynamicRepository(
+    ref.watch(dynamicApiProvider),
+    ref.watch(dioClientProvider),
+    ref.watch(cookieJarProvider),
+  );
 }
 
 @riverpod
@@ -174,4 +178,3 @@ DanmakuRepository danmakuRepository(Ref ref) {
 LiveApi liveApi(Ref ref) {
   return LiveApi(ref.watch(dioClientProvider));
 }
-

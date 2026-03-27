@@ -36,7 +36,10 @@ class DynamicCommentsSliver extends ConsumerWidget {
               children: [
                 Text(t.common.load_failed),
                 const SizedBox(height: 8),
-                ElevatedButton(onPressed: controller.refresh, child: Text(t.common.retry)),
+                ElevatedButton(
+                  onPressed: controller.refresh,
+                  child: Text(t.common.retry),
+                ),
               ],
             ),
           ),
@@ -91,7 +94,10 @@ class DynamicCommentsSliver extends ConsumerWidget {
             children: [
               Row(
                 children: [
-                  Text(t.video.reply_to(name: comment.member.uname), style: theme.textTheme.titleMedium),
+                  Text(
+                    t.video.reply_to(name: comment.member.uname),
+                    style: theme.textTheme.titleMedium,
+                  ),
                   const Spacer(),
                   IconButton(
                     icon: const Icon(Icons.close),
@@ -133,4 +139,3 @@ class DynamicCommentsSliver extends ConsumerWidget {
     );
   }
 }
-

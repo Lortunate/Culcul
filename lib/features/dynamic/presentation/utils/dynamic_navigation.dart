@@ -1,4 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/features/dynamic/presentation/article_detail_page.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -7,12 +8,14 @@ class DynamicNavigation {
   static Future<void> open(
     BuildContext context, {
     String? url,
+    String? title,
     String? fallbackBvid,
     String? fallbackAid,
   }) async {
     if (_openInternal(
       context,
       url: url,
+      title: title,
       fallbackBvid: fallbackBvid,
       fallbackAid: fallbackAid,
     )) {
@@ -33,6 +36,7 @@ class DynamicNavigation {
   static bool _openInternal(
     BuildContext context, {
     String? url,
+    String? title,
     String? fallbackBvid,
     String? fallbackAid,
   }) {
@@ -50,6 +54,18 @@ class DynamicNavigation {
       return true;
     }
 
+    final uri = _normalizeUri(url);
+    if (uri == null) return false;
+
+    if (_isArticleUri(uri)) {
+      Navigator.of(context, rootNavigator: true).push(
+        MaterialPageRoute(
+          builder: (context) => ArticleDetailPage(url: uri.toString(), title: title),
+        ),
+      );
+      return true;
+    }
+
     final aidSource = fallbackAid != null && fallbackAid.isNotEmpty
         ? 'av$fallbackAid'
         : source;
@@ -58,9 +74,6 @@ class DynamicNavigation {
       VideoDetailRoute(bvid: 'av${aidMatch.group(1)!}').push(context);
       return true;
     }
-
-    final uri = _normalizeUri(url);
-    if (uri == null) return false;
 
     final host = uri.host.toLowerCase();
     final segments = uri.pathSegments.where((e) => e.isNotEmpty).toList();
@@ -96,6 +109,14 @@ class DynamicNavigation {
     return false;
   }
 
+  static bool _isArticleUri(Uri uri) {
+    final host = uri.host.toLowerCase();
+    if (!host.contains('bilibili.com')) return false;
+
+    final path = uri.path.toLowerCase();
+    return RegExp(r'^/read/cv\d+').hasMatch(path) || RegExp(r'^/opus/\d+').hasMatch(path);
+  }
+
   static Uri? _normalizeUri(String? raw) {
     if (raw == null || raw.trim().isEmpty) return null;
     var normalized = raw.trim();
@@ -109,4 +130,3 @@ class DynamicNavigation {
     return Uri.tryParse(normalized);
   }
 }
-

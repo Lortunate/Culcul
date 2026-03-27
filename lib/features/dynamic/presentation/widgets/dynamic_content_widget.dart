@@ -16,11 +16,72 @@ import 'package:flutter/material.dart';
 
 class DynamicContentWidget extends StatelessWidget {
   final DynamicItem post;
+  final bool selectableText;
 
-  const DynamicContentWidget({super.key, required this.post});
+  const DynamicContentWidget({
+    super.key,
+    required this.post,
+    this.selectableText = false,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final contentText = post.contentText;
+    final visibility = _resolveVisibility(post);
+    final additionalWidget = post.additional == null
+        ? null
+        : _buildAdditional(post.additional!);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (visibility.showText && contentText != null) ...[
+          BilibiliEmojiText(
+            text: contentText,
+            emojiMap: const {},
+            style: theme.textTheme.bodyMedium?.copyWith(height: 1.5, fontSize: 15),
+            selectable: selectableText,
+          ),
+          const SizedBox(height: 8),
+        ],
+        if (visibility.showImages) DynamicImagesWidget(images: post.images!),
+        if (post.videoContent != null) const SizedBox(height: 8),
+        if (post.videoContent != null) DynamicVideoWidget(video: post.videoContent!),
+        if (visibility.showLinkCard) const SizedBox(height: 8),
+        if (visibility.showLinkCard) DynamicLinkCardWidget(card: post.linkCard!),
+        if (visibility.showAdditional && additionalWidget != null) ...[
+          const SizedBox(height: 8),
+          additionalWidget,
+        ],
+        if (post.orig != null) ...[
+          const SizedBox(height: 8),
+          DynamicForwardWidget(post: post.orig!),
+        ],
+        if (post.topicName != null) ...[
+          const SizedBox(height: 8),
+          _TopicChip(
+            topicName: post.topicName!,
+            onTap: post.topicId == null
+                ? null
+                : () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => TopicDetailPage(
+                          topicId: post.topicId!,
+                          topicName: post.topicName!,
+                        ),
+                      ),
+                    );
+                  },
+          ),
+        ],
+      ],
+    );
+  }
+
+  ({bool showText, bool showImages, bool showLinkCard, bool showAdditional})
+  _resolveVisibility(DynamicItem post) {
     final contentText = post.contentText;
     final hasText = contentText != null && contentText.isNotEmpty;
     final hasImages = post.images != null && post.images!.isNotEmpty;
@@ -38,103 +99,62 @@ class DynamicContentWidget extends StatelessWidget {
         post.additional != null &&
         !(post.additional!.type == 'ADDITIONAL_TYPE_UGC' && (hasVideo || showLinkCard));
 
-    final additionalWidget = post.additional != null
-        ? _buildAdditional(context, post.additional!)
-        : null;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (showText) ...[
-          BilibiliEmojiText(
-            text: contentText,
-            emojiMap: const {},
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(height: 1.5, fontSize: 15),
-            selectable: true,
-          ),
-          const SizedBox(height: 8),
-        ],
-        if (showImages) DynamicImagesWidget(images: post.images!),
-        if (post.videoContent != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: DynamicVideoWidget(video: post.videoContent!),
-          ),
-        if (showLinkCard)
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: DynamicLinkCardWidget(card: post.linkCard!),
-          ),
-        if (showAdditional && additionalWidget != null)
-          Padding(padding: const EdgeInsets.only(top: 8.0), child: additionalWidget),
-        if (post.orig != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: DynamicForwardWidget(post: post.orig!),
-          ),
-        if (post.topicName != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: GestureDetector(
-              onTap: () {
-                if (post.topicId != null) {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => TopicDetailPage(
-                        topicId: post.topicId!,
-                        topicName: post.topicName!,
-                      ),
-                    ),
-                  );
-                }
-              },
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.local_fire_department_rounded,
-                      size: 14,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      post.topicName!,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-      ],
+    return (
+      showText: showText,
+      showImages: showImages,
+      showLinkCard: showLinkCard,
+      showAdditional: showAdditional,
     );
   }
 
-  Widget? _buildAdditional(BuildContext context, DynamicAdditional additional) {
-    if (additional.type == 'ADDITIONAL_TYPE_VOTE') {
-      return DynamicVoteWidget(additional: additional);
-    } else if (additional.type == 'ADDITIONAL_TYPE_GOODS') {
-      return DynamicGoodsWidget(additional: additional);
-    } else if (additional.type == 'ADDITIONAL_TYPE_RESERVE') {
-      return DynamicReserveWidget(additional: additional);
-    } else if (additional.type == 'ADDITIONAL_TYPE_UGC') {
-      return DynamicUgcWidget(additional: additional);
-    } else if (additional.type == 'ADDITIONAL_TYPE_COMMON') {
-      return DynamicCommonWidget(additional: additional);
-    }
-    return null;
-  }
+  Widget? _buildAdditional(DynamicAdditional additional) => switch (additional.type) {
+    'ADDITIONAL_TYPE_VOTE' => DynamicVoteWidget(additional: additional),
+    'ADDITIONAL_TYPE_GOODS' => DynamicGoodsWidget(additional: additional),
+    'ADDITIONAL_TYPE_RESERVE' => DynamicReserveWidget(additional: additional),
+    'ADDITIONAL_TYPE_UGC' => DynamicUgcWidget(additional: additional),
+    'ADDITIONAL_TYPE_COMMON' => DynamicCommonWidget(additional: additional),
+    _ => null,
+  };
 }
 
+class _TopicChip extends StatelessWidget {
+  final String topicName;
+  final VoidCallback? onTap;
+
+  const _TopicChip({required this.topicName, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: colorScheme.primary.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.local_fire_department_rounded,
+              size: 14,
+              color: colorScheme.primary,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              topicName,
+              style: TextStyle(
+                color: colorScheme.primary,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

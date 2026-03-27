@@ -1,4 +1,5 @@
 import 'package:culcul/data/models/dynamic/dynamic_view_models.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_content_surface.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 
@@ -13,12 +14,9 @@ class DynamicVoteWidget extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
 
-    return Container(
+    return DynamicContentSurface(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(8),
-      ),
+      borderRadius: BorderRadius.circular(8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -44,4 +42,3 @@ class DynamicVoteWidget extends StatelessWidget {
     );
   }
 }
-

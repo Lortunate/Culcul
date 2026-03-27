@@ -23,8 +23,8 @@ class RecentlyFollowedWidget extends HookConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-              child: Text(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                child: Text(
                   t.moments.recently_followed,
                   style: Theme.of(
                     context,
@@ -95,4 +95,3 @@ class _UserItem extends StatelessWidget {
     );
   }
 }
-

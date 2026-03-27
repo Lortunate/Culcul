@@ -69,7 +69,6 @@ class DynamicDetailPage extends HookConsumerWidget {
       final newStatus = !item.isLiked;
       final newLikeCount = item.likeCount + (newStatus ? 1 : -1);
 
-      // Deep copy update logic
       final newStatLike = item.modules.moduleStat?.like.copyWith(
         count: newLikeCount,
         status: newStatus,
@@ -81,19 +80,24 @@ class DynamicDetailPage extends HookConsumerWidget {
       final newModules = item.modules.copyWith(moduleStat: newModuleStat);
       final newItem = item.copyWith(modules: newModules);
 
-      // Optimistic update
       post.value = newItem;
 
       final result = await ref
           .read(dynamicRepositoryProvider)
           .likeDynamic(item.id, newStatus);
 
-        if (result.isFailure) {
+      if (result.isFailure) {
         // Revert
         post.value = item;
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(t.moments.operation_failed(message: (result as Failure).exception.toString()))),
+            SnackBar(
+              content: Text(
+                t.moments.operation_failed(
+                  message: (result as Failure).exception.toString(),
+                ),
+              ),
+            ),
           );
         }
       }
@@ -138,13 +142,12 @@ class DynamicDetailPage extends HookConsumerWidget {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: DynamicContentWidget(post: post.value!),
+                child: DynamicContentWidget(post: post.value!, selectableText: true),
               ),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 12)),
             const SliverToBoxAdapter(child: Divider(height: 1)),
             DynamicCommentsSliver(post: post.value!),
-            // Add some padding at bottom for the input bar
             const SliverToBoxAdapter(child: SizedBox(height: 80)),
           ],
         ),
@@ -158,4 +161,3 @@ class DynamicDetailPage extends HookConsumerWidget {
     );
   }
 }
-

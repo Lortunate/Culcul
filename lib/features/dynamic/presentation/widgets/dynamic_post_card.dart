@@ -3,12 +3,10 @@ import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
-import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/dynamic/presentation/utils/dynamic_navigation.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_post_header.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_content_widget.dart';
-import 'package:culcul/ui/widgets/app_avatar.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class DynamicPostCard extends StatelessWidget {
   final DynamicItem post;
@@ -19,6 +17,7 @@ class DynamicPostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       decoration: BoxDecoration(
         color: colorScheme.surface,
@@ -26,84 +25,44 @@ class DynamicPostCard extends StatelessWidget {
           bottom: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.35)),
         ),
       ),
-      child: InkWell(
-        onTap: () {
-          DynamicDetailRoute(id: post.id).push(context);
-        },
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(context),
-              const SizedBox(height: 12),
-              DynamicContentWidget(post: post),
-              const SizedBox(height: 12),
-              Divider(
-                height: 1,
-                thickness: 0.5,
-                color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-              ),
-              _buildFooter(context),
-            ],
-          ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            DynamicPostHeader(post: post),
+            const SizedBox(height: 12),
+            _buildContentSection(context),
+            const SizedBox(height: 12),
+            Divider(
+              height: 1,
+              thickness: 0.5,
+              color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+            ),
+            _buildFooter(context),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return GestureDetector(
-      onTap: () {
-        UserProfileRoute(mid: post.authorMid).push(context);
-      },
-      behavior: HitTestBehavior.opaque,
-      child: Row(
-        children: [
-          AppAvatar(url: post.authorAvatar, size: 40),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  post.authorName,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                    color: post.authorName == '哔哩哔哩番剧' || post.authorName == '哔哩哔哩漫画'
-                        ? colorScheme.primary
-                        : colorScheme.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  post.timeText,
-                  style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.more_horiz_rounded,
-              size: 20,
-              color: colorScheme.onSurfaceVariant,
-            ),
-            onPressed: () => _showMoreActions(context),
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            style: const ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-          ),
-        ],
+  Widget _buildContentSection(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(8),
+        onTap: () => DynamicDetailRoute(id: post.id).push(context),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2),
+          child: DynamicContentWidget(post: post),
+        ),
       ),
     );
   }
 
   Widget _buildFooter(BuildContext context) {
+    final t = Translations.of(context);
+
     return Row(
       children: [
         Expanded(
@@ -135,13 +94,14 @@ class DynamicPostCard extends StatelessWidget {
             post.likeCount,
             t.actions.like,
             () {
-              if (onLike != null) {
-                onLike!(post);
-              } else {
+              final likeHandler = onLike;
+              if (likeHandler == null) {
                 ScaffoldMessenger.of(
                   context,
                 ).showSnackBar(SnackBar(content: Text(t.moments.like_coming_soon)));
+                return;
               }
+              likeHandler(post);
             },
             color: post.isLiked ? Theme.of(context).colorScheme.primary : null,
           ),
@@ -171,7 +131,7 @@ class DynamicPostCard extends StatelessWidget {
             Icon(icon, size: 20, color: contentColor),
             const SizedBox(width: 6),
             Text(
-              count > 0 ? _formatCount(count) : defaultText,
+              count > 0 ? FormatUtils.formatNumber(count) : defaultText,
               style: TextStyle(
                 fontSize: 13,
                 color: contentColor,
@@ -183,59 +143,4 @@ class DynamicPostCard extends StatelessWidget {
       ),
     );
   }
-
-  String _formatCount(int count) {
-    return FormatUtils.formatNumber(count);
-  }
-
-  Future<void> _showMoreActions(BuildContext context) async {
-    final link = 'https://t.bilibili.com/${post.id}';
-    final action = await showModalBottomSheet<String>(
-      context: context,
-      showDragHandle: true,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.share_outlined),
-              title: Text(t.actions.share),
-              onTap: () => Navigator.pop(context, 'share'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.copy_all_rounded),
-              title: Text(t.moments.copy_link),
-              onTap: () => Navigator.pop(context, 'copy'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.open_in_browser_rounded),
-              title: Text(t.moments.open_in_browser),
-              onTap: () => Navigator.pop(context, 'open'),
-            ),
-          ],
-        ),
-      ),
-    );
-    if (!context.mounted) return;
-
-    switch (action) {
-      case 'share':
-        await ShareUtils.shareDynamic(post.id, post.contentText ?? '');
-        break;
-      case 'copy':
-        await Clipboard.setData(ClipboardData(text: link));
-        if (context.mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(t.moments.copied_link)));
-        }
-        break;
-      case 'open':
-        await DynamicNavigation.open(context, url: link);
-        break;
-      default:
-        break;
-    }
-  }
 }
-

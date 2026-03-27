@@ -1,6 +1,7 @@
 import 'package:culcul/data/models/dynamic/dynamic_view_models.dart';
-import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/dynamic/presentation/utils/dynamic_navigation.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_content_surface.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 
 class DynamicReserveWidget extends StatelessWidget {
@@ -13,13 +14,13 @@ class DynamicReserveWidget extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
+    final jumpUrl = additional.jumpUrl;
+    final canOpen = jumpUrl != null && jumpUrl.isNotEmpty;
 
-    return Container(
+    return DynamicContentSurface(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(8),
-      ),
+      borderRadius: BorderRadius.circular(8),
+      onTap: canOpen ? () => DynamicNavigation.open(context, url: jumpUrl) : null,
       child: Row(
         children: [
           Expanded(
@@ -45,9 +46,9 @@ class DynamicReserveWidget extends StatelessWidget {
             ),
           ),
           ElevatedButton(
-            onPressed: additional.jumpUrl == null || additional.jumpUrl!.isEmpty
-                ? null
-                : () => DynamicNavigation.open(context, url: additional.jumpUrl),
+            onPressed: canOpen
+                ? () => DynamicNavigation.open(context, url: jumpUrl)
+                : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: colorScheme.primary,
               foregroundColor: colorScheme.onPrimary,
@@ -61,4 +62,3 @@ class DynamicReserveWidget extends StatelessWidget {
     );
   }
 }
-

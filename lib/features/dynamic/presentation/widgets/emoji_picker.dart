@@ -89,4 +89,3 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderSt
     );
   }
 }
-

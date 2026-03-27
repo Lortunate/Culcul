@@ -70,4 +70,3 @@ class DynamicImagesWidget extends StatelessWidget {
     await AppImagePreview.open(context, imageUrls: urls, initialIndex: initialIndex);
   }
 }
-

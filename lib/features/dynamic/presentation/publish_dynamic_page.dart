@@ -129,9 +129,9 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
 
       if (mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(t.moments.publish_success)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(t.moments.publish_success)));
         ref.invalidate(dynamicProvider);
       }
     } catch (e) {
@@ -228,7 +228,10 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
                           color: colorScheme.onSurfaceVariant,
                         ),
                       )
-                    : Text(t.moments.publish_action, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    : Text(
+                        t.moments.publish_action,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
               ),
             ),
           ],
@@ -278,4 +281,3 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
 
   bool get _hasDraft => _controller.text.trim().isNotEmpty || _images.isNotEmpty;
 }
-

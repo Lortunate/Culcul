@@ -1,7 +1,10 @@
+import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
-import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_content_surface.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_content_widget.dart';
+import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:flutter/material.dart';
 
 class DynamicForwardWidget extends StatelessWidget {
@@ -11,35 +14,38 @@ class DynamicForwardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
-    return Container(
+
+    return DynamicContentSurface(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Theme.of(
-          context,
-        ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(6),
-      ),
+      borderRadius: BorderRadius.circular(6),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: '@${post.authorName}',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 15,
+          Row(
+            children: [
+              AppClickable(
+                haptic: true,
+                onTap: () => _openUserProfile(context),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Text(
+                    '@${post.authorName}',
+                    style: TextStyle(
+                      color: colorScheme.primary,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 15,
+                    ),
                   ),
                 ),
-                if (post.description == null || post.description!.isEmpty) ...[
-                  const TextSpan(text: ' : '),
-                  TextSpan(text: t.moments.forward_post, style: const TextStyle(fontSize: 15)),
-                ],
+              ),
+              if (post.description == null || post.description!.isEmpty) ...[
+                const Text(' : '),
+                Text(t.moments.forward_post, style: const TextStyle(fontSize: 15)),
               ],
-            ),
+            ],
           ),
           const SizedBox(height: 4),
           DynamicContentWidget(post: post),
@@ -47,5 +53,8 @@ class DynamicForwardWidget extends StatelessWidget {
       ),
     );
   }
-}
 
+  void _openUserProfile(BuildContext context) {
+    UserProfileRoute(mid: post.authorMid).push(context);
+  }
+}

@@ -1,6 +1,8 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
+import 'package:culcul/ui/widgets/app_selectable_text.dart';
+
 class BilibiliEmojiText extends StatelessWidget {
   final String text;
   final Map emojiMap;
@@ -34,7 +36,7 @@ class BilibiliEmojiText extends StatelessWidget {
     );
 
     if (selectable) {
-      return SelectableText.rich(span, maxLines: maxLines);
+      return AppSelectableText.rich(span, maxLines: maxLines);
     }
     return Text.rich(span, maxLines: maxLines, overflow: overflow);
   }
@@ -123,4 +125,3 @@ class BilibiliEmojiText extends StatelessWidget {
     return TextSpan(children: spans);
   }
 }
-

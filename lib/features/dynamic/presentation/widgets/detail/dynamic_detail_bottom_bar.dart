@@ -1,6 +1,7 @@
 import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_comment_composer.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +10,7 @@ class DynamicDetailBottomBar extends StatelessWidget {
   final VoidCallback onLike;
   final VoidCallback onSubmitComment;
   final TextEditingController commentController;
+  final bool isSending;
 
   const DynamicDetailBottomBar({
     super.key,
@@ -16,17 +18,21 @@ class DynamicDetailBottomBar extends StatelessWidget {
     required this.onLike,
     required this.onSubmitComment,
     required this.commentController,
+    this.isSending = false,
   });
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
+
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: colorScheme.surface,
         border: Border(
           top: BorderSide(
-            color: Theme.of(context).colorScheme.outlineVariant,
+            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
             width: 0.5,
           ),
         ),
@@ -41,35 +47,14 @@ class DynamicDetailBottomBar extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Expanded(
-            child: Container(
+            child: DynamicCommentComposer(
+              controller: commentController,
+              isSending: isSending,
+              onSend: onSubmitComment,
+              hintText: t.moments.comment_hint,
               height: 36,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(18),
-              ),
-              alignment: Alignment.centerLeft,
-              child: TextField(
-                controller: commentController,
-                decoration: InputDecoration(
-                  hintText: t.moments.comment_hint,
-                  border: InputBorder.none,
-                  isDense: true,
-                  contentPadding: EdgeInsets.zero,
-                ),
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontSize: 14,
-                ),
-                textInputAction: TextInputAction.send,
-                onSubmitted: (_) => onSubmitComment(),
-              ),
+              radius: 18,
             ),
-          ),
-          IconButton(
-            icon: const Icon(Icons.send),
-            onPressed: onSubmitComment,
-            color: Theme.of(context).colorScheme.primary,
           ),
           const SizedBox(width: 8),
           _buildActionIcon(
@@ -77,7 +62,7 @@ class DynamicDetailBottomBar extends StatelessWidget {
             post.isLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined,
             post.likeCount,
             onLike,
-            color: post.isLiked ? Theme.of(context).colorScheme.primary : null,
+            color: post.isLiked ? colorScheme.primary : null,
           ),
           const SizedBox(width: 16),
           _buildActionIcon(
@@ -99,6 +84,7 @@ class DynamicDetailBottomBar extends StatelessWidget {
     Color? color,
   }) {
     final contentColor = color ?? Theme.of(context).colorScheme.onSurfaceVariant;
+
     return InkWell(
       onTap: onTap,
       child: Column(
@@ -112,4 +98,3 @@ class DynamicDetailBottomBar extends StatelessWidget {
     );
   }
 }
-

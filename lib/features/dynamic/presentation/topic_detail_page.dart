@@ -52,7 +52,7 @@ class TopicDetailPage extends HookConsumerWidget {
                     slivers: [
                       SliverFillRemaining(
                         child: Center(
-                            child: AppErrorWidget(
+                          child: AppErrorWidget(
                             message: t.common.no_content,
                             onRetry: notifier.refresh,
                           ),
@@ -78,4 +78,3 @@ class TopicDetailPage extends HookConsumerWidget {
     );
   }
 }
-

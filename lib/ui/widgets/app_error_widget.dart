@@ -1,5 +1,6 @@
 import 'package:culcul/core/errors/error_handler.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/widgets/app_selectable_text.dart';
 import 'package:flutter/material.dart';
 
 class AppErrorWidget extends StatelessWidget {
@@ -41,7 +42,7 @@ class AppErrorWidget extends StatelessWidget {
                 const SizedBox(height: 8),
                 const Text('Stack Trace:', style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
-                SelectableText(
+                AppSelectableText(
                   stackTrace.toString(),
                   style: const TextStyle(fontSize: 10, fontFamily: 'Courier'),
                 ),
@@ -143,4 +144,3 @@ class _RetryButton extends StatelessWidget {
     );
   }
 }
-

@@ -51,32 +51,51 @@ abstract class DynamicApi {
 
   @GET('/x/v2/reply')
   Future<ApiResponse<CommentResponse>> getComments({
-    @Query('oid') required int oid,
+    @Query('oid') required String oid,
     @Query('type') required int type,
     @Query('sort') int sort = 1,
     @Query('pn') int pn = 1,
     @Query('ps') int ps = 20,
+    @Header('Referer') String? referer,
+    @Header('Origin') String? origin,
+  });
+
+  @GET('/x/v2/reply/wbi/main')
+  @Headers({'x-bili-wbi': 'true'})
+  Future<ApiResponse<CommentResponse>> getArticleComments({
+    @Query('oid') required String oid,
+    @Query('type') int type = 12,
+    @Query('mode') int mode = 3,
+    @Query('next') int? next,
+    @Query('plat') int plat = 1,
+    @Query('web_location') String webLocation = '1315875',
+    @Header('Referer') String? referer,
+    @Header('Origin') String? origin,
   });
 
   @POST('/x/v2/reply/add')
   @FormUrlEncoded()
   @Headers({'x-bili-csrf': 'true'})
   Future<ApiResponse<CommentItem>> addReply({
-    @Field('oid') required int oid,
+    @Field('oid') required String oid,
     @Field('root') required int root,
     @Field('parent') required int parent,
     @Field('message') required String message,
     @Field('type') required int type,
+    @Header('Referer') String? referer,
+    @Header('Origin') String? origin,
   });
 
   @POST('/x/v2/reply/action')
   @FormUrlEncoded()
   @Headers({'x-bili-csrf': 'true'})
   Future<ApiResponse<void>> actionComment({
-    @Field('oid') required int oid,
+    @Field('oid') required String oid,
     @Field('rpid') required int rpid,
     @Field('action') required int action,
     @Field('type') required int type,
+    @Header('Referer') String? referer,
+    @Header('Origin') String? origin,
   });
 
   @GET('/x/polymer/web-dynamic/v1/detail')
@@ -109,4 +128,3 @@ abstract class DynamicApi {
     @Part(name: 'csrf') required String csrf,
   });
 }
-

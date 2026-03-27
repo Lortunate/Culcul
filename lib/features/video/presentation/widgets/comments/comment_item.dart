@@ -4,6 +4,7 @@ import 'package:culcul/features/video/presentation/widgets/comments/comment_imag
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/app_clickable.dart';
+import 'package:culcul/ui/widgets/app_selectable_text.dart';
 import 'package:culcul/ui/widgets/bilibili_emoji_text.dart';
 import 'package:culcul/ui/widgets/user_tags.dart';
 import 'package:flutter/material.dart';
@@ -173,8 +174,7 @@ class _Content extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SelectableText.rich(
-          scrollPhysics: const NeverScrollableScrollPhysics(),
+        AppSelectableText.rich(
           TextSpan(
             style: theme.textTheme.bodyMedium?.copyWith(
               height: 1.5,
@@ -373,4 +373,3 @@ class _Replies extends StatelessWidget {
     );
   }
 }
-
