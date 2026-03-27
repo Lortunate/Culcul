@@ -4,6 +4,7 @@ import 'package:culcul/features/favorites/controllers/favorites_controller.dart'
 import 'package:culcul/features/favorites/presentation/fav_resource_item.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/auth/controllers/auth_controller.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
@@ -28,6 +29,7 @@ class FavoriteDetailPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final t = Translations.of(context);
     final provider = favFolderResourcesProvider(mediaId);
     final asyncValue = ref.watch(provider);
     final colorScheme = Theme.of(context).colorScheme;
@@ -250,6 +252,7 @@ class _FavoriteFolderHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = Translations.of(context);
 
     return Padding(
       padding: const EdgeInsets.all(16),
