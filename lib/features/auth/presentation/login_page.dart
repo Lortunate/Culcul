@@ -30,30 +30,6 @@ class LoginPage extends HookConsumerWidget {
       }
     });
 
-    final animationController = useAnimationController(
-      duration: const Duration(milliseconds: 1200),
-    );
-
-    useEffect(() {
-      animationController.forward();
-      return null;
-    }, []);
-
-    final headerAnimation = CurvedAnimation(
-      parent: animationController,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOutQuart),
-    );
-
-    final tabsAnimation = CurvedAnimation(
-      parent: animationController,
-      curve: const Interval(0.2, 0.8, curve: Curves.easeOutQuart),
-    );
-
-    final contentAnimation = CurvedAnimation(
-      parent: animationController,
-      curve: const Interval(0.4, 1.0, curve: Curves.easeOutQuart),
-    );
-
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
@@ -68,9 +44,8 @@ class LoginPage extends HookConsumerWidget {
               icon: const Icon(Icons.close_rounded, size: 24),
               onPressed: () => context.pop(),
               style: IconButton.styleFrom(
-                backgroundColor: theme.colorScheme.surface.withValues(alpha: 0.3),
+                backgroundColor: theme.colorScheme.surfaceVariant.withValues(alpha: 0.5),
                 foregroundColor: theme.colorScheme.onSurface,
-                hoverColor: theme.colorScheme.surface.withValues(alpha: 0.5),
                 shape: const CircleBorder(),
                 padding: const EdgeInsets.all(8),
               ),
@@ -85,11 +60,10 @@ class LoginPage extends HookConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 16),
-                  _AuthHeader(animation: headerAnimation, title: t.auth.login),
+                  _AuthHeader(title: t.auth.login),
                   const SizedBox(height: 40),
 
                   _LoginMethodTabs(
-                    animation: tabsAnimation,
                     labels: [
                       t.auth.methods.sms,
                       t.auth.methods.account,
@@ -103,18 +77,7 @@ class LoginPage extends HookConsumerWidget {
                   ),
 
                   const SizedBox(height: 32),
-                  Expanded(
-                    child: FadeTransition(
-                      opacity: contentAnimation,
-                      child: SlideTransition(
-                        position: Tween<Offset>(
-                          begin: const Offset(0, 0.1),
-                          end: Offset.zero,
-                        ).animate(contentAnimation),
-                        child: _LoginContentSwitcher(selectedTab: selectedTab.value),
-                      ),
-                    ),
-                  ),
+                  Expanded(child: _LoginContentSwitcher(selectedTab: selectedTab.value)),
                 ],
               ),
             ),
@@ -139,79 +102,63 @@ void _showLoginErrorSnackBar(BuildContext context, ThemeData theme, String messa
 }
 
 class _AuthHeader extends StatelessWidget {
-  const _AuthHeader({required this.animation, required this.title});
+  const _AuthHeader({required this.title});
 
-  final Animation<double> animation;
   final String title;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return FadeTransition(
-      opacity: animation,
-      child: SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(0, 0.2),
-          end: Offset.zero,
-        ).animate(animation),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 52,
-              height: 52,
-              margin: const EdgeInsets.only(bottom: 24),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary,
-                borderRadius: BorderRadius.circular(14),
-                boxShadow: [
-                  BoxShadow(
-                    color: theme.colorScheme.primary.withValues(alpha: 0.4),
-                    blurRadius: 16,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 64,
+          height: 64,
+          margin: const EdgeInsets.only(bottom: 28),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: theme.colorScheme.primary.withValues(alpha: 0.15),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
               ),
-              child: Icon(
-                Icons.play_arrow_rounded,
-                size: 32,
-                color: theme.colorScheme.onPrimary,
-              ),
-            ),
-            Text(
-              title,
-              style: theme.textTheme.displaySmall?.copyWith(
-                fontWeight: FontWeight.w800,
-                color: theme.colorScheme.onSurface,
-                letterSpacing: -1,
-                height: 1.1,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              Translations.of(context).auth.welcome_back,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-                fontSize: 16,
-                letterSpacing: 0.2,
-              ),
-            ),
-          ],
+            ],
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Image.asset('assets/icon/icon.png', fit: BoxFit.cover),
         ),
-      ),
+        Text(
+          title,
+          style: theme.textTheme.displaySmall?.copyWith(
+            fontWeight: FontWeight.w800,
+            color: theme.colorScheme.onSurface,
+            letterSpacing: -1,
+            height: 1.1,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          Translations.of(context).auth.welcome_back,
+          style: theme.textTheme.bodyLarge?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+            fontSize: 16,
+            letterSpacing: 0.2,
+          ),
+        ),
+      ],
     );
   }
 }
 
 class _LoginMethodTabs extends StatelessWidget {
   const _LoginMethodTabs({
-    required this.animation,
     required this.labels,
     required this.selectedIndex,
     required this.onSelected,
   });
 
-  final Animation<double> animation;
   final List<String> labels;
   final int selectedIndex;
   final ValueChanged<int> onSelected;
@@ -219,52 +166,41 @@ class _LoginMethodTabs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return FadeTransition(
-      opacity: animation,
-      child: SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(0, 0.2),
-          end: Offset.zero,
-        ).animate(animation),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          clipBehavior: Clip.none,
-          child: Row(
-            children: List.generate(labels.length, (index) {
-              final isSelected = selectedIndex == index;
-              return GestureDetector(
-                onTap: () => onSelected(index),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  curve: Curves.easeOut,
-                  margin: const EdgeInsets.only(right: 16),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: isSelected ? theme.colorScheme.primary : Colors.transparent,
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(
-                      color: isSelected
-                          ? Colors.transparent
-                          : theme.colorScheme.outline.withValues(alpha: 0.1),
-                      width: 1,
-                    ),
-                  ),
-                  child: Text(
-                    labels[index],
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: isSelected
-                          ? theme.colorScheme.onPrimary
-                          : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-                      letterSpacing: 0.3,
-                    ),
-                  ),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      clipBehavior: Clip.none,
+      child: Row(
+        children: List.generate(labels.length, (index) {
+          final isSelected = selectedIndex == index;
+          return GestureDetector(
+            onTap: () => onSelected(index),
+            child: Container(
+              margin: const EdgeInsets.only(right: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: isSelected ? theme.colorScheme.primary : Colors.transparent,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: isSelected
+                      ? Colors.transparent
+                      : theme.colorScheme.outline.withValues(alpha: 0.1),
+                  width: 1,
                 ),
-              );
-            }),
-          ),
-        ),
+              ),
+              child: Text(
+                labels[index],
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: isSelected
+                      ? theme.colorScheme.onPrimary
+                      : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ),
+          );
+        }),
       ),
     );
   }
@@ -278,24 +214,7 @@ class _LoginContentSwitcher extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 500),
-      switchInCurve: Curves.easeOutQuart,
-      switchOutCurve: Curves.easeInQuart,
-      transitionBuilder: (child, animation) {
-        return FadeTransition(
-          opacity: animation,
-          child: SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0.05, 0),
-              end: Offset.zero,
-            ).animate(animation),
-            child: ScaleTransition(
-              scale: Tween<double>(begin: 0.95, end: 1.0).animate(animation),
-              child: child,
-            ),
-          ),
-        );
-      },
+      duration: const Duration(milliseconds: 200),
       child: KeyedSubtree(
         key: ValueKey<int>(selectedTab),
         child: switch (selectedTab) {
@@ -308,4 +227,3 @@ class _LoginContentSwitcher extends StatelessWidget {
     );
   }
 }
-

@@ -82,4 +82,3 @@ UseGeetestResult useGeetest({
 
   return UseGeetestResult(start: start, isLoading: isLoading.value);
 }
-

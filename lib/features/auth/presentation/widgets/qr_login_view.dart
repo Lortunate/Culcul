@@ -15,125 +15,88 @@ class QrLoginView extends HookConsumerWidget {
     final colorScheme = theme.colorScheme;
     final qrState = useQrLogin(ref);
 
-    // Entry animation
-    final entryAnimationController = useAnimationController(
-      duration: const Duration(milliseconds: 600),
-    );
-
-    useEffect(() {
-      entryAnimationController.forward();
-      return null;
-    }, []);
-
-    final entryOffset = Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero)
-        .animate(
-          CurvedAnimation(parent: entryAnimationController, curve: Curves.easeOutCubic),
-        );
-
-    final entryOpacity = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: entryAnimationController, curve: Curves.easeOut));
-
     return Center(
       child: SingleChildScrollView(
-        child: FadeTransition(
-          opacity: entryOpacity,
-          child: SlideTransition(
-            position: entryOffset,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainer,
-                    borderRadius: BorderRadius.circular(24),
-                    boxShadow: [
-                      BoxShadow(
-                        color: theme.shadowColor.withValues(alpha: 0.08),
-                        blurRadius: 24,
-                        offset: const Offset(0, 8),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 20),
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainer,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (qrState.qrUrl != null)
+                    Container(
+                      decoration: BoxDecoration(
+                        color: colorScheme.onPrimary,
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      if (qrState.qrUrl != null)
-                        Container(
-                          decoration: BoxDecoration(
-                            color: colorScheme.onPrimary,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          padding: const EdgeInsets.all(12),
-                          child: QrImageView(
-                            data: qrState.qrUrl!,
-                            version: QrVersions.auto,
-                            size: 200,
-                            eyeStyle: QrEyeStyle(
-                              eyeShape: QrEyeShape.square,
-                              color: colorScheme.scrim,
-                            ),
-                            dataModuleStyle: QrDataModuleStyle(
-                              dataModuleShape: QrDataModuleShape.square,
-                              color: colorScheme.scrim,
-                            ),
-                            padding: EdgeInsets.zero,
-                          ),
-                        )
-                      else
-                        SizedBox(
-                          height: 224,
-                          width: 224,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: theme.colorScheme.primary,
-                              strokeWidth: 3,
-                            ),
-                          ),
+                      padding: const EdgeInsets.all(12),
+                      child: QrImageView(
+                        data: qrState.qrUrl!,
+                        version: QrVersions.auto,
+                        size: 200,
+                        eyeStyle: QrEyeStyle(
+                          eyeShape: QrEyeShape.square,
+                          color: colorScheme.scrim,
                         ),
-                      const SizedBox(height: 24),
-                      Text(
-                        switch (qrState.status) {
-                          QrLoginStatus.loading => t.auth.qr_status.loading,
-                          QrLoginStatus.success => t.auth.qr_status.success,
-                          QrLoginStatus.scanned => t.auth.qr_status.scanned,
-                          QrLoginStatus.expired => t.auth.qr_status.expired,
-                          QrLoginStatus.error => t.auth.qr_status.error,
-                        },
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.labelLarge?.copyWith(
-                          color: theme.colorScheme.onSurface,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
+                        dataModuleStyle: QrDataModuleStyle(
+                          dataModuleShape: QrDataModuleShape.square,
+                          color: colorScheme.scrim,
+                        ),
+                        padding: EdgeInsets.zero,
+                      ),
+                    )
+                  else
+                    SizedBox(
+                      height: 224,
+                      width: 224,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: theme.colorScheme.primary,
+                          strokeWidth: 3,
                         ),
                       ),
-                    ],
-                  ),
-                ),
-
-                // Refresh Button (only when needed)
-                if (qrState.statusCode == 86038 ||
-                    qrState.status == QrLoginStatus.error) ...[
-                  const SizedBox(height: 32),
-                  FilledButton.icon(
-                    onPressed: qrState.refresh,
-                    icon: const Icon(Icons.refresh_rounded, size: 18),
-                    label: Text(t.auth.qr_refresh),
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      shape: const StadiumBorder(),
+                    ),
+                  const SizedBox(height: 24),
+                  Text(
+                    switch (qrState.status) {
+                      QrLoginStatus.loading => t.auth.qr_status.loading,
+                      QrLoginStatus.success => t.auth.qr_status.success,
+                      QrLoginStatus.scanned => t.auth.qr_status.scanned,
+                      QrLoginStatus.expired => t.auth.qr_status.expired,
+                      QrLoginStatus.error => t.auth.qr_status.error,
+                    },
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.labelLarge?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
                     ),
                   ),
                 ],
-              ],
+              ),
             ),
-          ),
+            if (qrState.statusCode == 86038 || qrState.status == QrLoginStatus.error) ...[
+              const SizedBox(height: 32),
+              FilledButton.icon(
+                onPressed: qrState.refresh,
+                icon: const Icon(Icons.refresh_rounded, size: 18),
+                label: Text(t.auth.qr_refresh),
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  shape: const StadiumBorder(),
+                ),
+              ),
+            ],
+          ],
         ),
       ),
     );
   }
 }
-

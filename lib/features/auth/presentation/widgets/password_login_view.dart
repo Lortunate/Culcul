@@ -18,34 +18,6 @@ class PasswordLoginView extends HookConsumerWidget {
     final passwordController = useTextEditingController();
     final isObscure = useState(true);
 
-    // Animation Controller for staggered entry
-    final animationController = useAnimationController(
-      duration: const Duration(milliseconds: 600),
-    );
-
-    useEffect(() {
-      animationController.forward();
-      return null;
-    }, []);
-
-    Animation<Offset> getSlideAnimation(double start, double end) {
-      return Tween<Offset>(begin: const Offset(0, 0.2), end: Offset.zero).animate(
-        CurvedAnimation(
-          parent: animationController,
-          curve: Interval(start, end, curve: Curves.easeOutCubic),
-        ),
-      );
-    }
-
-    Animation<double> getFadeAnimation(double start, double end) {
-      return Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-          parent: animationController,
-          curve: Interval(start, end, curve: Curves.easeOut),
-        ),
-      );
-    }
-
     void showAuthSnackBar(String message) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).clearSnackBars();
@@ -101,56 +73,30 @@ class PasswordLoginView extends HookConsumerWidget {
       child: Column(
         children: [
           const SizedBox(height: 24),
-          FadeTransition(
-            opacity: getFadeAnimation(0.0, 0.6),
-            child: SlideTransition(
-              position: getSlideAnimation(0.0, 0.6),
-              child: AuthTextField(
-                controller: usernameController,
-                hintText: t.auth.username_hint,
-              ),
-            ),
-          ),
+          AuthTextField(controller: usernameController, hintText: t.auth.username_hint),
           const SizedBox(height: 20),
-          FadeTransition(
-            opacity: getFadeAnimation(0.2, 0.8),
-            child: SlideTransition(
-              position: getSlideAnimation(0.2, 0.8),
-              child: AuthTextField(
-                controller: passwordController,
-                hintText: t.auth.password,
-                obscureText: isObscure.value,
-                suffix: GestureDetector(
-                  onTap: () => isObscure.value = !isObscure.value,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 4),
-                    child: Icon(
-                      isObscure.value
-                          ? Icons.visibility_rounded
-                          : Icons.visibility_off_rounded,
-                      size: 20,
-                      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-                    ),
-                  ),
+          AuthTextField(
+            controller: passwordController,
+            hintText: t.auth.password,
+            obscureText: isObscure.value,
+            suffix: GestureDetector(
+              onTap: () => isObscure.value = !isObscure.value,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 4),
+                child: Icon(
+                  isObscure.value
+                      ? Icons.visibility_rounded
+                      : Icons.visibility_off_rounded,
+                  size: 20,
+                  color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                 ),
               ),
             ),
           ),
           const SizedBox(height: 56),
-          FadeTransition(
-            opacity: getFadeAnimation(0.4, 1.0),
-            child: SlideTransition(
-              position: getSlideAnimation(0.4, 1.0),
-              child: AuthButton(
-                onPressed: login,
-                text: t.auth.login,
-                isLoading: isLoading,
-              ),
-            ),
-          ),
+          AuthButton(onPressed: login, text: t.auth.login, isLoading: isLoading),
         ],
       ),
     );
   }
 }
-

@@ -18,16 +18,12 @@ class LoginDialog extends HookConsumerWidget {
       barrierDismissible: true,
       barrierLabel: 'Login',
       barrierColor: colorScheme.scrim.withValues(alpha: 0.5),
-      transitionDuration: const Duration(milliseconds: 400),
+      transitionDuration: const Duration(milliseconds: 200),
       pageBuilder: (context, animation, secondaryAnimation) {
         return const Center(child: LoginDialog());
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
-        final curve = CurvedAnimation(parent: animation, curve: Curves.easeOutBack);
-        return ScaleTransition(
-          scale: curve,
-          child: FadeTransition(opacity: animation, child: child),
-        );
+        return FadeTransition(opacity: animation, child: child);
       },
     );
   }
@@ -66,13 +62,6 @@ class LoginDialog extends HookConsumerWidget {
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(28),
-          boxShadow: [
-            BoxShadow(
-              color: theme.colorScheme.shadow.withValues(alpha: 0.2),
-              blurRadius: 24,
-              offset: const Offset(0, 12),
-            ),
-          ],
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -82,7 +71,25 @@ class LoginDialog extends HookConsumerWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 24, 12, 8),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    margin: const EdgeInsets.only(right: 16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.colorScheme.primary.withValues(alpha: 0.15),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Image.asset('assets/icon/icon.png', fit: BoxFit.cover),
+                  ),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,6 +99,7 @@ class LoginDialog extends HookConsumerWidget {
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontWeight: FontWeight.w800,
                             letterSpacing: -0.5,
+                            height: 1.2,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -108,8 +116,9 @@ class LoginDialog extends HookConsumerWidget {
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close_rounded),
                     style: IconButton.styleFrom(
-                      backgroundColor: theme.colorScheme.surfaceContainerHighest
-                          .withValues(alpha: 0.3),
+                      backgroundColor: theme.colorScheme.surfaceVariant.withValues(
+                        alpha: 0.3,
+                      ),
                     ),
                   ),
                 ],
@@ -130,16 +139,13 @@ class LoginDialog extends HookConsumerWidget {
                         selectedTab.value = index;
                         HapticFeedback.lightImpact();
                       },
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
+                      child: Container(
                         margin: const EdgeInsets.only(right: 12),
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.surfaceContainerHighest.withValues(
-                                  alpha: 0.3,
-                                ),
+                              : theme.colorScheme.surfaceVariant.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(
@@ -164,7 +170,7 @@ class LoginDialog extends HookConsumerWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 200),
                   child: KeyedSubtree(
                     key: ValueKey<int>(selectedTab.value),
                     child: ConstrainedBox(
@@ -187,4 +193,3 @@ class LoginDialog extends HookConsumerWidget {
     );
   }
 }
-
