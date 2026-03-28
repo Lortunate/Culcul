@@ -20,7 +20,7 @@ class QrLoginView extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: 12),
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(

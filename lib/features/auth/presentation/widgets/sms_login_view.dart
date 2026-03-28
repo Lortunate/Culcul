@@ -105,10 +105,9 @@ class SmsLoginView extends HookConsumerWidget {
     }
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.only(bottom: 24),
       child: Column(
         children: [
-          const SizedBox(height: 24),
+          const SizedBox(height: 12),
           AuthTextField(
             controller: phoneController,
             hintText: t.auth.phone,
@@ -151,7 +150,7 @@ class SmsLoginView extends HookConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
           AuthTextField(
             controller: codeController,
             hintText: t.auth.sms_code,
@@ -180,12 +179,13 @@ class SmsLoginView extends HookConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(height: 56),
+          const SizedBox(height: 48),
           AuthButton(
             onPressed: onLogin,
             text: t.auth.login,
             isLoading: ref.watch(authProvider).isLoading,
           ),
+          const SizedBox(height: 24),
         ],
       ),
     );

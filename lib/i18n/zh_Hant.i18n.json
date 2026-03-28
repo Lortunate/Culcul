@@ -134,9 +134,9 @@
     "login": "登入",
     "logout": "登出",
     "methods": {
-      "account": "帳號登入",
-      "sms": "驗證碼登入",
-      "qr": "QR Code 登入"
+      "account": "帳號",
+      "sms": "驗證碼",
+      "qr": "二維碼"
     },
     "username": "帳號",
     "username_hint": "手機號碼/電子信箱",

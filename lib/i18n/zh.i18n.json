@@ -134,9 +134,9 @@
     "login": "登录",
     "logout": "退出登录",
     "methods": {
-      "account": "账号登录",
-      "sms": "验证码登录",
-      "qr": "二维码登录"
+      "account": "账号",
+      "sms": "验证码",
+      "qr": "二维码"
     },
     "username": "账号",
     "username_hint": "手机号/邮箱",

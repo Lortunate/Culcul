@@ -17,7 +17,8 @@ class LoginPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final t = Translations.of(context);
     final theme = Theme.of(context);
-    final selectedTab = useState(0);
+    final tabController = useTabController(initialLength: 3);
+    final selectedTab = useListenableSelector(tabController, () => tabController.index);
 
     ref.listen(authProvider, (previous, next) {
       if (next.isLoggedIn && !next.isLoading) {
@@ -44,7 +45,7 @@ class LoginPage extends HookConsumerWidget {
               icon: const Icon(Icons.close_rounded, size: 24),
               onPressed: () => context.pop(),
               style: IconButton.styleFrom(
-                backgroundColor: theme.colorScheme.surfaceVariant.withValues(alpha: 0.5),
+                backgroundColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                 foregroundColor: theme.colorScheme.onSurface,
                 shape: const CircleBorder(),
                 padding: const EdgeInsets.all(8),
@@ -59,25 +60,21 @@ class LoginPage extends HookConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 24),
                   _AuthHeader(title: t.auth.login),
-                  const SizedBox(height: 40),
-
+                  const SizedBox(height: 32),
                   _LoginMethodTabs(
                     labels: [
                       t.auth.methods.sms,
                       t.auth.methods.account,
                       t.auth.methods.qr,
                     ],
-                    selectedIndex: selectedTab.value,
-                    onSelected: (index) {
-                      selectedTab.value = index;
-                      HapticFeedback.lightImpact();
-                    },
+                    controller: tabController,
                   ),
-
-                  const SizedBox(height: 32),
-                  Expanded(child: _LoginContentSwitcher(selectedTab: selectedTab.value)),
+                  const SizedBox(height: 24),
+                  Expanded(
+                    child: _LoginContentSwitcher(selectedTab: selectedTab),
+                  ),
                 ],
               ),
             ),
@@ -112,39 +109,22 @@ class _AuthHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: 64,
-          height: 64,
-          margin: const EdgeInsets.only(bottom: 28),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: [
-              BoxShadow(
-                color: theme.colorScheme.primary.withValues(alpha: 0.15),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: Image.asset('assets/icon/icon.png', fit: BoxFit.cover),
-        ),
         Text(
           title,
           style: theme.textTheme.displaySmall?.copyWith(
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w900,
             color: theme.colorScheme.onSurface,
-            letterSpacing: -1,
+            letterSpacing: -1.5,
             height: 1.1,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         Text(
           Translations.of(context).auth.welcome_back,
           style: theme.textTheme.bodyLarge?.copyWith(
-            color: theme.colorScheme.onSurfaceVariant,
+            color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
             fontSize: 16,
-            letterSpacing: 0.2,
+            letterSpacing: 0.1,
           ),
         ),
       ],
@@ -155,52 +135,52 @@ class _AuthHeader extends StatelessWidget {
 class _LoginMethodTabs extends StatelessWidget {
   const _LoginMethodTabs({
     required this.labels,
-    required this.selectedIndex,
-    required this.onSelected,
+    required this.controller,
   });
 
   final List<String> labels;
-  final int selectedIndex;
-  final ValueChanged<int> onSelected;
+  final TabController controller;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      clipBehavior: Clip.none,
-      child: Row(
-        children: List.generate(labels.length, (index) {
-          final isSelected = selectedIndex == index;
-          return GestureDetector(
-            onTap: () => onSelected(index),
-            child: Container(
-              margin: const EdgeInsets.only(right: 16),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: isSelected ? theme.colorScheme.primary : Colors.transparent,
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
-                  color: isSelected
-                      ? Colors.transparent
-                      : theme.colorScheme.outline.withValues(alpha: 0.1),
-                  width: 1,
-                ),
-              ),
-              child: Text(
-                labels[index],
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: isSelected
-                      ? theme.colorScheme.onPrimary
-                      : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-                  letterSpacing: 0.3,
-                ),
-              ),
-            ),
-          );
-        }),
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: TabBar(
+        controller: controller,
+        tabs: labels.map((label) => Tab(text: label)).toList(),
+        onTap: (index) => HapticFeedback.lightImpact(),
+        splashFactory: NoSplash.splashFactory,
+        overlayColor: WidgetStateProperty.all(Colors.transparent),
+        dividerColor: Colors.transparent,
+        indicatorSize: TabBarIndicatorSize.tab,
+        labelColor: theme.colorScheme.primary,
+        unselectedLabelColor: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+        labelStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.2,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.2,
+        ),
+        indicator: BoxDecoration(
+          color: theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            )
+          ],
+        ),
       ),
     );
   }
