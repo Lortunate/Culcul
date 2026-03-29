@@ -1,5 +1,5 @@
 // ignore_for_file: invalid_use_of_internal_member
-import 'package:culcul/core/paging_mixin.dart';
+import 'package:culcul/core/pagination/paged_async_notifier.dart';
 import 'package:culcul/data/models/video/video_model.dart';
 import 'package:culcul/features/home/data/home_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -7,37 +7,30 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'home_recommend_controller.g.dart';
 
 @Riverpod(keepAlive: true)
-class HomeRecommend extends _$HomeRecommend with PagingMixin<VideoModel> {
+class HomeRecommend extends _$HomeRecommend with OffsetPagedAsyncNotifier<VideoModel> {
   @override
   Future<List<VideoModel>> build() async {
-    page = 1;
-    hasMore = true;
-    return fetchItems(page);
+    return buildFirstPage();
   }
 
   @override
-  Future<List<VideoModel>> fetchItems(int page) async {
-    return ref.read(homeRepositoryProvider).fetchRecommend(page: page);
+  Future<List<VideoModel>> fetchPage(int page, {bool refresh = false}) async {
+    return ref
+        .read(homeRepositoryProvider)
+        .fetchRecommend(page: page, forceRefresh: refresh);
   }
 
-  Future<void> refresh() async {
-    state = AsyncLoading<List<VideoModel>>().copyWithPrevious(state);
+  @override
+  Object itemId(VideoModel item) => item.bvid;
 
-    state = await AsyncValue.guard(() async {
-      final list = await ref
-          .read(homeRepositoryProvider)
-          .fetchRecommend(page: 1, forceRefresh: true);
-      page = 1;
-      hasMore = true;
-      return list;
-    });
+  @override
+  bool hasMoreAfterPage(List<VideoModel> items) => items.isNotEmpty;
+
+  Future<void> refresh() {
+    return refreshPage();
   }
 
-  Future<void> loadMore() async {
-    final oldState = state;
-    if (oldState is! AsyncData || !hasMore || oldState.isLoading) return;
-
-    state = AsyncLoading<List<VideoModel>>().copyWithPrevious(oldState);
-    await handleLoadMore(oldState, (newState) => state = newState, (item) => item.bvid);
+  Future<void> loadMore() {
+    return loadNextPage();
   }
 }

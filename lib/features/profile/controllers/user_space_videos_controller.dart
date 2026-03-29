@@ -1,3 +1,4 @@
+import 'package:culcul/core/pagination/paged_async_notifier.dart';
 import 'package:culcul/data/models/user/user_space_video_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:culcul/features/profile/data/profile_repository.dart';
@@ -5,64 +6,36 @@ import 'package:culcul/features/profile/data/profile_repository.dart';
 part 'user_space_videos_controller.g.dart';
 
 @Riverpod(keepAlive: true)
-class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier {
-  int _page = 1;
-  bool _hasMore = true;
+class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
+    with OffsetPagedAsyncNotifier<UserSpaceVideoModel> {
   int _mid = 0;
   String _order = 'pubdate';
+  static const _pageSize = 30;
 
   @override
   Future<List<UserSpaceVideoModel>> build(int mid, {String order = 'pubdate'}) async {
     _mid = mid;
     _order = order;
-    _page = 1;
-    _hasMore = true;
-    return _fetchVideos();
+    return buildFirstPage();
   }
 
-  Future<List<UserSpaceVideoModel>> _fetchVideos() async {
+  @override
+  Future<List<UserSpaceVideoModel>> fetchPage(int page, {bool refresh = false}) async {
     final repository = ref.read(profileRepositoryProvider);
-    final videos = await repository.getSpaceVideos(mid: _mid, page: _page, order: _order);
-    if (videos.length < 30) {
-      _hasMore = false;
-    } else {
-      _page++;
-    }
-    return videos;
+    return repository.getSpaceVideos(mid: _mid, page: page, order: _order);
   }
 
-  Future<void> loadMore() async {
-    if (!_hasMore || state.isLoading) return;
+  @override
+  Object itemId(UserSpaceVideoModel item) => item.bvid;
 
-    final oldState = state;
-    if (oldState.asData?.value == null) return;
+  @override
+  bool hasMoreAfterPage(List<UserSpaceVideoModel> items) => items.length >= _pageSize;
 
-    state = AsyncLoading<List<UserSpaceVideoModel>>().copyWithPrevious(oldState);
-
-    try {
-      final newItems = await _fetchVideos();
-
-      final previousItems = oldState.asData!.value;
-      final existingIds = previousItems.map((e) => e.bvid).toSet();
-      final uniqueNewItems = newItems
-          .where((e) => !existingIds.contains(e.bvid))
-          .toList();
-
-      state = AsyncData([...previousItems, ...uniqueNewItems]);
-    } catch (e, st) {
-      state = AsyncError<List<UserSpaceVideoModel>>(e, st).copyWithPrevious(oldState);
-    }
+  Future<void> loadMore() {
+    return loadNextPage();
   }
 
-  Future<void> refresh() async {
-    _page = 1;
-    _hasMore = true;
-    state = const AsyncLoading();
-    try {
-      final items = await _fetchVideos();
-      state = AsyncData(items);
-    } catch (e, st) {
-      state = AsyncError(e, st);
-    }
+  Future<void> refresh() {
+    return refreshPage();
   }
 }

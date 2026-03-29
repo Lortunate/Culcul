@@ -19,7 +19,7 @@ class FollowersPage extends ConsumerWidget {
       appBar: AppBar(title: Text(t.profile.followers.title), centerTitle: true),
       body: RelationUserList(
         asyncValue: followersAsync,
-        onRefresh: () => ref.refresh(followersProvider(vmid).future),
+        onRefresh: () => ref.read(followersProvider(vmid).notifier).refresh(),
         onLoadMore: () => ref.read(followersProvider(vmid).notifier).loadMore(),
         hasMore: hasMore,
         emptyText: t.profile.followers.empty,
