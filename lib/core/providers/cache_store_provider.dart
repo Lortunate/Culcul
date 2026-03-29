@@ -7,4 +7,3 @@ part 'cache_store_provider.g.dart';
 CacheStore cacheStore(Ref ref) {
   throw UnimplementedError('cacheStoreProvider not initialized');
 }
-

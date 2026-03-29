@@ -1,8 +1,8 @@
 // ignore_for_file: invalid_use_of_internal_member
 import 'package:culcul/core/paging_mixin.dart';
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/data/models/relation/relation_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:culcul/features/profile/data/relation_repository.dart';
 
 part 'relation_controller.g.dart';
 
@@ -78,4 +78,3 @@ class Followers extends _$Followers with PagingMixin<RelationUser> {
     );
   }
 }
-

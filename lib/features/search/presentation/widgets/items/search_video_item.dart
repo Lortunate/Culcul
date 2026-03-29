@@ -74,4 +74,3 @@ class SearchVideoItem extends StatelessWidget {
     );
   }
 }
-

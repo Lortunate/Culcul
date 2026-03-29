@@ -19,4 +19,3 @@ sealed class DmMask with _$DmMask {
 
   factory DmMask.fromJson(Map<String, dynamic> json) => _$DmMaskFromJson(json);
 }
-

@@ -122,4 +122,3 @@ class AppSearchBar extends StatelessWidget {
     return _buildReadonlySearchBar(context, theme);
   }
 }
-

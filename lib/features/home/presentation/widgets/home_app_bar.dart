@@ -87,4 +87,3 @@ class _AppBarButton extends StatelessWidget {
     );
   }
 }
-

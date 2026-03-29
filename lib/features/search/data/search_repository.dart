@@ -21,9 +21,7 @@ class SearchRepository extends BaseRepository {
 
   SearchRepository({required this.api});
 
-  Future<List<SearchSuggestionTag>> fetchSearchSuggestions(
-    String term,
-  ) async {
+  Future<List<SearchSuggestionTag>> fetchSearchSuggestions(String term) async {
     if (term.isEmpty) return [];
     final responseStr = await request(() => api.fetchSearchSuggestions(term));
     return _parseSuggestions(responseStr);
@@ -84,4 +82,3 @@ class SearchRepository extends BaseRepository {
     return response.data!;
   }
 }
-

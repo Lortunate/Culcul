@@ -131,10 +131,7 @@ class PrivateSessionItem extends ConsumerWidget {
     };
   }
 
-  String _guessFallbackSummary(
-    Translations t,
-    Map<String, dynamic>? contentMap,
-  ) {
+  String _guessFallbackSummary(Translations t, Map<String, dynamic>? contentMap) {
     if (contentMap != null) {
       if (contentMap.containsKey('content')) {
         return contentMap['content'].toString();
@@ -188,4 +185,3 @@ class PrivateSessionItem extends ConsumerWidget {
     );
   }
 }
-

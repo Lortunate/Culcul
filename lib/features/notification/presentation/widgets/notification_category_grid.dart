@@ -122,4 +122,3 @@ class NotificationCategoryGrid extends ConsumerWidget {
     );
   }
 }
-

@@ -26,4 +26,3 @@ class JsonUtils {
     return value.map((e) => parseStringWithDefault(e)).toList();
   }
 }
-

@@ -48,7 +48,8 @@ sealed class DynamicBasic with _$DynamicBasic {
     @JsonKey(name: 'comment_id_str', fromJson: JsonUtils.parseStringWithDefault)
     required String commentIdStr,
     @JsonKey(name: 'comment_type') required int commentType,
-    @JsonKey(name: 'rid_str', fromJson: JsonUtils.parseStringWithDefault) required String ridStr,
+    @JsonKey(name: 'rid_str', fromJson: JsonUtils.parseStringWithDefault)
+    required String ridStr,
   }) = _DynamicBasic;
 
   factory DynamicBasic.fromJson(Map<String, dynamic> json) =>
@@ -486,4 +487,3 @@ sealed class DynamicUploadImageData with _$DynamicUploadImageData {
   factory DynamicUploadImageData.fromJson(Map<String, dynamic> json) =>
       _$DynamicUploadImageDataFromJson(json);
 }
-

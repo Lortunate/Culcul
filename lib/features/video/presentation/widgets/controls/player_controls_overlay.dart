@@ -162,4 +162,3 @@ class _LockButton extends StatelessWidget {
     );
   }
 }
-

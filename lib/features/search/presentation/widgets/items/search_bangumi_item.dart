@@ -73,4 +73,3 @@ class SearchBangumiItem extends StatelessWidget {
     );
   }
 }
-

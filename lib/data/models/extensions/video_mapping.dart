@@ -33,4 +33,3 @@ extension UserSpaceVideoModelMapping on UserSpaceVideoModel {
     );
   }
 }
-

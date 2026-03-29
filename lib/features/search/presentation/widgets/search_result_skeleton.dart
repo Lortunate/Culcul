@@ -21,4 +21,3 @@ class SearchResultSkeleton extends StatelessWidget {
     );
   }
 }
-

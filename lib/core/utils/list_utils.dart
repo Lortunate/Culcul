@@ -19,4 +19,3 @@ class ListUtils {
     return [...current, ...uniqueNewItems];
   }
 }
-

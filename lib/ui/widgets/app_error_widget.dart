@@ -37,10 +37,16 @@ class AppErrorWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('${t.common.error}: $error', style: const TextStyle(fontWeight: FontWeight.bold)),
+              Text(
+                '${t.common.error}: $error',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
               if (stackTrace != null) ...[
                 const SizedBox(height: 8),
-                Text('${t.error.stack_trace}:', style: const TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  '${t.error.stack_trace}:',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 4),
                 AppSelectableText(
                   stackTrace.toString(),

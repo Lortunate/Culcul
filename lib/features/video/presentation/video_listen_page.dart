@@ -35,7 +35,9 @@ class VideoListenPage extends ConsumerWidget {
     if (sleepTimerTarget != null) {
       final remaining = sleepTimerTarget.difference(DateTime.now());
       if (remaining.inSeconds > 0) {
-        sleepTimerText = t.video.sleep_timer_remaining(remaining: remaining.formatDuration);
+        sleepTimerText = t.video.sleep_timer_remaining(
+          remaining: remaining.formatDuration,
+        );
       }
     }
 
@@ -293,4 +295,3 @@ class VideoListenPage extends ConsumerWidget {
     );
   }
 }
-

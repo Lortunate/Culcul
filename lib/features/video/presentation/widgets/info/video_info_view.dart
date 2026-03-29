@@ -132,4 +132,3 @@ class VideoInfoView extends ConsumerWidget {
     );
   }
 }
-

@@ -78,4 +78,3 @@ class _MaskSegment {
   final int offset;
   _MaskSegment(this.time, this.offset);
 }
-

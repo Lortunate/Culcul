@@ -128,4 +128,3 @@ class LiveAdminBadge extends StatelessWidget {
     );
   }
 }
-

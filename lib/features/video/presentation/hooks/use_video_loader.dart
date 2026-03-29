@@ -46,4 +46,3 @@ void useVideoLoader(WidgetRef ref, Player player, VideoDetailState state) {
     return null;
   }, [state.playbackSpeed]);
 }
-

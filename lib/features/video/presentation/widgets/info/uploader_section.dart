@@ -29,4 +29,3 @@ class UploaderSection extends StatelessWidget {
     );
   }
 }
-

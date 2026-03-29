@@ -24,4 +24,3 @@ sealed class LiveRoomState with _$LiveRoomState {
     @Default(false) bool isDanmakuEnabled,
   }) = _LiveRoomState;
 }
-

@@ -168,7 +168,10 @@ class _EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
-      child: SizedBox(height: 100, child: Center(child: Text(Translations.of(context).common.no_content))),
+      child: SizedBox(
+        height: 100,
+        child: Center(child: Text(Translations.of(context).common.no_content)),
+      ),
     );
   }
 }
@@ -220,4 +223,3 @@ class _LoadingGrid extends StatelessWidget {
     );
   }
 }
-

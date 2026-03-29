@@ -255,4 +255,3 @@ class _AboutSettingsSection extends StatelessWidget {
     );
   }
 }
-

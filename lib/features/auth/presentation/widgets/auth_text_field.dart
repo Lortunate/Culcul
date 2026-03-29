@@ -53,7 +53,7 @@ class AuthTextField extends StatelessWidget {
         filled: true,
         fillColor: isDark
             ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.4)
-            : colorScheme.surfaceVariant.withValues(alpha: 0.4),
+            : colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
         prefixIcon:
             leading ??
             (prefixIcon != null

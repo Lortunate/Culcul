@@ -44,4 +44,3 @@ class SearchHistory extends _$SearchHistory {
     await ref.read(storageBoxProvider).delete(_key);
   }
 }
-

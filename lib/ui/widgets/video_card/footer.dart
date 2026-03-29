@@ -32,4 +32,3 @@ class _VideoCardFooter extends StatelessWidget {
     );
   }
 }
-

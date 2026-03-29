@@ -172,4 +172,3 @@ TabBar _buildUserProfileTabBar({
   splashFactory: NoSplash.splashFactory,
   overlayColor: WidgetStateProperty.all(Colors.transparent),
 );
-

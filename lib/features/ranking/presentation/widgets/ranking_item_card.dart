@@ -64,4 +64,3 @@ class RankingItemCard extends StatelessWidget {
     );
   }
 }
-

@@ -97,4 +97,3 @@ class CompactTag extends StatelessWidget {
     );
   }
 }
-

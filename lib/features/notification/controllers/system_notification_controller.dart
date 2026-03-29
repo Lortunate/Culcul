@@ -1,6 +1,6 @@
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/data/models/notification/system_notification_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:culcul/features/notification/data/notification_repository.dart';
 
 part 'system_notification_controller.g.dart';
 
@@ -16,4 +16,3 @@ class SystemNotificationList extends _$SystemNotificationList {
     state = await AsyncValue.guard(() => build());
   }
 }
-

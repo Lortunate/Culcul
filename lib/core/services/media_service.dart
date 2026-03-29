@@ -64,4 +64,3 @@ class MediaService {
     return '${normalizedBase}_$timestamp$extension';
   }
 }
-

@@ -125,4 +125,3 @@ class _ArticleMetaItem extends StatelessWidget {
     );
   }
 }
-

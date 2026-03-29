@@ -39,4 +39,3 @@ class IconText extends StatelessWidget {
     );
   }
 }
-

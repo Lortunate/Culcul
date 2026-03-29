@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/data/models/comment/comment_model.dart';
@@ -21,6 +20,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:culcul/features/dynamic/data/dynamic_repository.dart';
 
 final articleDetailProvider = FutureProvider.autoDispose
     .family<ArticleDetailData, String>((ref, url) async {

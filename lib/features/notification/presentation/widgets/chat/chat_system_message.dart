@@ -25,4 +25,3 @@ class ChatSystemMessage extends StatelessWidget {
     );
   }
 }
-

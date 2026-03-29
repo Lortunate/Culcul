@@ -82,7 +82,9 @@ class FavFolderItem extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              t.favorites.folder_item_count(count: item.mediaCount.toString()),
+                              t.favorites.folder_item_count(
+                                count: item.mediaCount.toString(),
+                              ),
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: colorScheme.onSurfaceVariant,
                                 fontSize: 11,
@@ -152,4 +154,3 @@ class FavFolderItem extends StatelessWidget {
     );
   }
 }
-

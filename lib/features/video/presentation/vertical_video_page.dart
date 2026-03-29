@@ -129,9 +129,17 @@ class _RightBar extends StatelessWidget {
     final t = i18n(context);
     final actions = <_VideoAction>[
       (icon: Icons.thumb_up_rounded, count: videoDetail.stat.like, label: t.actions.like),
-      (icon: Icons.comment_rounded, count: videoDetail.stat.reply, label: t.actions.reply),
+      (
+        icon: Icons.comment_rounded,
+        count: videoDetail.stat.reply,
+        label: t.actions.reply,
+      ),
       (icon: Icons.thumb_down_alt_rounded, count: 438, label: t.actions.unlike),
-      (icon: Icons.star_rounded, count: videoDetail.stat.favorite, label: t.video.actions.favorite),
+      (
+        icon: Icons.star_rounded,
+        count: videoDetail.stat.favorite,
+        label: t.video.actions.favorite,
+      ),
       (icon: Icons.share_rounded, count: videoDetail.stat.share, label: t.actions.share),
     ];
 
@@ -365,4 +373,3 @@ class _BottomBar extends ConsumerWidget {
     );
   }
 }
-

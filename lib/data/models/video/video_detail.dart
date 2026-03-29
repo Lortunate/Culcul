@@ -110,4 +110,3 @@ sealed class TagCount with _$TagCount {
 
   factory TagCount.fromJson(Map<String, dynamic> json) => _$TagCountFromJson(json);
 }
-

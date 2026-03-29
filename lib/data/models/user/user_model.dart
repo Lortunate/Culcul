@@ -43,4 +43,3 @@ sealed class User with _$User {
     },
   };
 }
-

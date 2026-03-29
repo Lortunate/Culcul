@@ -102,4 +102,3 @@ VoidCallback useVideoOrientation(
 
   return (width: width, height: height);
 }
-

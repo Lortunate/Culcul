@@ -1,65 +1,44 @@
-import 'package:culcul/core/providers/api_provider.dart';
+import 'package:culcul/core/paging_mixin.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:culcul/features/dynamic/data/dynamic_repository.dart';
 
 part 'topic_dynamic_controller.g.dart';
 
 @riverpod
-class TopicDynamicNotifier extends _$TopicDynamicNotifier {
-  String? _offset;
-  bool _hasMore = true;
+class TopicDynamicNotifier extends _$TopicDynamicNotifier
+    with CursorPagingMixin<DynamicItem, String> {
   late int _topicId;
 
   @override
   Future<List<DynamicItem>> build({required int topicId}) async {
     _topicId = topicId;
-    _offset = null;
-    _hasMore = true;
-    return _fetchFeed();
+    cursor = null;
+    hasMore = true;
+    final firstPage = await fetchItems(cursor);
+    cursor = firstPage.nextCursor;
+    hasMore = firstPage.hasMore;
+    return firstPage.items;
   }
 
-  Future<List<DynamicItem>> _fetchFeed() async {
+  @override
+  Future<CursorPage<DynamicItem, String>> fetchItems(String? currentCursor) async {
     final repository = ref.read(dynamicRepositoryProvider);
-    final feed = await repository.getTopicFeed(topicId: _topicId, offset: _offset);
-    _offset = feed.offset;
-    _hasMore = feed.hasMore;
-    return feed.items;
+    final feed = await repository.getTopicFeed(topicId: _topicId, offset: currentCursor);
+    return CursorPage(items: feed.items, nextCursor: feed.offset, hasMore: feed.hasMore);
   }
 
   Future<void> loadMore() async {
-    if (!_hasMore || state.isLoading) return;
-
-    final oldState = state;
-    if (oldState.asData?.value == null) return;
-
-    state = AsyncLoading<List<DynamicItem>>().copyWithPrevious(oldState);
-
-    try {
-      final newItems = await _fetchFeed();
-
-      final List<DynamicItem> previousItems = oldState.asData!.value;
-      final existingIds = previousItems.map((e) => e.idStr).toSet();
-      final uniqueNewItems = newItems
-          .where((e) => !existingIds.contains(e.idStr))
-          .toList();
-
-      state = AsyncData([...previousItems, ...uniqueNewItems]);
-    } catch (e, st) {
-      state = AsyncError<List<DynamicItem>>(e, st).copyWithPrevious(oldState);
-    }
+    await handleCursorLoadMore(
+      state,
+      (newState) => state = newState,
+      (item) => item.idStr,
+    );
   }
 
   Future<void> refresh() async {
-    _offset = null;
-    _hasMore = true;
-    state = AsyncLoading<List<DynamicItem>>().copyWithPrevious(state);
-    try {
-      final items = await _fetchFeed();
-      state = AsyncData(items);
-    } catch (e, st) {
-      state = AsyncError<List<DynamicItem>>(e, st).copyWithPrevious(state);
-    }
+    await handleCursorRefresh(state, (newState) => state = newState);
   }
 
   Future<void> toggleLike(String id, bool isLiked) async {
@@ -99,4 +78,3 @@ class TopicDynamicNotifier extends _$TopicDynamicNotifier {
     }
   }
 }
-

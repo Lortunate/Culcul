@@ -143,4 +143,3 @@ class QuickSelectionSheet<T> extends StatelessWidget {
     );
   }
 }
-

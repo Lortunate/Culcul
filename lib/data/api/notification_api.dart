@@ -81,4 +81,3 @@ abstract class NotificationApi {
     @Field('msg[content]') required String content,
   });
 }
-

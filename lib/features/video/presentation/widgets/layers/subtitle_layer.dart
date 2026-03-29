@@ -58,4 +58,3 @@ class SubtitleLayer extends HookConsumerWidget {
     );
   }
 }
-

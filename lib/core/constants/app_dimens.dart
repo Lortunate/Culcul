@@ -41,4 +41,3 @@ class AppDimens {
   static const double dividerHeight = 1.0;
   static const double listTileHeight = 72.0;
 }
-

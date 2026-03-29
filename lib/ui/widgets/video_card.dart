@@ -83,4 +83,3 @@ class VideoCardContent extends StatelessWidget {
     );
   }
 }
-

@@ -140,4 +140,3 @@ class FormatUtils {
     return capitalize(result.trim());
   }
 }
-

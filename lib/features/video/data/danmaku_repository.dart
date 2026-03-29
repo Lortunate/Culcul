@@ -33,10 +33,7 @@ class DanmakuRepository extends BaseRepository {
     });
   }
 
-  Future<DmViewReply> fetchDanmakuView({
-    required int oid,
-    required int pid,
-  }) {
+  Future<DmViewReply> fetchDanmakuView({required int oid, required int pid}) {
     return request(() async {
       final response = await _api.fetchDanmakuView(oid: oid, pid: pid);
       return DmViewReply.fromBuffer(response);
@@ -49,4 +46,3 @@ class DanmakuRepository extends BaseRepository {
     });
   }
 }
-

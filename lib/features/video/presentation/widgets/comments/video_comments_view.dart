@@ -76,7 +76,7 @@ class VideoCommentsView extends ConsumerWidget {
                   bvid: bvid,
                   oid: state.videoDetail!.aid,
                   rootId: comment.rpid,
-                  $extra: {'comment': comment, 'upperMid': upperMid},
+                  $extra: CommentReplyRouteExtra(comment: comment, upperMid: upperMid),
                 ).push(context);
               }
             },
@@ -112,4 +112,3 @@ class VideoCommentsView extends ConsumerWidget {
     );
   }
 }
-

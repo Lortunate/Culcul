@@ -37,4 +37,3 @@ class LiveInteractMessage extends StatelessWidget {
     );
   }
 }
-

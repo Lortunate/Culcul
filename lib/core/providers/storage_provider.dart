@@ -14,4 +14,3 @@ class StorageKeys {
   static const String searchHistory = 'search_history';
   static const String refreshToken = 'auth_refresh_token';
 }
-

@@ -55,4 +55,3 @@ extension FormatDateTimeExtension on DateTime {
     }
   }
 }
-

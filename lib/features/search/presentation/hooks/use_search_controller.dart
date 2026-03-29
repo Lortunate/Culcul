@@ -89,4 +89,3 @@ useSearchController(WidgetRef ref) {
     defaultSearchHint: defaultSearchAsync.asData?.value?.showName,
   );
 }
-

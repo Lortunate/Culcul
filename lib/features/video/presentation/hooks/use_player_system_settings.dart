@@ -31,4 +31,3 @@ ValueNotifier<double> usePlayerSystemSettings(Player player) {
 
   return brightness;
 }
-

@@ -75,7 +75,10 @@ class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
       messenger
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          SnackBar(content: Text(t.common.save_success), behavior: SnackBarBehavior.floating),
+          SnackBar(
+            content: Text(t.common.save_success),
+            behavior: SnackBarBehavior.floating,
+          ),
         );
     } catch (error) {
       if (!mounted) return;
@@ -83,7 +86,10 @@ class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
       messenger
         ..hideCurrentSnackBar()
         ..showSnackBar(
-          SnackBar(content: Text(t.common.save_failed(message: message)), behavior: SnackBarBehavior.floating),
+          SnackBar(
+            content: Text(t.common.save_failed(message: message)),
+            behavior: SnackBarBehavior.floating,
+          ),
         );
     } finally {
       if (mounted) setState(() => _isSaving = false);
@@ -187,7 +193,11 @@ class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
     );
   }
 
-  Widget _buildSaveButton(ColorScheme colorScheme, MediaQueryData mediaQuery, Translations t) {
+  Widget _buildSaveButton(
+    ColorScheme colorScheme,
+    MediaQueryData mediaQuery,
+    Translations t,
+  ) {
     return Positioned(
       bottom: mediaQuery.padding.bottom + 16,
       left: 16,
@@ -214,7 +224,11 @@ class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
     );
   }
 
-  Widget _buildSwipeHint(ColorScheme colorScheme, MediaQueryData mediaQuery, Translations t) {
+  Widget _buildSwipeHint(
+    ColorScheme colorScheme,
+    MediaQueryData mediaQuery,
+    Translations t,
+  ) {
     return Positioned(
       bottom: mediaQuery.padding.bottom + 76,
       left: 0,
@@ -235,4 +249,3 @@ class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
     );
   }
 }
-

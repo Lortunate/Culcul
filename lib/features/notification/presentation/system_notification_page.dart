@@ -113,4 +113,3 @@ class _SystemNotificationCard extends StatelessWidget {
     );
   }
 }
-

@@ -59,4 +59,3 @@ class RetryInterceptor extends Interceptor {
             err.error is SocketException);
   }
 }
-

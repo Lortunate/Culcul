@@ -32,4 +32,3 @@ class HotSearchSkeleton extends StatelessWidget {
     );
   }
 }
-

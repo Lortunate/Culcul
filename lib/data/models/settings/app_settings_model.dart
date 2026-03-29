@@ -18,4 +18,3 @@ sealed class AppSettings with _$AppSettings {
 
   factory AppSettings.fromJson(Map<String, dynamic> json) => _$AppSettingsFromJson(json);
 }
-

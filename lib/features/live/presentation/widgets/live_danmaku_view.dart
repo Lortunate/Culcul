@@ -23,9 +23,7 @@ class LiveDanmakuView extends StatelessWidget {
       itemBuilder: (context, index) {
         final item = history[index];
         return Padding(
-          padding: EdgeInsets.symmetric(
-            vertical: _isSystemMessage(item) ? 6 : 4,
-          ),
+          padding: EdgeInsets.symmetric(vertical: _isSystemMessage(item) ? 6 : 4),
           child: _buildItem(context, item),
         );
       },
@@ -33,8 +31,7 @@ class LiveDanmakuView extends StatelessWidget {
   }
 
   bool _isSystemMessage(LiveDanmakuItem item) {
-    return item.dmType == 3 ||
-        item.nickname == t.live.danmaku.system_notice;
+    return item.dmType == 3 || item.nickname == t.live.danmaku.system_notice;
   }
 
   Widget _buildItem(BuildContext context, LiveDanmakuItem item) {
@@ -53,4 +50,3 @@ class LiveDanmakuView extends StatelessWidget {
     return LiveNormalMessage(item: item);
   }
 }
-

@@ -113,4 +113,3 @@ final playbackDurationProvider = Provider.autoDispose<Duration>((ref) {
 final playbackBufferProvider = Provider.autoDispose<Duration>((ref) {
   return ref.watch(playbackSnapshotValueProvider.select((value) => value.buffer));
 });
-

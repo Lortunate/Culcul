@@ -201,12 +201,19 @@ class LiveRoomRoute extends GoRouteData with $LiveRoomRoute {
   }
 }
 
+class CommentReplyRouteExtra {
+  final CommentItem comment;
+  final int? upperMid;
+
+  const CommentReplyRouteExtra({required this.comment, this.upperMid});
+}
+
 @TypedGoRoute<CommentReplyRoute>(path: '/comment/reply')
 class CommentReplyRoute extends GoRouteData with $CommentReplyRoute {
   final String bvid;
   final int oid;
   final int rootId;
-  final dynamic $extra;
+  final CommentReplyRouteExtra? $extra;
 
   const CommentReplyRoute({
     required this.bvid,
@@ -217,16 +224,16 @@ class CommentReplyRoute extends GoRouteData with $CommentReplyRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    if ($extra is Map<String, dynamic>) {
-      final map = $extra as Map<String, dynamic>;
-      return CommentReplyPage(
-        oid: oid,
-        rootId: rootId,
-        comment: map['comment'] as CommentItem,
-        upperMid: map['upperMid'] as int?,
-      );
+    final routeExtra = $extra;
+    if (routeExtra == null) {
+      throw ArgumentError('CommentReplyRoute requires CommentReplyRouteExtra in \$extra');
     }
-    return CommentReplyPage(oid: oid, rootId: rootId, comment: $extra as CommentItem);
+    return CommentReplyPage(
+      oid: oid,
+      rootId: rootId,
+      comment: routeExtra.comment,
+      upperMid: routeExtra.upperMid,
+    );
   }
 
   @override
@@ -504,4 +511,3 @@ class PublishDynamicRoute extends GoRouteData with $PublishDynamicRoute {
     );
   }
 }
-

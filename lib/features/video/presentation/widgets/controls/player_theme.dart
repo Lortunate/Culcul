@@ -125,4 +125,3 @@ class PlayerTheme {
   static Color overlayBackgroundColor(ColorScheme colorScheme) =>
       colorScheme.scrim.withValues(alpha: 0.6);
 }
-

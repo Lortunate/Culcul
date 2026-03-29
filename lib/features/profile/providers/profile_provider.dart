@@ -1,8 +1,8 @@
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/data/user_info_cache_service.dart';
 import 'package:culcul/data/models/user/user_profile_model.dart';
 import 'package:culcul/features/auth/controllers/auth_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:culcul/features/profile/data/profile_repository.dart';
 
 part 'profile_provider.g.dart';
 
@@ -49,4 +49,3 @@ class UserProfileNotifier extends _$UserProfileNotifier {
     return user;
   }
 }
-

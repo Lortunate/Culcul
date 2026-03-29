@@ -73,4 +73,3 @@ class PrivateSessionList extends ConsumerWidget {
     );
   }
 }
-

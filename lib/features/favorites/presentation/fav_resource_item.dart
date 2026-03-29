@@ -75,4 +75,3 @@ class FavResourceItem extends StatelessWidget {
     );
   }
 }
-

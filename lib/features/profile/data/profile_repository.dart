@@ -172,11 +172,7 @@ class ProfileRepository extends BaseRepository {
     }
   }
 
-  Future<void> modifyRelation({
-    required int mid,
-    required bool isFollow,
-  }) {
+  Future<void> modifyRelation({required int mid, required bool isFollow}) {
     return requestVoid(() => api.modifyRelation(mid, isFollow ? 1 : 2, 11));
   }
 }
-

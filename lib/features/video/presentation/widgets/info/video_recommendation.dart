@@ -17,4 +17,3 @@ class RecommendationItem extends StatelessWidget {
     );
   }
 }
-

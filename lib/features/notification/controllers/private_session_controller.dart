@@ -1,6 +1,6 @@
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/data/models/notification/private_message_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:culcul/features/notification/data/notification_repository.dart';
 
 part 'private_session_controller.g.dart';
 
@@ -37,4 +37,3 @@ class PrivateSessionList extends _$PrivateSessionList {
     _hasMore = data.hasMore == 1;
   }
 }
-

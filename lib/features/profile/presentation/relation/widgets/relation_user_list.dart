@@ -56,4 +56,3 @@ class RelationUserList extends StatelessWidget {
     );
   }
 }
-

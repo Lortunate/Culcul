@@ -22,4 +22,3 @@ class ChatTimeDivider extends StatelessWidget {
     );
   }
 }
-

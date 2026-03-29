@@ -73,10 +73,7 @@ class VideoRepository extends BaseRepository {
     return requestApi(() => api.fetchVideoPlayUrl(aid, cid, qn, fnval, fnver, fourk));
   }
 
-  Future<PlayerInfo> fetchPlayerInfo({
-    required int aid,
-    required int cid,
-  }) {
+  Future<PlayerInfo> fetchPlayerInfo({required int aid, required int cid}) {
     return requestApi(() => api.fetchPlayerInfo(aid, cid));
   }
 
@@ -119,9 +116,6 @@ class VideoRepository extends BaseRepository {
     String platform = 'android',
     int type = 3,
   }) {
-    return requestVoid(
-      () => api.reportVideoProgress(aid, cid, progress, platform, type),
-    );
+    return requestVoid(() => api.reportVideoProgress(aid, cid, progress, platform, type));
   }
 }
-

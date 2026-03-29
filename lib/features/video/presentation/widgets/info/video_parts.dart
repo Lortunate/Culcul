@@ -85,4 +85,3 @@ class VideoPartsSection extends StatelessWidget {
     );
   }
 }
-

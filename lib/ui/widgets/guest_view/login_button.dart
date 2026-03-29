@@ -25,4 +25,3 @@ class _GuestLoginButton extends StatelessWidget {
     );
   }
 }
-

@@ -53,4 +53,3 @@ class GuestView extends StatelessWidget {
     );
   }
 }
-

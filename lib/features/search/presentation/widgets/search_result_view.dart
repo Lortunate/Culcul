@@ -109,4 +109,3 @@ class SearchResultTab extends HookConsumerWidget {
     );
   }
 }
-

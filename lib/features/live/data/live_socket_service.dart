@@ -234,7 +234,7 @@ class LiveSocketService {
       final giftName = data['giftName'] as String;
       final num = data['num'] as int;
 
-        final item = LiveDanmakuItem(
+      final item = LiveDanmakuItem(
         text: t.live.danmaku.gift_feed(giftName: giftName, num: num.toString()),
         nickname: uname,
         uid: data['uid'] as int,
@@ -259,4 +259,3 @@ class LiveSocketService {
     _danmakuController.close();
   }
 }
-

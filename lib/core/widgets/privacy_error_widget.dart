@@ -43,4 +43,3 @@ class PrivacyErrorWidget extends StatelessWidget {
     );
   }
 }
-

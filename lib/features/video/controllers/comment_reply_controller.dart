@@ -98,13 +98,7 @@ class CommentReplyController extends _$CommentReplyController {
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
     final repo = ref.read(videoRepositoryProvider);
-    await repo.addReply(
-      oid: oid,
-      root: root,
-      parent: parent,
-      message: message,
-    );
+    await repo.addReply(oid: oid, root: root, parent: parent, message: message);
     await refresh();
   }
 }
-

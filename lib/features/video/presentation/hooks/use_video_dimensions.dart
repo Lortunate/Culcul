@@ -15,4 +15,3 @@ import 'package:media_kit/media_kit.dart';
 
   return (width: videoWidth.value.toDouble(), height: videoHeight.value.toDouble());
 }
-

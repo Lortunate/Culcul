@@ -67,4 +67,3 @@ class GuestProfileView extends ConsumerWidget {
     );
   }
 }
-

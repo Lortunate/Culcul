@@ -45,7 +45,9 @@ class LoginPage extends HookConsumerWidget {
               icon: const Icon(Icons.close_rounded, size: 24),
               onPressed: () => context.pop(),
               style: IconButton.styleFrom(
-                backgroundColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                backgroundColor: theme.colorScheme.surfaceContainerHighest.withValues(
+                  alpha: 0.5,
+                ),
                 foregroundColor: theme.colorScheme.onSurface,
                 shape: const CircleBorder(),
                 padding: const EdgeInsets.all(8),
@@ -72,9 +74,7 @@ class LoginPage extends HookConsumerWidget {
                     controller: tabController,
                   ),
                   const SizedBox(height: 24),
-                  Expanded(
-                    child: _LoginContentSwitcher(selectedTab: selectedTab),
-                  ),
+                  Expanded(child: _LoginContentSwitcher(selectedTab: selectedTab)),
                 ],
               ),
             ),
@@ -133,10 +133,7 @@ class _AuthHeader extends StatelessWidget {
 }
 
 class _LoginMethodTabs extends StatelessWidget {
-  const _LoginMethodTabs({
-    required this.labels,
-    required this.controller,
-  });
+  const _LoginMethodTabs({required this.labels, required this.controller});
 
   final List<String> labels;
   final TabController controller;
@@ -178,7 +175,7 @@ class _LoginMethodTabs extends StatelessWidget {
               color: Colors.black.withValues(alpha: 0.04),
               blurRadius: 8,
               offset: const Offset(0, 4),
-            )
+            ),
           ],
         ),
       ),

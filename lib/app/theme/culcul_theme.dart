@@ -298,4 +298,3 @@ class _ThemePalette {
     divider: CulculColors.darkDivider,
   );
 }
-

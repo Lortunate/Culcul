@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/data/models/video/player_info.dart';
 import 'package:culcul/features/video/data/video_repository.dart';
 import 'package:culcul/core/utils/danmaku_mask_parser.dart';
 import 'package:path_drawing/path_drawing.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:culcul/features/video/data/danmaku_repository.dart';
 
 part 'danmaku_mask_provider.g.dart';
 
@@ -107,4 +107,3 @@ Path? _parsePath(String base64Svg) {
   }
   return null;
 }
-

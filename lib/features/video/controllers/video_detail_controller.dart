@@ -1,4 +1,3 @@
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/data/models/video/video_detail.dart';
@@ -6,6 +5,7 @@ import 'package:culcul/features/video/data/video_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'video_detail_state.dart';
+import 'package:culcul/features/profile/data/relation_repository.dart';
 
 part 'video_detail_controller.g.dart';
 
@@ -238,12 +238,7 @@ class VideoDetailController extends _$VideoDetailController {
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
     final repo = ref.read(videoRepositoryProvider);
-    await repo.addReply(
-      oid: oid,
-      root: root,
-      parent: parent,
-      message: message,
-    );
+    await repo.addReply(oid: oid, root: root, parent: parent, message: message);
     await _fetchComments(oid);
   }
 

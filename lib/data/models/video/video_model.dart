@@ -76,4 +76,3 @@ class RcmdReasonConverter implements JsonConverter<String, dynamic> {
   @override
   dynamic toJson(String object) => object;
 }
-

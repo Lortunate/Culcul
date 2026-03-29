@@ -76,4 +76,3 @@ class SmartPagingView<T> extends HookConsumerWidget {
     );
   }
 }
-

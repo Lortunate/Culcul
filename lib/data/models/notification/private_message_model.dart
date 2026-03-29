@@ -183,4 +183,3 @@ sealed class PrivateMessageAccountInfo with _$PrivateMessageAccountInfo {
   factory PrivateMessageAccountInfo.fromJson(Map<String, dynamic> json) =>
       _$PrivateMessageAccountInfoFromJson(json);
 }
-

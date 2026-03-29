@@ -36,4 +36,3 @@ sealed class FavFolderListResponse with _$FavFolderListResponse {
   factory FavFolderListResponse.fromJson(Map<String, dynamic> json) =>
       _$FavFolderListResponseFromJson(json);
 }
-

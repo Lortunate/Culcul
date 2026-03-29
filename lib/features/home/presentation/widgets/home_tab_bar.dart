@@ -109,4 +109,3 @@ class _FixedSizePainter extends BoxPainter {
     canvas.drawRRect(rRect, paint);
   }
 }
-

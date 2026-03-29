@@ -80,4 +80,3 @@ class MasterpieceSection extends ConsumerWidget {
     );
   }
 }
-

@@ -46,4 +46,3 @@ sealed class TrendingItem with _$TrendingItem {
   factory TrendingItem.fromJson(Map<String, dynamic> json) =>
       _$TrendingItemFromJson(json);
 }
-

@@ -51,4 +51,3 @@ sealed class VipInfo with _$VipInfo {
 
   factory VipInfo.fromJson(Map<String, dynamic> json) => _$VipInfoFromJson(json);
 }
-

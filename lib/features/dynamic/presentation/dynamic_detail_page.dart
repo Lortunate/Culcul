@@ -1,4 +1,3 @@
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:culcul/features/dynamic/controllers/dynamic_comment_controller.dart';
@@ -12,6 +11,7 @@ import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:culcul/features/dynamic/data/dynamic_repository.dart';
 
 class DynamicDetailPage extends HookConsumerWidget {
   final String dynamicId;
@@ -84,11 +84,7 @@ class DynamicDetailPage extends HookConsumerWidget {
         post.value = item;
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                t.moments.operation_failed(message: e.toString()),
-              ),
-            ),
+            SnackBar(content: Text(t.moments.operation_failed(message: e.toString()))),
           );
         }
       }

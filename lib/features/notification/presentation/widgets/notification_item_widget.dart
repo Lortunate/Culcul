@@ -80,7 +80,9 @@ class NotificationItemWidget extends StatelessWidget {
                 // Main Content (Reply message or "Liked your comment")
                 if (type != NotificationType.like) ...[
                   Text(
-                    detail.message.isNotEmpty ? detail.message : detail.targetReplyContent,
+                    detail.message.isNotEmpty
+                        ? detail.message
+                        : detail.targetReplyContent,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurface,
                       height: 1.5,
@@ -193,4 +195,3 @@ class NotificationItemWidget extends StatelessWidget {
     return t.notification.related_content;
   }
 }
-

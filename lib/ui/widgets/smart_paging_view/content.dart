@@ -61,4 +61,3 @@ class _PagingStatusView extends StatelessWidget {
     );
   }
 }
-

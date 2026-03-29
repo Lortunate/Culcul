@@ -25,4 +25,3 @@ sealed class LiveDanmuHost with _$LiveDanmuHost {
   factory LiveDanmuHost.fromJson(Map<String, dynamic> json) =>
       _$LiveDanmuHostFromJson(json);
 }
-

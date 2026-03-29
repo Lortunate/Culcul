@@ -73,4 +73,3 @@ class DanmakuSettingsController extends _$DanmakuSettingsController {
     state = state.copyWith(isEnabled: value);
   }
 }
-

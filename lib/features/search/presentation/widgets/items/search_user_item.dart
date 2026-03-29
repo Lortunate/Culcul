@@ -27,8 +27,14 @@ class SearchUserItem extends StatelessWidget {
       name: FormatUtils.stripHtmlTags(item.uname ?? ''),
       subtitle: item.usign != null ? FormatUtils.stripHtmlTags(item.usign!) : null,
       stats: [
-        _UserMetaItem(label: t.profile.stats.followers, value: FormatUtils.formatAnyNumber(item.fans)),
-        _UserMetaItem(label: t.search.tabs.video, value: FormatUtils.formatAnyNumber(item.videos)),
+        _UserMetaItem(
+          label: t.profile.stats.followers,
+          value: FormatUtils.formatAnyNumber(item.fans),
+        ),
+        _UserMetaItem(
+          label: t.search.tabs.video,
+          value: FormatUtils.formatAnyNumber(item.videos),
+        ),
       ],
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
       trailing: SizedBox(
@@ -87,4 +93,3 @@ class _UserMetaItem extends StatelessWidget {
     );
   }
 }
-

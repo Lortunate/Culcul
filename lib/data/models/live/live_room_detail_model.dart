@@ -48,4 +48,3 @@ sealed class LiveRoomDetailModel with _$LiveRoomDetailModel {
   factory LiveRoomDetailModel.fromJson(Map<String, dynamic> json) =>
       _$LiveRoomDetailModelFromJson(json);
 }
-

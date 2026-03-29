@@ -89,4 +89,3 @@ class SearchTopicItem extends StatelessWidget {
     );
   }
 }
-

@@ -14,4 +14,3 @@ sealed class PopularResponse with _$PopularResponse {
   factory PopularResponse.fromJson(Map<String, dynamic> json) =>
       _$PopularResponseFromJson(json);
 }
-

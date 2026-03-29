@@ -26,4 +26,3 @@ void useHomeScrollController(
     refreshController.callRefresh();
   });
 }
-

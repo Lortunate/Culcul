@@ -69,4 +69,3 @@ class ListSkeletonView extends StatelessWidget {
     );
   }
 }
-

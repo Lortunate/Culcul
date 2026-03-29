@@ -84,4 +84,3 @@ class AppClickable extends StatelessWidget {
     return content;
   }
 }
-

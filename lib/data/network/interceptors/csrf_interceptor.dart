@@ -51,4 +51,3 @@ class CsrfInterceptor extends Interceptor {
     handler.next(options);
   }
 }
-

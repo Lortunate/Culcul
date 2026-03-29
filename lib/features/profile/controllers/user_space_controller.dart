@@ -1,6 +1,6 @@
 import 'package:culcul/data/models/user/user_profile_model.dart';
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:culcul/features/profile/data/profile_repository.dart';
 
 part 'user_space_controller.g.dart';
 
@@ -31,4 +31,3 @@ class UserSpaceNotifier extends _$UserSpaceNotifier {
     }
   }
 }
-

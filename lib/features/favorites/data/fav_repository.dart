@@ -16,9 +16,7 @@ class FavRepository extends BaseRepository {
 
   FavRepository(this._api);
 
-  Future<FavFolderListResponse> getCreatedFolders({
-    required int upMid,
-  }) async {
+  Future<FavFolderListResponse> getCreatedFolders({required int upMid}) async {
     return requestApi(() => _api.getCreatedFolders(upMid));
   }
 
@@ -95,4 +93,3 @@ class FavRepository extends BaseRepository {
     return requestVoid(() => _api.cleanInvalidResources(mediaId));
   }
 }
-

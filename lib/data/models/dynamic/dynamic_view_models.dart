@@ -85,4 +85,3 @@ class DynamicGoodsItem {
     required this.jumpUrl,
   });
 }
-

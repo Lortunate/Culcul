@@ -60,4 +60,3 @@ class VideoProgressBar extends HookConsumerWidget {
     );
   }
 }
-

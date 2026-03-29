@@ -29,4 +29,3 @@ class UserProfileActionButton extends StatelessWidget {
     );
   }
 }
-

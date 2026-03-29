@@ -152,4 +152,3 @@ class ChatPage extends HookConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 }
-

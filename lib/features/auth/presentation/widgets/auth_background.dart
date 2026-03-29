@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 
 class AuthBackground extends StatelessWidget {
   const AuthBackground({super.key, required this.child});

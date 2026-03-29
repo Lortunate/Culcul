@@ -35,4 +35,3 @@ abstract class RelationApi {
     @Field('re_src') int reSrc = 11,
   });
 }
-

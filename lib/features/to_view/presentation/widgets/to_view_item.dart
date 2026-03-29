@@ -52,7 +52,9 @@ class ToViewItem extends StatelessWidget {
             const SizedBox(width: 4),
             Expanded(
               child: Text(
-                t.watch_later.watch_to(progress: FormatUtils.formatDuration(item.progress ?? 0)),
+                t.watch_later.watch_to(
+                  progress: FormatUtils.formatDuration(item.progress ?? 0),
+                ),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                   fontSize: 12,
@@ -101,4 +103,3 @@ class ToViewItem extends StatelessWidget {
     );
   }
 }
-

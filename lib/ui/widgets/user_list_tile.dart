@@ -120,4 +120,3 @@ class UserListTile extends StatelessWidget {
     );
   }
 }
-

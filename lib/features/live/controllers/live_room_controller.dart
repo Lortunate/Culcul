@@ -2,10 +2,10 @@ import 'package:culcul/data/models/live/index.dart';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/features/live/controllers/live_room_state.dart';
 import 'package:culcul/features/live/data/live_repository.dart';
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/features/live/data/live_socket_service.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:culcul/features/profile/data/profile_repository.dart';
 
 part 'live_room_controller.g.dart';
 
@@ -92,7 +92,9 @@ class LiveRoomController extends _$LiveRoomController {
 
   Future<void> _fetchPlayUrl(int roomId, {int? qn}) async {
     try {
-      final url = await ref.read(liveRepositoryProvider).getPlayUrl(roomId: roomId, qn: qn);
+      final url = await ref
+          .read(liveRepositoryProvider)
+          .getPlayUrl(roomId: roomId, qn: qn);
       state = state.copyWith(playUrl: url);
     } catch (_) {}
   }

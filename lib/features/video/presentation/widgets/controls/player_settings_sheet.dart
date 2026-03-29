@@ -328,7 +328,11 @@ class PlayerSettingsSheet extends ConsumerWidget {
     );
   }
 
-  Widget _buildSleepTimerOptions(ColorScheme colorScheme, BuildContext context, Translations t) {
+  Widget _buildSleepTimerOptions(
+    ColorScheme colorScheme,
+    BuildContext context,
+    Translations t,
+  ) {
     final options = [
       null,
       const Duration(minutes: 15),
@@ -491,4 +495,3 @@ class _ModernFilterChip extends StatelessWidget {
     );
   }
 }
-

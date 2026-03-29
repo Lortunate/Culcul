@@ -53,4 +53,3 @@ sealed class SubtitleItem with _$SubtitleItem {
   factory SubtitleItem.fromJson(Map<String, dynamic> json) =>
       _$SubtitleItemFromJson(json);
 }
-

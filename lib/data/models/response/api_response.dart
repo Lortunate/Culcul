@@ -22,4 +22,3 @@ sealed class ApiResponse<T> with _$ApiResponse<T> {
   /// Check if the request was successful based on the code being 0.
   bool get isSuccess => code == 0;
 }
-

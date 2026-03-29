@@ -1,9 +1,9 @@
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:culcul/features/dynamic/controllers/dynamic_comment_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:culcul/features/dynamic/data/dynamic_repository.dart';
 
 part 'dynamic_comment_controller.g.dart';
 
@@ -89,12 +89,7 @@ class DynamicCommentController extends _$DynamicCommentController {
   Future<void> addReply(int root, int parent, String message) async {
     final repository = ref.read(dynamicRepositoryProvider);
 
-    await repository.addReply(
-      post: post,
-      root: root,
-      parent: parent,
-      message: message,
-    );
+    await repository.addReply(post: post, root: root, parent: parent, message: message);
     await refresh();
   }
 
@@ -113,4 +108,3 @@ class DynamicCommentController extends _$DynamicCommentController {
     return data.replies.length >= 20;
   }
 }
-

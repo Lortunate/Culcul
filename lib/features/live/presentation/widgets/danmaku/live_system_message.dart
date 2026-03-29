@@ -46,4 +46,3 @@ class LiveSystemMessage extends StatelessWidget {
     );
   }
 }
-

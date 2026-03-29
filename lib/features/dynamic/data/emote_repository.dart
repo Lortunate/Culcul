@@ -16,10 +16,7 @@ class EmoteRepository extends BaseRepository {
 
   EmoteRepository(this._api);
 
-  Future<EmoteResponse> getUserEmotes({
-    String business = 'dynamic',
-  }) {
+  Future<EmoteResponse> getUserEmotes({String business = 'dynamic'}) {
     return requestApi(() => _api.getUserEmotes(business: business));
   }
 }
-

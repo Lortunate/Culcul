@@ -62,4 +62,3 @@ class _RankingAppBar extends StatelessWidget {
     );
   }
 }
-

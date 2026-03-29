@@ -46,4 +46,3 @@ class HomeRepository extends BaseRepository {
     return data.list;
   }
 }
-

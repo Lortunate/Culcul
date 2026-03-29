@@ -1,7 +1,7 @@
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/data/network/dio_client.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:culcul/features/auth/data/auth_repository.dart';
 
 class TokenInterceptor extends Interceptor {
   final Ref _ref;
@@ -48,4 +48,3 @@ class TokenInterceptor extends Interceptor {
     handler.next(response);
   }
 }
-

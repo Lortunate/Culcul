@@ -32,4 +32,3 @@ void showSidePanel(BuildContext context, Widget child) {
     );
   }
 }
-

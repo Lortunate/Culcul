@@ -138,7 +138,10 @@ class _StatsRow extends StatelessWidget {
                       label: t.profile.stats.followers,
                       onTap: () => FollowersRoute(vmid: int.parse(user.id)).push(context),
                     ),
-                    UserProfileStatItem(count: user.likesCount, label: t.profile.stats.likes),
+                    UserProfileStatItem(
+                      count: user.likesCount,
+                      label: t.profile.stats.likes,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 4),
@@ -295,4 +298,3 @@ class _BioSection extends StatelessWidget {
     );
   }
 }
-

@@ -1,8 +1,8 @@
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/utils/list_utils.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:culcul/features/dynamic/data/dynamic_repository.dart';
 
 part 'dynamic_controller.g.dart';
 

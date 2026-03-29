@@ -74,7 +74,10 @@ class ChatInput extends StatelessWidget {
                   decoration: InputDecoration(
                     hintText: t.notification.chat.input_hint,
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
                     isDense: true,
                   ),
                   textInputAction: TextInputAction.send,
@@ -102,4 +105,3 @@ class ChatInput extends StatelessWidget {
     );
   }
 }
-

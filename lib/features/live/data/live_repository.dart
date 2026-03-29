@@ -28,15 +28,11 @@ class LiveRepository extends BaseRepository {
     return requestApi(() => _api.getPlayUrl(roomId: roomId, qn: qn, platform: platform));
   }
 
-  Future<LiveDanmakuConfigModel> getDanmakuConfig(
-    int roomId,
-  ) async {
+  Future<LiveDanmakuConfigModel> getDanmakuConfig(int roomId) async {
     return requestApi(() => _api.getDanmakuConfig(roomId));
   }
 
-  Future<LiveHistoryDanmakuModel> getHistoryDanmaku(
-    int roomId,
-  ) async {
+  Future<LiveHistoryDanmakuModel> getHistoryDanmaku(int roomId) async {
     return requestApi(() => _api.getHistoryDanmaku(roomId));
   }
 
@@ -85,10 +81,7 @@ class LiveRepository extends BaseRepository {
     );
   }
 
-  Future<void> sendDanmaku({
-    required int roomId,
-    required String msg,
-  }) async {
+  Future<void> sendDanmaku({required int roomId, required String msg}) async {
     return requestVoid(
       () => _api.sendDanmaku(
         msg: msg,
@@ -98,4 +91,3 @@ class LiveRepository extends BaseRepository {
     );
   }
 }
-

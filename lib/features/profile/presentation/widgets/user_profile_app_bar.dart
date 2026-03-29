@@ -174,4 +174,3 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
-

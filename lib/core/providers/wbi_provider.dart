@@ -195,4 +195,3 @@ class WbiHelper {
 final wbiHelperProvider = Provider<WbiHelper>((ref) {
   return WbiHelper(ref.watch(basicResourceApiProvider));
 });
-

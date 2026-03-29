@@ -27,10 +27,7 @@ class NotificationRepository extends BaseRepository {
     return requestApi(() => _api.getUnreadCount());
   }
 
-  Future<ReplyResponse> getReplyList({
-    int? id,
-    int? replyTime,
-  }) async {
+  Future<ReplyResponse> getReplyList({int? id, int? replyTime}) async {
     return requestApi(() => _api.getReplyList(id: id, replyTime: replyTime));
   }
 
@@ -38,11 +35,10 @@ class NotificationRepository extends BaseRepository {
     return requestApi(() => _api.getAtList(id: id, atTime: atTime));
   }
 
-  Future<ReplyResponse> getLikeList({
-    int? id,
-    int? likeTime,
-  }) async {
-    final likeResponse = await requestApi(() => _api.getLikeList(id: id, likeTime: likeTime));
+  Future<ReplyResponse> getLikeList({int? id, int? likeTime}) async {
+    final likeResponse = await requestApi(
+      () => _api.getLikeList(id: id, likeTime: likeTime),
+    );
     return ReplyResponse(
       cursor: likeResponse.total.cursor,
       items: likeResponse.total.items,
@@ -135,4 +131,3 @@ class NotificationRepository extends BaseRepository {
     );
   }
 }
-

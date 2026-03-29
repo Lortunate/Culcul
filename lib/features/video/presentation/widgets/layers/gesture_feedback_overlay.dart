@@ -38,4 +38,3 @@ class GestureFeedbackOverlay extends HookWidget {
     );
   }
 }
-

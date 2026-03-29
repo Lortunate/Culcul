@@ -48,4 +48,3 @@ abstract class SearchApi {
     @Query('tids') int? tids,
   });
 }
-

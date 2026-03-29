@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/protos/dm.pb.dart';
+import 'package:culcul/features/video/data/danmaku_repository.dart';
 
 part 'danmaku_controller.g.dart';
 
@@ -24,4 +24,3 @@ class DanmakuProvider extends _$DanmakuProvider {
     return result.elems;
   }
 }
-

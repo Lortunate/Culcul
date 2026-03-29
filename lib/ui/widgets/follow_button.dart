@@ -77,4 +77,3 @@ class FollowButton extends ConsumerWidget {
     );
   }
 }
-

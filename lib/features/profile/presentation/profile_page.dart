@@ -38,4 +38,3 @@ class ProfilePage extends HookConsumerWidget {
     );
   }
 }
-

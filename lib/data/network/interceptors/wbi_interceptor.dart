@@ -64,4 +64,3 @@ class WbiInterceptor extends Interceptor {
     }
   }
 }
-

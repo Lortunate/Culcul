@@ -84,4 +84,3 @@ class _PopularTag extends StatelessWidget {
     );
   }
 }
-

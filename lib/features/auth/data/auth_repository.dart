@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:culcul/core/errors/exceptions.dart';
+import 'package:culcul/core/providers/api_provider.dart';
+import 'package:culcul/core/providers/storage_provider.dart';
 import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/data/api/auth_api.dart';
 import 'package:culcul/data/models/response/api_response.dart';
@@ -9,6 +11,14 @@ import 'package:culcul/domain/entities/user_entity.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pointycastle/asymmetric/api.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'auth_repository.g.dart';
+
+@riverpod
+AuthRepository authRepository(Ref ref) {
+  return AuthRepository(ref.watch(authApiProvider), ref.watch(storageBoxProvider));
+}
 
 class AuthRepository extends BaseRepository {
   final AuthApi _api;
@@ -280,4 +290,3 @@ class AuthRepository extends BaseRepository {
     }
   }
 }
-

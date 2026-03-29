@@ -1,6 +1,6 @@
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/data/models/history/history_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:culcul/features/history/data/history_repository.dart';
 
 part 'history_provider.g.dart';
 
@@ -17,4 +17,3 @@ class HistoryList extends _$HistoryList {
     return data.list;
   }
 }
-

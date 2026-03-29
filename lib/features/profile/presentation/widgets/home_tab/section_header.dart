@@ -17,4 +17,3 @@ class SectionHeader extends StatelessWidget {
     );
   }
 }
-

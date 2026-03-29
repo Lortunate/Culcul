@@ -66,4 +66,3 @@ class UserEntity {
       currentExp.hashCode ^
       nextExp.hashCode;
 }
-

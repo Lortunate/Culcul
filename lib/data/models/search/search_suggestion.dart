@@ -55,4 +55,3 @@ class SearchSuggestionResultConverter
   @override
   dynamic toJson(SearchSuggestionResult? object) => object?.toJson();
 }
-

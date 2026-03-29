@@ -1,6 +1,6 @@
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/data/models/notification/reply_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:culcul/features/notification/data/notification_repository.dart';
 
 part 'at_controller.g.dart';
 
@@ -23,4 +23,3 @@ class AtList extends _$AtList {
     state = AsyncData([...currentList, ...data.items]);
   }
 }
-

@@ -45,11 +45,7 @@ class RankingSkeletonItem extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AppShimmerBox(
-                        height: 14,
-                        width: double.infinity,
-                        borderRadius: 2,
-                      ),
+                      AppShimmerBox(height: 14, width: double.infinity, borderRadius: 2),
                       SizedBox(height: 6),
                       AppShimmerBox(height: 14, width: 120, borderRadius: 2),
                     ],
@@ -86,4 +82,3 @@ class RankingSkeletonItem extends StatelessWidget {
     );
   }
 }
-

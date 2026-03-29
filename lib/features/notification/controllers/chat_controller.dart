@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/features/auth/controllers/auth_controller.dart';
 import 'package:culcul/data/models/notification/private_message_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:culcul/features/notification/data/notification_repository.dart';
 
 part 'chat_controller.g.dart';
 
@@ -93,8 +93,7 @@ class Chat extends _$Chat {
       }
       _hasMore = response.hasMore == 1;
     } catch (e) {
-      // Handle error quietly or show toast
-      print('Load more messages failed: $e');
+      // Keep current list on pagination failure; UI should remain usable.
     }
   }
 
@@ -127,7 +126,7 @@ class Chat extends _$Chat {
     final currentUser = ref.read(authProvider).user;
 
     if (currentUser == null) {
-      throw Exception('Not logged in');
+      throw StateError('Not logged in');
     }
 
     final senderUid = int.parse(currentUser.id);
@@ -156,12 +155,12 @@ class Chat extends _$Chat {
 
     try {
       await repo.sendPrivateMessage(
-      senderUid: senderUid,
-      receiverId: talkerId,
-      receiverType: sessionType,
-      msgType: msgType,
-      content: jsonEncode(contentMap),
-    );
+        senderUid: senderUid,
+        receiverId: talkerId,
+        receiverType: sessionType,
+        msgType: msgType,
+        content: jsonEncode(contentMap),
+      );
     } catch (e) {
       // Failure: Revert state
       state = previousState;
@@ -169,4 +168,3 @@ class Chat extends _$Chat {
     }
   }
 }
-

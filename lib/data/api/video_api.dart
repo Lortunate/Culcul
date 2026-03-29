@@ -125,4 +125,3 @@ abstract class VideoApi {
     @Field('type') int type,
   );
 }
-

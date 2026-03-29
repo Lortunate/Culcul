@@ -226,4 +226,3 @@ class _ExpBar extends StatelessWidget {
     );
   }
 }
-

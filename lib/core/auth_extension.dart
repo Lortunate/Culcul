@@ -5,4 +5,3 @@ extension AuthStateExtension on AsyncValue<UserEntity?> {
   bool get isLoggedIn => asData?.value != null;
   UserEntity? get user => asData?.value;
 }
-

@@ -204,4 +204,3 @@ class _StatIconText extends StatelessWidget {
     );
   }
 }
-

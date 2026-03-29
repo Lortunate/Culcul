@@ -63,4 +63,3 @@ AppException dioExceptionToAppException(DioException e) {
       return UnknownException('Unknown error: ${e.message}', cause: e);
   }
 }
-

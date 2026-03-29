@@ -45,4 +45,3 @@ class SpeedIndicator extends StatelessWidget {
     );
   }
 }
-

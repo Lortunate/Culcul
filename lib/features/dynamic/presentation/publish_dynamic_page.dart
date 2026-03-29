@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:culcul/features/dynamic/controllers/dynamic_controller.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/emoji_picker.dart';
@@ -11,6 +10,7 @@ import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:culcul/features/dynamic/data/dynamic_repository.dart';
 
 class PublishDynamicPage extends ConsumerStatefulWidget {
   const PublishDynamicPage({super.key});

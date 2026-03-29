@@ -160,4 +160,3 @@ class _RankingErrorView extends StatelessWidget {
     );
   }
 }
-

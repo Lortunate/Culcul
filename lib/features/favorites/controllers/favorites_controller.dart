@@ -1,7 +1,7 @@
 import 'package:culcul/data/models/fav/index.dart';
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/features/auth/controllers/auth_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:culcul/features/favorites/data/fav_repository.dart';
 
 part 'favorites_controller.g.dart';
 
@@ -141,4 +141,3 @@ class FavFolderResources extends _$FavFolderResources {
     }
   }
 }
-

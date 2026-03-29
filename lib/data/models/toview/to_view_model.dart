@@ -69,4 +69,3 @@ sealed class ToViewListResponse with _$ToViewListResponse {
   factory ToViewListResponse.fromJson(Map<String, dynamic> json) =>
       _$ToViewListResponseFromJson(json);
 }
-

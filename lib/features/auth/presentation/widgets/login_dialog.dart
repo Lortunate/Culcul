@@ -116,9 +116,8 @@ class LoginDialog extends HookConsumerWidget {
                     onPressed: () => Navigator.of(context).pop(),
                     icon: const Icon(Icons.close_rounded),
                     style: IconButton.styleFrom(
-                      backgroundColor: theme.colorScheme.surfaceVariant.withValues(
-                        alpha: 0.3,
-                      ),
+                      backgroundColor: theme.colorScheme.surfaceContainerHighest
+                          .withValues(alpha: 0.3),
                     ),
                   ),
                 ],
@@ -145,7 +144,9 @@ class LoginDialog extends HookConsumerWidget {
                         decoration: BoxDecoration(
                           color: isSelected
                               ? theme.colorScheme.primary
-                              : theme.colorScheme.surfaceVariant.withValues(alpha: 0.3),
+                              : theme.colorScheme.surfaceContainerHighest.withValues(
+                                  alpha: 0.3,
+                                ),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(

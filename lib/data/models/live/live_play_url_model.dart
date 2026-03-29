@@ -40,4 +40,3 @@ sealed class LiveStreamUrl with _$LiveStreamUrl {
   factory LiveStreamUrl.fromJson(Map<String, dynamic> json) =>
       _$LiveStreamUrlFromJson(json);
 }
-

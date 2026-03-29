@@ -3,13 +3,28 @@ import 'dart:io';
 
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:culcul/core/errors/exceptions.dart';
+import 'package:culcul/core/providers/api_provider.dart';
+import 'package:culcul/core/providers/cookie_jar_provider.dart';
 import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/data/api/dynamic_api.dart';
+import 'package:culcul/data/network/dio_client.dart';
 import 'package:culcul/features/dynamic/data/article_detail_data.dart';
 import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:dio/dio.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'dynamic_repository.g.dart';
+
+@riverpod
+DynamicRepository dynamicRepository(Ref ref) {
+  return DynamicRepository(
+    ref.watch(dynamicApiProvider),
+    ref.watch(dioClientProvider),
+    ref.watch(cookieJarProvider),
+  );
+}
 
 class DynamicRepository extends BaseRepository {
   final DynamicApi _api;
@@ -246,25 +261,15 @@ class DynamicRepository extends BaseRepository {
     return null;
   }
 
-  Future<DynamicData> getFeed({
-    String? type,
-    String? offset,
-    int page = 1,
-  }) {
+  Future<DynamicData> getFeed({String? type, String? offset, int page = 1}) {
     return requestApi(() => _api.getDynamicFeed(type: type, offset: offset, page: page));
   }
 
-  Future<DynamicData> getSpaceDynamicFeed({
-    required int hostMid,
-    String? offset,
-  }) {
+  Future<DynamicData> getSpaceDynamicFeed({required int hostMid, String? offset}) {
     return requestApi(() => _api.getSpaceDynamicFeed(hostMid: hostMid, offset: offset));
   }
 
-  Future<DynamicData> getTopicFeed({
-    required int topicId,
-    String? offset,
-  }) {
+  Future<DynamicData> getTopicFeed({required int topicId, String? offset}) {
     return requestApi(() => _api.getTopicFeed(topicId: topicId, offset: offset));
   }
 

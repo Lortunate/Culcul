@@ -1,4 +1,3 @@
-import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/data/models/fav/index.dart';
 import 'package:culcul/features/favorites/controllers/favorites_controller.dart';
 import 'package:culcul/features/favorites/presentation/fav_resource_item.dart';
@@ -14,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:culcul/features/favorites/data/fav_repository.dart';
 
 class FavoriteDetailPage extends HookConsumerWidget {
   final int mediaId;
@@ -63,13 +63,15 @@ class FavoriteDetailPage extends HookConsumerWidget {
                         ref.invalidate(provider);
                       } catch (e) {
                         if (context.mounted) {
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text('${t.common.error}: $e')));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('${t.common.error}: $e')),
+                          );
                         }
                       }
                     },
-              child: Text(t.favorites.delete_with_count(count: selectedItems.value.length)),
+              child: Text(
+                t.favorites.delete_with_count(count: selectedItems.value.length),
+              ),
             ),
             IconButton(
               icon: const Icon(Icons.close),
@@ -396,4 +398,3 @@ class _FavoriteDetailSkeleton extends StatelessWidget {
     );
   }
 }
-
