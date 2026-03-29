@@ -1,7 +1,6 @@
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/base_repository.dart';
-import 'package:culcul/core/result.dart';
 import 'package:culcul/data/api/profile_api.dart';
 import 'package:culcul/data/models/user/user_card_model.dart';
 import 'package:culcul/data/models/user/user_space_video_model.dart';
@@ -20,36 +19,26 @@ class ProfileRepository extends BaseRepository {
 
   ProfileRepository({required this.api});
 
-  Future<Result<UserCardModel, AppException>> getUserCard(int mid) async {
-    final result = await safeApiCall(() => api.getCard(mid));
+  Future<UserCardModel> getUserCard(int mid) async {
+    final data = await requestApi(() => api.getCard(mid));
+    try {
+      final map = data as Map<String, dynamic>;
+      final card = map['card'] as Map<String, dynamic>;
+      final following = map['following'] as bool? ?? false;
 
-    return switch (result) {
-      Success(value: final data) => () {
-        try {
-          final map = data as Map<String, dynamic>;
-          final card = map['card'] as Map<String, dynamic>;
-          final following = map['following'] as bool? ?? false;
-
-          return Success<UserCardModel, AppException>(
-            UserCardModel(
-              mid: card['mid']?.toString() ?? mid.toString(),
-              name: card['name']?.toString() ?? '',
-              face: card['face']?.toString() ?? '',
-              isFollowed: following,
-            ),
-          );
-        } catch (e) {
-          return Failure<UserCardModel, AppException>(
-            UnknownException('Failed to parse user card', cause: e),
-          );
-        }
-      }(),
-      Failure(exception: final e) => Failure<UserCardModel, AppException>(e),
-    };
+      return UserCardModel(
+        mid: card['mid']?.toString() ?? mid.toString(),
+        name: card['name']?.toString() ?? '',
+        face: card['face']?.toString() ?? '',
+        isFollowed: following,
+      );
+    } catch (e) {
+      throw UnknownException('Failed to parse user card', cause: e);
+    }
   }
 
-  Future<Result<UserProfile, AppException>> getProfile(int userId) async {
-    return safeCall(() async {
+  Future<UserProfile> getProfile(int userId) async {
+    return request(() async {
       final infoResponse = await api.getAccountInfo(userId);
 
       if (infoResponse.code != 0) {
@@ -154,48 +143,40 @@ class ProfileRepository extends BaseRepository {
     });
   }
 
-  Future<Result<List<UserSpaceVideoModel>, AppException>> getSpaceVideos({
+  Future<List<UserSpaceVideoModel>> getSpaceVideos({
     required int mid,
     int page = 1,
     int pageSize = 30,
     String order = 'pubdate',
   }) async {
-    final result = await safeApiCall(
+    final data = await requestApi(
       () => api.getSpaceVideos(mid: mid, page: page, pageSize: pageSize, order: order),
     );
-
-    return switch (result) {
-      Success(value: final data) => Success(data.list.vlist),
-      Failure(exception: final e) => Failure(e),
-    };
+    return data.list.vlist;
   }
 
-  Future<Result<UserSpaceVideoModel?, AppException>> getStickyVideo(int vmid) async {
-    final result = await safeApiCall(() => api.getStickyVideo(vmid));
-
-    return switch (result) {
-      Success(value: final data) => Success(data),
-      Failure(exception: final e) =>
-        (e is ServerException && e.code == 53016) ? const Success(null) : Failure(e),
-    };
+  Future<UserSpaceVideoModel?> getStickyVideo(int vmid) async {
+    try {
+      return await requestApi(() => api.getStickyVideo(vmid));
+    } on ServerException catch (e) {
+      if (e.code == 53016) return null;
+      rethrow;
+    }
   }
 
-  Future<Result<List<UserSpaceVideoModel>, AppException>> getMasterpiece(int vmid) async {
-    final result = await safeApiCall(() => api.getMasterpiece(vmid));
-
-    return switch (result) {
-      Success(value: final data) => Success(data),
-      Failure(exception: final _) => const Success(
-        [],
-      ), // Fallback to empty list as per original logic
-    };
+  Future<List<UserSpaceVideoModel>> getMasterpiece(int vmid) async {
+    try {
+      return await requestApi(() => api.getMasterpiece(vmid));
+    } catch (_) {
+      return [];
+    }
   }
 
-  Future<Result<void, AppException>> modifyRelation({
+  Future<void> modifyRelation({
     required int mid,
     required bool isFollow,
   }) {
-    return safeVoidApiCall(() => api.modifyRelation(mid, isFollow ? 1 : 2, 11));
+    return requestVoid(() => api.modifyRelation(mid, isFollow ? 1 : 2, 11));
   }
 }
 

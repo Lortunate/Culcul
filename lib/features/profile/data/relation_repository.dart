@@ -1,6 +1,4 @@
-import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/base_repository.dart';
-import 'package:culcul/core/result.dart';
 import 'package:culcul/data/api/relation_api.dart';
 import 'package:culcul/data/models/relation/relation_model.dart';
 
@@ -9,30 +7,30 @@ class RelationRepository extends BaseRepository {
 
   RelationRepository(this._api);
 
-  Future<Result<RelationResponseData, AppException>> getFollowings(
+  Future<RelationResponseData> getFollowings(
     int vmid, {
     int pn = 1,
     int ps = 50,
     String? orderType,
   }) {
-    return safeApiCall(
+    return requestApi(
       () => _api.getFollowings(vmid, pn: pn, ps: ps, orderType: orderType),
     );
   }
 
-  Future<Result<RelationResponseData, AppException>> getFollowers(
+  Future<RelationResponseData> getFollowers(
     int vmid, {
     int pn = 1,
     int ps = 50,
   }) {
-    return safeApiCall(() => _api.getFollowers(vmid, pn: pn, ps: ps));
+    return requestApi(() => _api.getFollowers(vmid, pn: pn, ps: ps));
   }
 
-  Future<Result<void, AppException>> modifyRelation({
+  Future<void> modifyRelation({
     required int fid,
     required int act,
   }) {
-    return safeVoidApiCall(() => _api.modifyRelation(fid, act));
+    return requestVoid(() => _api.modifyRelation(fid, act));
   }
 }
 

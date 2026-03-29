@@ -1,7 +1,5 @@
-import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/base_repository.dart';
-import 'package:culcul/core/result.dart';
 import 'package:culcul/data/api/video_api.dart';
 import 'package:culcul/data/models/video/video_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -18,48 +16,34 @@ class HomeRepository extends BaseRepository {
 
   HomeRepository({required this.api});
 
-  Future<Result<List<VideoModel>, AppException>> fetchRecommend({
+  Future<List<VideoModel>> fetchRecommend({
     int page = 1,
     bool forceRefresh = false,
   }) async {
-    final result = await safeApiCall(
+    final data = await requestApi(
       () => api.fetchRecommend(
         freshIdx: page,
         freshIdx1h: page,
         forceRefresh: forceRefresh ? true : null,
       ),
     );
-
-    return switch (result) {
-      Success(value: final data) => () {
-        final items = data.item;
-        final list = items
-            .where((e) => e['goto'] == 'av')
-            .map((e) => VideoModel.fromJson(e))
-            .toList();
-        return Success<List<VideoModel>, AppException>(list);
-      }(),
-      Failure(exception: final e) => Failure<List<VideoModel>, AppException>(e),
-    };
+    final items = data.item;
+    return items.where((e) => e['goto'] == 'av').map(VideoModel.fromJson).toList();
   }
 
-  Future<Result<List<VideoModel>, AppException>> fetchPopular({
+  Future<List<VideoModel>> fetchPopular({
     int page = 1,
     int pageSize = 20,
     bool forceRefresh = false,
   }) async {
-    final result = await safeApiCall(
+    final data = await requestApi(
       () => api.fetchPopular(
         pn: page,
         ps: pageSize,
         forceRefresh: forceRefresh ? true : null,
       ),
     );
-
-    return switch (result) {
-      Success(value: final data) => Success(data.list),
-      Failure(exception: final e) => Failure(e),
-    };
+    return data.list;
   }
 }
 

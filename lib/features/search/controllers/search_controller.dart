@@ -1,4 +1,3 @@
-import 'package:culcul/core/result.dart';
 import 'package:culcul/features/search/data/search_repository.dart';
 import 'package:culcul/data/models/feed/trending_ranking.dart';
 import 'package:culcul/data/models/search/default_search.dart';
@@ -14,30 +13,18 @@ class SearchSuggestions extends _$SearchSuggestions {
   FutureOr<List<SearchSuggestionTag>> build(String term) async {
     if (term.isEmpty) return [];
     final repository = ref.watch(searchRepositoryProvider);
-    final result = await repository.fetchSearchSuggestions(term);
-    return switch (result) {
-      Success(value: final list) => list,
-      Failure(exception: final e) => throw e,
-    };
+    return repository.fetchSearchSuggestions(term);
   }
 }
 
 @Riverpod(keepAlive: true)
 FutureOr<DefaultSearchData?> defaultSearch(Ref ref) async {
-  final result = await ref.watch(searchRepositoryProvider).fetchDefaultSearch();
-  return switch (result) {
-    Success(value: final data) => data,
-    Failure(exception: final e) => throw e,
-  };
+  return ref.watch(searchRepositoryProvider).fetchDefaultSearch();
 }
 
 @Riverpod(keepAlive: true)
 FutureOr<TrendingRankingData?> trendingRanking(Ref ref) async {
-  final result = await ref.watch(searchRepositoryProvider).fetchTrendingRanking();
-  return switch (result) {
-    Success(value: final data) => data,
-    Failure(exception: final e) => throw e,
-  };
+  return ref.watch(searchRepositoryProvider).fetchTrendingRanking();
 }
 
 @Riverpod(keepAlive: true)
@@ -50,7 +37,7 @@ class SearchResult extends _$SearchResult {
     int duration = 0,
   }) async {
     if (keyword.isEmpty) return null;
-    final result = await ref
+    return ref
         .watch(searchRepositoryProvider)
         .fetchSearchAll(
           keyword: keyword,
@@ -58,10 +45,6 @@ class SearchResult extends _$SearchResult {
           order: order,
           duration: duration,
         );
-    return switch (result) {
-      Success(value: final data) => data,
-      Failure(exception: final e) => throw e,
-    };
   }
 
   Future<void> fetchMore() async {
@@ -78,7 +61,7 @@ class SearchResult extends _$SearchResult {
     state = AsyncLoading<SearchResultData?>().copyWithPrevious(state);
 
     state = await AsyncValue.guard(() async {
-      final result = await ref
+      final newData = await ref
           .read(searchRepositoryProvider)
           .fetchSearchAll(
             keyword: keyword,
@@ -87,13 +70,7 @@ class SearchResult extends _$SearchResult {
             duration: duration,
             page: oldState.page + 1,
           );
-
-      return switch (result) {
-        Success(value: final newData) => newData.copyWith(
-          result: [...oldState.result, ...newData.result],
-        ),
-        Failure(exception: final e) => throw e,
-      };
+      return newData.copyWith(result: [...oldState.result, ...newData.result]);
     });
   }
 }

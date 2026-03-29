@@ -1,4 +1,3 @@
-import 'package:culcul/core/result.dart';
 import 'package:culcul/data/models/fav/index.dart';
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/features/auth/controllers/auth_controller.dart';
@@ -16,51 +15,40 @@ class FavCreatedFolders extends _$FavCreatedFolders {
     }
     final mid = int.parse(authState.user!.id);
     final repository = ref.read(favRepositoryProvider);
-    final result = await repository.getCreatedFolders(upMid: mid);
+    final response = await repository.getCreatedFolders(upMid: mid);
+    final folders = response.list ?? [];
+    if (folders.isEmpty) return <FavFolderModel>[];
 
-    return switch (result) {
-      Success(value: final response) => () async {
-        final folders = response.list ?? [];
-        if (folders.isEmpty) return <FavFolderModel>[];
+    final foldersWithCovers = await Future.wait(
+      folders.map((folder) async {
+        if (folder.cover != null && folder.cover!.isNotEmpty) {
+          return folder;
+        }
 
-        final foldersWithCovers = await Future.wait(
-          folders.map((folder) async {
-            if (folder.cover != null && folder.cover!.isNotEmpty) {
-              return folder;
-            }
+        try {
+          final resources = await repository.getFolderResources(
+            mediaId: folder.id,
+            pn: 1,
+            ps: 1,
+          );
+          String cover = resources.info.cover;
 
-            try {
-              final resResult = await repository.getFolderResources(
-                mediaId: folder.id,
-                pn: 1,
-                ps: 1,
-              );
+          if (cover.isEmpty && resources.medias != null && resources.medias!.isNotEmpty) {
+            cover = resources.medias!.first.cover;
+          }
 
-              if (resResult case Success(value: final resources)) {
-                String cover = resources.info.cover;
+          if (cover.isNotEmpty) {
+            return folder.copyWith(cover: cover);
+          }
+        } catch (_) {
+          return folder;
+        }
 
-                if (cover.isEmpty &&
-                    resources.medias != null &&
-                    resources.medias!.isNotEmpty) {
-                  cover = resources.medias!.first.cover;
-                }
+        return folder;
+      }),
+    );
 
-                if (cover.isNotEmpty) {
-                  return folder.copyWith(cover: cover);
-                }
-              }
-            } catch (_) {
-              return folder;
-            }
-
-            return folder;
-          }),
-        );
-
-        return foldersWithCovers;
-      }(),
-      Failure(exception: final e) => throw e,
-    };
+    return foldersWithCovers;
   }
 }
 
@@ -83,19 +71,13 @@ class FavCollectedFolders extends _$FavCollectedFolders {
       return [];
     }
     final mid = int.parse(authState.user!.id);
-    final result = await ref
+    final response = await ref
         .read(favRepositoryProvider)
         .getCollectedFolders(upMid: mid, pn: page, ps: _pageSize);
-
-    return switch (result) {
-      Success(value: final response) => () {
-        if ((response.list?.length ?? 0) < _pageSize) {
-          _hasMore = false;
-        }
-        return response.list ?? [];
-      }(),
-      Failure(exception: final e) => throw e,
-    };
+    if ((response.list?.length ?? 0) < _pageSize) {
+      _hasMore = false;
+    }
+    return response.list ?? [];
   }
 
   Future<void> loadMore() async {
@@ -133,17 +115,11 @@ class FavFolderResources extends _$FavFolderResources {
   }
 
   Future<FavFolderDetailState> _fetchItems(int mediaId, int page) async {
-    final result = await ref
+    final response = await ref
         .read(favRepositoryProvider)
         .getFolderResources(mediaId: mediaId, pn: page, ps: _pageSize);
-
-    return switch (result) {
-      Success(value: final response) => () {
-        _hasMore = response.hasMore;
-        return FavFolderDetailState(info: response.info, list: response.medias ?? []);
-      }(),
-      Failure(exception: final e) => throw e,
-    };
+    _hasMore = response.hasMore;
+    return FavFolderDetailState(info: response.info, list: response.medias ?? []);
   }
 
   Future<void> loadMore(int mediaId) async {

@@ -1,4 +1,5 @@
 import 'package:culcul/core/providers/api_provider.dart';
+import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:culcul/features/dynamic/controllers/dynamic_comment_state.dart';
@@ -19,22 +20,21 @@ class DynamicCommentController extends _$DynamicCommentController {
     state = state.copyWith(isLoading: true, error: null);
     final repository = ref.read(dynamicRepositoryProvider);
 
-    final result = await repository.getComments(post, sort: state.sort, page: 1);
-
-    result.when(
-      success: (data) {
-        final hasMore = _resolveHasMore(data, currentPage: 1);
-        state = state.copyWith(
-          comments: data.replies,
-          isLoading: false,
-          hasMore: hasMore,
-          page: 1,
-        );
-      },
-      failure: (error) {
-        state = state.copyWith(isLoading: false, error: error);
-      },
-    );
+    try {
+      final data = await repository.getComments(post, sort: state.sort, page: 1);
+      final hasMore = _resolveHasMore(data, currentPage: 1);
+      state = state.copyWith(
+        comments: data.replies,
+        isLoading: false,
+        hasMore: hasMore,
+        page: 1,
+      );
+    } catch (error) {
+      final exception = error is AppException
+          ? error
+          : UnknownException(error.toString(), cause: error);
+      state = state.copyWith(isLoading: false, error: exception);
+    }
   }
 
   Future<void> loadMore() async {
@@ -47,21 +47,17 @@ class DynamicCommentController extends _$DynamicCommentController {
     // Ideally we don't want to clear comments, just append.
     // We don't set global isLoading to true to avoid full screen loader.
 
-    final result = await repository.getComments(post, sort: state.sort, page: nextPage);
-
-    result.when(
-      success: (data) {
-        final hasMore = _resolveHasMore(data, currentPage: nextPage);
-        state = state.copyWith(
-          comments: [...state.comments, ...data.replies],
-          hasMore: hasMore,
-          page: nextPage,
-        );
-      },
-      failure: (error) {
-        // Handle error gracefully
-      },
-    );
+    try {
+      final data = await repository.getComments(post, sort: state.sort, page: nextPage);
+      final hasMore = _resolveHasMore(data, currentPage: nextPage);
+      state = state.copyWith(
+        comments: [...state.comments, ...data.replies],
+        hasMore: hasMore,
+        page: nextPage,
+      );
+    } catch (_) {
+      // Handle error gracefully.
+    }
   }
 
   Future<void> toggleLike(int rpid, bool isLiked) async {
@@ -82,9 +78,9 @@ class DynamicCommentController extends _$DynamicCommentController {
     newComments[index] = newItem;
     state = state.copyWith(comments: newComments);
 
-    final result = await repository.likeComment(post: post, rpid: rpid, isLiked: isLiked);
-
-    if (result.isFailure) {
+    try {
+      await repository.likeComment(post: post, rpid: rpid, isLiked: isLiked);
+    } catch (_) {
       // Revert on failure
       state = state.copyWith(comments: oldComments);
     }
@@ -93,17 +89,13 @@ class DynamicCommentController extends _$DynamicCommentController {
   Future<void> addReply(int root, int parent, String message) async {
     final repository = ref.read(dynamicRepositoryProvider);
 
-    final result = await repository.addReply(
+    await repository.addReply(
       post: post,
       root: root,
       parent: parent,
       message: message,
     );
-
-    if (result.isSuccess) {
-      // Refresh to show new comment
-      refresh();
-    }
+    await refresh();
   }
 
   bool _resolveHasMore(CommentResponse data, {required int currentPage}) {

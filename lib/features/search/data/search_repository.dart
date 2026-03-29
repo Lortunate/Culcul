@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/base_repository.dart';
-import 'package:culcul/core/result.dart';
 import 'package:culcul/data/api/search_api.dart';
 import 'package:culcul/data/models/feed/trending_ranking.dart';
 import 'package:culcul/data/models/search/default_search.dart';
@@ -22,46 +21,37 @@ class SearchRepository extends BaseRepository {
 
   SearchRepository({required this.api});
 
-  Future<Result<List<SearchSuggestionTag>, AppException>> fetchSearchSuggestions(
+  Future<List<SearchSuggestionTag>> fetchSearchSuggestions(
     String term,
   ) async {
-    if (term.isEmpty) return const Success([]);
-
-    final result = await safeCall(() => api.fetchSearchSuggestions(term));
-
-    return switch (result) {
-      Success(value: final responseStr) => _parseSuggestions(responseStr),
-      Failure(exception: final e) => Failure(e),
-    };
+    if (term.isEmpty) return [];
+    final responseStr = await request(() => api.fetchSearchSuggestions(term));
+    return _parseSuggestions(responseStr);
   }
 
-  Result<List<SearchSuggestionTag>, AppException> _parseSuggestions(String responseStr) {
+  List<SearchSuggestionTag> _parseSuggestions(String responseStr) {
     try {
       final Map<String, dynamic> json = jsonDecode(responseStr);
       final response = SearchSuggestionResponse.fromJson(json);
-      return Success(response.result?.tags ?? []);
+      return response.result?.tags ?? [];
     } catch (e) {
-      return const Success(<SearchSuggestionTag>[]);
+      return const <SearchSuggestionTag>[];
     }
   }
 
-  Future<Result<DefaultSearchData, AppException>> fetchDefaultSearch() {
-    return safeApiCall(() => api.fetchDefaultSearch());
+  Future<DefaultSearchData> fetchDefaultSearch() {
+    return requestApi(() => api.fetchDefaultSearch());
   }
 
-  Future<Result<TrendingRankingData, AppException>> fetchTrendingRanking() async {
-    final result = await safeCall(() => api.fetchTrendingRanking());
-
-    return switch (result) {
-      Success(value: final response) =>
-        (response.code == 0)
-            ? Success(response.data)
-            : Failure(ServerException(response.message, code: response.code)),
-      Failure(exception: final e) => Failure(e),
-    };
+  Future<TrendingRankingData> fetchTrendingRanking() async {
+    final response = await request(() => api.fetchTrendingRanking());
+    if (response.code != 0) {
+      throw ServerException(response.message, code: response.code);
+    }
+    return response.data;
   }
 
-  Future<Result<SearchResultData, AppException>> fetchSearchAll({
+  Future<SearchResultData> fetchSearchAll({
     required String keyword,
     int page = 1,
     int pageSize = 20,
@@ -69,7 +59,7 @@ class SearchRepository extends BaseRepository {
     String order = 'totalrank',
     int duration = 0,
   }) async {
-    final result = await safeCall(() async {
+    final response = await request(() async {
       return searchType == 'all'
           ? await api.fetchSearchAll(
               keyword: keyword,
@@ -88,14 +78,10 @@ class SearchRepository extends BaseRepository {
               duration: duration,
             );
     });
-
-    return switch (result) {
-      Success(value: final response) =>
-        (response.code == 0 && response.data != null)
-            ? Success(response.data!)
-            : Failure(ServerException(response.message, code: response.code)),
-      Failure(exception: final e) => Failure(e),
-    };
+    if (response.code != 0 || response.data == null) {
+      throw ServerException(response.message, code: response.code);
+    }
+    return response.data!;
   }
 }
 

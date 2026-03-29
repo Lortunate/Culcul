@@ -1,5 +1,4 @@
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/core/result.dart';
 import 'package:culcul/data/user_info_cache_service.dart';
 import 'package:culcul/data/models/user/user_profile_model.dart';
 import 'package:culcul/features/auth/controllers/auth_controller.dart';
@@ -14,11 +13,7 @@ Future<UserProfile> myProfile(Ref ref) async {
     throw Exception('Not logged in');
   }
   final repo = ref.watch(profileRepositoryProvider);
-  final result = await repo.getProfile(int.parse(authState.user!.id));
-  return switch (result) {
-    Success(value: final data) => data,
-    Failure(exception: final e) => throw e,
-  };
+  return repo.getProfile(int.parse(authState.user!.id));
 }
 
 @riverpod
@@ -48,16 +43,10 @@ class UserProfileNotifier extends _$UserProfileNotifier {
 
   Future<UserProfile> _fetchAndSave(String userId) async {
     final repo = ref.read(profileRepositoryProvider);
-    final result = await repo.getProfile(int.parse(userId));
-
-    return switch (result) {
-      Success(value: final user) => () async {
-        final cacheService = await ref.read(userInfoCacheServiceProvider.future);
-        await cacheService.saveUser(user);
-        return user;
-      }(),
-      Failure(exception: final e) => throw e,
-    };
+    final user = await repo.getProfile(int.parse(userId));
+    final cacheService = await ref.read(userInfoCacheServiceProvider.future);
+    await cacheService.saveUser(user);
+    return user;
   }
 }
 

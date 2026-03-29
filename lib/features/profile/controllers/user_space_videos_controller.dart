@@ -1,5 +1,4 @@
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/core/result.dart';
 import 'package:culcul/data/models/user/user_space_video_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -23,19 +22,13 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier {
 
   Future<List<UserSpaceVideoModel>> _fetchVideos() async {
     final repository = ref.read(profileRepositoryProvider);
-    final result = await repository.getSpaceVideos(mid: _mid, page: _page, order: _order);
-
-    return switch (result) {
-      Success(value: final videos) => () {
-        if (videos.length < 30) {
-          _hasMore = false;
-        } else {
-          _page++;
-        }
-        return videos;
-      }(),
-      Failure(exception: final e) => throw e,
-    };
+    final videos = await repository.getSpaceVideos(mid: _mid, page: _page, order: _order);
+    if (videos.length < 30) {
+      _hasMore = false;
+    } else {
+      _page++;
+    }
+    return videos;
   }
 
   Future<void> loadMore() async {

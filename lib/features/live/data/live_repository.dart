@@ -1,7 +1,5 @@
-import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/base_repository.dart';
-import 'package:culcul/core/result.dart';
 import 'package:culcul/data/api/live_api.dart';
 import 'package:culcul/data/models/live/index.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -18,59 +16,55 @@ class LiveRepository extends BaseRepository {
 
   LiveRepository(this._api);
 
-  Future<Result<LiveRoomDetailModel, AppException>> getRoomInfo(int roomId) async {
-    return safeApiCall(() => _api.getRoomInfo(roomId));
+  Future<LiveRoomDetailModel> getRoomInfo(int roomId) async {
+    return requestApi(() => _api.getRoomInfo(roomId));
   }
 
-  Future<Result<LivePlayUrlModel, AppException>> getPlayUrl({
+  Future<LivePlayUrlModel> getPlayUrl({
     required int roomId,
     int? qn,
     String platform = 'web',
   }) async {
-    return safeApiCall(() => _api.getPlayUrl(roomId: roomId, qn: qn, platform: platform));
+    return requestApi(() => _api.getPlayUrl(roomId: roomId, qn: qn, platform: platform));
   }
 
-  Future<Result<LiveDanmakuConfigModel, AppException>> getDanmakuConfig(
+  Future<LiveDanmakuConfigModel> getDanmakuConfig(
     int roomId,
   ) async {
-    return safeApiCall(() => _api.getDanmakuConfig(roomId));
+    return requestApi(() => _api.getDanmakuConfig(roomId));
   }
 
-  Future<Result<LiveHistoryDanmakuModel, AppException>> getHistoryDanmaku(
+  Future<LiveHistoryDanmakuModel> getHistoryDanmaku(
     int roomId,
   ) async {
-    return safeApiCall(() => _api.getHistoryDanmaku(roomId));
+    return requestApi(() => _api.getHistoryDanmaku(roomId));
   }
 
-  Future<Result<LiveDanmuInfoModel, AppException>> getDanmuInfo(int roomId) async {
-    return safeApiCall(() => _api.getDanmuInfo(roomId, 0));
+  Future<LiveDanmuInfoModel> getDanmuInfo(int roomId) async {
+    return requestApi(() => _api.getDanmuInfo(roomId, 0));
   }
 
-  Future<Result<List<LiveRoomModel>, AppException>> fetchRecommendList({
+  Future<List<LiveRoomModel>> fetchRecommendList({
     int page = 1,
     int pageSize = 30,
   }) async {
-    final result = await safeApiCall(
+    final data = await requestApi(
       () => _api.getRecommendList(page: page, pageSize: pageSize),
     );
-
-    return switch (result) {
-      Success(value: final data) => Success(data.roomList),
-      Failure(exception: final e) => Failure(e),
-    };
+    return data.roomList;
   }
 
-  Future<Result<LiveAnchorInfoModel, AppException>> getAnchorInfo(int uid) async {
-    return safeApiCall(() => _api.getAnchorInfo(uid));
+  Future<LiveAnchorInfoModel> getAnchorInfo(int uid) async {
+    return requestApi(() => _api.getAnchorInfo(uid));
   }
 
-  Future<Result<LiveGoldRankModel, AppException>> getOnlineGoldRank({
+  Future<LiveGoldRankModel> getOnlineGoldRank({
     required int ruid,
     required int roomId,
     int page = 1,
     int pageSize = 20,
   }) async {
-    return safeApiCall(
+    return requestApi(
       () => _api.getOnlineGoldRank(
         ruid: ruid,
         roomId: roomId,
@@ -80,22 +74,22 @@ class LiveRepository extends BaseRepository {
     );
   }
 
-  Future<Result<LiveGuardListModel, AppException>> getGuardList({
+  Future<LiveGuardListModel> getGuardList({
     required int ruid,
     required int roomId,
     int page = 1,
     int pageSize = 20,
   }) async {
-    return safeApiCall(
+    return requestApi(
       () => _api.getGuardList(ruid: ruid, roomId: roomId, page: page, pageSize: pageSize),
     );
   }
 
-  Future<Result<void, AppException>> sendDanmaku({
+  Future<void> sendDanmaku({
     required int roomId,
     required String msg,
   }) async {
-    return safeVoidApiCall(
+    return requestVoid(
       () => _api.sendDanmaku(
         msg: msg,
         roomId: roomId,

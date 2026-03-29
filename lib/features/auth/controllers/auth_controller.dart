@@ -1,5 +1,4 @@
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/core/result.dart';
 import 'package:culcul/domain/entities/user_entity.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -46,27 +45,21 @@ class Auth extends _$Auth {
       state = state.copyWith(isLoggedIn: true, user: cachedUser);
     }
 
-    final result = await ref.read(authRepositoryProvider).getCurrentUser();
-
-    switch (result) {
-      case Success(value: final user):
-        state = state.copyWith(isLoggedIn: true, user: user, isLoading: false);
-      case Failure():
-        final stillCached = ref.read(authRepositoryProvider).getCachedUser();
-        if (stillCached != null) {
-          state = state.copyWith(isLoading: false);
-        } else {
-          state = state.copyWith(isLoggedIn: false, user: null, isLoading: false);
-        }
+    try {
+      final user = await ref.read(authRepositoryProvider).getCurrentUser();
+      state = state.copyWith(isLoggedIn: true, user: user, isLoading: false);
+    } catch (_) {
+      final stillCached = ref.read(authRepositoryProvider).getCachedUser();
+      if (stillCached != null) {
+        state = state.copyWith(isLoading: false);
+      } else {
+        state = state.copyWith(isLoggedIn: false, user: null, isLoading: false);
+      }
     }
   }
 
   Future<Map<String, dynamic>> getCaptcha() async {
-    final result = await ref.read(authRepositoryProvider).getCaptcha();
-    return switch (result) {
-      Success(value: final data) => data,
-      Failure(exception: final e) => throw e,
-    };
+    return ref.read(authRepositoryProvider).getCaptcha();
   }
 
   Future<String> sendSms(
@@ -77,13 +70,9 @@ class Auth extends _$Auth {
     String validate,
     String seccode,
   ) async {
-    final result = await ref
+    return ref
         .read(authRepositoryProvider)
         .sendSms(cid, phone, token, challenge, validate, seccode);
-    return switch (result) {
-      Success(value: final key) => key,
-      Failure(exception: final e) => throw e,
-    };
   }
 
   Future<void> loginWithPassword(
@@ -95,55 +84,43 @@ class Auth extends _$Auth {
     String seccode,
   ) async {
     state = state.copyWith(isLoading: true, error: null);
-    final result = await ref
-        .read(authRepositoryProvider)
-        .loginWithPassword(
-          username: username,
-          password: password,
-          token: token,
-          challenge: challenge,
-          validate: validate,
-          seccode: seccode,
-        );
-
-    switch (result) {
-      case Success(value: final user):
-        state = state.copyWith(isLoggedIn: true, user: user, isLoading: false);
-      case Failure(exception: final e):
-        state = state.copyWith(isLoading: false, error: e.toString());
-        throw e;
+    try {
+      final user = await ref
+          .read(authRepositoryProvider)
+          .loginWithPassword(
+            username: username,
+            password: password,
+            token: token,
+            challenge: challenge,
+            validate: validate,
+            seccode: seccode,
+          );
+      state = state.copyWith(isLoggedIn: true, user: user, isLoading: false);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      rethrow;
     }
   }
 
   Future<void> loginWithSms(int cid, String phone, String code, String captchaKey) async {
     state = state.copyWith(isLoading: true, error: null);
-    final result = await ref
-        .read(authRepositoryProvider)
-        .loginWithSms(cid, phone, code, captchaKey);
-
-    switch (result) {
-      case Success(value: final user):
-        state = state.copyWith(isLoggedIn: true, user: user, isLoading: false);
-      case Failure(exception: final e):
-        state = state.copyWith(isLoading: false, error: e.toString());
-        throw e;
+    try {
+      final user = await ref
+          .read(authRepositoryProvider)
+          .loginWithSms(cid, phone, code, captchaKey);
+      state = state.copyWith(isLoggedIn: true, user: user, isLoading: false);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
+      rethrow;
     }
   }
 
   Future<Map<String, dynamic>> getQrCode() async {
-    final result = await ref.read(authRepositoryProvider).getQrCode();
-    return switch (result) {
-      Success(value: final data) => data,
-      Failure(exception: final e) => throw e,
-    };
+    return ref.read(authRepositoryProvider).getQrCode();
   }
 
   Future<Map<String, dynamic>> pollQrCode(String authCode) async {
-    final result = await ref.read(authRepositoryProvider).pollQrCode(authCode);
-    return switch (result) {
-      Success(value: final data) => data,
-      Failure(exception: final e) => throw e,
-    };
+    return ref.read(authRepositoryProvider).pollQrCode(authCode);
   }
 
   Future<void> logout() async {
@@ -152,14 +129,11 @@ class Auth extends _$Auth {
   }
 
   Future<void> refreshUser() async {
-    final result = await ref.read(authRepositoryProvider).getCurrentUser();
-
-    switch (result) {
-      case Success(value: final user):
-        state = state.copyWith(isLoggedIn: true, user: user);
-      case Failure():
-        break;
+    try {
+      final user = await ref.read(authRepositoryProvider).getCurrentUser();
+      state = state.copyWith(isLoggedIn: true, user: user);
+    } catch (_) {
+      // Ignore refresh errors to preserve current UI state.
     }
   }
 }
-

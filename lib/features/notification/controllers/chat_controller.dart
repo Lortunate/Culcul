@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/core/result.dart';
 import 'package:culcul/features/auth/controllers/auth_controller.dart';
 import 'package:culcul/data/models/notification/private_message_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -37,32 +36,25 @@ class Chat extends _$Chat {
     _hasMore = true;
 
     final repo = ref.watch(notificationRepositoryProvider);
-    final result = await repo.getPrivateMessages(
+    final response = await repo.getPrivateMessages(
       talkerId: talkerId,
       sessionType: sessionType,
     );
+    if (response.messages != null && response.messages!.isNotEmpty) {
+      _minSeqno = response.messages!.last.msgSeqno;
+    }
+    _hasMore = response.hasMore == 1;
 
-    return switch (result) {
-      Success(value: final response) => () {
-        if (response.messages != null && response.messages!.isNotEmpty) {
-          _minSeqno = response.messages!.last.msgSeqno;
-        }
-        _hasMore = response.hasMore == 1;
+    final emojiMap = <String, String>{};
+    if (response.emojiInfos != null) {
+      for (final e in response.emojiInfos!) {
+        emojiMap[e.text] = e.url;
+      }
+    }
 
-        final emojiMap = <String, String>{};
-        if (response.emojiInfos != null) {
-          for (final e in response.emojiInfos!) {
-            emojiMap[e.text] = e.url;
-          }
-        }
-
-        // Filter out withdrawn notification messages (msg_type: 5)
-        final messages = (response.messages ?? []).where((m) => m.msgType != 5).toList();
-
-        return ChatState(messages: messages, emojiMap: emojiMap);
-      }(),
-      Failure(exception: final e) => throw e,
-    };
+    // Filter out withdrawn notification messages (msg_type: 5)
+    final messages = (response.messages ?? []).where((m) => m.msgType != 5).toList();
+    return ChatState(messages: messages, emojiMap: emojiMap);
   }
 
   Future<void> loadMore() async {
@@ -70,39 +62,36 @@ class Chat extends _$Chat {
 
     final repo = ref.read(notificationRepositoryProvider);
     try {
-      final result = await repo.getPrivateMessages(
+      final response = await repo.getPrivateMessages(
         talkerId: talkerId,
         sessionType: sessionType,
         endSeqno: _minSeqno,
       );
+      final newMessages = response.messages ?? [];
+      if (newMessages.isNotEmpty) {
+        _minSeqno = newMessages.last.msgSeqno;
+        final filteredNew = newMessages.where((m) => m.msgType != 5).toList();
 
-      if (result case Success(value: final response)) {
-        final newMessages = response.messages ?? [];
-        if (newMessages.isNotEmpty) {
-          _minSeqno = newMessages.last.msgSeqno;
-          final filteredNew = newMessages.where((m) => m.msgType != 5).toList();
+        final currentState = state.value;
+        if (currentState != null) {
+          final currentList = currentState.messages;
+          final currentMap = Map<String, String>.from(currentState.emojiMap);
 
-          final currentState = state.value;
-          if (currentState != null) {
-            final currentList = currentState.messages;
-            final currentMap = Map<String, String>.from(currentState.emojiMap);
-
-            if (response.emojiInfos != null) {
-              for (final e in response.emojiInfos!) {
-                currentMap[e.text] = e.url;
-              }
+          if (response.emojiInfos != null) {
+            for (final e in response.emojiInfos!) {
+              currentMap[e.text] = e.url;
             }
-
-            state = AsyncData(
-              currentState.copyWith(
-                messages: [...currentList, ...filteredNew],
-                emojiMap: currentMap,
-              ),
-            );
           }
+
+          state = AsyncData(
+            currentState.copyWith(
+              messages: [...currentList, ...filteredNew],
+              emojiMap: currentMap,
+            ),
+          );
         }
-        _hasMore = response.hasMore == 1;
       }
+      _hasMore = response.hasMore == 1;
     } catch (e) {
       // Handle error quietly or show toast
       print('Load more messages failed: $e');
@@ -118,23 +107,16 @@ class Chat extends _$Chat {
     final repo = ref.read(notificationRepositoryProvider);
 
     // Upload first
-    final uploadResult = await repo.uploadImage(imageFile);
-
-    if (uploadResult case Success(value: final uploadRes)) {
-      final contentMap = {
-        'url': uploadRes.imageUrl,
-        'height': uploadRes.imageHeight,
-        'width': uploadRes.imageWidth,
-        'imageType': imageFile.path.split('.').last,
-        'original': 1,
-        'size': await imageFile.length() / 1024, // KB
-      };
-
-      await _send(msgType: 2, contentMap: contentMap);
-    } else if (uploadResult case Failure(exception: final e)) {
-      print('Send image failed: $e');
-      throw e;
-    }
+    final uploadRes = await repo.uploadImage(imageFile);
+    final contentMap = {
+      'url': uploadRes.imageUrl,
+      'height': uploadRes.imageHeight,
+      'width': uploadRes.imageWidth,
+      'imageType': imageFile.path.split('.').last,
+      'original': 1,
+      'size': await imageFile.length() / 1024, // KB
+    };
+    await _send(msgType: 2, contentMap: contentMap);
   }
 
   Future<void> _send({
@@ -172,20 +154,18 @@ class Chat extends _$Chat {
       );
     }
 
-    final result = await repo.sendPrivateMessage(
+    try {
+      await repo.sendPrivateMessage(
       senderUid: senderUid,
       receiverId: talkerId,
       receiverType: sessionType,
       msgType: msgType,
       content: jsonEncode(contentMap),
     );
-
-    if (result is Failure) {
+    } catch (e) {
       // Failure: Revert state
       state = previousState;
-      if (result case Failure(exception: final e)) {
-        throw e;
-      }
+      rethrow;
     }
   }
 }

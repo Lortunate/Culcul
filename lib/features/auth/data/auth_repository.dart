@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/base_repository.dart';
-import 'package:culcul/core/result.dart';
 import 'package:culcul/data/api/auth_api.dart';
 import 'package:culcul/data/models/response/api_response.dart';
 import 'package:culcul/data/models/user/user_model.dart' as data_user;
@@ -71,7 +70,7 @@ class AuthRepository extends BaseRepository {
   }
 
   // Password Login Flow
-  Future<Result<UserEntity, AppException>> loginWithPassword({
+  Future<UserEntity> loginWithPassword({
     required String username,
     required String password,
     required String token,
@@ -79,7 +78,7 @@ class AuthRepository extends BaseRepository {
     required String validate,
     required String seccode,
   }) async {
-    return safeCall(() async {
+    return request(() async {
       // 1. Get Key
       final keyResponse = await _api.getKey();
       if (keyResponse.code != 0) {
@@ -114,11 +113,7 @@ class AuthRepository extends BaseRepository {
       if (loginResponse.code == 0) {
         final data = loginResponse.data as Map<String, dynamic>?;
         if (data != null && data['status'] == 0) {
-          final userResult = await getCurrentUser();
-          return switch (userResult) {
-            Success(value: final user) => user,
-            Failure(exception: final e) => throw e,
-          };
+          return getCurrentUser();
         } else {
           throw AuthException(
             data?['message'] ?? loginResponse.message,
@@ -131,8 +126,8 @@ class AuthRepository extends BaseRepository {
   }
 
   // SMS Login Flow
-  Future<Result<List<CountryCode>, AppException>> getCountryList() async {
-    return safeCall(() async {
+  Future<List<CountryCode>> getCountryList() async {
+    return request(() async {
       final response = await _api.getCountryList();
       if (response.code == 0) {
         final data = response.data as Map<String, dynamic>?;
@@ -155,8 +150,8 @@ class AuthRepository extends BaseRepository {
     });
   }
 
-  Future<Result<Map<String, dynamic>, AppException>> getCaptcha() async {
-    return safeApiCall(() async {
+  Future<Map<String, dynamic>> getCaptcha() async {
+    return requestApi(() async {
       final response = await _api.getCaptcha();
       return ApiResponse(
         code: response.code,
@@ -166,7 +161,7 @@ class AuthRepository extends BaseRepository {
     });
   }
 
-  Future<Result<String, AppException>> sendSms(
+  Future<String> sendSms(
     int cid,
     String phone,
     String token,
@@ -174,7 +169,7 @@ class AuthRepository extends BaseRepository {
     String validate,
     String seccode,
   ) async {
-    return safeCall(() async {
+    return request(() async {
       final response = await _api.sendSms(
         cid,
         phone,
@@ -195,29 +190,25 @@ class AuthRepository extends BaseRepository {
     });
   }
 
-  Future<Result<UserEntity, AppException>> loginWithSms(
+  Future<UserEntity> loginWithSms(
     int cid,
     String phone,
     String code,
     String captchaKey,
   ) async {
-    return safeCall(() async {
+    return request(() async {
       final response = await _api.loginWithSms(cid, phone, code, 'main_web', captchaKey);
 
       if (response.code == 0) {
-        final userResult = await getCurrentUser();
-        return switch (userResult) {
-          Success(value: final user) => user,
-          Failure(exception: final e) => throw e,
-        };
+        return getCurrentUser();
       }
       throw AuthException(response.message, code: response.code);
     });
   }
 
   // QR Login Flow
-  Future<Result<Map<String, dynamic>, AppException>> getQrCode() async {
-    return safeApiCall(() async {
+  Future<Map<String, dynamic>> getQrCode() async {
+    return requestApi(() async {
       final response = await _api.getQrCode();
       return ApiResponse(
         code: response.code,
@@ -227,21 +218,21 @@ class AuthRepository extends BaseRepository {
     });
   }
 
-  Future<Result<Map<String, dynamic>, AppException>> pollQrCode(String authCode) async {
+  Future<Map<String, dynamic>> pollQrCode(String authCode) async {
     // pollQrCode returns data even on non-zero code sometimes (e.g. pending),
     // but BaseRepository.safeApiCall treats non-zero as error.
     // However, original code returned Success even if code != 0.
     // "Return data even if code is not 0, as it contains status"
     // So we should use safeCall and handle manually.
-    return safeCall(() async {
+    return request(() async {
       final response = await _api.pollQrCode(authCode);
       // We return the data regardless of code, assuming caller handles 'status'
       return response.data as Map<String, dynamic>? ?? {};
     });
   }
 
-  Future<Result<void, AppException>> logout() async {
-    return safeCall(() async {
+  Future<void> logout() async {
+    return request(() async {
       await clearCache();
       final response = await _api.logout();
       if (response.code != 0) {
@@ -251,8 +242,8 @@ class AuthRepository extends BaseRepository {
   }
 
   // User Info
-  Future<Result<UserEntity, AppException>> getCurrentUser() async {
-    return safeCall(() async {
+  Future<UserEntity> getCurrentUser() async {
+    return request(() async {
       final response = await _api.getCurrentUser();
       if (response.code == 0) {
         final data = response.data as Map<String, dynamic>?;
@@ -281,8 +272,12 @@ class AuthRepository extends BaseRepository {
   }
 
   Future<bool> isLoggedIn() async {
-    final result = await getCurrentUser();
-    return result is Success;
+    try {
+      await getCurrentUser();
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 }
 

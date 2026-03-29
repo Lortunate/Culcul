@@ -1,4 +1,3 @@
-import 'package:culcul/core/result.dart';
 import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/features/video/data/video_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -23,18 +22,16 @@ class CommentReplyController extends _$CommentReplyController {
     state = state.copyWith(isLoading: true, error: null);
 
     final repo = ref.read(videoRepositoryProvider);
-    final result = await repo.fetchReply(oid: oid, root: rootId, pn: 1);
-
-    switch (result) {
-      case Success(value: final response):
-        state = state.copyWith(
-          replies: response.replies,
-          page: 2,
-          hasMore: response.replies.isNotEmpty,
-          isLoading: false,
-        );
-      case Failure(exception: final e):
-        state = state.copyWith(isLoading: false, error: e);
+    try {
+      final response = await repo.fetchReply(oid: oid, root: rootId, pn: 1);
+      state = state.copyWith(
+        replies: response.replies,
+        page: 2,
+        hasMore: response.replies.isNotEmpty,
+        isLoading: false,
+      );
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e);
     }
   }
 
@@ -48,18 +45,16 @@ class CommentReplyController extends _$CommentReplyController {
     state = state.copyWith(isLoading: true);
 
     final repo = ref.read(videoRepositoryProvider);
-    final result = await repo.fetchReply(oid: oid, root: rootId, pn: state.page);
-
-    switch (result) {
-      case Success(value: final response):
-        state = state.copyWith(
-          replies: [...state.replies, ...response.replies],
-          page: state.page + 1,
-          hasMore: response.replies.isNotEmpty,
-          isLoading: false,
-        );
-      case Failure(exception: final e):
-        state = state.copyWith(isLoading: false, error: e);
+    try {
+      final response = await repo.fetchReply(oid: oid, root: rootId, pn: state.page);
+      state = state.copyWith(
+        replies: [...state.replies, ...response.replies],
+        page: state.page + 1,
+        hasMore: response.replies.isNotEmpty,
+        isLoading: false,
+      );
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e);
     }
   }
 
@@ -68,9 +63,9 @@ class CommentReplyController extends _$CommentReplyController {
 
     final action = isLiked ? 0 : 1;
     final repo = ref.read(videoRepositoryProvider);
-    final result = await repo.actionComment(oid: oid, rpid: rpid, action: action);
-
-    if (result is Failure) {
+    try {
+      await repo.actionComment(oid: oid, rpid: rpid, action: action);
+    } catch (_) {
       _updateCommentLikeStatus(rpid, isLiked);
     }
   }
@@ -103,16 +98,13 @@ class CommentReplyController extends _$CommentReplyController {
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
     final repo = ref.read(videoRepositoryProvider);
-    final result = await repo.addReply(
+    await repo.addReply(
       oid: oid,
       root: root,
       parent: parent,
       message: message,
     );
-
-    if (result is Success) {
-      refresh();
-    }
+    await refresh();
   }
 }
 

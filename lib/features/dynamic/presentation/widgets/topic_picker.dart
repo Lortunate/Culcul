@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:culcul/core/result.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/data/models/search/search_result.dart';
 import 'package:culcul/features/search/data/search_repository.dart';
@@ -33,20 +32,14 @@ class TopicPicker extends HookConsumerWidget {
 
       isLoading.value = true;
       try {
-        final result = await ref
+        final data = await ref
             .read(searchRepositoryProvider)
             .fetchSearchAll(keyword: keyword, searchType: 'topic');
-
-        switch (result) {
-          case Success(value: final data):
-            final topics = data.result
-                .map((e) => e.mapOrNull(topic: (t) => t))
-                .whereType<SearchTopicModel>()
-                .toList();
-            searchResults.value = topics;
-          case Failure():
-            break;
-        }
+        final topics = data.result
+            .map((e) => e.mapOrNull(topic: (t) => t))
+            .whereType<SearchTopicModel>()
+            .toList();
+        searchResults.value = topics;
       } catch (e) {
         debugPrint('Search topic error: $e');
       } finally {

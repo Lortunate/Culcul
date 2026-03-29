@@ -1,6 +1,4 @@
-import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/core/result.dart';
 import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/data/api/resource_api.dart';
 import 'package:culcul/data/api/video_api.dart';
@@ -28,43 +26,43 @@ class VideoRepository extends BaseRepository {
 
   VideoRepository({required this.api, required this.resourceApi});
 
-  Future<Result<void, AppException>> actionComment({
+  Future<void> actionComment({
     required int oid,
     required int rpid,
     required int action, // 1: like, 0: cancel
     int type = 1,
   }) {
-    return safeVoidApiCall(() => api.actionComment(oid, rpid, action, type));
+    return requestVoid(() => api.actionComment(oid, rpid, action, type));
   }
 
-  Future<Result<void, AppException>> hateComment({
+  Future<void> hateComment({
     required int oid,
     required int rpid,
     required int action, // 1: dislike, 0: cancel
     int type = 1,
   }) {
-    return safeVoidApiCall(() => api.hateComment(oid, rpid, action, type));
+    return requestVoid(() => api.hateComment(oid, rpid, action, type));
   }
 
-  Future<Result<CommentItem, AppException>> addReply({
+  Future<CommentItem> addReply({
     required int oid,
     required int root,
     required int parent,
     required String message,
     int type = 1,
   }) {
-    return safeApiCall(() => api.addReply(oid, root, parent, message, type));
+    return requestApi(() => api.addReply(oid, root, parent, message, type));
   }
 
-  Future<Result<VideoDetail, AppException>> fetchVideoView(String bvid) {
-    return safeApiCall(() => api.fetchVideoView(bvid));
+  Future<VideoDetail> fetchVideoView(String bvid) {
+    return requestApi(() => api.fetchVideoView(bvid));
   }
 
-  Future<Result<List<VideoTag>, AppException>> fetchVideoTags(String bvid) {
-    return safeApiCall(() => api.fetchVideoTags(bvid));
+  Future<List<VideoTag>> fetchVideoTags(String bvid) {
+    return requestApi(() => api.fetchVideoTags(bvid));
   }
 
-  Future<Result<PlayUrl, AppException>> fetchVideoPlayUrl({
+  Future<PlayUrl> fetchVideoPlayUrl({
     required int aid,
     required int cid,
     int qn = 80,
@@ -72,56 +70,56 @@ class VideoRepository extends BaseRepository {
     int fnver = 0,
     int fourk = 1,
   }) {
-    return safeApiCall(() => api.fetchVideoPlayUrl(aid, cid, qn, fnval, fnver, fourk));
+    return requestApi(() => api.fetchVideoPlayUrl(aid, cid, qn, fnval, fnver, fourk));
   }
 
-  Future<Result<PlayerInfo, AppException>> fetchPlayerInfo({
+  Future<PlayerInfo> fetchPlayerInfo({
     required int aid,
     required int cid,
   }) {
-    return safeApiCall(() => api.fetchPlayerInfo(aid, cid));
+    return requestApi(() => api.fetchPlayerInfo(aid, cid));
   }
 
-  Future<Result<List<RelatedVideo>, AppException>> fetchRelatedVideos(String bvid) {
-    return safeApiCall(() => api.fetchRelatedVideos(bvid));
+  Future<List<RelatedVideo>> fetchRelatedVideos(String bvid) {
+    return requestApi(() => api.fetchRelatedVideos(bvid));
   }
 
-  Future<Result<CommentResponse, AppException>> fetchComments({
+  Future<CommentResponse> fetchComments({
     required int oid,
     int type = 1,
     int sort = 1,
     int ps = 20,
     int pn = 1,
   }) {
-    return safeApiCall(() => api.fetchComments(oid, type, sort, ps, pn));
+    return requestApi(() => api.fetchComments(oid, type, sort, ps, pn));
   }
 
-  Future<Result<CommentResponse, AppException>> fetchReply({
+  Future<CommentResponse> fetchReply({
     required int oid,
     required int root,
     int type = 1,
     int ps = 20,
     int pn = 1,
   }) {
-    return safeApiCall(() => api.fetchReply(oid, root, type, ps, pn));
+    return requestApi(() => api.fetchReply(oid, root, type, ps, pn));
   }
 
-  Future<Result<SubtitleContent, AppException>> fetchSubtitleContent(String url) {
-    return safeCall(() async {
+  Future<SubtitleContent> fetchSubtitleContent(String url) {
+    return request(() async {
       final fullUrl = url.startsWith('http') ? url : 'https:$url';
       final response = await resourceApi.fetchJson(fullUrl);
       return SubtitleContent.fromJson(Map<String, dynamic>.from(response as Map));
     });
   }
 
-  Future<Result<void, AppException>> reportVideoProgress({
+  Future<void> reportVideoProgress({
     required int aid,
     required int cid,
     required int progress,
     String platform = 'android',
     int type = 3,
   }) {
-    return safeVoidApiCall(
+    return requestVoid(
       () => api.reportVideoProgress(aid, cid, progress, platform, type),
     );
   }

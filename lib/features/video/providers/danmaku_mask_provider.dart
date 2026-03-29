@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'dart:ui';
 import 'package:flutter/foundation.dart';
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/core/result.dart';
-import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/data/models/video/player_info.dart';
 import 'package:culcul/features/video/data/video_repository.dart';
 import 'package:culcul/core/utils/danmaku_mask_parser.dart';
@@ -14,39 +12,28 @@ part 'danmaku_mask_provider.g.dart';
 
 @riverpod
 Future<DanmakuMasks?> danmakuMask(Ref ref, {required int oid, required int pid}) async {
-  // 1. Fetch Player Info to get Mask URL
   final videoRepo = ref.read(videoRepositoryProvider);
-  final playerInfoResult = await videoRepo.fetchPlayerInfo(aid: pid, cid: oid);
-
-  if (playerInfoResult is Failure) {
+  PlayerInfo playerInfo;
+  try {
+    playerInfo = await videoRepo.fetchPlayerInfo(aid: pid, cid: oid);
+  } catch (_) {
     return null;
   }
-
-  // Cast to Success to access data
-  final playerInfo = (playerInfoResult as Success<PlayerInfo, AppException>).value;
   final dmMask = playerInfo.dmMask;
 
   if (dmMask == null) {
     return null;
   }
 
-  // 2. Fetch Mask Data
   final danmakuRepo = ref.read(danmakuRepositoryProvider);
-  final result = await danmakuRepo.fetchMaskData(dmMask.maskUrl);
-
-  if (result case Success(value: final bytes)) {
-    // 3. Parse
-    try {
-      final paths = await compute(_parseMaskData, _ParseData(bytes, dmMask.fps));
-      return DanmakuMasks(paths, dmMask.fps);
-    } catch (e) {
-      debugPrint('Failed to parse mask data: $e');
-      return null;
-    }
+  try {
+    final bytes = await danmakuRepo.fetchMaskData(dmMask.maskUrl);
+    final paths = await compute(_parseMaskData, _ParseData(bytes, dmMask.fps));
+    return DanmakuMasks(paths, dmMask.fps);
+  } catch (e) {
+    debugPrint('Failed to fetch or parse mask data: $e');
+    return null;
   }
-
-  debugPrint('Failed to fetch mask data');
-  return null;
 }
 
 class DanmakuMasks {

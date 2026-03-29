@@ -1,4 +1,3 @@
-import 'package:culcul/core/result.dart';
 import 'package:culcul/data/models/live/live_room_model.dart';
 import 'package:culcul/features/live/data/live_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -16,11 +15,7 @@ class LiveRecommend extends _$LiveRecommend {
   }
 
   Future<List<LiveRoomModel>> _fetchItems({required int page}) async {
-    final result = await ref.read(liveRepositoryProvider).fetchRecommendList(page: page);
-    return switch (result) {
-      Success(value: final list) => list,
-      Failure(exception: final e) => throw e,
-    };
+    return ref.read(liveRepositoryProvider).fetchRecommendList(page: page);
   }
 
   Future<void> refresh() async {

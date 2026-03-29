@@ -113,19 +113,14 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
       final List<DynamicUploadImageData> uploadedImages = [];
       if (_images.isNotEmpty) {
         for (var img in _images) {
-          final result = await ref.read(dynamicRepositoryProvider).uploadImage(img);
-          result.when(
-            success: (data) => uploadedImages.add(data),
-            failure: (e) => throw e,
-          );
+          final data = await ref.read(dynamicRepositoryProvider).uploadImage(img);
+          uploadedImages.add(data);
         }
       }
 
-      final result = await ref
+      await ref
           .read(dynamicRepositoryProvider)
           .publishDynamic(content: _controller.text, images: uploadedImages);
-
-      result.when(success: (_) {}, failure: (e) => throw e);
 
       if (mounted) {
         Navigator.pop(context);

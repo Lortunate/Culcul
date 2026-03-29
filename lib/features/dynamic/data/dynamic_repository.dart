@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/base_repository.dart';
-import 'package:culcul/core/result.dart';
 import 'package:culcul/data/api/dynamic_api.dart';
 import 'package:culcul/features/dynamic/data/article_detail_data.dart';
 import 'package:culcul/data/models/comment/comment_model.dart';
@@ -29,14 +28,14 @@ class DynamicRepository extends BaseRepository {
     return null;
   }
 
-  Future<Result<CommentResponse, AppException>> getComments(
+  Future<CommentResponse> getComments(
     DynamicItem post, {
     int sort = 1,
     int page = 1,
   }) async {
     final params = _getCommentParams(post);
     if (params == null) {
-      return const Failure(UnknownException('Unsupported dynamic type for comments'));
+      throw const UnknownException('Unsupported dynamic type for comments');
     }
 
     return getCommentList(
@@ -48,7 +47,7 @@ class DynamicRepository extends BaseRepository {
     );
   }
 
-  Future<Result<CommentItem, AppException>> addReply({
+  Future<CommentItem> addReply({
     required DynamicItem post,
     required String message,
     required int root,
@@ -56,7 +55,7 @@ class DynamicRepository extends BaseRepository {
   }) async {
     final params = _getCommentParams(post);
     if (params == null) {
-      return const Failure(UnknownException('Unsupported dynamic type for comments'));
+      throw const UnknownException('Unsupported dynamic type for comments');
     }
 
     return addCommentReply(
@@ -69,14 +68,14 @@ class DynamicRepository extends BaseRepository {
     );
   }
 
-  Future<Result<void, AppException>> likeComment({
+  Future<void> likeComment({
     required DynamicItem post,
     required int rpid,
     required bool isLiked,
   }) async {
     final params = _getCommentParams(post);
     if (params == null) {
-      return const Failure(UnknownException('Unsupported dynamic type for comments'));
+      throw const UnknownException('Unsupported dynamic type for comments');
     }
 
     return likeCommentByTarget(
@@ -88,14 +87,14 @@ class DynamicRepository extends BaseRepository {
     );
   }
 
-  Future<Result<CommentResponse, AppException>> getCommentList({
+  Future<CommentResponse> getCommentList({
     required String oid,
     required int type,
     int sort = 1,
     int page = 1,
     String? referer,
   }) {
-    return safeApiCall(
+    return requestApi(
       () => _api.getComments(
         oid: oid,
         type: type,
@@ -108,13 +107,13 @@ class DynamicRepository extends BaseRepository {
     );
   }
 
-  Future<Result<CommentResponse, AppException>> getArticleCommentList({
+  Future<CommentResponse> getArticleCommentList({
     required String oid,
     int mode = 3,
     int? next,
     String? referer,
   }) {
-    return safeApiCall(
+    return requestApi(
       () => _api.getArticleComments(
         oid: oid,
         mode: mode,
@@ -125,7 +124,7 @@ class DynamicRepository extends BaseRepository {
     );
   }
 
-  Future<Result<CommentItem, AppException>> addCommentReply({
+  Future<CommentItem> addCommentReply({
     required String oid,
     required int type,
     required int root,
@@ -133,7 +132,7 @@ class DynamicRepository extends BaseRepository {
     required String message,
     String? referer,
   }) {
-    return safeApiCall(
+    return requestApi(
       () => _api.addReply(
         oid: oid,
         type: type,
@@ -146,14 +145,14 @@ class DynamicRepository extends BaseRepository {
     );
   }
 
-  Future<Result<void, AppException>> likeCommentByTarget({
+  Future<void> likeCommentByTarget({
     required String oid,
     required int type,
     required int rpid,
     required bool isLiked,
     String? referer,
   }) {
-    return safeVoidApiCall(
+    return requestVoid(
       () => _api.actionComment(
         oid: oid,
         type: type,
@@ -247,34 +246,31 @@ class DynamicRepository extends BaseRepository {
     return null;
   }
 
-  Future<Result<DynamicData, AppException>> getFeed({
+  Future<DynamicData> getFeed({
     String? type,
     String? offset,
     int page = 1,
   }) {
-    return safeApiCall(() => _api.getDynamicFeed(type: type, offset: offset, page: page));
+    return requestApi(() => _api.getDynamicFeed(type: type, offset: offset, page: page));
   }
 
-  Future<Result<DynamicData, AppException>> getSpaceDynamicFeed({
+  Future<DynamicData> getSpaceDynamicFeed({
     required int hostMid,
     String? offset,
   }) {
-    return safeApiCall(() => _api.getSpaceDynamicFeed(hostMid: hostMid, offset: offset));
+    return requestApi(() => _api.getSpaceDynamicFeed(hostMid: hostMid, offset: offset));
   }
 
-  Future<Result<DynamicData, AppException>> getTopicFeed({
+  Future<DynamicData> getTopicFeed({
     required int topicId,
     String? offset,
   }) {
-    return safeApiCall(() => _api.getTopicFeed(topicId: topicId, offset: offset));
+    return requestApi(() => _api.getTopicFeed(topicId: topicId, offset: offset));
   }
 
-  Future<Result<DynamicItem, AppException>> getDetail(String id) async {
-    final result = await safeApiCall(() => _api.getDynamicDetail(id: id));
-    return switch (result) {
-      Success(value: final data) => Success(data.item),
-      Failure(exception: final e) => Failure(e),
-    };
+  Future<DynamicItem> getDetail(String id) async {
+    final data = await requestApi(() => _api.getDynamicDetail(id: id));
+    return data.item;
   }
 
   Future<ArticleDetailData> getArticleDetail(String url) async {
@@ -366,9 +362,9 @@ class DynamicRepository extends BaseRepository {
     return int.tryParse(uri.queryParameters['id'] ?? '');
   }
 
-  Future<Result<void, AppException>> likeDynamic(String id, bool like) async {
+  Future<void> likeDynamic(String id, bool like) async {
     // We wrap the whole block in safeCall to catch any errors during token retrieval
-    return safeCall(() async {
+    return request(() async {
       final csrf = await _getCsrfToken();
       final response = await _api.likeDynamic(
         body: {'dyn_id_str': id, 'up': like ? 1 : 2},
@@ -380,18 +376,18 @@ class DynamicRepository extends BaseRepository {
     });
   }
 
-  Future<Result<DynamicUploadImageData, AppException>> uploadImage(File file) async {
-    return safeApiCall(() async {
+  Future<DynamicUploadImageData> uploadImage(File file) async {
+    return requestApi(() async {
       final csrf = await _getCsrfToken();
       return _api.uploadImage(file: file, csrf: csrf ?? '');
     });
   }
 
-  Future<Result<void, AppException>> publishDynamic({
+  Future<void> publishDynamic({
     required String content,
     List<DynamicUploadImageData> images = const [],
   }) async {
-    return safeCall(() async {
+    return request(() async {
       final csrf = await _getCsrfToken();
 
       // Construct dyn_req

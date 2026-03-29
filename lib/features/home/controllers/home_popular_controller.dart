@@ -1,6 +1,5 @@
 // ignore_for_file: invalid_use_of_internal_member
 import 'package:culcul/core/paging_mixin.dart';
-import 'package:culcul/core/result.dart';
 import 'package:culcul/data/models/video/video_model.dart';
 import 'package:culcul/features/home/data/home_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -18,29 +17,19 @@ class HomePopular extends _$HomePopular with PagingMixin<VideoModel> {
 
   @override
   Future<List<VideoModel>> fetchItems(int page) async {
-    final result = await ref.read(homeRepositoryProvider).fetchPopular(page: page);
-    return switch (result) {
-      Success(value: final list) => list,
-      Failure(exception: final e) => throw e,
-    };
+    return ref.read(homeRepositoryProvider).fetchPopular(page: page);
   }
 
   Future<void> refresh() async {
     state = AsyncLoading<List<VideoModel>>().copyWithPrevious(state);
 
     state = await AsyncValue.guard(() async {
-      final result = await ref
+      final list = await ref
           .read(homeRepositoryProvider)
           .fetchPopular(page: 1, forceRefresh: true);
-
-      return switch (result) {
-        Success(value: final list) => () {
-          page = 1;
-          hasMore = true;
-          return list;
-        }(),
-        Failure(exception: final e) => throw e,
-      };
+      page = 1;
+      hasMore = true;
+      return list;
     });
   }
 

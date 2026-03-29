@@ -6,7 +6,7 @@ part 'emote_provider.g.dart';
 
 @riverpod
 Future<List<EmotePackage>> emotePackages(Ref ref) async {
-  final result = await ref.watch(emoteRepositoryProvider).getUserEmotes();
-  return result.when(success: (data) => data.packages, failure: (e) => throw e);
+  final data = await ref.watch(emoteRepositoryProvider).getUserEmotes();
+  return data.packages;
 }
 

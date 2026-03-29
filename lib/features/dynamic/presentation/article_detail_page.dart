@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/core/result.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/data/models/comment/comment_model.dart';
@@ -101,32 +100,19 @@ class ArticleDetailPage extends HookConsumerWidget {
       }
 
       try {
-        final result = await ref
+        final response = await ref
             .read(dynamicRepositoryProvider)
             .getArticleCommentList(
               oid: detail.commentOid,
               next: refresh ? null : commentsNext.value,
               referer: detail.url,
             );
-
-        result.when(
-          success: (response) {
-            final nextComments = refresh
-                ? response.replies
-                : _appendUniqueComments(previousComments, response.replies);
-            comments.value = nextComments;
-            commentsNext.value = response.cursor?.next;
-            commentsHasMore.value = _resolveHasMore(response);
-          },
-          failure: (error) {
-            commentsError.value = error.toString();
-            if (refresh) {
-              comments.value = previousComments;
-              commentsNext.value = previousNext;
-              commentsHasMore.value = previousHasMore;
-            }
-          },
-        );
+        final nextComments = refresh
+            ? response.replies
+            : _appendUniqueComments(previousComments, response.replies);
+        comments.value = nextComments;
+        commentsNext.value = response.cursor?.next;
+        commentsHasMore.value = _resolveHasMore(response);
       } catch (error) {
         commentsError.value = error.toString();
         if (refresh) {
@@ -157,27 +143,31 @@ class ArticleDetailPage extends HookConsumerWidget {
       if (message.isEmpty || sendingComment.value) return;
 
       sendingComment.value = true;
-      final result = await ref
-          .read(dynamicRepositoryProvider)
-          .addCommentReply(
-            oid: detail.commentOid,
-            type: detail.commentType,
-            root: 0,
-            parent: 0,
-            message: message,
-            referer: detail.url,
-          );
-      sendingComment.value = false;
-
-      if (result.isSuccess) {
-        commentController.clear();
-        if (context.mounted) {
-          FocusScope.of(context).unfocus();
-        }
-        await loadComments(detail, refresh: true);
-      } else {
-        showSnack(result.asFailure.toString());
+      var sent = false;
+      try {
+        await ref
+            .read(dynamicRepositoryProvider)
+            .addCommentReply(
+              oid: detail.commentOid,
+              type: detail.commentType,
+              root: 0,
+              parent: 0,
+              message: message,
+              referer: detail.url,
+            );
+        sent = true;
+      } catch (e) {
+        showSnack(e.toString());
+      } finally {
+        sendingComment.value = false;
       }
+
+      if (!sent) return;
+      if (context.mounted) {
+        commentController.clear();
+        FocusScope.of(context).unfocus();
+      }
+      await loadComments(detail, refresh: true);
     }
 
     Future<void> submitReply(CommentItem item, String message) async {
@@ -187,21 +177,20 @@ class ArticleDetailPage extends HookConsumerWidget {
         showSnack(t.video.comment.empty);
         return;
       }
-      final result = await ref
-          .read(dynamicRepositoryProvider)
-          .addCommentReply(
-            oid: detail.commentOid,
-            type: detail.commentType,
-            root: item.root == 0 ? item.rpid : item.root,
-            parent: item.rpid,
-            message: message,
-            referer: detail.url,
-          );
-
-      if (result.isSuccess) {
+      try {
+        await ref
+            .read(dynamicRepositoryProvider)
+            .addCommentReply(
+              oid: detail.commentOid,
+              type: detail.commentType,
+              root: item.root == 0 ? item.rpid : item.root,
+              parent: item.rpid,
+              message: message,
+              referer: detail.url,
+            );
         await loadComments(detail, refresh: true);
-      } else {
-        showSnack(result.asFailure.toString());
+      } catch (e) {
+        showSnack(e.toString());
       }
     }
 
@@ -222,22 +211,19 @@ class ArticleDetailPage extends HookConsumerWidget {
       }).toList();
       comments.value = updated;
 
-      final result = await ref
-          .read(dynamicRepositoryProvider)
-          .likeCommentByTarget(
-            oid: detail.commentOid,
-            type: detail.commentType,
-            rpid: item.rpid,
-            isLiked: !isLiked,
-            referer: detail.url,
-          );
-
-      result.when(
-        success: (_) {},
-        failure: (_) {
-          comments.value = previous;
-        },
-      );
+      try {
+        await ref
+            .read(dynamicRepositoryProvider)
+            .likeCommentByTarget(
+              oid: detail.commentOid,
+              type: detail.commentType,
+              rpid: item.rpid,
+              isLiked: !isLiked,
+              referer: detail.url,
+            );
+      } catch (_) {
+        comments.value = previous;
+      }
     }
 
     useEffect(() {

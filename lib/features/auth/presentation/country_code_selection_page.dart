@@ -1,5 +1,4 @@
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/core/result.dart';
 import 'package:culcul/domain/entities/country_code.dart';
 import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/ui/widgets/app_search_bar.dart';
@@ -22,14 +21,9 @@ class CountryCodeSelectionPage extends HookConsumerWidget {
     useEffect(() {
       Future<void> fetch() async {
         try {
-          final result = await ref.read(authRepositoryProvider).getCountryList();
-          switch (result) {
-            case Success(value: final list):
-              if (list.isNotEmpty) {
-                countryCodes.value = list;
-              }
-            case Failure():
-              break;
+          final list = await ref.read(authRepositoryProvider).getCountryList();
+          if (list.isNotEmpty) {
+            countryCodes.value = list;
           }
         } finally {
           isLoading.value = false;

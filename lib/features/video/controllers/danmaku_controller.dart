@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:culcul/core/result.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/protos/dm.pb.dart';
@@ -22,11 +21,7 @@ class DanmakuProvider extends _$DanmakuProvider {
       pid: pid,
       segmentIndex: segmentIndex,
     );
-
-    return switch (result) {
-      Success(value: final reply) => reply.elems,
-      Failure(exception: final e) => throw e,
-    };
+    return result.elems;
   }
 }
 

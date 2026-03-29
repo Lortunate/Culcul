@@ -1,4 +1,3 @@
-import 'package:culcul/core/result.dart';
 import 'package:culcul/data/models/subtitle.dart';
 import 'package:culcul/features/video/data/video_repository.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -63,13 +62,11 @@ class SubtitleController extends _$SubtitleController {
 
   Future<void> _loadSubtitleContent(SubtitleInfo info) async {
     final repo = ref.read(videoRepositoryProvider);
-    final result = await repo.fetchSubtitleContent(info.subtitleUrl);
-
-    switch (result) {
-      case Success(value: final content):
-        state = state.copyWith(content: content.body, isLoading: false);
-      case Failure(exception: final e):
-        state = state.copyWith(isLoading: false, error: e.toString());
+    try {
+      final content = await repo.fetchSubtitleContent(info.subtitleUrl);
+      state = state.copyWith(content: content.body, isLoading: false);
+    } catch (e) {
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 }

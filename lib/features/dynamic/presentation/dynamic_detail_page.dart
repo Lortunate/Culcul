@@ -1,5 +1,4 @@
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/core/result.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:culcul/features/dynamic/controllers/dynamic_comment_controller.dart';
@@ -31,18 +30,14 @@ class DynamicDetailPage extends HookConsumerWidget {
     // But we can only get it if we have a post.
 
     Future<void> loadDetail() async {
-      final result = await ref.read(dynamicRepositoryProvider).getDetail(dynamicId);
-
-      result.when(
-        success: (data) {
-          post.value = data;
-          isLoading.value = false;
-        },
-        failure: (e) {
-          error.value = e.toString();
-          isLoading.value = false;
-        },
-      );
+      try {
+        final data = await ref.read(dynamicRepositoryProvider).getDetail(dynamicId);
+        post.value = data;
+        isLoading.value = false;
+      } catch (e) {
+        error.value = e.toString();
+        isLoading.value = false;
+      }
     }
 
     useEffect(() {
@@ -82,20 +77,16 @@ class DynamicDetailPage extends HookConsumerWidget {
 
       post.value = newItem;
 
-      final result = await ref
-          .read(dynamicRepositoryProvider)
-          .likeDynamic(item.id, newStatus);
-
-      if (result.isFailure) {
+      try {
+        await ref.read(dynamicRepositoryProvider).likeDynamic(item.id, newStatus);
+      } catch (e) {
         // Revert
         post.value = item;
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                t.moments.operation_failed(
-                  message: (result as Failure).exception.toString(),
-                ),
+                t.moments.operation_failed(message: e.toString()),
               ),
             ),
           );

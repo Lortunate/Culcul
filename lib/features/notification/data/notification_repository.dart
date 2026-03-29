@@ -1,9 +1,7 @@
 import 'dart:io';
 
-import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/base_repository.dart';
-import 'package:culcul/core/result.dart';
 import 'package:culcul/data/api/notification_api.dart';
 import 'package:culcul/data/models/notification/image_upload_response.dart';
 import 'package:culcul/data/models/notification/private_message_model.dart';
@@ -25,57 +23,51 @@ class NotificationRepository extends BaseRepository {
 
   NotificationRepository(this._api);
 
-  Future<Result<UnreadCountModel, AppException>> getUnreadCount() async {
-    return safeApiCall(() => _api.getUnreadCount());
+  Future<UnreadCountModel> getUnreadCount() async {
+    return requestApi(() => _api.getUnreadCount());
   }
 
-  Future<Result<ReplyResponse, AppException>> getReplyList({
+  Future<ReplyResponse> getReplyList({
     int? id,
     int? replyTime,
   }) async {
-    return safeApiCall(() => _api.getReplyList(id: id, replyTime: replyTime));
+    return requestApi(() => _api.getReplyList(id: id, replyTime: replyTime));
   }
 
-  Future<Result<ReplyResponse, AppException>> getAtList({int? id, int? atTime}) async {
-    return safeApiCall(() => _api.getAtList(id: id, atTime: atTime));
+  Future<ReplyResponse> getAtList({int? id, int? atTime}) async {
+    return requestApi(() => _api.getAtList(id: id, atTime: atTime));
   }
 
-  Future<Result<ReplyResponse, AppException>> getLikeList({
+  Future<ReplyResponse> getLikeList({
     int? id,
     int? likeTime,
   }) async {
-    final result = await safeApiCall(() => _api.getLikeList(id: id, likeTime: likeTime));
-
-    return switch (result) {
-      Success(value: final likeResponse) => Success(
-        ReplyResponse(
-          cursor: likeResponse.total.cursor,
-          items: likeResponse.total.items,
-          lastViewAt: likeResponse.latest.lastViewAt,
-        ),
-      ),
-      Failure(exception: final e) => Failure(e),
-    };
+    final likeResponse = await requestApi(() => _api.getLikeList(id: id, likeTime: likeTime));
+    return ReplyResponse(
+      cursor: likeResponse.total.cursor,
+      items: likeResponse.total.items,
+      lastViewAt: likeResponse.latest.lastViewAt,
+    );
   }
 
-  Future<Result<PrivateMessageSessionResponse, AppException>> getPrivateSessions({
+  Future<PrivateMessageSessionResponse> getPrivateSessions({
     int sessionType = 1,
     int size = 20,
     int? endTs,
   }) async {
-    return safeApiCall(
+    return requestApi(
       () => _api.getPrivateSessions(sessionType: sessionType, size: size, endTs: endTs),
     );
   }
 
-  Future<Result<PrivateMessageListResponse, AppException>> getPrivateMessages({
+  Future<PrivateMessageListResponse> getPrivateMessages({
     required int talkerId,
     int sessionType = 1,
     int size = 20,
     int? beginSeqno,
     int? endSeqno,
   }) async {
-    return safeApiCall(
+    return requestApi(
       () => _api.getPrivateMessages(
         talkerId: talkerId,
         sessionType: sessionType,
@@ -86,52 +78,38 @@ class NotificationRepository extends BaseRepository {
     );
   }
 
-  Future<Result<List<SystemNotificationItem>, AppException>>
-  fetchSystemNotifications() async {
-    final sessionResult = await getPrivateSessions(sessionType: 7);
-
-    if (sessionResult case Failure(exception: final e)) {
-      return Failure(e);
-    }
-
-    final sessionRes =
-        (sessionResult as Success<PrivateMessageSessionResponse, AppException>).value;
+  Future<List<SystemNotificationItem>> fetchSystemNotifications() async {
+    final sessionRes = await getPrivateSessions(sessionType: 7);
     final systemMsgMap = sessionRes.systemMsg;
 
     if (systemMsgMap == null || !systemMsgMap.containsKey('5')) {
-      return const Success([]);
+      return [];
     }
 
     final talkerId = systemMsgMap['5']!;
-    final msgsResult = await getPrivateMessages(talkerId: talkerId);
-
-    return switch (msgsResult) {
-      Success(value: final msgsRes) => Success(
-        msgsRes.messages?.map((msg) {
-              final contentMap = msg.contentMap;
-              return SystemNotificationItem(
-                id: msg.msgSeqno,
-                title: contentMap?['title'] as String?,
-                text: contentMap?['content'] as String? ?? contentMap?['text'] as String?,
-                time: msg.timestamp,
-                uri:
-                    contentMap?['url'] as String? ??
-                    contentMap?['uri'] as String? ??
-                    contentMap?['jump_uri'] as String?,
-                jumpText: contentMap?['jump_text'] as String?,
-              );
-            }).toList() ??
-            [],
-      ),
-      Failure(exception: final e) => Failure(e),
-    };
+    final msgsRes = await getPrivateMessages(talkerId: talkerId);
+    return msgsRes.messages?.map((msg) {
+          final contentMap = msg.contentMap;
+          return SystemNotificationItem(
+            id: msg.msgSeqno,
+            title: contentMap?['title'] as String?,
+            text: contentMap?['content'] as String? ?? contentMap?['text'] as String?,
+            time: msg.timestamp,
+            uri:
+                contentMap?['url'] as String? ??
+                contentMap?['uri'] as String? ??
+                contentMap?['jump_uri'] as String?,
+            jumpText: contentMap?['jump_text'] as String?,
+          );
+        }).toList() ??
+        [];
   }
 
-  Future<Result<ImageUploadResponse, AppException>> uploadImage(File file) async {
-    return safeApiCall(() => _api.uploadImage(file: file));
+  Future<ImageUploadResponse> uploadImage(File file) async {
+    return requestApi(() => _api.uploadImage(file: file));
   }
 
-  Future<Result<SendMessageResponse, AppException>> sendPrivateMessage({
+  Future<SendMessageResponse> sendPrivateMessage({
     required int senderUid,
     required int receiverId,
     required int receiverType,
@@ -141,7 +119,7 @@ class NotificationRepository extends BaseRepository {
     final devId = const Uuid().v4().toUpperCase();
     final timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
-    return safeApiCall(
+    return requestApi(
       () => _api.sendPrivateMessage(
         wSenderUid: senderUid,
         wReceiverId: receiverId,

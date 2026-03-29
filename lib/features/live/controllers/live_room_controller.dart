@@ -1,5 +1,5 @@
 import 'package:culcul/data/models/live/index.dart';
-import 'package:culcul/core/result.dart';
+import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/features/live/controllers/live_room_state.dart';
 import 'package:culcul/features/live/data/live_repository.dart';
 import 'package:culcul/core/providers/api_provider.dart';
@@ -25,12 +25,11 @@ class LiveRoomController extends _$LiveRoomController {
   Future<void> _init(int roomId) async {
     state = state.copyWith(isLoading: true, error: null);
 
-    // Add welcome message
     final welcomeItem = LiveDanmakuItem(
       text: t.live.danmaku.welcome,
       nickname: t.live.danmaku.system_notice,
       uid: 0,
-      dmType: 3, // System Notice
+      dmType: 3,
       guardLevel: 0,
       isadmin: 0,
       vip: 0,
@@ -40,41 +39,39 @@ class LiveRoomController extends _$LiveRoomController {
     );
     state = state.copyWith(danmakuHistory: [welcomeItem]);
 
-    // Fetch room info first to get real room_id if using short_id
-    final infoResult = await ref.read(liveRepositoryProvider).getRoomInfo(roomId);
-
-    switch (infoResult) {
-      case Success(value: final info):
-        state = state.copyWith(roomInfo: info);
-        // Load other data in parallel
-        await Future.wait([
-          _fetchPlayUrl(info.roomId),
-          _fetchDanmakuConfig(info.roomId),
-          _fetchHistoryDanmaku(info.roomId),
-          _fetchAnchorInfo(info.uid),
-          _fetchLiveAnchorInfo(info.uid),
-          _fetchGoldRank(info.roomId, info.uid),
-          _fetchGuardList(info.roomId, info.uid),
-          _connectDanmaku(info.roomId),
-        ]);
-        state = state.copyWith(isLoading: false);
-      case Failure(exception: final e):
-        state = state.copyWith(isLoading: false, error: e);
+    try {
+      final info = await ref.read(liveRepositoryProvider).getRoomInfo(roomId);
+      state = state.copyWith(roomInfo: info);
+      await Future.wait([
+        _fetchPlayUrl(info.roomId),
+        _fetchDanmakuConfig(info.roomId),
+        _fetchHistoryDanmaku(info.roomId),
+        _fetchAnchorInfo(info.uid),
+        _fetchLiveAnchorInfo(info.uid),
+        _fetchGoldRank(info.roomId, info.uid),
+        _fetchGuardList(info.roomId, info.uid),
+        _connectDanmaku(info.roomId),
+      ]);
+      state = state.copyWith(isLoading: false);
+    } catch (e) {
+      final exception = e is AppException ? e : UnknownException(e.toString(), cause: e);
+      state = state.copyWith(isLoading: false, error: exception);
     }
   }
 
   Future<void> _connectDanmaku(int roomId) async {
-    final result = await ref.read(liveRepositoryProvider).getDanmuInfo(roomId);
-    if (result case Success(value: final info)) {
+    try {
+      final info = await ref.read(liveRepositoryProvider).getDanmuInfo(roomId);
       await _socketService.connect(info: info, roomId: roomId);
       _socketService.danmakuStream.listen((item) {
-        // Prepend new item and limit list size to 500
         final newList = [item, ...state.danmakuHistory];
         if (newList.length > 500) {
           newList.removeRange(500, newList.length);
         }
         state = state.copyWith(danmakuHistory: newList);
       });
+    } catch (_) {
+      // Ignore socket bootstrap errors for now.
     }
   }
 
@@ -83,25 +80,21 @@ class LiveRoomController extends _$LiveRoomController {
     if (anchor == null) return;
 
     final isFollowing = anchor.isFollowed;
-    final result = await ref
-        .read(profileRepositoryProvider)
-        .modifyRelation(mid: int.parse(anchor.mid), isFollow: !isFollowing);
-
-    if (result is Success) {
-      // Optimistic update if success
+    try {
+      await ref
+          .read(profileRepositoryProvider)
+          .modifyRelation(mid: int.parse(anchor.mid), isFollow: !isFollowing);
       state = state.copyWith(anchorInfo: anchor.copyWith(isFollowed: !isFollowing));
-    } else {
-      // Show error? For now just keep state
+    } catch (_) {
+      // Keep current state when follow action fails.
     }
   }
 
   Future<void> _fetchPlayUrl(int roomId, {int? qn}) async {
-    final result = await ref
-        .read(liveRepositoryProvider)
-        .getPlayUrl(roomId: roomId, qn: qn);
-    if (result case Success(value: final url)) {
+    try {
+      final url = await ref.read(liveRepositoryProvider).getPlayUrl(roomId: roomId, qn: qn);
       state = state.copyWith(playUrl: url);
-    }
+    } catch (_) {}
   }
 
   Future<void> switchQuality(int qn) async {
@@ -110,51 +103,49 @@ class LiveRoomController extends _$LiveRoomController {
   }
 
   Future<void> _fetchAnchorInfo(int uid) async {
-    final result = await ref.read(profileRepositoryProvider).getUserCard(uid);
-    if (result case Success(value: final card)) {
+    try {
+      final card = await ref.read(profileRepositoryProvider).getUserCard(uid);
       state = state.copyWith(anchorInfo: card);
-    }
+    } catch (_) {}
   }
 
   Future<void> _fetchLiveAnchorInfo(int uid) async {
-    final result = await ref.read(liveRepositoryProvider).getAnchorInfo(uid);
-    if (result case Success(value: final info)) {
+    try {
+      final info = await ref.read(liveRepositoryProvider).getAnchorInfo(uid);
       state = state.copyWith(liveAnchorInfo: info);
-    }
+    } catch (_) {}
   }
 
   Future<void> _fetchGoldRank(int roomId, int ruid) async {
-    final result = await ref
-        .read(liveRepositoryProvider)
-        .getOnlineGoldRank(roomId: roomId, ruid: ruid);
-    if (result case Success(value: final rank)) {
+    try {
+      final rank = await ref
+          .read(liveRepositoryProvider)
+          .getOnlineGoldRank(roomId: roomId, ruid: ruid);
       state = state.copyWith(goldRank: rank);
-    }
+    } catch (_) {}
   }
 
   Future<void> _fetchGuardList(int roomId, int ruid) async {
-    final result = await ref
-        .read(liveRepositoryProvider)
-        .getGuardList(roomId: roomId, ruid: ruid);
-    if (result case Success(value: final list)) {
+    try {
+      final list = await ref
+          .read(liveRepositoryProvider)
+          .getGuardList(roomId: roomId, ruid: ruid);
       state = state.copyWith(guardList: list);
-    }
+    } catch (_) {}
   }
 
   Future<void> _fetchDanmakuConfig(int roomId) async {
-    final result = await ref.read(liveRepositoryProvider).getDanmakuConfig(roomId);
-    if (result case Success(value: final config)) {
+    try {
+      final config = await ref.read(liveRepositoryProvider).getDanmakuConfig(roomId);
       state = state.copyWith(danmakuConfig: config);
-    }
+    } catch (_) {}
   }
 
   Future<void> _fetchHistoryDanmaku(int roomId) async {
-    final result = await ref.read(liveRepositoryProvider).getHistoryDanmaku(roomId);
-    if (result case Success(value: final history)) {
-      // API returns history in chronological order (Oldest -> Newest).
-      // We need to reverse it to Newest -> Oldest for ListView(reverse: true).
+    try {
+      final history = await ref.read(liveRepositoryProvider).getHistoryDanmaku(roomId);
       state = state.copyWith(danmakuHistory: history.room.reversed.toList());
-    }
+    } catch (_) {}
   }
 
   void toggleDanmaku() {
@@ -164,11 +155,9 @@ class LiveRoomController extends _$LiveRoomController {
   Future<void> sendDanmaku(String msg) async {
     if (msg.trim().isEmpty) return;
 
-    final result = await ref
-        .read(liveRepositoryProvider)
-        .sendDanmaku(roomId: state.roomId, msg: msg);
-
-    if (result case Failure(exception: final _)) {
+    try {
+      await ref.read(liveRepositoryProvider).sendDanmaku(roomId: state.roomId, msg: msg);
+    } catch (_) {
       // TODO: Show error
     }
   }
@@ -177,4 +166,3 @@ class LiveRoomController extends _$LiveRoomController {
     await _init(state.roomId);
   }
 }
-
