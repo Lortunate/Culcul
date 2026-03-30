@@ -25,7 +25,7 @@ class HomeRoute extends GoRouteData with $HomeRoute {
   const HomeRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const HomePage();
+  Widget build(BuildContext context, GoRouterState state) => buildHomeRoutePage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
@@ -37,7 +37,7 @@ class DynamicRoute extends GoRouteData with $DynamicRoute {
   const DynamicRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const DynamicPage();
+  Widget build(BuildContext context, GoRouterState state) => buildDynamicRoutePage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
@@ -49,7 +49,7 @@ class RankingRoute extends GoRouteData with $RankingRoute {
   const RankingRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const RankingPage();
+  Widget build(BuildContext context, GoRouterState state) => buildRankingRoutePage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
@@ -61,7 +61,7 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
   const ProfileRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const ProfilePage();
+  Widget build(BuildContext context, GoRouterState state) => buildProfileRoutePage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {

@@ -1,6 +1,5 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/data/models/fav/index.dart';
 import 'package:culcul/features/favorites/data/mappers/favorite_mapper.dart';
 import 'package:culcul/features/favorites/data/fav_repository.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';

@@ -1,7 +1,5 @@
-import 'package:culcul/data/models/video/video_model.dart';
 import 'package:culcul/features/home/data/home_repository.dart';
 import 'package:culcul/features/home/data/weekly_repository.dart';
-import 'package:culcul/data/models/feed/weekly_model.dart';
 import 'package:culcul/features/home/data/mappers/home_feed_mapper.dart';
 import 'package:culcul/features/home/domain/entities/home_video.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

@@ -1,8 +1,5 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/data/models/relation/relation_model.dart';
-import 'package:culcul/data/models/user/user_profile_model.dart';
-import 'package:culcul/data/models/user/user_space_video_model.dart';
 import 'package:culcul/features/profile/data/mappers/profile_mapper.dart';
 import 'package:culcul/features/profile/data/profile_cache_repository.dart';
 import 'package:culcul/features/profile/data/profile_repository.dart';

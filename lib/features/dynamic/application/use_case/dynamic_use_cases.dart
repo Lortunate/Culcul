@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
-import 'package:culcul/features/dynamic/data/article_detail_data.dart';
 import 'package:culcul/features/dynamic/data/dynamic_repository.dart';
 import 'package:culcul/features/dynamic/data/emote_repository.dart';
+import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
 import 'package:culcul/features/profile/data/relation_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

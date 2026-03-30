@@ -14,7 +14,7 @@ class NotificationRoute extends GoRouteData with $NotificationRoute {
   const NotificationRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const NotificationPage();
+  Widget build(BuildContext context, GoRouterState state) => buildNotificationRoutePage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
@@ -27,7 +27,7 @@ class ReplyNotificationRoute extends GoRouteData with $ReplyNotificationRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const NotificationListPage(type: NotificationType.reply);
+    return buildReplyNotificationRoutePage();
   }
 
   @override
@@ -41,7 +41,7 @@ class AtNotificationRoute extends GoRouteData with $AtNotificationRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const NotificationListPage(type: NotificationType.at);
+    return buildAtNotificationRoutePage();
   }
 
   @override
@@ -55,7 +55,7 @@ class LikeNotificationRoute extends GoRouteData with $LikeNotificationRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return const NotificationListPage(type: NotificationType.like);
+    return buildLikeNotificationRoutePage();
   }
 
   @override
@@ -69,7 +69,7 @@ class SystemNotificationRoute extends GoRouteData with $SystemNotificationRoute 
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      const SystemNotificationPage();
+      buildSystemNotificationRoutePage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
@@ -87,7 +87,7 @@ class ChatRoute extends GoRouteData with $ChatRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return ChatPage(
+    return buildChatRoutePage(
       talkerId: talkerId,
       name: name,
       sessionType: sessionType ?? 1,
@@ -112,7 +112,7 @@ class DynamicDetailRoute extends GoRouteData with $DynamicDetailRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      DynamicDetailPage(dynamicId: id);
+      buildDynamicDetailRoutePage(id);
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
@@ -125,7 +125,8 @@ class PublishDynamicRoute extends GoRouteData with $PublishDynamicRoute {
   const PublishDynamicRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const PublishDynamicPage();
+  Widget build(BuildContext context, GoRouterState state) =>
+      buildPublishDynamicRoutePage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {

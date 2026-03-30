@@ -5,7 +5,7 @@ class WeeklyRoute extends GoRouteData with $WeeklyRoute {
   const WeeklyRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const WeeklyScreen();
+  Widget build(BuildContext context, GoRouterState state) => buildWeeklyRoutePage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
@@ -20,7 +20,8 @@ class VideoDetailRoute extends GoRouteData with $VideoDetailRoute {
   const VideoDetailRoute({required this.bvid});
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => VideoDetailPage(bvid: bvid);
+  Widget build(BuildContext context, GoRouterState state) =>
+      buildVideoDetailRoutePage(bvid);
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
@@ -38,7 +39,8 @@ class LiveRoomRoute extends GoRouteData with $LiveRoomRoute {
   const LiveRoomRoute({required this.roomId});
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => LiveRoomPage(roomId: roomId);
+  Widget build(BuildContext context, GoRouterState state) =>
+      buildLiveRoomRoutePage(roomId);
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
@@ -49,19 +51,12 @@ class LiveRoomRoute extends GoRouteData with $LiveRoomRoute {
   }
 }
 
-class CommentReplyRouteExtra {
-  final CommentItem comment;
-  final int? upperMid;
-
-  const CommentReplyRouteExtra({required this.comment, this.upperMid});
-}
-
 @TypedGoRoute<CommentReplyRoute>(path: '/comment/reply')
 class CommentReplyRoute extends GoRouteData with $CommentReplyRoute {
   final String bvid;
   final int oid;
   final int rootId;
-  final CommentReplyRouteExtra? $extra;
+  final CommentReplyRouteInput? $extra;
 
   const CommentReplyRoute({
     required this.bvid,
@@ -74,14 +69,9 @@ class CommentReplyRoute extends GoRouteData with $CommentReplyRoute {
   Widget build(BuildContext context, GoRouterState state) {
     final routeExtra = $extra;
     if (routeExtra == null) {
-      throw ArgumentError('CommentReplyRoute requires CommentReplyRouteExtra in \$extra');
+      throw ArgumentError('CommentReplyRoute requires CommentReplyRouteInput in \$extra');
     }
-    return CommentReplyPage(
-      oid: oid,
-      rootId: rootId,
-      comment: routeExtra.comment,
-      upperMid: routeExtra.upperMid,
-    );
+    return buildCommentReplyRoutePage(oid: oid, rootId: rootId, input: routeExtra);
   }
 
   @override
@@ -95,7 +85,7 @@ class SearchRoute extends GoRouteData with $SearchRoute {
   const SearchRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const SearchPage();
+  Widget build(BuildContext context, GoRouterState state) => buildSearchRoutePage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
@@ -111,7 +101,7 @@ class FavoritesRoute extends GoRouteData with $FavoritesRoute {
   const FavoritesRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const FavoritesPage();
+  Widget build(BuildContext context, GoRouterState state) => buildFavoritesRoutePage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
@@ -132,7 +122,7 @@ class FavoriteDetailRoute extends GoRouteData with $FavoriteDetailRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return FavoriteDetailPage(mediaId: mediaId, title: title, mid: mid);
+    return buildFavoriteDetailRoutePage(mediaId: mediaId, title: title, mid: mid);
   }
 
   @override
@@ -148,7 +138,8 @@ class FollowingsRoute extends GoRouteData with $FollowingsRoute {
   const FollowingsRoute({required this.vmid});
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => FollowingsPage(vmid: vmid);
+  Widget build(BuildContext context, GoRouterState state) =>
+      buildFollowingsRoutePage(vmid);
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
@@ -163,7 +154,8 @@ class FollowersRoute extends GoRouteData with $FollowersRoute {
   const FollowersRoute({required this.vmid});
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => FollowersPage(vmid: vmid);
+  Widget build(BuildContext context, GoRouterState state) =>
+      buildFollowersRoutePage(vmid);
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
@@ -178,7 +170,8 @@ class UserProfileRoute extends GoRouteData with $UserProfileRoute {
   const UserProfileRoute({required this.mid});
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => UserProfilePage(mid: mid);
+  Widget build(BuildContext context, GoRouterState state) =>
+      buildUserProfileRoutePage(mid);
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
@@ -191,7 +184,7 @@ class LoginRoute extends GoRouteData with $LoginRoute {
   const LoginRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const LoginPage();
+  Widget build(BuildContext context, GoRouterState state) => buildLoginRoutePage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
@@ -204,7 +197,7 @@ class SettingsRoute extends GoRouteData with $SettingsRoute {
   const SettingsRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const SettingsPage();
+  Widget build(BuildContext context, GoRouterState state) => buildSettingsRoutePage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
@@ -217,7 +210,7 @@ class ToViewRoute extends GoRouteData with $ToViewRoute {
   const ToViewRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const ToViewPage();
+  Widget build(BuildContext context, GoRouterState state) => buildToViewRoutePage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
@@ -230,7 +223,7 @@ class HistoryRoute extends GoRouteData with $HistoryRoute {
   const HistoryRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const HistoryPage();
+  Widget build(BuildContext context, GoRouterState state) => buildHistoryRoutePage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {

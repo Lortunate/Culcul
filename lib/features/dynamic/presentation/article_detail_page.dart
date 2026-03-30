@@ -1,7 +1,7 @@
+import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/utils/share_utils.dart';
-import 'package:culcul/features/dynamic/data/article_detail_data.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/article_detail_view_model.dart';
 import 'package:culcul/features/dynamic/presentation/utils/dynamic_navigation.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_comment_composer.dart';
@@ -579,24 +579,29 @@ class _ParagraphBlockViewState extends State<_ParagraphBlockView> {
       alignment: _alignToAlignment(widget.block.align),
       child: Text.rich(
         TextSpan(children: spans),
-        textAlign: widget.block.align ?? TextAlign.start,
+        textAlign: _toTextAlign(widget.block.align),
       ),
     );
   }
 
-  Alignment _alignToAlignment(TextAlign? align) {
+  Alignment _alignToAlignment(ArticleTextAlign? align) {
     switch (align) {
-      case TextAlign.center:
+      case ArticleTextAlign.center:
         return Alignment.center;
-      case TextAlign.right:
-      case TextAlign.end:
+      case ArticleTextAlign.end:
         return Alignment.centerRight;
-      case TextAlign.justify:
-      case TextAlign.left:
-      case TextAlign.start:
+      case ArticleTextAlign.start:
       case null:
         return Alignment.centerLeft;
     }
+  }
+
+  TextAlign _toTextAlign(ArticleTextAlign? align) {
+    return switch (align) {
+      ArticleTextAlign.center => TextAlign.center,
+      ArticleTextAlign.end => TextAlign.end,
+      ArticleTextAlign.start || null => TextAlign.start,
+    };
   }
 }
 

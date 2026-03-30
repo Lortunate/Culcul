@@ -8,7 +8,7 @@ import 'package:culcul/core/providers/cookie_jar_provider.dart';
 import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/data/api/dynamic_api.dart';
 import 'package:culcul/data/network/dio_client.dart';
-import 'package:culcul/features/dynamic/data/article_detail_data.dart';
+import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';

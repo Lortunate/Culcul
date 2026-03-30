@@ -1,9 +1,9 @@
+import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
 import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/features/dynamic/data/article_detail_data.dart';
 import 'package:culcul/features/dynamic/application/use_case/dynamic_use_cases.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

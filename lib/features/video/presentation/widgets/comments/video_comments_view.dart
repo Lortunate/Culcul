@@ -1,4 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/features/video/presentation/video_route_entry.dart';
 import 'package:culcul/features/video/presentation/view_models/video_comments_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_item.dart';
@@ -78,7 +79,7 @@ class VideoCommentsView extends ConsumerWidget {
                   bvid: bvid,
                   oid: detailState.videoDetail!.aid,
                   rootId: comment.rpid,
-                  $extra: CommentReplyRouteExtra(comment: comment, upperMid: upperMid),
+                  $extra: CommentReplyRouteInput(comment: comment, upperMid: upperMid),
                 ).push(context);
               }
             },

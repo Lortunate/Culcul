@@ -57,7 +57,7 @@ class SearchUseCases {
   Future<Result<SearchDefaultHint?, AppError>> getDefaultSearch() async {
     try {
       final result = await _repository.fetchDefaultSearch();
-      return Success(result?.toDomain());
+      return Success(result.toDomain());
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -66,7 +66,7 @@ class SearchUseCases {
   Future<Result<List<SearchTrendingKeyword>, AppError>> getTrendingRanking() async {
     try {
       final result = await _repository.fetchTrendingRanking();
-      return Success(result?.list.map((item) => item.toDomain()).toList() ?? const []);
+      return Success(result.list.map((item) => item.toDomain()).toList());
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }

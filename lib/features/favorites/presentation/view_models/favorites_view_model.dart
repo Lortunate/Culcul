@@ -130,7 +130,7 @@ class FavFolderResources extends _$FavFolderResources {
       failure: (error) => throw error,
     );
     _hasMore = response.hasMore;
-    return FavFolderDetailState(info: response.info, list: response.medias ?? []);
+    return FavFolderDetailState(info: response.info, list: response.medias);
   }
 
   Future<void> loadMore(int mediaId) async {

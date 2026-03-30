@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:culcul/features/ranking/data/models/ranking_category.dart';
+import 'package:culcul/features/ranking/domain/entities/ranking_category.dart';
 import 'package:culcul/features/ranking/domain/entities/ranking_video.dart';
 import 'package:culcul/features/ranking/presentation/view_models/category_ranking_view_model.dart';
 import 'package:culcul/features/ranking/presentation/widgets/ranking_item_card.dart';
