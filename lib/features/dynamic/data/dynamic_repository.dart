@@ -48,17 +48,17 @@ class DynamicRepository extends BaseRepository {
     int sort = 1,
     int page = 1,
   }) async {
-    final params = _getCommentParams(post);
-    if (params == null) {
+    final target = _resolveCommentTarget(post);
+    if (target == null) {
       throw const UnknownException('Unsupported dynamic type for comments');
     }
 
     return getCommentList(
-      oid: params['oid'] as String,
-      type: params['type'] as int,
+      oid: target.oid,
+      type: target.type,
       sort: sort,
       page: page,
-      referer: _getCommentReferer(post),
+      referer: target.referer,
     );
   }
 
@@ -68,18 +68,18 @@ class DynamicRepository extends BaseRepository {
     required int root,
     required int parent,
   }) async {
-    final params = _getCommentParams(post);
-    if (params == null) {
+    final target = _resolveCommentTarget(post);
+    if (target == null) {
       throw const UnknownException('Unsupported dynamic type for comments');
     }
 
     return addCommentReply(
-      oid: params['oid'] as String,
-      type: params['type'] as int,
+      oid: target.oid,
+      type: target.type,
       root: root,
       parent: parent,
       message: message,
-      referer: _getCommentReferer(post),
+      referer: target.referer,
     );
   }
 
@@ -88,17 +88,17 @@ class DynamicRepository extends BaseRepository {
     required int rpid,
     required bool isLiked,
   }) async {
-    final params = _getCommentParams(post);
-    if (params == null) {
+    final target = _resolveCommentTarget(post);
+    if (target == null) {
       throw const UnknownException('Unsupported dynamic type for comments');
     }
 
     return likeCommentByTarget(
-      oid: params['oid'] as String,
-      type: params['type'] as int,
+      oid: target.oid,
+      type: target.type,
       rpid: rpid,
       isLiked: isLiked,
-      referer: _getCommentReferer(post),
+      referer: target.referer,
     );
   }
 
@@ -179,32 +179,38 @@ class DynamicRepository extends BaseRepository {
     );
   }
 
-  Map<String, dynamic>? _getCommentParams(DynamicItem post) {
+  _DynamicCommentTarget? _resolveCommentTarget(DynamicItem post) {
+    final referer = _getCommentReferer(post);
     if (post.commentId != null && post.commentType != null) {
-      return {'oid': post.commentId!, 'type': post.commentType!};
+      return _DynamicCommentTarget(
+        oid: post.commentId!,
+        type: post.commentType!,
+        referer: referer,
+      );
     }
 
     if (post.type == 'DYNAMIC_TYPE_AV') {
       if (post.videoContent != null) {
-        // Use AID as oid, type 1
-        return {'oid': post.videoContent!.aid ?? '0', 'type': 1};
+        return _DynamicCommentTarget(
+          oid: post.videoContent!.aid ?? '0',
+          type: 1,
+          referer: referer,
+        );
       }
     } else if (post.type == 'DYNAMIC_TYPE_DRAW' ||
         post.type == 'DYNAMIC_TYPE_WORD' ||
         post.type == 'DYNAMIC_TYPE_FORWARD') {
-      // Use dynamic ID (parsed) as oid, type 11 (draw) or 17 (word/forward)
       int type = 17;
       if (post.type == 'DYNAMIC_TYPE_DRAW') type = 11;
-      return {'oid': post.id, 'type': type};
+      return _DynamicCommentTarget(oid: post.id, type: type, referer: referer);
     } else if (post.type == 'DYNAMIC_TYPE_ARTICLE') {
       final articleOid = _extractArticleOid(post);
       if (articleOid != null) {
-        return {'oid': articleOid, 'type': 12};
+        return _DynamicCommentTarget(oid: articleOid, type: 12, referer: referer);
       }
     }
 
-    // Fallback: try parsing ID and assume type 17 (most common for modern dynamics)
-    return {'oid': post.id, 'type': 17};
+    return _DynamicCommentTarget(oid: post.id, type: 17, referer: referer);
   }
 
   String? _getCommentReferer(DynamicItem post) {
@@ -261,8 +267,8 @@ class DynamicRepository extends BaseRepository {
     return null;
   }
 
-  Future<DynamicData> getFeed({String? type, String? offset, int page = 1}) {
-    return requestApi(() => _api.getDynamicFeed(type: type, offset: offset, page: page));
+  Future<DynamicData> getFeed({String? type, String? offset}) {
+    return requestApi(() => _api.getDynamicFeed(type: type, offset: offset, page: 1));
   }
 
   Future<DynamicData> getSpaceDynamicFeed({required int hostMid, String? offset}) {
@@ -427,4 +433,16 @@ class DynamicRepository extends BaseRepository {
       }
     });
   }
+}
+
+class _DynamicCommentTarget {
+  final String oid;
+  final int type;
+  final String? referer;
+
+  const _DynamicCommentTarget({
+    required this.oid,
+    required this.type,
+    required this.referer,
+  });
 }

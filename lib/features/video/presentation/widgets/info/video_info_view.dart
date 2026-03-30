@@ -76,7 +76,7 @@ class VideoInfoView extends ConsumerWidget {
               const SizedBox(height: 12),
 
               // Video Interactive Actions
-              VideoActionsRow(state: state, notifier: notifier),
+              VideoActionsRow(state: state),
 
               const SizedBox(height: 8),
 
@@ -85,7 +85,11 @@ class VideoInfoView extends ConsumerWidget {
                 VideoPartsSection(
                   pages: d.pages,
                   currentCid: state.currentCid,
-                  onPartChanged: (cid) => notifier.switchPart(cid),
+                  onPartChanged: (cid) {
+                    ref
+                        .read(videoDetailControllerProvider(bvid).notifier)
+                        .switchPart(cid);
+                  },
                 ),
                 const SizedBox(height: 12),
               ],

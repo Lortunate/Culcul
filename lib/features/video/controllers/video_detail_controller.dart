@@ -1,11 +1,9 @@
-import 'package:culcul/core/utils/share_utils.dart';
-import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/data/models/video/video_detail.dart';
 import 'package:culcul/features/video/data/video_repository.dart';
+import 'package:culcul/features/profile/data/relation_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'video_detail_state.dart';
-import 'package:culcul/features/profile/data/relation_repository.dart';
 
 part 'video_detail_controller.g.dart';
 
@@ -33,7 +31,6 @@ class VideoDetailController extends _$VideoDetailController {
       await Future.wait([
         _fetchRelatedVideos(),
         _fetchVideoTags(),
-        _fetchComments(detail.aid),
         if (cid != 0) _fetchPlayUrl(detail.aid, cid),
       ]);
 
@@ -61,91 +58,11 @@ class VideoDetailController extends _$VideoDetailController {
     } catch (_) {}
   }
 
-  Future<void> _fetchComments(int aid) async {
-    state = state.copyWith(
-      isCommentLoading: true,
-      comments: [],
-      commentPage: 1,
-      hasMoreComments: true,
-    );
-
-    final repo = ref.read(videoRepositoryProvider);
-    try {
-      final response = await repo.fetchComments(oid: aid, sort: state.commentSort, pn: 1);
-      state = state.copyWith(
-        comments: response.replies,
-        commentPage: 2,
-        hasMoreComments: response.replies.isNotEmpty,
-        isCommentLoading: false,
-      );
-    } catch (_) {
-      state = state.copyWith(isCommentLoading: false);
-    }
-  }
-
-  Future<void> loadMoreComments() async {
-    if (state.isCommentLoading || !state.hasMoreComments) return;
-    final detail = state.videoDetail;
-    if (detail == null) return;
-
-    state = state.copyWith(isCommentLoading: true);
-
-    final repo = ref.read(videoRepositoryProvider);
-    try {
-      final response = await repo.fetchComments(
-        oid: detail.aid,
-        sort: state.commentSort,
-        pn: state.commentPage,
-      );
-      state = state.copyWith(
-        comments: [...state.comments, ...response.replies],
-        commentPage: state.commentPage + 1,
-        hasMoreComments: response.replies.isNotEmpty,
-        isCommentLoading: false,
-      );
-    } catch (_) {
-      state = state.copyWith(isCommentLoading: false);
-    }
-  }
-
-  Future<void> refreshComments() async {
-    final detail = state.videoDetail;
-    if (detail == null) return;
-    await _fetchComments(detail.aid);
-  }
-
-  Future<void> switchCommentSort(int sort) async {
-    if (state.commentSort == sort) return;
-    final detail = state.videoDetail;
-    if (detail == null) return;
-
-    state = state.copyWith(
-      commentSort: sort,
-      comments: [],
-      commentPage: 1,
-      hasMoreComments: true,
-      isCommentLoading: true,
-    );
-
-    final repo = ref.read(videoRepositoryProvider);
-    try {
-      final response = await repo.fetchComments(oid: detail.aid, sort: sort, pn: 1);
-      state = state.copyWith(
-        comments: response.replies,
-        commentPage: 2,
-        hasMoreComments: response.replies.isNotEmpty,
-        isCommentLoading: false,
-      );
-    } catch (_) {
-      state = state.copyWith(isCommentLoading: false);
-    }
-  }
-
   Future<void> _fetchPlayUrl(int aid, int cid, {int qn = 80}) async {
     final repo = ref.read(videoRepositoryProvider);
 
     try {
-      final playUrl = await repo.fetchVideoPlayUrl(aid: aid, cid: cid, qn: qn);
+      final playUrl = await repo.fetchVideoPlayUrl(aid: aid, cid: cid, quality: qn);
       final qualities = playUrl.acceptQuality.toList();
       state = state.copyWith(
         playUrl: playUrl,
@@ -198,90 +115,24 @@ class VideoDetailController extends _$VideoDetailController {
     final detail = state.videoDetail;
     if (detail == null) return;
 
-    final isFollowed = detail.reqUser?.attention == 1;
-    final act = isFollowed ? 2 : 1;
+    final wasFollowed = detail.reqUser?.attention == 1;
+    final nextAttention = wasFollowed ? 0 : 1;
+    final previousDetail = detail;
 
-    final newReqUser =
-        detail.reqUser?.copyWith(attention: isFollowed ? 0 : 1) ??
-        ReqUser(attention: isFollowed ? 0 : 1);
+    state = state.copyWith(
+      videoDetail: detail.copyWith(
+        reqUser:
+            detail.reqUser?.copyWith(attention: nextAttention) ??
+            ReqUser(attention: nextAttention),
+      ),
+    );
 
-    state = state.copyWith(videoDetail: detail.copyWith(reqUser: newReqUser));
-
-    final relationRepo = ref.read(relationRepositoryProvider);
     try {
-      await relationRepo.modifyRelation(fid: detail.owner.mid, act: act);
+      await ref
+          .read(relationRepositoryProvider)
+          .modifyRelation(fid: detail.owner.mid, act: wasFollowed ? 2 : 1);
     } catch (_) {
-      state = state.copyWith(videoDetail: detail);
+      state = state.copyWith(videoDetail: previousDetail);
     }
-  }
-
-  Future<void> toggleLike() async {}
-
-  Future<void> toggleDislike() async {}
-
-  Future<void> toggleCommentLike(int oid, int rpid, bool isLiked) async {
-    _updateCommentLikeStatus(rpid, !isLiked);
-
-    final action = isLiked ? 0 : 1;
-    final repo = ref.read(videoRepositoryProvider);
-    try {
-      await repo.actionComment(oid: oid, rpid: rpid, action: action);
-    } catch (_) {
-      _updateCommentLikeStatus(rpid, isLiked);
-    }
-  }
-
-  Future<void> toggleCommentDislike(int oid, int rpid) async {
-    final repo = ref.read(videoRepositoryProvider);
-    await repo.hateComment(oid: oid, rpid: rpid, action: 1);
-  }
-
-  Future<void> addReply(int oid, int root, int parent, String message) async {
-    final repo = ref.read(videoRepositoryProvider);
-    await repo.addReply(oid: oid, root: root, parent: parent, message: message);
-    await _fetchComments(oid);
-  }
-
-  void _updateCommentLikeStatus(int rpid, bool liked) {
-    List<CommentItem> newComments = [];
-    bool found = false;
-
-    CommentItem updateItem(CommentItem item) {
-      return item.copyWith(
-        like: liked ? item.like + 1 : item.like - 1,
-        action: liked ? 1 : 0,
-      );
-    }
-
-    for (var comment in state.comments) {
-      if (comment.rpid == rpid) {
-        newComments.add(updateItem(comment));
-        found = true;
-      } else {
-        final replyIndex = comment.replies.indexWhere((r) => r.rpid == rpid);
-        if (replyIndex != -1) {
-          final newReplies = List<CommentItem>.from(comment.replies);
-          newReplies[replyIndex] = updateItem(newReplies[replyIndex]);
-          newComments.add(comment.copyWith(replies: newReplies));
-          found = true;
-        } else {
-          newComments.add(comment);
-        }
-      }
-    }
-
-    if (found) {
-      state = state.copyWith(comments: newComments);
-    }
-  }
-
-  Future<void> sendCoin({int multiply = 1}) async {}
-
-  Future<void> toggleFavorite() async {}
-
-  Future<void> share() async {
-    final detail = state.videoDetail;
-    if (detail == null) return;
-    await ShareUtils.shareVideo(detail.bvid, detail.title, detail.pic);
   }
 }

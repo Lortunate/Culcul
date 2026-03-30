@@ -23,7 +23,7 @@ class CommentReplyController extends _$CommentReplyController {
 
     final repo = ref.read(videoRepositoryProvider);
     try {
-      final response = await repo.fetchReply(oid: oid, root: rootId, pn: 1);
+      final response = await repo.fetchReply(oid: oid, root: rootId, page: 1);
       state = state.copyWith(
         replies: response.replies,
         page: 2,
@@ -46,7 +46,7 @@ class CommentReplyController extends _$CommentReplyController {
 
     final repo = ref.read(videoRepositoryProvider);
     try {
-      final response = await repo.fetchReply(oid: oid, root: rootId, pn: state.page);
+      final response = await repo.fetchReply(oid: oid, root: rootId, page: state.page);
       state = state.copyWith(
         replies: [...state.replies, ...response.replies],
         page: state.page + 1,
@@ -61,10 +61,9 @@ class CommentReplyController extends _$CommentReplyController {
   Future<void> toggleCommentLike(int oid, int rpid, bool isLiked) async {
     _updateCommentLikeStatus(rpid, !isLiked);
 
-    final action = isLiked ? 0 : 1;
     final repo = ref.read(videoRepositoryProvider);
     try {
-      await repo.actionComment(oid: oid, rpid: rpid, action: action);
+      await repo.setCommentLike(oid: oid, rpid: rpid, isLiked: !isLiked);
     } catch (_) {
       _updateCommentLikeStatus(rpid, isLiked);
     }
@@ -72,7 +71,7 @@ class CommentReplyController extends _$CommentReplyController {
 
   Future<void> toggleCommentDislike(int oid, int rpid) async {
     final repo = ref.read(videoRepositoryProvider);
-    await repo.hateComment(oid: oid, rpid: rpid, action: 1);
+    await repo.setCommentDislike(oid: oid, rpid: rpid);
   }
 
   void _updateCommentLikeStatus(int rpid, bool liked) {
@@ -98,7 +97,7 @@ class CommentReplyController extends _$CommentReplyController {
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
     final repo = ref.read(videoRepositoryProvider);
-    await repo.addReply(oid: oid, root: root, parent: parent, message: message);
+    await repo.replyToComment(oid: oid, root: root, parent: parent, message: message);
     await refresh();
   }
 }

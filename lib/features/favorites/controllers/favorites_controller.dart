@@ -1,3 +1,4 @@
+import 'package:culcul/core/pagination/paged_async_notifier.dart';
 import 'package:culcul/data/models/fav/index.dart';
 import 'package:culcul/features/auth/controllers/auth_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -53,44 +54,37 @@ class FavCreatedFolders extends _$FavCreatedFolders {
 }
 
 @riverpod
-class FavCollectedFolders extends _$FavCollectedFolders {
-  int _page = 1;
+class FavCollectedFolders extends _$FavCollectedFolders
+    with OffsetPagedAsyncNotifier<FavFolderModel> {
   static const int _pageSize = 20;
-  bool _hasMore = true;
+  late int _mid;
 
   @override
   Future<List<FavFolderModel>> build() async {
-    _page = 1;
-    _hasMore = true;
-    return _fetchItems(_page);
-  }
-
-  Future<List<FavFolderModel>> _fetchItems(int page) async {
     final authState = ref.read(authProvider);
     if (!authState.isLoggedIn || authState.user == null) {
       return [];
     }
-    final mid = int.parse(authState.user!.id);
+    _mid = int.parse(authState.user!.id);
+    return buildFirstPage();
+  }
+
+  @override
+  Future<List<FavFolderModel>> fetchPage(int page, {bool refresh = false}) async {
     final response = await ref
         .read(favRepositoryProvider)
-        .getCollectedFolders(upMid: mid, pn: page, ps: _pageSize);
-    if ((response.list?.length ?? 0) < _pageSize) {
-      _hasMore = false;
-    }
+        .getCollectedFolders(upMid: _mid, pn: page, ps: _pageSize);
     return response.list ?? [];
   }
 
-  Future<void> loadMore() async {
-    if (!_hasMore || state.isLoading) return;
+  @override
+  Object itemId(FavFolderModel item) => item.id;
 
-    final currentList = state.value ?? [];
-    try {
-      final newItems = await _fetchItems(_page + 1);
-      _page++;
-      state = AsyncValue.data([...currentList, ...newItems]);
-    } catch (e) {
-      rethrow;
-    }
+  @override
+  bool hasMoreAfterPage(List<FavFolderModel> items) => items.length >= _pageSize;
+
+  Future<void> loadMore() {
+    return loadNextPage();
   }
 }
 

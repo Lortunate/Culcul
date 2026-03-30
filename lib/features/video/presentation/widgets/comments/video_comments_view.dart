@@ -1,4 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/features/video/controllers/video_comments_controller.dart';
 import 'package:culcul/features/video/controllers/video_detail_controller.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_item.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_reply_sheet.dart';
@@ -15,22 +16,23 @@ class VideoCommentsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(videoDetailControllerProvider(bvid));
-    final notifier = ref.read(videoDetailControllerProvider(bvid).notifier);
+    final detailState = ref.watch(videoDetailControllerProvider(bvid));
+    final state = ref.watch(videoCommentsControllerProvider(bvid));
+    final notifier = ref.read(videoCommentsControllerProvider(bvid).notifier);
 
-    if (state.isCommentLoading && state.comments.isEmpty) {
+    if (state.isInitialLoading && state.comments.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (state.comments.isEmpty && !state.isCommentLoading) {
+    if (state.comments.isEmpty && !state.isInitialLoading) {
       return _buildEmptyState(context, notifier);
     }
 
-    final upperMid = state.videoDetail?.owner.mid;
+    final upperMid = detailState.videoDetail?.owner.mid;
 
     return EasyRefresh(
-      onRefresh: notifier.refreshComments,
-      onLoad: state.hasMoreComments ? notifier.loadMoreComments : null,
+      onRefresh: notifier.refresh,
+      onLoad: state.hasMore ? notifier.loadMore : null,
       header: AppRefreshHeader(),
       footer: AppLoadFooter(),
       child: ListView.separated(
@@ -71,10 +73,10 @@ class VideoCommentsView extends ConsumerWidget {
               );
             },
             onTapReplies: () {
-              if (state.videoDetail?.aid != null) {
+              if (detailState.videoDetail?.aid != null) {
                 CommentReplyRoute(
                   bvid: bvid,
-                  oid: state.videoDetail!.aid,
+                  oid: detailState.videoDetail!.aid,
                   rootId: comment.rpid,
                   $extra: CommentReplyRouteExtra(comment: comment, upperMid: upperMid),
                 ).push(context);

@@ -1,62 +1,29 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/auth/controllers/auth_controller.dart';
-import 'package:culcul/features/video/controllers/video_detail_controller.dart';
 import 'package:culcul/features/video/controllers/video_detail_state.dart';
+import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class VideoActionsRow extends ConsumerWidget {
+class VideoActionsRow extends StatelessWidget {
   final VideoDetailState state;
-  final VideoDetailController notifier;
 
-  const VideoActionsRow({super.key, required this.state, required this.notifier});
+  const VideoActionsRow({super.key, required this.state});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final d = state.videoDetail!;
     final t = Translations.of(context);
-    final authState = ref.watch(authProvider);
-
-    void checkLoginAndAction(VoidCallback action) {
-      if (!authState.isLoggedIn) {
-        context.push('/login');
-        return;
-      }
-      action();
-    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           ActionButton(
-            icon: Icons.thumb_up_outlined,
-            label: d.stat.like.formatNumber,
-            onTap: () => checkLoginAndAction(() => notifier.toggleLike()),
-          ),
-          ActionButton(
-            icon: Icons.thumb_down_outlined,
-            label: t.actions.unlike,
-            onTap: () => checkLoginAndAction(() => notifier.toggleDislike()),
-          ),
-          ActionButton(
-            icon: Icons.monetization_on_outlined,
-            label: d.stat.coin.formatNumber,
-            onTap: () => checkLoginAndAction(() => notifier.sendCoin()),
-          ),
-          ActionButton(
-            icon: Icons.star_outline_rounded,
-            label: d.stat.favorite.formatNumber,
-            onTap: () => checkLoginAndAction(() => notifier.toggleFavorite()),
-          ),
-          ActionButton(
             icon: Icons.share_outlined,
-            label: d.stat.share.formatNumber,
-            onTap: () => notifier.share(), // Share usually doesn't require login
+            label: '${t.actions.share} ${d.stat.share.formatNumber}',
+            onTap: () => ShareUtils.shareVideo(d.bvid, d.title, d.pic),
           ),
         ],
       ),

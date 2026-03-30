@@ -1,3 +1,4 @@
+import 'package:culcul/core/pagination/paged_async_notifier.dart';
 import 'package:culcul/data/models/notification/private_message_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:culcul/features/notification/data/notification_repository.dart';
@@ -5,35 +6,33 @@ import 'package:culcul/features/notification/data/notification_repository.dart';
 part 'private_session_controller.g.dart';
 
 @riverpod
-class PrivateSessionList extends _$PrivateSessionList {
-  int? _endTs;
-  bool _hasMore = true;
-
+class PrivateSessionList extends _$PrivateSessionList
+    with CursorPagedAsyncNotifier<PrivateMessageSession, int> {
   @override
   FutureOr<List<PrivateMessageSession>> build() async {
-    _endTs = null;
-    _hasMore = true;
-    final data = await ref.read(notificationRepositoryProvider).getPrivateSessions();
-    if (data.sessionList != null && data.sessionList!.isNotEmpty) {
-      _endTs = data.sessionList!.last.sessionTs;
-    }
-    _hasMore = data.hasMore == 1;
-    return data.sessionList ?? [];
+    return buildFirstPage();
   }
 
-  Future<void> loadMore() async {
-    if (!_hasMore || state.isLoading) return;
-
-    final currentState = state.value;
-    if (currentState == null) return;
-
+  @override
+  Future<CursorPage<PrivateMessageSession, int>> fetchPage(
+    int? currentCursor, {
+    bool refresh = false,
+  }) async {
     final data = await ref
         .read(notificationRepositoryProvider)
-        .getPrivateSessions(endTs: _endTs);
-    if (data.sessionList != null && data.sessionList!.isNotEmpty) {
-      _endTs = data.sessionList!.last.sessionTs;
-      state = AsyncData([...currentState, ...data.sessionList!]);
-    }
-    _hasMore = data.hasMore == 1;
+        .getPrivateSessions(endTs: currentCursor);
+    final sessions = data.sessionList ?? const <PrivateMessageSession>[];
+    return CursorPage(
+      items: sessions,
+      nextCursor: sessions.isEmpty ? currentCursor : sessions.last.sessionTs,
+      hasMore: data.hasMore == 1,
+    );
+  }
+
+  @override
+  Object itemId(PrivateMessageSession item) => item.talkerId;
+
+  Future<void> loadMore() {
+    return loadNextPage();
   }
 }

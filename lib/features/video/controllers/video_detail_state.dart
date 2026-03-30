@@ -1,4 +1,3 @@
-import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/data/models/video/play_url.dart';
 import 'package:culcul/data/models/video/related_video.dart';
 import 'package:culcul/data/models/video/video_detail.dart';
@@ -15,11 +14,6 @@ sealed class VideoDetailState with _$VideoDetailState {
     Object? error,
     @Default(0) int currentCid,
     @Default([]) List<RelatedVideo> relatedVideos,
-    @Default([]) List<CommentItem> comments,
-    @Default(1) int commentSort,
-    @Default(1) int commentPage,
-    @Default(false) bool isCommentLoading,
-    @Default(true) bool hasMoreComments,
     @Default(80) int selectedQuality,
     @Default(1.0) double playbackSpeed,
     @Default([]) List<int> availableQualities,

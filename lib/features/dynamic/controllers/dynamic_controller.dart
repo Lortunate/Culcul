@@ -1,94 +1,41 @@
-import 'package:culcul/core/utils/list_utils.dart';
-import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
+import 'package:culcul/core/pagination/paged_async_notifier.dart';
+import 'package:culcul/features/dynamic/controllers/dynamic_feed_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:culcul/features/dynamic/data/dynamic_repository.dart';
 
 part 'dynamic_controller.g.dart';
 
 @riverpod
-class DynamicNotifier extends _$DynamicNotifier {
-  String _offset = '';
-  bool _hasMore = true;
+class DynamicNotifier extends _$DynamicNotifier
+    with CursorPagedAsyncNotifier<DynamicItem, String>, DynamicFeedController {
   late String _type;
 
   @override
-  AsyncValue<List<DynamicItem>> build(String type) {
+  Future<List<DynamicItem>> build(String type) {
     _type = type;
-    _offset = '';
-    _hasMore = true;
-    _fetchFeed();
-    return const AsyncValue.loading();
+    return buildFirstPage();
   }
 
-  Future<void> loadMore() async {
-    if (state.isLoading || !_hasMore) return;
-    await _fetchFeed();
-  }
-
-  Future<void> refresh() async {
-    _offset = '';
-    _hasMore = true;
-    state = const AsyncValue.loading();
-    await _fetchFeed();
-  }
-
-  Future<void> _fetchFeed() async {
-    if (!_hasMore) return;
-
+  @override
+  Future<CursorPage<DynamicItem, String>> fetchPage(
+    String? currentCursor, {
+    bool refresh = false,
+  }) async {
     final repo = ref.read(dynamicRepositoryProvider);
     final apiType = _type == 'all' ? null : _type;
-
-    try {
-      final data = await repo.getFeed(type: apiType, offset: _offset);
-      _hasMore = data.hasMore;
-      _offset = data.offset;
-
-      final newItems = data.items;
-
-      if (state.value != null && _offset.isNotEmpty) {
-        final mergedItems = ListUtils.mergeUnique(
-          state.value!,
-          newItems,
-          idGetter: (item) => item.idStr,
-        );
-        state = AsyncValue.data(mergedItems);
-      } else {
-        state = AsyncValue.data(newItems);
-      }
-    } catch (error) {
-      if (state.value == null) {
-        state = AsyncValue.error(error, StackTrace.current);
-      }
-    }
+    final data = await repo.getFeed(type: apiType, offset: currentCursor);
+    return CursorPage(items: data.items, nextCursor: data.offset, hasMore: data.hasMore);
   }
 
-  Future<void> toggleLike(String dynamicId, bool isLiked) async {
-    final currentList = state.asData?.value;
-    if (currentList == null) return;
+  @override
+  Object itemId(DynamicItem item) => item.idStr;
 
-    final index = currentList.indexWhere((e) => e.idStr == dynamicId);
-    if (index == -1) return;
+  Future<void> loadMore() {
+    return loadNextPage();
+  }
 
-    final item = currentList[index];
-
-    final newItem = item.copyWithLike(!isLiked);
-    final newList = List<DynamicItem>.from(currentList);
-    newList[index] = newItem;
-    state = AsyncValue.data(newList);
-
-    final repo = ref.read(dynamicRepositoryProvider);
-    try {
-      await repo.likeDynamic(dynamicId, !isLiked);
-    } catch (_) {
-      if (state.value != null) {
-        final revertList = List<DynamicItem>.from(state.value!);
-        final revertIndex = revertList.indexWhere((e) => e.idStr == dynamicId);
-        if (revertIndex != -1) {
-          revertList[revertIndex] = item;
-          state = AsyncValue.data(revertList);
-        }
-      }
-    }
+  Future<void> refresh() {
+    return refreshPage();
   }
 }
