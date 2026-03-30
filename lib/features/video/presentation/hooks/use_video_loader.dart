@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/features/video/presentation/view_model/player_view_model.dart';
 import 'package:culcul/features/video/presentation/view_model/video_detail_state.dart';
@@ -19,7 +21,7 @@ void useVideoLoader(WidgetRef ref, Player player, VideoDetailState state) {
       final bool isQualitySwitch =
           lastLoadedCid.value == state.currentCid && lastPlayUrl.value != null;
 
-      Future.microtask(() async {
+      unawaited(() async {
         await playerController.loadVideo(
           url,
           httpHeaders: {
@@ -36,7 +38,7 @@ void useVideoLoader(WidgetRef ref, Player player, VideoDetailState state) {
 
         lastLoadedCid.value = state.currentCid;
         lastPlayUrl.value = url;
-      });
+      }());
     }
     return null;
   }, [state.playUrl]);

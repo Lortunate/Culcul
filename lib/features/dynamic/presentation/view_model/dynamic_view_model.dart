@@ -1,8 +1,8 @@
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
+import 'package:culcul/features/dynamic/application/use_case/dynamic_use_cases.dart';
 import 'package:culcul/features/dynamic/presentation/view_model/dynamic_feed_view_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:culcul/features/dynamic/data/dynamic_repository.dart';
 
 part 'dynamic_view_model.g.dart';
 
@@ -22,9 +22,14 @@ class DynamicNotifier extends _$DynamicNotifier
     String? currentCursor, {
     bool refresh = false,
   }) async {
-    final repo = ref.read(dynamicRepositoryProvider);
     final apiType = _type == 'all' ? null : _type;
-    final data = await repo.getFeed(type: apiType, offset: currentCursor);
+    final result = await ref
+        .read(dynamicFeedUseCaseProvider)
+        .call(DynamicFeedQuery(type: apiType, offset: currentCursor));
+    final data = result.when(
+      success: (value) => value,
+      failure: (error) => throw error.toException(),
+    );
     return CursorPage(items: data.items, nextCursor: data.offset, hasMore: data.hasMore);
   }
 

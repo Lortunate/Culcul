@@ -1,8 +1,7 @@
 import 'dart:io';
 
-import 'package:culcul/data/models/dynamic/dynamic_response.dart';
+import 'package:culcul/features/dynamic/application/use_case/dynamic_use_cases.dart';
 import 'package:culcul/features/dynamic/presentation/view_model/dynamic_view_model.dart';
-import 'package:culcul/features/dynamic/data/dynamic_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'publish_dynamic_view_model.g.dart';
@@ -28,22 +27,17 @@ class PublishDynamicViewModel extends _$PublishDynamicViewModel {
     if (state.isPublishing) return null;
 
     state = state.copyWith(isPublishing: true);
-    try {
-      final uploadedImages = <DynamicUploadImageData>[];
-      for (final image in images) {
-        final data = await ref.read(dynamicRepositoryProvider).uploadImage(image);
-        uploadedImages.add(data);
-      }
-
-      await ref
-          .read(dynamicRepositoryProvider)
-          .publishDynamic(content: trimmed, images: uploadedImages);
-      ref.invalidate(dynamicProvider);
-      return null;
-    } catch (e) {
-      return e.toString();
-    } finally {
-      state = state.copyWith(isPublishing: false);
-    }
+    final result = await ref
+        .read(publishDynamicUseCaseProvider)
+        .call(PublishDynamicCommand(content: trimmed, images: images));
+    final error = result.when(
+      success: (_) {
+        ref.invalidate(dynamicProvider);
+        return null;
+      },
+      failure: (error) => error.message,
+    );
+    state = state.copyWith(isPublishing: false);
+    return error;
   }
 }

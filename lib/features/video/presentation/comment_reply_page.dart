@@ -35,7 +35,7 @@ class CommentReplyPage extends HookConsumerWidget {
 
     useEffect(() {
       if (state.rootComment == null) {
-        Future.microtask(() => controller.setRootComment(comment));
+        controller.setRootComment(comment);
       }
       return null;
     }, [comment]);

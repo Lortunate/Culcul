@@ -2,7 +2,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
-import 'package:culcul/features/dynamic/data/dynamic_repository.dart';
+import 'package:culcul/features/dynamic/application/use_case/dynamic_use_cases.dart';
 
 mixin DynamicFeedController {
   Ref get ref;
@@ -30,9 +30,10 @@ mixin DynamicFeedController {
     nextItems[index] = updatedItem;
     state = AsyncData(nextItems);
 
-    try {
-      await ref.read(dynamicRepositoryProvider).likeDynamic(id, !isLiked);
-    } catch (_) {
+    final result = await ref
+        .read(toggleDynamicLikeUseCaseProvider)
+        .call(id: id, newStatus: !isLiked);
+    if (result.isFailure) {
       state = previousState;
     }
   }

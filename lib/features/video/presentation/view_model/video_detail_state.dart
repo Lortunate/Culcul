@@ -1,3 +1,4 @@
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/data/models/video/play_url.dart';
 import 'package:culcul/data/models/video/related_video.dart';
 import 'package:culcul/data/models/video/video_detail.dart';
@@ -11,7 +12,7 @@ sealed class VideoDetailState with _$VideoDetailState {
     @Default(true) bool isLoading,
     VideoDetail? videoDetail,
     PlayUrl? playUrl,
-    Object? error,
+    AppError? error,
     @Default(0) int currentCid,
     @Default([]) List<RelatedVideo> relatedVideos,
     @Default(80) int selectedQuality,

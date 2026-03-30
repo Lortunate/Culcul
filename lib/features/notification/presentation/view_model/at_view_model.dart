@@ -1,6 +1,6 @@
 import 'package:culcul/data/models/notification/reply_model.dart';
+import 'package:culcul/features/notification/application/use_case/notification_use_cases.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:culcul/features/notification/data/notification_repository.dart';
 
 part 'at_view_model.g.dart';
 
@@ -8,8 +8,11 @@ part 'at_view_model.g.dart';
 class AtList extends _$AtList {
   @override
   FutureOr<List<ReplyItem>> build() async {
-    final data = await ref.read(notificationRepositoryProvider).getAtList();
-    return data.items;
+    final result = await ref.read(notificationUseCasesProvider).getAtList();
+    return result.when(
+      success: (data) => data.items,
+      failure: (error) => throw Exception(error.message),
+    );
   }
 
   Future<void> loadMore() async {
@@ -17,9 +20,12 @@ class AtList extends _$AtList {
     if (currentList.isEmpty) return;
 
     final lastItem = currentList.last;
-    final data = await ref
-        .read(notificationRepositoryProvider)
+    final result = await ref
+        .read(notificationUseCasesProvider)
         .getAtList(id: lastItem.id, atTime: lastItem.replyTime ?? 0);
-    state = AsyncData([...currentList, ...data.items]);
+    result.when(
+      success: (data) => state = AsyncData([...currentList, ...data.items]),
+      failure: (_) {},
+    );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:culcul/data/models/user/user_profile_model.dart';
+import 'package:culcul/features/profile/application/use_case/profile_follow_use_case.dart';
+import 'package:culcul/features/profile/application/use_case/profile_query_use_cases.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:culcul/features/profile/data/profile_repository.dart';
 
 part 'user_space_view_model.g.dart';
 
@@ -8,8 +9,11 @@ part 'user_space_view_model.g.dart';
 class UserSpaceNotifier extends _$UserSpaceNotifier {
   @override
   Future<UserProfile> build(String mid) async {
-    final repository = ref.read(profileRepositoryProvider);
-    return repository.getProfile(int.parse(mid));
+    final result = await ref.read(profileQueryUseCasesProvider).getProfile(mid);
+    return result.when(
+      success: (value) => value,
+      failure: (error) => throw Exception(error.message),
+    );
   }
 
   Future<void> toggleFollow() async {
@@ -20,14 +24,17 @@ class UserSpaceNotifier extends _$UserSpaceNotifier {
     // Optimistic update
     state = AsyncData(currentProfile.copyWith(isFollowing: newFollowStatus));
 
-    try {
-      await ref
-          .read(profileRepositoryProvider)
-          .modifyRelation(mid: int.parse(currentProfile.id), isFollow: newFollowStatus);
-    } catch (_) {
+    final result = await ref
+        .read(profileFollowUseCaseProvider)
+        .call(
+          ToggleProfileFollowCommand(
+            mid: int.parse(currentProfile.id),
+            isFollow: newFollowStatus,
+          ),
+        );
+    if (result.isFailure) {
       // Revert if failed
       state = AsyncData(currentProfile);
-      // TODO: Show error toast
     }
   }
 }

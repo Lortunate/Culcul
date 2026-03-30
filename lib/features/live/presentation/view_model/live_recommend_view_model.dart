@@ -1,6 +1,6 @@
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
 import 'package:culcul/data/models/live/live_room_model.dart';
-import 'package:culcul/features/live/data/live_repository.dart';
+import 'package:culcul/features/live/application/use_case/live_room_use_cases.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'live_recommend_view_model.g.dart';
@@ -15,8 +15,12 @@ class LiveRecommend extends _$LiveRecommend with OffsetPagedAsyncNotifier<LiveRo
   }
 
   @override
-  Future<List<LiveRoomModel>> fetchPage(int page, {bool refresh = false}) {
-    return ref.read(liveRepositoryProvider).fetchRecommendList(page: page);
+  Future<List<LiveRoomModel>> fetchPage(int page, {bool refresh = false}) async {
+    final result = await ref.read(liveRoomUseCasesProvider).getRecommendList(page);
+    return result.when(
+      success: (value) => value,
+      failure: (error) => throw error.toException(),
+    );
   }
 
   @override

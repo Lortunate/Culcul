@@ -1,9 +1,10 @@
-import 'package:culcul/core/errors/exceptions.dart';
+import 'dart:async';
+
 import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
+import 'package:culcul/features/dynamic/application/use_case/dynamic_use_cases.dart';
 import 'package:culcul/features/dynamic/presentation/view_model/dynamic_comment_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:culcul/features/dynamic/data/dynamic_repository.dart';
 
 part 'dynamic_comment_view_model.g.dart';
 
@@ -11,58 +12,45 @@ part 'dynamic_comment_view_model.g.dart';
 class DynamicCommentController extends _$DynamicCommentController {
   @override
   DynamicCommentState build(DynamicItem post) {
-    // Initial load
-    Future.microtask(() => refresh());
+    unawaited(refresh());
     return const DynamicCommentState();
   }
 
   Future<void> refresh() async {
     state = state.copyWith(isLoading: true, error: null);
-    final repository = ref.read(dynamicRepositoryProvider);
-
-    try {
-      final data = await repository.getComments(post, sort: state.sort, page: 1);
-      final hasMore = _resolveHasMore(data, currentPage: 1);
-      state = state.copyWith(
+    final result = await ref
+        .read(dynamicCommentsUseCaseProvider)
+        .call(DynamicCommentsQuery(post: post, sort: state.sort, page: 1));
+    state = result.when(
+      success: (data) => state.copyWith(
         comments: data.replies,
         isLoading: false,
-        hasMore: hasMore,
+        hasMore: _resolveHasMore(data, currentPage: 1),
         page: 1,
-      );
-    } catch (error) {
-      final exception = error is AppException
-          ? error
-          : UnknownException(error.toString(), cause: error);
-      state = state.copyWith(isLoading: false, error: exception);
-    }
+      ),
+      failure: (error) => state.copyWith(isLoading: false, error: error),
+    );
   }
 
   Future<void> loadMore() async {
     if (state.isLoading || !state.hasMore) return;
 
-    final repository = ref.read(dynamicRepositoryProvider);
     final nextPage = state.page + 1;
-
-    // Set loading state if needed, or just rely on UI showing a loader at bottom
-    // Ideally we don't want to clear comments, just append.
-    // We don't set global isLoading to true to avoid full screen loader.
-
-    try {
-      final data = await repository.getComments(post, sort: state.sort, page: nextPage);
-      final hasMore = _resolveHasMore(data, currentPage: nextPage);
-      state = state.copyWith(
-        comments: [...state.comments, ...data.replies],
-        hasMore: hasMore,
-        page: nextPage,
-      );
-    } catch (_) {
-      // Handle error gracefully.
+    final result = await ref
+        .read(dynamicCommentsUseCaseProvider)
+        .call(DynamicCommentsQuery(post: post, sort: state.sort, page: nextPage));
+    if (result.isFailure) {
+      return;
     }
+    final data = result.dataOrNull!;
+    state = state.copyWith(
+      comments: [...state.comments, ...data.replies],
+      hasMore: _resolveHasMore(data, currentPage: nextPage),
+      page: nextPage,
+    );
   }
 
   Future<void> toggleLike(int rpid, bool isLiked) async {
-    final repository = ref.read(dynamicRepositoryProvider);
-
     // Optimistic update
     final oldComments = [...state.comments];
     final index = state.comments.indexWhere((c) => c.rpid == rpid);
@@ -78,19 +66,23 @@ class DynamicCommentController extends _$DynamicCommentController {
     newComments[index] = newItem;
     state = state.copyWith(comments: newComments);
 
-    try {
-      await repository.likeComment(post: post, rpid: rpid, isLiked: isLiked);
-    } catch (_) {
-      // Revert on failure
+    final result = await ref
+        .read(dynamicCommentLikeUseCaseProvider)
+        .call(DynamicCommentLikeCommand(post: post, rpid: rpid, isLiked: isLiked));
+    if (result.isFailure) {
       state = state.copyWith(comments: oldComments);
     }
   }
 
   Future<void> addReply(int root, int parent, String message) async {
-    final repository = ref.read(dynamicRepositoryProvider);
-
-    await repository.addReply(post: post, root: root, parent: parent, message: message);
-    await refresh();
+    final result = await ref
+        .read(dynamicReplyUseCaseProvider)
+        .call(
+          DynamicReplyCommand(post: post, root: root, parent: parent, message: message),
+        );
+    if (result.isSuccess) {
+      await refresh();
+    }
   }
 
   bool _resolveHasMore(CommentResponse data, {required int currentPage}) {

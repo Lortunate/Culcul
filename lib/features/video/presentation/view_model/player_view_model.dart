@@ -50,8 +50,7 @@ class PlayerController extends _$PlayerController {
 
     _startHideTimer();
 
-    Future.microtask(() {
-      if (!_mounted) return;
+    if (_mounted) {
       _subscriptions.addAll([
         player.stream.playing.listen((p) {
           state = state.copyWith(isPlaying: p);
@@ -60,7 +59,7 @@ class PlayerController extends _$PlayerController {
           state = state.copyWith(isBuffering: b);
         }),
       ]);
-    });
+    }
 
     return PlayerUiState(
       isPlaying: player.state.playing,

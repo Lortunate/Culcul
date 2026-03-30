@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:culcul/data/models/notification/private_message_model.dart';
+import 'package:culcul/features/notification/application/use_case/notification_use_cases.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:culcul/features/notification/data/notification_repository.dart';
 
 part 'chat_view_model.g.dart';
 
@@ -35,10 +35,12 @@ class Chat extends _$Chat {
     _minSeqno = null;
     _hasMore = true;
 
-    final repo = ref.watch(notificationRepositoryProvider);
-    final response = await repo.getPrivateMessages(
-      talkerId: talkerId,
-      sessionType: sessionType,
+    final result = await ref
+        .read(notificationUseCasesProvider)
+        .getPrivateMessages(talkerId: talkerId, sessionType: sessionType);
+    final response = result.when(
+      success: (value) => value,
+      failure: (error) => throw Exception(error.message),
     );
     if (response.messages != null && response.messages!.isNotEmpty) {
       _minSeqno = response.messages!.last.msgSeqno;
@@ -60,13 +62,18 @@ class Chat extends _$Chat {
   Future<void> loadMore() async {
     if (!_hasMore || state.isLoading) return;
 
-    final repo = ref.read(notificationRepositoryProvider);
     try {
-      final response = await repo.getPrivateMessages(
-        talkerId: talkerId,
-        sessionType: sessionType,
-        endSeqno: _minSeqno,
-      );
+      final result = await ref
+          .read(notificationUseCasesProvider)
+          .getPrivateMessages(
+            talkerId: talkerId,
+            sessionType: sessionType,
+            endSeqno: _minSeqno,
+          );
+      if (result.isFailure) {
+        return;
+      }
+      final response = result.dataOrNull!;
       final newMessages = response.messages ?? [];
       if (newMessages.isNotEmpty) {
         _minSeqno = newMessages.last.msgSeqno;
@@ -103,10 +110,14 @@ class Chat extends _$Chat {
   }
 
   Future<void> sendImage(File imageFile) async {
-    final repo = ref.read(notificationRepositoryProvider);
-
     // Upload first
-    final uploadRes = await repo.uploadImage(imageFile);
+    final uploadResult = await ref
+        .read(notificationUseCasesProvider)
+        .uploadImage(imageFile);
+    if (uploadResult.isFailure) {
+      throw Exception(uploadResult.errorOrNull!.message);
+    }
+    final uploadRes = uploadResult.dataOrNull!;
     final contentMap = {
       'url': uploadRes.imageUrl,
       'height': uploadRes.imageHeight,
@@ -122,7 +133,6 @@ class Chat extends _$Chat {
     required int msgType,
     required Map<String, dynamic> contentMap,
   }) async {
-    final repo = ref.read(notificationRepositoryProvider);
     final currentUser = ref.read(authProvider).user;
 
     if (currentUser == null) {
@@ -154,13 +164,18 @@ class Chat extends _$Chat {
     }
 
     try {
-      await repo.sendPrivateMessage(
-        senderUid: senderUid,
-        receiverId: talkerId,
-        receiverType: sessionType,
-        msgType: msgType,
-        content: jsonEncode(contentMap),
-      );
+      final result = await ref
+          .read(notificationUseCasesProvider)
+          .sendPrivateMessage(
+            senderUid: senderUid,
+            receiverId: talkerId,
+            receiverType: sessionType,
+            msgType: msgType,
+            content: jsonEncode(contentMap),
+          );
+      if (result.isFailure) {
+        throw Exception(result.errorOrNull!.message);
+      }
     } catch (e) {
       // Failure: Revert state
       state = previousState;

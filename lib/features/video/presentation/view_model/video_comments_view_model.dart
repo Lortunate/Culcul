@@ -1,5 +1,7 @@
+import 'dart:async';
+
+import 'package:culcul/features/video/application/use_case/video_comment_use_cases.dart';
 import 'package:culcul/data/models/comment/comment_model.dart';
-import 'package:culcul/features/video/data/video_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'video_comments_state.dart';
@@ -11,7 +13,7 @@ part 'video_comments_view_model.g.dart';
 class VideoCommentsController extends _$VideoCommentsController {
   @override
   VideoCommentsState build(String bvid) {
-    Future.microtask(refresh);
+    unawaited(refresh());
     return const VideoCommentsState();
   }
 
@@ -63,23 +65,33 @@ class VideoCommentsController extends _$VideoCommentsController {
 
     state = state.copyWith(comments: nextComments);
 
-    try {
-      await ref
-          .read(videoRepositoryProvider)
-          .setCommentLike(oid: oid, rpid: rpid, isLiked: !isLiked);
-    } catch (_) {
+    final result = await ref
+        .read(videoCommentUseCasesProvider)
+        .toggleLike(
+          ToggleVideoCommentLikeCommand(oid: oid, rpid: rpid, isLiked: !isLiked),
+        );
+    if (result.isFailure) {
       state = state.copyWith(comments: previousComments);
     }
   }
 
-  Future<void> toggleCommentDislike(int oid, int rpid) {
-    return ref.read(videoRepositoryProvider).setCommentDislike(oid: oid, rpid: rpid);
+  Future<void> toggleCommentDislike(int oid, int rpid) async {
+    await ref
+        .read(videoCommentUseCasesProvider)
+        .toggleDislike(ToggleVideoCommentDislikeCommand(oid: oid, rpid: rpid));
   }
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
     await ref
-        .read(videoRepositoryProvider)
-        .replyToComment(oid: oid, root: root, parent: parent, message: message);
+        .read(videoCommentUseCasesProvider)
+        .addReply(
+          AddVideoCommentReplyCommand(
+            oid: oid,
+            root: root,
+            parent: parent,
+            message: message,
+          ),
+        );
     await refresh();
   }
 
@@ -95,23 +107,30 @@ class VideoCommentsController extends _$VideoCommentsController {
       state = state.copyWith(isLoadingMore: true, error: null);
     }
 
-    try {
-      final response = await ref
-          .read(videoRepositoryProvider)
-          .fetchComments(oid: aid, sort: state.sort, page: page);
-      final comments = replace
-          ? response.replies
-          : [...state.comments, ...response.replies];
-      state = state.copyWith(
-        comments: comments,
-        isInitialLoading: false,
-        isLoadingMore: false,
-        hasMore: response.replies.isNotEmpty,
-        nextPage: page + 1,
-      );
-    } catch (error) {
-      state = state.copyWith(isInitialLoading: false, isLoadingMore: false, error: error);
-    }
+    final result = await ref
+        .read(videoCommentUseCasesProvider)
+        .loadComments(VideoCommentsQuery(oid: aid, sort: state.sort, page: page));
+    result.when(
+      success: (response) {
+        final comments = replace
+            ? response.replies
+            : [...state.comments, ...response.replies];
+        state = state.copyWith(
+          comments: comments,
+          isInitialLoading: false,
+          isLoadingMore: false,
+          hasMore: response.replies.isNotEmpty,
+          nextPage: page + 1,
+        );
+      },
+      failure: (error) {
+        state = state.copyWith(
+          isInitialLoading: false,
+          isLoadingMore: false,
+          error: error,
+        );
+      },
+    );
   }
 
   Future<int?> _awaitAid() async {

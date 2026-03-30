@@ -1,5 +1,7 @@
+import 'dart:async';
+
 import 'package:culcul/data/models/comment/comment_model.dart';
-import 'package:culcul/features/video/data/video_repository.dart';
+import 'package:culcul/features/video/application/use_case/video_comment_use_cases.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'comment_reply_state.dart';
@@ -10,7 +12,7 @@ part 'comment_reply_view_model.g.dart';
 class CommentReplyController extends _$CommentReplyController {
   @override
   CommentReplyState build(int oid, int rootId) {
-    Future.microtask(_init);
+    unawaited(refresh());
     return const CommentReplyState();
   }
 
@@ -21,22 +23,18 @@ class CommentReplyController extends _$CommentReplyController {
   Future<void> refresh() async {
     state = state.copyWith(isLoading: true, error: null);
 
-    final repo = ref.read(videoRepositoryProvider);
-    try {
-      final response = await repo.fetchReply(oid: oid, root: rootId, page: 1);
-      state = state.copyWith(
+    final result = await ref
+        .read(videoCommentUseCasesProvider)
+        .loadReplies(VideoReplyQuery(oid: oid, root: rootId, page: 1));
+    state = result.when(
+      success: (response) => state.copyWith(
         replies: response.replies,
         page: 2,
         hasMore: response.replies.isNotEmpty,
         isLoading: false,
-      );
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e);
-    }
-  }
-
-  Future<void> _init() async {
-    await refresh();
+      ),
+      failure: (error) => state.copyWith(isLoading: false, error: error),
+    );
   }
 
   Future<void> loadMore() async {
@@ -44,34 +42,37 @@ class CommentReplyController extends _$CommentReplyController {
 
     state = state.copyWith(isLoading: true);
 
-    final repo = ref.read(videoRepositoryProvider);
-    try {
-      final response = await repo.fetchReply(oid: oid, root: rootId, page: state.page);
-      state = state.copyWith(
+    final result = await ref
+        .read(videoCommentUseCasesProvider)
+        .loadReplies(VideoReplyQuery(oid: oid, root: rootId, page: state.page));
+    state = result.when(
+      success: (response) => state.copyWith(
         replies: [...state.replies, ...response.replies],
         page: state.page + 1,
         hasMore: response.replies.isNotEmpty,
         isLoading: false,
-      );
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e);
-    }
+      ),
+      failure: (error) => state.copyWith(isLoading: false, error: error),
+    );
   }
 
   Future<void> toggleCommentLike(int oid, int rpid, bool isLiked) async {
     _updateCommentLikeStatus(rpid, !isLiked);
 
-    final repo = ref.read(videoRepositoryProvider);
-    try {
-      await repo.setCommentLike(oid: oid, rpid: rpid, isLiked: !isLiked);
-    } catch (_) {
+    final result = await ref
+        .read(videoCommentUseCasesProvider)
+        .toggleLike(
+          ToggleVideoCommentLikeCommand(oid: oid, rpid: rpid, isLiked: !isLiked),
+        );
+    if (result.isFailure) {
       _updateCommentLikeStatus(rpid, isLiked);
     }
   }
 
   Future<void> toggleCommentDislike(int oid, int rpid) async {
-    final repo = ref.read(videoRepositoryProvider);
-    await repo.setCommentDislike(oid: oid, rpid: rpid);
+    await ref
+        .read(videoCommentUseCasesProvider)
+        .toggleDislike(ToggleVideoCommentDislikeCommand(oid: oid, rpid: rpid));
   }
 
   void _updateCommentLikeStatus(int rpid, bool liked) {
@@ -96,8 +97,16 @@ class CommentReplyController extends _$CommentReplyController {
   }
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
-    final repo = ref.read(videoRepositoryProvider);
-    await repo.replyToComment(oid: oid, root: root, parent: parent, message: message);
+    await ref
+        .read(videoCommentUseCasesProvider)
+        .addReply(
+          AddVideoCommentReplyCommand(
+            oid: oid,
+            root: root,
+            parent: parent,
+            message: message,
+          ),
+        );
     await refresh();
   }
 }

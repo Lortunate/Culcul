@@ -1,6 +1,6 @@
 import 'package:culcul/data/models/notification/system_notification_model.dart';
+import 'package:culcul/features/notification/application/use_case/notification_use_cases.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:culcul/features/notification/data/notification_repository.dart';
 
 part 'system_notification_view_model.g.dart';
 
@@ -8,7 +8,11 @@ part 'system_notification_view_model.g.dart';
 class SystemNotificationList extends _$SystemNotificationList {
   @override
   Future<List<SystemNotificationItem>> build() async {
-    return ref.read(notificationRepositoryProvider).fetchSystemNotifications();
+    final result = await ref.read(notificationUseCasesProvider).getSystemNotifications();
+    return result.when(
+      success: (value) => value,
+      failure: (error) => throw Exception(error.message),
+    );
   }
 
   Future<void> refresh() async {

@@ -1,6 +1,6 @@
 import 'package:culcul/data/models/notification/unread_count_model.dart';
+import 'package:culcul/features/notification/application/use_case/notification_use_cases.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:culcul/features/notification/data/notification_repository.dart';
 
 part 'unread_count_view_model.g.dart';
 
@@ -8,7 +8,11 @@ part 'unread_count_view_model.g.dart';
 class UnreadCount extends _$UnreadCount {
   @override
   FutureOr<UnreadCountModel> build() async {
-    return ref.read(notificationRepositoryProvider).getUnreadCount();
+    final result = await ref.read(notificationUseCasesProvider).getUnreadCount();
+    return result.when(
+      success: (value) => value,
+      failure: (error) => throw Exception(error.message),
+    );
   }
 
   Future<void> refresh() async {

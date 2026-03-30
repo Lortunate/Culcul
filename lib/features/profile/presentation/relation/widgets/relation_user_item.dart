@@ -1,11 +1,11 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/data/models/relation/relation_model.dart';
+import 'package:culcul/features/profile/presentation/view_model/relation_user_action_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/follow_button.dart';
 import 'package:culcul/ui/widgets/user_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:culcul/features/profile/data/profile_repository.dart';
 
 class RelationUserItem extends ConsumerStatefulWidget {
   final RelationUser user;
@@ -88,11 +88,10 @@ class _RelationUserItemState extends ConsumerState<RelationUserItem> {
       }
     });
 
-    try {
-      await ref
-          .read(profileRepositoryProvider)
-          .modifyRelation(mid: widget.user.mid, isFollow: newStatus);
-    } catch (e) {
+    final error = await ref
+        .read(relationUserActionViewModelProvider.notifier)
+        .toggleFollow(mid: widget.user.mid, isFollow: newStatus);
+    if (error != null) {
       // Revert on error
       if (mounted) {
         setState(() {
@@ -101,7 +100,7 @@ class _RelationUserItemState extends ConsumerState<RelationUserItem> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              Translations.of(context).profile.relation.failed(error: e.toString()),
+              Translations.of(context).profile.relation.failed(error: error.message),
             ),
           ),
         );

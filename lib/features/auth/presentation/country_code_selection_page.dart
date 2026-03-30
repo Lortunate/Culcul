@@ -1,10 +1,10 @@
 import 'package:culcul/domain/entities/country_code.dart';
 import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:culcul/ui/widgets/app_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:culcul/features/auth/data/auth_repository.dart';
 
 class CountryCodeSelectionPage extends HookConsumerWidget {
   const CountryCodeSelectionPage({super.key});
@@ -21,7 +21,7 @@ class CountryCodeSelectionPage extends HookConsumerWidget {
     useEffect(() {
       Future<void> fetch() async {
         try {
-          final list = await ref.read(authRepositoryProvider).getCountryList();
+          final list = await ref.read(authProvider.notifier).getCountryList();
           if (list.isNotEmpty) {
             countryCodes.value = list;
           }

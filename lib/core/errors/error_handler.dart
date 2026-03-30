@@ -1,3 +1,4 @@
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,19 @@ import 'package:flutter/material.dart';
 class ErrorHandler {
   static String getErrorMessage(BuildContext context, dynamic error) {
     final t = Translations.of(context);
+
+    if (error is AppError) {
+      return switch (error) {
+        NetworkAppError _ => t.error.network,
+        AuthAppError _ => t.error.auth_failed,
+        ServerAppError _ =>
+          error.code != null
+              ? t.error.bad_response(code: error.code!)
+              : t.error.server_error,
+        CancelAppError _ => t.error.cancel,
+        DataAppError _ || UnknownAppError _ => error.message,
+      };
+    }
 
     if (error is NetworkException) {
       return t.error.network;

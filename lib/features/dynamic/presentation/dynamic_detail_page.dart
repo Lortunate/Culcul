@@ -51,7 +51,7 @@ class DynamicDetailPage extends HookConsumerWidget {
     if (state.error != null && state.post == null) {
       return Scaffold(
         appBar: AppBar(title: Text(t.moments.detail_title)),
-        body: Center(child: Text(state.error!)),
+        body: Center(child: Text(state.error!.message)),
       );
     }
 

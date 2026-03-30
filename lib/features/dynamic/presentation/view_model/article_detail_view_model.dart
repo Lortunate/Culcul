@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/features/dynamic/data/article_detail_data.dart';
-import 'package:culcul/features/dynamic/data/dynamic_repository.dart';
+import 'package:culcul/features/dynamic/application/use_case/dynamic_use_cases.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'article_detail_view_model.g.dart';
@@ -10,7 +12,7 @@ part 'article_detail_view_model.g.dart';
 class ArticleDetailUiState {
   final ArticleDetailData? detail;
   final bool isLoading;
-  final Object? error;
+  final AppError? error;
   final List<CommentItem> comments;
   final bool commentsLoading;
   final String? commentsError;
@@ -36,7 +38,7 @@ class ArticleDetailUiState {
     ArticleDetailData? detail,
     bool setDetail = false,
     bool? isLoading,
-    Object? error,
+    AppError? error,
     bool clearError = false,
     List<CommentItem>? comments,
     bool? commentsLoading,
@@ -68,28 +70,22 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
   @override
   ArticleDetailUiState build(String url) {
     _url = url;
-    Future.microtask(() async {
-      await loadDetail();
-      if (state.commentsEnabled) {
-        await loadComments(refresh: true);
-      }
-    });
+    unawaited(refreshAll());
     return const ArticleDetailUiState();
   }
 
   Future<void> loadDetail() async {
     state = state.copyWith(isLoading: true, clearError: true);
-    try {
-      final detail = await ref.read(dynamicRepositoryProvider).getArticleDetail(_url);
-      state = state.copyWith(
+    final result = await ref.read(articleDetailUseCaseProvider).call(_url);
+    state = result.when(
+      success: (detail) => state.copyWith(
         setDetail: true,
         detail: detail,
         isLoading: false,
         clearError: true,
-      );
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e);
-    }
+      ),
+      failure: (error) => state.copyWith(isLoading: false, error: error),
+    );
   }
 
   Future<void> refreshAll() async {
@@ -123,34 +119,39 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
       commentsHasMore: refresh ? true : null,
     );
 
-    try {
-      final response = await ref
-          .read(dynamicRepositoryProvider)
-          .getArticleCommentList(
+    final result = await ref
+        .read(articleCommentsUseCaseProvider)
+        .call(
+          ArticleCommentsQuery(
             oid: detail.commentOid,
-            next: refresh ? null : state.commentsNext,
             referer: detail.url,
-          );
-      final mergedComments = refresh
-          ? response.replies
-          : _appendUniqueComments(previousComments, response.replies);
+            next: refresh ? null : state.commentsNext,
+          ),
+        );
+    result.when(
+      success: (response) {
+        final mergedComments = refresh
+            ? response.replies
+            : _appendUniqueComments(previousComments, response.replies);
 
-      state = state.copyWith(
-        comments: mergedComments,
-        commentsNext: response.cursor?.next,
-        commentsHasMore: _resolveHasMore(response),
-        commentsLoading: false,
-        clearCommentsError: true,
-      );
-    } catch (e) {
-      state = state.copyWith(
-        commentsLoading: false,
-        commentsError: e.toString(),
-        comments: refresh ? previousComments : null,
-        commentsNext: refresh ? previousNext : null,
-        commentsHasMore: refresh ? previousHasMore : null,
-      );
-    }
+        state = state.copyWith(
+          comments: mergedComments,
+          commentsNext: response.cursor?.next,
+          commentsHasMore: _resolveHasMore(response),
+          commentsLoading: false,
+          clearCommentsError: true,
+        );
+      },
+      failure: (error) {
+        state = state.copyWith(
+          commentsLoading: false,
+          commentsError: error.message,
+          comments: refresh ? previousComments : null,
+          commentsNext: refresh ? previousNext : null,
+          commentsHasMore: refresh ? previousHasMore : null,
+        );
+      },
+    );
   }
 
   Future<String?> submitComment(String message) async {
@@ -160,24 +161,24 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
     if (message.trim().isEmpty || state.isSendingComment) return null;
 
     state = state.copyWith(isSendingComment: true);
-    try {
-      await ref
-          .read(dynamicRepositoryProvider)
-          .addCommentReply(
+    final result = await ref
+        .read(addArticleCommentUseCaseProvider)
+        .call(
+          AddArticleCommentCommand(
             oid: detail.commentOid,
             type: detail.commentType,
             root: 0,
             parent: 0,
             message: message.trim(),
             referer: detail.url,
-          );
-      await loadComments(refresh: true);
-      return null;
-    } catch (e) {
-      return e.toString();
-    } finally {
-      state = state.copyWith(isSendingComment: false);
+          ),
+        );
+    state = state.copyWith(isSendingComment: false);
+    if (result.isFailure) {
+      return result.errorOrNull!.message;
     }
+    await loadComments(refresh: true);
+    return null;
   }
 
   Future<String?> submitReply(CommentItem item, String message) async {
@@ -185,22 +186,23 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
     if (detail == null) return null;
     if (!state.commentsEnabled) return 'Comments disabled';
 
-    try {
-      await ref
-          .read(dynamicRepositoryProvider)
-          .addCommentReply(
+    final result = await ref
+        .read(addArticleCommentUseCaseProvider)
+        .call(
+          AddArticleCommentCommand(
             oid: detail.commentOid,
             type: detail.commentType,
             root: item.root == 0 ? item.rpid : item.root,
             parent: item.rpid,
             message: message,
             referer: detail.url,
-          );
-      await loadComments(refresh: true);
-      return null;
-    } catch (e) {
-      return e.toString();
+          ),
+        );
+    if (result.isFailure) {
+      return result.errorOrNull!.message;
     }
+    await loadComments(refresh: true);
+    return null;
   }
 
   Future<void> toggleCommentLike(CommentItem item) async {
@@ -221,17 +223,18 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
       }).toList(),
     );
 
-    try {
-      await ref
-          .read(dynamicRepositoryProvider)
-          .likeCommentByTarget(
+    final result = await ref
+        .read(toggleArticleCommentLikeUseCaseProvider)
+        .call(
+          ToggleArticleCommentLikeCommand(
             oid: detail.commentOid,
             type: detail.commentType,
             rpid: item.rpid,
             isLiked: !isLiked,
             referer: detail.url,
-          );
-    } catch (_) {
+          ),
+        );
+    if (result.isFailure) {
       state = state.copyWith(comments: previous);
     }
   }

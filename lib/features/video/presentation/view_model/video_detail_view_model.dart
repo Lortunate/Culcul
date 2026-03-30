@@ -1,6 +1,7 @@
+import 'dart:async';
+
 import 'package:culcul/data/models/video/video_detail.dart';
-import 'package:culcul/features/video/data/video_repository.dart';
-import 'package:culcul/features/profile/data/relation_repository.dart';
+import 'package:culcul/features/video/application/use_case/video_detail_use_cases.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'video_detail_state.dart';
@@ -11,68 +12,25 @@ part 'video_detail_view_model.g.dart';
 class VideoDetailController extends _$VideoDetailController {
   @override
   VideoDetailState build(String bvid) {
-    Future.microtask(_init);
+    unawaited(load());
     return const VideoDetailState();
   }
 
-  Future<void> _init() async {
+  Future<void> load() async {
     state = state.copyWith(isLoading: true, error: null);
-
-    final repo = ref.read(videoRepositoryProvider);
-    try {
-      final detail = await repo.fetchVideoView(bvid);
-      int cid = 0;
-      if (detail.pages.isNotEmpty) {
-        cid = detail.pages.first.cid;
-      }
-
-      state = state.copyWith(videoDetail: detail, currentCid: cid);
-
-      await Future.wait([
-        _fetchRelatedVideos(),
-        _fetchVideoTags(),
-        if (cid != 0) _fetchPlayUrl(detail.aid, cid),
-      ]);
-
-      state = state.copyWith(isLoading: false);
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e);
-    }
-  }
-
-  Future<void> _fetchRelatedVideos() async {
-    final repo = ref.read(videoRepositoryProvider);
-    try {
-      final list = await repo.fetchRelatedVideos(bvid);
-      state = state.copyWith(relatedVideos: list);
-    } catch (_) {}
-  }
-
-  Future<void> _fetchVideoTags() async {
-    final repo = ref.read(videoRepositoryProvider);
-    if (state.videoDetail == null) return;
-
-    try {
-      final tags = await repo.fetchVideoTags(bvid);
-      state = state.copyWith(videoDetail: state.videoDetail!.copyWith(tag: tags));
-    } catch (_) {}
-  }
-
-  Future<void> _fetchPlayUrl(int aid, int cid, {int qn = 80}) async {
-    final repo = ref.read(videoRepositoryProvider);
-
-    try {
-      final playUrl = await repo.fetchVideoPlayUrl(aid: aid, cid: cid, quality: qn);
-      final qualities = playUrl.acceptQuality.toList();
-      state = state.copyWith(
-        playUrl: playUrl,
+    final result = await ref.read(loadVideoDetailUseCaseProvider).call(bvid);
+    state = result.when(
+      success: (data) => state.copyWith(
         isLoading: false,
-        selectedQuality: playUrl.quality,
-        availableQualities: qualities,
-      );
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e);
-    }
+        videoDetail: data.detail,
+        currentCid: data.currentCid,
+        playUrl: data.playUrl,
+        relatedVideos: data.relatedVideos,
+        selectedQuality: data.selectedQuality,
+        availableQualities: data.availableQualities,
+      ),
+      failure: (error) => state.copyWith(isLoading: false, error: error),
+    );
   }
 
   Future<void> switchPart(int cid) async {
@@ -82,7 +40,7 @@ class VideoDetailController extends _$VideoDetailController {
     if (state.currentCid == cid && state.playUrl != null) return;
 
     state = state.copyWith(isLoading: true, currentCid: cid, playUrl: null);
-    await _fetchPlayUrl(detail.aid, cid, qn: state.selectedQuality);
+    await _loadPlayUrl(aid: detail.aid, cid: cid, qn: state.selectedQuality);
   }
 
   Future<void> switchQuality(int qn) async {
@@ -92,7 +50,7 @@ class VideoDetailController extends _$VideoDetailController {
     if (detail == null) return;
 
     state = state.copyWith(isLoading: true);
-    await _fetchPlayUrl(detail.aid, state.currentCid, qn: qn);
+    await _loadPlayUrl(aid: detail.aid, cid: state.currentCid, qn: qn);
   }
 
   void setPlaybackSpeed(double speed) {
@@ -103,12 +61,15 @@ class VideoDetailController extends _$VideoDetailController {
     final detail = state.videoDetail;
     if (detail == null) return;
 
-    final repo = ref.read(videoRepositoryProvider);
-    await repo.reportVideoProgress(
-      aid: detail.aid,
-      cid: state.currentCid,
-      progress: progress,
-    );
+    await ref
+        .read(reportVideoProgressUseCaseProvider)
+        .call(
+          ReportVideoProgressCommand(
+            aid: detail.aid,
+            cid: state.currentCid,
+            progress: progress,
+          ),
+        );
   }
 
   Future<void> toggleFollow() async {
@@ -127,12 +88,28 @@ class VideoDetailController extends _$VideoDetailController {
       ),
     );
 
-    try {
-      await ref
-          .read(relationRepositoryProvider)
-          .modifyRelation(fid: detail.owner.mid, act: wasFollowed ? 2 : 1);
-    } catch (_) {
+    final result = await ref
+        .read(toggleVideoFollowUseCaseProvider)
+        .call(
+          ToggleVideoFollowCommand(followMid: detail.owner.mid, wasFollowed: wasFollowed),
+        );
+    if (result.isFailure) {
       state = state.copyWith(videoDetail: previousDetail);
     }
+  }
+
+  Future<void> _loadPlayUrl({required int aid, required int cid, required int qn}) async {
+    final result = await ref
+        .read(loadVideoPlayUrlUseCaseProvider)
+        .call(VideoPlayUrlCommand(aid: aid, cid: cid, quality: qn));
+    state = result.when(
+      success: (data) => state.copyWith(
+        playUrl: data.playUrl,
+        isLoading: false,
+        selectedQuality: data.selectedQuality,
+        availableQualities: data.availableQualities,
+      ),
+      failure: (error) => state.copyWith(isLoading: false, error: error),
+    );
   }
 }

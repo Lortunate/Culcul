@@ -1,5 +1,6 @@
 import 'package:culcul/data/models/fav/index.dart';
 import 'package:culcul/features/favorites/presentation/view_model/favorites_view_model.dart';
+import 'package:culcul/features/favorites/presentation/view_model/favorite_folder_action_view_model.dart';
 import 'package:culcul/features/favorites/presentation/fav_resource_item.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
@@ -13,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:culcul/features/favorites/data/fav_repository.dart';
 
 class FavoriteDetailPage extends HookConsumerWidget {
   final int mediaId;
@@ -53,11 +53,16 @@ class FavoriteDetailPage extends HookConsumerWidget {
                   ? null
                   : () async {
                       // Batch delete
-                      final resources = selectedItems.value.join(',');
                       try {
-                        await ref
-                            .read(favRepositoryProvider)
-                            .batchDelResource(resources: resources, mediaId: mediaId);
+                        final error = await ref
+                            .read(favoriteFolderActionViewModelProvider.notifier)
+                            .deleteResources(
+                              mediaId: mediaId,
+                              resourceIds: selectedItems.value,
+                            );
+                        if (error != null) {
+                          throw Exception(error.message);
+                        }
                         isSelectionMode.value = false;
                         selectedItems.value = {};
                         ref.invalidate(provider);
@@ -99,14 +104,17 @@ class FavoriteDetailPage extends HookConsumerWidget {
 
                   if (result != null) {
                     try {
-                      await ref
-                          .read(favRepositoryProvider)
+                      final error = await ref
+                          .read(favoriteFolderActionViewModelProvider.notifier)
                           .editFolder(
                             mediaId: mediaId,
                             title: result['title']! as String,
                             intro: result['intro'] as String?,
                             privacy: result['privacy'] as int?,
                           );
+                      if (error != null) {
+                        throw Exception(error.message);
+                      }
                       ref.invalidate(favCreatedFoldersProvider);
                     } catch (e) {
                       if (context.mounted) {
@@ -138,9 +146,12 @@ class FavoriteDetailPage extends HookConsumerWidget {
                   );
                   if (confirm == true) {
                     try {
-                      await ref
-                          .read(favRepositoryProvider)
-                          .delFolder(mediaIds: mediaId.toString());
+                      final error = await ref
+                          .read(favoriteFolderActionViewModelProvider.notifier)
+                          .deleteFolder(mediaId: mediaId);
+                      if (error != null) {
+                        throw Exception(error.message);
+                      }
                       ref.invalidate(favCreatedFoldersProvider);
                       if (context.mounted) {
                         context.pop();

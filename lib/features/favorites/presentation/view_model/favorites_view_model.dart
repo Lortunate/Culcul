@@ -1,8 +1,8 @@
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
 import 'package:culcul/data/models/fav/index.dart';
+import 'package:culcul/features/favorites/application/use_case/favorite_folder_use_cases.dart';
 import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:culcul/features/favorites/data/fav_repository.dart';
 
 part 'favorites_view_model.g.dart';
 
@@ -15,8 +15,12 @@ class FavCreatedFolders extends _$FavCreatedFolders {
       return [];
     }
     final mid = int.parse(authState.user!.id);
-    final repository = ref.read(favRepositoryProvider);
-    final response = await repository.getCreatedFolders(upMid: mid);
+    final query = ref.read(favoriteFolderQueryUseCaseProvider);
+    final responseResult = await query.getCreatedFolders(mid);
+    final response = responseResult.when(
+      success: (value) => value,
+      failure: (error) => throw Exception(error.message),
+    );
     final folders = response.list ?? [];
     if (folders.isEmpty) return <FavFolderModel>[];
 
@@ -27,10 +31,14 @@ class FavCreatedFolders extends _$FavCreatedFolders {
         }
 
         try {
-          final resources = await repository.getFolderResources(
+          final resourcesResult = await query.getFolderResources(
             mediaId: folder.id,
-            pn: 1,
-            ps: 1,
+            page: 1,
+            pageSize: 1,
+          );
+          final resources = resourcesResult.when(
+            success: (value) => value,
+            failure: (error) => throw Exception(error.message),
           );
           String cover = resources.info.cover;
 
@@ -71,9 +79,13 @@ class FavCollectedFolders extends _$FavCollectedFolders
 
   @override
   Future<List<FavFolderModel>> fetchPage(int page, {bool refresh = false}) async {
-    final response = await ref
-        .read(favRepositoryProvider)
-        .getCollectedFolders(upMid: _mid, pn: page, ps: _pageSize);
+    final result = await ref
+        .read(favoriteFolderQueryUseCaseProvider)
+        .getCollectedFolders(upMid: _mid, page: page, pageSize: _pageSize);
+    final response = result.when(
+      success: (value) => value,
+      failure: (error) => throw error.toException(),
+    );
     return response.list ?? [];
   }
 
@@ -109,9 +121,13 @@ class FavFolderResources extends _$FavFolderResources {
   }
 
   Future<FavFolderDetailState> _fetchItems(int mediaId, int page) async {
-    final response = await ref
-        .read(favRepositoryProvider)
-        .getFolderResources(mediaId: mediaId, pn: page, ps: _pageSize);
+    final result = await ref
+        .read(favoriteFolderQueryUseCaseProvider)
+        .getFolderResources(mediaId: mediaId, page: page, pageSize: _pageSize);
+    final response = result.when(
+      success: (value) => value,
+      failure: (error) => throw error.toException(),
+    );
     _hasMore = response.hasMore;
     return FavFolderDetailState(info: response.info, list: response.medias ?? []);
   }

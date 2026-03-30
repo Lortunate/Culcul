@@ -1,24 +1,22 @@
+import 'dart:async';
+
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
 import 'package:culcul/data/models/dynamic/dynamic_response.dart';
-import 'package:culcul/features/dynamic/data/dynamic_repository.dart';
+import 'package:culcul/features/dynamic/application/use_case/dynamic_use_cases.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+part 'dynamic_detail_view_model.freezed.dart';
 part 'dynamic_detail_view_model.g.dart';
 
-class DynamicDetailUiState {
-  final DynamicItem? post;
-  final bool isLoading;
-  final String? error;
-
-  const DynamicDetailUiState({this.post, this.isLoading = true, this.error});
-
-  DynamicDetailUiState copyWith({DynamicItem? post, bool? isLoading, String? error}) {
-    return DynamicDetailUiState(
-      post: post ?? this.post,
-      isLoading: isLoading ?? this.isLoading,
-      error: error,
-    );
-  }
+@freezed
+sealed class DynamicDetailUiState with _$DynamicDetailUiState {
+  const factory DynamicDetailUiState({
+    DynamicItem? post,
+    @Default(true) bool isLoading,
+    AppError? error,
+  }) = _DynamicDetailUiState;
 }
 
 @riverpod
@@ -28,18 +26,17 @@ class DynamicDetailViewModel extends _$DynamicDetailViewModel {
   @override
   DynamicDetailUiState build(String dynamicId) {
     _dynamicId = dynamicId;
-    Future.microtask(loadDetail);
+    unawaited(loadDetail());
     return const DynamicDetailUiState();
   }
 
   Future<void> loadDetail() async {
     state = state.copyWith(isLoading: true, error: null);
-    try {
-      final data = await ref.read(dynamicRepositoryProvider).getDetail(_dynamicId);
-      state = state.copyWith(post: data, isLoading: false, error: null);
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
-    }
+    final result = await ref.read(dynamicDetailUseCaseProvider).call(_dynamicId);
+    state = result.when(
+      success: (data) => state.copyWith(post: data, isLoading: false, error: null),
+      failure: (error) => state.copyWith(isLoading: false, error: error),
+    );
   }
 
   Future<String?> toggleLike() async {
@@ -62,12 +59,15 @@ class DynamicDetailViewModel extends _$DynamicDetailViewModel {
     );
 
     state = state.copyWith(post: nextItem);
-    try {
-      await ref.read(dynamicRepositoryProvider).likeDynamic(item.id, newStatus);
-      return null;
-    } catch (e) {
-      state = state.copyWith(post: item);
-      return e.toString();
-    }
+    final result = await ref
+        .read(toggleDynamicLikeUseCaseProvider)
+        .call(id: item.id, newStatus: newStatus);
+    return result.when(
+      success: (_) => null,
+      failure: (error) {
+        state = state.copyWith(post: item);
+        return error.message;
+      },
+    );
   }
 }

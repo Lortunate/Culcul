@@ -1,4 +1,5 @@
 import 'package:culcul/features/favorites/presentation/view_model/favorites_view_model.dart';
+import 'package:culcul/features/favorites/presentation/view_model/favorite_folder_action_view_model.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
 import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
@@ -8,7 +9,6 @@ import 'package:culcul/ui/widgets/guest_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:culcul/features/favorites/data/fav_repository.dart';
 
 class FavoritesPage extends HookConsumerWidget {
   const FavoritesPage({super.key});
@@ -87,13 +87,16 @@ class _AddFolderAction extends ConsumerWidget {
         }
 
         try {
-          await ref
-              .read(favRepositoryProvider)
-              .addFolder(
+          final error = await ref
+              .read(favoriteFolderActionViewModelProvider.notifier)
+              .createFolder(
                 title: result['title']! as String,
                 intro: result['intro'] as String?,
                 privacy: result['privacy'] as int?,
               );
+          if (error != null) {
+            throw Exception(error.message);
+          }
           ref.invalidate(favCreatedFoldersProvider);
         } catch (error) {
           if (!context.mounted) {
