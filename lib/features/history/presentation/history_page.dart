@@ -1,7 +1,7 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
-import 'package:culcul/data/models/history/history_model.dart';
-import 'package:culcul/features/history/presentation/view_model/history_view_model.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/history/domain/entities/history_entry.dart';
+import 'package:culcul/features/history/presentation/view_models/history_view_model.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/guest_view.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +28,7 @@ class HistoryPage extends ConsumerWidget {
 }
 
 class _HistoryContent extends ConsumerWidget {
-  final AsyncValue<List<HistoryItem>> historyListAsync;
+  final AsyncValue<List<HistoryEntry>> historyListAsync;
 
   const _HistoryContent({required this.historyListAsync});
 
@@ -47,8 +47,8 @@ class _HistoryContent extends ConsumerWidget {
             return HistoryItemWidget(
               item: item,
               onTap: () {
-                final bvid = item.history.bvid;
-                if (item.history.business == 'archive' && bvid.isNotEmpty) {
+                final bvid = item.bvid;
+                if (item.business == 'archive' && bvid.isNotEmpty) {
                   context.push('/video/$bvid');
                 }
               },

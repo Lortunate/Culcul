@@ -17,7 +17,10 @@ void main() async {
         overrides: [
           cookieJarProvider.overrideWithValue(dependencies.cookieJar),
           cacheStoreProvider.overrideWithValue(dependencies.cacheStore),
-          storageBoxProvider.overrideWithValue(dependencies.storageBox),
+          storageBoxProvider.overrideWithValue(dependencies.legacyStorageBox),
+          sessionStorageBoxProvider.overrideWithValue(dependencies.sessionStorageBox),
+          settingsStorageBoxProvider.overrideWithValue(dependencies.settingsStorageBox),
+          searchStorageBoxProvider.overrideWithValue(dependencies.searchStorageBox),
           audioHandlerProvider.overrideWithValue(dependencies.audioHandler),
         ],
         child: const CulculApp(),

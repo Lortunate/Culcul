@@ -1,6 +1,7 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/data/models/notification/private_message_model.dart';
-import 'package:culcul/features/profile/providers/profile_provider.dart';
+import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
+import 'package:culcul/features/notification/domain/entities/private_message.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
@@ -9,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class PrivateSessionItem extends ConsumerWidget {
-  final PrivateMessageSession session;
+  final PrivateSession session;
 
   const PrivateSessionItem({super.key, required this.session});
 
@@ -58,7 +59,7 @@ class PrivateSessionItem extends ConsumerWidget {
     }
 
     final t = Translations.of(context);
-    final content = _buildMessageSummary(t, session.lastMsg);
+    final content = _buildMessageSummary(t, session.lastMessage);
 
     return ListTile(
       onTap: () {
@@ -102,7 +103,7 @@ class PrivateSessionItem extends ConsumerWidget {
     );
   }
 
-  String _buildMessageSummary(Translations t, PrivateMessageDetail? message) {
+  String _buildMessageSummary(Translations t, PrivateMessage? message) {
     if (message == null) return '';
     if (message.isWithdrawn) {
       return t.notification.chat.message_withdrawn;

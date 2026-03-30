@@ -1,8 +1,8 @@
-import 'package:culcul/features/favorites/presentation/view_model/favorites_view_model.dart';
-import 'package:culcul/features/favorites/presentation/view_model/favorite_folder_action_view_model.dart';
+import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
+import 'package:culcul/features/favorites/presentation/view_models/favorite_folder_action_view_model.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
-import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_tab_bar.dart';
 import 'package:culcul/ui/widgets/guest_view.dart';
@@ -86,26 +86,23 @@ class _AddFolderAction extends ConsumerWidget {
           return;
         }
 
-        try {
-          final error = await ref
-              .read(favoriteFolderActionViewModelProvider.notifier)
-              .createFolder(
-                title: result['title']! as String,
-                intro: result['intro'] as String?,
-                privacy: result['privacy'] as int?,
-              );
-          if (error != null) {
-            throw Exception(error.message);
-          }
+        final error = await ref
+            .read(favoriteFolderActionViewModelProvider.notifier)
+            .createFolder(
+              title: result['title']! as String,
+              intro: result['intro'] as String?,
+              privacy: result['privacy'] as int?,
+            );
+        if (error == null) {
           ref.invalidate(favCreatedFoldersProvider);
-        } catch (error) {
-          if (!context.mounted) {
-            return;
-          }
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Failed to add folder: $error')));
+          return;
         }
+        if (!context.mounted) {
+          return;
+        }
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to add folder: ${error.message}')));
       },
     );
   }

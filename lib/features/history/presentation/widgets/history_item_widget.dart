@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/data/models/history/history_model.dart';
+import 'package:culcul/features/history/domain/entities/history_entry.dart';
 import 'package:culcul/ui/widgets/icon_text.dart';
 import 'package:culcul/ui/widgets/video_list_card.dart';
 
 class HistoryItemWidget extends StatelessWidget {
-  final HistoryItem item;
+  final HistoryEntry item;
   final VoidCallback? onTap;
 
   const HistoryItemWidget({super.key, required this.item, this.onTap});
@@ -24,7 +24,7 @@ class HistoryItemWidget extends StatelessWidget {
       ),
       child: VideoListCard(
         onTap: onTap,
-        coverUrl: item.cover,
+        coverUrl: item.coverUrl,
         title: item.title,
         // Hide default duration badge if showing progress bar
         duration: (item.progress > 0) ? 0 : item.duration,
@@ -72,7 +72,7 @@ class HistoryItemWidget extends StatelessWidget {
             ),
           IconText(
             icon: Icons.access_time_rounded,
-            text: FormatUtils.formatTimeAgo(item.viewAt),
+            text: FormatUtils.formatTimeAgo(item.viewedAt),
             iconSize: 14,
             style: theme.textTheme.bodySmall?.copyWith(
               color: colorScheme.onSurfaceVariant,

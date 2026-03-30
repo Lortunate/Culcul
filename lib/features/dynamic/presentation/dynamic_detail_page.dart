@@ -1,5 +1,5 @@
-import 'package:culcul/features/dynamic/presentation/view_model/dynamic_comment_view_model.dart';
-import 'package:culcul/features/dynamic/presentation/view_model/dynamic_detail_view_model.dart';
+import 'package:culcul/features/dynamic/presentation/view_models/dynamic_comment_view_model.dart';
+import 'package:culcul/features/dynamic/presentation/view_models/dynamic_detail_view_model.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_detail_bottom_bar.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_detail_header.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_comments_view.dart';

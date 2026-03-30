@@ -1,11 +1,11 @@
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/data/models/search/search_result.dart';
+import 'package:culcul/features/search/domain/entities/search_result_page.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:culcul/ui/widgets/video_list_card.dart';
 import 'package:flutter/material.dart';
 
 class SearchBangumiItem extends StatelessWidget {
-  final SearchBangumiModel item;
+  final SearchBangumiEntry item;
 
   const SearchBangumiItem({super.key, required this.item});
 
@@ -19,19 +19,19 @@ class SearchBangumiItem extends StatelessWidget {
       height: 110,
       padding: const EdgeInsets.symmetric(vertical: 4),
       coverUrl: '', // Not used
-      title: FormatUtils.stripHtmlTags(item.title ?? ''),
+      title: FormatUtils.stripHtmlTags(item.title),
       leading: AspectRatio(
         aspectRatio: 3 / 4,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8),
-          child: AppNetworkImage(url: item.cover ?? item.pic ?? '', borderRadius: 8),
+          child: AppNetworkImage(url: item.coverUrl, borderRadius: 8),
         ),
       ),
       middleContent: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${item.seasonTypeName ?? ""} · ${item.areas ?? ""}',
+            '${item.seasonTypeName} · ${item.areas}',
             style: theme.textTheme.labelSmall?.copyWith(
               color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
               fontSize: 12,
@@ -39,7 +39,7 @@ class SearchBangumiItem extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            FormatUtils.stripHtmlTags(item.styles ?? ''),
+            FormatUtils.stripHtmlTags(item.styles),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.labelSmall?.copyWith(

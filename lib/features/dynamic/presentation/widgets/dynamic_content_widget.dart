@@ -1,6 +1,4 @@
-import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
-import 'package:culcul/data/models/dynamic/dynamic_response.dart';
-import 'package:culcul/data/models/dynamic/dynamic_view_models.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
 import 'package:culcul/features/dynamic/presentation/topic_detail_page.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_common_widget.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_goods_widget.dart';

@@ -71,6 +71,22 @@ sealed class AppError {
     }
     return UnknownAppError('Unexpected error occurred: $error', cause: error);
   }
+
+  static AppError network(String message, {int? code, Object? cause}) {
+    return NetworkAppError(message, code: code, cause: cause);
+  }
+
+  static AppError server(String message, {int? code, Object? cause}) {
+    return ServerAppError(message, code: code, cause: cause);
+  }
+
+  static AppError auth(String message, {int? code, Object? cause}) {
+    return AuthAppError(message, code: code, cause: cause);
+  }
+
+  static AppError data(String message, {int? code, Object? cause}) {
+    return DataAppError(message, code: code, cause: cause);
+  }
 }
 
 final class NetworkAppError extends AppError {

@@ -1,9 +1,10 @@
-import 'package:culcul/data/models/fav/index.dart';
-import 'package:culcul/features/favorites/presentation/view_model/favorites_view_model.dart';
-import 'package:culcul/features/favorites/presentation/view_model/favorite_folder_action_view_model.dart';
+import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
+import 'package:culcul/features/favorites/presentation/view_models/favorite_folder_action_view_model.dart';
 import 'package:culcul/features/favorites/presentation/fav_resource_item.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
-import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
+import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
@@ -53,25 +54,22 @@ class FavoriteDetailPage extends HookConsumerWidget {
                   ? null
                   : () async {
                       // Batch delete
-                      try {
-                        final error = await ref
-                            .read(favoriteFolderActionViewModelProvider.notifier)
-                            .deleteResources(
-                              mediaId: mediaId,
-                              resourceIds: selectedItems.value,
-                            );
-                        if (error != null) {
-                          throw Exception(error.message);
-                        }
+                      final error = await ref
+                          .read(favoriteFolderActionViewModelProvider.notifier)
+                          .deleteResources(
+                            mediaId: mediaId,
+                            resourceIds: selectedItems.value,
+                          );
+                      if (error == null) {
                         isSelectionMode.value = false;
                         selectedItems.value = {};
                         ref.invalidate(provider);
-                      } catch (e) {
-                        if (context.mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('${t.common.error}: $e')),
-                          );
-                        }
+                        return;
+                      }
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('${t.common.error}: ${error.message}')),
+                        );
                       }
                     },
               child: Text(
@@ -103,25 +101,22 @@ class FavoriteDetailPage extends HookConsumerWidget {
                   );
 
                   if (result != null) {
-                    try {
-                      final error = await ref
-                          .read(favoriteFolderActionViewModelProvider.notifier)
-                          .editFolder(
-                            mediaId: mediaId,
-                            title: result['title']! as String,
-                            intro: result['intro'] as String?,
-                            privacy: result['privacy'] as int?,
-                          );
-                      if (error != null) {
-                        throw Exception(error.message);
-                      }
+                    final error = await ref
+                        .read(favoriteFolderActionViewModelProvider.notifier)
+                        .editFolder(
+                          mediaId: mediaId,
+                          title: result['title']! as String,
+                          intro: result['intro'] as String?,
+                          privacy: result['privacy'] as int?,
+                        );
+                    if (error == null) {
                       ref.invalidate(favCreatedFoldersProvider);
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(SnackBar(content: Text('${t.common.error}: $e')));
-                      }
+                      return;
+                    }
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('${t.common.error}: ${error.message}')),
+                      );
                     }
                   }
                 } else if (value == 'manage') {
@@ -145,23 +140,20 @@ class FavoriteDetailPage extends HookConsumerWidget {
                     ),
                   );
                   if (confirm == true) {
-                    try {
-                      final error = await ref
-                          .read(favoriteFolderActionViewModelProvider.notifier)
-                          .deleteFolder(mediaId: mediaId);
-                      if (error != null) {
-                        throw Exception(error.message);
-                      }
+                    final error = await ref
+                        .read(favoriteFolderActionViewModelProvider.notifier)
+                        .deleteFolder(mediaId: mediaId);
+                    if (error == null) {
                       ref.invalidate(favCreatedFoldersProvider);
                       if (context.mounted) {
                         context.pop();
                       }
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(
-                          context,
-                        ).showSnackBar(SnackBar(content: Text('${t.common.error}: $e')));
-                      }
+                      return;
+                    }
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('${t.common.error}: ${error.message}')),
+                      );
                     }
                   }
                 }
@@ -257,7 +249,7 @@ class FavoriteDetailPage extends HookConsumerWidget {
 }
 
 class _FavoriteFolderHeader extends StatelessWidget {
-  final FavFolderInfoModel info;
+  final FavoriteFolderInfo info;
 
   const _FavoriteFolderHeader({required this.info});
 
@@ -323,7 +315,7 @@ class _FavoriteFolderHeader extends StatelessWidget {
 }
 
 class _FavoriteResourceRow extends StatelessWidget {
-  final FavResourceModel item;
+  final FavoriteResource item;
   final bool isSelectionMode;
   final bool isSelected;
   final ValueChanged<bool> onSelectionChanged;

@@ -1,12 +1,12 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/auth/presentation/widgets/login_dialog.dart';
 import 'package:culcul/features/home/presentation/widgets/home_app_bar.dart';
 import 'package:culcul/features/home/presentation/widgets/popular_view.dart';
 import 'package:culcul/features/home/presentation/widgets/recommend_view.dart';
 import 'package:culcul/features/home/presentation/live/live_view.dart';
-import 'package:culcul/features/home/presentation/home_events.dart';
-import 'package:culcul/features/search/presentation/view_model/search_view_model.dart';
+import 'package:culcul/features/home/presentation/view_models/home_page_view_model.dart';
+import 'package:culcul/features/search/presentation/view_models/search_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -31,10 +31,11 @@ class HomePage extends HookConsumerWidget {
       appBar: HomeAppBar(
         tabController: tabController,
         tabs: tabs.map((e) => e.title).toList(),
-        onTabTap: (index) =>
-            _handleTabTap(index: index, controller: tabController, ref: ref),
+        onTabTap: (index) => ref
+            .read(homePageViewModelProvider.notifier)
+            .onTabTapped(index, isChanging: tabController.indexIsChanging),
         onSearchTap: () => const SearchRoute().push(context),
-        hintText: defaultSearchAsync.asData?.value?.showName,
+        hintText: defaultSearchAsync.asData?.value?.text,
         onAvatarTap: () => _handleAvatarTap(context, authState.isLoggedIn),
         onMessageTap: () => const NotificationRoute().push(context),
         onGameTap: () {},
@@ -51,15 +52,6 @@ class HomePage extends HookConsumerWidget {
     (title: t.home.tabs.recommend, view: const RecommendView()),
     (title: t.home.tabs.hot, view: const PopularView()),
   ];
-
-  void _handleTabTap({
-    required int index,
-    required TabController controller,
-    required WidgetRef ref,
-  }) {
-    if (controller.indexIsChanging) return;
-    ref.read(homeTabTapProvider.notifier).update(HomeTabTapEvent(index));
-  }
 
   void _handleAvatarTap(BuildContext context, bool isLoggedIn) {
     if (isLoggedIn) {

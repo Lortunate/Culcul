@@ -1,5 +1,5 @@
-import 'package:culcul/features/dynamic/presentation/view_model/topic_dynamic_view_model.dart';
-import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
+import 'package:culcul/features/dynamic/presentation/view_models/topic_dynamic_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_card.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';

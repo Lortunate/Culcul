@@ -1,7 +1,8 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/data/models/toview/to_view_model.dart';
+import 'package:culcul/features/to_view/data/mappers/to_view_mapper.dart';
 import 'package:culcul/features/to_view/data/toview_repository.dart';
+import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'to_view_use_cases.g.dart';
@@ -16,10 +17,10 @@ class ToViewUseCases {
 
   const ToViewUseCases(this._repository);
 
-  Future<Result<List<ToViewModel>, AppError>> getList() async {
+  Future<Result<List<ToViewEntry>, AppError>> getList() async {
     try {
       final data = await _repository.getToViewList();
-      return Success(data.list);
+      return Success(data.list.map((item) => item.toDomain()).toList());
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }

@@ -1,13 +1,19 @@
 import 'dart:convert';
+
 import 'package:culcul/core/errors/exceptions.dart';
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/providers/storage_provider.dart';
-import 'package:culcul/core/base_repository.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/data/api/auth_api.dart';
 import 'package:culcul/data/models/response/api_response.dart';
 import 'package:culcul/data/models/user/user_model.dart' as data_user;
 import 'package:culcul/domain/entities/country_code.dart';
 import 'package:culcul/domain/entities/user_entity.dart';
+import 'package:culcul/features/auth/domain/entities/auth_captcha_challenge.dart';
+import 'package:culcul/features/auth/domain/entities/auth_qr_code.dart';
+import 'package:culcul/features/auth/domain/entities/auth_qr_poll_result.dart';
 import 'package:encrypt/encrypt.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pointycastle/asymmetric/api.dart';
@@ -17,15 +23,15 @@ part 'auth_repository.g.dart';
 
 @riverpod
 AuthRepository authRepository(Ref ref) {
-  return AuthRepository(ref.watch(authApiProvider), ref.watch(storageBoxProvider));
+  return AuthRepository(ref.watch(authApiProvider), ref.watch(sessionStorageBoxProvider));
 }
 
-class AuthRepository extends BaseRepository {
+class AuthRepository {
   final AuthApi _api;
-  final Box _box;
-  static const String _userCacheKey = 'auth_user_cache';
+  final Box<dynamic> _box;
+  final RequestExecutor _executor;
 
-  AuthRepository(this._api, this._box);
+  AuthRepository(this._api, this._box) : _executor = const RequestExecutor();
 
   Future<void> checkAndRefreshCookie() async {
     // Basic implementation or placeholder for cookie refresh logic
@@ -59,28 +65,27 @@ class AuthRepository extends BaseRepository {
   }
 
   UserEntity? getCachedUser() {
-    final jsonStr = _box.get(_userCacheKey);
+    final jsonStr = _box.get(StorageKeys.authUserCache);
     if (jsonStr == null) return null;
     try {
       return _toDomainUser(
         data_user.User.fromJson(jsonDecode(jsonStr) as Map<String, dynamic>),
       );
     } catch (e) {
-      _box.delete(_userCacheKey);
+      _box.delete(StorageKeys.authUserCache);
       return null;
     }
   }
 
   Future<void> _cacheUser(UserEntity user) async {
-    await _box.put(_userCacheKey, jsonEncode(_toDataUser(user).toJson()));
+    await _box.put(StorageKeys.authUserCache, jsonEncode(_toDataUser(user).toJson()));
   }
 
   Future<void> clearCache() async {
-    await _box.delete(_userCacheKey);
+    await _box.delete(StorageKeys.authUserCache);
   }
 
-  // Password Login Flow
-  Future<UserEntity> loginWithPassword({
+  Future<Result<UserEntity, AppError>> loginWithPassword({
     required String username,
     required String password,
     required String token,
@@ -88,7 +93,7 @@ class AuthRepository extends BaseRepository {
     required String validate,
     required String seccode,
   }) async {
-    return request(() async {
+    return _executor.run(() async {
       // 1. Get Key
       final keyResponse = await _api.getKey();
       if (keyResponse.code != 0) {
@@ -123,7 +128,7 @@ class AuthRepository extends BaseRepository {
       if (loginResponse.code == 0) {
         final data = loginResponse.data as Map<String, dynamic>?;
         if (data != null && data['status'] == 0) {
-          return getCurrentUser();
+          return _loadCurrentUser();
         } else {
           throw AuthException(
             data?['message'] ?? loginResponse.message,
@@ -135,9 +140,8 @@ class AuthRepository extends BaseRepository {
     });
   }
 
-  // SMS Login Flow
-  Future<List<CountryCode>> getCountryList() async {
-    return request(() async {
+  Future<Result<List<CountryCode>, AppError>> getCountryList() async {
+    return _executor.run(() async {
       final response = await _api.getCountryList();
       if (response.code == 0) {
         final data = response.data as Map<String, dynamic>?;
@@ -160,18 +164,33 @@ class AuthRepository extends BaseRepository {
     });
   }
 
-  Future<Map<String, dynamic>> getCaptcha() async {
-    return requestApi(() async {
-      final response = await _api.getCaptcha();
-      return ApiResponse(
-        code: response.code,
-        message: response.message,
-        data: response.data as Map<String, dynamic>?,
-      );
-    });
+  Future<Result<AuthCaptchaChallenge, AppError>> getCaptchaChallenge() async {
+    final result = await _executor.runApi(
+      () async {
+        final response = await _api.getCaptcha();
+        return ApiResponse(
+          code: response.code,
+          message: response.message,
+          data: response.data as Map<String, dynamic>?,
+        );
+      },
+      transform: (data) {
+        final geetest = data['geetest'] is Map<String, dynamic>
+            ? data['geetest'] as Map<String, dynamic>
+            : data;
+        final token = data['token'] as String?;
+        final gt = geetest['gt'] as String?;
+        final challenge = geetest['challenge'] as String?;
+        if (token == null || gt == null || challenge == null) {
+          throw const DataException('Invalid captcha payload');
+        }
+        return AuthCaptchaChallenge(token: token, gt: gt, challenge: challenge);
+      },
+    );
+    return result;
   }
 
-  Future<String> sendSms(
+  Future<Result<String, AppError>> sendSms(
     int cid,
     String phone,
     String token,
@@ -179,7 +198,7 @@ class AuthRepository extends BaseRepository {
     String validate,
     String seccode,
   ) async {
-    return request(() async {
+    return _executor.run(() async {
       final response = await _api.sendSms(
         cid,
         phone,
@@ -200,49 +219,57 @@ class AuthRepository extends BaseRepository {
     });
   }
 
-  Future<UserEntity> loginWithSms(
+  Future<Result<UserEntity, AppError>> loginWithSms(
     int cid,
     String phone,
     String code,
     String captchaKey,
   ) async {
-    return request(() async {
+    return _executor.run(() async {
       final response = await _api.loginWithSms(cid, phone, code, 'main_web', captchaKey);
 
       if (response.code == 0) {
-        return getCurrentUser();
+        return _loadCurrentUser();
       }
       throw AuthException(response.message, code: response.code);
     });
   }
 
-  // QR Login Flow
-  Future<Map<String, dynamic>> getQrCode() async {
-    return requestApi(() async {
-      final response = await _api.getQrCode();
-      return ApiResponse(
-        code: response.code,
-        message: response.message,
-        data: response.data as Map<String, dynamic>?,
+  Future<Result<AuthQrCode, AppError>> getQrCode() async {
+    return _executor.runApi(
+      () async {
+        final response = await _api.getQrCode();
+        return ApiResponse(
+          code: response.code,
+          message: response.message,
+          data: response.data as Map<String, dynamic>?,
+        );
+      },
+      transform: (data) {
+        final url = data['url'] as String?;
+        final key = data['qrcode_key'] as String?;
+        if (url == null || key == null) {
+          throw const DataException('Invalid QR code payload');
+        }
+        return AuthQrCode(url: url, key: key);
+      },
+    );
+  }
+
+  Future<Result<AuthQrPollResult, AppError>> pollQrCode(String authCode) async {
+    return _executor.run(() async {
+      final response = await _api.pollQrCode(authCode);
+      final data = response.data as Map<String, dynamic>? ?? const {};
+      final code = (data['code'] as num?)?.toInt() ?? response.code;
+      return AuthQrPollResult(
+        code: code,
+        message: data['message'] as String? ?? response.message,
       );
     });
   }
 
-  Future<Map<String, dynamic>> pollQrCode(String authCode) async {
-    // pollQrCode returns data even on non-zero code sometimes (e.g. pending),
-    // but BaseRepository.safeApiCall treats non-zero as error.
-    // However, original code returned Success even if code != 0.
-    // "Return data even if code is not 0, as it contains status"
-    // So we should use safeCall and handle manually.
-    return request(() async {
-      final response = await _api.pollQrCode(authCode);
-      // We return the data regardless of code, assuming caller handles 'status'
-      return response.data as Map<String, dynamic>? ?? {};
-    });
-  }
-
-  Future<void> logout() async {
-    return request(() async {
+  Future<Result<void, AppError>> logout() async {
+    return _executor.run(() async {
       await clearCache();
       final response = await _api.logout();
       if (response.code != 0) {
@@ -251,42 +278,40 @@ class AuthRepository extends BaseRepository {
     });
   }
 
-  // User Info
-  Future<UserEntity> getCurrentUser() async {
-    return request(() async {
-      final response = await _api.getCurrentUser();
-      if (response.code == 0) {
-        final data = response.data as Map<String, dynamic>?;
-        if (data != null && data['isLogin'] == true) {
-          final levelInfo = data['level_info'] as Map<String, dynamic>?;
-          final userModel = data_user.User(
-            id: data['mid'].toString(),
-            username: data['uname'],
-            avatarUrl: data['face'],
-            email: data['email'],
-            createdAt: DateTime.now(),
-            level: levelInfo?['current_level'] as int?,
-            currentExp: levelInfo?['current_exp'] as int?,
-            nextExp: levelInfo?['next_exp'] as int?,
-          );
-          final user = _toDomainUser(userModel);
-          await _cacheUser(user);
-          return user;
-        } else {
-          await clearCache();
-          throw const AuthException('Not logged in');
-        }
-      }
-      throw AuthException(response.message, code: response.code);
+  Future<Result<UserEntity, AppError>> getCurrentUser() async {
+    return _executor.run(() async {
+      return _loadCurrentUser();
     });
   }
 
   Future<bool> isLoggedIn() async {
-    try {
-      await getCurrentUser();
-      return true;
-    } catch (_) {
-      return false;
+    final result = await getCurrentUser();
+    return result.isSuccess;
+  }
+
+  Future<UserEntity> _loadCurrentUser() async {
+    final response = await _api.getCurrentUser();
+    if (response.code == 0) {
+      final data = response.data as Map<String, dynamic>?;
+      if (data != null && data['isLogin'] == true) {
+        final levelInfo = data['level_info'] as Map<String, dynamic>?;
+        final userModel = data_user.User(
+          id: data['mid'].toString(),
+          username: data['uname'],
+          avatarUrl: data['face'],
+          email: data['email'],
+          createdAt: DateTime.now(),
+          level: levelInfo?['current_level'] as int?,
+          currentExp: levelInfo?['current_exp'] as int?,
+          nextExp: levelInfo?['next_exp'] as int?,
+        );
+        final user = _toDomainUser(userModel);
+        await _cacheUser(user);
+        return user;
+      }
+      await clearCache();
+      throw const AuthException('Not logged in');
     }
+    throw AuthException(response.message, code: response.code);
   }
 }

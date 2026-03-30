@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/data/models/live/live_room_model.dart';
-import 'package:culcul/features/live/presentation/view_model/live_recommend_view_model.dart';
+import 'package:culcul/features/live/presentation/view_models/live_recommend_view_model.dart';
+import 'package:culcul/features/live/domain/entities/live_room_summary.dart';
 import 'package:culcul/features/home/presentation/live/widgets/live_card_skeleton.dart';
 import 'package:culcul/features/home/presentation/live/widgets/live_room_card.dart';
 import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
@@ -70,7 +70,7 @@ class _LiveGridSkeleton extends StatelessWidget {
 class _LiveGrid extends StatelessWidget {
   const _LiveGrid({required this.items, required this.scrollController});
 
-  final List<LiveRoomModel> items;
+  final List<LiveRoomSummary> items;
   final ScrollController scrollController;
 
   @override

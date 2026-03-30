@@ -1,4 +1,4 @@
-import 'package:culcul/data/models/live/index.dart';
+import 'package:culcul/features/live/domain/entities/live_models.dart';
 import 'package:culcul/features/live/presentation/widgets/danmaku/live_danmaku_badge.dart';
 import 'package:flutter/material.dart';
 

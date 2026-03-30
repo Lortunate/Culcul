@@ -1,5 +1,5 @@
 import 'package:culcul/core/utils/share_utils.dart';
-import 'package:culcul/data/models/user/user_profile_model.dart';
+import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_bottom_sheet.dart';
 import 'package:flutter/foundation.dart';
@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final UserProfile? profile;
+  final ProfileUser? profile;
   final ValueListenable<double> scrollOffset;
 
   const UserProfileAppBar({super.key, this.profile, required this.scrollOffset});

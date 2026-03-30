@@ -1,8 +1,8 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/data/models/video/video_model.dart';
-import 'package:culcul/features/profile/presentation/view_model/user_space_view_model.dart';
-import 'package:culcul/features/profile/presentation/view_model/user_space_videos_view_model.dart';
+import 'package:culcul/features/profile/presentation/view_models/user_space_view_model.dart';
+import 'package:culcul/features/profile/presentation/view_models/user_space_videos_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/video_card.dart';
 import 'package:culcul/ui/widgets/skeletons/video_card_skeleton.dart';
@@ -110,7 +110,7 @@ class _SectionHeader extends StatelessWidget {
 }
 
 class _VideoGrid extends StatelessWidget {
-  final List<dynamic> videos;
+  final List<ProfileVideo> videos;
   final int maxItems;
   final double spacing;
   final int crossAxisCount;
@@ -139,20 +139,17 @@ class _VideoGrid extends StatelessWidget {
         ),
         delegate: SliverChildBuilderDelegate((context, index) {
           final spaceVideo = videos[index];
-          final video = VideoModel(
+          return VideoCard(
             bvid: spaceVideo.bvid,
             title: spaceVideo.title,
-            pic: spaceVideo.pic,
-            owner: spaceVideo.owner,
-            stat: spaceVideo.stat,
+            coverUrl: spaceVideo.pic,
+            author: spaceVideo.owner.name,
+            description: spaceVideo.desc,
             duration: spaceVideo.duration,
-            pubDate: spaceVideo.pubDate,
-            desc: spaceVideo.desc,
-            rcmdReason: spaceVideo.reason,
-          );
-          return VideoCard(
-            video: video,
-            onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
+            viewCount: spaceVideo.stats.view,
+            danmakuCount: spaceVideo.stats.danmaku,
+            reason: spaceVideo.reason,
+            onTap: () => VideoDetailRoute(bvid: spaceVideo.bvid).push(context),
             showAuthor: false,
             showDescription: false,
           );

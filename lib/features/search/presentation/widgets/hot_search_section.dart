@@ -1,4 +1,4 @@
-import 'package:culcul/features/search/presentation/view_model/search_view_model.dart';
+import 'package:culcul/features/search/presentation/view_models/search_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/search/presentation/widgets/hot_search_skeleton.dart';
 import 'package:culcul/ui/widgets/app_clickable.dart';
@@ -26,8 +26,8 @@ class HotSearchSection extends ConsumerWidget {
           padding: const EdgeInsets.only(bottom: 12),
         ),
         trendingAsync.when(
-          data: (data) {
-            if (data == null || data.list.isEmpty) {
+          data: (items) {
+            if (items.isEmpty) {
               return SizedBox(
                 height: 120,
                 child: Center(
@@ -44,12 +44,12 @@ class HotSearchSection extends ConsumerWidget {
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 8,
               ),
-              itemCount: data.list.length,
+              itemCount: items.length,
               itemBuilder: (context, index) {
-                final item = data.list[index];
+                final item = items[index];
                 return _HotSearchItem(
                   position: item.position,
-                  keyword: item.showName,
+                  keyword: item.label,
                   onTap: () => onTap(item.keyword),
                 );
               },

@@ -10,18 +10,53 @@ part 'video_card/footer.dart';
 part 'video_card/thumbnail.dart';
 
 class VideoCard extends StatelessWidget {
-  final VideoModel video;
+  final VideoModel? video;
+  final String? bvid;
+  final String? title;
+  final String? coverUrl;
+  final String? author;
+  final String? description;
+  final int? duration;
+  final int? viewCount;
+  final int? danmakuCount;
+  final String? reason;
   final VoidCallback? onTap;
   final bool showAuthor;
   final bool showDescription;
 
   const VideoCard({
     super.key,
-    required this.video,
+    this.video,
+    this.bvid,
+    this.title,
+    this.coverUrl,
+    this.author,
+    this.description,
+    this.duration,
+    this.viewCount,
+    this.danmakuCount,
+    this.reason,
     this.onTap,
     this.showAuthor = true,
     this.showDescription = false,
-  });
+  }) : assert(
+         video != null ||
+             (title != null &&
+                 coverUrl != null &&
+                 author != null &&
+                 duration != null &&
+                 viewCount != null &&
+                 danmakuCount != null),
+       );
+
+  String get _title => video?.title ?? title!;
+  String get _author => video?.owner.name ?? author!;
+  String? get _description => showDescription ? (video?.desc ?? description) : null;
+  String get _coverUrl => video?.pic ?? coverUrl!;
+  int get _duration => video?.duration ?? duration!;
+  int get _viewCount => video?.stat.view ?? viewCount!;
+  int get _danmakuCount => video?.stat.danmaku ?? danmakuCount!;
+  String? get _reason => video?.rcmdReason ?? reason;
 
   Future<void> _showMoreSheet(BuildContext context) {
     return showModalBottomSheet<void>(
@@ -29,16 +64,19 @@ class VideoCard extends StatelessWidget {
       backgroundColor: Colors.transparent,
       barrierColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (context) => VideoMoreBottomSheet(video: video),
+      builder: (context) => VideoMoreBottomSheet(
+        bvid: bvid ?? video?.bvid,
+        coverUrl: coverUrl ?? video?.pic,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final content = _VideoCardContent(
-      title: video.title,
-      author: video.owner.name,
-      description: showDescription ? video.desc : null,
+      title: _title,
+      author: _author,
+      description: _description,
       showAuthor: showAuthor,
     );
 
@@ -48,7 +86,13 @@ class VideoCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _VideoCardThumbnail(video: video, reason: video.rcmdReason),
+          _VideoCardThumbnail(
+            coverUrl: _coverUrl,
+            duration: _duration,
+            viewCount: _viewCount,
+            danmakuCount: _danmakuCount,
+            reason: _reason,
+          ),
           Expanded(child: content),
         ],
       ),

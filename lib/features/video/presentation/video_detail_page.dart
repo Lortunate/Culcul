@@ -1,5 +1,5 @@
-import 'package:culcul/features/video/presentation/view_model/player_view_model.dart';
-import 'package:culcul/features/video/presentation/view_model/video_detail_view_model.dart';
+import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
+import 'package:culcul/features/video/presentation/view_models/video_page_view_model.dart';
 import 'package:culcul/features/video/presentation/hooks/use_video_orientation.dart';
 import 'package:culcul/features/video/presentation/vertical_video_page.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/video_comments_view.dart';
@@ -18,17 +18,11 @@ class VideoDetailPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(videoDetailControllerProvider(bvid));
+    final pageState = ref.watch(videoPageViewModelProvider(bvid));
 
-    if (state.videoDetail != null &&
-        state.videoDetail!.dimension.width != 0 &&
-        state.videoDetail!.dimension.height != 0 &&
-        state.videoDetail!.dimension.width < state.videoDetail!.dimension.height) {
+    if (pageState.shouldUseVerticalLayout && state.videoDetail != null) {
       return VerticalVideoPage(bvid: bvid, videoDetail: state.videoDetail!);
     }
-
-    final isFullscreen = ref.watch(
-      playerControllerProvider.select((s) => s.isFullscreen),
-    );
 
     final toggleFullscreen = useVideoOrientation(
       ref,
@@ -40,20 +34,20 @@ class VideoDetailPage extends HookConsumerWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: PopScope(
-        canPop: !isFullscreen,
+        canPop: !pageState.isFullscreen,
         onPopInvokedWithResult: (didPop, result) {
           if (didPop) return;
           toggleFullscreen();
         },
         child: SafeArea(
-          top: !isFullscreen,
-          bottom: !isFullscreen,
-          left: !isFullscreen,
-          right: !isFullscreen,
+          top: !pageState.isFullscreen,
+          bottom: !pageState.isFullscreen,
+          left: !pageState.isFullscreen,
+          right: !pageState.isFullscreen,
           child: Column(
             children: [
               VideoPlayerView(bvid: bvid, onToggleFullscreen: toggleFullscreen),
-              if (!isFullscreen) ...[
+              if (!pageState.isFullscreen) ...[
                 VideoTabBar(controller: tabController),
                 Expanded(
                   child: TabBarView(

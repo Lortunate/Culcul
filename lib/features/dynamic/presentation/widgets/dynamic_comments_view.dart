@@ -1,6 +1,5 @@
-import 'package:culcul/data/models/comment/comment_model.dart';
-import 'package:culcul/data/models/dynamic/dynamic_response.dart';
-import 'package:culcul/features/dynamic/presentation/view_model/dynamic_comment_view_model.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
+import 'package:culcul/features/dynamic/presentation/view_models/dynamic_comment_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_item.dart';
 import 'package:flutter/material.dart';

@@ -1,12 +1,12 @@
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/data/models/search/search_result.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/dynamic/presentation/topic_detail_page.dart';
+import 'package:culcul/features/search/domain/entities/search_result_page.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 
 class SearchTopicItem extends StatelessWidget {
-  final SearchTopicModel item;
+  final SearchTopicEntry item;
 
   const SearchTopicItem({super.key, required this.item});
 
@@ -18,12 +18,12 @@ class SearchTopicItem extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        if (item.tpId != null) {
+        if (item.topicId != 0) {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => TopicDetailPage(
-                topicId: item.tpId!,
-                topicName: FormatUtils.stripHtmlTags(item.title ?? ''),
+                topicId: item.topicId,
+                topicName: FormatUtils.stripHtmlTags(item.title),
               ),
             ),
           );
@@ -38,11 +38,11 @@ class SearchTopicItem extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (item.cover != null)
+            if (item.coverUrl != null)
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: AppNetworkImage(
-                  url: item.cover!,
+                  url: item.coverUrl!,
                   width: 80,
                   height: 80,
                   fit: BoxFit.cover,
@@ -54,7 +54,7 @@ class SearchTopicItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    FormatUtils.stripHtmlTags(item.title ?? ''),
+                    FormatUtils.stripHtmlTags(item.title),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.titleMedium?.copyWith(
@@ -73,9 +73,9 @@ class SearchTopicItem extends StatelessWidget {
                       ),
                     ),
                   const SizedBox(height: 8),
-                  if (item.update != null)
+                  if (item.updateCount != null)
                     Text(
-                      t.moments.topic_updates(count: item.update!.toString()),
+                      t.moments.topic_updates(count: item.updateCount!.toString()),
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: colorScheme.primary,
                       ),

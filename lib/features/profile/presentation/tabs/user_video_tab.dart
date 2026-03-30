@@ -1,7 +1,6 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/data/models/video/video_model.dart';
-import 'package:culcul/features/profile/presentation/view_model/user_space_videos_view_model.dart';
+import 'package:culcul/features/profile/presentation/view_models/user_space_videos_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/skeletons/video_list_skeleton.dart';
@@ -89,29 +88,17 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
                   );
                 }
                 final spaceVideo = videos[index];
-                final video = VideoModel(
-                  bvid: spaceVideo.bvid,
-                  title: spaceVideo.title,
-                  pic: spaceVideo.pic,
-                  owner: spaceVideo.owner,
-                  stat: spaceVideo.stat,
-                  duration: spaceVideo.duration,
-                  pubDate: spaceVideo.pubDate,
-                  desc: spaceVideo.desc,
-                  rcmdReason: spaceVideo.reason,
-                );
-
                 return Column(
                   children: [
                     VideoListCard(
-                      coverUrl: video.pic,
-                      title: video.title,
-                      duration: video.duration,
+                      coverUrl: spaceVideo.pic,
+                      title: spaceVideo.title,
+                      duration: spaceVideo.duration,
                       showDefaultStats: false,
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       stats: [
                         Text(
-                          FormatUtils.formatTimeAgo(video.pubDate),
+                          FormatUtils.formatTimeAgo(spaceVideo.pubDate),
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: colorScheme.outline,
                             fontSize: 11,
@@ -120,16 +107,16 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
                         const Spacer(),
                         IconText(
                           icon: Icons.play_circle_outline_rounded,
-                          text: FormatUtils.formatNumber(video.stat.view),
+                          text: FormatUtils.formatNumber(spaceVideo.stats.view),
                         ),
                         const SizedBox(width: 4),
                         IconText(
                           icon: Icons.list_alt_rounded,
-                          text: FormatUtils.formatNumber(video.stat.danmaku),
+                          text: FormatUtils.formatNumber(spaceVideo.stats.danmaku),
                         ),
                       ],
                       onTap: () {
-                        VideoDetailRoute(bvid: video.bvid).push(context);
+                        VideoDetailRoute(bvid: spaceVideo.bvid).push(context);
                       },
                     ),
                     if (index < videos.length - 1)

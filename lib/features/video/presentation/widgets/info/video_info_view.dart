@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/video/presentation/view_model/video_detail_view_model.dart';
+import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/widgets/info/uploader_section.dart';
 import 'package:culcul/features/video/presentation/widgets/info/video_actions.dart';
 import 'package:culcul/features/video/presentation/widgets/info/video_description.dart';

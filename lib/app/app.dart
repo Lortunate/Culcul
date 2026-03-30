@@ -1,7 +1,7 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/app/theme/app_theme.dart';
 import 'package:culcul/core/utils/toast_utils.dart';
-import 'package:culcul/features/settings/presentation/view_model/settings_view_model.dart';
+import 'package:culcul/features/settings/presentation/view_models/settings_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -13,7 +13,7 @@ class CulculApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
-    final themeMode = ref.watch(themeModeProvider);
+    final themeMode = ref.watch(appThemeModeProvider);
 
     return MaterialApp.router(
       title: 'Culcul',

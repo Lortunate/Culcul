@@ -1,4 +1,4 @@
-import 'package:culcul/data/models/video/video_model.dart';
+import 'package:culcul/features/home/domain/entities/home_video.dart';
 import 'package:culcul/features/home/presentation/widgets/video_more_bottom_sheet.dart';
 
 import 'package:culcul/ui/widgets/app_tag.dart';
@@ -6,7 +6,7 @@ import 'package:culcul/ui/widgets/video_list_card.dart';
 import 'package:flutter/material.dart';
 
 class PopularVideoCard extends StatelessWidget {
-  final VideoModel video;
+  final HomeVideo video;
   final VoidCallback? onTap;
 
   const PopularVideoCard({super.key, required this.video, this.onTap});
@@ -25,7 +25,7 @@ class PopularVideoCard extends StatelessWidget {
           backgroundColor: Colors.transparent,
           barrierColor: Colors.transparent,
           isScrollControlled: true,
-          builder: (context) => VideoMoreBottomSheet(video: video),
+          builder: (context) => VideoMoreBottomSheet.homeVideo(video: video),
         );
       },
       height: 100,
@@ -33,8 +33,8 @@ class PopularVideoCard extends StatelessWidget {
       coverUrl: video.pic,
       title: video.title,
       duration: video.duration,
-      viewCount: video.stat.view,
-      danmakuCount: video.stat.danmaku,
+      viewCount: video.stats.view,
+      danmakuCount: video.stats.danmaku,
       badge: video.rcmdReason.isNotEmpty ? _PopularTag(text: video.rcmdReason) : null,
       author: Row(
         children: [

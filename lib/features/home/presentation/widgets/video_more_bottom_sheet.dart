@@ -3,16 +3,24 @@ import 'dart:ui';
 import 'package:culcul/core/services/media_service.dart';
 import 'package:culcul/core/utils/id_utils.dart';
 import 'package:culcul/core/utils/toast_utils.dart';
-import 'package:culcul/data/models/video/video_model.dart';
-import 'package:culcul/features/to_view/presentation/view_model/to_view_view_model.dart';
+import 'package:culcul/features/home/domain/entities/home_video.dart';
+import 'package:culcul/features/to_view/presentation/view_models/to_view_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class VideoMoreBottomSheet extends ConsumerWidget {
-  final VideoModel video;
+  final String? bvid;
+  final String? coverUrl;
 
-  const VideoMoreBottomSheet({super.key, required this.video});
+  const VideoMoreBottomSheet({super.key, this.bvid, this.coverUrl});
+
+  VideoMoreBottomSheet.homeVideo({super.key, required HomeVideo video})
+    : bvid = video.bvid,
+      coverUrl = video.pic;
+
+  String get _resolvedBvid => bvid ?? '';
+  String get _resolvedCoverUrl => coverUrl ?? '';
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -81,7 +89,11 @@ class VideoMoreBottomSheet extends ConsumerWidget {
     Navigator.pop(context);
 
     try {
-      final aid = IdUtils.bv2av(video.bvid);
+      if (_resolvedBvid.isEmpty) {
+        ToastUtils.showError(t.home.video_more.invalid_video_id);
+        return;
+      }
+      final aid = IdUtils.bv2av(_resolvedBvid);
       if (aid == 0) {
         ToastUtils.showError(t.home.video_more.invalid_video_id);
         return;
@@ -99,7 +111,11 @@ class VideoMoreBottomSheet extends ConsumerWidget {
     Navigator.pop(context);
 
     try {
-      await mediaService.saveImage(video.pic);
+      if (_resolvedCoverUrl.isEmpty) {
+        ToastUtils.showError(t.home.video_more.download_failed(error: 'empty cover'));
+        return;
+      }
+      await mediaService.saveImage(_resolvedCoverUrl);
       ToastUtils.show(t.common.save_success);
     } catch (e) {
       ToastUtils.showError(t.home.video_more.download_failed(error: e.toString()));

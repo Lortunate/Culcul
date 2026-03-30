@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:culcul/domain/entities/country_code.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/auth/presentation/country_code_selection_page.dart';
 import 'package:culcul/features/auth/presentation/hooks/use_geetest.dart';
 import 'package:culcul/features/auth/presentation/widgets/auth_button.dart';
@@ -71,6 +71,10 @@ class SmsLoginView extends HookConsumerWidget {
               validate,
               seccode,
             );
+        if (key == null || key.isEmpty) {
+          showAuthSnackBar(t.common.error);
+          return;
+        }
         captchaKey.value = key;
         showAuthSnackBar(t.auth.sms_sent);
         countdown.value = 60;
@@ -87,13 +91,13 @@ class SmsLoginView extends HookConsumerWidget {
       geetest.start();
     }
 
-    void onLogin() {
+    Future<void> onLogin() async {
       if (phoneController.text.isNotEmpty && codeController.text.isNotEmpty) {
         if (captchaKey.value.isEmpty) {
           showAuthSnackBar(t.auth.get_code);
           return;
         }
-        ref
+        await ref
             .read(authProvider.notifier)
             .loginWithSms(
               selectedCountry.value.id,

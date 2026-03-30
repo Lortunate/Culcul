@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:culcul/features/video/presentation/view_model/video_detail_view_model.dart';
+import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit/media_kit.dart';

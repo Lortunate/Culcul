@@ -1,6 +1,5 @@
+import 'package:culcul/features/video/domain/entities/video_models.dart';
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/data/models/extensions/video_mapping.dart';
-import 'package:culcul/data/models/video/related_video.dart';
 import 'package:culcul/ui/widgets/video_card.dart';
 import 'package:flutter/material.dart';
 

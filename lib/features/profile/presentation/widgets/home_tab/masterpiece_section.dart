@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/profile/providers/user_space_extras_provider.dart';
+import 'package:culcul/features/profile/presentation/view_models/user_space_extras_view_model.dart';
 import 'package:culcul/features/profile/presentation/widgets/home_tab/section_header.dart';
 import 'package:culcul/ui/widgets/video_thumbnail.dart';
 import 'package:flutter/material.dart';
@@ -44,8 +44,8 @@ class MasterpieceSection extends ConsumerWidget {
                             VideoThumbnail(
                               url: video.pic,
                               duration: video.duration,
-                              viewCount: video.stat.view,
-                              danmakuCount: video.stat.danmaku,
+                              viewCount: video.stats.view,
+                              danmakuCount: video.stats.danmaku,
                               borderRadius: 12,
                               aspectRatio: 16 / 10,
                               width: 160,

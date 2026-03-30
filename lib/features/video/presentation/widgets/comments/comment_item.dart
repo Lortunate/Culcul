@@ -1,5 +1,5 @@
+import 'package:culcul/features/video/domain/entities/video_models.dart';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_images.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';

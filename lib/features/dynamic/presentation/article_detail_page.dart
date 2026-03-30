@@ -1,8 +1,8 @@
+import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/utils/share_utils.dart';
-import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/features/dynamic/data/article_detail_data.dart';
-import 'package:culcul/features/dynamic/presentation/view_model/article_detail_view_model.dart';
+import 'package:culcul/features/dynamic/presentation/view_models/article_detail_view_model.dart';
 import 'package:culcul/features/dynamic/presentation/utils/dynamic_navigation.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_comment_composer.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_item.dart';

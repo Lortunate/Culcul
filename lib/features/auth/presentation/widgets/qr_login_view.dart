@@ -1,5 +1,5 @@
-import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/auth/presentation/hooks/use_qr_login.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -35,7 +35,7 @@ class QrLoginView extends HookConsumerWidget {
                         color: colorScheme.onPrimary,
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(16),
                       child: QrImageView(
                         data: qrState.qrUrl!,
                         version: QrVersions.auto,

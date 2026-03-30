@@ -1,12 +1,12 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/data/models/search/search_result.dart';
+import 'package:culcul/features/search/domain/entities/search_result_page.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/user_list_tile.dart';
 import 'package:flutter/material.dart';
 
 class SearchUserItem extends StatelessWidget {
-  final SearchUserModel item;
+  final SearchUserEntry item;
 
   const SearchUserItem({super.key, required this.item});
 
@@ -18,14 +18,14 @@ class SearchUserItem extends StatelessWidget {
 
     return UserListTile(
       onTap: () {
-        if (item.mid != null) {
-          UserProfileRoute(mid: item.mid!).push(context);
+        if (item.mid != 0) {
+          UserProfileRoute(mid: item.mid).push(context);
         }
       },
-      avatarUrl: item.upic ?? item.upicUrl ?? '',
+      avatarUrl: item.avatarUrl,
       avatarSize: 60,
-      name: FormatUtils.stripHtmlTags(item.uname ?? ''),
-      subtitle: item.usign != null ? FormatUtils.stripHtmlTags(item.usign!) : null,
+      name: FormatUtils.stripHtmlTags(item.name),
+      subtitle: item.sign != null ? FormatUtils.stripHtmlTags(item.sign!) : null,
       stats: [
         _UserMetaItem(
           label: t.profile.stats.followers,

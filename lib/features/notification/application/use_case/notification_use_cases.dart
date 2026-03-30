@@ -4,10 +4,13 @@ import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/data/models/notification/image_upload_response.dart';
 import 'package:culcul/data/models/notification/private_message_model.dart';
-import 'package:culcul/data/models/notification/reply_model.dart';
-import 'package:culcul/data/models/notification/system_notification_model.dart';
-import 'package:culcul/data/models/notification/unread_count_model.dart';
+import 'package:culcul/features/notification/data/mappers/notification_mapper.dart';
 import 'package:culcul/features/notification/data/notification_repository.dart';
+import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
+import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
+import 'package:culcul/features/notification/domain/entities/private_message.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/domain/entities/system_notice.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'notification_use_cases.g.dart';
@@ -22,59 +25,91 @@ class NotificationUseCases {
 
   const NotificationUseCases(this._repository);
 
-  Future<Result<UnreadCountModel, AppError>> getUnreadCount() async {
+  Future<Result<NotificationSummary, AppError>> getUnreadCount() async {
     try {
-      return Success(await _repository.getUnreadCount());
+      return Success((await _repository.getUnreadCount()).toDomain());
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
   }
 
-  Future<Result<ReplyResponse, AppError>> getReplyList({int? id, int? replyTime}) async {
+  Future<Result<List<NotificationEntry>, AppError>> getReplyList({
+    int? id,
+    int? replyTime,
+  }) async {
     try {
-      return Success(await _repository.getReplyList(id: id, replyTime: replyTime));
+      final response = await _repository.getReplyList(id: id, replyTime: replyTime);
+      return Success(response.items.map((item) => item.toDomain()).toList());
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
   }
 
-  Future<Result<ReplyResponse, AppError>> getAtList({int? id, int? atTime}) async {
+  Future<Result<List<NotificationEntry>, AppError>> getAtList({
+    int? id,
+    int? atTime,
+  }) async {
     try {
-      return Success(await _repository.getAtList(id: id, atTime: atTime));
+      final response = await _repository.getAtList(id: id, atTime: atTime);
+      return Success(response.items.map((item) => item.toDomain()).toList());
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
   }
 
-  Future<Result<ReplyResponse, AppError>> getLikeList({int? id, int? likeTime}) async {
+  Future<Result<List<NotificationEntry>, AppError>> getLikeList({
+    int? id,
+    int? likeTime,
+  }) async {
     try {
-      return Success(await _repository.getLikeList(id: id, likeTime: likeTime));
+      final response = await _repository.getLikeList(id: id, likeTime: likeTime);
+      return Success(response.items.map((item) => item.toDomain()).toList());
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
   }
 
-  Future<Result<List<SystemNotificationItem>, AppError>> getSystemNotifications() async {
+  Future<Result<List<SystemNotice>, AppError>> getSystemNotifications() async {
     try {
-      return Success(await _repository.fetchSystemNotifications());
+      return Success(
+        (await _repository.fetchSystemNotifications())
+            .map((item) => item.toDomain())
+            .toList(),
+      );
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
   }
 
-  Future<Result<PrivateMessageListResponse, AppError>> getPrivateMessages({
+  Future<Result<PrivateMessagePage, AppError>> getPrivateMessages({
     required int talkerId,
     required int sessionType,
     int? endSeqno,
   }) async {
     try {
-      return Success(
-        await _repository.getPrivateMessages(
-          talkerId: talkerId,
-          sessionType: sessionType,
-          endSeqno: endSeqno,
-        ),
+      final response = await _repository.getPrivateMessages(
+        talkerId: talkerId,
+        sessionType: sessionType,
+        endSeqno: endSeqno,
       );
+      return Success(response.toDomain());
+    } catch (error) {
+      return Failure(AppError.fromObject(error));
+    }
+  }
+
+  Future<Result<PrivateSessionPage, AppError>> getPrivateSessions({
+    int sessionType = 1,
+    int size = 20,
+    int? endTs,
+  }) async {
+    try {
+      final response = await _repository.getPrivateSessions(
+        sessionType: sessionType,
+        size: size,
+        endTs: endTs,
+      );
+      return Success(response.toDomain());
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }

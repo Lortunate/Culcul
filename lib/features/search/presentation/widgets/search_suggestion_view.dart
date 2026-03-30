@@ -1,4 +1,4 @@
-import 'package:culcul/features/search/presentation/view_model/search_view_model.dart';
+import 'package:culcul/features/search/presentation/view_models/search_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -36,7 +36,7 @@ class SearchSuggestionView extends HookConsumerWidget {
             itemCount: suggestions.length,
             itemBuilder: (context, index) {
               final suggestion = suggestions[index];
-              final displayValue = suggestion.value ?? suggestion.term ?? '';
+              final displayValue = suggestion.value;
               if (displayValue.isEmpty) return const SizedBox.shrink();
 
               return _AnimatedSuggestionItem(

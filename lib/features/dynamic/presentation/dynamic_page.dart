@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/dynamic/presentation/publish_dynamic_page.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_list_view.dart';

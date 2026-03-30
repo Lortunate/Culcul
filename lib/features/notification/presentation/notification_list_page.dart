@@ -1,8 +1,8 @@
 import 'package:culcul/i18n/i18n.dart';
-import 'package:culcul/data/models/notification/reply_model.dart';
-import 'package:culcul/features/notification/presentation/view_model/at_view_model.dart';
-import 'package:culcul/features/notification/presentation/view_model/like_view_model.dart';
-import 'package:culcul/features/notification/presentation/view_model/reply_view_model.dart';
+import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
+import 'package:culcul/features/notification/presentation/view_models/at_view_model.dart';
+import 'package:culcul/features/notification/presentation/view_models/like_view_model.dart';
+import 'package:culcul/features/notification/presentation/view_models/reply_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_item_widget.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:easy_refresh/easy_refresh.dart';
@@ -60,12 +60,13 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
     }
   }
 
-  AsyncValue<List<ReplyItem>> _providerState(NotificationType type) => switch (type) {
-    NotificationType.reply => ref.watch(replyListProvider),
-    NotificationType.at => ref.watch(atListProvider),
-    NotificationType.like => ref.watch(likeListProvider),
-    NotificationType.system => const AsyncValue.data([]),
-  };
+  AsyncValue<List<NotificationEntry>> _providerState(NotificationType type) =>
+      switch (type) {
+        NotificationType.reply => ref.watch(replyListProvider),
+        NotificationType.at => ref.watch(atListProvider),
+        NotificationType.like => ref.watch(likeListProvider),
+        NotificationType.system => const AsyncValue.data([]),
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +119,7 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
     );
   }
 
-  Widget _buildItem(BuildContext context, ReplyItem item) {
+  Widget _buildItem(BuildContext context, NotificationEntry item) {
     return NotificationItemWidget(item: item, type: widget.type);
   }
 }
@@ -132,11 +133,11 @@ class _NotificationListView extends StatelessWidget {
     required this.itemBuilder,
   });
 
-  final List<ReplyItem> items;
+  final List<NotificationEntry> items;
   final ScrollController scrollController;
   final EasyRefreshController refreshController;
   final VoidCallback onLoadMore;
-  final Widget Function(BuildContext context, ReplyItem item) itemBuilder;
+  final Widget Function(BuildContext context, NotificationEntry item) itemBuilder;
 
   @override
   Widget build(BuildContext context) {

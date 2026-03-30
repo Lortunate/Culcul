@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/data/models/relation/relation_model.dart';
-import 'package:culcul/features/profile/presentation/view_model/relation_user_action_view_model.dart';
+import 'package:culcul/features/profile/domain/entities/relation_user.dart';
+import 'package:culcul/features/profile/presentation/view_models/relation_user_action_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/follow_button.dart';
 import 'package:culcul/ui/widgets/user_list_tile.dart';
@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class RelationUserItem extends ConsumerStatefulWidget {
-  final RelationUser user;
+  final ProfileRelationUser user;
   final VoidCallback? onTap;
 
   const RelationUserItem({super.key, required this.user, this.onTap});

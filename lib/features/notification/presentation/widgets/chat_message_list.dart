@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/i18n.dart';
-import 'package:culcul/data/models/notification/private_message_model.dart';
+import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_message_item.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_time_divider.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';
@@ -7,7 +7,7 @@ import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 
 class ChatMessageList extends StatefulWidget {
-  final List<PrivateMessageDetail> messages;
+  final List<PrivateMessage> messages;
   final Map<String, String> emojiMap;
   final Future<void> Function() onLoadMore;
   final Future<void> Function()? onRefresh;

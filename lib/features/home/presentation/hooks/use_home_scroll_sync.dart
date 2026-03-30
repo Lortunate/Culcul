@@ -1,4 +1,4 @@
-import 'package:culcul/features/home/presentation/home_events.dart';
+import 'package:culcul/features/home/presentation/view_models/home_page_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:easy_refresh/easy_refresh.dart';
@@ -9,8 +9,10 @@ void useHomeScrollSync(
   EasyRefreshController refreshController,
   int index,
 ) {
-  ref.listen(homeTabTapProvider, (previous, next) {
-    if (next?.index != index || !scrollController.hasClients) {
+  ref.listen(homePageViewModelProvider, (previous, next) {
+    final didRetapCurrentTab =
+        previous?.syncToken != next.syncToken && next.tabIndex == index;
+    if (!didRetapCurrentTab || !scrollController.hasClients) {
       return;
     }
 

@@ -2,10 +2,11 @@ import 'dart:io';
 
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/data/models/comment/comment_model.dart';
-import 'package:culcul/data/models/dynamic/dynamic_response.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
 import 'package:culcul/features/dynamic/data/article_detail_data.dart';
 import 'package:culcul/features/dynamic/data/dynamic_repository.dart';
+import 'package:culcul/features/dynamic/data/emote_repository.dart';
+import 'package:culcul/features/profile/data/relation_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'dynamic_use_cases.g.dart';
@@ -62,6 +63,46 @@ class PublishDynamicCommand {
   final List<File> images;
 
   const PublishDynamicCommand({required this.content, required this.images});
+}
+
+@riverpod
+EmotePackagesUseCase emotePackagesUseCase(Ref ref) {
+  return EmotePackagesUseCase(ref.read(emoteRepositoryProvider));
+}
+
+class EmotePackagesUseCase {
+  final EmoteRepository _repository;
+
+  const EmotePackagesUseCase(this._repository);
+
+  Future<Result<List<EmotePackage>, AppError>> call() async {
+    try {
+      final data = await _repository.getUserEmotes();
+      return Success(data.packages);
+    } catch (error) {
+      return Failure(AppError.fromObject(error));
+    }
+  }
+}
+
+@riverpod
+RecentlyFollowedUseCase recentlyFollowedUseCase(Ref ref) {
+  return RecentlyFollowedUseCase(ref.read(relationRepositoryProvider));
+}
+
+class RecentlyFollowedUseCase {
+  final RelationRepository _repository;
+
+  const RecentlyFollowedUseCase(this._repository);
+
+  Future<Result<List<RelationUser>, AppError>> call(int mid) async {
+    try {
+      final data = await _repository.getFollowings(mid, ps: 20);
+      return Success(data.list);
+    } catch (error) {
+      return Failure(AppError.fromObject(error));
+    }
+  }
 }
 
 class ArticleCommentsQuery {

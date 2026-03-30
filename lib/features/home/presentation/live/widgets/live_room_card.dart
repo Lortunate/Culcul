@@ -1,5 +1,5 @@
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/data/models/live/live_room_model.dart';
+import 'package:culcul/features/live/domain/entities/live_room_summary.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/app_card_container.dart';
 import 'package:culcul/ui/widgets/app_min_lines_text.dart';
@@ -8,7 +8,7 @@ import 'package:culcul/ui/widgets/app_overlay_tag.dart';
 import 'package:flutter/material.dart';
 
 class LiveRoomCard extends StatelessWidget {
-  final LiveRoomModel room;
+  final LiveRoomSummary room;
   final VoidCallback? onTap;
 
   const LiveRoomCard({super.key, required this.room, this.onTap});
@@ -77,7 +77,7 @@ class LiveRoomCard extends StatelessWidget {
 }
 
 class _LiveRoomCover extends StatelessWidget {
-  final LiveRoomModel room;
+  final LiveRoomSummary room;
   final ColorScheme colorScheme;
 
   const _LiveRoomCover({required this.room, required this.colorScheme});

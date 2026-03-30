@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/data/models/user/user_profile_model.dart';
-import 'package:culcul/features/profile/presentation/view_model/user_space_view_model.dart';
+import 'package:culcul/features/profile/domain/entities/profile_user.dart';
+import 'package:culcul/features/profile/presentation/view_models/user_space_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_action_button.dart';
 import 'package:culcul/ui/widgets/follow_button.dart';
@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class UserProfileButtons extends ConsumerWidget {
-  final UserProfile profile;
+  final ProfileUser profile;
   final bool isSelf;
   final double height;
   final double borderRadius;

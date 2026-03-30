@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/settings/presentation/view_model/settings_view_model.dart';
+import 'package:culcul/features/settings/presentation/view_models/settings_view_model.dart';
 import 'package:culcul/features/settings/presentation/widgets/settings_group.dart';
 import 'package:culcul/features/settings/presentation/widgets/settings_item.dart';
 import 'package:culcul/features/settings/presentation/widgets/settings_selection_item.dart';
@@ -17,12 +17,13 @@ class SettingsPage extends ConsumerWidget {
     final t = Translations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final themeMode = ref.watch(themeModeProvider);
+    final themeMode = ref.watch(appThemeModeProvider);
     final cacheSize = switch (ref.watch(cacheSizeProvider)) {
       AsyncData(:final value) => value,
       AsyncError() => '0 B',
       _ => '...',
     };
+    final isClearingCache = ref.watch(cacheMaintenanceProvider).isLoading;
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -44,7 +45,7 @@ class SettingsPage extends ConsumerWidget {
           _StorageSettingsSection(
             title: t.settings.sections.storage,
             clearCacheTitle: t.settings.clear_cache,
-            cacheSize: cacheSize,
+            cacheSize: isClearingCache ? '...' : cacheSize,
             onTapClearCache: () => _handleClearCache(context, ref),
           ),
           _AboutSettingsSection(
@@ -101,7 +102,7 @@ class SettingsPage extends ConsumerWidget {
           title: _getThemeName(t, mode),
           isSelected: currentMode == mode,
           onTap: () {
-            ref.read(themeModeProvider.notifier).setTheme(mode);
+            ref.read(appThemeModeProvider.notifier).setTheme(mode);
             context.pop();
           },
         );
@@ -129,7 +130,7 @@ class SettingsPage extends ConsumerWidget {
 
   Future<void> _handleClearCache(BuildContext context, WidgetRef ref) async {
     final t = Translations.of(context);
-    await ref.read(clearCacheProvider)();
+    await ref.read(cacheMaintenanceProvider.notifier).clear();
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

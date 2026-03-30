@@ -1,4 +1,4 @@
-import 'package:culcul/data/models/search/search_result.dart';
+import 'package:culcul/features/search/domain/entities/search_result_page.dart';
 import 'package:culcul/features/search/presentation/widgets/items/search_article_item.dart';
 import 'package:culcul/features/search/presentation/widgets/items/search_bangumi_item.dart';
 import 'package:culcul/features/search/presentation/widgets/items/search_topic_item.dart';
@@ -8,7 +8,7 @@ import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:flutter/material.dart';
 
 class SearchResultList extends StatelessWidget {
-  final List<SearchResultItem> items;
+  final List<SearchResultEntry> items;
   final bool hasMore;
   final bool isLoadingMore;
   final VoidCallback onLoadMore;
@@ -66,13 +66,13 @@ class SearchResultList extends StatelessWidget {
           }
 
           final item = items[index];
-          return item.map(
-            video: (v) => SearchVideoItem(item: v),
-            user: (u) => SearchUserItem(item: u),
-            bangumi: (b) => SearchBangumiItem(item: b),
-            article: (a) => SearchArticleItem(item: a),
-            topic: (t) => SearchTopicItem(item: t),
-          );
+          return switch (item) {
+            SearchVideoEntry v => SearchVideoItem(item: v),
+            SearchUserEntry u => SearchUserItem(item: u),
+            SearchBangumiEntry b => SearchBangumiItem(item: b),
+            SearchArticleEntry a => SearchArticleItem(item: a),
+            SearchTopicEntry t => SearchTopicItem(item: t),
+          };
         },
       ),
     );

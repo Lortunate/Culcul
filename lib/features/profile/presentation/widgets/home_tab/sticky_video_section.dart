@@ -1,7 +1,7 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/profile/providers/user_space_extras_provider.dart';
+import 'package:culcul/features/profile/presentation/view_models/user_space_extras_view_model.dart';
 import 'package:culcul/features/profile/presentation/widgets/home_tab/section_header.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
@@ -151,12 +151,12 @@ class StickyVideoSection extends ConsumerWidget {
                                 children: [
                                   _StatIconText(
                                     icon: Icons.play_circle_outline_rounded,
-                                    text: FormatUtils.formatNumber(video.stat.view),
+                                    text: FormatUtils.formatNumber(video.stats.view),
                                   ),
                                   const SizedBox(width: 12),
                                   _StatIconText(
                                     icon: Icons.article_outlined,
-                                    text: FormatUtils.formatNumber(video.stat.danmaku),
+                                    text: FormatUtils.formatNumber(video.stats.danmaku),
                                   ),
                                 ],
                               ),

@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/data/models/notification/reply_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/presentation/notification_list_page.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
 
 class NotificationItemWidget extends StatelessWidget {
-  final ReplyItem item;
+  final NotificationEntry item;
   final NotificationType type;
 
   const NotificationItemWidget({super.key, required this.item, required this.type});
@@ -17,14 +17,12 @@ class NotificationItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final user = item.user ?? item.users?.firstOrNull;
-    final detail = item.item;
+    final user = item.primaryActor;
+    final detail = item.detail;
 
     if (user == null) return const SizedBox.shrink();
 
-    final time = DateTime.fromMillisecondsSinceEpoch(
-      (item.replyTime ?? item.likeTime ?? 0) * 1000,
-    );
+    final time = DateTime.fromMillisecondsSinceEpoch(item.eventTime * 1000);
 
     return InkWell(
       onTap: () => _handleTap(context, detail),
@@ -134,7 +132,7 @@ class NotificationItemWidget extends StatelessWidget {
     );
   }
 
-  void _handleTap(BuildContext context, ReplyItemDetail detail) {
+  void _handleTap(BuildContext context, NotificationEntryDetail detail) {
     final uri = detail.uri;
 
     // 1. Try URI parsing
@@ -185,7 +183,7 @@ class NotificationItemWidget extends StatelessWidget {
     }
   }
 
-  String _getSourceText(ReplyItemDetail detail) {
+  String _getSourceText(NotificationEntryDetail detail) {
     if (detail.sourceContent.isNotEmpty) {
       return detail.sourceContent;
     }

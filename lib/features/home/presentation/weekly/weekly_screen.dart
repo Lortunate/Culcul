@@ -1,4 +1,4 @@
-import 'package:culcul/features/home/providers/weekly_provider.dart';
+import 'package:culcul/features/home/presentation/view_models/weekly_view_model.dart';
 import 'package:culcul/features/home/presentation/widgets/popular_video_card.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';

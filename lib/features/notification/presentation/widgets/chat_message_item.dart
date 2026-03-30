@@ -1,5 +1,5 @@
-import 'package:culcul/data/models/notification/private_message_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat/chat_bubble.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat/chat_image_message.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat/chat_system_message.dart';
@@ -8,7 +8,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
 class ChatMessageItem extends StatelessWidget {
-  final PrivateMessageDetail message;
+  final PrivateMessage message;
   final bool isSelf;
   final String avatarUrl;
   final VoidCallback? onAvatarTap;

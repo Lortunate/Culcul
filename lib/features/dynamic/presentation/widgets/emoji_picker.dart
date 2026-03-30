@@ -1,6 +1,6 @@
-import 'package:culcul/data/models/emote/emote_response.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/dynamic/providers/emote_provider.dart';
+import 'package:culcul/features/dynamic/presentation/view_models/emote_view_model.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

@@ -1,7 +1,7 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/data/models/fav/index.dart';
-import 'package:culcul/features/favorites/presentation/view_model/favorites_view_model.dart';
+import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
 import 'package:culcul/features/favorites/presentation/fav_folder_item.dart';
+import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +23,7 @@ class FavFolderList extends ConsumerWidget {
         ? null
         : () => ref.read(favCollectedFoldersProvider.notifier).loadMore();
 
-    return SmartPagingView<FavFolderModel>(
+    return SmartPagingView<FavoriteFolder>(
       provider: provider,
       asyncValue: asyncValue,
       onRefresh: () async {

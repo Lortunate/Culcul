@@ -1,4 +1,4 @@
-import 'package:culcul/features/search/presentation/view_model/search_view_model.dart';
+import 'package:culcul/features/search/presentation/view_models/search_view_model.dart';
 import 'package:culcul/features/search/presentation/widgets/search_filter_bar.dart';
 import 'package:culcul/features/search/presentation/widgets/search_result_list.dart';
 import 'package:culcul/features/search/presentation/widgets/search_result_skeleton.dart';
@@ -82,7 +82,7 @@ class SearchResultTab extends HookConsumerWidget {
         Expanded(
           child: searchResultAsync.when(
             data: (data) {
-              final items = data?.result ?? [];
+              final items = data?.items ?? [];
               final hasMore = data != null && data.page < data.numPages;
 
               return SearchResultList(

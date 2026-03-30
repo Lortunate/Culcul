@@ -1,14 +1,14 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/data/models/search/search_result.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
+import 'package:culcul/features/search/domain/entities/search_result_page.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/icon_text.dart';
 import 'package:culcul/ui/widgets/video_list_card.dart';
 import 'package:flutter/material.dart';
 
 class SearchVideoItem extends StatelessWidget {
-  final SearchVideoModel item;
+  final SearchVideoEntry item;
 
   const SearchVideoItem({super.key, required this.item});
 
@@ -21,14 +21,14 @@ class SearchVideoItem extends StatelessWidget {
     return VideoListCard(
       flat: true,
       onTap: () {
-        if (item.bvid != null) {
-          VideoDetailRoute(bvid: item.bvid!).push(context);
+        if (item.bvid.isNotEmpty) {
+          VideoDetailRoute(bvid: item.bvid).push(context);
         }
       },
       padding: EdgeInsets.zero,
-      coverUrl: item.pic ?? '',
-      title: FormatUtils.stripHtmlTags(item.title ?? ''),
-      duration: item.duration.parseDuration,
+      coverUrl: item.coverUrl,
+      title: FormatUtils.stripHtmlTags(item.title),
+      duration: item.durationText.parseDuration,
       thumbnailWidth: 160,
       aspectRatio: 16 / 9,
       height: 90,
@@ -41,7 +41,7 @@ class SearchVideoItem extends StatelessWidget {
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(
-              item.typename ?? t.search.tabs.video,
+              item.typeName.isEmpty ? t.search.tabs.video : item.typeName,
               style: theme.textTheme.labelSmall?.copyWith(
                 color: colorScheme.onSurfaceVariant,
                 fontSize: 10,
@@ -51,7 +51,7 @@ class SearchVideoItem extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              item.author ?? '',
+              item.author,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: theme.textTheme.labelSmall?.copyWith(
@@ -64,11 +64,11 @@ class SearchVideoItem extends StatelessWidget {
       stats: [
         IconText(
           icon: Icons.play_circle_outline_rounded,
-          text: FormatUtils.formatAnyNumber(item.play ?? item.view),
+          text: FormatUtils.formatAnyNumber(item.playCount ?? item.viewCount),
         ),
         IconText(
           icon: Icons.list_alt_rounded,
-          text: FormatUtils.formatAnyNumber(item.danmaku ?? item.videoReview),
+          text: FormatUtils.formatAnyNumber(item.danmakuCount ?? item.videoReviewCount),
         ),
       ],
     );

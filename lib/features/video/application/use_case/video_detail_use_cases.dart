@@ -1,8 +1,6 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/data/models/video/play_url.dart';
-import 'package:culcul/data/models/video/related_video.dart';
-import 'package:culcul/data/models/video/video_detail.dart';
+import 'package:culcul/features/video/domain/entities/video_models.dart';
 import 'package:culcul/features/profile/data/relation_repository.dart';
 import 'package:culcul/features/video/data/video_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

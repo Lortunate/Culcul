@@ -3,6 +3,9 @@ import 'package:culcul/core/result/result.dart';
 import 'package:culcul/domain/entities/country_code.dart';
 import 'package:culcul/domain/entities/user_entity.dart';
 import 'package:culcul/features/auth/data/auth_repository.dart';
+import 'package:culcul/features/auth/domain/entities/auth_captcha_challenge.dart';
+import 'package:culcul/features/auth/domain/entities/auth_qr_code.dart';
+import 'package:culcul/features/auth/domain/entities/auth_qr_poll_result.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_use_cases.g.dart';
@@ -76,111 +79,75 @@ class AuthUseCases {
 
   Future<Result<AuthInitData, AppError>> initialize() async {
     final cachedUser = _repository.getCachedUser();
-    try {
-      final refreshedUser = await _repository.getCurrentUser();
-      return Success(AuthInitData(cachedUser: cachedUser, refreshedUser: refreshedUser));
-    } catch (error) {
-      return Success(AuthInitData(cachedUser: cachedUser, refreshedUser: null));
-    }
+    final refreshedResult = await _repository.getCurrentUser();
+    return Success(
+      AuthInitData(cachedUser: cachedUser, refreshedUser: refreshedResult.dataOrNull),
+    );
   }
 
   Future<Result<List<CountryCode>, AppError>> getCountryList() async {
-    try {
-      return Success(await _repository.getCountryList());
-    } catch (error) {
-      return Failure(AppError.fromObject(error));
-    }
+    return _repository.getCountryList().then(_mapRepositoryResult);
   }
 
-  Future<Result<Map<String, dynamic>, AppError>> getCaptcha() async {
-    try {
-      return Success(await _repository.getCaptcha());
-    } catch (error) {
-      return Failure(AppError.fromObject(error));
-    }
+  Future<Result<AuthCaptchaChallenge, AppError>> getCaptcha() async {
+    return _repository.getCaptchaChallenge().then(_mapRepositoryResult);
   }
 
   Future<Result<String, AppError>> sendSms(SendSmsCommand command) async {
-    try {
-      return Success(
-        await _repository.sendSms(
+    return _repository
+        .sendSms(
           command.cid,
           command.phone,
           command.token,
           command.challenge,
           command.validate,
           command.seccode,
-        ),
-      );
-    } catch (error) {
-      return Failure(AppError.fromObject(error));
-    }
+        )
+        .then(_mapRepositoryResult);
   }
 
   Future<Result<UserEntity, AppError>> loginWithPassword(
     PasswordLoginCommand command,
   ) async {
-    try {
-      return Success(
-        await _repository.loginWithPassword(
+    return _repository
+        .loginWithPassword(
           username: command.username,
           password: command.password,
           token: command.token,
           challenge: command.challenge,
           validate: command.validate,
           seccode: command.seccode,
-        ),
-      );
-    } catch (error) {
-      return Failure(AppError.fromObject(error));
-    }
+        )
+        .then(_mapRepositoryResult);
   }
 
   Future<Result<UserEntity, AppError>> loginWithSms(SmsLoginCommand command) async {
-    try {
-      return Success(
-        await _repository.loginWithSms(
-          command.cid,
-          command.phone,
-          command.code,
-          command.captchaKey,
-        ),
-      );
-    } catch (error) {
-      return Failure(AppError.fromObject(error));
-    }
+    return _repository
+        .loginWithSms(command.cid, command.phone, command.code, command.captchaKey)
+        .then(_mapRepositoryResult);
   }
 
-  Future<Result<Map<String, dynamic>, AppError>> getQrCode() async {
-    try {
-      return Success(await _repository.getQrCode());
-    } catch (error) {
-      return Failure(AppError.fromObject(error));
-    }
+  Future<Result<AuthQrCode, AppError>> getQrCode() async {
+    return _repository.getQrCode().then(_mapRepositoryResult);
   }
 
-  Future<Result<Map<String, dynamic>, AppError>> pollQrCode(String authCode) async {
-    try {
-      return Success(await _repository.pollQrCode(authCode));
-    } catch (error) {
-      return Failure(AppError.fromObject(error));
-    }
+  Future<Result<AuthQrPollResult, AppError>> pollQrCode(String authCode) async {
+    return _repository.pollQrCode(authCode).then(_mapRepositoryResult);
   }
 
   Future<Result<void, AppError>> logout() async {
-    try {
-      await _repository.logout();
-      return const Success(null);
-    } catch (error) {
-      return Failure(AppError.fromObject(error));
-    }
+    return _repository.logout().then(_mapRepositoryResult);
   }
 
   Future<Result<UserEntity, AppError>> refreshUser() async {
-    try {
-      return Success(await _repository.getCurrentUser());
-    } catch (error) {
-      return Failure(AppError.fromObject(error));
-    }
+    return _repository.getCurrentUser().then(_mapRepositoryResult);
   }
+}
+
+Result<T, AppError> _mapRepositoryResult<T>(Result<T, dynamic> result) {
+  return result.when(
+    success: Success.new,
+    failure: (error) =>
+        Failure(error is AppError ? error : AppError.fromObject(error as Object)),
+  );
 }

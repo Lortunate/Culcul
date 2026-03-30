@@ -1,7 +1,10 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/data/models/fav/index.dart';
+import 'package:culcul/features/favorites/data/mappers/favorite_mapper.dart';
 import 'package:culcul/features/favorites/data/fav_repository.dart';
+import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
+import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'favorite_folder_use_cases.g.dart';
@@ -59,36 +62,44 @@ class FavoriteFolderQueryUseCase {
 
   const FavoriteFolderQueryUseCase(this._repository);
 
-  Future<Result<FavFolderListResponse, AppError>> getCreatedFolders(int upMid) async {
+  Future<Result<FavoriteFolderPage, AppError>> getCreatedFolders(int upMid) async {
     try {
-      return Success(await _repository.getCreatedFolders(upMid: upMid));
+      return Success((await _repository.getCreatedFolders(upMid: upMid)).toDomain());
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
   }
 
-  Future<Result<FavFolderListResponse, AppError>> getCollectedFolders({
+  Future<Result<FavoriteFolderPage, AppError>> getCollectedFolders({
     required int upMid,
     required int page,
     required int pageSize,
   }) async {
     try {
       return Success(
-        await _repository.getCollectedFolders(upMid: upMid, pn: page, ps: pageSize),
+        (await _repository.getCollectedFolders(
+          upMid: upMid,
+          pn: page,
+          ps: pageSize,
+        )).toDomain(),
       );
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
   }
 
-  Future<Result<FavResourceListResponse, AppError>> getFolderResources({
+  Future<Result<FavoriteResourcePage, AppError>> getFolderResources({
     required int mediaId,
     required int page,
     required int pageSize,
   }) async {
     try {
       return Success(
-        await _repository.getFolderResources(mediaId: mediaId, pn: page, ps: pageSize),
+        (await _repository.getFolderResources(
+          mediaId: mediaId,
+          pn: page,
+          ps: pageSize,
+        )).toDomain(),
       );
     } catch (error) {
       return Failure(AppError.fromObject(error));
@@ -101,7 +112,7 @@ class FavoriteFolderMutationsUseCase {
 
   const FavoriteFolderMutationsUseCase(this._repository);
 
-  Future<Result<FavFolderModel, AppError>> createFolder(
+  Future<Result<FavoriteFolder, AppError>> createFolder(
     CreateFavoriteFolderCommand command,
   ) async {
     try {
@@ -110,13 +121,13 @@ class FavoriteFolderMutationsUseCase {
         intro: command.intro,
         privacy: command.privacy,
       );
-      return Success(folder);
+      return Success(folder.toDomain());
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
   }
 
-  Future<Result<FavFolderModel, AppError>> editFolder(
+  Future<Result<FavoriteFolder, AppError>> editFolder(
     EditFavoriteFolderCommand command,
   ) async {
     try {
@@ -126,7 +137,7 @@ class FavoriteFolderMutationsUseCase {
         intro: command.intro,
         privacy: command.privacy,
       );
-      return Success(folder);
+      return Success(folder.toDomain());
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }

@@ -1,4 +1,4 @@
-import 'package:culcul/data/models/toview/to_view_model.dart';
+import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
 import 'package:culcul/features/to_view/presentation/widgets/to_view_item.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
@@ -13,7 +13,7 @@ class ToViewListView extends StatelessWidget {
     required this.onOpenVideo,
   });
 
-  final List<ToViewModel> items;
+  final List<ToViewEntry> items;
   final Future<IndicatorResult> Function() onRefresh;
   final ValueChanged<int> onDelete;
   final ValueChanged<String> onOpenVideo;
@@ -31,7 +31,7 @@ class ToViewListView extends StatelessWidget {
           final item = items[index];
           final aid = item.aid;
           final bvid = item.bvid;
-          if (aid == null || bvid == null) {
+          if (bvid.isEmpty) {
             return const SizedBox.shrink();
           }
 
@@ -61,7 +61,7 @@ class _DismissibleToViewItem extends StatelessWidget {
 
   final int aid;
   final String bvid;
-  final ToViewModel item;
+  final ToViewEntry item;
   final Color errorColor;
   final ValueChanged<int> onDelete;
   final ValueChanged<String> onOpenVideo;

@@ -1,10 +1,19 @@
 part of '../video_card.dart';
 
 class _VideoCardThumbnail extends StatelessWidget {
-  final VideoModel video;
+  final String coverUrl;
+  final int duration;
+  final int viewCount;
+  final int danmakuCount;
   final String? reason;
 
-  const _VideoCardThumbnail({required this.video, required this.reason});
+  const _VideoCardThumbnail({
+    required this.coverUrl,
+    required this.duration,
+    required this.viewCount,
+    required this.danmakuCount,
+    required this.reason,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,10 +23,10 @@ class _VideoCardThumbnail extends StatelessWidget {
     return Stack(
       children: [
         VideoThumbnail(
-          url: video.pic,
-          duration: video.duration,
-          viewCount: video.stat.view,
-          danmakuCount: video.stat.danmaku,
+          url: coverUrl,
+          duration: duration,
+          viewCount: viewCount,
+          danmakuCount: danmakuCount,
           borderRadius: 0,
           memCacheWidth: cacheWidth,
         ),

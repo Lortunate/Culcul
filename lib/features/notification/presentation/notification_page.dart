@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_category_grid.dart';
 import 'package:culcul/features/notification/presentation/widgets/private_session_list.dart';
 import 'package:culcul/ui/widgets/guest_view.dart';

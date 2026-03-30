@@ -21,7 +21,10 @@ class AppBootstrap {
     await Hive.initFlutter();
 
     final audioHandler = await CilixiliAudioHandler.init();
-    final storageBox = await Hive.openBox('cilixili_box');
+    final legacyStorageBox = await Hive.openBox('culcul_legacy_box');
+    final sessionStorageBox = await Hive.openBox('culcul_session_box');
+    final settingsStorageBox = await Hive.openBox('culcul_settings_box');
+    final searchStorageBox = await Hive.openBox('culcul_search_box');
 
     final cacheDirectory = await _resolveCacheDirectory();
     final documentDirectory = await getApplicationDocumentsDirectory();
@@ -34,7 +37,10 @@ class AppBootstrap {
         storage: FileStorage('${documentDirectory.path}/.cookies/'),
       ),
       cacheStore: FileCacheStore('${cacheDirectory.path}/http_cache'),
-      storageBox: storageBox,
+      legacyStorageBox: legacyStorageBox,
+      sessionStorageBox: sessionStorageBox,
+      settingsStorageBox: settingsStorageBox,
+      searchStorageBox: searchStorageBox,
       audioHandler: audioHandler,
     );
   }

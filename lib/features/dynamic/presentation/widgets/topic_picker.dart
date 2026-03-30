@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/features/dynamic/presentation/view_model/topic_search_view_model.dart';
+import 'package:culcul/features/dynamic/presentation/view_models/topic_search_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
@@ -101,11 +101,11 @@ class TopicPicker extends HookConsumerWidget {
                     itemBuilder: (context, index) {
                       final topic = topics[index];
                       return ListTile(
-                        leading: topic.cover != null
+                        leading: topic.coverUrl != null
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(4),
                                 child: AppNetworkImage(
-                                  url: topic.cover!,
+                                  url: topic.coverUrl!,
                                   width: 40,
                                   height: 40,
                                   fit: BoxFit.cover,
@@ -123,7 +123,7 @@ class TopicPicker extends HookConsumerWidget {
                                   color: colorScheme.onPrimaryContainer,
                                 ),
                               ),
-                        title: Text(FormatUtils.stripHtmlTags(topic.title ?? '')),
+                        title: Text(FormatUtils.stripHtmlTags(topic.title)),
                         subtitle: topic.description != null
                             ? Text(
                                 FormatUtils.stripHtmlTags(topic.description!),
@@ -132,7 +132,7 @@ class TopicPicker extends HookConsumerWidget {
                               )
                             : null,
                         onTap: () {
-                          onTopicSelected(FormatUtils.stripHtmlTags(topic.title ?? ''));
+                          onTopicSelected(FormatUtils.stripHtmlTags(topic.title));
                         },
                       );
                     },

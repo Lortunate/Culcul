@@ -1,5 +1,5 @@
+import 'package:culcul/features/video/domain/entities/video_models.dart';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/ui/widgets/app_image_preview.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';

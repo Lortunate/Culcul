@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/i18n.dart';
-import 'package:culcul/features/notification/presentation/view_model/unread_count_view_model.dart';
+import 'package:culcul/features/notification/presentation/view_models/unread_count_view_model.dart';
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -49,7 +49,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
               context,
               icon: Icons.notifications_none,
               label: t.notification.types.system,
-              count: data.sysMsg,
+              count: data.system,
               color: semanticColors.info,
               onTap: () => const SystemNotificationRoute().push(context),
             ),

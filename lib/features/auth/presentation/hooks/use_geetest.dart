@@ -1,4 +1,4 @@
-import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 // import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gt3_flutter_plugin/gt3_flutter_plugin.dart';
@@ -29,17 +29,14 @@ UseGeetestResult useGeetest({
 
   final start = useCallback(() async {
     isLoading.value = true;
+    final captcha = await ref.read(authProvider.notifier).getCaptcha();
+    if (captcha == null) {
+      onError?.call('Invalid Captcha Data');
+      if (context.mounted) isLoading.value = false;
+      return;
+    }
+
     try {
-      final captchaMap = await ref.read(authProvider.notifier).getCaptcha();
-      final geetest = captchaMap['geetest'] is Map ? captchaMap['geetest'] : null;
-      final gt = geetest != null ? geetest['gt'] : captchaMap['gt'];
-      final challenge = geetest != null ? geetest['challenge'] : captchaMap['challenge'];
-      final token = captchaMap['token'] ?? '';
-
-      if (gt == null || challenge == null) {
-        throw Exception("Invalid Captcha Data");
-      }
-
       final plugin = Gt3FlutterPlugin();
       plugin.addEventHandler(
         onResult: (Map<String, dynamic> message) async {
@@ -56,9 +53,10 @@ UseGeetestResult useGeetest({
                   result['geetest_seccode'] as String? ??
                   result['gen_time'] as String? ??
                   '';
-              final resultChallenge = result['geetest_challenge'] as String? ?? challenge;
+              final resultChallenge =
+                  result['geetest_challenge'] as String? ?? captcha.challenge;
 
-              await onSuccess(token, resultChallenge, validate, seccode);
+              await onSuccess(captcha.token, resultChallenge, validate, seccode);
             } catch (e) {
               onError?.call(e.toString());
             } finally {
@@ -73,7 +71,9 @@ UseGeetestResult useGeetest({
           if (context.mounted) isLoading.value = false;
         },
       );
-      plugin.startCaptcha(Gt3RegisterData(gt: gt, challenge: challenge, success: true));
+      plugin.startCaptcha(
+        Gt3RegisterData(gt: captcha.gt, challenge: captcha.challenge, success: true),
+      );
     } catch (e) {
       onError?.call(e.toString());
       if (context.mounted) isLoading.value = false;

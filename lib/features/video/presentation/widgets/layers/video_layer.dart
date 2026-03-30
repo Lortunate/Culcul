@@ -1,4 +1,4 @@
-import 'package:culcul/features/video/presentation/view_model/player_view_model.dart';
+import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit_video/media_kit_video.dart';

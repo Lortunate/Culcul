@@ -1,6 +1,5 @@
+import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
-import 'package:culcul/data/models/dynamic/dynamic_response.dart';
 import 'package:culcul/features/dynamic/presentation/utils/dynamic_post_actions.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/app_clickable.dart';

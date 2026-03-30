@@ -1,8 +1,8 @@
 import 'package:culcul/core/constants/app_dimens.dart';
 import 'package:culcul/core/errors/exceptions.dart';
-import 'package:culcul/data/models/relation/relation_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/presentation/relation/widgets/relation_user_item.dart';
+import 'package:culcul/features/profile/domain/entities/relation_user.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:culcul/core/widgets/privacy_error_widget.dart';
@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class RelationUserList extends StatelessWidget {
-  final AsyncValue<List<RelationUser>> asyncValue;
+  final AsyncValue<List<ProfileRelationUser>> asyncValue;
   final Future<void> Function() onRefresh;
   final Future<void> Function() onLoadMore;
   final String emptyText;
@@ -28,7 +28,7 @@ class RelationUserList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);
-    return SmartPagingView<RelationUser>(
+    return SmartPagingView<ProfileRelationUser>(
       asyncValue: asyncValue,
       onRefresh: onRefresh,
       onLoadMore: onLoadMore,

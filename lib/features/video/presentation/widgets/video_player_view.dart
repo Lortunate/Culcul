@@ -1,5 +1,5 @@
-import 'package:culcul/features/video/presentation/view_model/player_view_model.dart';
-import 'package:culcul/features/video/presentation/view_model/video_detail_view_model.dart';
+import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
+import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/hooks/use_player_system_settings.dart';
 import 'package:culcul/features/video/presentation/hooks/use_video_dimensions.dart';
 import 'package:culcul/features/video/presentation/hooks/use_video_loader.dart';

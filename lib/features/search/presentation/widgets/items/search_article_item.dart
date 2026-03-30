@@ -1,11 +1,11 @@
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/data/models/search/search_result.dart';
+import 'package:culcul/features/search/domain/entities/search_result_page.dart';
 import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 
 class SearchArticleItem extends StatelessWidget {
-  final SearchArticleModel item;
+  final SearchArticleEntry item;
 
   const SearchArticleItem({super.key, required this.item});
 
@@ -13,7 +13,7 @@ class SearchArticleItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final imageCount = item.imageUrls?.length ?? 0;
+    final imageCount = item.imageUrls.length;
 
     return AppClickable(
       onTap: () {},
@@ -24,7 +24,7 @@ class SearchArticleItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              FormatUtils.stripHtmlTags(item.title ?? ''),
+              FormatUtils.stripHtmlTags(item.title),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: theme.textTheme.titleSmall?.copyWith(
@@ -46,7 +46,7 @@ class SearchArticleItem extends StatelessWidget {
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(6),
                             child: AppNetworkImage(
-                              url: item.imageUrls![i],
+                              url: item.imageUrls[i],
                               borderRadius: 6,
                             ),
                           ),
@@ -60,7 +60,7 @@ class SearchArticleItem extends StatelessWidget {
                 aspectRatio: 16 / 9,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(8),
-                  child: AppNetworkImage(url: item.imageUrls![0], borderRadius: 8),
+                  child: AppNetworkImage(url: item.imageUrls[0], borderRadius: 8),
                 ),
               ),
             const SizedBox(height: 10),
@@ -73,7 +73,7 @@ class SearchArticleItem extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  item.author ?? item.uname ?? '',
+                  item.author,
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                     fontSize: 11,
@@ -82,12 +82,12 @@ class SearchArticleItem extends StatelessWidget {
                 const SizedBox(width: 16),
                 _ArticleMetaItem(
                   icon: Icons.remove_red_eye_outlined,
-                  value: FormatUtils.formatAnyNumber(item.view),
+                  value: FormatUtils.formatAnyNumber(item.viewCount),
                 ),
                 const SizedBox(width: 12),
                 _ArticleMetaItem(
                   icon: Icons.chat_bubble_outline_rounded,
-                  value: FormatUtils.formatAnyNumber(item.review),
+                  value: FormatUtils.formatAnyNumber(item.reviewCount),
                 ),
               ],
             ),

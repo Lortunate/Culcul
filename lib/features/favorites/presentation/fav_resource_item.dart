@@ -1,11 +1,11 @@
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/data/models/fav/fav_resource_model.dart';
+import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:culcul/ui/widgets/icon_text.dart';
 import 'package:culcul/ui/widgets/video_list_card.dart';
 import 'package:flutter/material.dart';
 
 class FavResourceItem extends StatelessWidget {
-  final FavResourceModel item;
+  final FavoriteResource item;
   final VoidCallback? onTap;
 
   const FavResourceItem({super.key, required this.item, this.onTap});
@@ -54,7 +54,7 @@ class FavResourceItem extends StatelessWidget {
         stats: [
           IconText(
             icon: Icons.play_circle_outline,
-            text: FormatUtils.formatNumber(item.cntInfo.play),
+            text: FormatUtils.formatNumber(item.stats.play),
             iconSize: 14,
             style: theme.textTheme.bodySmall?.copyWith(
               color: colorScheme.onSurfaceVariant,
@@ -63,7 +63,7 @@ class FavResourceItem extends StatelessWidget {
           ),
           IconText(
             icon: Icons.comment_outlined,
-            text: FormatUtils.formatNumber(item.cntInfo.danmaku),
+            text: FormatUtils.formatNumber(item.stats.danmaku),
             iconSize: 14,
             style: theme.textTheme.bodySmall?.copyWith(
               color: colorScheme.onSurfaceVariant,

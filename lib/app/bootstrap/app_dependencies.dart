@@ -7,13 +7,19 @@ import 'package:culcul/core/services/audio_handler.dart';
 class AppDependencies {
   final PersistCookieJar cookieJar;
   final FileCacheStore cacheStore;
-  final Box<dynamic> storageBox;
+  final Box<dynamic> legacyStorageBox;
+  final Box<dynamic> sessionStorageBox;
+  final Box<dynamic> settingsStorageBox;
+  final Box<dynamic> searchStorageBox;
   final CilixiliAudioHandler audioHandler;
 
   const AppDependencies({
     required this.cookieJar,
     required this.cacheStore,
-    required this.storageBox,
+    required this.legacyStorageBox,
+    required this.sessionStorageBox,
+    required this.settingsStorageBox,
+    required this.searchStorageBox,
     required this.audioHandler,
   });
 }

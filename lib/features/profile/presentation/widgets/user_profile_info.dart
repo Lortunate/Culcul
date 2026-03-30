@@ -1,7 +1,7 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/data/models/user/user_profile_model.dart';
-import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_stat_item.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_banner.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_buttons.dart';
@@ -13,7 +13,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class UserProfileInfo extends HookConsumerWidget {
-  final UserProfile? profile;
+  final ProfileUser? profile;
 
   static const double _bannerHeight = 160.0;
   static const double _avatarSize = 88.0;
@@ -108,7 +108,7 @@ class UserProfileInfo extends HookConsumerWidget {
 }
 
 class _StatsRow extends StatelessWidget {
-  final UserProfile user;
+  final ProfileUser user;
   final bool isSelf;
   final double avatarSize;
 
@@ -156,7 +156,7 @@ class _StatsRow extends StatelessWidget {
 }
 
 class _UserIdentity extends StatelessWidget {
-  final UserProfile user;
+  final ProfileUser user;
 
   const _UserIdentity({required this.user});
 

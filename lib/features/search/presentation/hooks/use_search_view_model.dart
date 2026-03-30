@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:culcul/features/search/presentation/view_model/search_history_view_model.dart';
-import 'package:culcul/features/search/presentation/view_model/search_view_model.dart';
+import 'package:culcul/features/search/presentation/view_models/search_history_view_model.dart';
+import 'package:culcul/features/search/presentation/view_models/search_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -26,7 +26,7 @@ useSearchViewModel(WidgetRef ref) {
   useListenable(searchController);
 
   void performSearch(String value) {
-    final query = value.isEmpty ? (defaultSearchAsync.asData?.value?.name ?? '') : value;
+    final query = value.isEmpty ? (defaultSearchAsync.asData?.value?.text ?? '') : value;
 
     if (query.isNotEmpty) {
       confirmedKeyword.value = query;
@@ -86,6 +86,6 @@ useSearchViewModel(WidgetRef ref) {
     confirmedKeyword: confirmedKeyword.value,
     onClear: onClear,
     onSearch: performSearch,
-    defaultSearchHint: defaultSearchAsync.asData?.value?.showName,
+    defaultSearchHint: defaultSearchAsync.asData?.value?.text,
   );
 }

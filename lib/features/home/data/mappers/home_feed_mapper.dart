@@ -1,0 +1,45 @@
+import 'package:culcul/data/models/feed/weekly_model.dart';
+import 'package:culcul/data/models/video/video_model.dart';
+import 'package:culcul/features/home/domain/entities/home_video.dart';
+
+extension HomeVideoOwnerMapper on Owner {
+  HomeVideoOwner toHomeOwner() {
+    return HomeVideoOwner(mid: mid, name: name, face: face);
+  }
+}
+
+extension HomeVideoStatsMapper on Stat {
+  HomeVideoStats toHomeStats() {
+    return HomeVideoStats(
+      view: view,
+      danmaku: danmaku,
+      reply: reply,
+      like: like,
+      coin: coin,
+      favorite: favorite,
+      share: share,
+    );
+  }
+}
+
+extension HomeVideoMapper on VideoModel {
+  HomeVideo toDomain() {
+    return HomeVideo(
+      bvid: bvid,
+      title: title,
+      pic: pic,
+      owner: owner.toHomeOwner(),
+      stats: stat.toHomeStats(),
+      duration: duration,
+      pubDate: pubDate,
+      desc: desc,
+      rcmdReason: rcmdReason,
+    );
+  }
+}
+
+extension HomeWeeklyMapper on WeeklyModel {
+  HomeWeeklyFeed toDomain() {
+    return HomeWeeklyFeed(list: list.map((item) => item.toDomain()).toList());
+  }
+}

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:culcul/features/dynamic/presentation/view_model/publish_dynamic_view_model.dart';
+import 'package:culcul/features/dynamic/presentation/view_models/publish_dynamic_view_model.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/emoji_picker.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/publish_dynamic_bottom_toolbar.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/publish_dynamic_image_grid.dart';
@@ -106,24 +106,20 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
     final t = Translations.of(context);
     final notifier = ref.read(publishDynamicViewModelProvider.notifier);
 
-    try {
-      final error = await notifier.publish(content: _controller.text, images: _images);
-      if (error != null) {
-        throw Exception(error);
-      }
-
+    final error = await notifier.publish(content: _controller.text, images: _images);
+    if (error == null) {
       if (mounted) {
         Navigator.pop(context);
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(t.moments.publish_success)));
       }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(t.moments.publish_failed(error: e.toString()))),
-        );
-      }
+      return;
+    }
+    if (mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(t.moments.publish_failed(error: error))));
     }
   }
 

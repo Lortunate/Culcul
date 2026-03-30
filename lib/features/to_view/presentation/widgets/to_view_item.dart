@@ -1,12 +1,12 @@
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/data/models/toview/to_view_model.dart';
+import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/icon_text.dart';
 import 'package:culcul/ui/widgets/video_list_card.dart';
 import 'package:flutter/material.dart';
 
 class ToViewItem extends StatelessWidget {
-  final ToViewModel item;
+  final ToViewEntry item;
   final VoidCallback? onTap;
 
   const ToViewItem({super.key, required this.item, this.onTap});
@@ -19,9 +19,9 @@ class ToViewItem extends StatelessWidget {
 
     return VideoListCard(
       onTap: onTap,
-      coverUrl: item.pic ?? '',
-      title: item.title ?? '',
-      duration: item.hasProgress ? 0 : (item.duration ?? 0),
+      coverUrl: item.coverUrl,
+      title: item.title,
+      duration: item.hasProgress ? 0 : item.duration,
       thumbnailWidth: 140,
       aspectRatio: 140 / 88,
       height: 88,
@@ -53,7 +53,7 @@ class ToViewItem extends StatelessWidget {
             Expanded(
               child: Text(
                 t.watch_later.watch_to(
-                  progress: FormatUtils.formatDuration(item.progress ?? 0),
+                  progress: FormatUtils.formatDuration(item.progress),
                 ),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: colorScheme.onSurfaceVariant,
@@ -68,7 +68,7 @@ class ToViewItem extends StatelessWidget {
             const SizedBox(width: 4),
             Expanded(
               child: Text(
-                item.owner?.name ?? '',
+                item.ownerName,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                   fontSize: 12,
@@ -83,7 +83,7 @@ class ToViewItem extends StatelessWidget {
       stats: [
         IconText(
           icon: Icons.play_circle_outline,
-          text: FormatUtils.formatNumber(item.stat?.view ?? 0),
+          text: FormatUtils.formatNumber(item.viewCount),
           iconSize: 12,
           style: theme.textTheme.bodySmall?.copyWith(
             color: colorScheme.onSurfaceVariant,
@@ -92,7 +92,7 @@ class ToViewItem extends StatelessWidget {
         ),
         IconText(
           icon: Icons.comment_outlined,
-          text: FormatUtils.formatNumber(item.stat?.danmaku ?? 0),
+          text: FormatUtils.formatNumber(item.danmakuCount),
           iconSize: 12,
           style: theme.textTheme.bodySmall?.copyWith(
             color: colorScheme.onSurfaceVariant,

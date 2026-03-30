@@ -1,11 +1,11 @@
-import 'package:culcul/data/models/fav/index.dart';
+import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 
 class FavFolderItem extends StatelessWidget {
-  final FavFolderModel item;
+  final FavoriteFolder item;
   final VoidCallback? onTap;
 
   const FavFolderItem({super.key, required this.item, this.onTap});
@@ -90,7 +90,7 @@ class FavFolderItem extends StatelessWidget {
                                 fontSize: 11,
                               ),
                             ),
-                            if (item.attr != 0 && (item.attr & 1) == 1) ...[
+                            if (item.isPrivate) ...[
                               const SizedBox(width: 8),
                               Container(
                                 padding: const EdgeInsets.symmetric(

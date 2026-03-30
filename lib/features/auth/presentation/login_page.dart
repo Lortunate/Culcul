@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/auth/presentation/widgets/auth_background.dart';
 import 'package:culcul/features/auth/presentation/widgets/password_login_view.dart';
 import 'package:culcul/features/auth/presentation/widgets/qr_login_view.dart';
@@ -28,6 +28,7 @@ class LoginPage extends HookConsumerWidget {
       }
       if (next.error != null) {
         _showLoginErrorSnackBar(context, theme, next.error!);
+        ref.read(authProvider.notifier).clearError();
       }
     });
 

@@ -2,9 +2,9 @@ import 'package:culcul/i18n/i18n.dart';
 import 'dart:ui';
 
 import 'package:culcul/app/theme/app_theme.dart';
-import 'package:culcul/features/video/presentation/view_model/playback_snapshot_view_model.dart';
-import 'package:culcul/features/video/presentation/view_model/player_view_model.dart';
-import 'package:culcul/features/video/presentation/view_model/video_detail_view_model.dart';
+import 'package:culcul/features/video/presentation/view_models/playback_snapshot_view_model.dart';
+import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
+import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/player_settings_sheet.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/player_theme.dart';
