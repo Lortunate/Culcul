@@ -1,7 +1,7 @@
-import 'package:culcul/features/favorites/controllers/favorites_controller.dart';
+import 'package:culcul/features/favorites/presentation/view_model/favorites_view_model.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
-import 'package:culcul/features/auth/controllers/auth_controller.dart';
+import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_tab_bar.dart';
 import 'package:culcul/ui/widgets/guest_view.dart';

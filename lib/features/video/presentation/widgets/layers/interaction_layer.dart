@@ -1,6 +1,6 @@
 import 'package:culcul/i18n/i18n.dart';
-import 'package:culcul/features/video/controllers/player_controller.dart';
-import 'package:culcul/features/video/controllers/video_detail_controller.dart';
+import 'package:culcul/features/video/presentation/view_model/player_view_model.dart';
+import 'package:culcul/features/video/presentation/view_model/video_detail_view_model.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/player_constants.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/seek_ripple_overlay.dart';

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/data/models/search/search_result.dart';
-import 'package:culcul/features/search/data/search_repository.dart';
+import 'package:culcul/features/dynamic/presentation/view_model/topic_search_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
@@ -20,40 +19,22 @@ class TopicPicker extends HookConsumerWidget {
     final t = Translations.of(context);
     final searchController = useTextEditingController();
     final searchKeyword = useState('');
-    final searchResults = useState<List<SearchTopicModel>>([]);
-    final isLoading = useState(false);
     final debounceTimer = useRef<Timer?>(null);
-
-    Future<void> searchTopics(String keyword) async {
-      if (keyword.isEmpty) {
-        searchResults.value = [];
-        return;
-      }
-
-      isLoading.value = true;
-      try {
-        final data = await ref
-            .read(searchRepositoryProvider)
-            .fetchSearchAll(keyword: keyword, searchType: 'topic');
-        final topics = data.result
-            .map((e) => e.mapOrNull(topic: (t) => t))
-            .whereType<SearchTopicModel>()
-            .toList();
-        searchResults.value = topics;
-      } catch (e) {
-        debugPrint('Search topic error: $e');
-      } finally {
-        isLoading.value = false;
-      }
-    }
+    final searchResultAsync = ref.watch(
+      topicSearchViewModelProvider(searchKeyword.value),
+    );
+    final topics = searchResultAsync.asData?.value ?? const [];
 
     void onSearchChanged(String value) {
-      searchKeyword.value = value;
       debounceTimer.value?.cancel();
       debounceTimer.value = Timer(const Duration(milliseconds: 500), () {
-        searchTopics(value);
+        searchKeyword.value = value;
       });
     }
+
+    useEffect(() {
+      return () => debounceTimer.value?.cancel();
+    }, const []);
 
     return Container(
       height: MediaQuery.of(context).size.height * 0.7,
@@ -104,9 +85,9 @@ class TopicPicker extends HookConsumerWidget {
             ),
           ),
           Expanded(
-            child: isLoading.value
+            child: searchResultAsync.isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : searchResults.value.isEmpty
+                : topics.isEmpty
                 ? Center(
                     child: Text(
                       searchKeyword.value.isEmpty
@@ -116,9 +97,9 @@ class TopicPicker extends HookConsumerWidget {
                     ),
                   )
                 : ListView.builder(
-                    itemCount: searchResults.value.length,
+                    itemCount: topics.length,
                     itemBuilder: (context, index) {
-                      final topic = searchResults.value[index];
+                      final topic = topics[index];
                       return ListTile(
                         leading: topic.cover != null
                             ? ClipRRect(

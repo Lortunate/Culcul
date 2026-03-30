@@ -1,6 +1,6 @@
 import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/features/video/controllers/player_controller.dart';
-import 'package:culcul/features/video/controllers/video_detail_state.dart';
+import 'package:culcul/features/video/presentation/view_model/player_view_model.dart';
+import 'package:culcul/features/video/presentation/view_model/video_detail_state.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit/media_kit.dart';

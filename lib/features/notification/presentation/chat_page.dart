@@ -1,7 +1,7 @@
 import 'package:culcul/i18n/i18n.dart';
 import 'dart:io';
-import 'package:culcul/features/notification/controllers/chat_controller.dart';
-import 'package:culcul/features/auth/controllers/auth_controller.dart';
+import 'package:culcul/features/notification/presentation/view_model/chat_view_model.dart';
+import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:culcul/features/profile/providers/profile_provider.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_input.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_message_list.dart';

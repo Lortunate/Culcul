@@ -1,5 +1,5 @@
-import 'package:culcul/features/video/controllers/player_controller.dart';
-import 'package:culcul/features/video/controllers/video_detail_controller.dart';
+import 'package:culcul/features/video/presentation/view_model/player_view_model.dart';
+import 'package:culcul/features/video/presentation/view_model/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/hooks/use_video_orientation.dart';
 import 'package:culcul/features/video/presentation/vertical_video_page.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/video_comments_view.dart';

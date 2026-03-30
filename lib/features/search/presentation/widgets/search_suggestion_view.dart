@@ -1,4 +1,4 @@
-import 'package:culcul/features/search/controllers/search_controller.dart';
+import 'package:culcul/features/search/presentation/view_model/search_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';

@@ -1,12 +1,12 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/features/auth/controllers/auth_controller.dart';
+import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:culcul/features/auth/presentation/widgets/login_dialog.dart';
 import 'package:culcul/features/home/presentation/widgets/home_app_bar.dart';
 import 'package:culcul/features/home/presentation/widgets/popular_view.dart';
 import 'package:culcul/features/home/presentation/widgets/recommend_view.dart';
 import 'package:culcul/features/home/presentation/live/live_view.dart';
 import 'package:culcul/features/home/presentation/home_events.dart';
-import 'package:culcul/features/search/controllers/search_controller.dart';
+import 'package:culcul/features/search/presentation/view_model/search_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';

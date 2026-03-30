@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/i18n.dart';
-import 'package:culcul/features/notification/controllers/private_session_controller.dart';
+import 'package:culcul/features/notification/presentation/view_model/private_session_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_skeletons.dart';
 import 'package:culcul/features/notification/presentation/widgets/private_session_item.dart';
 import 'package:easy_refresh/easy_refresh.dart';

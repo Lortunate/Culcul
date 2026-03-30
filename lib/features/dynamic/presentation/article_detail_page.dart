@@ -1,9 +1,8 @@
-import 'dart:math' as math;
-
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/data/models/comment/comment_model.dart';
 import 'package:culcul/features/dynamic/data/article_detail_data.dart';
+import 'package:culcul/features/dynamic/presentation/view_model/article_detail_view_model.dart';
 import 'package:culcul/features/dynamic/presentation/utils/dynamic_navigation.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_comment_composer.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_item.dart';
@@ -20,12 +19,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:culcul/features/dynamic/data/dynamic_repository.dart';
-
-final articleDetailProvider = FutureProvider.autoDispose
-    .family<ArticleDetailData, String>((ref, url) async {
-      return ref.read(dynamicRepositoryProvider).getArticleDetail(url);
-    });
 
 class ArticleDetailPage extends HookConsumerWidget {
   final String url;
@@ -36,36 +29,28 @@ class ArticleDetailPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = Translations.of(context);
-    final provider = articleDetailProvider(url);
+    final provider = articleDetailViewModelProvider(url);
     final state = ref.watch(provider);
+    final notifier = ref.read(provider.notifier);
     final commentController = useTextEditingController();
-    final comments = useState<List<CommentItem>>(<CommentItem>[]);
-    final commentsLoading = useState(false);
-    final commentsError = useState<String?>(null);
-    final commentsNext = useState<int?>(null);
-    final commentsHasMore = useState(true);
-    final sendingComment = useState(false);
 
-    if (state.isLoading && !state.hasValue) {
+    if (state.isLoading && state.detail == null) {
       return Scaffold(
         appBar: AppBar(title: Text(title ?? t.moments.detail_title)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
 
-    if (state.hasError && !state.hasValue) {
+    if (state.error != null && state.detail == null) {
       return Scaffold(
         appBar: AppBar(title: Text(title ?? t.moments.detail_title)),
         body: Center(
-          child: AppErrorWidget(
-            error: state.error!,
-            onRetry: () => ref.refresh(provider.future),
-          ),
+          child: AppErrorWidget(error: state.error!, onRetry: notifier.refreshAll),
         ),
       );
     }
 
-    final data = state.value;
+    final data = state.detail;
     if (data == null) {
       return Scaffold(
         appBar: AppBar(title: Text(title ?? t.moments.detail_title)),
@@ -73,165 +58,46 @@ class ArticleDetailPage extends HookConsumerWidget {
       );
     }
 
-    final commentsEnabled = data.commentOid.isNotEmpty;
+    final commentsEnabled = state.commentsEnabled;
 
     void showSnack(String message) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
     }
 
-    Future<void> loadComments(ArticleDetailData detail, {bool refresh = false}) async {
-      if (!commentsEnabled) {
-        commentsLoading.value = false;
-        commentsError.value = null;
-        commentsHasMore.value = false;
-        return;
-      }
-      if (commentsLoading.value && !refresh) return;
-
-      final previousComments = List<CommentItem>.from(comments.value);
-      final previousNext = commentsNext.value;
-      final previousHasMore = commentsHasMore.value;
-      commentsLoading.value = true;
-      commentsError.value = null;
-      if (refresh) {
-        commentsNext.value = null;
-        commentsHasMore.value = true;
-      }
-
-      try {
-        final response = await ref
-            .read(dynamicRepositoryProvider)
-            .getArticleCommentList(
-              oid: detail.commentOid,
-              next: refresh ? null : commentsNext.value,
-              referer: detail.url,
-            );
-        final nextComments = refresh
-            ? response.replies
-            : _appendUniqueComments(previousComments, response.replies);
-        comments.value = nextComments;
-        commentsNext.value = response.cursor?.next;
-        commentsHasMore.value = _resolveHasMore(response);
-      } catch (error) {
-        commentsError.value = error.toString();
-        if (refresh) {
-          comments.value = previousComments;
-          commentsNext.value = previousNext;
-          commentsHasMore.value = previousHasMore;
-        }
-      } finally {
-        commentsLoading.value = false;
-      }
-    }
-
-    Future<void> refreshAll() async {
-      final refreshed = await ref.refresh(provider.future);
-      if (context.mounted) {
-        await loadComments(refreshed, refresh: true);
-      }
-    }
-
     Future<void> submitComment() async {
-      final detail = state.value;
-      if (detail == null) return;
       if (!commentsEnabled) {
         showSnack(t.video.comment.empty);
         return;
       }
       final message = commentController.text.trim();
-      if (message.isEmpty || sendingComment.value) return;
+      if (message.isEmpty || state.isSendingComment) return;
 
-      sendingComment.value = true;
-      var sent = false;
-      try {
-        await ref
-            .read(dynamicRepositoryProvider)
-            .addCommentReply(
-              oid: detail.commentOid,
-              type: detail.commentType,
-              root: 0,
-              parent: 0,
-              message: message,
-              referer: detail.url,
-            );
-        sent = true;
-      } catch (e) {
-        showSnack(e.toString());
-      } finally {
-        sendingComment.value = false;
+      final error = await notifier.submitComment(message);
+      if (error != null) {
+        showSnack(error == 'Comments disabled' ? t.video.comment.empty : error);
+        return;
       }
-
-      if (!sent) return;
       if (context.mounted) {
         commentController.clear();
         FocusScope.of(context).unfocus();
       }
-      await loadComments(detail, refresh: true);
     }
 
     Future<void> submitReply(CommentItem item, String message) async {
-      final detail = state.value;
-      if (detail == null) return;
       if (!commentsEnabled) {
         showSnack(t.video.comment.empty);
         return;
       }
-      try {
-        await ref
-            .read(dynamicRepositoryProvider)
-            .addCommentReply(
-              oid: detail.commentOid,
-              type: detail.commentType,
-              root: item.root == 0 ? item.rpid : item.root,
-              parent: item.rpid,
-              message: message,
-              referer: detail.url,
-            );
-        await loadComments(detail, refresh: true);
-      } catch (e) {
-        showSnack(e.toString());
+      final error = await notifier.submitReply(item, message);
+      if (error != null) {
+        showSnack(error == 'Comments disabled' ? t.video.comment.empty : error);
       }
     }
 
     Future<void> toggleCommentLike(CommentItem item) async {
-      final detail = state.value;
-      if (detail == null) return;
-      final isLiked = item.action == 1;
-      final previous = comments.value;
-
-      final updated = previous.map((comment) {
-        if (comment.rpid == item.rpid) {
-          return comment.copyWith(
-            action: isLiked ? 0 : 1,
-            like: isLiked ? math.max(0, comment.like - 1) : comment.like + 1,
-          );
-        }
-        return comment;
-      }).toList();
-      comments.value = updated;
-
-      try {
-        await ref
-            .read(dynamicRepositoryProvider)
-            .likeCommentByTarget(
-              oid: detail.commentOid,
-              type: detail.commentType,
-              rpid: item.rpid,
-              isLiked: !isLiked,
-              referer: detail.url,
-            );
-      } catch (_) {
-        comments.value = previous;
-      }
+      await notifier.toggleCommentLike(item);
     }
-
-    useEffect(() {
-      if (commentsEnabled && comments.value.isEmpty && !commentsLoading.value) {
-        Future.microtask(() => loadComments(data, refresh: true));
-      }
-      return null;
-    }, [data.commentOid, commentsEnabled]);
 
     return Scaffold(
       appBar: AppBar(
@@ -276,11 +142,11 @@ class ArticleDetailPage extends HookConsumerWidget {
       body: EasyRefresh(
         header: AppRefreshHeader(),
         footer: AppLoadFooter(),
-        onRefresh: refreshAll,
-        onLoad: commentsEnabled && commentsHasMore.value
+        onRefresh: notifier.refreshAll,
+        onLoad: commentsEnabled && state.commentsHasMore
             ? () async {
-                if (!commentsLoading.value) {
-                  await loadComments(data);
+                if (!state.commentsLoading) {
+                  await notifier.loadComments();
                 }
               }
             : null,
@@ -347,7 +213,7 @@ class ArticleDetailPage extends HookConsumerWidget {
                 ),
               ),
             ),
-            if (comments.value.isEmpty && commentsLoading.value)
+            if (state.comments.isEmpty && state.commentsLoading)
               const SliverFillRemaining(
                 hasScrollBody: false,
                 child: Center(child: CircularProgressIndicator()),
@@ -358,34 +224,34 @@ class ArticleDetailPage extends HookConsumerWidget {
                 child: Center(
                   child: AppErrorWidget(
                     message: t.video.comment.empty,
-                    onRetry: () => loadComments(data, refresh: true),
+                    onRetry: () => notifier.loadComments(refresh: true),
                   ),
                 ),
               )
-            else if (comments.value.isEmpty && commentsError.value != null)
+            else if (state.comments.isEmpty && state.commentsError != null)
               SliverFillRemaining(
                 hasScrollBody: false,
                 child: Center(
                   child: AppErrorWidget(
-                    message: commentsError.value!,
-                    onRetry: () => loadComments(data, refresh: true),
+                    message: state.commentsError!,
+                    onRetry: () => notifier.loadComments(refresh: true),
                   ),
                 ),
               )
-            else if (comments.value.isEmpty)
+            else if (state.comments.isEmpty)
               SliverFillRemaining(
                 hasScrollBody: false,
                 child: Center(
                   child: AppErrorWidget(
                     message: t.video.comment.empty,
-                    onRetry: () => loadComments(data, refresh: true),
+                    onRetry: () => notifier.loadComments(refresh: true),
                   ),
                 ),
               )
             else
               SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
-                  final item = comments.value[index];
+                  final item = state.comments[index];
                   return Column(
                     children: [
                       CommentItemWidget(
@@ -406,7 +272,7 @@ class ArticleDetailPage extends HookConsumerWidget {
                               )
                             : null,
                       ),
-                      if (index < comments.value.length - 1)
+                      if (index < state.comments.length - 1)
                         Divider(
                           height: 1,
                           thickness: 0.5,
@@ -416,22 +282,22 @@ class ArticleDetailPage extends HookConsumerWidget {
                         ),
                     ],
                   );
-                }, childCount: comments.value.length),
+                }, childCount: state.comments.length),
               ),
-            if (commentsLoading.value)
+            if (state.commentsLoading)
               const SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.only(top: 16, bottom: 8),
                   child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
                 ),
               ),
-            if (commentsError.value != null && comments.value.isNotEmpty)
+            if (state.commentsError != null && state.comments.isNotEmpty)
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                   child: AppErrorWidget(
-                    message: commentsError.value!,
-                    onRetry: () => loadComments(data, refresh: true),
+                    message: state.commentsError!,
+                    onRetry: () => notifier.loadComments(refresh: true),
                   ),
                 ),
               ),
@@ -442,7 +308,7 @@ class ArticleDetailPage extends HookConsumerWidget {
       bottomNavigationBar: commentsEnabled
           ? _ArticleCommentBar(
               controller: commentController,
-              isSending: sendingComment.value,
+              isSending: state.isSendingComment,
               onSend: submitComment,
             )
           : null,
@@ -923,10 +789,6 @@ class _ArticleCommentBar extends StatelessWidget {
   }
 }
 
-bool _resolveHasMore(CommentResponse data) {
-  return !(data.cursor?.isEnd ?? true);
-}
-
 bool _hasVisibleText(String value) {
   return value.replaceAll(RegExp(r'\s+'), '').isNotEmpty;
 }
@@ -951,16 +813,4 @@ Color? _parseColor(String? color) {
     }
   }
   return null;
-}
-
-List<CommentItem> _appendUniqueComments(
-  List<CommentItem> current,
-  List<CommentItem> incoming,
-) {
-  if (incoming.isEmpty) return current;
-  final merged = <int, CommentItem>{for (final item in current) item.rpid: item};
-  for (final item in incoming) {
-    merged[item.rpid] = item;
-  }
-  return merged.values.toList();
 }

@@ -1,6 +1,5 @@
 import 'dart:async';
-import 'package:culcul/features/video/controllers/video_detail_controller.dart';
-import 'package:culcul/features/video/data/video_repository.dart';
+import 'package:culcul/features/video/presentation/view_model/video_detail_view_model.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
@@ -18,13 +17,13 @@ void useVideoProgressReport(WidgetRef ref, String bvid, Player player, bool isPl
   final isPlayingRef = useRef(isPlaying);
   isPlayingRef.value = isPlaying;
 
-  final videoRepo = ref.read(videoRepositoryProvider);
+  final detailNotifier = ref.read(videoDetailControllerProvider(bvid).notifier);
 
   void reportProgress() {
     final pos = player.state.position.inSeconds;
     final current = latestInfoRef.value;
     if (pos > 0 && current.aid != null && current.cid != 0) {
-      videoRepo.reportVideoProgress(aid: current.aid!, cid: current.cid, progress: pos);
+      detailNotifier.reportProgress(pos);
     }
   }
 

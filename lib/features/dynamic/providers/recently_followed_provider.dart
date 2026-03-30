@@ -1,5 +1,5 @@
 import 'package:culcul/data/models/relation/relation_model.dart';
-import 'package:culcul/features/auth/controllers/auth_controller.dart';
+import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:culcul/features/profile/data/relation_repository.dart';
 

@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/data/models/user/user_profile_model.dart';
-import 'package:culcul/features/profile/controllers/user_space_controller.dart';
+import 'package:culcul/features/profile/presentation/view_model/user_space_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_action_button.dart';
 import 'package:culcul/ui/widgets/follow_button.dart';

@@ -1,4 +1,4 @@
-import 'package:culcul/features/auth/controllers/auth_controller.dart';
+import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

@@ -1,8 +1,8 @@
 import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/data/models/notification/reply_model.dart';
-import 'package:culcul/features/notification/controllers/at_controller.dart';
-import 'package:culcul/features/notification/controllers/like_controller.dart';
-import 'package:culcul/features/notification/controllers/reply_controller.dart';
+import 'package:culcul/features/notification/presentation/view_model/at_view_model.dart';
+import 'package:culcul/features/notification/presentation/view_model/like_view_model.dart';
+import 'package:culcul/features/notification/presentation/view_model/reply_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_item_widget.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:easy_refresh/easy_refresh.dart';

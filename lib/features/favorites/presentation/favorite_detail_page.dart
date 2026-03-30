@@ -1,8 +1,8 @@
 import 'package:culcul/data/models/fav/index.dart';
-import 'package:culcul/features/favorites/controllers/favorites_controller.dart';
+import 'package:culcul/features/favorites/presentation/view_model/favorites_view_model.dart';
 import 'package:culcul/features/favorites/presentation/fav_resource_item.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
-import 'package:culcul/features/auth/controllers/auth_controller.dart';
+import 'package:culcul/features/auth/presentation/view_model/auth_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';

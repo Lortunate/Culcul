@@ -1,7 +1,6 @@
 import 'dart:io';
 
-import 'package:culcul/data/models/dynamic/dynamic_response.dart';
-import 'package:culcul/features/dynamic/controllers/dynamic_controller.dart';
+import 'package:culcul/features/dynamic/presentation/view_model/publish_dynamic_view_model.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/emoji_picker.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/publish_dynamic_bottom_toolbar.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/publish_dynamic_image_grid.dart';
@@ -10,7 +9,6 @@ import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:culcul/features/dynamic/data/dynamic_repository.dart';
 
 class PublishDynamicPage extends ConsumerStatefulWidget {
   const PublishDynamicPage({super.key});
@@ -25,7 +23,6 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
   final TextEditingController _controller = TextEditingController();
   final ImagePicker _imagePicker = ImagePicker();
   final List<File> _images = [];
-  bool _isPublishing = false;
   final FocusNode _focusNode = FocusNode();
 
   @override
@@ -106,28 +103,20 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
 
   Future<void> _publish() async {
     if (_controller.text.trim().isEmpty && _images.isEmpty) return;
-
-    setState(() => _isPublishing = true);
+    final t = Translations.of(context);
+    final notifier = ref.read(publishDynamicViewModelProvider.notifier);
 
     try {
-      final List<DynamicUploadImageData> uploadedImages = [];
-      if (_images.isNotEmpty) {
-        for (var img in _images) {
-          final data = await ref.read(dynamicRepositoryProvider).uploadImage(img);
-          uploadedImages.add(data);
-        }
+      final error = await notifier.publish(content: _controller.text, images: _images);
+      if (error != null) {
+        throw Exception(error);
       }
-
-      await ref
-          .read(dynamicRepositoryProvider)
-          .publishDynamic(content: _controller.text, images: uploadedImages);
 
       if (mounted) {
         Navigator.pop(context);
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(t.moments.publish_success)));
-        ref.invalidate(dynamicProvider);
       }
     } catch (e) {
       if (mounted) {
@@ -135,8 +124,6 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
           SnackBar(content: Text(t.moments.publish_failed(error: e.toString()))),
         );
       }
-    } finally {
-      if (mounted) setState(() => _isPublishing = false);
     }
   }
 
@@ -170,6 +157,9 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
+    final isPublishing = ref.watch(
+      publishDynamicViewModelProvider.select((state) => state.isPublishing),
+    );
     final isPostable = _hasDraft;
 
     return PopScope(
@@ -203,18 +193,18 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
             Padding(
               padding: const EdgeInsets.only(right: 16),
               child: TextButton(
-                onPressed: _isPublishing || !isPostable ? null : _publish,
+                onPressed: isPublishing || !isPostable ? null : _publish,
                 style: TextButton.styleFrom(
-                  backgroundColor: _isPublishing || !isPostable
+                  backgroundColor: isPublishing || !isPostable
                       ? colorScheme.surfaceContainerHighest
                       : colorScheme.primary,
-                  foregroundColor: _isPublishing || !isPostable
+                  foregroundColor: isPublishing || !isPostable
                       ? colorScheme.onSurfaceVariant
                       : colorScheme.onPrimary,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                 ),
-                child: _isPublishing
+                child: isPublishing
                     ? SizedBox(
                         width: 16,
                         height: 16,

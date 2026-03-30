@@ -1,4 +1,4 @@
-import 'package:culcul/features/search/presentation/hooks/use_search_controller.dart';
+import 'package:culcul/features/search/presentation/hooks/use_search_view_model.dart';
 import 'package:culcul/features/search/presentation/widgets/hot_search_section.dart';
 import 'package:culcul/features/search/presentation/widgets/search_app_bar.dart';
 import 'package:culcul/features/search/presentation/widgets/search_history_section.dart';
@@ -14,7 +14,7 @@ class SearchPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final search = useSearchController(ref);
+    final search = useSearchViewModel(ref);
 
     return Scaffold(
       appBar: SearchAppBar(

@@ -1,8 +1,8 @@
-import 'package:culcul/features/video/controllers/danmaku_settings_controller.dart';
-import 'package:culcul/features/video/controllers/player_controller.dart';
-import 'package:culcul/features/video/controllers/playback_snapshot_controller.dart';
-import 'package:culcul/features/video/controllers/subtitle_controller.dart';
-import 'package:culcul/features/video/controllers/video_detail_controller.dart';
+import 'package:culcul/features/video/presentation/view_model/danmaku_settings_view_model.dart';
+import 'package:culcul/features/video/presentation/view_model/player_view_model.dart';
+import 'package:culcul/features/video/presentation/view_model/playback_snapshot_view_model.dart';
+import 'package:culcul/features/video/presentation/view_model/subtitle_view_model.dart';
+import 'package:culcul/features/video/presentation/view_model/video_detail_view_model.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/controls_utils.dart';

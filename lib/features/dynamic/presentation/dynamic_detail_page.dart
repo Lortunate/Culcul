@@ -1,6 +1,5 @@
-import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
-import 'package:culcul/data/models/dynamic/dynamic_response.dart';
-import 'package:culcul/features/dynamic/controllers/dynamic_comment_controller.dart';
+import 'package:culcul/features/dynamic/presentation/view_model/dynamic_comment_view_model.dart';
+import 'package:culcul/features/dynamic/presentation/view_model/dynamic_detail_view_model.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_detail_bottom_bar.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_detail_header.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_comments_view.dart';
@@ -11,7 +10,6 @@ import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:culcul/features/dynamic/data/dynamic_repository.dart';
 
 class DynamicDetailPage extends HookConsumerWidget {
   final String dynamicId;
@@ -21,103 +19,62 @@ class DynamicDetailPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = Translations.of(context);
-    final post = useState<DynamicItem?>(null);
-    final isLoading = useState(true);
-    final error = useState<String?>(null);
+    final provider = dynamicDetailViewModelProvider(dynamicId);
+    final state = ref.watch(provider);
+    final notifier = ref.read(provider.notifier);
     final commentController = useTextEditingController();
 
-    // We need a way to refresh comments, so we get the controller for comments
-    // But we can only get it if we have a post.
-
-    Future<void> loadDetail() async {
-      try {
-        final data = await ref.read(dynamicRepositoryProvider).getDetail(dynamicId);
-        post.value = data;
-        isLoading.value = false;
-      } catch (e) {
-        error.value = e.toString();
-        isLoading.value = false;
-      }
-    }
-
-    useEffect(() {
-      loadDetail();
-      return null;
-    }, []);
-
     void submitComment() {
-      if (post.value == null) return;
+      final post = state.post;
+      if (post == null) return;
       final text = commentController.text.trim();
       if (text.isEmpty) return;
 
-      ref
-          .read(dynamicCommentControllerProvider(post.value!).notifier)
-          .addReply(0, 0, text);
+      ref.read(dynamicCommentControllerProvider(post).notifier).addReply(0, 0, text);
       commentController.clear();
       FocusScope.of(context).unfocus();
     }
 
     Future<void> handleLike() async {
-      if (post.value == null) return;
-
-      final item = post.value!;
-      final newStatus = !item.isLiked;
-      final newLikeCount = item.likeCount + (newStatus ? 1 : -1);
-
-      final newStatLike = item.modules.moduleStat?.like.copyWith(
-        count: newLikeCount,
-        status: newStatus,
-      );
-
-      if (item.modules.moduleStat == null || newStatLike == null) return;
-
-      final newModuleStat = item.modules.moduleStat!.copyWith(like: newStatLike);
-      final newModules = item.modules.copyWith(moduleStat: newModuleStat);
-      final newItem = item.copyWith(modules: newModules);
-
-      post.value = newItem;
-
-      try {
-        await ref.read(dynamicRepositoryProvider).likeDynamic(item.id, newStatus);
-      } catch (e) {
-        // Revert
-        post.value = item;
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(t.moments.operation_failed(message: e.toString()))),
-          );
-        }
+      final message = await notifier.toggleLike();
+      if (message != null && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(t.moments.operation_failed(message: message))),
+        );
       }
     }
 
-    if (isLoading.value) {
+    if (state.isLoading && state.post == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    if (error.value != null) {
+    if (state.error != null && state.post == null) {
       return Scaffold(
         appBar: AppBar(title: Text(t.moments.detail_title)),
-        body: Center(child: Text(error.value!)),
+        body: Center(child: Text(state.error!)),
       );
     }
 
-    if (post.value == null) return const SizedBox();
+    final post = state.post;
+    if (post == null) return const SizedBox();
 
     return Scaffold(
       appBar: AppBar(title: Text(t.moments.detail_title)),
       body: EasyRefresh(
         onRefresh: () async {
-          await loadDetail();
-          if (post.value != null) {
+          await notifier.loadDetail();
+          final latestPost = ref.read(provider).post;
+          if (latestPost != null) {
             return ref
-                .read(dynamicCommentControllerProvider(post.value!).notifier)
+                .read(dynamicCommentControllerProvider(latestPost).notifier)
                 .refresh();
           }
         },
         onLoad: () async {
-          if (post.value != null) {
+          final latestPost = ref.read(provider).post;
+          if (latestPost != null) {
             return ref
-                .read(dynamicCommentControllerProvider(post.value!).notifier)
+                .read(dynamicCommentControllerProvider(latestPost).notifier)
                 .loadMore();
           }
         },
@@ -125,22 +82,22 @@ class DynamicDetailPage extends HookConsumerWidget {
         footer: AppLoadFooter(),
         child: CustomScrollView(
           slivers: [
-            SliverToBoxAdapter(child: DynamicDetailHeader(post: post.value!)),
+            SliverToBoxAdapter(child: DynamicDetailHeader(post: post)),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: DynamicContentWidget(post: post.value!, selectableText: true),
+                child: DynamicContentWidget(post: post, selectableText: true),
               ),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 12)),
             const SliverToBoxAdapter(child: Divider(height: 1)),
-            DynamicCommentsSliver(post: post.value!),
+            DynamicCommentsSliver(post: post),
             const SliverToBoxAdapter(child: SizedBox(height: 80)),
           ],
         ),
       ),
       bottomNavigationBar: DynamicDetailBottomBar(
-        post: post.value!,
+        post: post,
         onLike: handleLike,
         onSubmitComment: submitComment,
         commentController: commentController,

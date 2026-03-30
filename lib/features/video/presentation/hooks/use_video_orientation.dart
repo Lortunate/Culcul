@@ -1,7 +1,7 @@
 import 'package:culcul/data/models/video/video_detail.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:culcul/features/video/controllers/player_controller.dart';
+import 'package:culcul/features/video/presentation/view_model/player_view_model.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 VoidCallback useVideoOrientation(

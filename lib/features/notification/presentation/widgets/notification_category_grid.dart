@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/i18n.dart';
-import 'package:culcul/features/notification/controllers/unread_count_controller.dart';
+import 'package:culcul/features/notification/presentation/view_model/unread_count_view_model.dart';
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/app/theme/app_theme.dart';
 import 'package:flutter/material.dart';

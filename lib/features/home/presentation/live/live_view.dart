@@ -1,9 +1,9 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/data/models/live/live_room_model.dart';
-import 'package:culcul/features/live/controllers/live_recommend_controller.dart';
+import 'package:culcul/features/live/presentation/view_model/live_recommend_view_model.dart';
 import 'package:culcul/features/home/presentation/live/widgets/live_card_skeleton.dart';
 import 'package:culcul/features/home/presentation/live/widgets/live_room_card.dart';
-import 'package:culcul/features/home/presentation/controllers/home_scroll_controller.dart';
+import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +29,7 @@ class LiveView extends HookConsumerWidget {
     final scrollController = useScrollController();
     final refreshController = useMemoized(() => EasyRefreshController());
 
-    useHomeScrollController(ref, scrollController, refreshController, 0);
+    useHomeScrollSync(ref, scrollController, refreshController, 0);
 
     return SmartPagingView(
       provider: liveRecommendProvider,

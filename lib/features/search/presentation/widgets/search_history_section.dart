@@ -1,4 +1,4 @@
-import 'package:culcul/features/search/controllers/search_history_controller.dart';
+import 'package:culcul/features/search/presentation/view_model/search_history_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:culcul/ui/widgets/app_section_header.dart';
