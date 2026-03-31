@@ -1,7 +1,7 @@
-import 'package:culcul/features/video/models/video_models.dart';
+import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'dart:async';
 
-import 'package:culcul/features/video/application/use_case/video_detail_use_cases.dart';
+import 'package:culcul/features/video/application/video_detail_workflows.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'video_detail_state.dart';
@@ -18,7 +18,7 @@ class VideoDetailController extends _$VideoDetailController {
 
   Future<void> load() async {
     state = state.copyWith(isLoading: true, error: null);
-    final result = await ref.read(loadVideoDetailUseCaseProvider).call(bvid);
+    final result = await ref.read(loadVideoDetailWorkflowProvider).call(bvid);
     state = result.when(
       success: (data) => state.copyWith(
         isLoading: false,
@@ -62,7 +62,7 @@ class VideoDetailController extends _$VideoDetailController {
     if (detail == null) return;
 
     await ref
-        .read(reportVideoProgressUseCaseProvider)
+        .read(reportVideoProgressWorkflowProvider)
         .call(
           ReportVideoProgressCommand(
             aid: detail.aid,
@@ -89,7 +89,7 @@ class VideoDetailController extends _$VideoDetailController {
     );
 
     final result = await ref
-        .read(toggleVideoFollowUseCaseProvider)
+        .read(toggleVideoFollowWorkflowProvider)
         .call(
           ToggleVideoFollowCommand(followMid: detail.owner.mid, wasFollowed: wasFollowed),
         );
@@ -100,7 +100,7 @@ class VideoDetailController extends _$VideoDetailController {
 
   Future<void> _loadPlayUrl({required int aid, required int cid, required int qn}) async {
     final result = await ref
-        .read(loadVideoPlayUrlUseCaseProvider)
+        .read(loadVideoPlayUrlWorkflowProvider)
         .call(VideoPlayUrlCommand(aid: aid, cid: cid, quality: qn));
     state = result.when(
       success: (data) => state.copyWith(

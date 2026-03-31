@@ -1,1 +1,1 @@
-export 'data/history_repository.dart' show historyRepositoryProvider;
+export 'data/history_repository_impl.dart' show historyRepositoryProvider;

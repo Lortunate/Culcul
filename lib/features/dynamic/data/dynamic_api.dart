@@ -1,8 +1,7 @@
 import 'dart:io';
 
 import 'package:culcul/core/network/models/api_response.dart';
-import 'package:culcul/features/dynamic/models/dynamic_response.dart';
-import 'package:culcul/features/video/models/comment_model.dart';
+import 'package:culcul/features/dynamic/data/dtos/dynamic_dtos.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 

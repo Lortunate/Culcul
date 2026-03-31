@@ -18,7 +18,6 @@ abstract class FavoriteRepository {
     String? order,
     int? type,
     int? tid,
-    String platform = 'web',
   });
 
   Future<FavoriteFolder> createFolder({
@@ -41,7 +40,6 @@ abstract class FavoriteRepository {
   Future<void> deleteResources({
     required String resources,
     required int mediaId,
-    String platform = 'web',
   });
 
   Future<void> cleanInvalidResources({required int mediaId});

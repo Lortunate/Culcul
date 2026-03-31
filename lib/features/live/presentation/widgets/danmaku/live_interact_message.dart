@@ -1,5 +1,5 @@
 import 'package:culcul/app/theme/app_theme.dart';
-import 'package:culcul/features/live/models/live_models.dart';
+import 'package:culcul/features/live/domain/entities/live_entities.dart';
 import 'package:flutter/material.dart';
 
 class LiveInteractMessage extends StatelessWidget {

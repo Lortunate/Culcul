@@ -1,6 +1,6 @@
 // ignore_for_file: invalid_use_of_internal_member
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
-import 'package:culcul/features/profile/application/use_case/profile_query_use_cases.dart';
+import 'package:culcul/features/profile/application/profile_query_workflows.dart';
 import 'package:culcul/features/profile/domain/entities/relation_user.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -20,7 +20,7 @@ class Followings extends _$Followings with OffsetPagedAsyncNotifier<ProfileRelat
   @override
   Future<List<ProfileRelationUser>> fetchPage(int page, {bool refresh = false}) async {
     final result = await ref
-        .read(profileQueryUseCasesProvider)
+        .read(profileQueryWorkflowsProvider)
         .getFollowings(vmid: _vmid, page: page);
     return result.when(success: (value) => value, failure: (error) => throw error);
   }
@@ -54,7 +54,7 @@ class Followers extends _$Followers with OffsetPagedAsyncNotifier<ProfileRelatio
   @override
   Future<List<ProfileRelationUser>> fetchPage(int page, {bool refresh = false}) async {
     final result = await ref
-        .read(profileQueryUseCasesProvider)
+        .read(profileQueryWorkflowsProvider)
         .getFollowers(vmid: _vmid, page: page);
     return result.when(success: (value) => value, failure: (error) => throw error);
   }

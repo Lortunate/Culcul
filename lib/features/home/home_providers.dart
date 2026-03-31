@@ -1,2 +1,2 @@
-export 'data/home_repository.dart' show homeRepositoryProvider;
-export 'data/weekly_repository.dart' show weeklyRepositoryProvider;
+export 'data/home_repository_impl.dart' show homeRepositoryProvider;
+export 'data/weekly_repository_impl.dart' show weeklyRepositoryProvider;

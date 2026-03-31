@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:culcul/protos/dm.pb.dart';
-import 'package:culcul/features/video/application/use_case/video_extra_use_cases.dart';
+import 'package:culcul/features/video/application/video_extra_workflows.dart';
 
 part 'danmaku_view_model.g.dart';
 
@@ -16,7 +16,7 @@ class DanmakuProvider extends _$DanmakuProvider {
     required int segmentIndex,
   }) async {
     final result = await ref
-        .read(videoExtraUseCasesProvider)
+        .read(videoExtraWorkflowsProvider)
         .loadDanmakuSegment(
           DanmakuSegmentQuery(oid: oid, pid: pid, segmentIndex: segmentIndex),
         );

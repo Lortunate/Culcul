@@ -1,4 +1,4 @@
-import 'package:culcul/features/dynamic/models/dynamic_models.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/emote_view_model.dart';
 import 'package:extended_image/extended_image.dart';

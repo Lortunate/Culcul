@@ -2,7 +2,7 @@ import 'package:culcul/core/errors/app_error.dart';
 import 'dart:io';
 
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
-import 'package:culcul/features/notification/application/use_case/notification_use_cases.dart';
+import 'package:culcul/features/notification/application/notification_workflows.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -33,7 +33,7 @@ class Chat extends _$Chat {
     _hasMore = true;
 
     final result = await ref
-        .read(notificationUseCasesProvider)
+        .read(notificationWorkflowsProvider)
         .getPrivateMessages(talkerId: talkerId, sessionType: sessionType);
     final response = result.when(
       success: (value) => value,
@@ -59,7 +59,7 @@ class Chat extends _$Chat {
 
     try {
       final result = await ref
-          .read(notificationUseCasesProvider)
+          .read(notificationWorkflowsProvider)
           .getPrivateMessages(
             talkerId: talkerId,
             sessionType: sessionType,
@@ -105,7 +105,7 @@ class Chat extends _$Chat {
   Future<void> sendImage(File imageFile) async {
     // Upload first
     final uploadResult = await ref
-        .read(notificationUseCasesProvider)
+        .read(notificationWorkflowsProvider)
         .uploadImage(imageFile);
     if (uploadResult.isFailure) {
       throw uploadResult.errorOrNull!;
@@ -162,7 +162,7 @@ class Chat extends _$Chat {
 
     try {
       final result = await ref
-          .read(notificationUseCasesProvider)
+          .read(notificationWorkflowsProvider)
           .sendPrivateMessage(
             senderUid: senderUid,
             receiverId: talkerId,

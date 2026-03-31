@@ -1,1 +1,1 @@
-export 'data/notification_repository.dart' show notificationRepositoryProvider;
+export 'data/notification_repository_impl.dart' show notificationRepositoryProvider;

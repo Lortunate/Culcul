@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:culcul/features/profile/models/user_profile_model.dart';
+import 'package:culcul/features/profile/data/dtos/profile_dtos.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

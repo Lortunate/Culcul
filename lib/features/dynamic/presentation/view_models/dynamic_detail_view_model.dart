@@ -1,8 +1,8 @@
-import 'package:culcul/features/dynamic/models/dynamic_models.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'dart:async';
 
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/features/dynamic/application/use_case/dynamic_use_cases.dart';
+import 'package:culcul/features/dynamic/application/dynamic_workflows.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -31,7 +31,7 @@ class DynamicDetailViewModel extends _$DynamicDetailViewModel {
 
   Future<void> loadDetail() async {
     state = state.copyWith(isLoading: true, error: null);
-    final result = await ref.read(dynamicDetailUseCaseProvider).call(_dynamicId);
+    final result = await ref.read(dynamicDetailWorkflowProvider).call(_dynamicId);
     state = result.when(
       success: (data) => state.copyWith(post: data, isLoading: false, error: null),
       failure: (error) => state.copyWith(isLoading: false, error: error),
@@ -59,7 +59,7 @@ class DynamicDetailViewModel extends _$DynamicDetailViewModel {
 
     state = state.copyWith(post: nextItem);
     final result = await ref
-        .read(toggleDynamicLikeUseCaseProvider)
+        .read(toggleDynamicLikeWorkflowProvider)
         .call(id: item.id, newStatus: newStatus);
     return result.when(
       success: (_) => null,

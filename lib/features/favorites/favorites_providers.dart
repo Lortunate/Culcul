@@ -1,1 +1,1 @@
-export 'data/fav_repository.dart' show favRepositoryProvider;
+export 'data/fav_repository_impl.dart' show favRepositoryProvider;

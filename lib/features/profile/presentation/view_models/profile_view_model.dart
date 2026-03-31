@@ -1,6 +1,6 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
-import 'package:culcul/features/profile/application/use_case/profile_query_use_cases.dart';
+import 'package:culcul/features/profile/application/profile_query_workflows.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -13,7 +13,7 @@ Future<ProfileUser> myProfile(Ref ref) async {
     throw AppError.auth('Not logged in');
   }
   final result = await ref
-      .watch(profileQueryUseCasesProvider)
+      .watch(profileQueryWorkflowsProvider)
       .getProfile(authState.user!.id);
   return result.when(success: (value) => value, failure: (error) => throw error);
 }
@@ -23,7 +23,7 @@ class UserProfileNotifier extends _$UserProfileNotifier {
   @override
   Future<ProfileUser> build(String userId) async {
     final cachedResult = await ref
-        .read(profileQueryUseCasesProvider)
+        .read(profileQueryWorkflowsProvider)
         .getCachedProfile(userId);
     final cachedUser = cachedResult.dataOrNull;
 
@@ -46,7 +46,7 @@ class UserProfileNotifier extends _$UserProfileNotifier {
   }
 
   Future<ProfileUser> _loadFresh(String userId) async {
-    final result = await ref.read(profileQueryUseCasesProvider).refreshProfile(userId);
+    final result = await ref.read(profileQueryWorkflowsProvider).refreshProfile(userId);
     return result.when(success: (value) => value, failure: (error) => throw error);
   }
 }

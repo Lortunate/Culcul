@@ -1,1 +1,1 @@
-export 'data/ranking_repository.dart' show rankingRepositoryProvider;
+export 'data/ranking_repository_impl.dart' show rankingRepositoryProvider;

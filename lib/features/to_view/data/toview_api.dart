@@ -1,5 +1,5 @@
 import 'package:culcul/core/network/models/api_response.dart';
-import 'package:culcul/features/to_view/models/to_view_models.dart';
+import 'package:culcul/features/to_view/data/dtos/to_view_dtos.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 

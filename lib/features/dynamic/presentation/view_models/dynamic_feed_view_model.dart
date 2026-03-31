@@ -1,7 +1,7 @@
-import 'package:culcul/features/dynamic/models/dynamic_models.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:culcul/features/dynamic/application/use_case/dynamic_use_cases.dart';
+import 'package:culcul/features/dynamic/application/dynamic_workflows.dart';
 
 mixin DynamicFeedController {
   Ref get ref;
@@ -30,7 +30,7 @@ mixin DynamicFeedController {
     state = AsyncData(nextItems);
 
     final result = await ref
-        .read(toggleDynamicLikeUseCaseProvider)
+        .read(toggleDynamicLikeWorkflowProvider)
         .call(id: id, newStatus: !isLiked);
     if (result.isFailure) {
       state = previousState;

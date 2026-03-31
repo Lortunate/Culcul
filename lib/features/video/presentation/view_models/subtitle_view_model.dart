@@ -1,5 +1,5 @@
-import 'package:culcul/features/video/models/video_models.dart';
-import 'package:culcul/features/video/application/use_case/video_extra_use_cases.dart';
+import 'package:culcul/features/video/domain/entities/video_entities.dart';
+import 'package:culcul/features/video/application/video_extra_workflows.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -62,7 +62,7 @@ class SubtitleController extends _$SubtitleController {
 
   Future<void> _loadSubtitleContent(SubtitleInfo info) async {
     final result = await ref
-        .read(videoExtraUseCasesProvider)
+        .read(videoExtraWorkflowsProvider)
         .loadSubtitleContent(info.subtitleUrl);
     state = result.when(
       success: (content) => state.copyWith(content: content.body, isLoading: false),

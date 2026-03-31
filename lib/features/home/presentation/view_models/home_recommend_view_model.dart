@@ -1,6 +1,6 @@
 // ignore_for_file: invalid_use_of_internal_member
-import 'package:culcul/features/home/application/use_case/home_feed_use_cases.dart';
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
+import 'package:culcul/features/home/home_providers.dart';
 import 'package:culcul/features/home/domain/entities/home_video.dart';
 import 'package:culcul/features/home/presentation/view_models/home_video_paging_view_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -18,7 +18,7 @@ class HomeRecommend extends _$HomeRecommend
   @override
   Future<List<HomeVideo>> fetchPage(int page, {bool refresh = false}) async {
     return ref
-        .read(homeFeedUseCasesProvider)
-        .loadRecommendPage(page: page, refresh: refresh);
+        .read(homeRepositoryProvider)
+        .fetchRecommend(page: page, forceRefresh: refresh);
   }
 }

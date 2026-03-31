@@ -1,5 +1,5 @@
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/features/favorites/application/use_case/favorite_folder_use_cases.dart';
+import 'package:culcul/features/favorites/favorites_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'favorite_folder_action_view_model.g.dart';
@@ -15,13 +15,19 @@ class FavoriteFolderActionViewModel extends _$FavoriteFolderActionViewModel {
     int? privacy,
   }) async {
     state = const AsyncLoading();
-    final result = await ref
-        .read(favoriteFolderMutationsUseCaseProvider)
-        .createFolder(
-          CreateFavoriteFolderCommand(title: title, intro: intro, privacy: privacy),
-        );
-    state = const AsyncData(null);
-    return result.errorOrNull;
+    try {
+      await ref.read(favRepositoryProvider).createFolder(
+        title: title,
+        intro: intro,
+        privacy: privacy,
+      );
+      state = const AsyncData(null);
+      return null;
+    } catch (error) {
+      final appError = AppError.fromObject(error);
+      state = const AsyncData(null);
+      return appError;
+    }
   }
 
   Future<AppError?> editFolder({
@@ -31,27 +37,33 @@ class FavoriteFolderActionViewModel extends _$FavoriteFolderActionViewModel {
     int? privacy,
   }) async {
     state = const AsyncLoading();
-    final result = await ref
-        .read(favoriteFolderMutationsUseCaseProvider)
-        .editFolder(
-          EditFavoriteFolderCommand(
-            mediaId: mediaId,
-            title: title,
-            intro: intro,
-            privacy: privacy,
-          ),
-        );
-    state = const AsyncData(null);
-    return result.errorOrNull;
+    try {
+      await ref.read(favRepositoryProvider).updateFolder(
+        mediaId: mediaId,
+        title: title,
+        intro: intro,
+        privacy: privacy,
+      );
+      state = const AsyncData(null);
+      return null;
+    } catch (error) {
+      final appError = AppError.fromObject(error);
+      state = const AsyncData(null);
+      return appError;
+    }
   }
 
   Future<AppError?> deleteFolder({required int mediaId}) async {
     state = const AsyncLoading();
-    final result = await ref
-        .read(favoriteFolderMutationsUseCaseProvider)
-        .deleteFolder(DeleteFavoriteFolderCommand(mediaId: mediaId));
-    state = const AsyncData(null);
-    return result.errorOrNull;
+    try {
+      await ref.read(favRepositoryProvider).deleteFolder(mediaIds: mediaId.toString());
+      state = const AsyncData(null);
+      return null;
+    } catch (error) {
+      final appError = AppError.fromObject(error);
+      state = const AsyncData(null);
+      return appError;
+    }
   }
 
   Future<AppError?> deleteResources({
@@ -59,12 +71,17 @@ class FavoriteFolderActionViewModel extends _$FavoriteFolderActionViewModel {
     required Set<int> resourceIds,
   }) async {
     state = const AsyncLoading();
-    final result = await ref
-        .read(favoriteFolderMutationsUseCaseProvider)
-        .deleteResources(
-          DeleteFavoriteResourcesCommand(mediaId: mediaId, resourceIds: resourceIds),
-        );
-    state = const AsyncData(null);
-    return result.errorOrNull;
+    try {
+      await ref.read(favRepositoryProvider).deleteResources(
+        resources: resourceIds.join(','),
+        mediaId: mediaId,
+      );
+      state = const AsyncData(null);
+      return null;
+    } catch (error) {
+      final appError = AppError.fromObject(error);
+      state = const AsyncData(null);
+      return appError;
+    }
   }
 }

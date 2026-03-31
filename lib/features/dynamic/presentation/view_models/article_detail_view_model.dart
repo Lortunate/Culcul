@@ -1,10 +1,10 @@
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
-import 'package:culcul/features/dynamic/models/dynamic_models.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/features/dynamic/application/use_case/dynamic_use_cases.dart';
+import 'package:culcul/features/dynamic/application/dynamic_workflows.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'article_detail_view_model.g.dart';
@@ -76,7 +76,7 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
 
   Future<void> loadDetail() async {
     state = state.copyWith(isLoading: true, clearError: true);
-    final result = await ref.read(articleDetailUseCaseProvider).call(_url);
+    final result = await ref.read(articleDetailWorkflowProvider).call(_url);
     state = result.when(
       success: (detail) => state.copyWith(
         setDetail: true,
@@ -120,7 +120,7 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
     );
 
     final result = await ref
-        .read(articleCommentsUseCaseProvider)
+        .read(articleCommentsWorkflowProvider)
         .call(
           ArticleCommentsQuery(
             oid: detail.commentOid,
@@ -162,7 +162,7 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
 
     state = state.copyWith(isSendingComment: true);
     final result = await ref
-        .read(addArticleCommentUseCaseProvider)
+        .read(addArticleCommentWorkflowProvider)
         .call(
           AddArticleCommentCommand(
             oid: detail.commentOid,
@@ -187,7 +187,7 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
     if (!state.commentsEnabled) return 'Comments disabled';
 
     final result = await ref
-        .read(addArticleCommentUseCaseProvider)
+        .read(addArticleCommentWorkflowProvider)
         .call(
           AddArticleCommentCommand(
             oid: detail.commentOid,
@@ -224,7 +224,7 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
     );
 
     final result = await ref
-        .read(toggleArticleCommentLikeUseCaseProvider)
+        .read(toggleArticleCommentLikeWorkflowProvider)
         .call(
           ToggleArticleCommentLikeCommand(
             oid: detail.commentOid,

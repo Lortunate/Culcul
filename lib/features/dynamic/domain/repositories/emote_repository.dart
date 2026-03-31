@@ -1,5 +1,5 @@
-import 'package:culcul/features/dynamic/models/dynamic_models.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 
 abstract class EmoteRepository {
-  Future<EmoteResponse> getUserEmotes({String business = 'dynamic'});
+  Future<EmoteResponse> getUserEmotes();
 }

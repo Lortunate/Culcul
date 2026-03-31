@@ -3,19 +3,19 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:culcul/app/shell/main_shell.dart';
-import 'package:culcul/features/auth/presentation/auth_route_entry.dart';
-import 'package:culcul/features/dynamic/presentation/dynamic_route_entry.dart';
-import 'package:culcul/features/favorites/presentation/favorites_route_entry.dart';
-import 'package:culcul/features/history/presentation/history_route_entry.dart';
-import 'package:culcul/features/home/presentation/home_route_entry.dart';
-import 'package:culcul/features/live/presentation/live_route_entry.dart';
-import 'package:culcul/features/notification/presentation/notification_route_entry.dart';
-import 'package:culcul/features/profile/presentation/profile_route_entry.dart';
-import 'package:culcul/features/ranking/presentation/ranking_route_entry.dart';
-import 'package:culcul/features/search/presentation/search_route_entry.dart';
-import 'package:culcul/features/settings/presentation/settings_route_entry.dart';
-import 'package:culcul/features/to_view/presentation/to_view_route_entry.dart';
-import 'package:culcul/features/video/presentation/video_route_entry.dart';
+import 'package:culcul/features/auth/presentation/route_entry.dart';
+import 'package:culcul/features/dynamic/presentation/route_entry.dart';
+import 'package:culcul/features/favorites/presentation/route_entry.dart';
+import 'package:culcul/features/history/presentation/route_entry.dart';
+import 'package:culcul/features/home/presentation/route_entry.dart';
+import 'package:culcul/features/live/presentation/route_entry.dart';
+import 'package:culcul/features/notification/presentation/route_entry.dart';
+import 'package:culcul/features/profile/presentation/route_entry.dart';
+import 'package:culcul/features/ranking/presentation/route_entry.dart';
+import 'package:culcul/features/search/presentation/route_entry.dart';
+import 'package:culcul/features/settings/presentation/route_entry.dart';
+import 'package:culcul/features/to_view/presentation/route_entry.dart';
+import 'package:culcul/features/video/presentation/route_entry.dart';
 
 import 'route_transitions.dart';
 
@@ -35,3 +35,4 @@ GoRouter router(Ref ref) {
     debugLogDiagnostics: true,
   );
 }
+

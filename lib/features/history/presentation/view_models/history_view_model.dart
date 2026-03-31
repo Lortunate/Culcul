@@ -1,5 +1,5 @@
-import 'package:culcul/features/history/application/use_case/history_use_cases.dart';
 import 'package:culcul/features/history/domain/entities/history_entry.dart';
+import 'package:culcul/features/history/history_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'history_view_model.g.dart';
@@ -12,7 +12,6 @@ class HistoryList extends _$HistoryList {
   }
 
   Future<List<HistoryEntry>> _fetchHistory() async {
-    final result = await ref.read(historyUseCasesProvider).getHistory();
-    return result.when(success: (value) => value, failure: (error) => throw error);
+    return ref.read(historyRepositoryProvider).getHistory();
   }
 }

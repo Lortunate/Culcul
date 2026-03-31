@@ -1,1 +1,1 @@
-export 'data/live_repository.dart' show liveRepositoryProvider;
+export 'data/live_repository_impl.dart' show liveRepositoryProvider;

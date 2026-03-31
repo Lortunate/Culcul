@@ -1,9 +1,9 @@
-import 'package:culcul/features/profile/data/mappers/profile_mapper.dart';
+import 'package:culcul/features/profile/data/profile_mapper.dart';
 import 'package:culcul/features/profile/data/user_info_cache_service.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/repositories/profile_cache_repository.dart'
     as domain;
-import 'package:culcul/features/profile/models/profile_models.dart';
+import 'package:culcul/features/profile/data/dtos/profile_dtos.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'profile_cache_repository.g.dart';

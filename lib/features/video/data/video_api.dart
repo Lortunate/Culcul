@@ -1,10 +1,6 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/network/models/api_response.dart';
-import 'package:culcul/features/video/models/comment_model.dart';
-import 'package:culcul/features/video/models/play_url.dart';
-import 'package:culcul/features/video/models/player_info.dart';
-import 'package:culcul/features/video/models/related_video.dart';
-import 'package:culcul/features/video/models/video_detail.dart';
+import 'package:culcul/features/video/data/dtos/video_dtos.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 

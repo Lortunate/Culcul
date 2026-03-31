@@ -1,6 +1,6 @@
 import 'package:culcul/core/utils/format_extensions.dart';
-import 'package:culcul/features/settings/application/use_case/settings_use_cases.dart';
 import 'package:culcul/features/settings/domain/entities/app_theme_preference.dart';
+import 'package:culcul/features/settings/settings_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -10,17 +10,17 @@ part 'settings_view_model.g.dart';
 class AppThemeMode extends _$AppThemeMode {
   @override
   ThemeMode build() =>
-      ref.watch(settingsUseCasesProvider).getThemePreference().toThemeMode;
+      ref.watch(settingsRepositoryProvider).readThemePreference().toThemeMode;
 
   Future<void> setTheme(ThemeMode mode) async {
     state = mode;
-    await ref.read(settingsUseCasesProvider).setThemePreference(mode.toPreference);
+    await ref.read(settingsRepositoryProvider).saveThemePreference(mode.toPreference);
   }
 }
 
 @riverpod
 Future<String> cacheSize(Ref ref) async {
-  final totalSize = await ref.read(settingsUseCasesProvider).getCacheSizeInBytes();
+  final totalSize = await ref.read(settingsRepositoryProvider).getCacheSizeInBytes();
   return totalSize.formatFileSize;
 }
 
@@ -32,7 +32,7 @@ class CacheMaintenance extends _$CacheMaintenance {
   Future<void> clear() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() async {
-      await ref.read(settingsUseCasesProvider).clearCache();
+      await ref.read(settingsRepositoryProvider).clearCache();
       ref.invalidate(cacheSizeProvider);
     });
   }

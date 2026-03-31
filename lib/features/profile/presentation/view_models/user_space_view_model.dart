@@ -1,5 +1,5 @@
-import 'package:culcul/features/profile/application/use_case/profile_follow_use_case.dart';
-import 'package:culcul/features/profile/application/use_case/profile_query_use_cases.dart';
+import 'package:culcul/features/profile/application/profile_follow_workflows.dart';
+import 'package:culcul/features/profile/application/profile_query_workflows.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -9,7 +9,7 @@ part 'user_space_view_model.g.dart';
 class UserSpaceNotifier extends _$UserSpaceNotifier {
   @override
   Future<ProfileUser> build(String mid) async {
-    final result = await ref.read(profileQueryUseCasesProvider).getProfile(mid);
+    final result = await ref.read(profileQueryWorkflowsProvider).getProfile(mid);
     return result.when(success: (value) => value, failure: (error) => throw error);
   }
 
@@ -22,7 +22,7 @@ class UserSpaceNotifier extends _$UserSpaceNotifier {
     state = AsyncData(currentProfile.copyWith(isFollowing: newFollowStatus));
 
     final result = await ref
-        .read(profileFollowUseCaseProvider)
+        .read(profileFollowWorkflowsProvider)
         .call(
           ToggleProfileFollowCommand(
             mid: int.parse(currentProfile.id),

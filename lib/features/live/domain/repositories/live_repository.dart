@@ -1,4 +1,4 @@
-import 'package:culcul/features/live/models/live_models.dart';
+import 'package:culcul/features/live/domain/entities/live_entities.dart';
 
 abstract class LiveRepository {
   Future<LiveRoomDetailModel> getRoomInfo(int roomId);
@@ -6,7 +6,6 @@ abstract class LiveRepository {
   Future<LivePlayUrlModel> getPlayUrl({
     required int roomId,
     int? qn,
-    String platform = 'web',
   });
 
   Future<LiveDanmakuConfigModel> getDanmakuConfig(int roomId);

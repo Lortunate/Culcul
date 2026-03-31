@@ -1,1 +1,1 @@
-export 'data/search_repository.dart' show searchRepositoryProvider;
+export 'data/search_repository_impl.dart' show searchRepositoryProvider;

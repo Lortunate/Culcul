@@ -1,6 +1,6 @@
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
-import 'package:culcul/features/profile/models/profile_models.dart';
+import 'package:culcul/features/profile/domain/entities/profile_transport_entities.dart';
 
 abstract class ProfileRepository {
   Future<UserCardModel> getUserCard(int mid);

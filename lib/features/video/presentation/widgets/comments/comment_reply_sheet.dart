@@ -1,4 +1,4 @@
-import 'package:culcul/features/video/models/video_models.dart';
+import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';

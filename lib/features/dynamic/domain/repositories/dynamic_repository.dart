@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
-import 'package:culcul/features/dynamic/models/dynamic_models.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 
 abstract class DynamicRepository {
   Future<CommentResponse> getComments(DynamicItem post, {int sort = 1, int page = 1});

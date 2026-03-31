@@ -1,5 +1,5 @@
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
-import 'package:culcul/features/notification/application/use_case/notification_use_cases.dart';
+import 'package:culcul/features/notification/application/notification_workflows.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -19,7 +19,7 @@ class PrivateSessionList extends _$PrivateSessionList
     bool refresh = false,
   }) async {
     final result = await ref
-        .read(notificationUseCasesProvider)
+        .read(notificationWorkflowsProvider)
         .getPrivateSessions(endTs: currentCursor);
     final data = result.when(success: (value) => value, failure: (error) => throw error);
     final sessions = data.sessions;

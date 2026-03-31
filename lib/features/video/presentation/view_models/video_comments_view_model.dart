@@ -1,7 +1,7 @@
-import 'package:culcul/features/video/models/video_models.dart';
+import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'dart:async';
 
-import 'package:culcul/features/video/application/use_case/video_comment_use_cases.dart';
+import 'package:culcul/features/video/application/video_comment_workflows.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'video_comments_state.dart';
@@ -66,7 +66,7 @@ class VideoCommentsController extends _$VideoCommentsController {
     state = state.copyWith(comments: nextComments);
 
     final result = await ref
-        .read(videoCommentUseCasesProvider)
+        .read(videoCommentWorkflowsProvider)
         .toggleLike(
           ToggleVideoCommentLikeCommand(oid: oid, rpid: rpid, isLiked: !isLiked),
         );
@@ -77,13 +77,13 @@ class VideoCommentsController extends _$VideoCommentsController {
 
   Future<void> toggleCommentDislike(int oid, int rpid) async {
     await ref
-        .read(videoCommentUseCasesProvider)
+        .read(videoCommentWorkflowsProvider)
         .toggleDislike(ToggleVideoCommentDislikeCommand(oid: oid, rpid: rpid));
   }
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
     await ref
-        .read(videoCommentUseCasesProvider)
+        .read(videoCommentWorkflowsProvider)
         .addReply(
           AddVideoCommentReplyCommand(
             oid: oid,
@@ -108,7 +108,7 @@ class VideoCommentsController extends _$VideoCommentsController {
     }
 
     final result = await ref
-        .read(videoCommentUseCasesProvider)
+        .read(videoCommentWorkflowsProvider)
         .loadComments(VideoCommentsQuery(oid: aid, sort: state.sort, page: page));
     result.when(
       success: (response) {

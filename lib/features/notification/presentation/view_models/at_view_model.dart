@@ -1,4 +1,4 @@
-import 'package:culcul/features/notification/application/use_case/notification_use_cases.dart';
+import 'package:culcul/features/notification/application/notification_workflows.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -8,7 +8,7 @@ part 'at_view_model.g.dart';
 class AtList extends _$AtList {
   @override
   FutureOr<List<NotificationEntry>> build() async {
-    final result = await ref.read(notificationUseCasesProvider).getAtList();
+    final result = await ref.read(notificationWorkflowsProvider).getAtList();
     return result.when(success: (data) => data, failure: (error) => throw error);
   }
 
@@ -18,7 +18,7 @@ class AtList extends _$AtList {
 
     final lastItem = currentList.last;
     final result = await ref
-        .read(notificationUseCasesProvider)
+        .read(notificationWorkflowsProvider)
         .getAtList(id: lastItem.id, atTime: lastItem.replyTime ?? 0);
     result.when(
       success: (data) => state = AsyncData([...currentList, ...data]),

@@ -1,7 +1,7 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
-import 'package:culcul/features/notification/presentation/notification_list_page.dart';
+import 'package:culcul/features/notification/presentation/pages/notification_list_page.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
@@ -193,3 +193,4 @@ class NotificationItemWidget extends StatelessWidget {
     return t.notification.related_content;
   }
 }
+

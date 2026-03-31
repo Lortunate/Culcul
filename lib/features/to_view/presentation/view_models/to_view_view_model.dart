@@ -1,6 +1,6 @@
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
-import 'package:culcul/features/to_view/application/use_case/to_view_use_cases.dart';
+import 'package:culcul/features/to_view/to_view_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'to_view_view_model.g.dart';
@@ -14,29 +14,34 @@ class ToViewList extends _$ToViewList {
       return [];
     }
 
-    final result = await ref.read(toViewUseCasesProvider).getList();
-    return result.when(success: (value) => value, failure: (error) => throw error);
+    return ref.read(toViewRepositoryProvider).getList();
   }
 
   Future<void> add(int aid) async {
-    final result = await ref.read(toViewUseCasesProvider).add(aid);
-    if (result.isSuccess) {
+    try {
+      await ref.read(toViewRepositoryProvider).add(aid: aid);
       ref.invalidateSelf();
+    } catch (_) {
+      // Keep current state when action fails.
     }
   }
 
   Future<void> delete(int aid) async {
-    final result = await ref.read(toViewUseCasesProvider).delete(aid);
-    if (result.isSuccess) {
+    try {
+      await ref.read(toViewRepositoryProvider).delete(aid: aid);
       final currentList = state.asData?.value ?? [];
       state = AsyncValue.data(currentList.where((item) => item.aid != aid).toList());
+    } catch (_) {
+      // Keep current state when action fails.
     }
   }
 
   Future<void> clear() async {
-    final result = await ref.read(toViewUseCasesProvider).clear();
-    if (result.isSuccess) {
+    try {
+      await ref.read(toViewRepositoryProvider).clear();
       state = const AsyncValue.data([]);
+    } catch (_) {
+      // Keep current state when action fails.
     }
   }
 }

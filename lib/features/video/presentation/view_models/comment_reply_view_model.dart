@@ -1,7 +1,7 @@
-import 'package:culcul/features/video/models/video_models.dart';
+import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'dart:async';
 
-import 'package:culcul/features/video/application/use_case/video_comment_use_cases.dart';
+import 'package:culcul/features/video/application/video_comment_workflows.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'comment_reply_state.dart';
@@ -24,7 +24,7 @@ class CommentReplyController extends _$CommentReplyController {
     state = state.copyWith(isLoading: true, error: null);
 
     final result = await ref
-        .read(videoCommentUseCasesProvider)
+        .read(videoCommentWorkflowsProvider)
         .loadReplies(VideoReplyQuery(oid: oid, root: rootId, page: 1));
     state = result.when(
       success: (response) => state.copyWith(
@@ -43,7 +43,7 @@ class CommentReplyController extends _$CommentReplyController {
     state = state.copyWith(isLoading: true);
 
     final result = await ref
-        .read(videoCommentUseCasesProvider)
+        .read(videoCommentWorkflowsProvider)
         .loadReplies(VideoReplyQuery(oid: oid, root: rootId, page: state.page));
     state = result.when(
       success: (response) => state.copyWith(
@@ -60,7 +60,7 @@ class CommentReplyController extends _$CommentReplyController {
     _updateCommentLikeStatus(rpid, !isLiked);
 
     final result = await ref
-        .read(videoCommentUseCasesProvider)
+        .read(videoCommentWorkflowsProvider)
         .toggleLike(
           ToggleVideoCommentLikeCommand(oid: oid, rpid: rpid, isLiked: !isLiked),
         );
@@ -71,7 +71,7 @@ class CommentReplyController extends _$CommentReplyController {
 
   Future<void> toggleCommentDislike(int oid, int rpid) async {
     await ref
-        .read(videoCommentUseCasesProvider)
+        .read(videoCommentWorkflowsProvider)
         .toggleDislike(ToggleVideoCommentDislikeCommand(oid: oid, rpid: rpid));
   }
 
@@ -98,7 +98,7 @@ class CommentReplyController extends _$CommentReplyController {
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
     await ref
-        .read(videoCommentUseCasesProvider)
+        .read(videoCommentWorkflowsProvider)
         .addReply(
           AddVideoCommentReplyCommand(
             oid: oid,

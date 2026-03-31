@@ -1,1 +1,1 @@
-export 'data/auth_repository.dart' show authRepositoryProvider;
+export 'data/auth_repository_impl.dart' show authRepositoryProvider;

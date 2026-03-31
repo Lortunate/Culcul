@@ -1,7 +1,7 @@
-import 'package:culcul/features/dynamic/models/dynamic_models.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'dart:async';
 
-import 'package:culcul/features/dynamic/application/use_case/dynamic_use_cases.dart';
+import 'package:culcul/features/dynamic/application/dynamic_workflows.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_comment_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -18,7 +18,7 @@ class DynamicCommentController extends _$DynamicCommentController {
   Future<void> refresh() async {
     state = state.copyWith(isLoading: true, error: null);
     final result = await ref
-        .read(dynamicCommentsUseCaseProvider)
+        .read(dynamicCommentsWorkflowProvider)
         .call(DynamicCommentsQuery(post: post, sort: state.sort, page: 1));
     state = result.when(
       success: (data) => state.copyWith(
@@ -36,7 +36,7 @@ class DynamicCommentController extends _$DynamicCommentController {
 
     final nextPage = state.page + 1;
     final result = await ref
-        .read(dynamicCommentsUseCaseProvider)
+        .read(dynamicCommentsWorkflowProvider)
         .call(DynamicCommentsQuery(post: post, sort: state.sort, page: nextPage));
     if (result.isFailure) {
       return;
@@ -66,7 +66,7 @@ class DynamicCommentController extends _$DynamicCommentController {
     state = state.copyWith(comments: newComments);
 
     final result = await ref
-        .read(dynamicCommentLikeUseCaseProvider)
+        .read(dynamicCommentLikeWorkflowProvider)
         .call(DynamicCommentLikeCommand(post: post, rpid: rpid, isLiked: isLiked));
     if (result.isFailure) {
       state = state.copyWith(comments: oldComments);
@@ -75,7 +75,7 @@ class DynamicCommentController extends _$DynamicCommentController {
 
   Future<void> addReply(int root, int parent, String message) async {
     final result = await ref
-        .read(dynamicReplyUseCaseProvider)
+        .read(dynamicReplyWorkflowProvider)
         .call(
           DynamicReplyCommand(post: post, root: root, parent: parent, message: message),
         );

@@ -1,7 +1,6 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/network/models/api_response.dart';
-import 'package:culcul/features/home/models/feed_response.dart';
-import 'package:culcul/features/home/models/popular_response.dart';
+import 'package:culcul/features/home/data/dtos/home_dtos.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 

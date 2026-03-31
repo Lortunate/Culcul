@@ -1,4 +1,4 @@
-import 'package:culcul/features/video/models/video_model.dart';
+import 'package:culcul/features/video/domain/entities/video_model.dart';
 import 'package:culcul/features/home/presentation/widgets/video_more_bottom_sheet.dart';
 import 'package:culcul/ui/widgets/app_card_container.dart';
 import 'package:culcul/ui/widgets/app_overlay_tag.dart';

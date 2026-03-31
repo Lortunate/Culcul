@@ -4,7 +4,7 @@ import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/auth/domain/entities/country_code.dart';
 import 'package:culcul/features/auth/domain/entities/user_entity.dart';
-import 'package:culcul/features/auth/application/use_case/auth_use_cases.dart';
+import 'package:culcul/features/auth/auth_providers.dart';
 import 'package:culcul/features/auth/domain/entities/auth_captcha_challenge.dart';
 import 'package:culcul/features/auth/domain/entities/auth_qr_code.dart';
 import 'package:culcul/features/auth/domain/entities/auth_qr_poll_result.dart';
@@ -35,24 +35,20 @@ class Auth extends _$Auth {
   Future<void> _init() async {
     state = state.copyWith(isLoading: true, error: null);
 
-    final result = await ref.read(authUseCasesProvider).initialize();
-    final data = result.dataOrNull;
-    if (data == null) {
-      state = state.copyWith(isLoggedIn: false, user: null, isLoading: false);
-      return;
-    }
-
-    final user = data.refreshedUser ?? data.cachedUser;
+    final repository = ref.read(authRepositoryProvider);
+    final cachedUser = repository.getCachedUser();
+    final refreshedResult = await repository.getCurrentUser();
+    final user = refreshedResult.dataOrNull ?? cachedUser;
     state = state.copyWith(isLoggedIn: user != null, user: user, isLoading: false);
   }
 
   Future<List<CountryCode>> getCountryList() async {
-    final result = await ref.read(authUseCasesProvider).getCountryList();
+    final result = await ref.read(authRepositoryProvider).getCountryList();
     return _unwrapOrDefault(result, const <CountryCode>[]);
   }
 
   Future<AuthCaptchaChallenge?> getCaptcha() async {
-    final result = await ref.read(authUseCasesProvider).getCaptcha();
+    final result = await ref.read(authRepositoryProvider).getCaptchaChallenge();
     return _unwrapOrNull(result);
   }
 
@@ -65,17 +61,8 @@ class Auth extends _$Auth {
     String seccode,
   ) async {
     final result = await ref
-        .read(authUseCasesProvider)
-        .sendSms(
-          SendSmsCommand(
-            cid: cid,
-            phone: phone,
-            token: token,
-            challenge: challenge,
-            validate: validate,
-            seccode: seccode,
-          ),
-        );
+        .read(authRepositoryProvider)
+        .sendSms(cid, phone, token, challenge, validate, seccode);
     return _unwrapOrNull(result);
   }
 
@@ -89,16 +76,14 @@ class Auth extends _$Auth {
   ) async {
     state = state.copyWith(isLoading: true, error: null);
     final result = await ref
-        .read(authUseCasesProvider)
+        .read(authRepositoryProvider)
         .loginWithPassword(
-          PasswordLoginCommand(
-            username: username,
-            password: password,
-            token: token,
-            challenge: challenge,
-            validate: validate,
-            seccode: seccode,
-          ),
+          username: username,
+          password: password,
+          token: token,
+          challenge: challenge,
+          validate: validate,
+          seccode: seccode,
         );
     _handleUserResult(result);
   }
@@ -106,25 +91,23 @@ class Auth extends _$Auth {
   Future<void> loginWithSms(int cid, String phone, String code, String captchaKey) async {
     state = state.copyWith(isLoading: true, error: null);
     final result = await ref
-        .read(authUseCasesProvider)
-        .loginWithSms(
-          SmsLoginCommand(cid: cid, phone: phone, code: code, captchaKey: captchaKey),
-        );
+        .read(authRepositoryProvider)
+        .loginWithSms(cid, phone, code, captchaKey);
     _handleUserResult(result);
   }
 
   Future<AuthQrCode?> getQrCode() async {
-    final result = await ref.read(authUseCasesProvider).getQrCode();
+    final result = await ref.read(authRepositoryProvider).getQrCode();
     return _unwrapOrNull(result);
   }
 
   Future<AuthQrPollResult?> pollQrCode(String authCode) async {
-    final result = await ref.read(authUseCasesProvider).pollQrCode(authCode);
+    final result = await ref.read(authRepositoryProvider).pollQrCode(authCode);
     return _unwrapOrNull(result);
   }
 
   Future<void> logout() async {
-    final result = await ref.read(authUseCasesProvider).logout();
+    final result = await ref.read(authRepositoryProvider).logout();
     result.when(
       success: (_) {
         state = state.copyWith(isLoggedIn: false, user: null, error: null);
@@ -134,7 +117,7 @@ class Auth extends _$Auth {
   }
 
   Future<void> refreshUser() async {
-    final result = await ref.read(authUseCasesProvider).refreshUser();
+    final result = await ref.read(authRepositoryProvider).getCurrentUser();
     result.when(
       success: (user) {
         state = state.copyWith(isLoggedIn: true, user: user, error: null);

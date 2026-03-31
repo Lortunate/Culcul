@@ -1,2 +1,2 @@
-export 'data/dynamic_repository.dart' show dynamicRepositoryProvider;
-export 'data/emote_repository.dart' show emoteRepositoryProvider;
+export 'data/dynamic_repository_impl.dart' show dynamicRepositoryProvider;
+export 'data/emote_repository_impl.dart' show emoteRepositoryProvider;

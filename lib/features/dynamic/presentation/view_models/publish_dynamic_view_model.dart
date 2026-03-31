@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:culcul/features/dynamic/application/use_case/dynamic_use_cases.dart';
+import 'package:culcul/features/dynamic/application/dynamic_workflows.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_view_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -28,7 +28,7 @@ class PublishDynamicViewModel extends _$PublishDynamicViewModel {
 
     state = state.copyWith(isPublishing: true);
     final result = await ref
-        .read(publishDynamicUseCaseProvider)
+        .read(publishDynamicWorkflowProvider)
         .call(PublishDynamicCommand(content: trimmed, images: images));
     final error = result.when(
       success: (_) {

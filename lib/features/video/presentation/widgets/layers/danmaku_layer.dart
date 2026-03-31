@@ -3,7 +3,7 @@ import 'package:culcul/features/video/presentation/view_models/danmaku_settings_
 import 'package:culcul/features/video/presentation/view_models/danmaku_mask_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
-import 'package:culcul/features/video/application/use_case/video_extra_use_cases.dart';
+import 'package:culcul/features/video/application/video_extra_workflows.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
