@@ -1,6 +1,6 @@
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
 import 'package:culcul/features/live/domain/entities/live_room_summary.dart';
-import 'package:culcul/features/live/application/live_room_workflows.dart';
+import 'package:culcul/features/live/live_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'live_recommend_view_model.g.dart';
@@ -17,8 +17,7 @@ class LiveRecommend extends _$LiveRecommend
 
   @override
   Future<List<LiveRoomSummary>> fetchPage(int page, {bool refresh = false}) async {
-    final result = await ref.read(liveRoomWorkflowsProvider).getRecommendList(page);
-    return result.when(success: (value) => value, failure: (error) => throw error);
+    return ref.read(liveRepositoryProvider).getRecommendList(page: page);
   }
 
   @override

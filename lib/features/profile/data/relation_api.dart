@@ -1,5 +1,5 @@
 import 'package:culcul/core/network/models/api_response.dart';
-import 'package:culcul/features/profile/data/dtos/profile_dtos.dart';
+import 'package:culcul/features/profile/domain/entities/profile_models.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
@@ -34,3 +34,4 @@ abstract class RelationApi {
     @Field('re_src') int reSrc = 11,
   });
 }
+

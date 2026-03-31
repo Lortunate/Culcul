@@ -4,7 +4,8 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/features/dynamic/application/dynamic_workflows.dart';
+import 'package:culcul/core/result/run_result.dart';
+import 'package:culcul/features/dynamic/dynamic_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'article_detail_view_model.g.dart';
@@ -76,7 +77,9 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
 
   Future<void> loadDetail() async {
     state = state.copyWith(isLoading: true, clearError: true);
-    final result = await ref.read(articleDetailWorkflowProvider).call(_url);
+    final result = await runResult(
+      () => ref.read(dynamicRepositoryProvider).getArticleDetail(_url),
+    );
     state = result.when(
       success: (detail) => state.copyWith(
         setDetail: true,
@@ -119,15 +122,13 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
       commentsHasMore: refresh ? true : null,
     );
 
-    final result = await ref
-        .read(articleCommentsWorkflowProvider)
-        .call(
-          ArticleCommentsQuery(
-            oid: detail.commentOid,
-            referer: detail.url,
-            next: refresh ? null : state.commentsNext,
-          ),
-        );
+    final result = await runResult(
+      () => ref.read(dynamicRepositoryProvider).getArticleCommentList(
+        oid: detail.commentOid,
+        referer: detail.url,
+        next: refresh ? null : state.commentsNext,
+      ),
+    );
     result.when(
       success: (response) {
         final mergedComments = refresh
@@ -161,18 +162,16 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
     if (message.trim().isEmpty || state.isSendingComment) return null;
 
     state = state.copyWith(isSendingComment: true);
-    final result = await ref
-        .read(addArticleCommentWorkflowProvider)
-        .call(
-          AddArticleCommentCommand(
-            oid: detail.commentOid,
-            type: detail.commentType,
-            root: 0,
-            parent: 0,
-            message: message.trim(),
-            referer: detail.url,
-          ),
-        );
+    final result = await runVoidResult(
+      () => ref.read(dynamicRepositoryProvider).addCommentReply(
+        oid: detail.commentOid,
+        type: detail.commentType,
+        root: 0,
+        parent: 0,
+        message: message.trim(),
+        referer: detail.url,
+      ),
+    );
     state = state.copyWith(isSendingComment: false);
     if (result.isFailure) {
       return result.errorOrNull!.message;
@@ -186,18 +185,16 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
     if (detail == null) return null;
     if (!state.commentsEnabled) return 'Comments disabled';
 
-    final result = await ref
-        .read(addArticleCommentWorkflowProvider)
-        .call(
-          AddArticleCommentCommand(
-            oid: detail.commentOid,
-            type: detail.commentType,
-            root: item.root == 0 ? item.rpid : item.root,
-            parent: item.rpid,
-            message: message,
-            referer: detail.url,
-          ),
-        );
+    final result = await runVoidResult(
+      () => ref.read(dynamicRepositoryProvider).addCommentReply(
+        oid: detail.commentOid,
+        type: detail.commentType,
+        root: item.root == 0 ? item.rpid : item.root,
+        parent: item.rpid,
+        message: message,
+        referer: detail.url,
+      ),
+    );
     if (result.isFailure) {
       return result.errorOrNull!.message;
     }
@@ -223,17 +220,15 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
       }).toList(),
     );
 
-    final result = await ref
-        .read(toggleArticleCommentLikeWorkflowProvider)
-        .call(
-          ToggleArticleCommentLikeCommand(
-            oid: detail.commentOid,
-            type: detail.commentType,
-            rpid: item.rpid,
-            isLiked: !isLiked,
-            referer: detail.url,
-          ),
-        );
+    final result = await runVoidResult(
+      () => ref.read(dynamicRepositoryProvider).likeCommentByTarget(
+        oid: detail.commentOid,
+        type: detail.commentType,
+        rpid: item.rpid,
+        isLiked: !isLiked,
+        referer: detail.url,
+      ),
+    );
     if (result.isFailure) {
       state = state.copyWith(comments: previous);
     }

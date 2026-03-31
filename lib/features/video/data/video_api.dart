@@ -1,6 +1,6 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/network/models/api_response.dart';
-import 'package:culcul/features/video/data/dtos/video_dtos.dart';
+import 'package:culcul/features/video/domain/entities/video_models.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
@@ -102,3 +102,4 @@ abstract class VideoApi {
     @Field('type') int type,
   );
 }
+

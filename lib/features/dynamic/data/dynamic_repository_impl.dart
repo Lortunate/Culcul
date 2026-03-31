@@ -10,7 +10,7 @@ import 'package:culcul/features/dynamic/data/dynamic_api.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/features/dynamic/domain/repositories/dynamic_repository.dart'
     as domain;
-import 'package:culcul/features/dynamic/data/dtos/dynamic_dtos.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -459,3 +459,4 @@ class _DynamicCommentTarget {
     required this.referer,
   });
 }
+

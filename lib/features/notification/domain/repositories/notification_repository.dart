@@ -2,10 +2,11 @@ import 'dart:io';
 
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
+import 'package:culcul/features/notification/domain/entities/image_upload_response.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
+import 'package:culcul/features/notification/domain/entities/private_message_model.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/domain/entities/system_notice.dart';
-import 'package:culcul/features/notification/domain/entities/notification_transport_entities.dart';
 
 abstract class NotificationRepository {
   Future<NotificationSummary> getUnreadCount();

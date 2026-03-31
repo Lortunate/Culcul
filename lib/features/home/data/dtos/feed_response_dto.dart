@@ -1,18 +1,19 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+class FeedResponseDto {
+  final List<Map<String, dynamic>> item;
+  final dynamic businessCard;
+  final List<dynamic> floorInfo;
+  final int userFeature;
+  final String sideBarColumn;
 
-part 'feed_response.freezed.dart';
+  const FeedResponseDto({
+    this.item = const [],
+    this.businessCard,
+    this.floorInfo = const [],
+    this.userFeature = 0,
+    this.sideBarColumn = '',
+  });
 
-@freezed
-sealed class FeedResponse with _$FeedResponse {
-  const factory FeedResponse({
-    @Default([]) List<Map<String, dynamic>> item,
-    @JsonKey(name: 'business_card') dynamic businessCard,
-    @JsonKey(name: 'floor_info') @Default([]) List<dynamic> floorInfo,
-    @JsonKey(name: 'user_feature') @Default(0) int userFeature,
-    @JsonKey(name: 'side_bar_column') @Default('') String sideBarColumn,
-  }) = _FeedResponse;
-
-  factory FeedResponse.fromJson(Map<String, dynamic> json) {
+  factory FeedResponseDto.fromJson(Map<String, dynamic> json) {
     final normalized = Map<String, dynamic>.from(json);
 
     final rawItem = normalized['item'];
@@ -37,7 +38,7 @@ sealed class FeedResponse with _$FeedResponse {
       normalized['side_bar_column'] = '';
     }
 
-    return FeedResponse(
+    return FeedResponseDto(
       item: (normalized['item'] as List).cast<Map<String, dynamic>>(),
       businessCard: normalized['business_card'],
       floorInfo: (normalized['floor_info'] as List).cast<dynamic>(),

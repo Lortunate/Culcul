@@ -1,5 +1,5 @@
 import 'package:culcul/core/network/models/api_response.dart';
-import 'package:culcul/features/to_view/data/dtos/to_view_dtos.dart';
+import 'package:culcul/features/to_view/data/dtos/to_view_model_dto.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
@@ -10,7 +10,7 @@ abstract class ToViewApi {
   factory ToViewApi(Dio dio, {String baseUrl}) = _ToViewApi;
 
   @GET('/x/v2/history/toview')
-  Future<ApiResponse<ToViewListResponse>> getToViewList();
+  Future<ApiResponse<ToViewListResponseDto>> getToViewList();
 
   @POST('/x/v2/history/toview/add')
   @FormUrlEncoded()
@@ -26,3 +26,4 @@ abstract class ToViewApi {
   @Headers({'x-bili-csrf': 'true'})
   Future<void> clearToView();
 }
+

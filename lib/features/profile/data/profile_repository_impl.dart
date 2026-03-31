@@ -7,7 +7,7 @@ import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/features/profile/domain/repositories/profile_repository.dart'
     as domain;
-import 'package:culcul/features/profile/data/dtos/profile_dtos.dart';
+import 'package:culcul/features/profile/domain/entities/profile_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'profile_repository_impl.g.dart';
@@ -230,3 +230,4 @@ class ProfileRepositoryImpl extends BaseRepository implements domain.ProfileRepo
     return topPhoto;
   }
 }
+

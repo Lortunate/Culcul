@@ -3,7 +3,7 @@ import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/features/live/data/live_room_mapper.dart';
 import 'package:culcul/features/live/data/live_api.dart';
 import 'package:culcul/features/live/domain/repositories/live_repository.dart' as domain;
-import 'package:culcul/features/live/data/dtos/live_dtos.dart';
+import 'package:culcul/features/live/domain/entities/live_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'live_repository_impl.g.dart';
@@ -112,3 +112,4 @@ class LiveRepositoryImpl extends BaseRepository implements domain.LiveRepository
     )).map((item) => item.toDomain()).toList();
   }
 }
+

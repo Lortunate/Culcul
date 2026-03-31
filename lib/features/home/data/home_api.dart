@@ -1,6 +1,7 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/network/models/api_response.dart';
-import 'package:culcul/features/home/data/dtos/home_dtos.dart';
+import 'package:culcul/features/home/data/dtos/feed_response_dto.dart';
+import 'package:culcul/features/home/data/dtos/popular_response_dto.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
@@ -12,7 +13,7 @@ abstract class HomeApi {
 
   @GET(ApiConstants.feedRcmd)
   @Headers({'x-bili-wbi': 'true'})
-  Future<ApiResponse<FeedResponse>> fetchRecommend({
+  Future<ApiResponse<FeedResponseDto>> fetchRecommend({
     @Query('fresh_type') int freshType = 4,
     @Query('ps') int ps = 20,
     @Query('fresh_idx') int freshIdx = 1,
@@ -21,9 +22,10 @@ abstract class HomeApi {
   });
 
   @GET(ApiConstants.popular)
-  Future<ApiResponse<PopularResponse>> fetchPopular({
+  Future<ApiResponse<PopularResponseDto>> fetchPopular({
     @Query('pn') int pn = 1,
     @Query('ps') int ps = 20,
     @Query('force_refresh') bool? forceRefresh,
   });
 }
+

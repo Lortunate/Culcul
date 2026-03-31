@@ -1,7 +1,10 @@
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'dart:async';
 
+import 'package:culcul/core/result/run_result.dart';
+import 'package:culcul/features/profile/profile_providers.dart';
 import 'package:culcul/features/video/application/video_detail_workflows.dart';
+import 'package:culcul/features/video/video_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'video_detail_state.dart';
@@ -61,9 +64,11 @@ class VideoDetailController extends _$VideoDetailController {
     final detail = state.videoDetail;
     if (detail == null) return;
 
-    await ref
-        .read(reportVideoProgressWorkflowProvider)
-        .call(aid: detail.aid, cid: state.currentCid, progress: progress);
+    await ref.read(videoRepositoryProvider).reportVideoProgress(
+      aid: detail.aid,
+      cid: state.currentCid,
+      progress: progress,
+    );
   }
 
   Future<void> toggleFollow() async {
@@ -82,24 +87,31 @@ class VideoDetailController extends _$VideoDetailController {
       ),
     );
 
-    final result = await ref
-        .read(toggleVideoFollowWorkflowProvider)
-        .call(followMid: detail.owner.mid, wasFollowed: wasFollowed);
+    final result = await runVoidResult(
+      () => ref.read(relationRepositoryProvider).modifyRelation(
+        fid: detail.owner.mid,
+        act: wasFollowed ? 2 : 1,
+      ),
+    );
     if (result.isFailure) {
       state = state.copyWith(videoDetail: previousDetail);
     }
   }
 
   Future<void> _loadPlayUrl({required int aid, required int cid, required int qn}) async {
-    final result = await ref
-        .read(loadVideoPlayUrlWorkflowProvider)
-        .call(aid: aid, cid: cid, quality: qn);
+    final result = await runResult(
+      () => ref.read(videoRepositoryProvider).fetchVideoPlayUrl(
+        aid: aid,
+        cid: cid,
+        quality: qn,
+      ),
+    );
     state = result.when(
-      success: (data) => state.copyWith(
-        playUrl: data.playUrl,
+      success: (playUrl) => state.copyWith(
+        playUrl: playUrl,
         isLoading: false,
-        selectedQuality: data.selectedQuality,
-        availableQualities: data.availableQualities,
+        selectedQuality: playUrl.quality,
+        availableQualities: playUrl.acceptQuality.toList(),
       ),
       failure: (error) => state.copyWith(isLoading: false, error: error),
     );

@@ -29,7 +29,7 @@ class PublishDynamicViewModel extends _$PublishDynamicViewModel {
     state = state.copyWith(isPublishing: true);
     final result = await ref
         .read(publishDynamicWorkflowProvider)
-        .call(PublishDynamicCommand(content: trimmed, images: images));
+        .call(content: trimmed, images: images);
     final error = result.when(
       success: (_) {
         ref.invalidate(dynamicProvider);

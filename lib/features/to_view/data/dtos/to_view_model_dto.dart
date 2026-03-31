@@ -1,13 +1,13 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'to_view_model.freezed.dart';
-part 'to_view_model.g.dart';
+part 'to_view_model_dto.freezed.dart';
+part 'to_view_model_dto.g.dart';
 
 @freezed
-sealed class ToViewModel with _$ToViewModel {
-  const ToViewModel._();
+sealed class ToViewModelDto with _$ToViewModelDto {
+  const ToViewModelDto._();
 
-  const factory ToViewModel({
+  const factory ToViewModelDto({
     @JsonKey(name: 'aid') int? aid,
     @JsonKey(name: 'videos') @Default(0) int? videos,
     @JsonKey(name: 'tid') @Default(0) int? tid,
@@ -21,14 +21,14 @@ sealed class ToViewModel with _$ToViewModel {
     @JsonKey(name: 'state') @Default(0) int? state,
     @JsonKey(name: 'duration') @Default(0) int? duration,
     @JsonKey(name: 'rights') Map<String, dynamic>? rights,
-    @JsonKey(name: 'owner') ToViewOwnerModel? owner,
-    @JsonKey(name: 'stat') ToViewStatModel? stat,
+    @JsonKey(name: 'owner') ToViewOwnerModelDto? owner,
+    @JsonKey(name: 'stat') ToViewStatModelDto? stat,
     @JsonKey(name: 'dynamic') String? dynamicText,
     @JsonKey(name: 'cid') @Default(0) int? cid,
     @JsonKey(name: 'progress') @Default(0) int? progress,
     @JsonKey(name: 'add_at') @Default(0) int? addAt,
     @JsonKey(name: 'bvid') @Default('') String? bvid,
-  }) = _ToViewModel;
+  }) = _ToViewModelDto;
 
   bool get hasProgress => (progress ?? 0) > 0;
 
@@ -37,24 +37,25 @@ sealed class ToViewModel with _$ToViewModel {
     return (progress ?? 0) / d;
   }
 
-  factory ToViewModel.fromJson(Map<String, dynamic> json) => _$ToViewModelFromJson(json);
+  factory ToViewModelDto.fromJson(Map<String, dynamic> json) =>
+      _$ToViewModelDtoFromJson(json);
 }
 
 @freezed
-sealed class ToViewOwnerModel with _$ToViewOwnerModel {
-  const factory ToViewOwnerModel({
+sealed class ToViewOwnerModelDto with _$ToViewOwnerModelDto {
+  const factory ToViewOwnerModelDto({
     @Default(0) int mid,
     @Default('') String name,
     @Default('') String face,
-  }) = _ToViewOwnerModel;
+  }) = _ToViewOwnerModelDto;
 
-  factory ToViewOwnerModel.fromJson(Map<String, dynamic> json) =>
-      _$ToViewOwnerModelFromJson(json);
+  factory ToViewOwnerModelDto.fromJson(Map<String, dynamic> json) =>
+      _$ToViewOwnerModelDtoFromJson(json);
 }
 
 @freezed
-sealed class ToViewStatModel with _$ToViewStatModel {
-  const factory ToViewStatModel({
+sealed class ToViewStatModelDto with _$ToViewStatModelDto {
+  const factory ToViewStatModelDto({
     @JsonKey(name: 'aid') int? aid,
     @JsonKey(name: 'view') @Default(0) int? view,
     @JsonKey(name: 'danmaku') @Default(0) int? danmaku,
@@ -64,19 +65,19 @@ sealed class ToViewStatModel with _$ToViewStatModel {
     @JsonKey(name: 'share') @Default(0) int? share,
     @JsonKey(name: 'like') @Default(0) int? like,
     @JsonKey(name: 'dislike') @Default(0) int? dislike,
-  }) = _ToViewStatModel;
+  }) = _ToViewStatModelDto;
 
-  factory ToViewStatModel.fromJson(Map<String, dynamic> json) =>
-      _$ToViewStatModelFromJson(json);
+  factory ToViewStatModelDto.fromJson(Map<String, dynamic> json) =>
+      _$ToViewStatModelDtoFromJson(json);
 }
 
 @freezed
-sealed class ToViewListResponse with _$ToViewListResponse {
-  const factory ToViewListResponse({
+sealed class ToViewListResponseDto with _$ToViewListResponseDto {
+  const factory ToViewListResponseDto({
     @JsonKey(name: 'count') @Default(0) int count,
-    @JsonKey(name: 'list') @Default([]) List<ToViewModel> list,
-  }) = _ToViewListResponse;
+    @JsonKey(name: 'list') @Default([]) List<ToViewModelDto> list,
+  }) = _ToViewListResponseDto;
 
-  factory ToViewListResponse.fromJson(Map<String, dynamic> json) =>
-      _$ToViewListResponseFromJson(json);
+  factory ToViewListResponseDto.fromJson(Map<String, dynamic> json) =>
+      _$ToViewListResponseDtoFromJson(json);
 }

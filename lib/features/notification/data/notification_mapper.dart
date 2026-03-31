@@ -1,4 +1,4 @@
-import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
+import 'package:culcul/features/notification/domain/entities/notification_models.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
@@ -164,3 +164,4 @@ extension PrivateMessageSessionResponseMapper on PrivateMessageSessionResponse {
     );
   }
 }
+

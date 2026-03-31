@@ -13,6 +13,7 @@ const _presentationAllowedSubdirs = {
   'widgets',
   'view_models',
 };
+const _allowedCrossFeatureDomainExportFiles = <String>{};
 
 void main() {
   final issues = <String>[];
@@ -154,6 +155,47 @@ void main() {
           (line) => line.contains('/features/') && line.contains('/models/'),
         )) {
       issues.add('$path must not export feature models directly');
+    }
+
+    if (normalized.contains('/features/') &&
+        normalized.contains('/data/dtos/') &&
+        packageExports.any((line) => line.contains('/domain/'))) {
+      issues.add('$path must not export feature domain symbols from data/dtos');
+    }
+
+    if (normalized.contains('/features/') && normalized.contains('/domain/entities/')) {
+      final sourceFeatureMatch = RegExp(r'/lib/features/([^/]+)/').firstMatch(normalized);
+      final sourceFeature = sourceFeatureMatch?.group(1);
+      for (final line in packageExports) {
+        final match = RegExp(
+          r"export 'package:culcul/features/([^/]+)/domain/entities/",
+        ).firstMatch(line);
+        if (match == null || sourceFeature == null) continue;
+        final targetFeature = match.group(1)!;
+        if (targetFeature != sourceFeature &&
+            !_allowedCrossFeatureDomainExportFiles.contains(path)) {
+          issues.add(
+            '$path must not export other feature domain entities directly (use core/contracts)',
+          );
+          break;
+        }
+      }
+    }
+
+    final domainImportMatches = RegExp(r"import 'package:culcul/features/([^/]+)/domain/")
+        .allMatches(content);
+    if (normalized.contains('/features/') && normalized.contains('/domain/')) {
+      final sourceFeatureMatch = RegExp(r'/lib/features/([^/]+)/').firstMatch(normalized);
+      final sourceFeature = sourceFeatureMatch?.group(1);
+      for (final match in domainImportMatches) {
+        final targetFeature = match.group(1);
+        if (sourceFeature != null && targetFeature != null && sourceFeature != targetFeature) {
+          issues.add(
+            '$path must not import other feature domain symbols directly (use core/contracts)',
+          );
+          break;
+        }
+      }
     }
 
     if (normalized.contains('/features/') &&

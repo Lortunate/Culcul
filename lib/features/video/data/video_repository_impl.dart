@@ -4,7 +4,7 @@ import 'package:culcul/core/network/resource_api.dart';
 import 'package:culcul/features/video/domain/repositories/video_repository.dart'
     as domain;
 import 'package:culcul/features/video/data/video_api.dart';
-import 'package:culcul/features/video/data/dtos/video_dtos.dart';
+import 'package:culcul/features/video/domain/entities/video_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'video_repository_impl.g.dart';
@@ -136,3 +136,4 @@ class VideoRepositoryImpl extends BaseRepository implements domain.VideoReposito
     return requestVoid(() => api.reportVideoProgress(aid, cid, progress, 'android', 3));
   }
 }
+

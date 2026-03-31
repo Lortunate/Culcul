@@ -1,9 +1,7 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/result/run_result.dart';
-import 'package:culcul/features/profile/profile_providers.dart';
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
-import 'package:culcul/features/profile/domain/repositories/relation_repository.dart';
 import 'package:culcul/features/video/domain/repositories/video_repository.dart';
 import 'package:culcul/features/video/video_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -23,18 +21,6 @@ class VideoInitialData {
     required this.currentCid,
     required this.playUrl,
     required this.relatedVideos,
-    required this.availableQualities,
-    required this.selectedQuality,
-  });
-}
-
-class VideoPlayUrlData {
-  final PlayUrl playUrl;
-  final List<int> availableQualities;
-  final int selectedQuality;
-
-  const VideoPlayUrlData({
-    required this.playUrl,
     required this.availableQualities,
     required this.selectedQuality,
   });
@@ -81,77 +67,6 @@ class LoadVideoDetailWorkflow {
         selectedQuality: playUrl?.quality ?? 80,
       );
     });
-  }
-}
-
-@riverpod
-LoadVideoPlayUrlWorkflow loadVideoPlayUrlWorkflow(Ref ref) {
-  return LoadVideoPlayUrlWorkflow(ref.read(videoRepositoryProvider));
-}
-
-class LoadVideoPlayUrlWorkflow {
-  final VideoRepository _repository;
-
-  const LoadVideoPlayUrlWorkflow(this._repository);
-
-  Future<Result<VideoPlayUrlData, AppError>> call({
-    required int aid,
-    required int cid,
-    required int quality,
-  }) async {
-    return runResult(() async {
-      final playUrl = await _repository.fetchVideoPlayUrl(
-        aid: aid,
-        cid: cid,
-        quality: quality,
-      );
-      return VideoPlayUrlData(
-        playUrl: playUrl,
-        availableQualities: playUrl.acceptQuality.toList(),
-        selectedQuality: playUrl.quality,
-      );
-    });
-  }
-}
-
-@riverpod
-ToggleVideoFollowWorkflow toggleVideoFollowWorkflow(Ref ref) {
-  return ToggleVideoFollowWorkflow(ref.read(relationRepositoryProvider));
-}
-
-class ToggleVideoFollowWorkflow {
-  final RelationRepository _repository;
-
-  const ToggleVideoFollowWorkflow(this._repository);
-
-  Future<Result<void, AppError>> call({
-    required int followMid,
-    required bool wasFollowed,
-  }) async {
-    return runVoidResult(
-      () => _repository.modifyRelation(fid: followMid, act: wasFollowed ? 2 : 1),
-    );
-  }
-}
-
-@riverpod
-ReportVideoProgressWorkflow reportVideoProgressWorkflow(Ref ref) {
-  return ReportVideoProgressWorkflow(ref.read(videoRepositoryProvider));
-}
-
-class ReportVideoProgressWorkflow {
-  final VideoRepository _repository;
-
-  const ReportVideoProgressWorkflow(this._repository);
-
-  Future<Result<void, AppError>> call({
-    required int aid,
-    required int cid,
-    required int progress,
-  }) async {
-    return runVoidResult(
-      () => _repository.reportVideoProgress(aid: aid, cid: cid, progress: progress),
-    );
   }
 }
 

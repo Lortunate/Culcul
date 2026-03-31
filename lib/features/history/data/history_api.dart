@@ -1,6 +1,6 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/network/models/api_response.dart';
-import 'package:culcul/features/history/data/dtos/history_dtos.dart';
+import 'package:culcul/features/history/domain/entities/history_models.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
@@ -19,3 +19,4 @@ abstract class HistoryApi {
     @Query('ps') int ps,
   );
 }
+

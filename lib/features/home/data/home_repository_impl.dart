@@ -1,4 +1,5 @@
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
@@ -6,7 +7,6 @@ import 'package:culcul/features/home/data/home_api.dart';
 import 'package:culcul/features/home/data/home_feed_mapper.dart';
 import 'package:culcul/features/home/domain/entities/home_video.dart';
 import 'package:culcul/features/home/domain/repositories/home_repository.dart' as domain;
-import 'package:culcul/features/home/data/dtos/home_dtos.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_repository_impl.g.dart';
@@ -95,3 +95,4 @@ class HomeRepositoryImpl implements domain.HomeRepository {
     )).map((item) => item.toDomain()).toList();
   }
 }
+

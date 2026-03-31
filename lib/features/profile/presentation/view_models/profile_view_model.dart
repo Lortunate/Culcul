@@ -2,6 +2,7 @@ import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/profile/application/profile_query_workflows.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
+import 'package:culcul/features/profile/profile_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'profile_view_model.g.dart';
@@ -12,10 +13,7 @@ Future<ProfileUser> myProfile(Ref ref) async {
   if (!authState.isLoggedIn || authState.user == null) {
     throw AppError.auth('Not logged in');
   }
-  final result = await ref
-      .watch(profileQueryWorkflowsProvider)
-      .getProfile(authState.user!.id);
-  return result.when(success: (value) => value, failure: (error) => throw error);
+  return ref.watch(profileRepositoryProvider).getProfile(int.parse(authState.user!.id));
 }
 
 @riverpod

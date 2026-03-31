@@ -1,4 +1,4 @@
-import 'package:culcul/features/profile/data/dtos/profile_dtos.dart';
+import 'package:culcul/features/profile/domain/entities/profile_models.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/features/profile/domain/entities/relation_user.dart';
@@ -106,3 +106,4 @@ extension UserSpaceVideoMapper on UserSpaceVideoModel {
     );
   }
 }
+

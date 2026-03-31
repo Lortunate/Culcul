@@ -1,7 +1,8 @@
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'dart:async';
 
-import 'package:culcul/features/video/application/video_comment_workflows.dart';
+import 'package:culcul/core/result/run_result.dart';
+import 'package:culcul/features/video/video_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'comment_reply_state.dart';
@@ -23,9 +24,13 @@ class CommentReplyController extends _$CommentReplyController {
   Future<void> refresh() async {
     state = state.copyWith(isLoading: true, error: null);
 
-    final result = await ref
-        .read(videoCommentWorkflowsProvider)
-        .loadReplies(oid: oid, root: rootId, page: 1);
+    final result = await runResult(
+      () => ref.read(videoRepositoryProvider).fetchReply(
+        oid: oid,
+        root: rootId,
+        page: 1,
+      ),
+    );
     state = result.when(
       success: (response) => state.copyWith(
         replies: response.replies,
@@ -42,9 +47,13 @@ class CommentReplyController extends _$CommentReplyController {
 
     state = state.copyWith(isLoading: true);
 
-    final result = await ref
-        .read(videoCommentWorkflowsProvider)
-        .loadReplies(oid: oid, root: rootId, page: state.page);
+    final result = await runResult(
+      () => ref.read(videoRepositoryProvider).fetchReply(
+        oid: oid,
+        root: rootId,
+        page: state.page,
+      ),
+    );
     state = result.when(
       success: (response) => state.copyWith(
         replies: [...state.replies, ...response.replies],
@@ -59,16 +68,20 @@ class CommentReplyController extends _$CommentReplyController {
   Future<void> toggleCommentLike(int oid, int rpid, bool isLiked) async {
     _updateCommentLikeStatus(rpid, !isLiked);
 
-    final result = await ref
-        .read(videoCommentWorkflowsProvider)
-        .toggleLike(oid: oid, rpid: rpid, isLiked: !isLiked);
+    final result = await runVoidResult(
+      () => ref.read(videoRepositoryProvider).setCommentLike(
+        oid: oid,
+        rpid: rpid,
+        isLiked: !isLiked,
+      ),
+    );
     if (result.isFailure) {
       _updateCommentLikeStatus(rpid, isLiked);
     }
   }
 
   Future<void> toggleCommentDislike(int oid, int rpid) async {
-    await ref.read(videoCommentWorkflowsProvider).toggleDislike(oid: oid, rpid: rpid);
+    await ref.read(videoRepositoryProvider).setCommentDislike(oid: oid, rpid: rpid);
   }
 
   void _updateCommentLikeStatus(int rpid, bool liked) {
@@ -93,9 +106,12 @@ class CommentReplyController extends _$CommentReplyController {
   }
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
-    await ref
-        .read(videoCommentWorkflowsProvider)
-        .addReply(oid: oid, root: root, parent: parent, message: message);
+    await ref.read(videoRepositoryProvider).replyToComment(
+      oid: oid,
+      root: root,
+      parent: parent,
+      message: message,
+    );
     await refresh();
   }
 }

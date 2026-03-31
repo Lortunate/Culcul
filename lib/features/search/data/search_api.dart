@@ -1,5 +1,5 @@
 import 'package:culcul/core/network/models/api_response.dart';
-import 'package:culcul/features/search/data/dtos/search_dtos.dart';
+import 'package:culcul/features/search/domain/entities/search_models.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
@@ -46,3 +46,4 @@ abstract class SearchApi {
     @Query('tids') int? tids,
   });
 }
+

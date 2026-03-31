@@ -1,12 +1,12 @@
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/features/to_view/data/dtos/to_view_model_dto.dart';
 import 'package:culcul/features/to_view/data/to_view_mapper.dart';
 import 'package:culcul/features/to_view/data/toview_api.dart';
 import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
 import 'package:culcul/features/to_view/domain/repositories/to_view_repository.dart'
     as domain;
-import 'package:culcul/features/to_view/data/dtos/to_view_dtos.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'toview_repository_impl.g.dart';
@@ -21,12 +21,12 @@ class ToViewRepositoryImpl extends BaseRepository implements domain.ToViewReposi
 
   ToViewRepositoryImpl(this._api);
 
-  Future<ToViewListResponse> getToViewList() async {
+  Future<ToViewListResponseDto> getToViewList() async {
     try {
       return await requestApi(() => _api.getToViewList());
     } on ServerException catch (e) {
       if (e.code == 0 && e.message == 'No Data') {
-        return ToViewListResponse(count: 0, list: []);
+        return const ToViewListResponseDto(count: 0, list: []);
       }
       rethrow;
     }
@@ -59,3 +59,4 @@ class ToViewRepositoryImpl extends BaseRepository implements domain.ToViewReposi
   @override
   Future<void> clear() => clearToView();
 }
+

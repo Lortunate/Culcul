@@ -1,4 +1,4 @@
-import 'package:culcul/features/live/data/dtos/live_dtos.dart';
+import 'package:culcul/features/live/domain/entities/live_models.dart';
 
 extension WatchedShowMapper on WatchedShow {
   LiveWatchedShow toDomain() {
@@ -32,3 +32,4 @@ extension LiveRoomSummaryMapper on LiveRoomModel {
     );
   }
 }
+

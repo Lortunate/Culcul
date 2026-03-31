@@ -10,7 +10,7 @@ import 'package:culcul/features/search/domain/entities/search_suggestion_entry.d
 import 'package:culcul/features/search/domain/entities/search_trending_keyword.dart';
 import 'package:culcul/features/search/domain/repositories/search_repository.dart'
     as domain;
-import 'package:culcul/features/search/data/dtos/search_dtos.dart';
+import 'package:culcul/features/search/domain/entities/search_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_repository_impl.g.dart';
@@ -127,3 +127,4 @@ class SearchRepositoryImpl extends BaseRepository implements domain.SearchReposi
     return result.toDomain();
   }
 }
+

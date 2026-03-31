@@ -1,7 +1,8 @@
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'dart:async';
 
-import 'package:culcul/features/video/application/video_comment_workflows.dart';
+import 'package:culcul/core/result/run_result.dart';
+import 'package:culcul/features/video/video_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'video_comments_state.dart';
@@ -65,22 +66,29 @@ class VideoCommentsController extends _$VideoCommentsController {
 
     state = state.copyWith(comments: nextComments);
 
-    final result = await ref
-        .read(videoCommentWorkflowsProvider)
-        .toggleLike(oid: oid, rpid: rpid, isLiked: !isLiked);
+    final result = await runVoidResult(
+      () => ref.read(videoRepositoryProvider).setCommentLike(
+        oid: oid,
+        rpid: rpid,
+        isLiked: !isLiked,
+      ),
+    );
     if (result.isFailure) {
       state = state.copyWith(comments: previousComments);
     }
   }
 
   Future<void> toggleCommentDislike(int oid, int rpid) async {
-    await ref.read(videoCommentWorkflowsProvider).toggleDislike(oid: oid, rpid: rpid);
+    await ref.read(videoRepositoryProvider).setCommentDislike(oid: oid, rpid: rpid);
   }
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
-    await ref
-        .read(videoCommentWorkflowsProvider)
-        .addReply(oid: oid, root: root, parent: parent, message: message);
+    await ref.read(videoRepositoryProvider).replyToComment(
+      oid: oid,
+      root: root,
+      parent: parent,
+      message: message,
+    );
     await refresh();
   }
 
@@ -96,9 +104,13 @@ class VideoCommentsController extends _$VideoCommentsController {
       state = state.copyWith(isLoadingMore: true, error: null);
     }
 
-    final result = await ref
-        .read(videoCommentWorkflowsProvider)
-        .loadComments(oid: aid, sort: state.sort, page: page);
+    final result = await runResult(
+      () => ref.read(videoRepositoryProvider).fetchComments(
+        oid: aid,
+        sort: state.sort,
+        page: page,
+      ),
+    );
     result.when(
       success: (response) {
         final comments = replace

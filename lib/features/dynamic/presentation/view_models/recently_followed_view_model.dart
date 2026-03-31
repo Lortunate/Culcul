@@ -1,5 +1,5 @@
-import 'package:culcul/features/dynamic/application/dynamic_workflows.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/profile/profile_providers.dart';
 import 'package:culcul/features/profile/domain/entities/relation_user.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -14,9 +14,12 @@ class RecentlyFollowed extends _$RecentlyFollowed {
       return [];
     }
 
-    final result = await ref
-        .read(recentlyFollowedWorkflowProvider)
-        .call(int.parse(authState.user!.id));
-    return result.when(success: (value) => value, failure: (_) => []);
+    try {
+      return await ref
+          .read(relationRepositoryProvider)
+          .getFollowings(int.parse(authState.user!.id), page: 1, pageSize: 20);
+    } catch (_) {
+      return [];
+    }
   }
 }

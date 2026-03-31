@@ -2,8 +2,8 @@ import 'package:culcul/core/errors/app_error.dart';
 import 'dart:io';
 
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
-import 'package:culcul/features/notification/application/notification_workflows.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
+import 'package:culcul/features/notification/notification_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'chat_view_model.g.dart';
@@ -32,12 +32,9 @@ class Chat extends _$Chat {
     _minSeqno = null;
     _hasMore = true;
 
-    final result = await ref
-        .read(notificationWorkflowsProvider)
-        .getPrivateMessages(talkerId: talkerId, sessionType: sessionType);
-    final response = result.when(
-      success: (value) => value,
-      failure: (error) => throw error,
+    final response = await ref.read(notificationRepositoryProvider).getPrivateMessages(
+      talkerId: talkerId,
+      sessionType: sessionType,
     );
     if (response.messages.isNotEmpty) {
       _minSeqno = response.messages.last.msgSeqno;
@@ -59,16 +56,13 @@ class Chat extends _$Chat {
 
     try {
       final result = await ref
-          .read(notificationWorkflowsProvider)
+          .read(notificationRepositoryProvider)
           .getPrivateMessages(
             talkerId: talkerId,
             sessionType: sessionType,
             endSeqno: _minSeqno,
           );
-      if (result.isFailure) {
-        return;
-      }
-      final response = result.dataOrNull!;
+      final response = result;
       final newMessages = response.messages;
       if (newMessages.isNotEmpty) {
         _minSeqno = newMessages.last.msgSeqno;
@@ -105,12 +99,9 @@ class Chat extends _$Chat {
   Future<void> sendImage(File imageFile) async {
     // Upload first
     final uploadResult = await ref
-        .read(notificationWorkflowsProvider)
+        .read(notificationRepositoryProvider)
         .uploadImage(imageFile);
-    if (uploadResult.isFailure) {
-      throw uploadResult.errorOrNull!;
-    }
-    final uploadRes = uploadResult.dataOrNull!;
+    final uploadRes = uploadResult;
     final content = PrivateMessageContent.image(
       url: uploadRes.imageUrl,
       height: uploadRes.imageHeight,
@@ -161,18 +152,13 @@ class Chat extends _$Chat {
     }
 
     try {
-      final result = await ref
-          .read(notificationWorkflowsProvider)
-          .sendPrivateMessage(
-            senderUid: senderUid,
-            receiverId: talkerId,
-            receiverType: sessionType,
-            msgType: msgType,
-            content: content,
-          );
-      if (result.isFailure) {
-        throw result.errorOrNull!;
-      }
+      await ref.read(notificationRepositoryProvider).sendPrivateMessage(
+        senderUid: senderUid,
+        receiverId: talkerId,
+        receiverType: sessionType,
+        msgType: msgType,
+        content: content,
+      );
     } catch (e) {
       // Failure: Revert state
       state = previousState;

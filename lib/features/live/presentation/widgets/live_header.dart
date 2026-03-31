@@ -1,5 +1,6 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/live/domain/entities/live_entities.dart';
+import 'package:culcul/features/profile/domain/entities/user_card_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/follow_button.dart';

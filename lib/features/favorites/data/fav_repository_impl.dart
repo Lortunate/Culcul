@@ -6,7 +6,7 @@ import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:culcul/features/favorites/domain/repositories/favorite_repository.dart'
     as domain;
-import 'package:culcul/features/favorites/data/dtos/favorite_dtos.dart';
+import 'package:culcul/features/favorites/domain/entities/favorite_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'fav_repository_impl.g.dart';
@@ -177,3 +177,4 @@ class FavRepositoryImpl extends BaseRepository implements domain.FavoriteReposit
     return batchDelResource(resources: resources, mediaId: mediaId);
   }
 }
+

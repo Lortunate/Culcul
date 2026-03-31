@@ -1,10 +1,11 @@
 import 'dart:async';
 
 import 'package:culcul/core/errors/exceptions.dart';
-import 'package:culcul/features/live/presentation/view_models/services/live_socket_service.dart';
-import 'package:culcul/features/live/application/live_room_workflows.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/live/domain/entities/live_entities.dart';
+import 'package:culcul/features/live/live_providers.dart';
+import 'package:culcul/features/live/presentation/view_models/services/live_socket_service.dart';
+import 'package:culcul/features/profile/profile_providers.dart';
 import 'package:culcul/features/live/presentation/view_models/live_room_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -42,11 +43,7 @@ class LiveRoomController extends _$LiveRoomController {
     state = state.copyWith(danmakuHistory: [welcomeItem]);
 
     try {
-      final roomResult = await ref.read(liveRoomWorkflowsProvider).getRoomInfo(roomId);
-      final info = roomResult.when(
-        success: (value) => value,
-        failure: (error) => throw error,
-      );
+      final info = await ref.read(liveRepositoryProvider).getRoomInfo(roomId);
       state = state.copyWith(roomInfo: info);
       await Future.wait([
         _fetchPlayUrl(info.roomId),
@@ -67,11 +64,7 @@ class LiveRoomController extends _$LiveRoomController {
 
   Future<void> _connectDanmaku(int roomId) async {
     try {
-      final danmuResult = await ref.read(liveRoomWorkflowsProvider).getDanmuInfo(roomId);
-      final info = danmuResult.when(
-        success: (value) => value,
-        failure: (error) => throw error,
-      );
+      final info = await ref.read(liveRepositoryProvider).getDanmuInfo(roomId);
       await _socketService.connect(info: info, roomId: roomId);
       _socketService.danmakuStream.listen((item) {
         final newList = [item, ...state.danmakuHistory];
@@ -91,12 +84,10 @@ class LiveRoomController extends _$LiveRoomController {
 
     final isFollowing = anchor.isFollowed;
     try {
-      final followResult = await ref
-          .read(liveRoomWorkflowsProvider)
-          .toggleFollow(uid: int.parse(anchor.mid), follow: !isFollowing);
-      if (followResult.isFailure) {
-        throw followResult.errorOrNull!;
-      }
+      await ref.read(profileRepositoryProvider).modifyRelation(
+        mid: int.parse(anchor.mid),
+        isFollow: !isFollowing,
+      );
       state = state.copyWith(anchorInfo: anchor.copyWith(isFollowed: !isFollowing));
     } catch (error, stackTrace) {
       _logIgnoredError('toggleFollow', error, stackTrace);
@@ -105,13 +96,7 @@ class LiveRoomController extends _$LiveRoomController {
 
   Future<void> _fetchPlayUrl(int roomId, {int? qn}) async {
     try {
-      final playResult = await ref
-          .read(liveRoomWorkflowsProvider)
-          .getPlayUrl(roomId: roomId, qn: qn);
-      final url = playResult.when(
-        success: (value) => value,
-        failure: (error) => throw error,
-      );
+      final url = await ref.read(liveRepositoryProvider).getPlayUrl(roomId: roomId, qn: qn);
       state = state.copyWith(playUrl: url);
     } catch (error, stackTrace) {
       _logIgnoredError('fetchPlayUrl', error, stackTrace);
@@ -125,11 +110,7 @@ class LiveRoomController extends _$LiveRoomController {
 
   Future<void> _fetchAnchorInfo(int uid) async {
     try {
-      final cardResult = await ref.read(liveRoomWorkflowsProvider).getAnchorCard(uid);
-      final card = cardResult.when(
-        success: (value) => value,
-        failure: (error) => throw error,
-      );
+      final card = await ref.read(profileRepositoryProvider).getUserCard(uid);
       state = state.copyWith(anchorInfo: card);
     } catch (error, stackTrace) {
       _logIgnoredError('fetchAnchorInfo', error, stackTrace);
@@ -138,11 +119,7 @@ class LiveRoomController extends _$LiveRoomController {
 
   Future<void> _fetchLiveAnchorInfo(int uid) async {
     try {
-      final infoResult = await ref.read(liveRoomWorkflowsProvider).getAnchorInfo(uid);
-      final info = infoResult.when(
-        success: (value) => value,
-        failure: (error) => throw error,
-      );
+      final info = await ref.read(liveRepositoryProvider).getAnchorInfo(uid);
       state = state.copyWith(liveAnchorInfo: info);
     } catch (error, stackTrace) {
       _logIgnoredError('fetchLiveAnchorInfo', error, stackTrace);
@@ -151,12 +128,9 @@ class LiveRoomController extends _$LiveRoomController {
 
   Future<void> _fetchGoldRank(int roomId, int ruid) async {
     try {
-      final rankResult = await ref
-          .read(liveRoomWorkflowsProvider)
-          .getOnlineGoldRank(roomId: roomId, uid: ruid);
-      final rank = rankResult.when(
-        success: (value) => value,
-        failure: (error) => throw error,
+      final rank = await ref.read(liveRepositoryProvider).getOnlineGoldRank(
+        roomId: roomId,
+        ruid: ruid,
       );
       state = state.copyWith(goldRank: rank);
     } catch (error, stackTrace) {
@@ -166,12 +140,9 @@ class LiveRoomController extends _$LiveRoomController {
 
   Future<void> _fetchGuardList(int roomId, int ruid) async {
     try {
-      final listResult = await ref
-          .read(liveRoomWorkflowsProvider)
-          .getGuardList(roomId: roomId, uid: ruid);
-      final list = listResult.when(
-        success: (value) => value,
-        failure: (error) => throw error,
+      final list = await ref.read(liveRepositoryProvider).getGuardList(
+        roomId: roomId,
+        ruid: ruid,
       );
       state = state.copyWith(guardList: list);
     } catch (error, stackTrace) {
@@ -181,13 +152,7 @@ class LiveRoomController extends _$LiveRoomController {
 
   Future<void> _fetchDanmakuConfig(int roomId) async {
     try {
-      final configResult = await ref
-          .read(liveRoomWorkflowsProvider)
-          .getDanmakuConfig(roomId);
-      final config = configResult.when(
-        success: (value) => value,
-        failure: (error) => throw error,
-      );
+      final config = await ref.read(liveRepositoryProvider).getDanmakuConfig(roomId);
       state = state.copyWith(danmakuConfig: config);
     } catch (error, stackTrace) {
       _logIgnoredError('fetchDanmakuConfig', error, stackTrace);
@@ -196,13 +161,7 @@ class LiveRoomController extends _$LiveRoomController {
 
   Future<void> _fetchHistoryDanmaku(int roomId) async {
     try {
-      final historyResult = await ref
-          .read(liveRoomWorkflowsProvider)
-          .getHistoryDanmaku(roomId);
-      final history = historyResult.when(
-        success: (value) => value,
-        failure: (error) => throw error,
-      );
+      final history = await ref.read(liveRepositoryProvider).getHistoryDanmaku(roomId);
       state = state.copyWith(danmakuHistory: history.room.reversed.toList());
     } catch (error, stackTrace) {
       _logIgnoredError('fetchHistoryDanmaku', error, stackTrace);
@@ -217,12 +176,7 @@ class LiveRoomController extends _$LiveRoomController {
     if (msg.trim().isEmpty) return;
 
     try {
-      final result = await ref
-          .read(liveRoomWorkflowsProvider)
-          .sendDanmaku(roomId: state.roomId, msg: msg);
-      if (result.isFailure) {
-        throw result.errorOrNull!;
-      }
+      await ref.read(liveRepositoryProvider).sendDanmaku(roomId: state.roomId, msg: msg);
     } catch (error, stackTrace) {
       _logIgnoredError('sendDanmaku', error, stackTrace);
     }

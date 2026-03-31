@@ -1,7 +1,8 @@
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'dart:async';
 
-import 'package:culcul/features/dynamic/application/dynamic_workflows.dart';
+import 'package:culcul/core/result/run_result.dart';
+import 'package:culcul/features/dynamic/dynamic_providers.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_comment_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -17,9 +18,13 @@ class DynamicCommentController extends _$DynamicCommentController {
 
   Future<void> refresh() async {
     state = state.copyWith(isLoading: true, error: null);
-    final result = await ref
-        .read(dynamicCommentsWorkflowProvider)
-        .call(DynamicCommentsQuery(post: post, sort: state.sort, page: 1));
+    final result = await runResult(
+      () => ref.read(dynamicRepositoryProvider).getComments(
+        post,
+        sort: state.sort,
+        page: 1,
+      ),
+    );
     state = result.when(
       success: (data) => state.copyWith(
         comments: data.replies,
@@ -35,9 +40,13 @@ class DynamicCommentController extends _$DynamicCommentController {
     if (state.isLoading || !state.hasMore) return;
 
     final nextPage = state.page + 1;
-    final result = await ref
-        .read(dynamicCommentsWorkflowProvider)
-        .call(DynamicCommentsQuery(post: post, sort: state.sort, page: nextPage));
+    final result = await runResult(
+      () => ref.read(dynamicRepositoryProvider).getComments(
+        post,
+        sort: state.sort,
+        page: nextPage,
+      ),
+    );
     if (result.isFailure) {
       return;
     }
@@ -65,20 +74,27 @@ class DynamicCommentController extends _$DynamicCommentController {
     newComments[index] = newItem;
     state = state.copyWith(comments: newComments);
 
-    final result = await ref
-        .read(dynamicCommentLikeWorkflowProvider)
-        .call(DynamicCommentLikeCommand(post: post, rpid: rpid, isLiked: isLiked));
+    final result = await runVoidResult(
+      () => ref.read(dynamicRepositoryProvider).likeComment(
+        post: post,
+        rpid: rpid,
+        isLiked: isLiked,
+      ),
+    );
     if (result.isFailure) {
       state = state.copyWith(comments: oldComments);
     }
   }
 
   Future<void> addReply(int root, int parent, String message) async {
-    final result = await ref
-        .read(dynamicReplyWorkflowProvider)
-        .call(
-          DynamicReplyCommand(post: post, root: root, parent: parent, message: message),
-        );
+    final result = await runVoidResult(
+      () => ref.read(dynamicRepositoryProvider).addReply(
+        post: post,
+        root: root,
+        parent: parent,
+        message: message,
+      ),
+    );
     if (result.isSuccess) {
       await refresh();
     }

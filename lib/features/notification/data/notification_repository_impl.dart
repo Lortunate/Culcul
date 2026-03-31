@@ -12,7 +12,7 @@ import 'package:culcul/features/notification/domain/entities/private_session.dar
 import 'package:culcul/features/notification/domain/entities/system_notice.dart';
 import 'package:culcul/features/notification/domain/repositories/notification_repository.dart'
     as domain;
-import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
+import 'package:culcul/features/notification/domain/entities/notification_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 
@@ -193,3 +193,4 @@ class NotificationRepositoryImpl extends BaseRepository
     return response.toDomain();
   }
 }
+

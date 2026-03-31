@@ -5,7 +5,7 @@ import 'package:culcul/features/history/data/history_mapper.dart';
 import 'package:culcul/features/history/domain/entities/history_entry.dart';
 import 'package:culcul/features/history/domain/repositories/history_repository.dart'
     as domain;
-import 'package:culcul/features/history/data/dtos/history_dtos.dart';
+import 'package:culcul/features/history/domain/entities/history_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'history_repository_impl.g.dart';
@@ -42,3 +42,4 @@ class HistoryRepositoryImpl extends BaseRepository implements domain.HistoryRepo
     return data.list.map((item) => item.toDomain()).toList();
   }
 }
+

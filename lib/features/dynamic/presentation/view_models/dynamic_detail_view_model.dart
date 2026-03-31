@@ -2,7 +2,8 @@ import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'dart:async';
 
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/features/dynamic/application/dynamic_workflows.dart';
+import 'package:culcul/core/result/run_result.dart';
+import 'package:culcul/features/dynamic/dynamic_providers.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -31,7 +32,9 @@ class DynamicDetailViewModel extends _$DynamicDetailViewModel {
 
   Future<void> loadDetail() async {
     state = state.copyWith(isLoading: true, error: null);
-    final result = await ref.read(dynamicDetailWorkflowProvider).call(_dynamicId);
+    final result = await runResult(
+      () => ref.read(dynamicRepositoryProvider).getDetail(_dynamicId),
+    );
     state = result.when(
       success: (data) => state.copyWith(post: data, isLoading: false, error: null),
       failure: (error) => state.copyWith(isLoading: false, error: error),
@@ -58,15 +61,13 @@ class DynamicDetailViewModel extends _$DynamicDetailViewModel {
     );
 
     state = state.copyWith(post: nextItem);
-    final result = await ref
-        .read(toggleDynamicLikeWorkflowProvider)
-        .call(id: item.id, newStatus: newStatus);
-    return result.when(
-      success: (_) => null,
-      failure: (error) {
-        state = state.copyWith(post: item);
-        return error.message;
-      },
+    final result = await runVoidResult(
+      () => ref.read(dynamicRepositoryProvider).likeDynamic(item.id, newStatus),
     );
+    if (result.isFailure) {
+      state = state.copyWith(post: item);
+      return result.errorOrNull?.message;
+    }
+    return null;
   }
 }

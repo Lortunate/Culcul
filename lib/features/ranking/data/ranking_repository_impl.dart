@@ -1,11 +1,12 @@
 import 'package:culcul/core/base_repository.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/features/ranking/data/dtos/ranking_response_dto.dart';
 import 'package:culcul/features/ranking/data/ranking_video_mapper.dart';
 import 'package:culcul/features/ranking/data/ranking_api.dart';
 import 'package:culcul/features/ranking/domain/entities/ranking_video.dart';
 import 'package:culcul/features/ranking/domain/repositories/ranking_repository.dart'
     as domain;
-import 'package:culcul/features/ranking/data/dtos/ranking_dtos.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'ranking_repository_impl.g.dart';
@@ -20,8 +21,12 @@ class RankingRepositoryImpl extends BaseRepository implements domain.RankingRepo
 
   RankingRepositoryImpl(this._api);
 
+  Future<RankingResponseDto> getRankingResponseDto({int? rid}) {
+    return requestApi(() => _api.fetchRanking(rid: rid));
+  }
+
   Future<List<VideoModel>> getRankingModels({int? rid}) async {
-    final data = await requestApi(() => _api.fetchRanking(rid: rid));
+    final data = await getRankingResponseDto(rid: rid);
     return data.list;
   }
 
@@ -31,3 +36,4 @@ class RankingRepositoryImpl extends BaseRepository implements domain.RankingRepo
     return videos.map((video) => video.toDomain()).toList();
   }
 }
+
