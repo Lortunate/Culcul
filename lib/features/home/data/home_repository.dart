@@ -35,10 +35,16 @@ class HomeRepositoryImpl implements domain.HomeRepository {
           ),
           transform: (data) {
             final items = data.item;
-            return items
-                .where((e) => e['goto'] == 'av')
-                .map(VideoModel.fromJson)
-                .toList();
+            final videos = <VideoModel>[];
+            for (final item in items) {
+              if (item['goto'] != 'av') continue;
+              try {
+                videos.add(VideoModel.fromJson(item));
+              } catch (_) {
+                // Skip malformed entries instead of failing the whole page.
+              }
+            }
+            return videos;
           },
         );
     return _unwrap(result);

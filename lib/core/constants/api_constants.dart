@@ -3,6 +3,7 @@ class ApiConstants {
 
   // Base URLs
   static const String baseUrl = 'https://api.bilibili.com';
+  static const String baseUrlFallback = 'https://api.biliapi.net';
   static const String liveBaseUrl = 'https://api.live.bilibili.com';
   static const String passportBaseUrl = 'https://passport.bilibili.com';
 

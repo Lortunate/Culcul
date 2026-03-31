@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:culcul/core/constants/api_constants.dart';
 import 'package:dio/dio.dart';
 
 class RetryInterceptor extends Interceptor {
@@ -19,27 +20,7 @@ class RetryInterceptor extends Interceptor {
 
       try {
         extra['retries'] = retries + 1;
-        final options = Options(
-          method: err.requestOptions.method,
-          headers: err.requestOptions.headers,
-          extra: extra,
-          responseType: err.requestOptions.responseType,
-          contentType: err.requestOptions.contentType,
-          validateStatus: err.requestOptions.validateStatus,
-          receiveTimeout: err.requestOptions.receiveTimeout,
-          sendTimeout: err.requestOptions.sendTimeout,
-          listFormat: err.requestOptions.listFormat,
-        );
-
-        final response = await dio.request(
-          err.requestOptions.path,
-          data: err.requestOptions.data,
-          queryParameters: err.requestOptions.queryParameters,
-          cancelToken: err.requestOptions.cancelToken,
-          options: options,
-          onSendProgress: err.requestOptions.onSendProgress,
-          onReceiveProgress: err.requestOptions.onReceiveProgress,
-        );
+        final response = await _retryWithOptionalFallback(err, extra);
 
         return handler.resolve(response);
       } catch (e) {
@@ -57,5 +38,54 @@ class RetryInterceptor extends Interceptor {
         (err.type == DioExceptionType.unknown &&
             err.error != null &&
             err.error is SocketException);
+  }
+
+  Future<Response<dynamic>> _retryWithOptionalFallback(
+    DioException err,
+    Map<String, dynamic> extra,
+  ) {
+    final requestOptions = err.requestOptions;
+    final fallbackBaseUrl = _resolveFallbackBaseUrl(err, requestOptions, extra);
+    final fallbackPath = _resolveFallbackPath(requestOptions.path, fallbackBaseUrl);
+    final retryOptions = requestOptions.copyWith(
+      baseUrl: fallbackBaseUrl ?? requestOptions.baseUrl,
+      path: fallbackPath,
+      extra: extra,
+    );
+    return dio.fetch(retryOptions);
+  }
+
+  String? _resolveFallbackBaseUrl(
+    DioException err,
+    RequestOptions requestOptions,
+    Map<String, dynamic> extra,
+  ) {
+    if (!_isFailedHostLookup(err)) {
+      return null;
+    }
+    if (extra['dns_fallback_used'] == true) {
+      return null;
+    }
+    final isPrimaryHost = requestOptions.uri.host == Uri.parse(ApiConstants.baseUrl).host;
+    if (!isPrimaryHost) {
+      return null;
+    }
+    extra['dns_fallback_used'] = true;
+    return ApiConstants.baseUrlFallback;
+  }
+
+  bool _isFailedHostLookup(DioException err) {
+    final error = err.error;
+    return error is SocketException && error.message.contains('Failed host lookup');
+  }
+
+  String _resolveFallbackPath(String path, String? fallbackBaseUrl) {
+    if (fallbackBaseUrl == null) {
+      return path;
+    }
+    if (path.startsWith(ApiConstants.baseUrl)) {
+      return path.replaceFirst(ApiConstants.baseUrl, fallbackBaseUrl);
+    }
+    return path;
   }
 }
