@@ -3,16 +3,18 @@ import 'dart:io';
 
 import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/core/base_repository.dart';
+import 'package:culcul/features/notification/data/dtos/notification_models.dart';
 import 'package:culcul/features/notification/data/notification_mapper.dart';
 import 'package:culcul/features/notification/data/notification_api.dart';
+import 'package:culcul/features/notification/domain/entities/image_upload_result.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
 import 'package:culcul/features/notification/domain/entities/system_notice.dart';
 import 'package:culcul/features/notification/domain/repositories/notification_repository.dart'
     as domain;
-import 'package:culcul/features/notification/domain/entities/notification_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 
@@ -108,12 +110,13 @@ class NotificationRepositoryImpl extends BaseRepository
   }
 
   @override
-  Future<ImageUploadResponse> uploadImage(File file) async {
-    return requestApi(() => _api.uploadImage(file: file));
+  Future<ImageUploadResult> uploadImage(File file) async {
+    final response = await requestApi(() => _api.uploadImage(file: file));
+    return response.toDomain();
   }
 
   @override
-  Future<SendMessageResponse> sendPrivateMessage({
+  Future<SendMessageResult> sendPrivateMessage({
     required int senderUid,
     required int receiverId,
     required int receiverType,
@@ -123,7 +126,7 @@ class NotificationRepositoryImpl extends BaseRepository
     final devId = const Uuid().v4().toUpperCase();
     final timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
-    return requestApi(
+    final response = await requestApi(
       () => _api.sendPrivateMessage(
         wSenderUid: senderUid,
         wReceiverId: receiverId,
@@ -134,9 +137,10 @@ class NotificationRepositoryImpl extends BaseRepository
         msgType: msgType,
         devId: devId,
         timestamp: timestamp,
-        content: jsonEncode(content.toJson()),
+        content: jsonEncode(content.toRawMap()),
       ),
     );
+    return response.toDomain();
   }
 
   @override
@@ -182,9 +186,7 @@ class NotificationRepositoryImpl extends BaseRepository
   }
 
   @override
-  Future<PrivateSessionPage> getPrivateSessions({
-    int? endTs,
-  }) async {
+  Future<PrivateSessionPage> getPrivateSessions({int? endTs}) async {
     final response = await getPrivateSessionsModel(
       sessionType: 1,
       size: 20,
@@ -193,4 +195,3 @@ class NotificationRepositoryImpl extends BaseRepository
     return response.toDomain();
   }
 }
-

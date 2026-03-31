@@ -1,4 +1,4 @@
-import 'package:culcul/features/profile/domain/entities/relation_user.dart';
+import 'package:culcul/core/contracts/relation_user_contract.dart';
 
 abstract class RelationRepository {
   Future<List<ProfileRelationUser>> getFollowings(

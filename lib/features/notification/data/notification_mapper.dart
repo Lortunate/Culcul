@@ -1,8 +1,10 @@
-import 'package:culcul/features/notification/domain/entities/notification_models.dart';
+import 'package:culcul/features/notification/data/dtos/notification_models.dart';
+import 'package:culcul/features/notification/domain/entities/image_upload_result.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
 import 'package:culcul/features/notification/domain/entities/system_notice.dart';
 
 extension UnreadCountMapper on UnreadCountModel {
@@ -165,3 +167,22 @@ extension PrivateMessageSessionResponseMapper on PrivateMessageSessionResponse {
   }
 }
 
+extension ImageUploadResponseMapper on ImageUploadResponse {
+  ImageUploadResult toDomain() {
+    return ImageUploadResult(
+      imageUrl: imageUrl,
+      imageWidth: imageWidth,
+      imageHeight: imageHeight,
+    );
+  }
+}
+
+extension SendMessageResponseMapper on SendMessageResponse {
+  SendMessageResult toDomain() {
+    return SendMessageResult(
+      msgKey: msgKey,
+      msgContent: msgContent,
+      keyHitInfos: keyHitInfos,
+    );
+  }
+}

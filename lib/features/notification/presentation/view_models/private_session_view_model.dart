@@ -18,9 +18,9 @@ class PrivateSessionList extends _$PrivateSessionList
     int? currentCursor, {
     bool refresh = false,
   }) async {
-    final data = await ref.read(notificationRepositoryProvider).getPrivateSessions(
-      endTs: currentCursor,
-    );
+    final data = await ref
+        .read(notificationRepositoryProvider)
+        .getPrivateSessions(endTs: currentCursor);
     final sessions = data.sessions;
     return CursorPage(
       items: sessions,

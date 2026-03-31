@@ -46,12 +46,15 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
   void _loadMore() {
     switch (widget.type) {
       case NotificationType.reply:
+        if (!ref.read(replyListProvider.notifier).hasMore) return;
         ref.read(replyListProvider.notifier).loadMore();
         break;
       case NotificationType.at:
+        if (!ref.read(atListProvider.notifier).hasMore) return;
         ref.read(atListProvider.notifier).loadMore();
         break;
       case NotificationType.like:
+        if (!ref.read(likeListProvider.notifier).hasMore) return;
         ref.read(likeListProvider.notifier).loadMore();
         break;
       case NotificationType.system:

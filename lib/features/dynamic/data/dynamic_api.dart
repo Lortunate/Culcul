@@ -1,7 +1,8 @@
 import 'dart:io';
 
+import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/network/models/api_response.dart';
-import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
+import 'package:culcul/features/dynamic/data/dtos/dynamic_models_dto.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
@@ -128,4 +129,3 @@ abstract class DynamicApi {
     @Part(name: 'csrf') required String csrf,
   });
 }
-

@@ -1,4 +1,5 @@
 import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/core/pagination/paged_list_state.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_message_item.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_time_divider.dart';
@@ -7,7 +8,7 @@ import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 
 class ChatMessageList extends StatefulWidget {
-  final List<PrivateMessage> messages;
+  final PagedListState<PrivateMessage> paging;
   final Map<String, String> emojiMap;
   final Future<void> Function() onLoadMore;
   final Future<void> Function()? onRefresh;
@@ -18,7 +19,7 @@ class ChatMessageList extends StatefulWidget {
 
   const ChatMessageList({
     super.key,
-    required this.messages,
+    required this.paging,
     required this.emojiMap,
     required this.onLoadMore,
     this.onRefresh,
@@ -36,7 +37,8 @@ class _ChatMessageListState extends State<ChatMessageList> {
   @override
   Widget build(BuildContext context) {
     final t = i18n(context);
-    if (widget.messages.isEmpty) {
+    final messages = widget.paging.items;
+    if (messages.isEmpty) {
       return EasyRefresh(
         onRefresh: widget.onRefresh,
         child: LayoutBuilder(
@@ -55,24 +57,24 @@ class _ChatMessageListState extends State<ChatMessageList> {
 
     return EasyRefresh(
       onRefresh: widget.onRefresh,
-      onLoad: widget.onLoadMore,
+      onLoad: widget.paging.hasMore ? widget.onLoadMore : null,
       header: null,
       footer: AppLoadFooter(),
       child: ListView.separated(
         controller: widget.scrollController,
         reverse: true,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        itemCount: widget.messages.length,
+        itemCount: messages.length,
         separatorBuilder: (_, _) => const SizedBox(height: 16),
         itemBuilder: (context, index) {
-          final message = widget.messages[index];
+          final message = messages[index];
           final isSelf = message.isMe(widget.currentUserId);
 
           bool showTime = false;
-          if (index == widget.messages.length - 1) {
+          if (index == messages.length - 1) {
             showTime = true;
           } else {
-            final nextMessage = widget.messages[index + 1];
+            final nextMessage = messages[index + 1];
             if (message.timestamp - nextMessage.timestamp > 300) {
               showTime = true;
             }

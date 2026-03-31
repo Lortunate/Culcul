@@ -22,30 +22,34 @@ class VideoCommentsController extends _$VideoCommentsController {
     final aid = await _awaitAid();
     if (aid == null) {
       state = state.copyWith(
-        isInitialLoading: false,
-        error: StateError('Video detail not loaded'),
+        paging: state.paging.copyWith(
+          isInitialLoading: false,
+          error: StateError('Video detail not loaded'),
+        ),
       );
       return;
     }
 
     state = state.copyWith(
-      isInitialLoading: true,
-      isLoadingMore: false,
-      error: null,
-      nextPage: 1,
-      hasMore: true,
-      comments: const [],
+      paging: state.paging.copyWith(
+        isInitialLoading: true,
+        isLoadingMore: false,
+        error: null,
+        nextPage: 1,
+        hasMore: true,
+        items: const [],
+      ),
     );
 
     await _loadPage(page: 1, replace: true);
   }
 
   Future<void> loadMore() async {
-    if (state.isInitialLoading || state.isLoadingMore || !state.hasMore) {
+    if (state.paging.isInitialLoading || state.paging.isLoadingMore || !state.paging.hasMore) {
       return;
     }
 
-    await _loadPage(page: state.nextPage, replace: false);
+    await _loadPage(page: state.paging.nextPage, replace: false);
   }
 
   Future<void> switchSort(int sort) async {
@@ -58,23 +62,21 @@ class VideoCommentsController extends _$VideoCommentsController {
   }
 
   Future<void> toggleCommentLike(int oid, int rpid, bool isLiked) async {
-    final previousComments = state.comments;
+    final previousComments = state.paging.items;
     final nextComments = _updateComment(previousComments, rpid, isLiked: !isLiked);
     if (identical(nextComments, previousComments)) {
       return;
     }
 
-    state = state.copyWith(comments: nextComments);
+    state = state.copyWith(paging: state.paging.copyWith(items: nextComments));
 
     final result = await runVoidResult(
-      () => ref.read(videoRepositoryProvider).setCommentLike(
-        oid: oid,
-        rpid: rpid,
-        isLiked: !isLiked,
-      ),
+      () => ref
+          .read(videoRepositoryProvider)
+          .setCommentLike(oid: oid, rpid: rpid, isLiked: !isLiked),
     );
     if (result.isFailure) {
-      state = state.copyWith(comments: previousComments);
+      state = state.copyWith(paging: state.paging.copyWith(items: previousComments));
     }
   }
 
@@ -83,12 +85,9 @@ class VideoCommentsController extends _$VideoCommentsController {
   }
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
-    await ref.read(videoRepositoryProvider).replyToComment(
-      oid: oid,
-      root: root,
-      parent: parent,
-      message: message,
-    );
+    await ref
+        .read(videoRepositoryProvider)
+        .replyToComment(oid: oid, root: root, parent: parent, message: message);
     await refresh();
   }
 
@@ -99,36 +98,43 @@ class VideoCommentsController extends _$VideoCommentsController {
     }
 
     if (replace) {
-      state = state.copyWith(isInitialLoading: true, error: null);
+      state = state.copyWith(
+        paging: state.paging.copyWith(isInitialLoading: true, error: null),
+      );
     } else {
-      state = state.copyWith(isLoadingMore: true, error: null);
+      state = state.copyWith(
+        paging: state.paging.copyWith(isLoadingMore: true, error: null),
+      );
     }
 
     final result = await runResult(
-      () => ref.read(videoRepositoryProvider).fetchComments(
-        oid: aid,
-        sort: state.sort,
-        page: page,
-      ),
+      () => ref
+          .read(videoRepositoryProvider)
+          .fetchComments(oid: aid, sort: state.sort, page: page),
     );
     result.when(
       success: (response) {
         final comments = replace
             ? response.replies
-            : [...state.comments, ...response.replies];
+            : [...state.paging.items, ...response.replies];
         state = state.copyWith(
-          comments: comments,
-          isInitialLoading: false,
-          isLoadingMore: false,
-          hasMore: response.replies.isNotEmpty,
-          nextPage: page + 1,
+          paging: state.paging.copyWith(
+            items: comments,
+            isInitialLoading: false,
+            isLoadingMore: false,
+            hasMore: response.replies.isNotEmpty,
+            nextPage: page + 1,
+            error: null,
+          ),
         );
       },
       failure: (error) {
         state = state.copyWith(
-          isInitialLoading: false,
-          isLoadingMore: false,
-          error: error,
+          paging: state.paging.copyWith(
+            isInitialLoading: false,
+            isLoadingMore: false,
+            error: error,
+          ),
         );
       },
     );

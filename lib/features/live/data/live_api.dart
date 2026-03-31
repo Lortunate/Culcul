@@ -1,6 +1,6 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/network/models/api_response.dart';
-import 'package:culcul/features/live/domain/entities/live_models.dart';
+import 'package:culcul/features/live/data/dtos/live_models_dto.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
@@ -76,4 +76,3 @@ abstract class LiveApi {
     @Field('bubble') int bubble = 0,
   });
 }
-

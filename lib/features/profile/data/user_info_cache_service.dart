@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:culcul/features/profile/domain/entities/profile_models.dart';
+import 'package:culcul/features/profile/data/dtos/profile_models.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -34,4 +34,3 @@ Future<UserInfoCacheService> userInfoCacheService(Ref ref) async {
   final box = await Hive.openBox<String>(UserInfoCacheService.boxName);
   return UserInfoCacheService(box);
 }
-

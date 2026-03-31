@@ -1,11 +1,11 @@
 import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/features/profile/data/dtos/profile_models.dart';
 import 'package:culcul/features/profile/data/profile_mapper.dart';
 import 'package:culcul/features/profile/data/relation_api.dart';
-import 'package:culcul/features/profile/domain/entities/relation_user.dart';
+import 'package:culcul/core/contracts/relation_user_contract.dart';
 import 'package:culcul/features/profile/domain/repositories/relation_repository.dart'
     as domain;
-import 'package:culcul/features/profile/domain/entities/profile_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'relation_repository_impl.g.dart';
@@ -66,4 +66,3 @@ class RelationRepositoryImpl extends BaseRepository implements domain.RelationRe
     return data.list.map((item) => item.toDomain()).toList();
   }
 }
-

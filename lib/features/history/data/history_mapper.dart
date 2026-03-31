@@ -1,7 +1,7 @@
-import 'package:culcul/features/history/domain/entities/history_models.dart';
+import 'package:culcul/features/history/data/dtos/history_model_dto.dart';
 import 'package:culcul/features/history/domain/entities/history_entry.dart';
 
-extension HistoryItemMapper on HistoryItem {
+extension HistoryItemMapper on HistoryItemDto {
   HistoryEntry toDomain() {
     return HistoryEntry(
       title: title,
@@ -16,4 +16,3 @@ extension HistoryItemMapper on HistoryItem {
     );
   }
 }
-

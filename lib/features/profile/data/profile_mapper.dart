@@ -1,7 +1,8 @@
-import 'package:culcul/features/profile/domain/entities/profile_models.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/features/profile/data/dtos/profile_models.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
-import 'package:culcul/features/profile/domain/entities/relation_user.dart';
+import 'package:culcul/core/contracts/relation_user_contract.dart';
 
 extension UserProfileMapper on UserProfile {
   ProfileUser toDomain() {
@@ -106,4 +107,3 @@ extension UserSpaceVideoMapper on UserSpaceVideoModel {
     );
   }
 }
-

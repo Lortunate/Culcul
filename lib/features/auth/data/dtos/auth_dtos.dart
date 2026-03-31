@@ -1,4 +1,25 @@
+import 'package:culcul/features/auth/domain/entities/country_code.dart';
 import 'package:culcul/features/auth/domain/entities/user_entity.dart';
+
+class CountryCodeDto {
+  final int id;
+  final String name;
+  final String countryId;
+
+  const CountryCodeDto({required this.id, required this.name, required this.countryId});
+
+  factory CountryCodeDto.fromJson(Map<String, dynamic> json) {
+    return CountryCodeDto(
+      id: json['id'] as int? ?? 0,
+      name: json['cname'] as String? ?? '',
+      countryId: json['country_id']?.toString() ?? '',
+    );
+  }
+
+  CountryCode toDomain() {
+    return CountryCode(id: id, name: name, code: '+$countryId');
+  }
+}
 
 class AuthUserDto {
   final String id;

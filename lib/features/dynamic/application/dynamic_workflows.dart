@@ -10,41 +10,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'dynamic_workflows.g.dart';
 
-class DynamicFeedQuery {
-  final String? type;
-  final String? offset;
-  final int? hostMid;
-  final int? topicId;
-
-  const DynamicFeedQuery({this.type, this.offset, this.hostMid, this.topicId});
-}
-
-@riverpod
-DynamicFeedWorkflow dynamicFeedWorkflow(Ref ref) {
-  return DynamicFeedWorkflow(ref.read(dynamicRepositoryProvider));
-}
-
-class DynamicFeedWorkflow {
-  final DynamicRepository _repository;
-
-  const DynamicFeedWorkflow(this._repository);
-
-  Future<Result<DynamicData, AppError>> call(DynamicFeedQuery query) async {
-    return runResult(() async {
-      if (query.topicId != null) {
-        return _repository.getTopicFeed(topicId: query.topicId!, offset: query.offset);
-      }
-      if (query.hostMid != null) {
-        return _repository.getSpaceDynamicFeed(
-          hostMid: query.hostMid!,
-          offset: query.offset,
-        );
-      }
-      return _repository.getFeed(type: query.type, offset: query.offset);
-    });
-  }
-}
-
 @riverpod
 PublishDynamicWorkflow publishDynamicWorkflow(Ref ref) {
   return PublishDynamicWorkflow(ref.read(dynamicRepositoryProvider));

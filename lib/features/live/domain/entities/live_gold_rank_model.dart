@@ -1,17 +1,13 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'live_gold_rank_model.freezed.dart';
-part 'live_gold_rank_model.g.dart';
 
 @freezed
 sealed class LiveGoldRankModel with _$LiveGoldRankModel {
   const factory LiveGoldRankModel({
-    @JsonKey(name: 'onlineNum') required int onlineNum,
-    @JsonKey(name: 'OnlineRankItem') required List<LiveRankItem> list,
+    required int onlineNum,
+    required List<LiveRankItem> list,
   }) = _LiveGoldRankModel;
-
-  factory LiveGoldRankModel.fromJson(Map<String, dynamic> json) =>
-      _$LiveGoldRankModelFromJson(json);
 }
 
 @freezed
@@ -23,12 +19,9 @@ sealed class LiveRankItem with _$LiveRankItem {
     required String face,
     required int score,
     required LiveRankMedalInfo medalInfo,
-    @JsonKey(name: 'guard_level') required int guardLevel,
-    @JsonKey(name: 'wealth_level') required int wealthLevel,
+    required int guardLevel,
+    required int wealthLevel,
   }) = _LiveRankItem;
-
-  factory LiveRankItem.fromJson(Map<String, dynamic> json) =>
-      _$LiveRankItemFromJson(json);
 }
 
 @freezed
@@ -43,7 +36,4 @@ sealed class LiveRankMedalInfo with _$LiveRankMedalInfo {
     required int targetId,
     required int isLight,
   }) = _LiveRankMedalInfo;
-
-  factory LiveRankMedalInfo.fromJson(Map<String, dynamic> json) =>
-      _$LiveRankMedalInfoFromJson(json);
 }

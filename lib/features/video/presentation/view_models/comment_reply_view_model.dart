@@ -22,46 +22,73 @@ class CommentReplyController extends _$CommentReplyController {
   }
 
   Future<void> refresh() async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(
+      paging: state.paging.copyWith(
+        isInitialLoading: true,
+        isLoadingMore: false,
+        error: null,
+        nextPage: 1,
+        hasMore: true,
+        items: const [],
+      ),
+    );
 
     final result = await runResult(
-      () => ref.read(videoRepositoryProvider).fetchReply(
-        oid: oid,
-        root: rootId,
-        page: 1,
-      ),
+      () => ref.read(videoRepositoryProvider).fetchReply(oid: oid, root: rootId, page: 1),
     );
     state = result.when(
       success: (response) => state.copyWith(
-        replies: response.replies,
-        page: 2,
-        hasMore: response.replies.isNotEmpty,
-        isLoading: false,
+        paging: state.paging.copyWith(
+          items: response.replies,
+          nextPage: 2,
+          hasMore: response.replies.isNotEmpty,
+          isInitialLoading: false,
+          isLoadingMore: false,
+          error: null,
+        ),
       ),
-      failure: (error) => state.copyWith(isLoading: false, error: error),
+      failure: (error) => state.copyWith(
+        paging: state.paging.copyWith(
+          isInitialLoading: false,
+          isLoadingMore: false,
+          error: error,
+        ),
+      ),
     );
   }
 
   Future<void> loadMore() async {
-    if (state.isLoading || !state.hasMore) return;
+    if (state.paging.isInitialLoading || state.paging.isLoadingMore || !state.paging.hasMore) {
+      return;
+    }
 
-    state = state.copyWith(isLoading: true);
+    state = state.copyWith(
+      paging: state.paging.copyWith(isLoadingMore: true, error: null),
+    );
 
     final result = await runResult(
-      () => ref.read(videoRepositoryProvider).fetchReply(
-        oid: oid,
-        root: rootId,
-        page: state.page,
-      ),
+      () => ref
+          .read(videoRepositoryProvider)
+          .fetchReply(oid: oid, root: rootId, page: state.paging.nextPage),
     );
     state = result.when(
       success: (response) => state.copyWith(
-        replies: [...state.replies, ...response.replies],
-        page: state.page + 1,
-        hasMore: response.replies.isNotEmpty,
-        isLoading: false,
+        paging: state.paging.copyWith(
+          items: [...state.paging.items, ...response.replies],
+          nextPage: state.paging.nextPage + 1,
+          hasMore: response.replies.isNotEmpty,
+          isInitialLoading: false,
+          isLoadingMore: false,
+          error: null,
+        ),
       ),
-      failure: (error) => state.copyWith(isLoading: false, error: error),
+      failure: (error) => state.copyWith(
+        paging: state.paging.copyWith(
+          isInitialLoading: false,
+          isLoadingMore: false,
+          error: error,
+        ),
+      ),
     );
   }
 
@@ -69,11 +96,9 @@ class CommentReplyController extends _$CommentReplyController {
     _updateCommentLikeStatus(rpid, !isLiked);
 
     final result = await runVoidResult(
-      () => ref.read(videoRepositoryProvider).setCommentLike(
-        oid: oid,
-        rpid: rpid,
-        isLiked: !isLiked,
-      ),
+      () => ref
+          .read(videoRepositoryProvider)
+          .setCommentLike(oid: oid, rpid: rpid, isLiked: !isLiked),
     );
     if (result.isFailure) {
       _updateCommentLikeStatus(rpid, isLiked);
@@ -97,21 +122,18 @@ class CommentReplyController extends _$CommentReplyController {
       return;
     }
 
-    final index = state.replies.indexWhere((r) => r.rpid == rpid);
+    final index = state.paging.items.indexWhere((r) => r.rpid == rpid);
     if (index != -1) {
-      final newReplies = List<CommentItem>.from(state.replies);
+      final newReplies = List<CommentItem>.from(state.paging.items);
       newReplies[index] = updateItem(newReplies[index]);
-      state = state.copyWith(replies: newReplies);
+      state = state.copyWith(paging: state.paging.copyWith(items: newReplies));
     }
   }
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
-    await ref.read(videoRepositoryProvider).replyToComment(
-      oid: oid,
-      root: root,
-      parent: parent,
-      message: message,
-    );
+    await ref
+        .read(videoRepositoryProvider)
+        .replyToComment(oid: oid, root: root, parent: parent, message: message);
     await refresh();
   }
 }

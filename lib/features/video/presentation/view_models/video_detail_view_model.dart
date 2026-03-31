@@ -64,11 +64,9 @@ class VideoDetailController extends _$VideoDetailController {
     final detail = state.videoDetail;
     if (detail == null) return;
 
-    await ref.read(videoRepositoryProvider).reportVideoProgress(
-      aid: detail.aid,
-      cid: state.currentCid,
-      progress: progress,
-    );
+    await ref
+        .read(videoRepositoryProvider)
+        .reportVideoProgress(aid: detail.aid, cid: state.currentCid, progress: progress);
   }
 
   Future<void> toggleFollow() async {
@@ -88,10 +86,9 @@ class VideoDetailController extends _$VideoDetailController {
     );
 
     final result = await runVoidResult(
-      () => ref.read(relationRepositoryProvider).modifyRelation(
-        fid: detail.owner.mid,
-        act: wasFollowed ? 2 : 1,
-      ),
+      () => ref
+          .read(relationRepositoryProvider)
+          .modifyRelation(fid: detail.owner.mid, act: wasFollowed ? 2 : 1),
     );
     if (result.isFailure) {
       state = state.copyWith(videoDetail: previousDetail);
@@ -100,11 +97,9 @@ class VideoDetailController extends _$VideoDetailController {
 
   Future<void> _loadPlayUrl({required int aid, required int cid, required int qn}) async {
     final result = await runResult(
-      () => ref.read(videoRepositoryProvider).fetchVideoPlayUrl(
-        aid: aid,
-        cid: cid,
-        quality: qn,
-      ),
+      () => ref
+          .read(videoRepositoryProvider)
+          .fetchVideoPlayUrl(aid: aid, cid: cid, quality: qn),
     );
     state = result.when(
       success: (playUrl) => state.copyWith(

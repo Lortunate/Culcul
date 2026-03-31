@@ -73,4 +73,3 @@ class _SearchLandingContent extends StatelessWidget {
     );
   }
 }
-

@@ -84,10 +84,9 @@ class LiveRoomController extends _$LiveRoomController {
 
     final isFollowing = anchor.isFollowed;
     try {
-      await ref.read(profileRepositoryProvider).modifyRelation(
-        mid: int.parse(anchor.mid),
-        isFollow: !isFollowing,
-      );
+      await ref
+          .read(profileRepositoryProvider)
+          .modifyRelation(mid: int.parse(anchor.mid), isFollow: !isFollowing);
       state = state.copyWith(anchorInfo: anchor.copyWith(isFollowed: !isFollowing));
     } catch (error, stackTrace) {
       _logIgnoredError('toggleFollow', error, stackTrace);
@@ -96,7 +95,9 @@ class LiveRoomController extends _$LiveRoomController {
 
   Future<void> _fetchPlayUrl(int roomId, {int? qn}) async {
     try {
-      final url = await ref.read(liveRepositoryProvider).getPlayUrl(roomId: roomId, qn: qn);
+      final url = await ref
+          .read(liveRepositoryProvider)
+          .getPlayUrl(roomId: roomId, qn: qn);
       state = state.copyWith(playUrl: url);
     } catch (error, stackTrace) {
       _logIgnoredError('fetchPlayUrl', error, stackTrace);
@@ -128,10 +129,9 @@ class LiveRoomController extends _$LiveRoomController {
 
   Future<void> _fetchGoldRank(int roomId, int ruid) async {
     try {
-      final rank = await ref.read(liveRepositoryProvider).getOnlineGoldRank(
-        roomId: roomId,
-        ruid: ruid,
-      );
+      final rank = await ref
+          .read(liveRepositoryProvider)
+          .getOnlineGoldRank(roomId: roomId, ruid: ruid);
       state = state.copyWith(goldRank: rank);
     } catch (error, stackTrace) {
       _logIgnoredError('fetchGoldRank', error, stackTrace);
@@ -140,10 +140,9 @@ class LiveRoomController extends _$LiveRoomController {
 
   Future<void> _fetchGuardList(int roomId, int ruid) async {
     try {
-      final list = await ref.read(liveRepositoryProvider).getGuardList(
-        roomId: roomId,
-        ruid: ruid,
-      );
+      final list = await ref
+          .read(liveRepositoryProvider)
+          .getGuardList(roomId: roomId, ruid: ruid);
       state = state.copyWith(guardList: list);
     } catch (error, stackTrace) {
       _logIgnoredError('fetchGuardList', error, stackTrace);
@@ -190,6 +189,3 @@ class LiveRoomController extends _$LiveRoomController {
     debugPrint('LiveRoomController::$scope ignored error: $error\n$stackTrace');
   }
 }
-
-
-

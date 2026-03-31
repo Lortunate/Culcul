@@ -15,8 +15,9 @@ class DynamicCommentsSliver extends ConsumerWidget {
     final t = Translations.of(context);
     final state = ref.watch(dynamicCommentControllerProvider(post));
     final controller = ref.read(dynamicCommentControllerProvider(post).notifier);
+    final paging = state.paging;
 
-    if (state.isLoading && state.comments.isEmpty) {
+    if (paging.isInitialLoading && paging.items.isEmpty) {
       return const SliverToBoxAdapter(
         child: Padding(
           padding: EdgeInsets.all(32.0),
@@ -25,7 +26,7 @@ class DynamicCommentsSliver extends ConsumerWidget {
       );
     }
 
-    if (state.error != null && state.comments.isEmpty) {
+    if (state.error != null && paging.items.isEmpty) {
       return SliverToBoxAdapter(
         child: Padding(
           padding: const EdgeInsets.all(32.0),
@@ -46,7 +47,7 @@ class DynamicCommentsSliver extends ConsumerWidget {
       );
     }
 
-    if (state.comments.isEmpty) {
+    if (paging.items.isEmpty) {
       return SliverToBoxAdapter(
         child: Padding(
           padding: EdgeInsets.all(32.0),
@@ -57,14 +58,14 @@ class DynamicCommentsSliver extends ConsumerWidget {
 
     return SliverList(
       delegate: SliverChildBuilderDelegate((context, index) {
-        final comment = state.comments[index];
+        final comment = paging.items[index];
         return CommentItemWidget(
           item: comment,
           onLike: () => controller.toggleLike(comment.rpid, comment.action == 1),
           onDislike: () {},
           onReply: () => _showReplySheet(context, ref, comment),
         );
-      }, childCount: state.comments.length),
+      }, childCount: paging.items.length),
     );
   }
 

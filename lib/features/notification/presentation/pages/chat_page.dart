@@ -50,7 +50,7 @@ class ChatPage extends HookConsumerWidget {
           Expanded(
             child: chatState.when(
               data: (state) => ChatMessageList(
-                messages: state.messages,
+                paging: state.paging,
                 emojiMap: state.emojiMap,
                 currentUserId: currentUserId,
                 selfAvatarUrl: currentUser?.avatarUrl ?? '',

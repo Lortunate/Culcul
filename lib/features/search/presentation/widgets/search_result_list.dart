@@ -1,4 +1,4 @@
-import 'package:culcul/features/search/domain/entities/search_result_page.dart';
+import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/features/search/presentation/widgets/items/search_article_item.dart';
 import 'package:culcul/features/search/presentation/widgets/items/search_bangumi_item.dart';
 import 'package:culcul/features/search/presentation/widgets/items/search_topic_item.dart';

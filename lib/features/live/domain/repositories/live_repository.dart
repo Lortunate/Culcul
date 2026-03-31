@@ -3,10 +3,7 @@ import 'package:culcul/features/live/domain/entities/live_entities.dart';
 abstract class LiveRepository {
   Future<LiveRoomDetailModel> getRoomInfo(int roomId);
 
-  Future<LivePlayUrlModel> getPlayUrl({
-    required int roomId,
-    int? qn,
-  });
+  Future<LivePlayUrlModel> getPlayUrl({required int roomId, int? qn});
 
   Future<LiveDanmakuConfigModel> getDanmakuConfig(int roomId);
 

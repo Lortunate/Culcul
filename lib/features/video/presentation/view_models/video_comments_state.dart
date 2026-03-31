@@ -1,3 +1,4 @@
+import 'package:culcul/core/pagination/paged_list_state.dart';
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -6,12 +7,7 @@ part 'video_comments_state.freezed.dart';
 @freezed
 sealed class VideoCommentsState with _$VideoCommentsState {
   const factory VideoCommentsState({
-    @Default([]) List<CommentItem> comments,
-    @Default(true) bool isInitialLoading,
-    @Default(false) bool isLoadingMore,
-    @Default(false) bool hasMore,
+    @Default(PagedListState<CommentItem>()) PagedListState<CommentItem> paging,
     @Default(1) int sort,
-    @Default(1) int nextPage,
-    Object? error,
   }) = _VideoCommentsState;
 }

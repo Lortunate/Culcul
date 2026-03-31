@@ -1,5 +1,6 @@
+import 'package:culcul/core/result/run_result.dart';
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
-import 'package:culcul/features/video/application/video_extra_workflows.dart';
+import 'package:culcul/features/video/video_providers.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -61,9 +62,9 @@ class SubtitleController extends _$SubtitleController {
   }
 
   Future<void> _loadSubtitleContent(SubtitleInfo info) async {
-    final result = await ref
-        .read(videoExtraWorkflowsProvider)
-        .loadSubtitleContent(info.subtitleUrl);
+    final result = await runResult(
+      () => ref.read(videoRepositoryProvider).fetchSubtitleContent(info.subtitleUrl),
+    );
     state = result.when(
       success: (content) => state.copyWith(content: content.body, isLoading: false),
       failure: (error) => state.copyWith(isLoading: false, error: error.message),

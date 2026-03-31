@@ -17,7 +17,17 @@ class DynamicCommentController extends _$DynamicCommentController {
   }
 
   Future<void> refresh() async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(
+      paging: state.paging.copyWith(
+        isInitialLoading: true,
+        isLoadingMore: false,
+        hasMore: true,
+        nextPage: 1,
+        items: const [],
+        error: null,
+      ),
+      error: null,
+    );
     final result = await runResult(
       () => ref.read(dynamicRepositoryProvider).getComments(
         post,
@@ -27,19 +37,39 @@ class DynamicCommentController extends _$DynamicCommentController {
     );
     state = result.when(
       success: (data) => state.copyWith(
-        comments: data.replies,
-        isLoading: false,
-        hasMore: _resolveHasMore(data, currentPage: 1),
-        page: 1,
+        paging: state.paging.copyWith(
+          items: data.replies,
+          isInitialLoading: false,
+          isLoadingMore: false,
+          hasMore: _resolveHasMore(data, currentPage: 1),
+          nextPage: 2,
+          error: null,
+        ),
+        error: null,
       ),
-      failure: (error) => state.copyWith(isLoading: false, error: error),
+      failure: (error) => state.copyWith(
+        paging: state.paging.copyWith(
+          isInitialLoading: false,
+          isLoadingMore: false,
+          error: error,
+        ),
+        error: error,
+      ),
     );
   }
 
   Future<void> loadMore() async {
-    if (state.isLoading || !state.hasMore) return;
+    if (state.paging.isInitialLoading ||
+        state.paging.isLoadingMore ||
+        !state.paging.hasMore) {
+      return;
+    }
 
-    final nextPage = state.page + 1;
+    final nextPage = state.paging.nextPage;
+    state = state.copyWith(
+      paging: state.paging.copyWith(isLoadingMore: true, error: null),
+      error: null,
+    );
     final result = await runResult(
       () => ref.read(dynamicRepositoryProvider).getComments(
         post,
@@ -48,31 +78,40 @@ class DynamicCommentController extends _$DynamicCommentController {
       ),
     );
     if (result.isFailure) {
+      state = state.copyWith(
+        paging: state.paging.copyWith(isLoadingMore: false, error: result.errorOrNull),
+        error: result.errorOrNull,
+      );
       return;
     }
     final data = result.dataOrNull!;
     state = state.copyWith(
-      comments: [...state.comments, ...data.replies],
-      hasMore: _resolveHasMore(data, currentPage: nextPage),
-      page: nextPage,
+      paging: state.paging.copyWith(
+        items: [...state.paging.items, ...data.replies],
+        hasMore: _resolveHasMore(data, currentPage: nextPage),
+        nextPage: nextPage + 1,
+        isLoadingMore: false,
+        error: null,
+      ),
+      error: null,
     );
   }
 
   Future<void> toggleLike(int rpid, bool isLiked) async {
     // Optimistic update
-    final oldComments = [...state.comments];
-    final index = state.comments.indexWhere((c) => c.rpid == rpid);
+    final oldComments = [...state.paging.items];
+    final index = state.paging.items.indexWhere((c) => c.rpid == rpid);
     if (index == -1) return;
 
-    final oldItem = state.comments[index];
+    final oldItem = state.paging.items[index];
     final newItem = oldItem.copyWith(
       action: isLiked ? 1 : 0,
       like: isLiked ? oldItem.like + 1 : oldItem.like - 1,
     );
 
-    final newComments = [...state.comments];
+    final newComments = [...state.paging.items];
     newComments[index] = newItem;
-    state = state.copyWith(comments: newComments);
+    state = state.copyWith(paging: state.paging.copyWith(items: newComments));
 
     final result = await runVoidResult(
       () => ref.read(dynamicRepositoryProvider).likeComment(
@@ -82,7 +121,7 @@ class DynamicCommentController extends _$DynamicCommentController {
       ),
     );
     if (result.isFailure) {
-      state = state.copyWith(comments: oldComments);
+      state = state.copyWith(paging: state.paging.copyWith(items: oldComments));
     }
   }
 

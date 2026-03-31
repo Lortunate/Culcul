@@ -11,5 +11,3 @@ Widget buildFollowingsRoutePage(int vmid) => FollowingsPage(vmid: vmid);
 Widget buildFollowersRoutePage(int vmid) => FollowersPage(vmid: vmid);
 
 Widget buildUserProfileRoutePage(int mid) => UserProfilePage(mid: mid);
-
-

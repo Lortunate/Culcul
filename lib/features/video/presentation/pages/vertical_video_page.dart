@@ -373,4 +373,3 @@ class _BottomBar extends ConsumerWidget {
     );
   }
 }
-

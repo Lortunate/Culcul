@@ -1,6 +1,6 @@
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
-import 'package:culcul/features/dynamic/application/dynamic_workflows.dart';
+import 'package:culcul/features/dynamic/dynamic_providers.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_feed_view_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -22,10 +22,9 @@ class TopicDynamicNotifier extends _$TopicDynamicNotifier
     String? currentCursor, {
     bool refresh = false,
   }) async {
-    final result = await ref
-        .read(dynamicFeedWorkflowProvider)
-        .call(DynamicFeedQuery(topicId: _topicId, offset: currentCursor));
-    final feed = result.when(success: (value) => value, failure: (error) => throw error);
+    final feed = await ref
+        .read(dynamicRepositoryProvider)
+        .getTopicFeed(topicId: _topicId, offset: currentCursor);
     return CursorPage(items: feed.items, nextCursor: feed.offset, hasMore: feed.hasMore);
   }
 

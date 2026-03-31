@@ -29,6 +29,7 @@ class CommentReplyPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(commentReplyControllerProvider(oid, rootId));
     final controller = ref.read(commentReplyControllerProvider(oid, rootId).notifier);
+    final paging = state.paging;
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
@@ -85,7 +86,7 @@ class CommentReplyPage extends HookConsumerWidget {
           Expanded(
             child: EasyRefresh(
               onRefresh: controller.refresh,
-              onLoad: state.hasMore ? controller.loadMore : null,
+              onLoad: paging.hasMore ? controller.loadMore : null,
               header: AppRefreshHeader(),
               footer: AppLoadFooter(),
               child: CustomScrollView(
@@ -115,7 +116,7 @@ class CommentReplyPage extends HookConsumerWidget {
                             alpha: 0.2,
                           ),
                         ),
-                        if (state.replies.isNotEmpty)
+                        if (paging.items.isNotEmpty)
                           Padding(
                             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                             child: Row(
@@ -133,14 +134,14 @@ class CommentReplyPage extends HookConsumerWidget {
                       ],
                     ),
                   ),
-                  if (state.replies.isEmpty && state.isLoading)
+                  if (paging.items.isEmpty && paging.isInitialLoading)
                     const SliverFillRemaining(
                       child: Center(child: CircularProgressIndicator()),
                     )
                   else
                     SliverList(
                       delegate: SliverChildBuilderDelegate((context, index) {
-                        final reply = state.replies[index];
+                        final reply = paging.items[index];
                         return CommentItemWidget(
                           item: reply,
                           showRepliesPreview: false,
@@ -154,7 +155,7 @@ class CommentReplyPage extends HookConsumerWidget {
                               controller.toggleCommentDislike(reply.oid, reply.rpid),
                           onReply: () => showReplySheet(reply),
                         );
-                      }, childCount: state.replies.length),
+                      }, childCount: paging.items.length),
                     ),
                   const SliverToBoxAdapter(child: SizedBox(height: 20)),
                 ],

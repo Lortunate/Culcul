@@ -1,3 +1,4 @@
+import 'package:culcul/core/pagination/paged_list_state.dart';
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -7,10 +8,6 @@ part 'comment_reply_state.freezed.dart';
 sealed class CommentReplyState with _$CommentReplyState {
   const factory CommentReplyState({
     CommentItem? rootComment,
-    @Default([]) List<CommentItem> replies,
-    @Default(1) int page,
-    @Default(true) bool hasMore,
-    @Default(false) bool isLoading,
-    Object? error,
+    @Default(PagedListState<CommentItem>()) PagedListState<CommentItem> paging,
   }) = _CommentReplyState;
 }

@@ -4,7 +4,6 @@ import 'subtitle.dart';
 import 'video_model.dart';
 
 part 'video_detail.freezed.dart';
-part 'video_detail.g.dart';
 
 @freezed
 sealed class VideoDetail with _$VideoDetail {
@@ -17,7 +16,7 @@ sealed class VideoDetail with _$VideoDetail {
     required dynamic copyright,
     required String pic,
     required String title,
-    @JsonKey(name: 'pubdate') required int pubDate,
+    required int pubDate,
     required int ctime,
     required String desc,
     required Owner owner,
@@ -26,20 +25,14 @@ sealed class VideoDetail with _$VideoDetail {
     @Default([]) List<VideoPage> pages,
     VideoSubtitle? subtitle,
     @Default([]) List<VideoTag> tag,
-    @JsonKey(name: 'req_user') ReqUser? reqUser,
+    ReqUser? reqUser,
   }) = _VideoDetail;
-
-  factory VideoDetail.fromJson(Map<String, dynamic> json) => _$VideoDetailFromJson(json);
 }
 
 @freezed
 sealed class ReqUser with _$ReqUser {
-  const factory ReqUser({
-    @Default(0) int attention,
-    @JsonKey(name: 'guest_attention') @Default(0) int guestAttention,
-  }) = _ReqUser;
-
-  factory ReqUser.fromJson(Map<String, dynamic> json) => _$ReqUserFromJson(json);
+  const factory ReqUser({@Default(0) int attention, @Default(0) int guestAttention}) =
+      _ReqUser;
 }
 
 @freezed
@@ -54,8 +47,6 @@ sealed class VideoPage with _$VideoPage {
     @Default('') String weblink,
     @Default(VideoDimension()) VideoDimension dimension,
   }) = _VideoPage;
-
-  factory VideoPage.fromJson(Map<String, dynamic> json) => _$VideoPageFromJson(json);
 }
 
 @freezed
@@ -65,40 +56,35 @@ sealed class VideoDimension with _$VideoDimension {
     @Default(0) int height,
     @Default(0) int rotate,
   }) = _VideoDimension;
-
-  factory VideoDimension.fromJson(Map<String, dynamic> json) =>
-      _$VideoDimensionFromJson(json);
 }
 
 @freezed
 sealed class VideoTag with _$VideoTag {
   const factory VideoTag({
-    @JsonKey(name: 'tag_id') @Default(0) int tagId,
-    @JsonKey(name: 'tag_name') @Default('') String tagName,
+    @Default(0) int tagId,
+    @Default('') String tagName,
     @Default('') String cover,
     @Default(0) int likes,
     @Default(0) int hates,
     @Default(0) int liked,
     @Default(0) int hated,
     @Default(0) int attribute,
-    @JsonKey(name: 'is_activity') @Default(0) int isActivity,
+    @Default(0) int isActivity,
     @Default('') String uri,
-    @JsonKey(name: 'tag_type') @Default('') String tagType,
+    @Default('') String tagType,
     @Default(TagCount()) TagCount count,
     @Default(0) int type,
     @Default(0) int state,
     @Default(0) int ctime,
     @Default(0) int mtime,
     @Default(0) int atime,
-    @Default(0) @JsonKey(name: 'is_atten') int isAtten,
-    @Default(0) @JsonKey(name: 'extra_attr') int extraAttr,
-    @Default('') @JsonKey(name: 'music_id') String musicId,
+    @Default(0) int isAtten,
+    @Default(0) int extraAttr,
+    @Default('') String musicId,
     @Default('') String content,
-    @Default('') @JsonKey(name: 'short_content') String shortContent,
-    @Default('') @JsonKey(name: 'head_cover') String headCover,
+    @Default('') String shortContent,
+    @Default('') String headCover,
   }) = _VideoTag;
-
-  factory VideoTag.fromJson(Map<String, dynamic> json) => _$VideoTagFromJson(json);
 }
 
 @freezed
@@ -108,6 +94,4 @@ sealed class TagCount with _$TagCount {
     @Default(0) int use,
     @Default(0) int atten,
   }) = _TagCount;
-
-  factory TagCount.fromJson(Map<String, dynamic> json) => _$TagCountFromJson(json);
 }

@@ -2,14 +2,12 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/utils/danmaku_mask_parser.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/result/run_result.dart';
-import 'package:culcul/features/video/domain/entities/video_entities.dart';
+import 'package:culcul/core/utils/danmaku_mask_parser.dart';
 import 'package:culcul/features/video/domain/repositories/danmaku_repository.dart';
 import 'package:culcul/features/video/domain/repositories/video_repository.dart';
 import 'package:culcul/features/video/video_providers.dart';
-import 'package:culcul/protos/dm.pb.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_drawing/path_drawing.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -32,24 +30,6 @@ class VideoExtraWorkflows {
     required this.videoRepository,
     required this.danmakuRepository,
   });
-
-  Future<Result<SubtitleContent, AppError>> loadSubtitleContent(String url) async {
-    return runResult(() => videoRepository.fetchSubtitleContent(url));
-  }
-
-  Future<Result<DmSegMobileReply, AppError>> loadDanmakuSegment({
-    required int oid,
-    required int pid,
-    required int segmentIndex,
-  }) async {
-    return runResult(
-      () => danmakuRepository.fetchDanmakuSegment(
-        oid: oid,
-        pid: pid,
-        segmentIndex: segmentIndex,
-      ),
-    );
-  }
 
   Future<Result<DanmakuMasks?, AppError>> loadDanmakuMask({
     required int oid,

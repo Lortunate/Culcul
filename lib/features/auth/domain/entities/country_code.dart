@@ -4,14 +4,6 @@ class CountryCode {
   final String code;
 
   const CountryCode({required this.id, required this.name, required this.code});
-
-  factory CountryCode.fromJson(Map<String, dynamic> json) {
-    return CountryCode(
-      id: json['id'] as int,
-      name: json['cname'] as String,
-      code: "+${json['country_id']}",
-    );
-  }
 }
 
 const List<CountryCode> defaultCountryCodes = [

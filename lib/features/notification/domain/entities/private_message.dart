@@ -62,7 +62,7 @@ class PrivateMessageContent {
     });
   }
 
-  Map<String, dynamic> toJson() => Map<String, dynamic>.from(_data);
+  Map<String, dynamic> toRawMap() => Map<String, dynamic>.from(_data);
 
   String? get primaryText => _readString('content') ?? _readString('text');
 
@@ -132,7 +132,7 @@ class PrivateMessage {
   });
 
   Map<String, dynamic>? get contentMap {
-    final json = content.toJson();
+    final json = content.toRawMap();
     return json.isEmpty ? null : json;
   }
 

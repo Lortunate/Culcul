@@ -61,10 +61,12 @@ class SearchResultTab extends HookConsumerWidget {
     final showFilter = searchType == 'video' || searchType == 'article';
 
     final provider = searchResultProvider(
-      keyword,
-      searchType: searchType,
-      order: order.value,
-      duration: duration.value,
+      searchResultParams(
+        keyword,
+        searchType: searchType,
+        order: order.value,
+        duration: duration.value,
+      ),
     );
     final searchResultAsync = ref.watch(provider);
     final notifier = ref.read(provider.notifier);

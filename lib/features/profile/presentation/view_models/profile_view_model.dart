@@ -1,6 +1,5 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
-import 'package:culcul/features/profile/application/profile_query_workflows.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/profile_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -20,10 +19,9 @@ Future<ProfileUser> myProfile(Ref ref) async {
 class UserProfileNotifier extends _$UserProfileNotifier {
   @override
   Future<ProfileUser> build(String userId) async {
-    final cachedResult = await ref
-        .read(profileQueryWorkflowsProvider)
-        .getCachedProfile(userId);
-    final cachedUser = cachedResult.dataOrNull;
+    final cachedUser = await ref
+        .read(profileCacheRepositoryProvider.notifier)
+        .readProfile(userId);
 
     if (cachedUser != null) {
       _refreshInBackground(userId);
@@ -44,7 +42,10 @@ class UserProfileNotifier extends _$UserProfileNotifier {
   }
 
   Future<ProfileUser> _loadFresh(String userId) async {
-    final result = await ref.read(profileQueryWorkflowsProvider).refreshProfile(userId);
-    return result.when(success: (value) => value, failure: (error) => throw error);
+    final profile = await ref
+        .read(profileRepositoryProvider)
+        .getProfile(int.parse(userId));
+    await ref.read(profileCacheRepositoryProvider.notifier).writeProfile(profile);
+    return profile;
   }
 }

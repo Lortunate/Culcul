@@ -1,12 +1,12 @@
 import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/features/favorites/data/fav_api.dart';
+import 'package:culcul/features/favorites/data/dtos/favorite_models.dart';
 import 'package:culcul/features/favorites/data/favorite_mapper.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:culcul/features/favorites/domain/repositories/favorite_repository.dart'
     as domain;
-import 'package:culcul/features/favorites/domain/entities/favorite_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'fav_repository_impl.g.dart';
@@ -83,10 +83,7 @@ class FavRepositoryImpl extends BaseRepository implements domain.FavoriteReposit
     return requestVoid(() => _api.delFolder(mediaIds));
   }
 
-  Future<void> batchDelResource({
-    required String resources,
-    required int mediaId,
-  }) async {
+  Future<void> batchDelResource({required String resources, required int mediaId}) async {
     return requestVoid(() => _api.batchDelResource(resources, mediaId, platform: 'web'));
   }
 
@@ -170,11 +167,7 @@ class FavRepositoryImpl extends BaseRepository implements domain.FavoriteReposit
   Future<void> deleteFolder({required String mediaIds}) => delFolder(mediaIds: mediaIds);
 
   @override
-  Future<void> deleteResources({
-    required String resources,
-    required int mediaId,
-  }) {
+  Future<void> deleteResources({required String resources, required int mediaId}) {
     return batchDelResource(resources: resources, mediaId: mediaId);
   }
 }
-

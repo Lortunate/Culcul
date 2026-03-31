@@ -2,15 +2,15 @@ import 'dart:convert';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/core/base_repository.dart';
+import 'package:culcul/features/search/data/dtos/search_models.dart';
 import 'package:culcul/features/search/data/search_mapper.dart';
 import 'package:culcul/features/search/data/search_api.dart';
 import 'package:culcul/features/search/domain/entities/search_default_hint.dart';
-import 'package:culcul/features/search/domain/entities/search_result_page.dart';
+import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/features/search/domain/entities/search_suggestion_entry.dart';
 import 'package:culcul/features/search/domain/entities/search_trending_keyword.dart';
 import 'package:culcul/features/search/domain/repositories/search_repository.dart'
     as domain;
-import 'package:culcul/features/search/domain/entities/search_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_repository_impl.g.dart';
@@ -127,4 +127,3 @@ class SearchRepositoryImpl extends BaseRepository implements domain.SearchReposi
     return result.toDomain();
   }
 }
-

@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/live/presentation/view_models/live_recommend_view_model.dart';
-import 'package:culcul/features/live/domain/entities/live_room_summary.dart';
+import 'package:culcul/core/contracts/live_room_summary_contract.dart';
 import 'package:culcul/features/home/presentation/widgets/live/live_card_skeleton.dart';
 import 'package:culcul/features/home/presentation/widgets/live/live_room_card.dart';
 import 'package:culcul/features/home/presentation/widgets/hooks/use_home_scroll_sync.dart';
@@ -96,5 +96,6 @@ class _LiveGrid extends StatelessWidget {
     );
   }
 }
+
 
 

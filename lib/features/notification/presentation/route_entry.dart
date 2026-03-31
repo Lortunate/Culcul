@@ -33,4 +33,3 @@ Widget buildChatRoutePage({
     avatarUrl: avatarUrl,
   );
 }
-

@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
-import 'package:culcul/features/notification/domain/entities/image_upload_response.dart';
+import 'package:culcul/features/notification/domain/entities/image_upload_result.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
-import 'package:culcul/features/notification/domain/entities/private_message_model.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
 import 'package:culcul/features/notification/domain/entities/system_notice.dart';
 
 abstract class NotificationRepository {
@@ -25,13 +25,11 @@ abstract class NotificationRepository {
     int? endSeqno,
   });
 
-  Future<PrivateSessionPage> getPrivateSessions({
-    int? endTs,
-  });
+  Future<PrivateSessionPage> getPrivateSessions({int? endTs});
 
-  Future<ImageUploadResponse> uploadImage(File file);
+  Future<ImageUploadResult> uploadImage(File file);
 
-  Future<SendMessageResponse> sendPrivateMessage({
+  Future<SendMessageResult> sendPrivateMessage({
     required int senderUid,
     required int receiverId,
     required int receiverType,

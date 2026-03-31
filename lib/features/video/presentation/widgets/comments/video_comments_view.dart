@@ -20,12 +20,13 @@ class VideoCommentsView extends ConsumerWidget {
     final detailState = ref.watch(videoDetailControllerProvider(bvid));
     final state = ref.watch(videoCommentsControllerProvider(bvid));
     final notifier = ref.read(videoCommentsControllerProvider(bvid).notifier);
+    final paging = state.paging;
 
-    if (state.isInitialLoading && state.comments.isEmpty) {
+    if (paging.isInitialLoading && paging.items.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (state.comments.isEmpty && !state.isInitialLoading) {
+    if (paging.items.isEmpty && !paging.isInitialLoading) {
       return _buildEmptyState(context, notifier);
     }
 
@@ -33,12 +34,12 @@ class VideoCommentsView extends ConsumerWidget {
 
     return EasyRefresh(
       onRefresh: notifier.refresh,
-      onLoad: state.hasMore ? notifier.loadMore : null,
+      onLoad: paging.hasMore ? notifier.loadMore : null,
       header: AppRefreshHeader(),
       footer: AppLoadFooter(),
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: 4),
-        itemCount: state.comments.length,
+        itemCount: paging.items.length,
         separatorBuilder: (context, index) {
           return Divider(
             height: 1,
@@ -49,7 +50,7 @@ class VideoCommentsView extends ConsumerWidget {
           );
         },
         itemBuilder: (context, index) {
-          final comment = state.comments[index];
+          final comment = paging.items[index];
           return CommentItemWidget(
             item: comment,
             upperMid: upperMid,
@@ -96,7 +97,7 @@ class VideoCommentsView extends ConsumerWidget {
 
     return Center(
       child: GestureDetector(
-        onTap: notifier.refreshComments,
+        onTap: notifier.refresh,
         behavior: HitTestBehavior.opaque,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -115,4 +116,3 @@ class VideoCommentsView extends ConsumerWidget {
     );
   }
 }
-

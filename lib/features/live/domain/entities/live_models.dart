@@ -1,2 +1,2 @@
 export 'index.dart';
-export 'package:culcul/features/live/domain/entities/live_room_summary.dart';
+export 'package:culcul/core/contracts/live_room_summary_contract.dart';

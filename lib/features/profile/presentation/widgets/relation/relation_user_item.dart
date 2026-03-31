@@ -1,5 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/features/profile/domain/entities/relation_user.dart';
+import 'package:culcul/core/contracts/relation_user_contract.dart';
 import 'package:culcul/features/profile/presentation/view_models/relation_user_action_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/follow_button.dart';

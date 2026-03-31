@@ -1,5 +1,5 @@
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
-import 'package:culcul/features/live/domain/entities/live_room_summary.dart';
+import 'package:culcul/core/contracts/live_room_summary_contract.dart';
 import 'package:culcul/features/live/live_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

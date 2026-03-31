@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'user_card_model.freezed.dart';
-part 'user_card_model.g.dart';
+part 'user_card_contract.freezed.dart';
 
 @freezed
 sealed class UserCardModel with _$UserCardModel {
@@ -11,7 +10,4 @@ sealed class UserCardModel with _$UserCardModel {
     required String face,
     @Default(false) bool isFollowed,
   }) = _UserCardModel;
-
-  factory UserCardModel.fromJson(Map<String, dynamic> json) =>
-      _$UserCardModelFromJson(json);
 }

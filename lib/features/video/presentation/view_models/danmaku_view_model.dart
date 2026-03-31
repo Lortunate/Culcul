@@ -1,7 +1,9 @@
 import 'dart:async';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import 'package:culcul/core/result/run_result.dart';
+import 'package:culcul/features/video/video_providers.dart';
 import 'package:culcul/protos/dm.pb.dart';
-import 'package:culcul/features/video/application/video_extra_workflows.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'danmaku_view_model.g.dart';
 
@@ -15,9 +17,11 @@ class DanmakuProvider extends _$DanmakuProvider {
     required int pid,
     required int segmentIndex,
   }) async {
-    final result = await ref
-        .read(videoExtraWorkflowsProvider)
-        .loadDanmakuSegment(oid: oid, pid: pid, segmentIndex: segmentIndex);
+    final result = await runResult(
+      () => ref
+          .read(danmakuRepositoryProvider)
+          .fetchDanmakuSegment(oid: oid, pid: pid, segmentIndex: segmentIndex),
+    );
     return result.when(success: (value) => value.elems, failure: (error) => throw error);
   }
 }

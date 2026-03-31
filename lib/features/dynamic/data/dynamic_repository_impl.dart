@@ -7,10 +7,11 @@ import 'package:culcul/core/providers/cookie_jar_provider.dart';
 import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/features/dynamic/data/dynamic_api.dart';
+import 'package:culcul/features/dynamic/data/dynamic_mapper.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'package:culcul/features/dynamic/domain/repositories/dynamic_repository.dart'
     as domain;
-import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -274,23 +275,29 @@ class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepo
 
   @override
   Future<DynamicData> getFeed({String? type, String? offset}) {
-    return requestApi(() => _api.getDynamicFeed(type: type, offset: offset, page: 1));
+    return requestApi(() => _api.getDynamicFeed(type: type, offset: offset, page: 1)).then(
+      (data) => data.toDomain(),
+    );
   }
 
   @override
   Future<DynamicData> getSpaceDynamicFeed({required int hostMid, String? offset}) {
-    return requestApi(() => _api.getSpaceDynamicFeed(hostMid: hostMid, offset: offset));
+    return requestApi(
+      () => _api.getSpaceDynamicFeed(hostMid: hostMid, offset: offset),
+    ).then((data) => data.toDomain());
   }
 
   @override
   Future<DynamicData> getTopicFeed({required int topicId, String? offset}) {
-    return requestApi(() => _api.getTopicFeed(topicId: topicId, offset: offset));
+    return requestApi(
+      () => _api.getTopicFeed(topicId: topicId, offset: offset),
+    ).then((data) => data.toDomain());
   }
 
   @override
   Future<DynamicItem> getDetail(String id) async {
     final data = await requestApi(() => _api.getDynamicDetail(id: id));
-    return data.item;
+    return data.toDomain().item;
   }
 
   @override
@@ -403,7 +410,7 @@ class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepo
     return requestApi(() async {
       final csrf = await _getCsrfToken();
       return _api.uploadImage(file: file, csrf: csrf ?? '');
-    });
+    }).then((data) => data.toDomain());
   }
 
   @override

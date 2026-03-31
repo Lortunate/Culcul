@@ -2,7 +2,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 
 part 'video_model.freezed.dart';
-part 'video_model.g.dart';
 
 @freezed
 sealed class VideoModel with _$VideoModel {
@@ -15,12 +14,10 @@ sealed class VideoModel with _$VideoModel {
     required Owner owner,
     required Stat stat,
     required int duration,
-    @JsonKey(name: 'pubdate') required int pubDate,
+    required int pubDate,
     @Default('') String desc,
-    @JsonKey(name: 'rcmd_reason') @RcmdReasonConverter() @Default('') String rcmdReason,
+    @Default('') String rcmdReason,
   }) = _VideoModel;
-
-  factory VideoModel.fromJson(Map<String, dynamic> json) => _$VideoModelFromJson(json);
 
   String get durationString => FormatUtils.formatDuration(duration);
   String get pubDateString => FormatUtils.formatTimeAgo(pubDate);
@@ -33,8 +30,6 @@ sealed class Owner with _$Owner {
     required String name,
     @Default('') String face,
   }) = _Owner;
-
-  factory Owner.fromJson(Map<String, dynamic> json) => _$OwnerFromJson(json);
 }
 
 @freezed
@@ -51,8 +46,6 @@ sealed class Stat with _$Stat {
     @Default(0) int share,
   }) = _Stat;
 
-  factory Stat.fromJson(Map<String, dynamic> json) => _$StatFromJson(json);
-
   String get viewString => FormatUtils.formatNumber(view);
   String get danmakuString => FormatUtils.formatNumber(danmaku);
   String get replyString => FormatUtils.formatNumber(reply);
@@ -60,19 +53,4 @@ sealed class Stat with _$Stat {
   String get coinString => FormatUtils.formatNumber(coin);
   String get favoriteString => FormatUtils.formatNumber(favorite);
   String get shareString => FormatUtils.formatNumber(share);
-}
-
-class RcmdReasonConverter implements JsonConverter<String, dynamic> {
-  const RcmdReasonConverter();
-
-  @override
-  String fromJson(dynamic json) {
-    if (json is Map) {
-      return json['content'] as String? ?? '';
-    }
-    return '';
-  }
-
-  @override
-  dynamic toJson(String object) => object;
 }

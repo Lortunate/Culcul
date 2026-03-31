@@ -1,6 +1,8 @@
 import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/core/network/resource_api.dart';
+import 'package:culcul/features/video/data/dtos/subtitle_dto.dart' as subtitle_dto;
+import 'package:culcul/features/video/data/video_mapper.dart';
 import 'package:culcul/features/video/domain/repositories/video_repository.dart'
     as domain;
 import 'package:culcul/features/video/data/video_api.dart';
@@ -63,12 +65,14 @@ class VideoRepositoryImpl extends BaseRepository implements domain.VideoReposito
 
   @override
   Future<VideoDetail> fetchVideoView(String bvid) {
-    return requestApi(() => api.fetchVideoView(bvid));
+    return requestApi(() => api.fetchVideoView(bvid)).then((value) => value.toDomain());
   }
 
   @override
   Future<List<VideoTag>> fetchVideoTags(String bvid) {
-    return requestApi(() => api.fetchVideoTags(bvid));
+    return requestApi(
+      () => api.fetchVideoTags(bvid),
+    ).then((value) => value.map((item) => item.toDomain()).toList());
   }
 
   @override
@@ -86,17 +90,21 @@ class VideoRepositoryImpl extends BaseRepository implements domain.VideoReposito
         _defaultFnver,
         _defaultFourk,
       ),
-    );
+    ).then((value) => value.toDomain());
   }
 
   @override
   Future<PlayerInfo> fetchPlayerInfo({required int aid, required int cid}) {
-    return requestApi(() => api.fetchPlayerInfo(aid, cid));
+    return requestApi(
+      () => api.fetchPlayerInfo(aid, cid),
+    ).then((value) => value.toDomain());
   }
 
   @override
   Future<List<RelatedVideo>> fetchRelatedVideos(String bvid) {
-    return requestApi(() => api.fetchRelatedVideos(bvid));
+    return requestApi(
+      () => api.fetchRelatedVideos(bvid),
+    ).then((value) => value.map((item) => item.toDomain()).toList());
   }
 
   @override
@@ -123,7 +131,10 @@ class VideoRepositoryImpl extends BaseRepository implements domain.VideoReposito
     return request(() async {
       final fullUrl = url.startsWith('http') ? url : 'https:$url';
       final response = await resourceApi.fetchJson(fullUrl);
-      return SubtitleContent.fromJson(Map<String, dynamic>.from(response as Map));
+      final dto = subtitle_dto.SubtitleContent.fromJson(
+        Map<String, dynamic>.from(response as Map),
+      );
+      return dto.toDomain();
     });
   }
 
@@ -136,4 +147,3 @@ class VideoRepositoryImpl extends BaseRepository implements domain.VideoReposito
     return requestVoid(() => api.reportVideoProgress(aid, cid, progress, 'android', 3));
   }
 }
-

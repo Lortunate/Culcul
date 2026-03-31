@@ -131,12 +131,16 @@ class AuthRepositoryImpl implements domain.AuthRepository {
         if (data != null) {
           final common =
               (data['common'] as List<dynamic>?)
-                  ?.map((e) => CountryCode.fromJson(e as Map<String, dynamic>))
+                  ?.map(
+                    (e) => CountryCodeDto.fromJson(e as Map<String, dynamic>).toDomain(),
+                  )
                   .toList() ??
               [];
           final others =
               (data['others'] as List<dynamic>?)
-                  ?.map((e) => CountryCode.fromJson(e as Map<String, dynamic>))
+                  ?.map(
+                    (e) => CountryCodeDto.fromJson(e as Map<String, dynamic>).toDomain(),
+                  )
                   .toList() ??
               [];
           return [...common, ...others];

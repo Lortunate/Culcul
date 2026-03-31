@@ -1,3 +1,4 @@
+import 'package:culcul/core/pagination/paged_async_notifier.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/notification_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -5,24 +6,33 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'at_view_model.g.dart';
 
 @riverpod
-class AtList extends _$AtList {
+class AtList extends _$AtList with CursorPagedAsyncNotifier<NotificationEntry, ({int id, int time})> {
   @override
   FutureOr<List<NotificationEntry>> build() async {
-    return ref.read(notificationRepositoryProvider).getAtList();
+    return buildFirstPage();
   }
 
-  Future<void> loadMore() async {
-    final currentList = state.value ?? [];
-    if (currentList.isEmpty) return;
-
-    final lastItem = currentList.last;
-    try {
-      final data = await ref
-          .read(notificationRepositoryProvider)
-          .getAtList(id: lastItem.id, atTime: lastItem.replyTime ?? 0);
-      state = AsyncData([...currentList, ...data]);
-    } catch (_) {
-      // Keep current state on pagination failure.
-    }
+  @override
+  Future<CursorPage<NotificationEntry, ({int id, int time})>> fetchPage(
+    ({int id, int time})? cursor, {
+    bool refresh = false,
+  }) {
+    return ref
+        .read(notificationRepositoryProvider)
+        .getAtList(id: cursor?.id, atTime: cursor?.time)
+        .then(
+          (data) => CursorPage(
+            items: data,
+            nextCursor: data.isEmpty ? null : (id: data.last.id, time: data.last.eventTime),
+            hasMore: data.isNotEmpty,
+          ),
+        );
   }
+
+  @override
+  Object itemId(NotificationEntry item) => item.id;
+
+  Future<void> loadMore() => loadNextPage();
+
+  Future<void> refresh() => refreshPage();
 }

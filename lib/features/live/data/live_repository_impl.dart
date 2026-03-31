@@ -1,5 +1,6 @@
 import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/features/live/data/dtos/live_models_dto.dart' as dto;
 import 'package:culcul/features/live/data/live_room_mapper.dart';
 import 'package:culcul/features/live/data/live_api.dart';
 import 'package:culcul/features/live/domain/repositories/live_repository.dart' as domain;
@@ -20,33 +21,35 @@ class LiveRepositoryImpl extends BaseRepository implements domain.LiveRepository
 
   @override
   Future<LiveRoomDetailModel> getRoomInfo(int roomId) async {
-    return requestApi(() => _api.getRoomInfo(roomId));
+    final data = await requestApi(() => _api.getRoomInfo(roomId));
+    return data.toDomain();
   }
 
   @override
-  Future<LivePlayUrlModel> getPlayUrl({
-    required int roomId,
-    int? qn,
-  }) async {
-    return requestApi(() => _api.getPlayUrl(roomId: roomId, qn: qn));
+  Future<LivePlayUrlModel> getPlayUrl({required int roomId, int? qn}) async {
+    final data = await requestApi(() => _api.getPlayUrl(roomId: roomId, qn: qn));
+    return data.toDomain();
   }
 
   @override
   Future<LiveDanmakuConfigModel> getDanmakuConfig(int roomId) async {
-    return requestApi(() => _api.getDanmakuConfig(roomId));
+    final data = await requestApi(() => _api.getDanmakuConfig(roomId));
+    return data.toDomain();
   }
 
   @override
   Future<LiveHistoryDanmakuModel> getHistoryDanmaku(int roomId) async {
-    return requestApi(() => _api.getHistoryDanmaku(roomId));
+    final data = await requestApi(() => _api.getHistoryDanmaku(roomId));
+    return data.toDomain();
   }
 
   @override
   Future<LiveDanmuInfoModel> getDanmuInfo(int roomId) async {
-    return requestApi(() => _api.getDanmuInfo(roomId, 0));
+    final data = await requestApi(() => _api.getDanmuInfo(roomId, 0));
+    return data.toDomain();
   }
 
-  Future<List<LiveRoomModel>> fetchRecommendListModels({
+  Future<List<dto.LiveRoomModel>> fetchRecommendListModels({
     int page = 1,
     int pageSize = 30,
   }) async {
@@ -58,7 +61,8 @@ class LiveRepositoryImpl extends BaseRepository implements domain.LiveRepository
 
   @override
   Future<LiveAnchorInfoModel> getAnchorInfo(int uid) async {
-    return requestApi(() => _api.getAnchorInfo(uid));
+    final data = await requestApi(() => _api.getAnchorInfo(uid));
+    return data.toDomain();
   }
 
   @override
@@ -68,7 +72,7 @@ class LiveRepositoryImpl extends BaseRepository implements domain.LiveRepository
     int page = 1,
     int pageSize = 20,
   }) async {
-    return requestApi(
+    final data = await requestApi(
       () => _api.getOnlineGoldRank(
         ruid: ruid,
         roomId: roomId,
@@ -76,6 +80,7 @@ class LiveRepositoryImpl extends BaseRepository implements domain.LiveRepository
         pageSize: pageSize,
       ),
     );
+    return data.toDomain();
   }
 
   @override
@@ -85,9 +90,10 @@ class LiveRepositoryImpl extends BaseRepository implements domain.LiveRepository
     int page = 1,
     int pageSize = 20,
   }) async {
-    return requestApi(
+    final data = await requestApi(
       () => _api.getGuardList(ruid: ruid, roomId: roomId, page: page, pageSize: pageSize),
     );
+    return data.toDomain();
   }
 
   @override
@@ -109,7 +115,6 @@ class LiveRepositoryImpl extends BaseRepository implements domain.LiveRepository
     return (await fetchRecommendListModels(
       page: page,
       pageSize: pageSize,
-    )).map((item) => item.toDomain()).toList();
+    )).map((item) => item.toSummary()).toList();
   }
 }
-
