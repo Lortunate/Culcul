@@ -101,4 +101,3 @@ class QrLoginView extends ConsumerWidget {
     );
   }
 }
-

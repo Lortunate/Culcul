@@ -68,9 +68,7 @@ class CommentReplyController extends _$CommentReplyController {
   }
 
   Future<void> toggleCommentDislike(int oid, int rpid) async {
-    await ref
-        .read(videoCommentWorkflowsProvider)
-        .toggleDislike(oid: oid, rpid: rpid);
+    await ref.read(videoCommentWorkflowsProvider).toggleDislike(oid: oid, rpid: rpid);
   }
 
   void _updateCommentLikeStatus(int rpid, bool liked) {

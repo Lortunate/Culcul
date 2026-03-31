@@ -56,7 +56,10 @@ class AuthRepositoryImpl implements domain.AuthRepository {
   }
 
   Future<void> _cacheUser(UserEntity user) async {
-    await _box.put(StorageKeys.authUserCache, jsonEncode(AuthUserDto.fromDomain(user).toJson()));
+    await _box.put(
+      StorageKeys.authUserCache,
+      jsonEncode(AuthUserDto.fromDomain(user).toJson()),
+    );
   }
 
   Future<void> clearCache() async {

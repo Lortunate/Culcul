@@ -23,13 +23,7 @@ class VideoCommentWorkflows {
     required int sort,
     required int page,
   }) async {
-    return runResult(
-      () => _repository.fetchComments(
-        oid: oid,
-        sort: sort,
-        page: page,
-      ),
-    );
+    return runResult(() => _repository.fetchComments(oid: oid, sort: sort, page: page));
   }
 
   Future<Result<CommentResponse, AppError>> loadReplies({
@@ -46,15 +40,14 @@ class VideoCommentWorkflows {
     required bool isLiked,
   }) async {
     return runVoidResult(
-      () => _repository.setCommentLike(
-        oid: oid,
-        rpid: rpid,
-        isLiked: isLiked,
-      ),
+      () => _repository.setCommentLike(oid: oid, rpid: rpid, isLiked: isLiked),
     );
   }
 
-  Future<Result<void, AppError>> toggleDislike({required int oid, required int rpid}) async {
+  Future<Result<void, AppError>> toggleDislike({
+    required int oid,
+    required int rpid,
+  }) async {
     return runVoidResult(() => _repository.setCommentDislike(oid: oid, rpid: rpid));
   }
 

@@ -74,9 +74,7 @@ class VideoCommentsController extends _$VideoCommentsController {
   }
 
   Future<void> toggleCommentDislike(int oid, int rpid) async {
-    await ref
-        .read(videoCommentWorkflowsProvider)
-        .toggleDislike(oid: oid, rpid: rpid);
+    await ref.read(videoCommentWorkflowsProvider).toggleDislike(oid: oid, rpid: rpid);
   }
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
