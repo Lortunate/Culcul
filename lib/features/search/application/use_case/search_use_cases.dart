@@ -1,11 +1,11 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/search/data/mappers/search_mapper.dart';
-import 'package:culcul/features/search/data/search_repository.dart';
 import 'package:culcul/features/search/domain/entities/search_default_hint.dart';
 import 'package:culcul/features/search/domain/entities/search_result_page.dart';
 import 'package:culcul/features/search/domain/entities/search_suggestion_entry.dart';
 import 'package:culcul/features/search/domain/entities/search_trending_keyword.dart';
+import 'package:culcul/features/search/domain/repositories/search_repository.dart';
+import 'package:culcul/features/search/search_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_use_cases.g.dart';
@@ -42,13 +42,7 @@ class SearchUseCases {
     String term,
   ) async {
     try {
-      final suggestions = await _repository.fetchSearchSuggestions(term);
-      return Success(
-        suggestions
-            .map((item) => item.toDomain())
-            .whereType<SearchSuggestionEntry>()
-            .toList(),
-      );
+      return Success(await _repository.getSuggestions(term));
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -56,8 +50,7 @@ class SearchUseCases {
 
   Future<Result<SearchDefaultHint?, AppError>> getDefaultSearch() async {
     try {
-      final result = await _repository.fetchDefaultSearch();
-      return Success(result.toDomain());
+      return Success(await _repository.getDefaultSearch());
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -65,8 +58,7 @@ class SearchUseCases {
 
   Future<Result<List<SearchTrendingKeyword>, AppError>> getTrendingRanking() async {
     try {
-      final result = await _repository.fetchTrendingRanking();
-      return Success(result.list.map((item) => item.toDomain()).toList());
+      return Success(await _repository.getTrendingRanking());
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -74,15 +66,16 @@ class SearchUseCases {
 
   Future<Result<SearchResultPage, AppError>> search(SearchQuery query) async {
     try {
-      final result = await _repository.fetchSearchAll(
-        keyword: query.keyword,
-        page: query.page,
-        pageSize: query.pageSize,
-        searchType: query.searchType,
-        order: query.order,
-        duration: query.duration,
+      return Success(
+        await _repository.search(
+          keyword: query.keyword,
+          page: query.page,
+          pageSize: query.pageSize,
+          searchType: query.searchType,
+          order: query.order,
+          duration: query.duration,
+        ),
       );
-      return Success(result.toDomain());
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }

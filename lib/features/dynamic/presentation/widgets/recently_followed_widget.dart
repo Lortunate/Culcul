@@ -1,5 +1,5 @@
-import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/recently_followed_view_model.dart';
+import 'package:culcul/features/profile/domain/entities/relation_user.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -57,7 +57,7 @@ class RecentlyFollowedWidget extends HookConsumerWidget {
 class _UserItem extends StatelessWidget {
   const _UserItem({required this.user});
 
-  final RelationUser user;
+  final ProfileRelationUser user;
 
   @override
   Widget build(BuildContext context) {

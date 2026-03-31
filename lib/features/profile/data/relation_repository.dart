@@ -1,22 +1,26 @@
 import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/data/api/relation_api.dart';
-import 'package:culcul/data/models/relation/relation_model.dart';
+import 'package:culcul/features/profile/data/mappers/profile_mapper.dart';
+import 'package:culcul/features/profile/data/relation_api.dart';
+import 'package:culcul/features/profile/domain/entities/relation_user.dart';
+import 'package:culcul/features/profile/domain/repositories/relation_repository.dart'
+    as domain;
+import 'package:culcul/features/profile/models/profile_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'relation_repository.g.dart';
 
 @riverpod
-RelationRepository relationRepository(Ref ref) {
-  return RelationRepository(ref.watch(relationApiProvider));
+domain.RelationRepository relationRepository(Ref ref) {
+  return RelationRepositoryImpl(ref.watch(relationApiProvider));
 }
 
-class RelationRepository extends BaseRepository {
+class RelationRepositoryImpl extends BaseRepository implements domain.RelationRepository {
   final RelationApi _api;
 
-  RelationRepository(this._api);
+  RelationRepositoryImpl(this._api);
 
-  Future<RelationResponseData> getFollowings(
+  Future<RelationResponseData> getFollowingsModel(
     int vmid, {
     int pn = 1,
     int ps = 50,
@@ -27,11 +31,38 @@ class RelationRepository extends BaseRepository {
     );
   }
 
-  Future<RelationResponseData> getFollowers(int vmid, {int pn = 1, int ps = 50}) {
+  Future<RelationResponseData> getFollowersModel(int vmid, {int pn = 1, int ps = 50}) {
     return requestApi(() => _api.getFollowers(vmid, pn: pn, ps: ps));
   }
 
+  @override
   Future<void> modifyRelation({required int fid, required int act}) {
     return requestVoid(() => _api.modifyRelation(fid, act));
+  }
+
+  @override
+  Future<List<ProfileRelationUser>> getFollowings(
+    int vmid, {
+    int page = 1,
+    int pageSize = 50,
+    String? orderType,
+  }) async {
+    final data = await getFollowingsModel(
+      vmid,
+      pn: page,
+      ps: pageSize,
+      orderType: orderType,
+    );
+    return data.list.map((item) => item.toDomain()).toList();
+  }
+
+  @override
+  Future<List<ProfileRelationUser>> getFollowers(
+    int vmid, {
+    int page = 1,
+    int pageSize = 50,
+  }) async {
+    final data = await getFollowersModel(vmid, pn: page, ps: pageSize);
+    return data.list.map((item) => item.toDomain()).toList();
   }
 }

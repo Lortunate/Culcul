@@ -1,7 +1,4 @@
-import 'package:culcul/data/models/relation/relation_model.dart';
-import 'package:culcul/data/models/user/user_profile_model.dart';
-import 'package:culcul/data/models/user/user_space_video_model.dart';
-import 'package:culcul/data/models/video/video_model.dart';
+import 'package:culcul/features/profile/models/profile_models.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/features/profile/domain/entities/relation_user.dart';

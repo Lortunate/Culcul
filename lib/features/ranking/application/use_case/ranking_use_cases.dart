@@ -1,8 +1,8 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/ranking/data/mappers/ranking_video_mapper.dart';
-import 'package:culcul/features/ranking/data/ranking_repository.dart';
+import 'package:culcul/features/ranking/domain/repositories/ranking_repository.dart';
 import 'package:culcul/features/ranking/domain/entities/ranking_video.dart';
+import 'package:culcul/features/ranking/ranking_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'ranking_use_cases.g.dart';
@@ -19,8 +19,7 @@ class RankingUseCases {
 
   Future<Result<List<RankingVideo>, AppError>> getRanking({int? rid}) async {
     try {
-      final videos = await _repository.getRanking(rid: rid);
-      return Success(videos.map((video) => video.toDomain()).toList());
+      return Success(await _repository.getRanking(rid: rid));
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }

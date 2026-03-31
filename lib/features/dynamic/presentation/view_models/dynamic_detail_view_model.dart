@@ -1,4 +1,4 @@
-import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
+import 'package:culcul/features/dynamic/models/dynamic_models.dart';
 import 'dart:async';
 
 import 'package:culcul/core/errors/app_error.dart';

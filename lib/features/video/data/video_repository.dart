@@ -1,34 +1,32 @@
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/base_repository.dart';
-import 'package:culcul/data/api/resource_api.dart';
-import 'package:culcul/data/api/video_api.dart';
-import 'package:culcul/data/models/comment/comment_model.dart';
-import 'package:culcul/data/models/subtitle.dart';
-import 'package:culcul/data/models/video/play_url.dart';
-import 'package:culcul/data/models/video/player_info.dart';
-import 'package:culcul/data/models/video/related_video.dart';
-import 'package:culcul/data/models/video/video_detail.dart';
+import 'package:culcul/core/network/resource_api.dart';
+import 'package:culcul/features/video/domain/repositories/video_repository.dart'
+    as domain;
+import 'package:culcul/features/video/data/video_api.dart';
+import 'package:culcul/features/video/models/video_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'video_repository.g.dart';
 
 @riverpod
-VideoRepository videoRepository(Ref ref) {
-  return VideoRepository(
+domain.VideoRepository videoRepository(Ref ref) {
+  return VideoRepositoryImpl(
     api: ref.watch(videoApiProvider),
     resourceApi: ref.watch(resourceApiProvider),
   );
 }
 
-class VideoRepository extends BaseRepository {
+class VideoRepositoryImpl extends BaseRepository implements domain.VideoRepository {
   static const _videoCommentType = 1;
   static const _defaultCommentPageSize = 20;
 
   final VideoApi api;
   final ResourceApi resourceApi;
 
-  VideoRepository({required this.api, required this.resourceApi});
+  VideoRepositoryImpl({required this.api, required this.resourceApi});
 
+  @override
   Future<void> setCommentLike({
     required int oid,
     required int rpid,
@@ -39,6 +37,7 @@ class VideoRepository extends BaseRepository {
     );
   }
 
+  @override
   Future<void> setCommentDislike({
     required int oid,
     required int rpid,
@@ -49,6 +48,7 @@ class VideoRepository extends BaseRepository {
     );
   }
 
+  @override
   Future<CommentItem> replyToComment({
     required int oid,
     required int root,
@@ -58,14 +58,17 @@ class VideoRepository extends BaseRepository {
     return requestApi(() => api.addReply(oid, root, parent, message, _videoCommentType));
   }
 
+  @override
   Future<VideoDetail> fetchVideoView(String bvid) {
     return requestApi(() => api.fetchVideoView(bvid));
   }
 
+  @override
   Future<List<VideoTag>> fetchVideoTags(String bvid) {
     return requestApi(() => api.fetchVideoTags(bvid));
   }
 
+  @override
   Future<PlayUrl> fetchVideoPlayUrl({
     required int aid,
     required int cid,
@@ -79,14 +82,17 @@ class VideoRepository extends BaseRepository {
     );
   }
 
+  @override
   Future<PlayerInfo> fetchPlayerInfo({required int aid, required int cid}) {
     return requestApi(() => api.fetchPlayerInfo(aid, cid));
   }
 
+  @override
   Future<List<RelatedVideo>> fetchRelatedVideos(String bvid) {
     return requestApi(() => api.fetchRelatedVideos(bvid));
   }
 
+  @override
   Future<CommentResponse> fetchComments({required int oid, int sort = 1, int page = 1}) {
     return requestApi(
       () =>
@@ -94,6 +100,7 @@ class VideoRepository extends BaseRepository {
     );
   }
 
+  @override
   Future<CommentResponse> fetchReply({
     required int oid,
     required int root,
@@ -104,6 +111,7 @@ class VideoRepository extends BaseRepository {
     );
   }
 
+  @override
   Future<SubtitleContent> fetchSubtitleContent(String url) {
     return request(() async {
       final fullUrl = url.startsWith('http') ? url : 'https:$url';
@@ -112,6 +120,7 @@ class VideoRepository extends BaseRepository {
     });
   }
 
+  @override
   Future<void> reportVideoProgress({
     required int aid,
     required int cid,

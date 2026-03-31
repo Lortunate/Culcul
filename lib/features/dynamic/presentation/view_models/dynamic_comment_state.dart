@@ -1,4 +1,4 @@
-import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
+import 'package:culcul/features/dynamic/models/dynamic_models.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 

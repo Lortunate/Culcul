@@ -4,11 +4,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'storage_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-Box<dynamic> storageBox(Ref ref) {
-  throw UnimplementedError('storageBox must be overridden');
-}
-
-@Riverpod(keepAlive: true)
 Box<dynamic> sessionStorageBox(Ref ref) {
   throw UnimplementedError('sessionStorageBox must be overridden');
 }
@@ -24,9 +19,6 @@ Box<dynamic> searchStorageBox(Ref ref) {
 }
 
 class StorageKeys {
-  static const String legacyUser = 'auth_user';
-  static const String legacySettings = 'app_settings';
-  static const String refreshToken = 'auth_refresh_token';
   static const String authUserCache = 'auth_user_cache';
   static const String themeMode = 'theme_mode';
   static const String searchHistory = 'search_history';

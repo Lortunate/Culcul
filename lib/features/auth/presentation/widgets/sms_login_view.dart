@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:culcul/domain/entities/country_code.dart';
+import 'package:culcul/features/auth/domain/entities/country_code.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/auth/presentation/country_code_selection_page.dart';

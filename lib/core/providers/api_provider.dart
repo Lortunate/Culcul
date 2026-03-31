@@ -1,24 +1,22 @@
-import 'package:culcul/data/api/auth_api.dart';
-import 'package:culcul/data/api/weekly_api.dart';
-
-import 'package:culcul/data/api/relation_api.dart';
-import 'package:culcul/data/api/fav_api.dart';
-import 'package:culcul/data/api/history_api.dart';
-import 'package:culcul/data/api/toview_api.dart';
-
-import 'package:culcul/data/api/dynamic_api.dart';
-import 'package:culcul/data/api/notification_api.dart';
-import 'package:culcul/data/api/profile_api.dart';
-import 'package:culcul/data/api/ranking_api.dart';
-import 'package:culcul/data/api/resource_api.dart';
-import 'package:culcul/data/api/search_api.dart';
-import 'package:culcul/data/api/video_api.dart';
-import 'package:culcul/data/api/danmaku_api.dart';
-import 'package:culcul/data/api/live_api.dart';
-import 'package:culcul/data/network/dio_client.dart';
+import 'package:culcul/core/network/resource_api.dart';
+import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/features/auth/data/auth_api.dart';
+import 'package:culcul/features/dynamic/data/dynamic_api.dart';
+import 'package:culcul/features/dynamic/data/emote_api.dart';
+import 'package:culcul/features/favorites/data/fav_api.dart';
+import 'package:culcul/features/history/data/history_api.dart';
+import 'package:culcul/features/home/data/home_api.dart';
+import 'package:culcul/features/home/data/weekly_api.dart';
+import 'package:culcul/features/live/data/live_api.dart';
+import 'package:culcul/features/notification/data/notification_api.dart';
+import 'package:culcul/features/profile/data/profile_api.dart';
+import 'package:culcul/features/profile/data/relation_api.dart';
+import 'package:culcul/features/ranking/data/ranking_api.dart';
+import 'package:culcul/features/search/data/search_api.dart';
+import 'package:culcul/features/to_view/data/toview_api.dart';
+import 'package:culcul/features/video/data/danmaku_api.dart';
+import 'package:culcul/features/video/data/video_api.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import 'package:culcul/data/api/emote_api.dart';
 
 part 'api_provider.g.dart';
 
@@ -30,6 +28,11 @@ ResourceApi basicResourceApi(Ref ref) {
 @riverpod
 ResourceApi resourceApi(Ref ref) {
   return ResourceApi(ref.watch(dioClientProvider));
+}
+
+@riverpod
+HomeApi homeApi(Ref ref) {
+  return HomeApi(ref.watch(dioClientProvider));
 }
 
 @riverpod

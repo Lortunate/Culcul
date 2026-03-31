@@ -1,22 +1,31 @@
 import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/data/api/weekly_api.dart';
-import 'package:culcul/data/models/feed/weekly_model.dart';
+import 'package:culcul/features/home/data/mappers/home_feed_mapper.dart';
+import 'package:culcul/features/home/data/weekly_api.dart';
+import 'package:culcul/features/home/domain/entities/home_video.dart';
+import 'package:culcul/features/home/domain/repositories/weekly_repository.dart'
+    as domain;
+import 'package:culcul/features/home/models/home_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'weekly_repository.g.dart';
 
 @riverpod
-WeeklyRepository weeklyRepository(Ref ref) {
-  return WeeklyRepository(ref.watch(weeklyApiProvider));
+domain.WeeklyRepository weeklyRepository(Ref ref) {
+  return WeeklyRepositoryImpl(ref.watch(weeklyApiProvider));
 }
 
-class WeeklyRepository extends BaseRepository {
+class WeeklyRepositoryImpl extends BaseRepository implements domain.WeeklyRepository {
   final WeeklyApi _api;
 
-  WeeklyRepository(this._api);
+  WeeklyRepositoryImpl(this._api);
 
-  Future<WeeklyModel> getWeeklyList() {
+  Future<WeeklyModel> getWeeklyListModel() {
     return requestApi(() => _api.getWeeklyList());
+  }
+
+  @override
+  Future<HomeWeeklyFeed> getWeeklyList() async {
+    return (await getWeeklyListModel()).toDomain();
   }
 }

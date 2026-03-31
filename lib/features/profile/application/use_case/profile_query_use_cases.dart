@@ -1,12 +1,15 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/profile/data/mappers/profile_mapper.dart';
-import 'package:culcul/features/profile/data/profile_cache_repository.dart';
-import 'package:culcul/features/profile/data/profile_repository.dart';
-import 'package:culcul/features/profile/data/relation_repository.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/features/profile/domain/entities/relation_user.dart';
+import 'package:culcul/features/profile/domain/repositories/profile_cache_repository.dart'
+    as domain;
+import 'package:culcul/features/profile/domain/repositories/profile_repository.dart'
+    as domain;
+import 'package:culcul/features/profile/domain/repositories/relation_repository.dart'
+    as domain;
+import 'package:culcul/features/profile/profile_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'profile_query_use_cases.g.dart';
@@ -21,9 +24,9 @@ ProfileQueryUseCases profileQueryUseCases(Ref ref) {
 }
 
 class ProfileQueryUseCases {
-  final ProfileCacheRepository profileCacheRepository;
-  final ProfileRepository profileRepository;
-  final RelationRepository relationRepository;
+  final domain.ProfileCacheRepository profileCacheRepository;
+  final domain.ProfileRepository profileRepository;
+  final domain.RelationRepository relationRepository;
 
   const ProfileQueryUseCases({
     required this.profileCacheRepository,
@@ -33,7 +36,7 @@ class ProfileQueryUseCases {
 
   Future<Result<ProfileUser, AppError>> getProfile(String mid) async {
     try {
-      return Success((await profileRepository.getProfile(int.parse(mid))).toDomain());
+      return Success(await profileRepository.getProfile(int.parse(mid)));
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -41,7 +44,7 @@ class ProfileQueryUseCases {
 
   Future<Result<ProfileUser?, AppError>> getCachedProfile(String mid) async {
     try {
-      return Success((await profileCacheRepository.read(mid))?.toDomain());
+      return Success(await profileCacheRepository.readProfile(mid));
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -50,8 +53,8 @@ class ProfileQueryUseCases {
   Future<Result<ProfileUser, AppError>> refreshProfile(String mid) async {
     try {
       final profile = await profileRepository.getProfile(int.parse(mid));
-      await profileCacheRepository.write(profile);
-      return Success(profile.toDomain());
+      await profileCacheRepository.writeProfile(profile);
+      return Success(profile);
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -64,11 +67,7 @@ class ProfileQueryUseCases {
   }) async {
     try {
       return Success(
-        (await profileRepository.getSpaceVideos(
-          mid: mid,
-          page: page,
-          order: order,
-        )).map((item) => item.toDomain()).toList(),
+        await profileRepository.getSpaceVideos(mid: mid, page: page, order: order),
       );
     } catch (error) {
       return Failure(AppError.fromObject(error));
@@ -77,7 +76,7 @@ class ProfileQueryUseCases {
 
   Future<Result<ProfileVideo?, AppError>> getStickyVideo(int vmid) async {
     try {
-      return Success((await profileRepository.getStickyVideo(vmid))?.toDomain());
+      return Success(await profileRepository.getStickyVideo(vmid));
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -85,11 +84,7 @@ class ProfileQueryUseCases {
 
   Future<Result<List<ProfileVideo>, AppError>> getMasterpieces(int vmid) async {
     try {
-      return Success(
-        (await profileRepository.getMasterpiece(
-          vmid,
-        )).map((item) => item.toDomain()).toList(),
-      );
+      return Success(await profileRepository.getMasterpiece(vmid));
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -100,8 +95,7 @@ class ProfileQueryUseCases {
     required int page,
   }) async {
     try {
-      final data = await relationRepository.getFollowings(vmid, pn: page);
-      return Success(data.list.map((item) => item.toDomain()).toList());
+      return Success(await relationRepository.getFollowings(vmid, page: page));
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -112,8 +106,7 @@ class ProfileQueryUseCases {
     required int page,
   }) async {
     try {
-      final data = await relationRepository.getFollowers(vmid, pn: page);
-      return Success(data.list.map((item) => item.toDomain()).toList());
+      return Success(await relationRepository.getFollowers(vmid, page: page));
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }

@@ -1,6 +1,6 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/data/models/response/api_response.dart';
+import 'package:culcul/core/network/models/api_response.dart';
 
 class RequestExecutor {
   const RequestExecutor();

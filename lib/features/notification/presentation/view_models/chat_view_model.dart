@@ -1,5 +1,4 @@
 import 'package:culcul/core/errors/app_error.dart';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
@@ -100,7 +99,7 @@ class Chat extends _$Chat {
 
   Future<void> sendMessage(String content) async {
     if (content.trim().isEmpty) return;
-    await _send(msgType: 1, contentMap: {'content': content});
+    await _send(msgType: 1, content: PrivateMessageContent.text(content));
   }
 
   Future<void> sendImage(File imageFile) async {
@@ -112,20 +111,19 @@ class Chat extends _$Chat {
       throw uploadResult.errorOrNull!;
     }
     final uploadRes = uploadResult.dataOrNull!;
-    final contentMap = {
-      'url': uploadRes.imageUrl,
-      'height': uploadRes.imageHeight,
-      'width': uploadRes.imageWidth,
-      'imageType': imageFile.path.split('.').last,
-      'original': 1,
-      'size': await imageFile.length() / 1024, // KB
-    };
-    await _send(msgType: 2, contentMap: contentMap);
+    final content = PrivateMessageContent.image(
+      url: uploadRes.imageUrl,
+      height: uploadRes.imageHeight,
+      width: uploadRes.imageWidth,
+      imageType: imageFile.path.split('.').last,
+      size: await imageFile.length() / 1024,
+    );
+    await _send(msgType: 2, content: content);
   }
 
   Future<void> _send({
     required int msgType,
-    required Map<String, dynamic> contentMap,
+    required PrivateMessageContent content,
   }) async {
     final currentUser = ref.read(authProvider).user;
 
@@ -145,7 +143,7 @@ class Chat extends _$Chat {
       msgType: msgType,
       msgStatus: 0,
       timestamp: timestamp,
-      content: contentMap,
+      content: content,
       atUids: null,
       msgKey: null,
       notifyCode: null,
@@ -170,7 +168,7 @@ class Chat extends _$Chat {
             receiverId: talkerId,
             receiverType: sessionType,
             msgType: msgType,
-            content: jsonEncode(contentMap),
+            content: content,
           );
       if (result.isFailure) {
         throw result.errorOrNull!;

@@ -1,4 +1,4 @@
-import 'package:culcul/features/video/domain/entities/video_models.dart';
+import 'package:culcul/features/video/models/video_models.dart';
 import 'package:culcul/features/video/presentation/view_models/comment_reply_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/bottom_input_bar.dart';

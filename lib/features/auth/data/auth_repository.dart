@@ -6,14 +6,14 @@ import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/providers/storage_provider.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/data/api/auth_api.dart';
-import 'package:culcul/data/models/response/api_response.dart';
-import 'package:culcul/data/models/user/user_model.dart' as data_user;
-import 'package:culcul/domain/entities/country_code.dart';
-import 'package:culcul/domain/entities/user_entity.dart';
+import 'package:culcul/features/auth/data/auth_api.dart';
+import 'package:culcul/features/auth/domain/entities/country_code.dart';
+import 'package:culcul/features/auth/domain/entities/user_entity.dart';
 import 'package:culcul/features/auth/domain/entities/auth_captcha_challenge.dart';
 import 'package:culcul/features/auth/domain/entities/auth_qr_code.dart';
 import 'package:culcul/features/auth/domain/entities/auth_qr_poll_result.dart';
+import 'package:culcul/features/auth/domain/repositories/auth_repository.dart' as domain;
+import 'package:culcul/features/auth/models/auth_models.dart' as auth_models;
 import 'package:encrypt/encrypt.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pointycastle/asymmetric/api.dart';
@@ -22,23 +22,27 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'auth_repository.g.dart';
 
 @riverpod
-AuthRepository authRepository(Ref ref) {
-  return AuthRepository(ref.watch(authApiProvider), ref.watch(sessionStorageBoxProvider));
+domain.AuthRepository authRepository(Ref ref) {
+  return AuthRepositoryImpl(
+    ref.watch(authApiProvider),
+    ref.watch(sessionStorageBoxProvider),
+  );
 }
 
-class AuthRepository {
+class AuthRepositoryImpl implements domain.AuthRepository {
   final AuthApi _api;
   final Box<dynamic> _box;
   final RequestExecutor _executor;
 
-  AuthRepository(this._api, this._box) : _executor = const RequestExecutor();
+  AuthRepositoryImpl(this._api, this._box) : _executor = const RequestExecutor();
 
+  @override
   Future<void> checkAndRefreshCookie() async {
     // Basic implementation or placeholder for cookie refresh logic
     // This method is required by TokenInterceptor
   }
 
-  UserEntity _toDomainUser(data_user.User user) {
+  UserEntity _toDomainUser(auth_models.User user) {
     return UserEntity(
       id: user.id,
       username: user.username,
@@ -51,8 +55,8 @@ class AuthRepository {
     );
   }
 
-  data_user.User _toDataUser(UserEntity user) {
-    return data_user.User(
+  auth_models.User _toDataUser(UserEntity user) {
+    return auth_models.User(
       id: user.id,
       username: user.username,
       avatarUrl: user.avatarUrl,
@@ -64,12 +68,13 @@ class AuthRepository {
     );
   }
 
+  @override
   UserEntity? getCachedUser() {
     final jsonStr = _box.get(StorageKeys.authUserCache);
     if (jsonStr == null) return null;
     try {
       return _toDomainUser(
-        data_user.User.fromJson(jsonDecode(jsonStr) as Map<String, dynamic>),
+        auth_models.User.fromJson(jsonDecode(jsonStr) as Map<String, dynamic>),
       );
     } catch (e) {
       _box.delete(StorageKeys.authUserCache);
@@ -85,6 +90,7 @@ class AuthRepository {
     await _box.delete(StorageKeys.authUserCache);
   }
 
+  @override
   Future<Result<UserEntity, AppError>> loginWithPassword({
     required String username,
     required String password,
@@ -140,6 +146,7 @@ class AuthRepository {
     });
   }
 
+  @override
   Future<Result<List<CountryCode>, AppError>> getCountryList() async {
     return _executor.run(() async {
       final response = await _api.getCountryList();
@@ -164,11 +171,12 @@ class AuthRepository {
     });
   }
 
+  @override
   Future<Result<AuthCaptchaChallenge, AppError>> getCaptchaChallenge() async {
     final result = await _executor.runApi(
       () async {
         final response = await _api.getCaptcha();
-        return ApiResponse(
+        return auth_models.ApiResponse(
           code: response.code,
           message: response.message,
           data: response.data as Map<String, dynamic>?,
@@ -190,6 +198,7 @@ class AuthRepository {
     return result;
   }
 
+  @override
   Future<Result<String, AppError>> sendSms(
     int cid,
     String phone,
@@ -219,6 +228,7 @@ class AuthRepository {
     });
   }
 
+  @override
   Future<Result<UserEntity, AppError>> loginWithSms(
     int cid,
     String phone,
@@ -235,11 +245,12 @@ class AuthRepository {
     });
   }
 
+  @override
   Future<Result<AuthQrCode, AppError>> getQrCode() async {
     return _executor.runApi(
       () async {
         final response = await _api.getQrCode();
-        return ApiResponse(
+        return auth_models.ApiResponse(
           code: response.code,
           message: response.message,
           data: response.data as Map<String, dynamic>?,
@@ -256,6 +267,7 @@ class AuthRepository {
     );
   }
 
+  @override
   Future<Result<AuthQrPollResult, AppError>> pollQrCode(String authCode) async {
     return _executor.run(() async {
       final response = await _api.pollQrCode(authCode);
@@ -268,6 +280,7 @@ class AuthRepository {
     });
   }
 
+  @override
   Future<Result<void, AppError>> logout() async {
     return _executor.run(() async {
       await clearCache();
@@ -278,6 +291,7 @@ class AuthRepository {
     });
   }
 
+  @override
   Future<Result<UserEntity, AppError>> getCurrentUser() async {
     return _executor.run(() async {
       return _loadCurrentUser();
@@ -295,7 +309,7 @@ class AuthRepository {
       final data = response.data as Map<String, dynamic>?;
       if (data != null && data['isLogin'] == true) {
         final levelInfo = data['level_info'] as Map<String, dynamic>?;
-        final userModel = data_user.User(
+        final userModel = auth_models.User(
           id: data['mid'].toString(),
           username: data['uname'],
           avatarUrl: data['face'],

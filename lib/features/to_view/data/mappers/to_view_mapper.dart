@@ -1,4 +1,4 @@
-import 'package:culcul/data/models/toview/to_view_model.dart';
+import 'package:culcul/features/to_view/models/to_view_models.dart';
 import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
 
 extension ToViewModelMapper on ToViewModel {

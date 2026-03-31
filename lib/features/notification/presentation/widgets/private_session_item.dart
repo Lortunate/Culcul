@@ -109,39 +109,27 @@ class PrivateSessionItem extends ConsumerWidget {
       return t.notification.chat.message_withdrawn;
     }
 
-    final contentMap = message.contentMap;
-
     return switch (message.summaryKind) {
       PrivateMessageSummaryKind.text =>
-        contentMap?['content']?.toString() ?? t.notification.chat.summary_text,
+        message.primaryText ?? t.notification.chat.summary_text,
       PrivateMessageSummaryKind.image => t.notification.chat.summary_image,
       PrivateMessageSummaryKind.notice =>
-        contentMap?['title']?.toString() ??
-            contentMap?['text']?.toString() ??
-            t.notification.chat.summary_notice,
+        message.titleText ?? message.primaryText ?? t.notification.chat.summary_notice,
       PrivateMessageSummaryKind.video =>
-        '${t.notification.chat.summary_video} ${contentMap?['title']?.toString() ?? ''}',
+        '${t.notification.chat.summary_video} ${message.titleText ?? ''}',
       PrivateMessageSummaryKind.article =>
-        '${t.notification.chat.summary_article} ${contentMap?['title']?.toString() ?? ''}',
+        '${t.notification.chat.summary_article} ${message.titleText ?? ''}',
       PrivateMessageSummaryKind.card =>
-        '${t.notification.chat.summary_card} ${contentMap?['title']?.toString() ?? ''}',
+        '${t.notification.chat.summary_card} ${message.titleText ?? ''}',
       PrivateMessageSummaryKind.share =>
-        '${t.notification.chat.summary_share} ${contentMap?['title']?.toString() ?? ''}',
+        '${t.notification.chat.summary_share} ${message.titleText ?? ''}',
       PrivateMessageSummaryKind.withdrawn => t.notification.chat.message_withdrawn,
-      PrivateMessageSummaryKind.unknown => _guessFallbackSummary(t, contentMap),
+      PrivateMessageSummaryKind.unknown => _guessFallbackSummary(t, message),
     };
   }
 
-  String _guessFallbackSummary(Translations t, Map<String, dynamic>? contentMap) {
-    if (contentMap != null) {
-      if (contentMap.containsKey('content')) {
-        return contentMap['content'].toString();
-      }
-      if (contentMap.containsKey('title')) {
-        return contentMap['title'].toString();
-      }
-    }
-    return t.notification.chat.summary_unknown;
+  String _guessFallbackSummary(Translations t, PrivateMessage message) {
+    return message.fallbackSummaryText ?? t.notification.chat.summary_unknown;
   }
 
   Widget _buildAvatar(String url, int mid, BuildContext context) {

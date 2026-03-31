@@ -1,4 +1,4 @@
-import 'package:culcul/data/models/history/history_model.dart';
+import 'package:culcul/features/history/models/history_models.dart';
 import 'package:culcul/features/history/domain/entities/history_entry.dart';
 
 extension HistoryItemMapper on HistoryItem {

@@ -1,8 +1,8 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/history/data/mappers/history_mapper.dart';
-import 'package:culcul/features/history/data/history_repository.dart';
+import 'package:culcul/features/history/history_providers.dart';
 import 'package:culcul/features/history/domain/entities/history_entry.dart';
+import 'package:culcul/features/history/domain/repositories/history_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'history_use_cases.g.dart';
@@ -19,8 +19,7 @@ class HistoryUseCases {
 
   Future<Result<List<HistoryEntry>, AppError>> getHistory() async {
     try {
-      final data = await _repository.getHistoryCursor();
-      return Success(data.list.map((item) => item.toDomain()).toList());
+      return Success(await _repository.getHistory());
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }

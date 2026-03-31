@@ -6,32 +6,32 @@ import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/providers/cookie_jar_provider.dart';
 import 'package:culcul/core/base_repository.dart';
-import 'package:culcul/data/api/dynamic_api.dart';
-import 'package:culcul/data/network/dio_client.dart';
+import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/features/dynamic/data/dynamic_api.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
-import 'package:culcul/data/models/comment/comment_model.dart';
-import 'package:culcul/data/models/dynamic/dynamic_extension.dart';
-import 'package:culcul/data/models/dynamic/dynamic_response.dart';
+import 'package:culcul/features/dynamic/domain/repositories/dynamic_repository.dart'
+    as domain;
+import 'package:culcul/features/dynamic/models/dynamic_models.dart';
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'dynamic_repository.g.dart';
 
 @riverpod
-DynamicRepository dynamicRepository(Ref ref) {
-  return DynamicRepository(
+domain.DynamicRepository dynamicRepository(Ref ref) {
+  return DynamicRepositoryImpl(
     ref.watch(dynamicApiProvider),
     ref.watch(dioClientProvider),
     ref.watch(cookieJarProvider),
   );
 }
 
-class DynamicRepository extends BaseRepository {
+class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepository {
   final DynamicApi _api;
   final Dio _dio;
   final CookieJar _cookieJar;
 
-  DynamicRepository(this._api, this._dio, this._cookieJar);
+  DynamicRepositoryImpl(this._api, this._dio, this._cookieJar);
 
   Future<String?> _getCsrfToken() async {
     final cookies = await _cookieJar.loadForRequest(Uri.parse('https://bilibili.com'));
@@ -43,6 +43,7 @@ class DynamicRepository extends BaseRepository {
     return null;
   }
 
+  @override
   Future<CommentResponse> getComments(
     DynamicItem post, {
     int sort = 1,
@@ -62,6 +63,7 @@ class DynamicRepository extends BaseRepository {
     );
   }
 
+  @override
   Future<CommentItem> addReply({
     required DynamicItem post,
     required String message,
@@ -83,6 +85,7 @@ class DynamicRepository extends BaseRepository {
     );
   }
 
+  @override
   Future<void> likeComment({
     required DynamicItem post,
     required int rpid,
@@ -122,6 +125,7 @@ class DynamicRepository extends BaseRepository {
     );
   }
 
+  @override
   Future<CommentResponse> getArticleCommentList({
     required String oid,
     int mode = 3,
@@ -139,6 +143,7 @@ class DynamicRepository extends BaseRepository {
     );
   }
 
+  @override
   Future<CommentItem> addCommentReply({
     required String oid,
     required int type,
@@ -160,6 +165,7 @@ class DynamicRepository extends BaseRepository {
     );
   }
 
+  @override
   Future<void> likeCommentByTarget({
     required String oid,
     required int type,
@@ -267,23 +273,28 @@ class DynamicRepository extends BaseRepository {
     return null;
   }
 
+  @override
   Future<DynamicData> getFeed({String? type, String? offset}) {
     return requestApi(() => _api.getDynamicFeed(type: type, offset: offset, page: 1));
   }
 
+  @override
   Future<DynamicData> getSpaceDynamicFeed({required int hostMid, String? offset}) {
     return requestApi(() => _api.getSpaceDynamicFeed(hostMid: hostMid, offset: offset));
   }
 
+  @override
   Future<DynamicData> getTopicFeed({required int topicId, String? offset}) {
     return requestApi(() => _api.getTopicFeed(topicId: topicId, offset: offset));
   }
 
+  @override
   Future<DynamicItem> getDetail(String id) async {
     final data = await requestApi(() => _api.getDynamicDetail(id: id));
     return data.item;
   }
 
+  @override
   Future<ArticleDetailData> getArticleDetail(String url) async {
     final uri = Uri.parse(url);
     if (uri.path.contains('/opus/')) {
@@ -373,6 +384,7 @@ class DynamicRepository extends BaseRepository {
     return int.tryParse(uri.queryParameters['id'] ?? '');
   }
 
+  @override
   Future<void> likeDynamic(String id, bool like) async {
     // We wrap the whole block in safeCall to catch any errors during token retrieval
     return request(() async {
@@ -387,6 +399,7 @@ class DynamicRepository extends BaseRepository {
     });
   }
 
+  @override
   Future<DynamicUploadImageData> uploadImage(File file) async {
     return requestApi(() async {
       final csrf = await _getCsrfToken();
@@ -394,6 +407,7 @@ class DynamicRepository extends BaseRepository {
     });
   }
 
+  @override
   Future<void> publishDynamic({
     required String content,
     List<DynamicUploadImageData> images = const [],

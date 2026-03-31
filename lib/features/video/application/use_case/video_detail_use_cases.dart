@@ -1,8 +1,10 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/video/domain/entities/video_models.dart';
-import 'package:culcul/features/profile/data/relation_repository.dart';
-import 'package:culcul/features/video/data/video_repository.dart';
+import 'package:culcul/features/profile/profile_providers.dart';
+import 'package:culcul/features/video/models/video_models.dart';
+import 'package:culcul/features/profile/domain/repositories/relation_repository.dart';
+import 'package:culcul/features/video/domain/repositories/video_repository.dart';
+import 'package:culcul/features/video/video_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'video_detail_use_cases.g.dart';

@@ -1,5 +1,5 @@
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
-import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
+import 'package:culcul/features/dynamic/models/dynamic_models.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/article_detail_view_model.dart';

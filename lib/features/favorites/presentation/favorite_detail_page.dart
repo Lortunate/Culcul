@@ -94,7 +94,7 @@ class FavoriteDetailPage extends HookConsumerWidget {
                       ?.where((f) => f.id == mediaId)
                       .firstOrNull;
 
-                  final result = await showDialog<Map<String, dynamic>>(
+                  final result = await showDialog<FavFolderFormData>(
                     context: context,
                     builder: (_) => FavFolderDialog(folder: folder),
                   );
@@ -104,9 +104,9 @@ class FavoriteDetailPage extends HookConsumerWidget {
                         .read(favoriteFolderActionViewModelProvider.notifier)
                         .editFolder(
                           mediaId: mediaId,
-                          title: result['title']! as String,
-                          intro: result['intro'] as String?,
-                          privacy: result['privacy'] as int?,
+                          title: result.title,
+                          intro: result.intro,
+                          privacy: result.privacy,
                         );
                     if (error == null) {
                       ref.invalidate(favCreatedFoldersProvider);

@@ -38,16 +38,15 @@ class ChatMessageItem extends StatelessWidget {
 
     if (message.msgType == 10) {
       // System notice
-      final content =
-          message.contentMap?['text'] as String? ?? t.notification.types.system;
+      final content = message.primaryText ?? t.notification.types.system;
       return ChatSystemMessage(content: content);
     }
 
     if (message.msgType == 18) {
       // System tip, such as follow restrictions
-      final tips = message.systemTipContent;
+      final tips = message.systemTipTexts;
       if (tips != null && tips.isNotEmpty) {
-        final text = tips.map((e) => e['text'] as String? ?? '').join('');
+        final text = tips.join('');
         return ChatSystemMessage(content: text);
       }
     }
@@ -111,10 +110,8 @@ class ChatMessageItem extends StatelessWidget {
       );
     } else {
       String text = t.notification.chat.unsupported_type(type: message.msgType);
-      if (message.contentMap != null) {
-        if (message.contentMap!.containsKey('title')) {
-          text += '\\n${message.contentMap!['title']}';
-        }
+      if (message.titleText case final title?) {
+        text += '\n$title';
       }
       return ChatBubble(
         isSelf: isSelf,

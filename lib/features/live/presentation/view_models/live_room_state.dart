@@ -1,4 +1,4 @@
-import 'package:culcul/features/live/domain/entities/live_models.dart';
+import 'package:culcul/features/live/models/live_models.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:culcul/core/errors/exceptions.dart';
 

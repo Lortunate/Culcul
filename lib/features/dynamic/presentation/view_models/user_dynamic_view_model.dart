@@ -1,4 +1,4 @@
-import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
+import 'package:culcul/features/dynamic/models/dynamic_models.dart';
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
 import 'package:culcul/features/dynamic/application/use_case/dynamic_use_cases.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_feed_view_model.dart';

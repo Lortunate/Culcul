@@ -1,4 +1,4 @@
-import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
+import 'package:culcul/features/dynamic/models/dynamic_models.dart';
 import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/features/dynamic/presentation/utils/dynamic_navigation.dart';
 import 'package:culcul/i18n/strings.g.dart';

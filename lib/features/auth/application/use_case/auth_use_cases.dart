@@ -1,11 +1,12 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/domain/entities/country_code.dart';
-import 'package:culcul/domain/entities/user_entity.dart';
-import 'package:culcul/features/auth/data/auth_repository.dart';
+import 'package:culcul/features/auth/domain/entities/country_code.dart';
+import 'package:culcul/features/auth/domain/entities/user_entity.dart';
+import 'package:culcul/features/auth/auth_providers.dart';
 import 'package:culcul/features/auth/domain/entities/auth_captcha_challenge.dart';
 import 'package:culcul/features/auth/domain/entities/auth_qr_code.dart';
 import 'package:culcul/features/auth/domain/entities/auth_qr_poll_result.dart';
+import 'package:culcul/features/auth/domain/repositories/auth_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_use_cases.g.dart';

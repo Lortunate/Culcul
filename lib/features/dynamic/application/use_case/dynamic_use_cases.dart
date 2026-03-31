@@ -2,11 +2,14 @@ import 'dart:io';
 
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/dynamic/data/dynamic_repository.dart';
-import 'package:culcul/features/dynamic/data/emote_repository.dart';
+import 'package:culcul/features/dynamic/dynamic_providers.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
-import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
-import 'package:culcul/features/profile/data/relation_repository.dart';
+import 'package:culcul/features/dynamic/domain/repositories/dynamic_repository.dart';
+import 'package:culcul/features/dynamic/domain/repositories/emote_repository.dart';
+import 'package:culcul/features/dynamic/models/dynamic_models.dart';
+import 'package:culcul/features/profile/profile_providers.dart';
+import 'package:culcul/features/profile/domain/entities/relation_user.dart';
+import 'package:culcul/features/profile/domain/repositories/relation_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'dynamic_use_cases.g.dart';
@@ -95,10 +98,9 @@ class RecentlyFollowedUseCase {
 
   const RecentlyFollowedUseCase(this._repository);
 
-  Future<Result<List<RelationUser>, AppError>> call(int mid) async {
+  Future<Result<List<ProfileRelationUser>, AppError>> call(int mid) async {
     try {
-      final data = await _repository.getFollowings(mid, ps: 20);
-      return Success(data.list);
+      return Success(await _repository.getFollowings(mid, page: 1, pageSize: 20));
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }

@@ -1,5 +1,4 @@
-import 'package:culcul/data/models/feed/weekly_model.dart';
-import 'package:culcul/data/models/video/video_model.dart';
+import 'package:culcul/features/home/models/home_models.dart';
 import 'package:culcul/features/home/domain/entities/home_video.dart';
 
 extension HomeVideoOwnerMapper on Owner {

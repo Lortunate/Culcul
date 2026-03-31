@@ -1,6 +1,8 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/profile/data/profile_repository.dart';
+import 'package:culcul/features/profile/profile_providers.dart';
+import 'package:culcul/features/profile/domain/repositories/profile_repository.dart'
+    as domain;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'profile_follow_use_case.g.dart';
@@ -18,7 +20,7 @@ ProfileFollowUseCase profileFollowUseCase(Ref ref) {
 }
 
 class ProfileFollowUseCase {
-  final ProfileRepository _repository;
+  final domain.ProfileRepository _repository;
 
   const ProfileFollowUseCase(this._repository);
 

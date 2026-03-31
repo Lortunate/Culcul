@@ -1,4 +1,4 @@
-import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
+import 'package:culcul/features/dynamic/models/dynamic_models.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_comment_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_item.dart';

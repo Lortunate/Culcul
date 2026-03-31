@@ -1,9 +1,10 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/live/domain/entities/live_models.dart';
-import 'package:culcul/features/live/data/mappers/live_room_mapper.dart';
-import 'package:culcul/features/live/data/live_repository.dart';
-import 'package:culcul/features/profile/data/profile_repository.dart';
+import 'package:culcul/features/live/live_providers.dart';
+import 'package:culcul/features/live/models/live_models.dart';
+import 'package:culcul/features/live/domain/repositories/live_repository.dart';
+import 'package:culcul/features/profile/profile_providers.dart';
+import 'package:culcul/features/profile/domain/repositories/profile_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'live_room_use_cases.g.dart';
@@ -129,11 +130,7 @@ class LiveRoomUseCases {
 
   Future<Result<List<LiveRoomSummary>, AppError>> getRecommendList(int page) async {
     try {
-      return Success(
-        (await liveRepository.fetchRecommendList(
-          page: page,
-        )).map((item) => item.toDomain()).toList(),
-      );
+      return Success(await liveRepository.getRecommendList(page: page));
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }

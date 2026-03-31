@@ -77,7 +77,7 @@ class _AddFolderAction extends ConsumerWidget {
     return IconButton(
       icon: const Icon(Icons.add),
       onPressed: () async {
-        final result = await showDialog<Map<String, dynamic>>(
+        final result = await showDialog<FavFolderFormData>(
           context: context,
           builder: (_) => const FavFolderDialog(),
         );
@@ -89,9 +89,9 @@ class _AddFolderAction extends ConsumerWidget {
         final error = await ref
             .read(favoriteFolderActionViewModelProvider.notifier)
             .createFolder(
-              title: result['title']! as String,
-              intro: result['intro'] as String?,
-              privacy: result['privacy'] as int?,
+              title: result.title,
+              intro: result.intro,
+              privacy: result.privacy,
             );
         if (error == null) {
           ref.invalidate(favCreatedFoldersProvider);

@@ -2,15 +2,14 @@ import 'dart:io';
 
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/data/models/notification/image_upload_response.dart';
-import 'package:culcul/data/models/notification/private_message_model.dart';
-import 'package:culcul/features/notification/data/mappers/notification_mapper.dart';
-import 'package:culcul/features/notification/data/notification_repository.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/domain/repositories/notification_repository.dart';
 import 'package:culcul/features/notification/domain/entities/system_notice.dart';
+import 'package:culcul/features/notification/models/notification_models.dart';
+import 'package:culcul/features/notification/notification_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'notification_use_cases.g.dart';
@@ -27,7 +26,7 @@ class NotificationUseCases {
 
   Future<Result<NotificationSummary, AppError>> getUnreadCount() async {
     try {
-      return Success((await _repository.getUnreadCount()).toDomain());
+      return Success(await _repository.getUnreadCount());
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -38,8 +37,7 @@ class NotificationUseCases {
     int? replyTime,
   }) async {
     try {
-      final response = await _repository.getReplyList(id: id, replyTime: replyTime);
-      return Success(response.items.map((item) => item.toDomain()).toList());
+      return Success(await _repository.getReplyList(id: id, replyTime: replyTime));
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -50,8 +48,7 @@ class NotificationUseCases {
     int? atTime,
   }) async {
     try {
-      final response = await _repository.getAtList(id: id, atTime: atTime);
-      return Success(response.items.map((item) => item.toDomain()).toList());
+      return Success(await _repository.getAtList(id: id, atTime: atTime));
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -62,8 +59,7 @@ class NotificationUseCases {
     int? likeTime,
   }) async {
     try {
-      final response = await _repository.getLikeList(id: id, likeTime: likeTime);
-      return Success(response.items.map((item) => item.toDomain()).toList());
+      return Success(await _repository.getLikeList(id: id, likeTime: likeTime));
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -71,11 +67,7 @@ class NotificationUseCases {
 
   Future<Result<List<SystemNotice>, AppError>> getSystemNotifications() async {
     try {
-      return Success(
-        (await _repository.fetchSystemNotifications())
-            .map((item) => item.toDomain())
-            .toList(),
-      );
+      return Success(await _repository.getSystemNotifications());
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -87,12 +79,13 @@ class NotificationUseCases {
     int? endSeqno,
   }) async {
     try {
-      final response = await _repository.getPrivateMessages(
-        talkerId: talkerId,
-        sessionType: sessionType,
-        endSeqno: endSeqno,
+      return Success(
+        await _repository.getPrivateMessages(
+          talkerId: talkerId,
+          sessionType: sessionType,
+          endSeqno: endSeqno,
+        ),
       );
-      return Success(response.toDomain());
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -104,12 +97,13 @@ class NotificationUseCases {
     int? endTs,
   }) async {
     try {
-      final response = await _repository.getPrivateSessions(
-        sessionType: sessionType,
-        size: size,
-        endTs: endTs,
+      return Success(
+        await _repository.getPrivateSessions(
+          sessionType: sessionType,
+          size: size,
+          endTs: endTs,
+        ),
       );
-      return Success(response.toDomain());
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -128,7 +122,7 @@ class NotificationUseCases {
     required int receiverId,
     required int receiverType,
     required int msgType,
-    required String content,
+    required PrivateMessageContent content,
   }) async {
     try {
       return Success(

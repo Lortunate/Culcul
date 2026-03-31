@@ -1,21 +1,24 @@
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/base_repository.dart';
-import 'package:culcul/data/api/emote_api.dart';
-import 'package:culcul/data/models/emote/emote_response.dart';
+import 'package:culcul/features/dynamic/data/emote_api.dart';
+import 'package:culcul/features/dynamic/domain/repositories/emote_repository.dart'
+    as domain;
+import 'package:culcul/features/dynamic/models/dynamic_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'emote_repository.g.dart';
 
 @Riverpod(keepAlive: true)
-EmoteRepository emoteRepository(Ref ref) {
-  return EmoteRepository(ref.watch(emoteApiProvider));
+domain.EmoteRepository emoteRepository(Ref ref) {
+  return EmoteRepositoryImpl(ref.watch(emoteApiProvider));
 }
 
-class EmoteRepository extends BaseRepository {
+class EmoteRepositoryImpl extends BaseRepository implements domain.EmoteRepository {
   final EmoteApi _api;
 
-  EmoteRepository(this._api);
+  EmoteRepositoryImpl(this._api);
 
+  @override
   Future<EmoteResponse> getUserEmotes({String business = 'dynamic'}) {
     return requestApi(() => _api.getUserEmotes(business: business));
   }

@@ -1,4 +1,4 @@
-import 'package:culcul/features/live/domain/entities/live_models.dart';
+import 'package:culcul/features/live/models/live_models.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/live/presentation/widgets/danmaku/live_gift_message.dart';
 import 'package:culcul/features/live/presentation/widgets/danmaku/live_interact_message.dart';

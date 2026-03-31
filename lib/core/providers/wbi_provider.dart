@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:culcul/core/providers/api_provider.dart';
-import 'package:culcul/data/api/resource_api.dart';
+import 'package:culcul/core/network/resource_api.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

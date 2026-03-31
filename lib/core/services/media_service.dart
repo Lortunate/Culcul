@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/data/api/resource_api.dart';
+import 'package:culcul/core/network/resource_api.dart';
 import 'package:gal/gal.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

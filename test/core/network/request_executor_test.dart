@@ -2,7 +2,7 @@ import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/network/request_executor.dart';
-import 'package:culcul/data/models/response/api_response.dart';
+import 'package:culcul/core/network/models/api_response.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _FakeRepository extends BaseRepository {}

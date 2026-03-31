@@ -1,7 +1,4 @@
-import 'package:culcul/data/models/feed/trending_ranking.dart';
-import 'package:culcul/data/models/search/default_search.dart';
-import 'package:culcul/data/models/search/search_result.dart';
-import 'package:culcul/data/models/search/search_suggestion.dart';
+import 'package:culcul/features/search/models/search_models.dart';
 import 'package:culcul/features/search/domain/entities/search_default_hint.dart';
 import 'package:culcul/features/search/domain/entities/search_result_page.dart';
 import 'package:culcul/features/search/domain/entities/search_suggestion_entry.dart';

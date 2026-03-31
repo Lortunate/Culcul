@@ -1,4 +1,4 @@
-import 'package:culcul/data/models/video/video_model.dart';
+import 'package:culcul/features/ranking/models/ranking_models.dart';
 import 'package:culcul/features/ranking/domain/entities/ranking_video.dart';
 
 extension RankingVideoMapper on VideoModel {

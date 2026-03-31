@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:culcul/features/live/domain/entities/live_models.dart';
+import 'package:culcul/features/live/models/live_models.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/io.dart';

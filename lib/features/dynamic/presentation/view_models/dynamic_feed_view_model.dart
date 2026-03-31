@@ -1,4 +1,4 @@
-import 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
+import 'package:culcul/features/dynamic/models/dynamic_models.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:culcul/features/dynamic/application/use_case/dynamic_use_cases.dart';

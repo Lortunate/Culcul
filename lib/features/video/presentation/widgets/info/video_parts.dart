@@ -1,4 +1,4 @@
-import 'package:culcul/features/video/domain/entities/video_models.dart';
+import 'package:culcul/features/video/models/video_models.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:flutter/material.dart';

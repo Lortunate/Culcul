@@ -1,21 +1,25 @@
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/base_repository.dart';
-import 'package:culcul/data/api/toview_api.dart';
-import 'package:culcul/data/models/toview/to_view_model.dart';
+import 'package:culcul/features/to_view/data/mappers/to_view_mapper.dart';
+import 'package:culcul/features/to_view/data/toview_api.dart';
+import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
+import 'package:culcul/features/to_view/domain/repositories/to_view_repository.dart'
+    as domain;
+import 'package:culcul/features/to_view/models/to_view_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'toview_repository.g.dart';
 
 @riverpod
-ToViewRepository toViewRepository(Ref ref) {
-  return ToViewRepository(ref.watch(toViewApiProvider));
+domain.ToViewRepository toViewRepository(Ref ref) {
+  return ToViewRepositoryImpl(ref.watch(toViewApiProvider));
 }
 
-class ToViewRepository extends BaseRepository {
+class ToViewRepositoryImpl extends BaseRepository implements domain.ToViewRepository {
   final ToViewApi _api;
 
-  ToViewRepository(this._api);
+  ToViewRepositoryImpl(this._api);
 
   Future<ToViewListResponse> getToViewList() async {
     try {
@@ -39,4 +43,19 @@ class ToViewRepository extends BaseRepository {
   Future<void> clearToView() {
     return request(() => _api.clearToView());
   }
+
+  @override
+  Future<List<ToViewEntry>> getList() async {
+    final data = await getToViewList();
+    return data.list.map((item) => item.toDomain()).toList();
+  }
+
+  @override
+  Future<void> add({required int aid}) => addToView(aid: aid);
+
+  @override
+  Future<void> delete({required int aid}) => deleteToView(aid: aid);
+
+  @override
+  Future<void> clear() => clearToView();
 }

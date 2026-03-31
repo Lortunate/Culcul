@@ -1,9 +1,9 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/favorites/data/mappers/favorite_mapper.dart';
-import 'package:culcul/features/favorites/data/fav_repository.dart';
+import 'package:culcul/features/favorites/favorites_providers.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
+import 'package:culcul/features/favorites/domain/repositories/favorite_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'favorite_folder_use_cases.g.dart';
@@ -57,13 +57,13 @@ FavoriteFolderQueryUseCase favoriteFolderQueryUseCase(Ref ref) {
 }
 
 class FavoriteFolderQueryUseCase {
-  final FavRepository _repository;
+  final FavoriteRepository _repository;
 
   const FavoriteFolderQueryUseCase(this._repository);
 
   Future<Result<FavoriteFolderPage, AppError>> getCreatedFolders(int upMid) async {
     try {
-      return Success((await _repository.getCreatedFolders(upMid: upMid)).toDomain());
+      return Success(await _repository.getCreatedFolders(upMid: upMid));
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -76,11 +76,11 @@ class FavoriteFolderQueryUseCase {
   }) async {
     try {
       return Success(
-        (await _repository.getCollectedFolders(
+        await _repository.getCollectedFolders(
           upMid: upMid,
-          pn: page,
-          ps: pageSize,
-        )).toDomain(),
+          page: page,
+          pageSize: pageSize,
+        ),
       );
     } catch (error) {
       return Failure(AppError.fromObject(error));
@@ -94,11 +94,11 @@ class FavoriteFolderQueryUseCase {
   }) async {
     try {
       return Success(
-        (await _repository.getFolderResources(
+        await _repository.getFolderResources(
           mediaId: mediaId,
-          pn: page,
-          ps: pageSize,
-        )).toDomain(),
+          page: page,
+          pageSize: pageSize,
+        ),
       );
     } catch (error) {
       return Failure(AppError.fromObject(error));
@@ -107,7 +107,7 @@ class FavoriteFolderQueryUseCase {
 }
 
 class FavoriteFolderMutationsUseCase {
-  final FavRepository _repository;
+  final FavoriteRepository _repository;
 
   const FavoriteFolderMutationsUseCase(this._repository);
 
@@ -115,12 +115,12 @@ class FavoriteFolderMutationsUseCase {
     CreateFavoriteFolderCommand command,
   ) async {
     try {
-      final folder = await _repository.addFolder(
+      final folder = await _repository.createFolder(
         title: command.title,
         intro: command.intro,
         privacy: command.privacy,
       );
-      return Success(folder.toDomain());
+      return Success(folder);
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -130,13 +130,13 @@ class FavoriteFolderMutationsUseCase {
     EditFavoriteFolderCommand command,
   ) async {
     try {
-      final folder = await _repository.editFolder(
+      final folder = await _repository.updateFolder(
         mediaId: command.mediaId,
         title: command.title,
         intro: command.intro,
         privacy: command.privacy,
       );
-      return Success(folder.toDomain());
+      return Success(folder);
     } catch (error) {
       return Failure(AppError.fromObject(error));
     }
@@ -144,7 +144,7 @@ class FavoriteFolderMutationsUseCase {
 
   Future<Result<void, AppError>> deleteFolder(DeleteFavoriteFolderCommand command) async {
     try {
-      await _repository.delFolder(mediaIds: command.mediaId.toString());
+      await _repository.deleteFolder(mediaIds: command.mediaId.toString());
       return const Success(null);
     } catch (error) {
       return Failure(AppError.fromObject(error));
@@ -155,7 +155,7 @@ class FavoriteFolderMutationsUseCase {
     DeleteFavoriteResourcesCommand command,
   ) async {
     try {
-      await _repository.batchDelResource(
+      await _repository.deleteResources(
         resources: command.resourceIds.join(','),
         mediaId: command.mediaId,
       );

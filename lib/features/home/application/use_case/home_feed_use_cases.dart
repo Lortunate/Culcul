@@ -1,7 +1,7 @@
-import 'package:culcul/features/home/data/home_repository.dart';
-import 'package:culcul/features/home/data/weekly_repository.dart';
-import 'package:culcul/features/home/data/mappers/home_feed_mapper.dart';
 import 'package:culcul/features/home/domain/entities/home_video.dart';
+import 'package:culcul/features/home/domain/repositories/home_repository.dart';
+import 'package:culcul/features/home/domain/repositories/weekly_repository.dart';
+import 'package:culcul/features/home/home_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_feed_use_cases.g.dart';
@@ -28,23 +28,17 @@ class HomeFeedUseCases {
     required int page,
     bool refresh = false,
   }) async {
-    return (await _homeRepository.fetchRecommend(
-      page: page,
-      forceRefresh: refresh,
-    )).map((item) => item.toDomain()).toList();
+    return _homeRepository.fetchRecommend(page: page, forceRefresh: refresh);
   }
 
   Future<List<HomeVideo>> loadPopularPage({
     required int page,
     bool refresh = false,
   }) async {
-    return (await _homeRepository.fetchPopular(
-      page: page,
-      forceRefresh: refresh,
-    )).map((item) => item.toDomain()).toList();
+    return _homeRepository.fetchPopular(page: page, forceRefresh: refresh);
   }
 
   Future<HomeWeeklyFeed> loadWeekly() async {
-    return (await _weeklyRepository.getWeeklyList()).toDomain();
+    return _weeklyRepository.getWeeklyList();
   }
 }

@@ -1,9 +1,6 @@
-import 'package:culcul/data/models/notification/reply_model.dart';
-import 'package:culcul/data/models/notification/system_notification_model.dart';
-import 'package:culcul/data/models/notification/unread_count_model.dart';
+import 'package:culcul/features/notification/models/notification_models.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
-import 'package:culcul/data/models/notification/private_message_model.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/domain/entities/system_notice.dart';
@@ -111,7 +108,7 @@ extension PrivateMessageDetailMapper on PrivateMessageDetail {
       receiverType: receiverType,
       receiverId: receiverId,
       msgType: msgType,
-      content: content,
+      content: PrivateMessageContent.fromRaw(content),
       msgSeqno: msgSeqno,
       timestamp: timestamp,
       atUids: atUids,

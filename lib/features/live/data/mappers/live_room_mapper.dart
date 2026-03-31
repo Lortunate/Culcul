@@ -1,5 +1,4 @@
-import 'package:culcul/data/models/live/live_room_model.dart';
-import 'package:culcul/features/live/domain/entities/live_room_summary.dart';
+import 'package:culcul/features/live/models/live_models.dart';
 
 extension WatchedShowMapper on WatchedShow {
   LiveWatchedShow toDomain() {

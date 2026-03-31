@@ -1,4 +1,4 @@
-import 'package:culcul/features/live/domain/entities/live_models.dart';
+import 'package:culcul/features/live/models/live_models.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 

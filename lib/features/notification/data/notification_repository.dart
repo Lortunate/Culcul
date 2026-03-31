@@ -1,41 +1,47 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:culcul/core/providers/api_provider.dart';
 import 'package:culcul/core/base_repository.dart';
-import 'package:culcul/data/api/notification_api.dart';
-import 'package:culcul/data/models/notification/image_upload_response.dart';
-import 'package:culcul/data/models/notification/private_message_model.dart';
-import 'package:culcul/data/models/notification/reply_model.dart';
-import 'package:culcul/data/models/notification/system_notification_model.dart';
-import 'package:culcul/data/models/notification/unread_count_model.dart';
+import 'package:culcul/features/notification/data/mappers/notification_mapper.dart';
+import 'package:culcul/features/notification/data/notification_api.dart';
+import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
+import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
+import 'package:culcul/features/notification/domain/entities/private_message.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/domain/entities/system_notice.dart';
+import 'package:culcul/features/notification/domain/repositories/notification_repository.dart'
+    as domain;
+import 'package:culcul/features/notification/models/notification_models.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 
 part 'notification_repository.g.dart';
 
 @riverpod
-NotificationRepository notificationRepository(Ref ref) {
-  return NotificationRepository(ref.watch(notificationApiProvider));
+domain.NotificationRepository notificationRepository(Ref ref) {
+  return NotificationRepositoryImpl(ref.watch(notificationApiProvider));
 }
 
-class NotificationRepository extends BaseRepository {
+class NotificationRepositoryImpl extends BaseRepository
+    implements domain.NotificationRepository {
   final NotificationApi _api;
 
-  NotificationRepository(this._api);
+  NotificationRepositoryImpl(this._api);
 
-  Future<UnreadCountModel> getUnreadCount() async {
+  Future<UnreadCountModel> getUnreadCountModel() async {
     return requestApi(() => _api.getUnreadCount());
   }
 
-  Future<ReplyResponse> getReplyList({int? id, int? replyTime}) async {
+  Future<ReplyResponse> getReplyListModel({int? id, int? replyTime}) async {
     return requestApi(() => _api.getReplyList(id: id, replyTime: replyTime));
   }
 
-  Future<ReplyResponse> getAtList({int? id, int? atTime}) async {
+  Future<ReplyResponse> getAtListModel({int? id, int? atTime}) async {
     return requestApi(() => _api.getAtList(id: id, atTime: atTime));
   }
 
-  Future<ReplyResponse> getLikeList({int? id, int? likeTime}) async {
+  Future<ReplyResponse> getLikeListModel({int? id, int? likeTime}) async {
     final likeResponse = await requestApi(
       () => _api.getLikeList(id: id, likeTime: likeTime),
     );
@@ -46,7 +52,7 @@ class NotificationRepository extends BaseRepository {
     );
   }
 
-  Future<PrivateMessageSessionResponse> getPrivateSessions({
+  Future<PrivateMessageSessionResponse> getPrivateSessionsModel({
     int sessionType = 1,
     int size = 20,
     int? endTs,
@@ -56,7 +62,7 @@ class NotificationRepository extends BaseRepository {
     );
   }
 
-  Future<PrivateMessageListResponse> getPrivateMessages({
+  Future<PrivateMessageListResponse> getPrivateMessagesModel({
     required int talkerId,
     int sessionType = 1,
     int size = 20,
@@ -75,7 +81,7 @@ class NotificationRepository extends BaseRepository {
   }
 
   Future<List<SystemNotificationItem>> fetchSystemNotifications() async {
-    final sessionRes = await getPrivateSessions(sessionType: 7);
+    final sessionRes = await getPrivateSessionsModel(sessionType: 7);
     final systemMsgMap = sessionRes.systemMsg;
 
     if (systemMsgMap == null || !systemMsgMap.containsKey('5')) {
@@ -83,7 +89,7 @@ class NotificationRepository extends BaseRepository {
     }
 
     final talkerId = systemMsgMap['5']!;
-    final msgsRes = await getPrivateMessages(talkerId: talkerId);
+    final msgsRes = await getPrivateMessagesModel(talkerId: talkerId);
     return msgsRes.messages?.map((msg) {
           final contentMap = msg.contentMap;
           return SystemNotificationItem(
@@ -101,16 +107,18 @@ class NotificationRepository extends BaseRepository {
         [];
   }
 
+  @override
   Future<ImageUploadResponse> uploadImage(File file) async {
     return requestApi(() => _api.uploadImage(file: file));
   }
 
+  @override
   Future<SendMessageResponse> sendPrivateMessage({
     required int senderUid,
     required int receiverId,
     required int receiverType,
     required int msgType,
-    required String content,
+    required PrivateMessageContent content,
   }) async {
     final devId = const Uuid().v4().toUpperCase();
     final timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
@@ -126,8 +134,64 @@ class NotificationRepository extends BaseRepository {
         msgType: msgType,
         devId: devId,
         timestamp: timestamp,
-        content: content,
+        content: jsonEncode(content.toJson()),
       ),
     );
+  }
+
+  @override
+  Future<NotificationSummary> getUnreadCount() async {
+    return (await getUnreadCountModel()).toDomain();
+  }
+
+  @override
+  Future<List<NotificationEntry>> getReplyList({int? id, int? replyTime}) async {
+    final response = await getReplyListModel(id: id, replyTime: replyTime);
+    return response.items.map((item) => item.toDomain()).toList();
+  }
+
+  @override
+  Future<List<NotificationEntry>> getAtList({int? id, int? atTime}) async {
+    final response = await getAtListModel(id: id, atTime: atTime);
+    return response.items.map((item) => item.toDomain()).toList();
+  }
+
+  @override
+  Future<List<NotificationEntry>> getLikeList({int? id, int? likeTime}) async {
+    final response = await getLikeListModel(id: id, likeTime: likeTime);
+    return response.items.map((item) => item.toDomain()).toList();
+  }
+
+  @override
+  Future<List<SystemNotice>> getSystemNotifications() async {
+    return (await fetchSystemNotifications()).map((item) => item.toDomain()).toList();
+  }
+
+  @override
+  Future<PrivateMessagePage> getPrivateMessages({
+    required int talkerId,
+    required int sessionType,
+    int? endSeqno,
+  }) async {
+    final response = await getPrivateMessagesModel(
+      talkerId: talkerId,
+      sessionType: sessionType,
+      endSeqno: endSeqno,
+    );
+    return response.toDomain();
+  }
+
+  @override
+  Future<PrivateSessionPage> getPrivateSessions({
+    int sessionType = 1,
+    int size = 20,
+    int? endTs,
+  }) async {
+    final response = await getPrivateSessionsModel(
+      sessionType: sessionType,
+      size: size,
+      endTs: endTs,
+    );
+    return response.toDomain();
   }
 }

@@ -5,13 +5,12 @@ part 'search_history_view_model.g.dart';
 
 @riverpod
 class SearchHistory extends _$SearchHistory {
-  static const _key = 'search_history';
   static const _maxHistory = 15;
 
   @override
   List<String> build() {
     final box = ref.watch(searchStorageBoxProvider);
-    final history = box.get(_key, defaultValue: <String>[]);
+    final history = box.get(StorageKeys.searchHistory, defaultValue: <String>[]);
     if (history is List) {
       return history.cast<String>();
     }
@@ -30,17 +29,17 @@ class SearchHistory extends _$SearchHistory {
     }
 
     state = current;
-    await ref.read(searchStorageBoxProvider).put(_key, current);
+    await ref.read(searchStorageBoxProvider).put(StorageKeys.searchHistory, current);
   }
 
   Future<void> remove(String term) async {
     final current = state.where((element) => element != term).toList();
     state = current;
-    await ref.read(searchStorageBoxProvider).put(_key, current);
+    await ref.read(searchStorageBoxProvider).put(StorageKeys.searchHistory, current);
   }
 
   Future<void> clear() async {
     state = [];
-    await ref.read(searchStorageBoxProvider).delete(_key);
+    await ref.read(searchStorageBoxProvider).delete(StorageKeys.searchHistory);
   }
 }
