@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:culcul/core/errors/exceptions.dart';
-import 'package:culcul/features/live/presentation/services/live_socket_service.dart';
+import 'package:culcul/features/live/presentation/view_models/services/live_socket_service.dart';
 import 'package:culcul/features/live/application/live_room_workflows.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/live/domain/entities/live_entities.dart';
@@ -236,5 +236,6 @@ class LiveRoomController extends _$LiveRoomController {
     debugPrint('LiveRoomController::$scope ignored error: $error\n$stackTrace');
   }
 }
+
 
 

@@ -6,8 +6,6 @@ import 'package:culcul/features/auth/domain/entities/country_code.dart';
 import 'package:culcul/features/auth/domain/entities/user_entity.dart';
 import 'package:culcul/features/auth/auth_providers.dart';
 import 'package:culcul/features/auth/domain/entities/auth_captcha_challenge.dart';
-import 'package:culcul/features/auth/domain/entities/auth_qr_code.dart';
-import 'package:culcul/features/auth/domain/entities/auth_qr_poll_result.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -94,16 +92,6 @@ class Auth extends _$Auth {
         .read(authRepositoryProvider)
         .loginWithSms(cid, phone, code, captchaKey);
     _handleUserResult(result);
-  }
-
-  Future<AuthQrCode?> getQrCode() async {
-    final result = await ref.read(authRepositoryProvider).getQrCode();
-    return _unwrapOrNull(result);
-  }
-
-  Future<AuthQrPollResult?> pollQrCode(String authCode) async {
-    final result = await ref.read(authRepositoryProvider).pollQrCode(authCode);
-    return _unwrapOrNull(result);
   }
 
   Future<void> logout() async {

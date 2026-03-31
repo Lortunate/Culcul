@@ -67,9 +67,7 @@ class VideoCommentsController extends _$VideoCommentsController {
 
     final result = await ref
         .read(videoCommentWorkflowsProvider)
-        .toggleLike(
-          ToggleVideoCommentLikeCommand(oid: oid, rpid: rpid, isLiked: !isLiked),
-        );
+        .toggleLike(oid: oid, rpid: rpid, isLiked: !isLiked);
     if (result.isFailure) {
       state = state.copyWith(comments: previousComments);
     }
@@ -78,20 +76,13 @@ class VideoCommentsController extends _$VideoCommentsController {
   Future<void> toggleCommentDislike(int oid, int rpid) async {
     await ref
         .read(videoCommentWorkflowsProvider)
-        .toggleDislike(ToggleVideoCommentDislikeCommand(oid: oid, rpid: rpid));
+        .toggleDislike(oid: oid, rpid: rpid);
   }
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
     await ref
         .read(videoCommentWorkflowsProvider)
-        .addReply(
-          AddVideoCommentReplyCommand(
-            oid: oid,
-            root: root,
-            parent: parent,
-            message: message,
-          ),
-        );
+        .addReply(oid: oid, root: root, parent: parent, message: message);
     await refresh();
   }
 
@@ -109,7 +100,7 @@ class VideoCommentsController extends _$VideoCommentsController {
 
     final result = await ref
         .read(videoCommentWorkflowsProvider)
-        .loadComments(VideoCommentsQuery(oid: aid, sort: state.sort, page: page));
+        .loadComments(oid: aid, sort: state.sort, page: page);
     result.when(
       success: (response) {
         final comments = replace

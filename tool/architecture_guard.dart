@@ -12,8 +12,6 @@ const _presentationAllowedSubdirs = {
   'pages',
   'widgets',
   'view_models',
-  'hooks',
-  'services',
 };
 
 void main() {

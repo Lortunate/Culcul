@@ -25,8 +25,6 @@ abstract class NotificationRepository {
   });
 
   Future<PrivateSessionPage> getPrivateSessions({
-    int sessionType = 1,
-    int size = 20,
     int? endTs,
   });
 

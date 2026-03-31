@@ -1,6 +1,6 @@
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/video_page_view_model.dart';
-import 'package:culcul/features/video/presentation/hooks/use_video_orientation.dart';
+import 'package:culcul/features/video/presentation/widgets/hooks/use_video_orientation.dart';
 import 'package:culcul/features/video/presentation/pages/vertical_video_page.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/video_comments_view.dart';
 import 'package:culcul/features/video/presentation/widgets/info/video_info_view.dart';
@@ -66,4 +66,5 @@ class VideoDetailPage extends HookConsumerWidget {
     );
   }
 }
+
 

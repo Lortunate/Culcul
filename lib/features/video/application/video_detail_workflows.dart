@@ -1,5 +1,6 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
+import 'package:culcul/core/result/run_result.dart';
 import 'package:culcul/features/profile/profile_providers.dart';
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:culcul/features/profile/domain/repositories/relation_repository.dart';
@@ -27,18 +28,6 @@ class VideoInitialData {
   });
 }
 
-class VideoPlayUrlCommand {
-  final int aid;
-  final int cid;
-  final int quality;
-
-  const VideoPlayUrlCommand({
-    required this.aid,
-    required this.cid,
-    required this.quality,
-  });
-}
-
 class VideoPlayUrlData {
   final PlayUrl playUrl;
   final List<int> availableQualities;
@@ -48,25 +37,6 @@ class VideoPlayUrlData {
     required this.playUrl,
     required this.availableQualities,
     required this.selectedQuality,
-  });
-}
-
-class ToggleVideoFollowCommand {
-  final int followMid;
-  final bool wasFollowed;
-
-  const ToggleVideoFollowCommand({required this.followMid, required this.wasFollowed});
-}
-
-class ReportVideoProgressCommand {
-  final int aid;
-  final int cid;
-  final int progress;
-
-  const ReportVideoProgressCommand({
-    required this.aid,
-    required this.cid,
-    required this.progress,
   });
 }
 
@@ -81,7 +51,7 @@ class LoadVideoDetailWorkflow {
   const LoadVideoDetailWorkflow(this._repository);
 
   Future<Result<VideoInitialData, AppError>> call(String bvid) async {
-    try {
+    return runResult(() async {
       final detail = await _repository.fetchVideoView(bvid);
       final cid = detail.pages.isNotEmpty ? detail.pages.first.cid : 0;
 
@@ -102,19 +72,15 @@ class LoadVideoDetailWorkflow {
           : detail.copyWith(tag: tagsResult.dataOrNull!);
       final playUrl = playResult.dataOrNull;
 
-      return Success(
-        VideoInitialData(
-          detail: mergedDetail,
-          currentCid: cid,
-          playUrl: playUrl,
-          relatedVideos: relatedResult.dataOrNull ?? const [],
-          availableQualities: playUrl?.acceptQuality.toList() ?? const [],
-          selectedQuality: playUrl?.quality ?? 80,
-        ),
+      return VideoInitialData(
+        detail: mergedDetail,
+        currentCid: cid,
+        playUrl: playUrl,
+        relatedVideos: relatedResult.dataOrNull ?? const [],
+        availableQualities: playUrl?.acceptQuality.toList() ?? const [],
+        selectedQuality: playUrl?.quality ?? 80,
       );
-    } catch (error) {
-      return Failure(AppError.fromObject(error));
-    }
+    });
   }
 }
 
@@ -128,23 +94,23 @@ class LoadVideoPlayUrlWorkflow {
 
   const LoadVideoPlayUrlWorkflow(this._repository);
 
-  Future<Result<VideoPlayUrlData, AppError>> call(VideoPlayUrlCommand command) async {
-    try {
+  Future<Result<VideoPlayUrlData, AppError>> call({
+    required int aid,
+    required int cid,
+    required int quality,
+  }) async {
+    return runResult(() async {
       final playUrl = await _repository.fetchVideoPlayUrl(
-        aid: command.aid,
-        cid: command.cid,
-        quality: command.quality,
+        aid: aid,
+        cid: cid,
+        quality: quality,
       );
-      return Success(
-        VideoPlayUrlData(
-          playUrl: playUrl,
-          availableQualities: playUrl.acceptQuality.toList(),
-          selectedQuality: playUrl.quality,
-        ),
+      return VideoPlayUrlData(
+        playUrl: playUrl,
+        availableQualities: playUrl.acceptQuality.toList(),
+        selectedQuality: playUrl.quality,
       );
-    } catch (error) {
-      return Failure(AppError.fromObject(error));
-    }
+    });
   }
 }
 
@@ -158,16 +124,13 @@ class ToggleVideoFollowWorkflow {
 
   const ToggleVideoFollowWorkflow(this._repository);
 
-  Future<Result<void, AppError>> call(ToggleVideoFollowCommand command) async {
-    try {
-      await _repository.modifyRelation(
-        fid: command.followMid,
-        act: command.wasFollowed ? 2 : 1,
-      );
-      return const Success(null);
-    } catch (error) {
-      return Failure(AppError.fromObject(error));
-    }
+  Future<Result<void, AppError>> call({
+    required int followMid,
+    required bool wasFollowed,
+  }) async {
+    return runVoidResult(
+      () => _repository.modifyRelation(fid: followMid, act: wasFollowed ? 2 : 1),
+    );
   }
 }
 
@@ -181,24 +144,17 @@ class ReportVideoProgressWorkflow {
 
   const ReportVideoProgressWorkflow(this._repository);
 
-  Future<Result<void, AppError>> call(ReportVideoProgressCommand command) async {
-    try {
-      await _repository.reportVideoProgress(
-        aid: command.aid,
-        cid: command.cid,
-        progress: command.progress,
-      );
-      return const Success(null);
-    } catch (error) {
-      return Failure(AppError.fromObject(error));
-    }
+  Future<Result<void, AppError>> call({
+    required int aid,
+    required int cid,
+    required int progress,
+  }) async {
+    return runVoidResult(
+      () => _repository.reportVideoProgress(aid: aid, cid: cid, progress: progress),
+    );
   }
 }
 
 Future<Result<T, AppError>> _guard<T>(Future<T> Function() action) async {
-  try {
-    return Success(await action());
-  } catch (error) {
-    return Failure(AppError.fromObject(error));
-  }
+  return runResult(action);
 }

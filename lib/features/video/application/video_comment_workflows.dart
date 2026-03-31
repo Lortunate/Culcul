@@ -8,55 +8,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'video_comment_workflows.g.dart';
 
-class VideoCommentsQuery {
-  final int oid;
-  final int sort;
-  final int page;
-
-  const VideoCommentsQuery({required this.oid, required this.sort, required this.page});
-}
-
-class VideoReplyQuery {
-  final int oid;
-  final int root;
-  final int page;
-
-  const VideoReplyQuery({required this.oid, required this.root, required this.page});
-}
-
-class ToggleVideoCommentLikeCommand {
-  final int oid;
-  final int rpid;
-  final bool isLiked;
-
-  const ToggleVideoCommentLikeCommand({
-    required this.oid,
-    required this.rpid,
-    required this.isLiked,
-  });
-}
-
-class ToggleVideoCommentDislikeCommand {
-  final int oid;
-  final int rpid;
-
-  const ToggleVideoCommentDislikeCommand({required this.oid, required this.rpid});
-}
-
-class AddVideoCommentReplyCommand {
-  final int oid;
-  final int root;
-  final int parent;
-  final String message;
-
-  const AddVideoCommentReplyCommand({
-    required this.oid,
-    required this.root,
-    required this.parent,
-    required this.message,
-  });
-}
-
 @riverpod
 VideoCommentWorkflows videoCommentWorkflows(Ref ref) {
   return VideoCommentWorkflows(ref.read(videoRepositoryProvider));
@@ -67,47 +18,58 @@ class VideoCommentWorkflows {
 
   const VideoCommentWorkflows(this._repository);
 
-  Future<Result<CommentResponse, AppError>> loadComments(VideoCommentsQuery query) async {
+  Future<Result<CommentResponse, AppError>> loadComments({
+    required int oid,
+    required int sort,
+    required int page,
+  }) async {
     return runResult(
       () => _repository.fetchComments(
-        oid: query.oid,
-        sort: query.sort,
-        page: query.page,
+        oid: oid,
+        sort: sort,
+        page: page,
       ),
     );
   }
 
-  Future<Result<CommentResponse, AppError>> loadReplies(VideoReplyQuery query) async {
-    return runResult(
-      () => _repository.fetchReply(oid: query.oid, root: query.root, page: query.page),
-    );
+  Future<Result<CommentResponse, AppError>> loadReplies({
+    required int oid,
+    required int root,
+    required int page,
+  }) async {
+    return runResult(() => _repository.fetchReply(oid: oid, root: root, page: page));
   }
 
-  Future<Result<void, AppError>> toggleLike(ToggleVideoCommentLikeCommand command) async {
+  Future<Result<void, AppError>> toggleLike({
+    required int oid,
+    required int rpid,
+    required bool isLiked,
+  }) async {
     return runVoidResult(
       () => _repository.setCommentLike(
-        oid: command.oid,
-        rpid: command.rpid,
-        isLiked: command.isLiked,
+        oid: oid,
+        rpid: rpid,
+        isLiked: isLiked,
       ),
     );
   }
 
-  Future<Result<void, AppError>> toggleDislike(
-    ToggleVideoCommentDislikeCommand command,
-  ) async {
-    return runVoidResult(
-      () => _repository.setCommentDislike(oid: command.oid, rpid: command.rpid),
-    );
+  Future<Result<void, AppError>> toggleDislike({required int oid, required int rpid}) async {
+    return runVoidResult(() => _repository.setCommentDislike(oid: oid, rpid: rpid));
   }
 
-  Future<Result<void, AppError>> addReply(AddVideoCommentReplyCommand command) async {
+  Future<Result<void, AppError>> addReply({
+    required int oid,
+    required int root,
+    required int parent,
+    required String message,
+  }) async {
     return runVoidResult(
       () => _repository.replyToComment(
-        oid: command.oid,
-        root: command.root,
-        parent: command.parent,
-        message: command.message,
+        oid: oid,
+        root: root,
+        parent: parent,
+        message: message,
       ),
     );
   }

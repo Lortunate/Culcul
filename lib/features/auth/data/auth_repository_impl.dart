@@ -3,17 +3,18 @@ import 'dart:convert';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/core/network/models/api_response.dart';
 import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/providers/storage_provider.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/auth/data/auth_api.dart';
+import 'package:culcul/features/auth/data/dtos/auth_dtos.dart';
 import 'package:culcul/features/auth/domain/entities/country_code.dart';
 import 'package:culcul/features/auth/domain/entities/user_entity.dart';
 import 'package:culcul/features/auth/domain/entities/auth_captcha_challenge.dart';
 import 'package:culcul/features/auth/domain/entities/auth_qr_code.dart';
 import 'package:culcul/features/auth/domain/entities/auth_qr_poll_result.dart';
 import 'package:culcul/features/auth/domain/repositories/auth_repository.dart' as domain;
-import 'package:culcul/features/auth/data/dtos/auth_dtos.dart' as auth_models;
 import 'package:encrypt/encrypt.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pointycastle/asymmetric/api.dart';
@@ -42,40 +43,12 @@ class AuthRepositoryImpl implements domain.AuthRepository {
     // This method is required by TokenInterceptor
   }
 
-  UserEntity _toDomainUser(auth_models.User user) {
-    return UserEntity(
-      id: user.id,
-      username: user.username,
-      avatarUrl: user.avatarUrl,
-      email: user.email,
-      createdAt: user.createdAt,
-      level: user.level,
-      currentExp: user.currentExp,
-      nextExp: user.nextExp,
-    );
-  }
-
-  auth_models.User _toDataUser(UserEntity user) {
-    return auth_models.User(
-      id: user.id,
-      username: user.username,
-      avatarUrl: user.avatarUrl,
-      email: user.email,
-      createdAt: user.createdAt,
-      level: user.level,
-      currentExp: user.currentExp,
-      nextExp: user.nextExp,
-    );
-  }
-
   @override
   UserEntity? getCachedUser() {
     final jsonStr = _box.get(StorageKeys.authUserCache);
     if (jsonStr == null) return null;
     try {
-      return _toDomainUser(
-        auth_models.User.fromJson(jsonDecode(jsonStr) as Map<String, dynamic>),
-      );
+      return AuthUserDto.fromJson(jsonDecode(jsonStr) as Map<String, dynamic>).toDomain();
     } catch (e) {
       _box.delete(StorageKeys.authUserCache);
       return null;
@@ -83,7 +56,7 @@ class AuthRepositoryImpl implements domain.AuthRepository {
   }
 
   Future<void> _cacheUser(UserEntity user) async {
-    await _box.put(StorageKeys.authUserCache, jsonEncode(_toDataUser(user).toJson()));
+    await _box.put(StorageKeys.authUserCache, jsonEncode(AuthUserDto.fromDomain(user).toJson()));
   }
 
   Future<void> clearCache() async {
@@ -176,7 +149,7 @@ class AuthRepositoryImpl implements domain.AuthRepository {
     final result = await _executor.runApi(
       () async {
         final response = await _api.getCaptcha();
-        return auth_models.ApiResponse(
+        return ApiResponse<Map<String, dynamic>?>(
           code: response.code,
           message: response.message,
           data: response.data as Map<String, dynamic>?,
@@ -250,7 +223,7 @@ class AuthRepositoryImpl implements domain.AuthRepository {
     return _executor.runApi(
       () async {
         final response = await _api.getQrCode();
-        return auth_models.ApiResponse(
+        return ApiResponse<Map<String, dynamic>?>(
           code: response.code,
           message: response.message,
           data: response.data as Map<String, dynamic>?,
@@ -309,7 +282,7 @@ class AuthRepositoryImpl implements domain.AuthRepository {
       final data = response.data as Map<String, dynamic>?;
       if (data != null && data['isLogin'] == true) {
         final levelInfo = data['level_info'] as Map<String, dynamic>?;
-        final userModel = auth_models.User(
+        final userDto = AuthUserDto(
           id: data['mid'].toString(),
           username: data['uname'],
           avatarUrl: data['face'],
@@ -319,7 +292,7 @@ class AuthRepositoryImpl implements domain.AuthRepository {
           currentExp: levelInfo?['current_exp'] as int?,
           nextExp: levelInfo?['next_exp'] as int?,
         );
-        final user = _toDomainUser(userModel);
+        final user = userDto.toDomain();
         await _cacheUser(user);
         return user;
       }

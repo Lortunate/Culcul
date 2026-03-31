@@ -1,10 +1,10 @@
-import 'package:culcul/features/auth/presentation/hooks/use_qr_login.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_qr_login_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-class QrLoginView extends HookConsumerWidget {
+class QrLoginView extends ConsumerWidget {
   const QrLoginView({super.key});
 
   @override
@@ -12,7 +12,8 @@ class QrLoginView extends HookConsumerWidget {
     final t = Translations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final qrState = useQrLogin(ref);
+    final qrState = ref.watch(authQrLoginControllerProvider);
+    final qrController = ref.read(authQrLoginControllerProvider.notifier);
 
     return Center(
       child: SingleChildScrollView(
@@ -65,11 +66,11 @@ class QrLoginView extends HookConsumerWidget {
                   const SizedBox(height: 24),
                   Text(
                     switch (qrState.status) {
-                      QrLoginStatus.loading => t.auth.qr_status.loading,
-                      QrLoginStatus.success => t.auth.qr_status.success,
-                      QrLoginStatus.scanned => t.auth.qr_status.scanned,
-                      QrLoginStatus.expired => t.auth.qr_status.expired,
-                      QrLoginStatus.error => t.auth.qr_status.error,
+                      AuthQrLoginStatus.loading => t.auth.qr_status.loading,
+                      AuthQrLoginStatus.success => t.auth.qr_status.success,
+                      AuthQrLoginStatus.scanned => t.auth.qr_status.scanned,
+                      AuthQrLoginStatus.expired => t.auth.qr_status.expired,
+                      AuthQrLoginStatus.error => t.auth.qr_status.error,
                     },
                     textAlign: TextAlign.center,
                     style: theme.textTheme.labelLarge?.copyWith(
@@ -81,10 +82,11 @@ class QrLoginView extends HookConsumerWidget {
                 ],
               ),
             ),
-            if (qrState.statusCode == 86038 || qrState.status == QrLoginStatus.error) ...[
+            if (qrState.statusCode == 86038 ||
+                qrState.status == AuthQrLoginStatus.error) ...[
               const SizedBox(height: 32),
               FilledButton.icon(
-                onPressed: qrState.refresh,
+                onPressed: qrController.refresh,
                 icon: const Icon(Icons.refresh_rounded, size: 18),
                 label: Text(t.auth.qr_refresh),
                 style: FilledButton.styleFrom(
@@ -99,3 +101,4 @@ class QrLoginView extends HookConsumerWidget {
     );
   }
 }
+

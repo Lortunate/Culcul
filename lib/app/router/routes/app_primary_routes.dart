@@ -51,7 +51,7 @@ class LiveRoomRoute extends GoRouteData with $LiveRoomRoute {
   }
 }
 
-@TypedGoRoute<CommentReplyRoute>(path: '/comment/reply')
+@TypedGoRoute<CommentReplyRoute>(path: '/video/:bvid/comment/:oid/:rootId')
 class CommentReplyRoute extends GoRouteData with $CommentReplyRoute {
   final String bvid;
   final int oid;
@@ -205,7 +205,7 @@ class SettingsRoute extends GoRouteData with $SettingsRoute {
   }
 }
 
-@TypedGoRoute<ToViewRoute>(path: '/to_view')
+@TypedGoRoute<ToViewRoute>(path: '/to-view')
 class ToViewRoute extends GoRouteData with $ToViewRoute {
   const ToViewRoute();
 

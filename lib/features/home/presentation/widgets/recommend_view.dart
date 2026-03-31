@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/home/presentation/view_models/home_recommend_view_model.dart';
-import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
+import 'package:culcul/features/home/presentation/widgets/hooks/use_home_scroll_sync.dart';
 import 'package:culcul/features/home/domain/entities/home_video.dart';
 import 'package:culcul/ui/widgets/skeletons/page_skeletons.dart';
 import 'package:culcul/ui/widgets/skeletons/video_card_skeleton.dart';
@@ -88,3 +88,4 @@ class _RecommendVideoGrid extends StatelessWidget {
     );
   }
 }
+

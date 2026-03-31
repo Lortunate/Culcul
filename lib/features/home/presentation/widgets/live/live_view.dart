@@ -3,7 +3,7 @@ import 'package:culcul/features/live/presentation/view_models/live_recommend_vie
 import 'package:culcul/features/live/domain/entities/live_room_summary.dart';
 import 'package:culcul/features/home/presentation/widgets/live/live_card_skeleton.dart';
 import 'package:culcul/features/home/presentation/widgets/live/live_room_card.dart';
-import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
+import 'package:culcul/features/home/presentation/widgets/hooks/use_home_scroll_sync.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
@@ -96,4 +96,5 @@ class _LiveGrid extends StatelessWidget {
     );
   }
 }
+
 

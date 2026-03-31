@@ -183,13 +183,11 @@ class NotificationRepositoryImpl extends BaseRepository
 
   @override
   Future<PrivateSessionPage> getPrivateSessions({
-    int sessionType = 1,
-    int size = 20,
     int? endTs,
   }) async {
     final response = await getPrivateSessionsModel(
-      sessionType: sessionType,
-      size: size,
+      sessionType: 1,
+      size: 20,
       endTs: endTs,
     );
     return response.toDomain();

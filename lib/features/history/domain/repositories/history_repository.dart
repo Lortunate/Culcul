@@ -4,7 +4,6 @@ abstract class HistoryRepository {
   Future<List<HistoryEntry>> getHistory({
     int max = 0,
     int viewAt = 0,
-    String business = '',
     int pageSize = 20,
   });
 }

@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/home/presentation/view_models/home_popular_view_model.dart';
-import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
+import 'package:culcul/features/home/presentation/widgets/hooks/use_home_scroll_sync.dart';
 import 'package:culcul/features/home/domain/entities/home_video.dart';
 import 'package:culcul/features/home/presentation/widgets/popular_video_card.dart';
 import 'package:culcul/ui/widgets/skeletons/page_skeletons.dart';
@@ -73,3 +73,4 @@ class _PopularVideoList extends StatelessWidget {
     );
   }
 }
+

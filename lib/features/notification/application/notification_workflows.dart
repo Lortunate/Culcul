@@ -69,17 +69,9 @@ class NotificationWorkflows {
   }
 
   Future<Result<PrivateSessionPage, AppError>> getPrivateSessions({
-    int sessionType = 1,
-    int size = 20,
     int? endTs,
   }) async {
-    return runResult(
-      () => _repository.getPrivateSessions(
-        sessionType: sessionType,
-        size: size,
-        endTs: endTs,
-      ),
-    );
+    return runResult(() => _repository.getPrivateSessions(endTs: endTs));
   }
 
   Future<Result<ImageUploadResponse, AppError>> uploadImage(File file) async {

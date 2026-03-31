@@ -16,25 +16,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'video_extra_workflows.g.dart';
 
-class DanmakuSegmentQuery {
-  final int oid;
-  final int pid;
-  final int segmentIndex;
-
-  const DanmakuSegmentQuery({
-    required this.oid,
-    required this.pid,
-    required this.segmentIndex,
-  });
-}
-
-class DanmakuMaskQuery {
-  final int oid;
-  final int pid;
-
-  const DanmakuMaskQuery({required this.oid, required this.pid});
-}
-
 @riverpod
 VideoExtraWorkflows videoExtraWorkflows(Ref ref) {
   return VideoExtraWorkflows(
@@ -56,33 +37,36 @@ class VideoExtraWorkflows {
     return runResult(() => videoRepository.fetchSubtitleContent(url));
   }
 
-  Future<Result<DmSegMobileReply, AppError>> loadDanmakuSegment(
-    DanmakuSegmentQuery query,
-  ) async {
+  Future<Result<DmSegMobileReply, AppError>> loadDanmakuSegment({
+    required int oid,
+    required int pid,
+    required int segmentIndex,
+  }) async {
     return runResult(
       () => danmakuRepository.fetchDanmakuSegment(
-        oid: query.oid,
-        pid: query.pid,
-        segmentIndex: query.segmentIndex,
+        oid: oid,
+        pid: pid,
+        segmentIndex: segmentIndex,
       ),
     );
   }
 
-  Future<Result<DanmakuMasks?, AppError>> loadDanmakuMask(DanmakuMaskQuery query) async {
-    try {
-      PlayerInfo playerInfo;
-      try {
-        playerInfo = await videoRepository.fetchPlayerInfo(
-          aid: query.pid,
-          cid: query.oid,
-        );
-      } catch (_) {
-        return const Success(null);
+  Future<Result<DanmakuMasks?, AppError>> loadDanmakuMask({
+    required int oid,
+    required int pid,
+  }) async {
+    return runResult(() async {
+      final playerInfoResult = await runResult(
+        () => videoRepository.fetchPlayerInfo(aid: pid, cid: oid),
+      );
+      final playerInfo = playerInfoResult.dataOrNull;
+      if (playerInfo == null) {
+        return null;
       }
 
       final dmMask = playerInfo.dmMask;
       if (dmMask == null) {
-        return const Success(null);
+        return null;
       }
 
       final bytes = await danmakuRepository.fetchMaskData(dmMask.maskUrl);
@@ -90,10 +74,8 @@ class VideoExtraWorkflows {
         _parseMaskData,
         _ParseDanmakuMaskData(bytes, dmMask.fps),
       );
-      return Success(DanmakuMasks(paths, dmMask.fps));
-    } catch (error) {
-      return Failure(AppError.fromObject(error));
-    }
+      return DanmakuMasks(paths, dmMask.fps);
+    });
   }
 }
 

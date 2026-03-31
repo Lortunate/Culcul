@@ -23,23 +23,20 @@ class HistoryRepositoryImpl extends BaseRepository implements domain.HistoryRepo
   Future<HistoryResponseData> getHistoryCursor({
     int max = 0,
     int viewAt = 0,
-    String business = '',
     int ps = 20,
   }) {
-    return requestApi(() => _api.getHistoryCursor(max, viewAt, business, ps));
+    return requestApi(() => _api.getHistoryCursor(max, viewAt, '', ps));
   }
 
   @override
   Future<List<HistoryEntry>> getHistory({
     int max = 0,
     int viewAt = 0,
-    String business = '',
     int pageSize = 20,
   }) async {
     final data = await getHistoryCursor(
       max: max,
       viewAt: viewAt,
-      business: business,
       ps: pageSize,
     );
     return data.list.map((item) => item.toDomain()).toList();

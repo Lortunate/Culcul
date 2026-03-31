@@ -17,9 +17,7 @@ class DanmakuProvider extends _$DanmakuProvider {
   }) async {
     final result = await ref
         .read(videoExtraWorkflowsProvider)
-        .loadDanmakuSegment(
-          DanmakuSegmentQuery(oid: oid, pid: pid, segmentIndex: segmentIndex),
-        );
+        .loadDanmakuSegment(oid: oid, pid: pid, segmentIndex: segmentIndex);
     return result.when(success: (value) => value.elems, failure: (error) => throw error);
   }
 }

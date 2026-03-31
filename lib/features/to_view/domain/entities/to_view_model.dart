@@ -1,4 +1,4 @@
-import 'package:culcul/features/favorites/domain/entities/favorite_transport_entities.dart';
+import 'package:culcul/features/favorites/domain/entities/fav_resource_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'to_view_model.freezed.dart';

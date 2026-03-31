@@ -63,13 +63,7 @@ class VideoDetailController extends _$VideoDetailController {
 
     await ref
         .read(reportVideoProgressWorkflowProvider)
-        .call(
-          ReportVideoProgressCommand(
-            aid: detail.aid,
-            cid: state.currentCid,
-            progress: progress,
-          ),
-        );
+        .call(aid: detail.aid, cid: state.currentCid, progress: progress);
   }
 
   Future<void> toggleFollow() async {
@@ -90,9 +84,7 @@ class VideoDetailController extends _$VideoDetailController {
 
     final result = await ref
         .read(toggleVideoFollowWorkflowProvider)
-        .call(
-          ToggleVideoFollowCommand(followMid: detail.owner.mid, wasFollowed: wasFollowed),
-        );
+        .call(followMid: detail.owner.mid, wasFollowed: wasFollowed);
     if (result.isFailure) {
       state = state.copyWith(videoDetail: previousDetail);
     }
@@ -101,7 +93,7 @@ class VideoDetailController extends _$VideoDetailController {
   Future<void> _loadPlayUrl({required int aid, required int cid, required int qn}) async {
     final result = await ref
         .read(loadVideoPlayUrlWorkflowProvider)
-        .call(VideoPlayUrlCommand(aid: aid, cid: cid, quality: qn));
+        .call(aid: aid, cid: cid, quality: qn);
     state = result.when(
       success: (data) => state.copyWith(
         playUrl: data.playUrl,
