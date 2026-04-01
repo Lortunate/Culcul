@@ -25,6 +25,9 @@ sealed class PlayerUiState with _$PlayerUiState {
 
 @riverpod
 class PlayerController extends _$PlayerController {
+  static const Duration _candidateOpenTimeout = Duration(seconds: 8);
+  static const Duration _mediaReadyTimeout = Duration(seconds: 6);
+
   late final Player player;
   late final VideoController videoController;
 
@@ -104,7 +107,7 @@ class PlayerController extends _$PlayerController {
   }
 
   Future<void> loadVideo(
-    String url, {
+    List<String> urls, {
     Map<String, String>? httpHeaders,
     bool isQualitySwitch = false,
     bool autoPlay = true,
@@ -112,41 +115,81 @@ class PlayerController extends _$PlayerController {
     String? artist,
     String? coverUrl,
   }) async {
-    final media = Media(url, httpHeaders: httpHeaders);
-
-    if (!isQualitySwitch) {
-      final audioHandler = ref.read(audioHandlerProvider);
-      await audioHandler.updateMediaItem(
-        MediaItem(
-          id: url,
-          title: title ?? 'Unknown',
-          artist: artist,
-          artUri: coverUrl != null ? Uri.parse(coverUrl) : null,
-        ),
-      );
+    final candidates = urls
+        .map((url) => url.trim())
+        .where((url) => url.isNotEmpty)
+        .toList(growable: false);
+    if (candidates.isEmpty) {
+      throw ArgumentError.value(urls, 'urls', 'At least one playable url is required.');
     }
 
-    if (isQualitySwitch) {
-      final currentPos = player.state.position;
-      final wasPlaying = state.isPlaying;
+    final currentPos = player.state.position;
+    final wasPlaying = state.isPlaying;
 
-      await player.open(media, play: false);
+    Object? lastError;
+    StackTrace? lastStackTrace;
 
-      if (player.state.duration == Duration.zero) {
+    for (var i = 0; i < candidates.length; i++) {
+      final candidate = candidates[i];
+      final media = Media(candidate, httpHeaders: httpHeaders);
+
+      try {
+        if (isQualitySwitch) {
+          await _openMediaWithTimeout(media, play: false, ensureStarted: false);
+
+          await player.seek(currentPos);
+          if (wasPlaying) {
+            await player.play();
+          }
+        } else {
+          await _openMediaWithTimeout(media, play: autoPlay, ensureStarted: autoPlay);
+          final audioHandler = ref.read(audioHandlerProvider);
+          await audioHandler.updateMediaItem(
+            MediaItem(
+              id: candidate,
+              title: title ?? 'Unknown',
+              artist: artist,
+              artUri: coverUrl != null ? Uri.parse(coverUrl) : null,
+            ),
+          );
+        }
+        return;
+      } catch (error, stackTrace) {
+        lastError = error;
+        lastStackTrace = stackTrace;
+        debugPrint(
+          'PlayerController.loadVideo failed for candidate ${i + 1}/${candidates.length}: $error',
+        );
         try {
-          await player.stream.duration
-              .firstWhere((d) => d > Duration.zero)
-              .timeout(const Duration(seconds: 2));
+          await player.stop();
         } catch (_) {}
       }
-
-      await player.seek(currentPos);
-      if (wasPlaying) {
-        await player.play();
-      }
-    } else {
-      await player.open(media, play: autoPlay);
     }
+
+    if (lastError != null && lastStackTrace != null) {
+      Error.throwWithStackTrace(lastError!, lastStackTrace!);
+    }
+  }
+
+  Future<void> _openMediaWithTimeout(
+    Media media, {
+    required bool play,
+    required bool ensureStarted,
+  }) async {
+    await player.open(media, play: play).timeout(_candidateOpenTimeout);
+
+    if (!ensureStarted) {
+      return;
+    }
+
+    if (player.state.duration > Duration.zero || player.state.position > Duration.zero) {
+      return;
+    }
+
+    await Future.any([
+      player.stream.duration.firstWhere((d) => d > Duration.zero),
+      player.stream.position.firstWhere((p) => p > Duration.zero),
+    ]).timeout(_mediaReadyTimeout);
   }
 
   void toggleFullscreen() {

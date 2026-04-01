@@ -1,5 +1,6 @@
 import 'package:culcul/features/search/presentation/view_models/search_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -49,10 +50,11 @@ class SearchSuggestionView extends HookConsumerWidget {
           );
         },
         loading: () => _LoadingState(text: t.search.status.loading),
-        error: (error, _) => _ErrorState(
-          colorScheme: colorScheme,
-          theme: theme,
-          text: t.search.status.failed,
+        error: (error, stack) => AppErrorWidget(
+          error: error,
+          stackTrace: stack,
+          onRetry: () => ref.refresh(searchSuggestionsProvider(term)),
+          variant: AppErrorWidgetVariant.compact,
         ),
       ),
     );
@@ -254,44 +256,6 @@ class _EmptyState extends StatelessWidget {
             style: theme.textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
               fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ErrorState extends StatelessWidget {
-  final ColorScheme colorScheme;
-  final ThemeData theme;
-  final String text;
-
-  const _ErrorState({required this.colorScheme, required this.theme, required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: colorScheme.errorContainer.withValues(alpha: 0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.wifi_off_rounded,
-              size: 24,
-              color: colorScheme.error.withValues(alpha: 0.5),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            text,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
             ),
           ),
         ],

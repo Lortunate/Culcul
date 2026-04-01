@@ -167,9 +167,15 @@
       "presets": {
         "official_direct": "官方直連",
         "dns_backup": "DNS 備援",
+        "app_backup": "App 介面",
+        "app_dns_backup": "App 介面備援",
         "cdn_cos": "CDN COS",
         "cdn_ks3": "CDN KS3",
-        "cdn_ali": "CDN 阿里"
+        "cdn_ali": "CDN 阿里",
+        "cdn_hw": "CDN 華為雲",
+        "cdn_bos": "CDN 百度雲",
+        "cdn_tencent": "CDN 騰訊雲",
+        "cdn_akam": "CDN Akamai"
       }
     }
   },

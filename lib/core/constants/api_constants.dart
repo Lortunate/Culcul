@@ -46,8 +46,7 @@ class ApiConstants {
   static const String cookieRefresh = '/x/passport-login/web/cookie/refresh';
 
   // Network Configuration
-  static const String userAgent =
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36';
+  static const String userAgent = "Mozilla/5.0 (Windows NT 11.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.1.7448.156 Safari/537.36";
   static const String referer = 'https://www.bilibili.com/';
 
   // Cache Configuration

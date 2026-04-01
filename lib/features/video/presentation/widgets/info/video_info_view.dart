@@ -6,6 +6,7 @@ import 'package:culcul/features/video/presentation/widgets/info/video_descriptio
 import 'package:culcul/features/video/presentation/widgets/info/video_parts.dart';
 import 'package:culcul/features/video/presentation/widgets/info/video_recommendation.dart';
 import 'package:culcul/features/video/presentation/widgets/info/video_stats.dart';
+import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -27,7 +28,10 @@ class VideoInfoView extends ConsumerWidget {
     }
 
     if (state.videoDetail == null) {
-      return Center(child: Text(t.common.error));
+      return AppErrorWidget(
+        error: state.error ?? Exception(t.common.error),
+        onRetry: notifier.load,
+      );
     }
 
     final d = state.videoDetail!;

@@ -27,7 +27,7 @@ sealed class Durl with _$Durl {
     required int length,
     required int size,
     required String url,
-    @Default([]) List<String> backupUrl,
+    @JsonKey(name: 'backup_url') @Default([]) List<String> backupUrl,
   }) = _Durl;
 
   factory Durl.fromJson(Map<String, dynamic> json) => _$DurlFromJson(json);

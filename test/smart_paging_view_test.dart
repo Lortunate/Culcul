@@ -1,5 +1,6 @@
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/widgets/app_empty_state_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -68,5 +69,46 @@ void main() {
     // Should be back to Data
     expect(find.text('Item 2'), findsOneWidget);
     expect(find.byType(EasyRefresh), findsOneWidget);
+  });
+
+  testWidgets('SmartPagingView renders AppEmptyStateWidget for empty data', (
+    tester,
+  ) async {
+    final provider = NotifierProvider<MyNotifier, AsyncValue<List<String>>>(
+      MyNotifier.new,
+    );
+    final container = ProviderContainer();
+    addTearDown(container.dispose);
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: TranslationProvider(
+          child: MaterialApp(
+            home: HookConsumer(
+              builder: (context, ref, child) {
+                final asyncValue = ref.watch(provider);
+                return SmartPagingView<String>(
+                  asyncValue: asyncValue,
+                  builder: (context, items) => ListView.builder(
+                    itemCount: items.length,
+                    itemBuilder: (c, i) => Text(items[i]),
+                  ),
+                  skeleton: const Text('Skeleton'),
+                  onRefresh: () async {},
+                  onLoadMore: () async {},
+                  provider: provider,
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    container.read(provider.notifier).setState(const AsyncValue.data([]));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AppEmptyStateWidget), findsOneWidget);
   });
 }

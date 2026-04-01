@@ -1,5 +1,6 @@
 import 'package:culcul/core/network/bilibili_acceleration.dart';
-import 'package:culcul/ui/widgets/app_clickable.dart';
+import 'package:culcul/features/settings/presentation/widgets/settings_group.dart';
+import 'package:culcul/features/settings/presentation/widgets/settings_tile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -21,25 +22,29 @@ class NetworkModeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _Section(
+    return SettingsGroup(
       title: title,
-      child: _SectionCard(
-        child: CupertinoSlidingSegmentedControl<BiliAccelerationMode>(
-          groupValue: currentMode,
-          padding: const EdgeInsets.all(3),
-          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
-          thumbColor: Theme.of(context).colorScheme.surface,
-          children: {
-            BiliAccelerationMode.auto: _segmentText(context, autoLabel),
-            BiliAccelerationMode.manual: _segmentText(context, manualLabel),
-          },
-          onValueChanged: (mode) {
-            if (mode != null) {
-              onSelect(mode);
-            }
-          },
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: CupertinoSlidingSegmentedControl<BiliAccelerationMode>(
+            groupValue: currentMode,
+            padding: const EdgeInsets.all(3),
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+            thumbColor: Theme.of(context).colorScheme.surface,
+            children: {
+              BiliAccelerationMode.auto: _segmentText(context, autoLabel),
+              BiliAccelerationMode.manual: _segmentText(context, manualLabel),
+            },
+            onValueChanged: (mode) {
+              if (mode != null) {
+                onSelect(mode);
+              }
+            },
+          ),
         ),
-      ),
+      ],
     );
   }
 
@@ -78,26 +83,40 @@ class NetworkPresetSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _Section(
-      title: title,
-      description: hintText,
-      child: _SectionCard(
-        child: Column(
-          children: [
-            for (var i = 0; i < kBiliAccelerationPresets.length; i++) ...[
-              _PresetTile(
-                key: ValueKey<String>('preset_tile_${kBiliAccelerationPresets[i].id}'),
-                title: titleBuilder(kBiliAccelerationPresets[i].id),
-                subtitle: latencyBuilder(latencies[kBiliAccelerationPresets[i].id]),
-                isActive: kBiliAccelerationPresets[i].id == activePresetId,
-                activeTag: activeTag,
-                onTap: () => onTapPreset(kBiliAccelerationPresets[i].id),
-              ),
-              if (i < kBiliAccelerationPresets.length - 1) const SizedBox(height: 4),
-            ],
-          ],
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        SettingsGroup(
+          title: title,
+          children: kBiliAccelerationPresets.map((preset) {
+            final isActive = preset.id == activePresetId;
+            return SettingsTile(
+              key: ValueKey<String>('preset_tile_${preset.id}'),
+              title: titleBuilder(preset.id),
+              subtitle: isActive 
+                  ? '${latencyBuilder(latencies[preset.id])} · $activeTag' 
+                  : latencyBuilder(latencies[preset.id]),
+              showArrow: false,
+              trailing: isActive
+                  ? Icon(Icons.check_rounded, color: colorScheme.primary)
+                  : null,
+              onTap: () => onTapPreset(preset.id),
+            );
+          }).toList(),
         ),
-      ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: Text(
+            hintText,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -133,214 +152,48 @@ class NetworkOperationsSection extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return _Section(
+    return SettingsGroup(
       title: title,
-      child: _SectionCard(
-        child: Column(
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              decoration: BoxDecoration(
-                color: colorScheme.surface.withValues(alpha: 0.65),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(lockTitle),
-                        const SizedBox(height: 4),
-                        Text(
-                          lockSubtitle,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Switch(
-                    key: const ValueKey<String>('network_lock_switch'),
-                    value: isLocked,
-                    onChanged: onChangedLock,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              key: const ValueKey<String>('network_test_row'),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              decoration: BoxDecoration(
-                color: colorScheme.surface.withValues(alpha: 0.65),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(testTitle),
-                        const SizedBox(height: 4),
-                        Text(
-                          testValue,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  SizedBox(
-                    width: 116,
-                    child: FilledButton(
-                      key: const ValueKey<String>('network_test_button'),
-                      onPressed: isTesting ? null : onTapTest,
-                      style: FilledButton.styleFrom(
-                        minimumSize: const Size.fromHeight(42),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                      child: Text(testButtonLabel),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _Section extends StatelessWidget {
-  const _Section({required this.title, this.description, required this.child});
-
-  final String title;
-  final String? description;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(4, 0, 4, 8),
-            child: Text(
-              title,
-              style: theme.textTheme.labelLarge?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+      children: [
+        SettingsTile(
+          title: lockTitle,
+          subtitle: lockSubtitle,
+          showArrow: false,
+          onTap: () => onChangedLock(!isLocked),
+          trailing: Switch(
+            key: const ValueKey<String>('network_lock_switch'),
+            value: isLocked,
+            onChanged: onChangedLock,
           ),
-          if (description != null)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(4, 0, 4, 8),
+        ),
+        SettingsTile(
+          key: const ValueKey<String>('network_test_row'),
+          title: testTitle,
+          subtitle: testValue,
+          showArrow: false,
+          trailing: SizedBox(
+            width: 116,
+            height: 38,
+            child: FilledButton(
+              key: const ValueKey<String>('network_test_button'),
+              onPressed: isTesting ? null : onTapTest,
+              style: FilledButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
               child: Text(
-                description!,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
+                testButtonLabel,
+                style: theme.textTheme.labelLarge?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: isTesting ? colorScheme.onSurface.withValues(alpha: 0.38) : colorScheme.onPrimary,
                 ),
               ),
             ),
-          child,
-        ],
-      ),
-    );
-  }
-}
-
-class _PresetTile extends StatelessWidget {
-  const _PresetTile({
-    super.key,
-    required this.title,
-    required this.subtitle,
-    required this.isActive,
-    required this.activeTag,
-    required this.onTap,
-  });
-
-  final String title;
-  final String subtitle;
-  final bool isActive;
-  final String activeTag;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final titleStyle = theme.textTheme.bodyLarge?.copyWith(
-      color: isActive ? colorScheme.primary : colorScheme.onSurface,
-      fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
-    );
-
-    return AppClickable(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: isActive
-              ? colorScheme.primaryContainer.withValues(alpha: 0.4)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
+          ),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-        child: Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: titleStyle),
-                  const SizedBox(height: 4),
-                  Text(
-                    isActive ? '$subtitle · $activeTag' : subtitle,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Icon(
-              isActive ? Icons.check_rounded : Icons.chevron_right_rounded,
-              color: isActive ? colorScheme.primary : colorScheme.outline,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SectionCard extends StatelessWidget {
-  const _SectionCard({required this.child});
-
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: child,
+      ],
     );
   }
 }

@@ -1,10 +1,12 @@
 import 'package:culcul/core/constants/api_constants.dart';
+import 'package:culcul/core/network/bilibili_acceleration.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AppNetworkImage extends StatelessWidget {
+class AppNetworkImage extends ConsumerWidget {
   final String url;
   final double? width;
   final double? height;
@@ -64,7 +66,7 @@ class AppNetworkImage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -72,12 +74,19 @@ class AppNetworkImage extends StatelessWidget {
       return _buildErrorWidget(colorScheme);
     }
 
+    final accelerationState = ref.watch(bilibiliAccelerationControllerProvider);
+    final activePreset = biliPresetById(accelerationState.activePresetId);
+
+    final rawUrl = FormatUtils.formatImageUrl(url);
+    final rewrittenUri = rewriteUriWithPreset(Uri.parse(rawUrl), activePreset);
+    final finalUrl = rewrittenUri.toString();
+
     final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
     final cacheW = _resolveCacheSize(memCacheWidth, width, devicePixelRatio);
     final cacheH = _resolveCacheSize(memCacheHeight, height, devicePixelRatio);
 
     return ExtendedImage.network(
-      FormatUtils.formatImageUrl(url),
+      finalUrl,
       headers: const {
         'Referer': ApiConstants.referer,
         'User-Agent': ApiConstants.userAgent,

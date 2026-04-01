@@ -264,6 +264,16 @@ const List<BiliAccelerationPreset> kBiliAccelerationPresets = [
     apiBaseUrl: 'https://api.biliapi.net',
   ),
   BiliAccelerationPreset(
+    id: 'app_backup',
+    displayName: 'App API',
+    apiBaseUrl: 'https://app.bilibili.com',
+  ),
+  BiliAccelerationPreset(
+    id: 'app_dns_backup',
+    displayName: 'App DNS Backup',
+    apiBaseUrl: 'https://app.biliapi.net',
+  ),
+  BiliAccelerationPreset(
     id: 'cdn_cos',
     displayName: 'CDN COS',
     apiBaseUrl: 'https://api.bilibili.com',
@@ -283,6 +293,34 @@ const List<BiliAccelerationPreset> kBiliAccelerationPresets = [
     apiBaseUrl: 'https://api.bilibili.com',
     videoCdnHost: 'upos-sz-mirrorali.bilivideo.com',
     imageCdnHost: 'i2.hdslb.com',
+  ),
+  BiliAccelerationPreset(
+    id: 'cdn_hw',
+    displayName: 'CDN HW',
+    apiBaseUrl: 'https://api.bilibili.com',
+    videoCdnHost: 'upos-sz-mirrorhw.bilivideo.com',
+    imageCdnHost: 'i0.hdslb.com',
+  ),
+  BiliAccelerationPreset(
+    id: 'cdn_bos',
+    displayName: 'CDN BOS',
+    apiBaseUrl: 'https://api.bilibili.com',
+    videoCdnHost: 'upos-sz-mirrorbos.bilivideo.com',
+    imageCdnHost: 'i1.hdslb.com',
+  ),
+  BiliAccelerationPreset(
+    id: 'cdn_tencent',
+    displayName: 'CDN TENCENT',
+    apiBaseUrl: 'https://api.bilibili.com',
+    videoCdnHost: 'upos-sz-mirrortencent.bilivideo.com',
+    imageCdnHost: 'i2.hdslb.com',
+  ),
+  BiliAccelerationPreset(
+    id: 'cdn_akam',
+    displayName: 'CDN AKAMAI',
+    apiBaseUrl: 'https://api.bilibili.com',
+    videoCdnHost: 'upos-hz-mirrorakam.akamaized.net',
+    imageCdnHost: 'i0.hdslb.com',
   ),
 ];
 
@@ -521,9 +559,12 @@ class BilibiliAccelerationController extends Notifier<BiliAccelerationState> {
     final latencyMap = <String, BiliLatencySnapshot>{};
     final stopwatch = Stopwatch()..start();
     try {
-      for (final preset in kBiliAccelerationPresets) {
-        latencyMap[preset.id] = await _probePreset(probeDio, preset);
-      }
+      final futures = kBiliAccelerationPresets.map((preset) async {
+        final snapshot = await _probePreset(probeDio, preset);
+        return MapEntry(preset.id, snapshot);
+      });
+      final entries = await Future.wait(futures);
+      latencyMap.addEntries(entries);
     } finally {
       stopwatch.stop();
       probeDio.close(force: true);
@@ -990,22 +1031,26 @@ class BilibiliAccelerationController extends Notifier<BiliAccelerationState> {
     BiliAccelerationPreset preset,
   ) async {
     final apiUri = Uri.parse(preset.apiBaseUrl).resolve(ApiConstants.nav);
-    final apiLatencyMs = await _probeUriLatency(probeDio, apiUri);
+    final apiLatencyMsFuture = _probeUriLatency(probeDio, apiUri);
 
-    int? cdnLatencyMs;
+    Future<int?> cdnLatencyMsFuture = Future.value(null);
     if (preset.videoCdnHost != null) {
-      cdnLatencyMs = await _probeUriLatency(
+      cdnLatencyMsFuture = _probeUriLatency(
         probeDio,
         Uri.https(preset.videoCdnHost!, '/'),
       );
     } else if (preset.imageCdnHost != null) {
-      cdnLatencyMs = await _probeUriLatency(
+      cdnLatencyMsFuture = _probeUriLatency(
         probeDio,
         Uri.https(preset.imageCdnHost!, '/'),
       );
     }
 
-    return BiliLatencySnapshot(apiLatencyMs: apiLatencyMs, cdnLatencyMs: cdnLatencyMs);
+    final results = await Future.wait([apiLatencyMsFuture, cdnLatencyMsFuture]);
+    return BiliLatencySnapshot(
+      apiLatencyMs: results[0],
+      cdnLatencyMs: results[1],
+    );
   }
 
   Future<int?> _probeUriLatency(Dio probeDio, Uri uri) async {
@@ -1032,7 +1077,7 @@ class BilibiliAccelerationController extends Notifier<BiliAccelerationState> {
 }
 
 bool _isBiliVideoHost(String host) {
-  return host.endsWith('.bilivideo.com') || host.endsWith('.bilivideo.cn');
+  return host.endsWith('.bilivideo.com') || host.endsWith('.bilivideo.cn') || host.endsWith('.akamaized.net');
 }
 
-bool _isHdslbImageHost(String host) => RegExp(r'^i[0-2]\.hdslb\.com$').hasMatch(host);
+bool _isHdslbImageHost(String host) => RegExp(r'^i\d\.hdslb\.com$').hasMatch(host);

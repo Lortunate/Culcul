@@ -2,6 +2,8 @@ import 'package:culcul/features/search/presentation/view_models/search_view_mode
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/search/presentation/widgets/hot_search_skeleton.dart';
 import 'package:culcul/ui/widgets/app_clickable.dart';
+import 'package:culcul/ui/widgets/app_empty_state_widget.dart';
+import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/app_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -13,8 +15,6 @@ class HotSearchSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
     final trendingAsync = ref.watch(trendingRankingProvider);
 
@@ -30,9 +30,7 @@ class HotSearchSection extends ConsumerWidget {
             if (items.isEmpty) {
               return SizedBox(
                 height: 120,
-                child: Center(
-                  child: Text(t.common.no_content, style: theme.textTheme.bodyMedium),
-                ),
+                child: AppEmptyStateWidget(message: t.common.no_content, compact: true),
               );
             }
             return GridView.builder(
@@ -58,18 +56,11 @@ class HotSearchSection extends ConsumerWidget {
           loading: () => const HotSearchSkeleton(),
           error: (error, stack) => SizedBox(
             height: 120,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error_outline_rounded, color: colorScheme.error, size: 24),
-                  const SizedBox(height: 8),
-                  Text(
-                    t.common.error,
-                    style: theme.textTheme.bodyMedium?.copyWith(color: colorScheme.error),
-                  ),
-                ],
-              ),
+            child: AppErrorWidget(
+              error: error,
+              stackTrace: stack,
+              onRetry: () => ref.refresh(trendingRankingProvider),
+              variant: AppErrorWidgetVariant.compact,
             ),
           ),
         ),

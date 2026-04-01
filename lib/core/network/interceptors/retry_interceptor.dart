@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:culcul/core/network/bilibili_acceleration.dart';
 import 'package:dio/dio.dart';
@@ -25,7 +26,8 @@ class RetryInterceptor extends Interceptor {
     final retries = extra['retries'] as int? ?? 0;
 
     if (retries < maxRetries && _shouldRetry(err)) {
-      await Future.delayed(Duration(milliseconds: retryInterval));
+      final delayMs = retryInterval * pow(2, retries);
+      await Future.delayed(Duration(milliseconds: delayMs.toInt()));
 
       try {
         extra['retries'] = retries + 1;

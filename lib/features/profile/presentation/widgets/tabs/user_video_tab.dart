@@ -135,6 +135,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
           error: (err, stack) => SliverFillRemaining(
             child: AppErrorWidget(
               error: err,
+              stackTrace: stack,
               onRetry: () =>
                   ref.refresh(userSpaceVideosProvider(widget.mid, order: _order)),
             ),

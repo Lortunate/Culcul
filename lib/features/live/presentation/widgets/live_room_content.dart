@@ -17,7 +17,7 @@ class LiveRoomContent extends ConsumerWidget {
     if (state.isLoading) return const Center(child: CircularProgressIndicator());
     if (state.error != null) {
       return _LiveRoomError(
-        error: state.error,
+        error: state.error!,
         onRetry: () => ref.read(liveRoomControllerProvider(roomId).notifier).refresh(),
       );
     }
@@ -104,7 +104,7 @@ class _DanmakuTopGradient extends StatelessWidget {
 class _LiveRoomError extends StatelessWidget {
   const _LiveRoomError({required this.error, required this.onRetry});
 
-  final Object? error;
+  final Object error;
   final VoidCallback onRetry;
 
   @override

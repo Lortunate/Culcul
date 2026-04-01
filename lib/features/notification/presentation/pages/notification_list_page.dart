@@ -96,7 +96,6 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
           );
         },
         error: (e, s) {
-          debugPrint('NotificationListPage Error: $e\n$s');
           return AppErrorWidget(
             error: e,
             stackTrace: s,

@@ -97,14 +97,11 @@ class SearchResultTab extends HookConsumerWidget {
               );
             },
             loading: () => const SearchResultSkeleton(),
-            error: (error, stack) {
-              debugPrint('SearchResultView Error: $error\n$stack');
-              return AppErrorWidget(
-                error: error,
-                stackTrace: stack,
-                onRetry: () => ref.refresh(provider),
-              );
-            },
+            error: (error, stack) => AppErrorWidget(
+              error: error,
+              stackTrace: stack,
+              onRetry: () => ref.refresh(provider),
+            ),
           ),
         ),
       ],

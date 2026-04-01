@@ -4,6 +4,8 @@ import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 
 class ErrorHandler {
+  static final Set<String> _loggedErrorSignatures = <String>{};
+
   static String getErrorMessage(BuildContext context, dynamic error) {
     final t = Translations.of(context);
 
@@ -37,6 +39,66 @@ class ErrorHandler {
       return error.toString();
     }
   }
+
+  static String getShortErrorMessage(
+    BuildContext context,
+    Object error, {
+    int maxLength = 120,
+  }) {
+    final fallback = Translations.of(context).common.error;
+    final full = getErrorMessage(context, error).trim();
+    if (full.isEmpty) return fallback;
+
+    final firstLine = full.split(RegExp(r'\r?\n')).first.trim();
+    if (firstLine.isEmpty) return fallback;
+    if (firstLine.length <= maxLength) return firstLine;
+    if (maxLength <= 3) return firstLine.substring(0, maxLength);
+    return '${firstLine.substring(0, maxLength - 3)}...';
+  }
+
+  static String buildErrorDetails(
+    BuildContext context,
+    Object error, {
+    StackTrace? stackTrace,
+  }) {
+    final t = Translations.of(context);
+    final mappedMessage = getErrorMessage(context, error);
+    final details = StringBuffer()
+      ..writeln('${t.common.error}: $mappedMessage')
+      ..writeln('Type: ${error.runtimeType}')
+      ..writeln('Raw: $error');
+
+    if (stackTrace != null) {
+      details
+        ..writeln()
+        ..writeln('${t.error.stack_trace}:')
+        ..writeln(stackTrace);
+    }
+
+    return details.toString().trimRight();
+  }
+
+  static void logError(
+    Object error, {
+    StackTrace? stackTrace,
+    String source = 'AppErrorWidget',
+  }) {
+    final signature = '${error.runtimeType}|$error';
+    if (!_loggedErrorSignatures.add(signature)) return;
+
+    debugPrint('[$source] $signature');
+    if (stackTrace != null) {
+      debugPrint('[$source][stack]\n$stackTrace');
+    }
+  }
+
+  @visibleForTesting
+  static void resetLoggedErrorsForTest() {
+    _loggedErrorSignatures.clear();
+  }
+
+  @visibleForTesting
+  static int get loggedErrorCountForTest => _loggedErrorSignatures.length;
 
   static void showErrorSnackBar(
     BuildContext context,

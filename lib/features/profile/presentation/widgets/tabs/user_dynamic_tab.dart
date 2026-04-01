@@ -68,6 +68,7 @@ class _UserDynamicTabState extends ConsumerState<UserDynamicTab>
           error: (err, stack) => SliverFillRemaining(
             child: AppErrorWidget(
               error: err,
+              stackTrace: stack,
               onRetry: () => ref.refresh(userDynamicProvider(widget.mid)),
             ),
           ),

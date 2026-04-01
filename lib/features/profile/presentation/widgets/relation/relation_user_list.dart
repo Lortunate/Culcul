@@ -39,7 +39,7 @@ class RelationUserList extends StatelessWidget {
         if (error is AppException && error.code == 22115) {
           return const PrivacyErrorWidget();
         }
-        return AppErrorWidget(error: error, onRetry: onRefresh);
+        return AppErrorWidget(error: error, stackTrace: stack, onRetry: onRefresh);
       },
       builder: (context, list) {
         return ListView.separated(

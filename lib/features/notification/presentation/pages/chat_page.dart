@@ -6,6 +6,7 @@ import 'package:culcul/features/profile/presentation/view_models/profile_view_mo
 import 'package:culcul/features/notification/presentation/widgets/chat_input.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_message_list.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_skeletons.dart';
+import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -58,7 +59,11 @@ class ChatPage extends HookConsumerWidget {
                 scrollController: scrollController,
                 onLoadMore: notifier.loadMore,
               ),
-              error: (err, stack) => Center(child: Text('Error: $err')),
+              error: (err, stack) => AppErrorWidget(
+                error: err,
+                stackTrace: stack,
+                onRetry: () => ref.refresh(provider),
+              ),
               loading: () => const ChatMessageSkeletonList(),
             ),
           ),

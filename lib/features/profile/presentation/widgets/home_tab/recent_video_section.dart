@@ -47,6 +47,7 @@ class RecentVideoSection extends ConsumerWidget {
       },
       error: (err, stack) => _ErrorState(
         error: err,
+        stackTrace: stack,
         onRetry: () => ref.refresh(userSpaceVideosProvider(mid, order: 'pubdate')),
       ),
       loading: () => const _LoadingGrid(
@@ -175,16 +176,21 @@ class _EmptyState extends StatelessWidget {
 
 class _ErrorState extends StatelessWidget {
   final Object error;
+  final StackTrace? stackTrace;
   final VoidCallback onRetry;
 
-  const _ErrorState({required this.error, required this.onRetry});
+  const _ErrorState({
+    required this.error,
+    required this.stackTrace,
+    required this.onRetry,
+  });
 
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: AppErrorWidget(error: error, onRetry: onRetry),
+        child: AppErrorWidget(error: error, stackTrace: stackTrace, onRetry: onRetry),
       ),
     );
   }

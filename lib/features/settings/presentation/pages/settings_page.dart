@@ -1,10 +1,11 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/network/bilibili_acceleration.dart';
 import 'package:culcul/features/settings/presentation/view_models/settings_view_model.dart';
+import 'package:culcul/features/settings/presentation/widgets/settings_group.dart';
 import 'package:culcul/features/settings/presentation/widgets/settings_selection_item.dart';
 import 'package:culcul/features/settings/presentation/widgets/settings_selection_sheet.dart';
+import 'package:culcul/features/settings/presentation/widgets/settings_tile.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -29,49 +30,58 @@ class SettingsPage extends ConsumerWidget {
     final activePreset = biliPresetById(accelerationState.activePresetId);
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: colorScheme.surfaceContainerLowest,
       appBar: _SettingsAppBar(title: t.settings.title),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: <Widget>[
-          _SettingsSectionLabel(title: t.settings.sections.general),
-          _SettingsListRow(
-            key: const ValueKey<String>('settings_row_language'),
-            title: t.settings.language,
-            value: _getLanguageName(t, LocaleSettings.currentLocale),
-            onTap: () => _showLanguageSelector(context),
+          SettingsGroup(
+            children: [
+              SettingsTile(
+                key: const ValueKey<String>('settings_row_appearance'),
+                title: t.settings.appearance,
+                icon: Icons.palette_outlined,
+                value: _getThemeName(t, themeMode),
+                onTap: () => _showThemeSelector(context, ref, themeMode),
+              ),
+              SettingsTile(
+                key: const ValueKey<String>('settings_row_language'),
+                title: t.settings.language,
+                icon: Icons.language_outlined,
+                value: _getLanguageName(t, LocaleSettings.currentLocale),
+                onTap: () => _showLanguageSelector(context),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          _SettingsSectionLabel(title: t.settings.sections.appearance),
-          _SettingsListRow(
-            key: const ValueKey<String>('settings_row_appearance'),
-            title: t.settings.appearance,
-            value: _getThemeName(t, themeMode),
-            onTap: () => _showThemeSelector(context, ref, themeMode),
+          const SizedBox(height: 24),
+          SettingsGroup(
+            children: [
+              SettingsTile(
+                key: const ValueKey<String>('settings_row_network'),
+                title: t.settings.network.page_title,
+                icon: Icons.speed_outlined,
+                value: _getPresetName(t, activePreset.id),
+                onTap: () => const NetworkSettingsRoute().push(context),
+              ),
+              SettingsTile(
+                key: const ValueKey<String>('settings_row_cache'),
+                title: t.settings.clear_cache,
+                icon: Icons.cleaning_services_outlined,
+                value: isClearingCache ? '...' : cacheSize,
+                onTap: () => _handleClearCache(context, ref),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
-          _SettingsSectionLabel(title: t.settings.sections.network),
-          _SettingsListRow(
-            key: const ValueKey<String>('settings_row_network'),
-            title: t.settings.network.page_title,
-            value: _getPresetName(t, activePreset.id),
-            onTap: () => const NetworkSettingsRoute().push(context),
-          ),
-          const SizedBox(height: 16),
-          _SettingsSectionLabel(title: t.settings.sections.storage),
-          _SettingsListRow(
-            key: const ValueKey<String>('settings_row_cache'),
-            title: t.settings.clear_cache,
-            value: isClearingCache ? '...' : cacheSize,
-            onTap: () => _handleClearCache(context, ref),
-          ),
-          const SizedBox(height: 16),
-          _SettingsSectionLabel(title: t.settings.sections.about),
-          _SettingsListRow(
-            key: const ValueKey<String>('settings_row_version'),
-            title: t.settings.version,
-            value: 'v1.0.0',
-            showArrow: false,
+          const SizedBox(height: 24),
+          SettingsGroup(
+            children: [
+              SettingsTile(
+                key: const ValueKey<String>('settings_row_version'),
+                title: t.settings.sections.about,
+                icon: Icons.info_outline_rounded,
+                onTap: () => const AboutRoute().push(context),
+              ),
+            ],
           ),
           const SizedBox(height: 20),
         ],
@@ -99,9 +109,15 @@ class SettingsPage extends ConsumerWidget {
     return switch (presetId) {
       'official_direct' => t.settings.network.presets.official_direct,
       'dns_backup' => t.settings.network.presets.dns_backup,
+      'app_backup' => t.settings.network.presets.app_backup,
+      'app_dns_backup' => t.settings.network.presets.app_dns_backup,
       'cdn_cos' => t.settings.network.presets.cdn_cos,
       'cdn_ks3' => t.settings.network.presets.cdn_ks3,
       'cdn_ali' => t.settings.network.presets.cdn_ali,
+      'cdn_hw' => t.settings.network.presets.cdn_hw,
+      'cdn_bos' => t.settings.network.presets.cdn_bos,
+      'cdn_tencent' => t.settings.network.presets.cdn_tencent,
+      'cdn_akam' => t.settings.network.presets.cdn_akam,
       _ => presetId,
     };
   }
@@ -151,6 +167,7 @@ class SettingsPage extends ConsumerWidget {
     showModalBottomSheet(
       context: context,
       backgroundColor: colorScheme.surface,
+      clipBehavior: Clip.antiAlias,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -189,98 +206,10 @@ class _SettingsAppBar extends StatelessWidget implements PreferredSizeWidget {
         style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
       ),
       centerTitle: true,
-      backgroundColor: colorScheme.surface,
+      backgroundColor: colorScheme.surfaceContainerLowest,
       leading: IconButton(
         icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
         onPressed: () => context.pop(),
-      ),
-    );
-  }
-}
-
-class _SettingsSectionLabel extends StatelessWidget {
-  const _SettingsSectionLabel({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: Text(
-        title,
-        style: theme.textTheme.labelLarge?.copyWith(
-          color: colorScheme.onSurfaceVariant,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-}
-
-class _SettingsListRow extends StatelessWidget {
-  const _SettingsListRow({
-    super.key,
-    required this.title,
-    this.value,
-    this.onTap,
-    this.showArrow = true,
-  });
-
-  final String title;
-  final String? value;
-  final VoidCallback? onTap;
-  final bool showArrow;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return AppClickable(
-      onTap: onTap,
-      child: Container(
-        constraints: const BoxConstraints(minHeight: 58),
-        margin: const EdgeInsets.only(top: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerLow,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                title,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            if (value != null)
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: Text(
-                  value!,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontSize: 13,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-            if (showArrow) ...[
-              const SizedBox(width: 6),
-              Icon(
-                Icons.chevron_right_rounded,
-                size: 18,
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ],
-          ],
-        ),
       ),
     );
   }

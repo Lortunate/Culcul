@@ -34,6 +34,7 @@ class SystemNotificationPage extends ConsumerWidget {
         },
         error: (err, stack) => AppErrorWidget(
           error: err,
+          stackTrace: stack,
           onRetry: () => ref.refresh(systemNotificationListProvider),
         ),
         loading: () => const Center(child: CircularProgressIndicator()),

@@ -40,7 +40,11 @@ class _PagingContent<T> extends StatelessWidget {
         key: const ValueKey('paging_empty'),
         child:
             emptyBuilder?.call(context) ??
-            AppErrorWidget(message: emptyText ?? t.common.no_content, onRetry: onRefresh),
+            AppEmptyStateWidget(
+              message: emptyText ?? t.common.no_content,
+              onAction: onRefresh,
+              actionLabel: t.common.retry,
+            ),
       );
     }
 

@@ -26,18 +26,16 @@ sealed class AuthState with _$AuthState {
 class Auth extends _$Auth {
   @override
   AuthState build() {
-    unawaited(_init());
-    return const AuthState();
+    Future<void>.microtask(_init);
+    return const AuthState(isLoading: true);
   }
 
   Future<void> _init() async {
-    state = state.copyWith(isLoading: true, error: null);
-
     final repository = ref.read(authRepositoryProvider);
     final cachedUser = repository.getCachedUser();
     final refreshedResult = await repository.getCurrentUser();
     final user = refreshedResult.dataOrNull ?? cachedUser;
-    state = state.copyWith(isLoggedIn: user != null, user: user, isLoading: false);
+    state = AuthState(isLoggedIn: user != null, user: user, isLoading: false);
   }
 
   Future<List<CountryCode>> getCountryList() async {

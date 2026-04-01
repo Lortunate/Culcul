@@ -4,6 +4,8 @@ import 'package:culcul/features/search/presentation/widgets/items/search_bangumi
 import 'package:culcul/features/search/presentation/widgets/items/search_topic_item.dart';
 import 'package:culcul/features/search/presentation/widgets/items/search_user_item.dart';
 import 'package:culcul/features/search/presentation/widgets/items/search_video_item.dart';
+import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/widgets/app_empty_state_widget.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +14,7 @@ class SearchResultList extends StatelessWidget {
   final bool hasMore;
   final bool isLoadingMore;
   final VoidCallback onLoadMore;
-  final VoidCallback? onRetry;
+  final VoidCallback onRetry;
   final Object? error;
   final StackTrace? stackTrace;
 
@@ -22,13 +24,15 @@ class SearchResultList extends StatelessWidget {
     required this.hasMore,
     required this.isLoadingMore,
     required this.onLoadMore,
-    this.onRetry,
+    required this.onRetry,
     this.error,
     this.stackTrace,
   });
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
+
     if (error != null) {
       return Center(
         child: AppErrorWidget(error: error!, stackTrace: stackTrace, onRetry: onRetry),
@@ -36,7 +40,7 @@ class SearchResultList extends StatelessWidget {
     }
 
     if (items.isEmpty) {
-      return const Center(child: AppErrorWidget(message: 'No results found'));
+      return Center(child: AppEmptyStateWidget(message: t.search.status.empty));
     }
 
     return NotificationListener<ScrollNotification>(

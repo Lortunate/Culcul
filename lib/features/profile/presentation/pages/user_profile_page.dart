@@ -52,7 +52,11 @@ class UserProfilePage extends HookConsumerWidget {
               onRefresh: () => ref.refresh(provider.future),
             ),
             error: (err, stack) => Center(
-              child: AppErrorWidget(error: err, onRetry: () => ref.refresh(provider)),
+              child: AppErrorWidget(
+                error: err,
+                stackTrace: stack,
+                onRetry: () => ref.refresh(provider),
+              ),
             ),
             loading: () => const Center(child: CircularProgressIndicator()),
           ),

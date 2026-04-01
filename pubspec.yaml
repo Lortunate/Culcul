@@ -59,6 +59,7 @@ dependencies:
   pointycastle: ^3.9.1
   audio_service: ^0.18.18
   flutter_spinkit: ^5.2.2
+  dio_http2_adapter: ^2.7.0
 
 dev_dependencies:
   flutter_test:

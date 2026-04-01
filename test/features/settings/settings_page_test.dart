@@ -61,9 +61,9 @@ void main() {
       routes: [
         GoRoute(
           path: '/settings',
-          builder: (_, __) => const SettingsPage(),
+          builder: (_, _) => const SettingsPage(),
           routes: [
-            GoRoute(path: 'network', builder: (_, __) => const NetworkSettingsPage()),
+            GoRoute(path: 'network', builder: (_, _) => const NetworkSettingsPage()),
           ],
         ),
       ],

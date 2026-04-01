@@ -194,7 +194,10 @@ class LoginRoute extends GoRouteData with $LoginRoute {
 
 @TypedGoRoute<SettingsRoute>(
   path: '/settings',
-  routes: [TypedGoRoute<NetworkSettingsRoute>(path: 'network')],
+  routes: [
+    TypedGoRoute<NetworkSettingsRoute>(path: 'network'),
+    TypedGoRoute<AboutRoute>(path: 'about'),
+  ],
 )
 class SettingsRoute extends GoRouteData with $SettingsRoute {
   const SettingsRoute();
@@ -214,6 +217,18 @@ class NetworkSettingsRoute extends GoRouteData with $NetworkSettingsRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       buildNetworkSettingsRoutePage();
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
+  }
+}
+
+class AboutRoute extends GoRouteData with $AboutRoute {
+  const AboutRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => buildAboutRoutePage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {

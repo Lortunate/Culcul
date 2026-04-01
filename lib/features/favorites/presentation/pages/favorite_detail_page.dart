@@ -5,6 +5,7 @@ import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/widgets/app_empty_state_widget.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
@@ -192,9 +193,10 @@ class FavoriteDetailPage extends HookConsumerWidget {
                 if (items.isEmpty)
                   SliverFillRemaining(
                     child: Center(
-                      child: AppErrorWidget(
+                      child: AppEmptyStateWidget(
                         message: t.common.no_content,
-                        onRetry: () => ref.refresh(provider.future),
+                        onAction: () => ref.refresh(provider.future),
+                        actionLabel: t.common.retry,
                       ),
                     ),
                   )

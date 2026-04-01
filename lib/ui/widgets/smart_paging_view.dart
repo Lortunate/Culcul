@@ -1,4 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/widgets/app_empty_state_widget.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';

@@ -2,6 +2,7 @@ import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/features/notification/presentation/view_models/private_session_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_skeletons.dart';
 import 'package:culcul/features/notification/presentation/widgets/private_session_item.dart';
+import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -51,20 +52,12 @@ class PrivateSessionList extends ConsumerWidget {
           physics: const AlwaysScrollableScrollPhysics(),
           child: SizedBox(
             height: MediaQuery.of(context).size.height * 0.7,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('${t.common.load_failed}: $e'),
-                  const SizedBox(height: 8),
-                  ElevatedButton(
-                    onPressed: () {
-                      ref.invalidate(privateSessionListProvider);
-                    },
-                    child: Text(t.common.retry),
-                  ),
-                ],
-              ),
+            child: AppErrorWidget(
+              error: e,
+              stackTrace: s,
+              onRetry: () {
+                ref.invalidate(privateSessionListProvider);
+              },
             ),
           ),
         ),

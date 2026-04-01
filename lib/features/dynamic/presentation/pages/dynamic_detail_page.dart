@@ -5,6 +5,7 @@ import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_deta
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_comments_view.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_content_widget.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +52,12 @@ class DynamicDetailPage extends HookConsumerWidget {
     if (state.error != null && state.post == null) {
       return Scaffold(
         appBar: AppBar(title: Text(t.moments.detail_title)),
-        body: Center(child: Text(state.error!.message)),
+        body: Center(
+          child: AppErrorWidget(
+            error: state.error!,
+            onRetry: () => notifier.loadDetail(),
+          ),
+        ),
       );
     }
 

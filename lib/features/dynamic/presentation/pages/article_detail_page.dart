@@ -8,6 +8,7 @@ import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_comm
 import 'package:culcul/features/video/presentation/widgets/comments/comment_item.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_reply_sheet.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/widgets/app_empty_state_widget.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/app_image_preview.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
@@ -54,7 +55,13 @@ class ArticleDetailPage extends HookConsumerWidget {
     if (data == null) {
       return Scaffold(
         appBar: AppBar(title: Text(title ?? t.moments.detail_title)),
-        body: Center(child: AppErrorWidget(message: t.common.no_content)),
+        body: Center(
+          child: AppEmptyStateWidget(
+            message: t.common.no_content,
+            onAction: notifier.refreshAll,
+            actionLabel: t.common.retry,
+          ),
+        ),
       );
     }
 
@@ -222,9 +229,10 @@ class ArticleDetailPage extends HookConsumerWidget {
               SliverFillRemaining(
                 hasScrollBody: false,
                 child: Center(
-                  child: AppErrorWidget(
+                  child: AppEmptyStateWidget(
                     message: t.video.comment.empty,
-                    onRetry: () => notifier.loadComments(refresh: true),
+                    onAction: () => notifier.loadComments(refresh: true),
+                    actionLabel: t.common.retry,
                   ),
                 ),
               )
@@ -233,7 +241,7 @@ class ArticleDetailPage extends HookConsumerWidget {
                 hasScrollBody: false,
                 child: Center(
                   child: AppErrorWidget(
-                    message: state.commentsError!,
+                    error: Exception(state.commentsError!),
                     onRetry: () => notifier.loadComments(refresh: true),
                   ),
                 ),
@@ -242,9 +250,10 @@ class ArticleDetailPage extends HookConsumerWidget {
               SliverFillRemaining(
                 hasScrollBody: false,
                 child: Center(
-                  child: AppErrorWidget(
+                  child: AppEmptyStateWidget(
                     message: t.video.comment.empty,
-                    onRetry: () => notifier.loadComments(refresh: true),
+                    onAction: () => notifier.loadComments(refresh: true),
+                    actionLabel: t.common.retry,
                   ),
                 ),
               )
@@ -296,8 +305,9 @@ class ArticleDetailPage extends HookConsumerWidget {
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
                   child: AppErrorWidget(
-                    message: state.commentsError!,
+                    error: Exception(state.commentsError!),
                     onRetry: () => notifier.loadComments(refresh: true),
+                    variant: AppErrorWidgetVariant.compact,
                   ),
                 ),
               ),

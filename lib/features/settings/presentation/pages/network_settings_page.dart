@@ -17,21 +17,21 @@ class NetworkSettingsPage extends ConsumerWidget {
     final accelerationState = ref.watch(bilibiliAccelerationControllerProvider);
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
+      backgroundColor: colorScheme.surfaceContainerLowest,
       appBar: AppBar(
         title: Text(
           t.settings.network.page_title,
           style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
         ),
         centerTitle: true,
-        backgroundColor: colorScheme.surface,
+        backgroundColor: colorScheme.surfaceContainerLowest,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
           onPressed: () => context.pop(),
         ),
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(0, 4, 0, 24),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
           NetworkModeSection(
             title: t.settings.network.mode,
@@ -41,6 +41,7 @@ class NetworkSettingsPage extends ConsumerWidget {
             onSelect: (mode) =>
                 ref.read(bilibiliAccelerationControllerProvider.notifier).setMode(mode),
           ),
+          const SizedBox(height: 24),
           NetworkPresetSection(
             title: t.settings.network.active_preset,
             hintText: t.settings.network.preset_hint,
@@ -58,6 +59,7 @@ class NetworkSettingsPage extends ConsumerWidget {
                   .manualSwitchPreset(presetId);
             },
           ),
+          const SizedBox(height: 24),
           NetworkOperationsSection(
             title: t.settings.network.operations,
             lockTitle: t.settings.network.lock_preset,

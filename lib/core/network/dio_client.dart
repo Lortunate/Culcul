@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/network/bilibili_acceleration.dart';
 import 'package:culcul/core/network/interceptors/bili_acceleration_interceptor.dart';
@@ -10,6 +12,7 @@ import 'package:culcul/core/providers/cache_store_provider.dart';
 import 'package:culcul/core/providers/cookie_jar_provider.dart';
 import 'package:culcul/core/utils/json_compute.dart';
 import 'package:dio/dio.dart';
+import 'package:dio_http2_adapter/dio_http2_adapter.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:flutter/foundation.dart';
@@ -23,13 +26,23 @@ Dio _createBaseDio(Ref ref) {
   final dio = Dio(
     BaseOptions(
       baseUrl: ApiConstants.baseUrl,
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
-      sendTimeout: const Duration(seconds: 10),
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 15),
+      sendTimeout: const Duration(seconds: 15),
       headers: {
         'User-Agent': ApiConstants.userAgent,
         'Referer': ApiConstants.referer,
         'Accept': 'application/json, text/plain, */*',
+        'Connection': 'keep-alive',
+      },
+    ),
+  );
+
+  dio.httpClientAdapter = Http2Adapter(
+    ConnectionManager(
+      idleTimeout: const Duration(seconds: 60),
+      onClientCreate: (_, config) {
+        config.onBadCertificate = (_) => true;
       },
     ),
   );
