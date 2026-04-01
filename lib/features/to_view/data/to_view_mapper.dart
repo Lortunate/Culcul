@@ -16,4 +16,3 @@ extension ToViewModelMapper on ToViewModelDto {
     );
   }
 }
-

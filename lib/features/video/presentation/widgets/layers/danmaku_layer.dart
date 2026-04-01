@@ -4,6 +4,7 @@ import 'package:culcul/features/video/presentation/view_models/danmaku_mask_view
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:culcul/features/video/application/video_extra_workflows.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -33,7 +34,9 @@ class DanmakuLayer extends HookConsumerWidget {
     );
 
     final settings = ref.watch(danmakuSettingsControllerProvider);
-    final maskProvider = ref.watch(danmakuMaskProvider(oid: currentCid, pid: aid ?? 0));
+    final maskResultProvider = ref.watch(
+      danmakuMaskProvider(oid: currentCid, pid: aid ?? 0),
+    );
     final danmakuOption = _buildDanmakuOption(settings);
 
     final player = ref.read(playerControllerProvider.notifier).player;
@@ -55,7 +58,12 @@ class DanmakuLayer extends HookConsumerWidget {
           ref
               .read(danmakuProviderProvider.notifier)
               .loadSegment(oid: currentCid, pid: aid, segmentIndex: index)
-              .then((elems) {
+              .then((result) {
+                final elems = result.dataOrNull;
+                if (elems == null) {
+                  timeline.markSegmentLoadFailed(index);
+                  return;
+                }
                 final newItems = elems.map((e) {
                   return DanmakuItem(
                     e.content,
@@ -87,7 +95,7 @@ class DanmakuLayer extends HookConsumerWidget {
 
         final nextMaskPath = _resolveMaskPath(
           settings: settings,
-          maskProvider: maskProvider,
+          maskResultProvider: maskResultProvider,
           currentPosMs: currentPosMs,
         );
         if (nextMaskPath != maskPathNotifier.value.value) {
@@ -189,13 +197,17 @@ Color _toOpaqueDanmakuColor(int colorValue) {
 
 Path? _resolveMaskPath({
   required DanmakuSettings settings,
-  required AsyncValue<DanmakuMasks?> maskProvider,
+  required AsyncValue<Result<DanmakuMasks?, dynamic>> maskResultProvider,
   required int currentPosMs,
 }) {
-  if (!settings.enableAiMask || !maskProvider.hasValue || maskProvider.value == null) {
+  if (!settings.enableAiMask || !maskResultProvider.hasValue) {
     return null;
   }
-  return maskProvider.value!.getPath(currentPosMs);
+  final masks = maskResultProvider.value?.dataOrNull;
+  if (masks == null) {
+    return null;
+  }
+  return masks.getPath(currentPosMs);
 }
 
 class _DanmakuTimelineBuffer {

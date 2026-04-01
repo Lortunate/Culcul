@@ -78,4 +78,3 @@ Color _authorColor(ColorScheme colorScheme, String authorName) {
     _ => colorScheme.onSurface,
   };
 }
-

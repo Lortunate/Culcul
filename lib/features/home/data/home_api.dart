@@ -28,4 +28,3 @@ abstract class HomeApi {
     @Query('force_refresh') bool? forceRefresh,
   });
 }
-

@@ -17,6 +17,7 @@ domain.HomeRepository homeRepository(Ref ref) {
 }
 
 class HomeRepositoryImpl implements domain.HomeRepository {
+  static const int _defaultPopularPageSize = 20;
   final HomeApi api;
   final RequestExecutor _executor;
 
@@ -52,14 +53,13 @@ class HomeRepositoryImpl implements domain.HomeRepository {
 
   Future<List<VideoModel>> fetchPopularModels({
     int page = 1,
-    int pageSize = 20,
     bool forceRefresh = false,
   }) async {
     final Result<List<VideoModel>, AppError> result = await _executor
         .runApi<List<VideoModel>>(
           () async => api.fetchPopular(
             pn: page,
-            ps: pageSize,
+            ps: _defaultPopularPageSize,
             forceRefresh: forceRefresh ? true : null,
           ),
           transform: (data) => data.list,
@@ -83,16 +83,10 @@ class HomeRepositoryImpl implements domain.HomeRepository {
   }
 
   @override
-  Future<List<HomeVideo>> fetchPopular({
-    int page = 1,
-    int pageSize = 20,
-    bool forceRefresh = false,
-  }) async {
+  Future<List<HomeVideo>> fetchPopular({int page = 1, bool forceRefresh = false}) async {
     return (await fetchPopularModels(
       page: page,
-      pageSize: pageSize,
       forceRefresh: forceRefresh,
     )).map((item) => item.toDomain()).toList();
   }
 }
-

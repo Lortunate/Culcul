@@ -195,5 +195,3 @@ class SmsLoginView extends HookConsumerWidget {
     );
   }
 }
-
-

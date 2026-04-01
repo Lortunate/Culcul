@@ -1,5 +1,5 @@
 import 'dynamic_response.dart';
-import 'dynamic_view_models.dart';
+import 'dynamic_content_entities.dart';
 
 extension DynamicItemExtension on DynamicItem {
   String get id => idStr;

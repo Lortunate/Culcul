@@ -1,4 +1,4 @@
-import 'package:culcul/features/favorites/data/dtos/favorite_models.dart';
+import 'package:culcul/features/favorites/data/dtos/favorite_dtos.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 

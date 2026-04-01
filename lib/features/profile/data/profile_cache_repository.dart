@@ -1,5 +1,5 @@
 import 'package:culcul/features/profile/data/profile_mapper.dart';
-import 'package:culcul/features/profile/data/dtos/profile_models.dart';
+import 'package:culcul/features/profile/data/dtos/profile_dtos.dart';
 import 'package:culcul/features/profile/data/user_info_cache_service.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/repositories/profile_cache_repository.dart'

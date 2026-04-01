@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/core/base_repository.dart';
-import 'package:culcul/features/search/data/dtos/search_models.dart';
+import 'package:culcul/features/search/data/dtos/search_dtos.dart';
 import 'package:culcul/features/search/data/search_mapper.dart';
 import 'package:culcul/features/search/data/search_api.dart';
 import 'package:culcul/features/search/domain/entities/search_default_hint.dart';
@@ -21,6 +21,7 @@ domain.SearchRepository searchRepository(Ref ref) {
 }
 
 class SearchRepositoryImpl extends BaseRepository implements domain.SearchRepository {
+  static const int _defaultSearchPageSize = 20;
   final SearchApi api;
 
   SearchRepositoryImpl({required this.api});
@@ -56,7 +57,6 @@ class SearchRepositoryImpl extends BaseRepository implements domain.SearchReposi
   Future<SearchResultData> fetchSearchAll({
     required String keyword,
     int page = 1,
-    int pageSize = 20,
     String searchType = 'all',
     String order = 'totalrank',
     int duration = 0,
@@ -66,7 +66,7 @@ class SearchRepositoryImpl extends BaseRepository implements domain.SearchReposi
           ? await api.fetchSearchAll(
               keyword: keyword,
               page: page,
-              pageSize: pageSize,
+              pageSize: _defaultSearchPageSize,
               searchType: searchType,
               order: order,
               duration: duration,
@@ -74,7 +74,7 @@ class SearchRepositoryImpl extends BaseRepository implements domain.SearchReposi
           : await api.fetchSearchByType(
               keyword: keyword,
               page: page,
-              pageSize: pageSize,
+              pageSize: _defaultSearchPageSize,
               searchType: searchType,
               order: order,
               duration: duration,
@@ -111,7 +111,6 @@ class SearchRepositoryImpl extends BaseRepository implements domain.SearchReposi
   Future<SearchResultPage> search({
     required String keyword,
     int page = 1,
-    int pageSize = 20,
     String searchType = 'all',
     String order = 'totalrank',
     int duration = 0,
@@ -119,7 +118,6 @@ class SearchRepositoryImpl extends BaseRepository implements domain.SearchReposi
     final result = await fetchSearchAll(
       keyword: keyword,
       page: page,
-      pageSize: pageSize,
       searchType: searchType,
       order: order,
       duration: duration,

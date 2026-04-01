@@ -4,7 +4,8 @@ import 'package:culcul/features/video/data/dtos/related_video_dto.dart' as relat
 import 'package:culcul/features/video/data/dtos/subtitle_dto.dart' as subtitle_dto;
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart' as detail_dto;
 import 'package:culcul/features/video/data/dtos/video_model_dto.dart' as model_dto;
-import 'package:culcul/features/video/domain/entities/video_models.dart' as domain;
+import 'package:culcul/features/video/domain/entities/video_entities_exports.dart'
+    as domain;
 
 extension VideoModelMapper on model_dto.VideoModel {
   domain.VideoModel toDomain() {

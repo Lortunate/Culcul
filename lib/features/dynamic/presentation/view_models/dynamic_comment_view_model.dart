@@ -29,11 +29,9 @@ class DynamicCommentController extends _$DynamicCommentController {
       error: null,
     );
     final result = await runResult(
-      () => ref.read(dynamicRepositoryProvider).getComments(
-        post,
-        sort: state.sort,
-        page: 1,
-      ),
+      () => ref
+          .read(dynamicRepositoryProvider)
+          .getComments(post, sort: state.sort, page: 1),
     );
     state = result.when(
       success: (data) => state.copyWith(
@@ -71,11 +69,9 @@ class DynamicCommentController extends _$DynamicCommentController {
       error: null,
     );
     final result = await runResult(
-      () => ref.read(dynamicRepositoryProvider).getComments(
-        post,
-        sort: state.sort,
-        page: nextPage,
-      ),
+      () => ref
+          .read(dynamicRepositoryProvider)
+          .getComments(post, sort: state.sort, page: nextPage),
     );
     if (result.isFailure) {
       state = state.copyWith(
@@ -113,27 +109,18 @@ class DynamicCommentController extends _$DynamicCommentController {
     newComments[index] = newItem;
     state = state.copyWith(paging: state.paging.copyWith(items: newComments));
 
-    final result = await runVoidResult(
-      () => ref.read(dynamicRepositoryProvider).likeComment(
-        post: post,
-        rpid: rpid,
-        isLiked: isLiked,
-      ),
-    );
+    final result = await ref
+        .read(dynamicRepositoryProvider)
+        .likeComment(post: post, rpid: rpid, isLiked: isLiked);
     if (result.isFailure) {
       state = state.copyWith(paging: state.paging.copyWith(items: oldComments));
     }
   }
 
   Future<void> addReply(int root, int parent, String message) async {
-    final result = await runVoidResult(
-      () => ref.read(dynamicRepositoryProvider).addReply(
-        post: post,
-        root: root,
-        parent: parent,
-        message: message,
-      ),
-    );
+    final result = await ref
+        .read(dynamicRepositoryProvider)
+        .addReply(post: post, root: root, parent: parent, message: message);
     if (result.isSuccess) {
       await refresh();
     }

@@ -1,4 +1,4 @@
-import 'package:culcul/features/search/data/dtos/search_models.dart';
+import 'package:culcul/features/search/data/dtos/search_dtos.dart';
 import 'package:culcul/features/search/domain/entities/search_default_hint.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/features/search/domain/entities/search_suggestion_entry.dart';

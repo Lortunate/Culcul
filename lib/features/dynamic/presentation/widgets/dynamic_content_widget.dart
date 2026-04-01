@@ -156,4 +156,3 @@ class _TopicChip extends StatelessWidget {
     );
   }
 }
-

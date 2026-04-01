@@ -10,7 +10,7 @@ part 'profile_view_model.g.dart';
 Future<ProfileUser> myProfile(Ref ref) async {
   final authState = ref.watch(authProvider);
   if (!authState.isLoggedIn || authState.user == null) {
-    throw AppError.auth('Not logged in');
+    return Future.error(AppError.auth('Not logged in'));
   }
   return ref.watch(profileRepositoryProvider).getProfile(int.parse(authState.user!.id));
 }

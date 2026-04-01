@@ -130,4 +130,3 @@ class DynamicNavigation {
     return Uri.tryParse(normalized);
   }
 }
-

@@ -13,7 +13,6 @@ abstract class SearchRepository {
   Future<SearchResultPage> search({
     required String keyword,
     int page = 1,
-    int pageSize = 20,
     String searchType = 'all',
     String order = 'totalrank',
     int duration = 0,

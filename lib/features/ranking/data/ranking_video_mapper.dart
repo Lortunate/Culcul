@@ -14,4 +14,3 @@ extension RankingVideoMapper on VideoModel {
     );
   }
 }
-

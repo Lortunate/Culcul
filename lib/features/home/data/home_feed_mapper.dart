@@ -43,4 +43,3 @@ extension HomeWeeklyMapper on WeeklyModelDto {
     return HomeWeeklyFeed(list: list.map((item) => item.toDomain()).toList());
   }
 }
-

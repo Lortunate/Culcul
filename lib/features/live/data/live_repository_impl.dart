@@ -1,10 +1,13 @@
 import 'package:culcul/core/base_repository.dart';
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/network/dio_client.dart';
-import 'package:culcul/features/live/data/dtos/live_models_dto.dart' as dto;
+import 'package:culcul/core/result/result.dart';
+import 'package:culcul/core/result/run_result.dart';
+import 'package:culcul/features/live/data/dtos/live_dtos.dart' as dto;
 import 'package:culcul/features/live/data/live_room_mapper.dart';
 import 'package:culcul/features/live/data/live_api.dart';
 import 'package:culcul/features/live/domain/repositories/live_repository.dart' as domain;
-import 'package:culcul/features/live/domain/entities/live_models.dart';
+import 'package:culcul/features/live/domain/entities/live_entities_exports.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'live_repository_impl.g.dart';
@@ -15,6 +18,8 @@ domain.LiveRepository liveRepository(Ref ref) {
 }
 
 class LiveRepositoryImpl extends BaseRepository implements domain.LiveRepository {
+  static const int _recommendPageSize = 30;
+  static const int _rankPageSize = 20;
   final LiveApi _api;
 
   LiveRepositoryImpl(this._api);
@@ -49,12 +54,9 @@ class LiveRepositoryImpl extends BaseRepository implements domain.LiveRepository
     return data.toDomain();
   }
 
-  Future<List<dto.LiveRoomModel>> fetchRecommendListModels({
-    int page = 1,
-    int pageSize = 30,
-  }) async {
+  Future<List<dto.LiveRoomModel>> fetchRecommendListModels({int page = 1}) async {
     final data = await requestApi(
-      () => _api.getRecommendList(page: page, pageSize: pageSize),
+      () => _api.getRecommendList(page: page, pageSize: _recommendPageSize),
     );
     return data.roomList;
   }
@@ -70,14 +72,13 @@ class LiveRepositoryImpl extends BaseRepository implements domain.LiveRepository
     required int ruid,
     required int roomId,
     int page = 1,
-    int pageSize = 20,
   }) async {
     final data = await requestApi(
       () => _api.getOnlineGoldRank(
         ruid: ruid,
         roomId: roomId,
         page: page,
-        pageSize: pageSize,
+        pageSize: _rankPageSize,
       ),
     );
     return data.toDomain();
@@ -88,33 +89,38 @@ class LiveRepositoryImpl extends BaseRepository implements domain.LiveRepository
     required int ruid,
     required int roomId,
     int page = 1,
-    int pageSize = 20,
   }) async {
     final data = await requestApi(
-      () => _api.getGuardList(ruid: ruid, roomId: roomId, page: page, pageSize: pageSize),
+      () => _api.getGuardList(
+        ruid: ruid,
+        roomId: roomId,
+        page: page,
+        pageSize: _rankPageSize,
+      ),
     );
     return data.toDomain();
   }
 
   @override
-  Future<void> sendDanmaku({required int roomId, required String msg}) async {
-    return requestVoid(
-      () => _api.sendDanmaku(
-        msg: msg,
-        roomId: roomId,
-        rnd: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+  Future<Result<void, AppError>> sendDanmaku({
+    required int roomId,
+    required String msg,
+  }) async {
+    return runVoidResult(
+      () => requestVoid(
+        () => _api.sendDanmaku(
+          msg: msg,
+          roomId: roomId,
+          rnd: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        ),
       ),
     );
   }
 
   @override
-  Future<List<LiveRoomSummary>> getRecommendList({
-    int page = 1,
-    int pageSize = 30,
-  }) async {
+  Future<List<LiveRoomSummary>> getRecommendList({int page = 1}) async {
     return (await fetchRecommendListModels(
       page: page,
-      pageSize: pageSize,
     )).map((item) => item.toSummary()).toList();
   }
 }

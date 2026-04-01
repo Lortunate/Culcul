@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/result/run_result.dart';
 import 'package:culcul/features/video/video_providers.dart';
 import 'package:culcul/protos/dm.pb.dart';
@@ -12,7 +14,7 @@ class DanmakuProvider extends _$DanmakuProvider {
   @override
   FutureOr<void> build() {}
 
-  Future<List<DanmakuElem>> loadSegment({
+  Future<Result<List<DanmakuElem>, AppError>> loadSegment({
     required int oid,
     required int pid,
     required int segmentIndex,
@@ -22,6 +24,6 @@ class DanmakuProvider extends _$DanmakuProvider {
           .read(danmakuRepositoryProvider)
           .fetchDanmakuSegment(oid: oid, pid: pid, segmentIndex: segmentIndex),
     );
-    return result.when(success: (value) => value.elems, failure: (error) => throw error);
+    return result.map((value) => value.elems);
   }
 }

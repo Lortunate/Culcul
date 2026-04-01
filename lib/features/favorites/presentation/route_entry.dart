@@ -11,4 +11,3 @@ Widget buildFavoriteDetailRoutePage({
 }) {
   return FavoriteDetailPage(mediaId: mediaId, title: title, mid: mid);
 }
-

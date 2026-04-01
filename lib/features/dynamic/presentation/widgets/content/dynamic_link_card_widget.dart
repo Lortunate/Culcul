@@ -67,4 +67,3 @@ class DynamicLinkCardWidget extends StatelessWidget {
     );
   }
 }
-

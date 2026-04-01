@@ -1,17 +1,17 @@
 import 'dart:io';
 
 final _projectRoot = Directory.current;
-const _applicationAllowedFeatures = {
-  'video',
-  'dynamic',
-  'live',
-  'notification',
-  'profile',
-};
+const _applicationAllowedFeatures = {'dynamic', 'video'};
 const _presentationAllowedSubdirs = {'pages', 'widgets', 'view_models'};
 const _allowedCrossFeatureDomainExportFiles = <String>{};
 const _allowedDomainDtoForwardFiles = <String>{
   'lib/features/dynamic/domain/entities/dynamic_response.dart',
+};
+const _allowedVoidRepositoryMethods = <String>{
+  'checkAndRefreshCookie',
+  'writeProfile',
+  'saveThemePreference',
+  'clearCache',
 };
 
 void main() {
@@ -53,6 +53,30 @@ void main() {
     issues.add(
       'Forbidden application directory outside complex features: ${_rel(dir.path)}',
     );
+  }
+
+  final emptyApplicationDirs = _projectRoot
+      .listSync(recursive: true)
+      .whereType<Directory>()
+      .where((dir) {
+        final path = dir.path.replaceAll('\\', '/');
+        if (path.contains('/.dart_tool/')) return false;
+        if (!RegExp(r'/lib/features/[^/]+/application$').hasMatch(path)) {
+          return false;
+        }
+        return !dir
+            .listSync(recursive: true)
+            .whereType<File>()
+            .any(
+              (file) =>
+                  file.path.endsWith('.dart') &&
+                  !file.path.endsWith('.g.dart') &&
+                  !file.path.endsWith('.freezed.dart'),
+            );
+      })
+      .toList();
+  for (final dir in emptyApplicationDirs) {
+    issues.add('Forbidden empty application directory: ${_rel(dir.path)}');
   }
 
   final modelsDirs = _projectRoot.listSync(recursive: true).whereType<Directory>().where((
@@ -135,6 +159,12 @@ void main() {
     if (normalized.contains('/features/') &&
         importLines.any((line) => line.contains('core/providers/api_provider.dart'))) {
       issues.add('$path must not import core/providers/api_provider.dart');
+    }
+
+    if (RegExp(
+      r'/lib/features/[^/]+/(data/dtos|domain/entities)/[^/]*models[^/]*\.dart$',
+    ).hasMatch(normalized)) {
+      issues.add('$path must not use *models*.dart naming in dto/domain entities');
     }
 
     if (normalized.contains('/features/') &&
@@ -256,6 +286,31 @@ void main() {
         RegExp(r'runResult\s*\(\s*\(\)\s*=>\s*\w+Repository\.').hasMatch(content) &&
         !RegExp(r'fetchPlayerInfo|fetchMaskData|compute\s*\(').hasMatch(content)) {
       issues.add('$path must not keep pure pass-through workflows');
+    }
+
+    if (normalized.contains('/features/') &&
+        normalized.contains('/domain/repositories/')) {
+      final voidMethodMatches = RegExp(r'Future<void>\s+(\w+)\s*\(').allMatches(content);
+      for (final match in voidMethodMatches) {
+        final method = match.group(1);
+        if (method != null && !_allowedVoidRepositoryMethods.contains(method)) {
+          issues.add(
+            '$path must use Result return type for write/failure-sensitive repository methods ($method)',
+          );
+        }
+      }
+
+      if (RegExp(r'\bint\s+(pageSize|ps)\s*=').hasMatch(content)) {
+        issues.add(
+          '$path must not expose paging size technical parameters in domain repositories',
+        );
+      }
+
+      if (RegExp(r'\breferer\b|\bmode\s*=').hasMatch(content)) {
+        issues.add(
+          '$path must not expose transport-level parameters in domain repositories',
+        );
+      }
     }
   }
 

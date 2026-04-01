@@ -69,4 +69,3 @@ class DynamicGoodsWidget extends StatelessWidget {
     );
   }
 }
-

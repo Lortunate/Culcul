@@ -3,9 +3,7 @@ import 'package:culcul/features/dynamic/domain/entities/dynamic_response.dart' a
 
 extension DynamicDetailDataMapper on dto.DynamicDetailData {
   domain.DynamicDetailData toDomain() {
-    return domain.DynamicDetailData(
-      item: item.toDomain(),
-    );
+    return domain.DynamicDetailData(item: item.toDomain());
   }
 }
 
@@ -119,10 +117,7 @@ extension AdditionalReserveMapper on dto.AdditionalReserve {
 
 extension ReserveDescMapper on dto.ReserveDesc {
   domain.ReserveDesc toDomain() {
-    return domain.ReserveDesc(
-      text: text,
-      style: style,
-    );
+    return domain.ReserveDesc(text: text, style: style);
   }
 }
 
@@ -138,12 +133,7 @@ extension AdditionalGoodsMapper on dto.AdditionalGoods {
 
 extension GoodsItemMapper on dto.GoodsItem {
   domain.GoodsItem toDomain() {
-    return domain.GoodsItem(
-      name: name,
-      price: price,
-      cover: cover,
-      jumpUrl: jumpUrl,
-    );
+    return domain.GoodsItem(name: name, price: price, cover: cover, jumpUrl: jumpUrl);
   }
 }
 
@@ -174,10 +164,7 @@ extension AdditionalUgcMapper on dto.AdditionalUgc {
 
 extension ModuleDescMapper on dto.ModuleDesc {
   domain.ModuleDesc toDomain() {
-    return domain.ModuleDesc(
-      text: text,
-      richTextNodes: richTextNodes,
-    );
+    return domain.ModuleDesc(text: text, richTextNodes: richTextNodes);
   }
 }
 
@@ -217,21 +204,13 @@ extension MajorArchiveMapper on dto.MajorArchive {
 
 extension MajorDrawMapper on dto.MajorDraw {
   domain.MajorDraw toDomain() {
-    return domain.MajorDraw(
-      id: id,
-      items: items.map((item) => item.toDomain()).toList(),
-    );
+    return domain.MajorDraw(id: id, items: items.map((item) => item.toDomain()).toList());
   }
 }
 
 extension DrawItemMapper on dto.DrawItem {
   domain.DrawItem toDomain() {
-    return domain.DrawItem(
-      src: src,
-      width: width,
-      height: height,
-      size: size,
-    );
+    return domain.DrawItem(src: src, width: width, height: height, size: size);
   }
 }
 
@@ -262,10 +241,7 @@ extension MajorCommonMapper on dto.MajorCommon {
 
 extension MajorStatMapper on dto.MajorStat {
   domain.MajorStat toDomain() {
-    return domain.MajorStat(
-      play: play,
-      danmaku: danmaku,
-    );
+    return domain.MajorStat(play: play, danmaku: danmaku);
   }
 }
 
@@ -281,27 +257,19 @@ extension ModuleStatMapper on dto.ModuleStat {
 
 extension StatLikeMapper on dto.StatLike {
   domain.StatLike toDomain() {
-    return domain.StatLike(
-      count: count,
-      status: status,
-    );
+    return domain.StatLike(count: count, status: status);
   }
 }
 
 extension StatCommonMapper on dto.StatCommon {
   domain.StatCommon toDomain() {
-    return domain.StatCommon(
-      count: count,
-    );
+    return domain.StatCommon(count: count);
   }
 }
 
 extension ModuleTopicMapper on dto.ModuleTopic {
   domain.ModuleTopic toDomain() {
-    return domain.ModuleTopic(
-      name: name,
-      jumpUrl: jumpUrl,
-    );
+    return domain.ModuleTopic(name: name, jumpUrl: jumpUrl);
   }
 }
 
@@ -358,21 +326,13 @@ extension MajorOpusMapper on dto.MajorOpus {
 
 extension OpusSummaryMapper on dto.OpusSummary {
   domain.OpusSummary toDomain() {
-    return domain.OpusSummary(
-      text: text,
-      richTextNodes: richTextNodes,
-    );
+    return domain.OpusSummary(text: text, richTextNodes: richTextNodes);
   }
 }
 
 extension OpusPicMapper on dto.OpusPic {
   domain.OpusPic toDomain() {
-    return domain.OpusPic(
-      url: url,
-      width: width,
-      height: height,
-      size: size,
-    );
+    return domain.OpusPic(url: url, width: width, height: height, size: size);
   }
 }
 
@@ -391,18 +351,13 @@ extension MajorLiveMapper on dto.MajorLive {
 
 extension MajorLiveRcmdMapper on dto.MajorLiveRcmd {
   domain.MajorLiveRcmd toDomain() {
-    return domain.MajorLiveRcmd(
-      content: content,
-      reserveType: reserveType,
-    );
+    return domain.MajorLiveRcmd(content: content, reserveType: reserveType);
   }
 }
 
 extension DynamicPublishDataMapper on dto.DynamicPublishData {
   domain.DynamicPublishData toDomain() {
-    return domain.DynamicPublishData(
-      dynIdStr: dynIdStr,
-    );
+    return domain.DynamicPublishData(dynIdStr: dynIdStr);
   }
 }
 

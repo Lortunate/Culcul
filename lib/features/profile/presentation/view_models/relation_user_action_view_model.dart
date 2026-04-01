@@ -11,15 +11,10 @@ class RelationUserActionViewModel extends _$RelationUserActionViewModel {
 
   Future<AppError?> toggleFollow({required int mid, required bool isFollow}) async {
     state = const AsyncLoading();
-    try {
-      await ref
-          .read(profileRepositoryProvider)
-          .modifyRelation(mid: mid, isFollow: isFollow);
-      state = const AsyncData(null);
-      return null;
-    } catch (error) {
-      state = const AsyncData(null);
-      return AppError.fromObject(error);
-    }
+    final result = await ref
+        .read(profileRepositoryProvider)
+        .modifyRelation(mid: mid, isFollow: isFollow);
+    state = const AsyncData(null);
+    return result.errorOrNull;
   }
 }

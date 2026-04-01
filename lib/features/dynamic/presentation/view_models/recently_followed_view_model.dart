@@ -15,12 +15,12 @@ class RecentlyFollowed extends _$RecentlyFollowed {
     }
 
     try {
-      return await ref
+      final users = await ref
           .read(relationRepositoryProvider)
-          .getFollowings(int.parse(authState.user!.id), page: 1, pageSize: 20);
+          .getFollowings(int.parse(authState.user!.id), page: 1);
+      return users.take(20).toList();
     } catch (_) {
       return [];
     }
   }
 }
-

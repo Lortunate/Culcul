@@ -72,4 +72,3 @@ class DynamicPage extends HookConsumerWidget {
     );
   }
 }
-

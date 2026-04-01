@@ -1,11 +1,13 @@
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
 
 abstract class ToViewRepository {
   Future<List<ToViewEntry>> getList();
 
-  Future<void> add({required int aid});
+  Future<Result<void, AppError>> add({required int aid});
 
-  Future<void> delete({required int aid});
+  Future<Result<void, AppError>> delete({required int aid});
 
-  Future<void> clear();
+  Future<Result<void, AppError>> clear();
 }

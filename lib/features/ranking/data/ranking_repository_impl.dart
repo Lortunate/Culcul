@@ -36,4 +36,3 @@ class RankingRepositoryImpl extends BaseRepository implements domain.RankingRepo
     return videos.map((video) => video.toDomain()).toList();
   }
 }
-

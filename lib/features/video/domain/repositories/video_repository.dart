@@ -1,19 +1,21 @@
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 
 abstract class VideoRepository {
-  Future<void> setCommentLike({
+  Future<Result<void, AppError>> setCommentLike({
     required int oid,
     required int rpid,
     required bool isLiked,
   });
 
-  Future<void> setCommentDislike({
+  Future<Result<void, AppError>> setCommentDislike({
     required int oid,
     required int rpid,
     bool isDisliked = true,
   });
 
-  Future<CommentItem> replyToComment({
+  Future<Result<CommentItem, AppError>> replyToComment({
     required int oid,
     required int root,
     required int parent,
@@ -40,7 +42,7 @@ abstract class VideoRepository {
 
   Future<SubtitleContent> fetchSubtitleContent(String url);
 
-  Future<void> reportVideoProgress({
+  Future<Result<void, AppError>> reportVideoProgress({
     required int aid,
     required int cid,
     required int progress,

@@ -1,5 +1,5 @@
 import 'package:culcul/core/contracts/live_room_summary_contract.dart' as contract;
-import 'package:culcul/features/live/data/dtos/live_models_dto.dart' as dto;
+import 'package:culcul/features/live/data/dtos/live_dtos.dart' as dto;
 import 'package:culcul/features/live/domain/entities/live_entities.dart' as domain;
 
 extension WatchedShowMapper on dto.WatchedShow {

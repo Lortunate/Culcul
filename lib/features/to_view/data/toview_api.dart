@@ -26,4 +26,3 @@ abstract class ToViewApi {
   @Headers({'x-bili-csrf': 'true'})
   Future<void> clearToView();
 }
-

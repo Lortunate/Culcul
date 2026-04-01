@@ -101,4 +101,3 @@ class _Skeleton extends StatelessWidget {
     );
   }
 }
-

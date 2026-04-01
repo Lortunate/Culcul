@@ -2,10 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cookie_jar/cookie_jar.dart';
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/providers/cookie_jar_provider.dart';
 import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/core/result/result.dart';
+import 'package:culcul/core/result/run_result.dart';
 import 'package:culcul/features/dynamic/data/dynamic_api.dart';
 import 'package:culcul/features/dynamic/data/dynamic_mapper.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
@@ -64,7 +67,7 @@ class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepo
   }
 
   @override
-  Future<CommentItem> addReply({
+  Future<Result<CommentItem, AppError>> addReply({
     required DynamicItem post,
     required String message,
     required int root,
@@ -72,10 +75,10 @@ class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepo
   }) async {
     final target = _resolveCommentTarget(post);
     if (target == null) {
-      throw const UnknownException('Unsupported dynamic type for comments');
+      return Failure(AppError.data('Unsupported dynamic type for comments'));
     }
 
-    return addCommentReply(
+    return _addCommentReply(
       oid: target.oid,
       type: target.type,
       root: root,
@@ -86,17 +89,17 @@ class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepo
   }
 
   @override
-  Future<void> likeComment({
+  Future<Result<void, AppError>> likeComment({
     required DynamicItem post,
     required int rpid,
     required bool isLiked,
   }) async {
     final target = _resolveCommentTarget(post);
     if (target == null) {
-      throw const UnknownException('Unsupported dynamic type for comments');
+      return Failure(AppError.data('Unsupported dynamic type for comments'));
     }
 
-    return likeCommentByTarget(
+    return _likeCommentByTarget(
       oid: target.oid,
       type: target.type,
       rpid: rpid,
@@ -127,24 +130,39 @@ class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepo
 
   @override
   Future<CommentResponse> getArticleCommentList({
-    required String oid,
-    int mode = 3,
+    required ArticleDetailData article,
     int? next,
-    String? referer,
   }) {
+    final referer = article.url;
     return requestApi(
       () => _api.getArticleComments(
-        oid: oid,
-        mode: mode,
+        oid: article.commentOid,
+        mode: 3,
         next: next,
         referer: referer,
-        origin: referer == null ? null : 'https://www.bilibili.com',
+        origin: 'https://www.bilibili.com',
       ),
     );
   }
 
   @override
-  Future<CommentItem> addCommentReply({
+  Future<Result<CommentItem, AppError>> addArticleCommentReply({
+    required ArticleDetailData article,
+    required int root,
+    required int parent,
+    required String message,
+  }) {
+    return _addCommentReply(
+      oid: article.commentOid,
+      type: article.commentType,
+      root: root,
+      parent: parent,
+      message: message,
+      referer: article.url,
+    );
+  }
+
+  Future<Result<CommentItem, AppError>> _addCommentReply({
     required String oid,
     required int type,
     required int root,
@@ -152,35 +170,53 @@ class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepo
     required String message,
     String? referer,
   }) {
-    return requestApi(
-      () => _api.addReply(
-        oid: oid,
-        type: type,
-        root: root,
-        parent: parent,
-        message: message,
-        referer: referer,
-        origin: referer == null ? null : 'https://www.bilibili.com',
+    return runResult(
+      () => requestApi(
+        () => _api.addReply(
+          oid: oid,
+          type: type,
+          root: root,
+          parent: parent,
+          message: message,
+          referer: referer,
+          origin: referer == null ? null : 'https://www.bilibili.com',
+        ),
       ),
     );
   }
 
   @override
-  Future<void> likeCommentByTarget({
+  Future<Result<void, AppError>> likeArticleComment({
+    required ArticleDetailData article,
+    required int rpid,
+    required bool isLiked,
+  }) {
+    return _likeCommentByTarget(
+      oid: article.commentOid,
+      type: article.commentType,
+      rpid: rpid,
+      isLiked: isLiked,
+      referer: article.url,
+    );
+  }
+
+  Future<Result<void, AppError>> _likeCommentByTarget({
     required String oid,
     required int type,
     required int rpid,
     required bool isLiked,
     String? referer,
   }) {
-    return requestVoid(
-      () => _api.actionComment(
-        oid: oid,
-        type: type,
-        rpid: rpid,
-        action: isLiked ? 1 : 0,
-        referer: referer,
-        origin: referer == null ? null : 'https://www.bilibili.com',
+    return runVoidResult(
+      () => requestVoid(
+        () => _api.actionComment(
+          oid: oid,
+          type: type,
+          rpid: rpid,
+          action: isLiked ? 1 : 0,
+          referer: referer,
+          origin: referer == null ? null : 'https://www.bilibili.com',
+        ),
       ),
     );
   }
@@ -275,9 +311,9 @@ class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepo
 
   @override
   Future<DynamicData> getFeed({String? type, String? offset}) {
-    return requestApi(() => _api.getDynamicFeed(type: type, offset: offset, page: 1)).then(
-      (data) => data.toDomain(),
-    );
+    return requestApi(
+      () => _api.getDynamicFeed(type: type, offset: offset, page: 1),
+    ).then((data) => data.toDomain());
   }
 
   @override
@@ -391,66 +427,72 @@ class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepo
   }
 
   @override
-  Future<void> likeDynamic(String id, bool like) async {
-    // We wrap the whole block in safeCall to catch any errors during token retrieval
-    return request(() async {
-      final csrf = await _getCsrfToken();
-      final response = await _api.likeDynamic(
-        body: {'dyn_id_str': id, 'up': like ? 1 : 2},
-        csrf: csrf ?? '',
-      );
-      if (!response.isSuccess) {
-        throw ServerException(response.message, code: response.code);
-      }
+  Future<Result<void, AppError>> likeDynamic(String id, bool like) async {
+    return runVoidResult(() async {
+      await request(() async {
+        final csrf = await _getCsrfToken();
+        final response = await _api.likeDynamic(
+          body: {'dyn_id_str': id, 'up': like ? 1 : 2},
+          csrf: csrf ?? '',
+        );
+        if (!response.isSuccess) {
+          throw ServerException(response.message, code: response.code);
+        }
+      });
     });
   }
 
   @override
-  Future<DynamicUploadImageData> uploadImage(File file) async {
-    return requestApi(() async {
-      final csrf = await _getCsrfToken();
-      return _api.uploadImage(file: file, csrf: csrf ?? '');
-    }).then((data) => data.toDomain());
+  Future<Result<DynamicUploadImageData, AppError>> uploadImage(File file) async {
+    return runResult(() async {
+      final data = await requestApi(() async {
+        final csrf = await _getCsrfToken();
+        return _api.uploadImage(file: file, csrf: csrf ?? '');
+      });
+      return data.toDomain();
+    });
   }
 
   @override
-  Future<void> publishDynamic({
+  Future<Result<void, AppError>> publishDynamic({
     required String content,
     List<DynamicUploadImageData> images = const [],
   }) async {
-    return request(() async {
-      final csrf = await _getCsrfToken();
+    return runVoidResult(() async {
+      await request(() async {
+        final csrf = await _getCsrfToken();
 
-      // Construct dyn_req
-      final List<Map<String, dynamic>> contents = [];
-      contents.add({'raw_text': content, 'type': 1, 'biz_id': ''});
+        // Construct dyn_req
+        final List<Map<String, dynamic>> contents = [];
+        contents.add({'raw_text': content, 'type': 1, 'biz_id': ''});
 
-      final List<Map<String, dynamic>> pics = [];
-      for (var img in images) {
-        pics.add({
-          'img_src': img.imageUrl,
-          'img_width': img.width,
-          'img_height': img.height,
-        });
-      }
+        final List<Map<String, dynamic>> pics = [];
+        for (var img in images) {
+          pics.add({
+            'img_src': img.imageUrl,
+            'img_width': img.width,
+            'img_height': img.height,
+          });
+        }
 
-      final Map<String, dynamic> dynReq = {
-        'content': {'contents': contents},
-        'scene': images.isNotEmpty ? 2 : 1, // 1: text, 2: image
-      };
+        final Map<String, dynamic> dynReq = {
+          'content': {'contents': contents},
+          'scene': images.isNotEmpty ? 2 : 1, // 1: text, 2: image
+        };
 
-      if (images.isNotEmpty) {
-        dynReq['pics'] = pics;
-      }
+        if (images.isNotEmpty) {
+          dynReq['pics'] = pics;
+        }
 
-      final response = await _api.createDynamic(
-        csrf: csrf ?? '',
-        body: {'dyn_req': dynReq},
-      );
+        final response = await _api.createDynamic(
+          csrf: csrf ?? '',
+          body: {'dyn_req': dynReq},
+        );
 
-      if (!response.isSuccess) {
-        throw ServerException(response.message, code: response.code);
-      }
+        if (!response.isSuccess) {
+          throw ServerException(response.message, code: response.code);
+        }
+      });
     });
   }
 }
@@ -466,4 +508,3 @@ class _DynamicCommentTarget {
     required this.referer,
   });
 }
-

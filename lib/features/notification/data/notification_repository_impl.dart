@@ -3,7 +3,10 @@ import 'dart:io';
 
 import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/core/base_repository.dart';
-import 'package:culcul/features/notification/data/dtos/notification_models.dart';
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
+import 'package:culcul/core/result/run_result.dart';
+import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
 import 'package:culcul/features/notification/data/notification_mapper.dart';
 import 'package:culcul/features/notification/data/notification_api.dart';
 import 'package:culcul/features/notification/domain/entities/image_upload_result.dart';
@@ -110,13 +113,15 @@ class NotificationRepositoryImpl extends BaseRepository
   }
 
   @override
-  Future<ImageUploadResult> uploadImage(File file) async {
-    final response = await requestApi(() => _api.uploadImage(file: file));
-    return response.toDomain();
+  Future<Result<ImageUploadResult, AppError>> uploadImage(File file) async {
+    return runResult(() async {
+      final response = await requestApi(() => _api.uploadImage(file: file));
+      return response.toDomain();
+    });
   }
 
   @override
-  Future<SendMessageResult> sendPrivateMessage({
+  Future<Result<SendMessageResult, AppError>> sendPrivateMessage({
     required int senderUid,
     required int receiverId,
     required int receiverType,
@@ -126,21 +131,23 @@ class NotificationRepositoryImpl extends BaseRepository
     final devId = const Uuid().v4().toUpperCase();
     final timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
-    final response = await requestApi(
-      () => _api.sendPrivateMessage(
-        wSenderUid: senderUid,
-        wReceiverId: receiverId,
-        wDevId: devId,
-        senderUid: senderUid,
-        receiverId: receiverId,
-        receiverType: receiverType,
-        msgType: msgType,
-        devId: devId,
-        timestamp: timestamp,
-        content: jsonEncode(content.toRawMap()),
-      ),
-    );
-    return response.toDomain();
+    return runResult(() async {
+      final response = await requestApi(
+        () => _api.sendPrivateMessage(
+          wSenderUid: senderUid,
+          wReceiverId: receiverId,
+          wDevId: devId,
+          senderUid: senderUid,
+          receiverId: receiverId,
+          receiverType: receiverType,
+          msgType: msgType,
+          devId: devId,
+          timestamp: timestamp,
+          content: jsonEncode(content.toRawMap()),
+        ),
+      );
+      return response.toDomain();
+    });
   }
 
   @override

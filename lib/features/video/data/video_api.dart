@@ -1,7 +1,7 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/network/models/api_response.dart';
-import 'package:culcul/features/video/data/dtos/video_models_dto.dart';
+import 'package:culcul/features/video/data/dtos/video_dtos.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
@@ -24,11 +24,11 @@ abstract class VideoApi {
   Future<ApiResponse<PlayUrl>> fetchVideoPlayUrl(
     @Query('avid') int aid,
     @Query('cid') int cid,
-    @Query('qn') int qn,
-    @Query('fnval') int fnval,
-    @Query('fnver') int fnver,
-    @Query('fourk') int fourk,
-  );
+    @Query('qn') int qn, [
+    @Query('fnval') int fnval = 1,
+    @Query('fnver') int fnver = 0,
+    @Query('fourk') int fourk = 1,
+  ]);
 
   @GET(ApiConstants.playerInfo)
   @Headers({'x-bili-wbi': 'true'})

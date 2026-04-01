@@ -6,7 +6,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'like_view_model.g.dart';
 
 @riverpod
-class LikeList extends _$LikeList with CursorPagedAsyncNotifier<NotificationEntry, ({int id, int time})> {
+class LikeList extends _$LikeList
+    with CursorPagedAsyncNotifier<NotificationEntry, ({int id, int time})> {
   @override
   FutureOr<List<NotificationEntry>> build() async {
     return buildFirstPage();
@@ -23,7 +24,9 @@ class LikeList extends _$LikeList with CursorPagedAsyncNotifier<NotificationEntr
         .then(
           (data) => CursorPage(
             items: data,
-            nextCursor: data.isEmpty ? null : (id: data.last.id, time: data.last.eventTime),
+            nextCursor: data.isEmpty
+                ? null
+                : (id: data.last.id, time: data.last.eventTime),
             hasMore: data.isNotEmpty,
           ),
         );

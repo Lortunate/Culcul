@@ -63,4 +63,3 @@ class DynamicUgcWidget extends StatelessWidget {
     );
   }
 }
-

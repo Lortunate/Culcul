@@ -1,7 +1,10 @@
 import 'package:culcul/core/errors/exceptions.dart';
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/network/dio_client.dart';
-import 'package:culcul/features/profile/data/dtos/profile_models.dart';
+import 'package:culcul/core/result/result.dart';
+import 'package:culcul/core/result/run_result.dart';
+import 'package:culcul/features/profile/data/dtos/profile_dtos.dart';
 import 'package:culcul/features/profile/data/profile_mapper.dart';
 import 'package:culcul/features/profile/data/profile_api.dart';
 import 'package:culcul/core/contracts/user_card_contract.dart';
@@ -19,6 +22,7 @@ domain.ProfileRepository profileRepository(Ref ref) {
 }
 
 class ProfileRepositoryImpl extends BaseRepository implements domain.ProfileRepository {
+  static const int _defaultSpaceVideoPageSize = 30;
   final ProfileApi api;
 
   ProfileRepositoryImpl({required this.api});
@@ -82,11 +86,15 @@ class ProfileRepositoryImpl extends BaseRepository implements domain.ProfileRepo
   Future<List<UserSpaceVideoModel>> getSpaceVideosModel({
     required int mid,
     int page = 1,
-    int pageSize = 30,
     String order = 'pubdate',
   }) async {
     final data = await requestApi(
-      () => api.getSpaceVideos(mid: mid, page: page, pageSize: pageSize, order: order),
+      () => api.getSpaceVideos(
+        mid: mid,
+        page: page,
+        pageSize: _defaultSpaceVideoPageSize,
+        order: order,
+      ),
     );
     return data.list.vlist;
   }
@@ -109,8 +117,13 @@ class ProfileRepositoryImpl extends BaseRepository implements domain.ProfileRepo
   }
 
   @override
-  Future<void> modifyRelation({required int mid, required bool isFollow}) {
-    return requestVoid(() => api.modifyRelation(mid, isFollow ? 1 : 2, 11));
+  Future<Result<void, AppError>> modifyRelation({
+    required int mid,
+    required bool isFollow,
+  }) {
+    return runVoidResult(
+      () => requestVoid(() => api.modifyRelation(mid, isFollow ? 1 : 2, 11)),
+    );
   }
 
   @override
@@ -122,13 +135,11 @@ class ProfileRepositoryImpl extends BaseRepository implements domain.ProfileRepo
   Future<List<ProfileVideo>> getSpaceVideos({
     required int mid,
     int page = 1,
-    int pageSize = 30,
     String order = 'pubdate',
   }) async {
     return (await getSpaceVideosModel(
       mid: mid,
       page: page,
-      pageSize: pageSize,
       order: order,
     )).map((item) => item.toDomain()).toList();
   }

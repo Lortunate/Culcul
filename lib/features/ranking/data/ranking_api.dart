@@ -14,4 +14,3 @@ abstract class RankingApi {
   @Headers({'x-bili-wbi': 'true'})
   Future<ApiResponse<RankingResponseDto>> fetchRanking({@Query('rid') int? rid});
 }
-

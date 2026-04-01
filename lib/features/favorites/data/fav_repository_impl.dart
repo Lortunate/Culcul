@@ -1,7 +1,10 @@
 import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/core/base_repository.dart';
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
+import 'package:culcul/core/result/run_result.dart';
 import 'package:culcul/features/favorites/data/fav_api.dart';
-import 'package:culcul/features/favorites/data/dtos/favorite_models.dart';
+import 'package:culcul/features/favorites/data/dtos/favorite_dtos.dart';
 import 'package:culcul/features/favorites/data/favorite_mapper.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
@@ -17,6 +20,7 @@ domain.FavoriteRepository favRepository(Ref ref) {
 }
 
 class FavRepositoryImpl extends BaseRepository implements domain.FavoriteRepository {
+  static const int _defaultPageSize = 20;
   final FavApi _api;
 
   FavRepositoryImpl(this._api);
@@ -28,7 +32,7 @@ class FavRepositoryImpl extends BaseRepository implements domain.FavoriteReposit
   Future<FavFolderListResponse> getCollectedFoldersModel({
     required int upMid,
     required int pn,
-    required int ps,
+    int ps = _defaultPageSize,
   }) async {
     return requestApi(() => _api.getCollectedFolders(upMid, pn, ps));
   }
@@ -36,7 +40,7 @@ class FavRepositoryImpl extends BaseRepository implements domain.FavoriteReposit
   Future<FavResourceListResponse> getFolderResourcesModel({
     required int mediaId,
     required int pn,
-    required int ps,
+    int ps = _defaultPageSize,
     String? keyword,
     String? order,
     int? type,
@@ -88,8 +92,8 @@ class FavRepositoryImpl extends BaseRepository implements domain.FavoriteReposit
   }
 
   @override
-  Future<void> cleanInvalidResources({required int mediaId}) async {
-    return requestVoid(() => _api.cleanInvalidResources(mediaId));
+  Future<Result<void, AppError>> cleanInvalidResources({required int mediaId}) async {
+    return runVoidResult(() => requestVoid(() => _api.cleanInvalidResources(mediaId)));
   }
 
   @override
@@ -101,20 +105,14 @@ class FavRepositoryImpl extends BaseRepository implements domain.FavoriteReposit
   Future<FavoriteFolderPage> getCollectedFolders({
     required int upMid,
     required int page,
-    required int pageSize,
   }) async {
-    return (await getCollectedFoldersModel(
-      upMid: upMid,
-      pn: page,
-      ps: pageSize,
-    )).toDomain();
+    return (await getCollectedFoldersModel(upMid: upMid, pn: page)).toDomain();
   }
 
   @override
   Future<FavoriteResourcePage> getFolderResources({
     required int mediaId,
     required int page,
-    required int pageSize,
     String? keyword,
     String? order,
     int? type,
@@ -123,7 +121,6 @@ class FavRepositoryImpl extends BaseRepository implements domain.FavoriteReposit
     return (await getFolderResourcesModel(
       mediaId: mediaId,
       pn: page,
-      ps: pageSize,
       keyword: keyword,
       order: order,
       type: type,
@@ -132,42 +129,51 @@ class FavRepositoryImpl extends BaseRepository implements domain.FavoriteReposit
   }
 
   @override
-  Future<FavoriteFolder> createFolder({
+  Future<Result<FavoriteFolder, AppError>> createFolder({
     required String title,
     String? intro,
     int? privacy,
     String? cover,
   }) async {
-    return (await addFolderModel(
-      title: title,
-      intro: intro,
-      privacy: privacy,
-      cover: cover,
-    )).toDomain();
+    return runResult(() async {
+      return (await addFolderModel(
+        title: title,
+        intro: intro,
+        privacy: privacy,
+        cover: cover,
+      )).toDomain();
+    });
   }
 
   @override
-  Future<FavoriteFolder> updateFolder({
+  Future<Result<FavoriteFolder, AppError>> updateFolder({
     required int mediaId,
     required String title,
     String? intro,
     int? privacy,
     String? cover,
   }) async {
-    return (await editFolderModel(
-      mediaId: mediaId,
-      title: title,
-      intro: intro,
-      privacy: privacy,
-      cover: cover,
-    )).toDomain();
+    return runResult(() async {
+      return (await editFolderModel(
+        mediaId: mediaId,
+        title: title,
+        intro: intro,
+        privacy: privacy,
+        cover: cover,
+      )).toDomain();
+    });
   }
 
   @override
-  Future<void> deleteFolder({required String mediaIds}) => delFolder(mediaIds: mediaIds);
+  Future<Result<void, AppError>> deleteFolder({required String mediaIds}) {
+    return runVoidResult(() => delFolder(mediaIds: mediaIds));
+  }
 
   @override
-  Future<void> deleteResources({required String resources, required int mediaId}) {
-    return batchDelResource(resources: resources, mediaId: mediaId);
+  Future<Result<void, AppError>> deleteResources({
+    required String resources,
+    required int mediaId,
+  }) {
+    return runVoidResult(() => batchDelResource(resources: resources, mediaId: mediaId));
   }
 }

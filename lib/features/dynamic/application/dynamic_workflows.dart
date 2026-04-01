@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/core/result/run_result.dart';
 import 'package:culcul/features/dynamic/dynamic_providers.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'package:culcul/features/dynamic/domain/repositories/dynamic_repository.dart';
@@ -24,12 +23,14 @@ class PublishDynamicWorkflow {
     required String content,
     required List<File> images,
   }) async {
-    return runVoidResult(() async {
-      final uploadedImages = <DynamicUploadImageData>[];
-      for (final image in images) {
-        uploadedImages.add(await _repository.uploadImage(image));
+    final uploadedImages = <DynamicUploadImageData>[];
+    for (final image in images) {
+      final uploadResult = await _repository.uploadImage(image);
+      if (uploadResult.isFailure) {
+        return Failure(uploadResult.errorOrNull!);
       }
-      await _repository.publishDynamic(content: content, images: uploadedImages);
-    });
+      uploadedImages.add(uploadResult.dataOrNull!);
+    }
+    return _repository.publishDynamic(content: content, images: uploadedImages);
   }
 }

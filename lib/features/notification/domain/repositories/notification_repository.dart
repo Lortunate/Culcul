@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
 import 'package:culcul/features/notification/domain/entities/image_upload_result.dart';
@@ -27,9 +29,9 @@ abstract class NotificationRepository {
 
   Future<PrivateSessionPage> getPrivateSessions({int? endTs});
 
-  Future<ImageUploadResult> uploadImage(File file);
+  Future<Result<ImageUploadResult, AppError>> uploadImage(File file);
 
-  Future<SendMessageResult> sendPrivateMessage({
+  Future<Result<SendMessageResult, AppError>> sendPrivateMessage({
     required int senderUid,
     required int receiverId,
     required int receiverType,

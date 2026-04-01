@@ -73,4 +73,3 @@ class _PopularVideoList extends StatelessWidget {
     );
   }
 }
-

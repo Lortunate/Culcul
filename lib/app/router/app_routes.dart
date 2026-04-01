@@ -35,4 +35,3 @@ GoRouter router(Ref ref) {
     debugLogDiagnostics: true,
   );
 }
-

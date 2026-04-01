@@ -123,11 +123,12 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
     );
 
     final result = await runResult(
-      () => ref.read(dynamicRepositoryProvider).getArticleCommentList(
-        oid: detail.commentOid,
-        referer: detail.url,
-        next: refresh ? null : state.commentsNext,
-      ),
+      () => ref
+          .read(dynamicRepositoryProvider)
+          .getArticleCommentList(
+            article: detail,
+            next: refresh ? null : state.commentsNext,
+          ),
     );
     result.when(
       success: (response) {
@@ -162,16 +163,14 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
     if (message.trim().isEmpty || state.isSendingComment) return null;
 
     state = state.copyWith(isSendingComment: true);
-    final result = await runVoidResult(
-      () => ref.read(dynamicRepositoryProvider).addCommentReply(
-        oid: detail.commentOid,
-        type: detail.commentType,
-        root: 0,
-        parent: 0,
-        message: message.trim(),
-        referer: detail.url,
-      ),
-    );
+    final result = await ref
+        .read(dynamicRepositoryProvider)
+        .addArticleCommentReply(
+          article: detail,
+          root: 0,
+          parent: 0,
+          message: message.trim(),
+        );
     state = state.copyWith(isSendingComment: false);
     if (result.isFailure) {
       return result.errorOrNull!.message;
@@ -185,16 +184,14 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
     if (detail == null) return null;
     if (!state.commentsEnabled) return 'Comments disabled';
 
-    final result = await runVoidResult(
-      () => ref.read(dynamicRepositoryProvider).addCommentReply(
-        oid: detail.commentOid,
-        type: detail.commentType,
-        root: item.root == 0 ? item.rpid : item.root,
-        parent: item.rpid,
-        message: message,
-        referer: detail.url,
-      ),
-    );
+    final result = await ref
+        .read(dynamicRepositoryProvider)
+        .addArticleCommentReply(
+          article: detail,
+          root: item.root == 0 ? item.rpid : item.root,
+          parent: item.rpid,
+          message: message,
+        );
     if (result.isFailure) {
       return result.errorOrNull!.message;
     }
@@ -220,15 +217,9 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
       }).toList(),
     );
 
-    final result = await runVoidResult(
-      () => ref.read(dynamicRepositoryProvider).likeCommentByTarget(
-        oid: detail.commentOid,
-        type: detail.commentType,
-        rpid: item.rpid,
-        isLiked: !isLiked,
-        referer: detail.url,
-      ),
-    );
+    final result = await ref
+        .read(dynamicRepositoryProvider)
+        .likeArticleComment(article: detail, rpid: item.rpid, isLiked: !isLiked);
     if (result.isFailure) {
       state = state.copyWith(comments: previous);
     }

@@ -85,11 +85,9 @@ class VideoDetailController extends _$VideoDetailController {
       ),
     );
 
-    final result = await runVoidResult(
-      () => ref
-          .read(relationRepositoryProvider)
-          .modifyRelation(fid: detail.owner.mid, act: wasFollowed ? 2 : 1),
-    );
+    final result = await ref
+        .read(relationRepositoryProvider)
+        .modifyRelation(fid: detail.owner.mid, act: wasFollowed ? 2 : 1);
     if (result.isFailure) {
       state = state.copyWith(videoDetail: previousDetail);
     }

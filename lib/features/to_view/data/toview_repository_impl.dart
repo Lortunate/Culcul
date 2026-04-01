@@ -1,6 +1,9 @@
 import 'package:culcul/core/errors/exceptions.dart';
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/core/result/result.dart';
+import 'package:culcul/core/result/run_result.dart';
 import 'package:culcul/features/to_view/data/dtos/to_view_model_dto.dart';
 import 'package:culcul/features/to_view/data/to_view_mapper.dart';
 import 'package:culcul/features/to_view/data/toview_api.dart';
@@ -51,12 +54,17 @@ class ToViewRepositoryImpl extends BaseRepository implements domain.ToViewReposi
   }
 
   @override
-  Future<void> add({required int aid}) => addToView(aid: aid);
+  Future<Result<void, AppError>> add({required int aid}) {
+    return runVoidResult(() => addToView(aid: aid));
+  }
 
   @override
-  Future<void> delete({required int aid}) => deleteToView(aid: aid);
+  Future<Result<void, AppError>> delete({required int aid}) {
+    return runVoidResult(() => deleteToView(aid: aid));
+  }
 
   @override
-  Future<void> clear() => clearToView();
+  Future<Result<void, AppError>> clear() {
+    return runVoidResult(clearToView);
+  }
 }
-

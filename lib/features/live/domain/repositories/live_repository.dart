@@ -1,3 +1,5 @@
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/live/domain/entities/live_entities.dart';
 
 abstract class LiveRepository {
@@ -11,7 +13,7 @@ abstract class LiveRepository {
 
   Future<LiveDanmuInfoModel> getDanmuInfo(int roomId);
 
-  Future<List<LiveRoomSummary>> getRecommendList({int page = 1, int pageSize = 30});
+  Future<List<LiveRoomSummary>> getRecommendList({int page = 1});
 
   Future<LiveAnchorInfoModel> getAnchorInfo(int uid);
 
@@ -19,15 +21,13 @@ abstract class LiveRepository {
     required int ruid,
     required int roomId,
     int page = 1,
-    int pageSize = 20,
   });
 
   Future<LiveGuardListModel> getGuardList({
     required int ruid,
     required int roomId,
     int page = 1,
-    int pageSize = 20,
   });
 
-  Future<void> sendDanmaku({required int roomId, required String msg});
+  Future<Result<void, AppError>> sendDanmaku({required int roomId, required String msg});
 }

@@ -15,19 +15,11 @@ class FavoriteFolderActionViewModel extends _$FavoriteFolderActionViewModel {
     int? privacy,
   }) async {
     state = const AsyncLoading();
-    try {
-      await ref.read(favRepositoryProvider).createFolder(
-        title: title,
-        intro: intro,
-        privacy: privacy,
-      );
-      state = const AsyncData(null);
-      return null;
-    } catch (error) {
-      final appError = AppError.fromObject(error);
-      state = const AsyncData(null);
-      return appError;
-    }
+    final result = await ref
+        .read(favRepositoryProvider)
+        .createFolder(title: title, intro: intro, privacy: privacy);
+    state = const AsyncData(null);
+    return result.errorOrNull;
   }
 
   Future<AppError?> editFolder({
@@ -37,33 +29,20 @@ class FavoriteFolderActionViewModel extends _$FavoriteFolderActionViewModel {
     int? privacy,
   }) async {
     state = const AsyncLoading();
-    try {
-      await ref.read(favRepositoryProvider).updateFolder(
-        mediaId: mediaId,
-        title: title,
-        intro: intro,
-        privacy: privacy,
-      );
-      state = const AsyncData(null);
-      return null;
-    } catch (error) {
-      final appError = AppError.fromObject(error);
-      state = const AsyncData(null);
-      return appError;
-    }
+    final result = await ref
+        .read(favRepositoryProvider)
+        .updateFolder(mediaId: mediaId, title: title, intro: intro, privacy: privacy);
+    state = const AsyncData(null);
+    return result.errorOrNull;
   }
 
   Future<AppError?> deleteFolder({required int mediaId}) async {
     state = const AsyncLoading();
-    try {
-      await ref.read(favRepositoryProvider).deleteFolder(mediaIds: mediaId.toString());
-      state = const AsyncData(null);
-      return null;
-    } catch (error) {
-      final appError = AppError.fromObject(error);
-      state = const AsyncData(null);
-      return appError;
-    }
+    final result = await ref
+        .read(favRepositoryProvider)
+        .deleteFolder(mediaIds: mediaId.toString());
+    state = const AsyncData(null);
+    return result.errorOrNull;
   }
 
   Future<AppError?> deleteResources({
@@ -71,17 +50,10 @@ class FavoriteFolderActionViewModel extends _$FavoriteFolderActionViewModel {
     required Set<int> resourceIds,
   }) async {
     state = const AsyncLoading();
-    try {
-      await ref.read(favRepositoryProvider).deleteResources(
-        resources: resourceIds.join(','),
-        mediaId: mediaId,
-      );
-      state = const AsyncData(null);
-      return null;
-    } catch (error) {
-      final appError = AppError.fromObject(error);
-      state = const AsyncData(null);
-      return appError;
-    }
+    final result = await ref
+        .read(favRepositoryProvider)
+        .deleteResources(resources: resourceIds.join(','), mediaId: mediaId);
+    state = const AsyncData(null);
+    return result.errorOrNull;
   }
 }

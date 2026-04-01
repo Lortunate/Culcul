@@ -1,5 +1,5 @@
 import 'package:culcul/core/contracts/video_model_contract.dart';
-import 'package:culcul/features/profile/data/dtos/profile_models.dart';
+import 'package:culcul/features/profile/data/dtos/profile_dtos.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/core/contracts/relation_user_contract.dart';

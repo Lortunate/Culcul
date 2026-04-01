@@ -12,9 +12,6 @@ class PopularResponseDto {
         .whereType<Map>()
         .map((e) => VideoModel.fromJson(Map<String, dynamic>.from(e)))
         .toList();
-    return PopularResponseDto(
-      list: videos,
-      noMore: json['no_more'] == true,
-    );
+    return PopularResponseDto(list: videos, noMore: json['no_more'] == true);
   }
 }

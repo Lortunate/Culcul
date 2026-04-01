@@ -45,7 +45,9 @@ class VideoCommentsController extends _$VideoCommentsController {
   }
 
   Future<void> loadMore() async {
-    if (state.paging.isInitialLoading || state.paging.isLoadingMore || !state.paging.hasMore) {
+    if (state.paging.isInitialLoading ||
+        state.paging.isLoadingMore ||
+        !state.paging.hasMore) {
       return;
     }
 
@@ -70,11 +72,9 @@ class VideoCommentsController extends _$VideoCommentsController {
 
     state = state.copyWith(paging: state.paging.copyWith(items: nextComments));
 
-    final result = await runVoidResult(
-      () => ref
-          .read(videoRepositoryProvider)
-          .setCommentLike(oid: oid, rpid: rpid, isLiked: !isLiked),
-    );
+    final result = await ref
+        .read(videoRepositoryProvider)
+        .setCommentLike(oid: oid, rpid: rpid, isLiked: !isLiked);
     if (result.isFailure) {
       state = state.copyWith(paging: state.paging.copyWith(items: previousComments));
     }
@@ -85,10 +85,12 @@ class VideoCommentsController extends _$VideoCommentsController {
   }
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
-    await ref
+    final result = await ref
         .read(videoRepositoryProvider)
         .replyToComment(oid: oid, root: root, parent: parent, message: message);
-    await refresh();
+    if (result.isSuccess) {
+      await refresh();
+    }
   }
 
   Future<void> _loadPage({required int page, required bool replace}) async {

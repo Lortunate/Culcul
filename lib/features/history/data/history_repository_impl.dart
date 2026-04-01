@@ -16,6 +16,7 @@ domain.HistoryRepository historyRepository(Ref ref) {
 }
 
 class HistoryRepositoryImpl extends BaseRepository implements domain.HistoryRepository {
+  static const int _defaultPageSize = 20;
   final HistoryApi _api;
 
   HistoryRepositoryImpl(this._api);
@@ -23,18 +24,14 @@ class HistoryRepositoryImpl extends BaseRepository implements domain.HistoryRepo
   Future<HistoryResponseDataDto> getHistoryCursor({
     int max = 0,
     int viewAt = 0,
-    int ps = 20,
+    int ps = _defaultPageSize,
   }) {
     return requestApi(() => _api.getHistoryCursor(max, viewAt, '', ps));
   }
 
   @override
-  Future<List<HistoryEntry>> getHistory({
-    int max = 0,
-    int viewAt = 0,
-    int pageSize = 20,
-  }) async {
-    final data = await getHistoryCursor(max: max, viewAt: viewAt, ps: pageSize);
+  Future<List<HistoryEntry>> getHistory({int max = 0, int viewAt = 0}) async {
+    final data = await getHistoryCursor(max: max, viewAt: viewAt);
     return data.list.map((item) => item.toDomain()).toList();
   }
 }

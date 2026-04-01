@@ -58,7 +58,9 @@ class CommentReplyController extends _$CommentReplyController {
   }
 
   Future<void> loadMore() async {
-    if (state.paging.isInitialLoading || state.paging.isLoadingMore || !state.paging.hasMore) {
+    if (state.paging.isInitialLoading ||
+        state.paging.isLoadingMore ||
+        !state.paging.hasMore) {
       return;
     }
 
@@ -95,11 +97,9 @@ class CommentReplyController extends _$CommentReplyController {
   Future<void> toggleCommentLike(int oid, int rpid, bool isLiked) async {
     _updateCommentLikeStatus(rpid, !isLiked);
 
-    final result = await runVoidResult(
-      () => ref
-          .read(videoRepositoryProvider)
-          .setCommentLike(oid: oid, rpid: rpid, isLiked: !isLiked),
-    );
+    final result = await ref
+        .read(videoRepositoryProvider)
+        .setCommentLike(oid: oid, rpid: rpid, isLiked: !isLiked);
     if (result.isFailure) {
       _updateCommentLikeStatus(rpid, isLiked);
     }
@@ -131,9 +131,11 @@ class CommentReplyController extends _$CommentReplyController {
   }
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
-    await ref
+    final result = await ref
         .read(videoRepositoryProvider)
         .replyToComment(oid: oid, root: root, parent: parent, message: message);
-    await refresh();
+    if (result.isSuccess) {
+      await refresh();
+    }
   }
 }

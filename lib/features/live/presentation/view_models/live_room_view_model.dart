@@ -83,13 +83,13 @@ class LiveRoomController extends _$LiveRoomController {
     if (anchor == null) return;
 
     final isFollowing = anchor.isFollowed;
-    try {
-      await ref
-          .read(profileRepositoryProvider)
-          .modifyRelation(mid: int.parse(anchor.mid), isFollow: !isFollowing);
+    final result = await ref
+        .read(profileRepositoryProvider)
+        .modifyRelation(mid: int.parse(anchor.mid), isFollow: !isFollowing);
+    if (result.isSuccess) {
       state = state.copyWith(anchorInfo: anchor.copyWith(isFollowed: !isFollowing));
-    } catch (error, stackTrace) {
-      _logIgnoredError('toggleFollow', error, stackTrace);
+    } else {
+      _logIgnoredError('toggleFollow', result.errorOrNull!, StackTrace.current);
     }
   }
 
@@ -174,10 +174,11 @@ class LiveRoomController extends _$LiveRoomController {
   Future<void> sendDanmaku(String msg) async {
     if (msg.trim().isEmpty) return;
 
-    try {
-      await ref.read(liveRepositoryProvider).sendDanmaku(roomId: state.roomId, msg: msg);
-    } catch (error, stackTrace) {
-      _logIgnoredError('sendDanmaku', error, stackTrace);
+    final result = await ref
+        .read(liveRepositoryProvider)
+        .sendDanmaku(roomId: state.roomId, msg: msg);
+    if (result.isFailure) {
+      _logIgnoredError('sendDanmaku', result.errorOrNull!, StackTrace.current);
     }
   }
 

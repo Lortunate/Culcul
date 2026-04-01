@@ -108,10 +108,7 @@ sealed class AdditionalReserve with _$AdditionalReserve {
 
 @freezed
 sealed class ReserveDesc with _$ReserveDesc {
-  const factory ReserveDesc({
-    required String text,
-    required int style,
-  }) = _ReserveDesc;
+  const factory ReserveDesc({required String text, required int style}) = _ReserveDesc;
 }
 
 @freezed
@@ -158,10 +155,8 @@ sealed class AdditionalUgc with _$AdditionalUgc {
 
 @freezed
 sealed class ModuleDesc with _$ModuleDesc {
-  const factory ModuleDesc({
-    required String text,
-    List<dynamic>? richTextNodes,
-  }) = _ModuleDesc;
+  const factory ModuleDesc({required String text, List<dynamic>? richTextNodes}) =
+      _ModuleDesc;
 }
 
 @freezed
@@ -236,10 +231,7 @@ sealed class MajorCommon with _$MajorCommon {
 
 @freezed
 sealed class MajorStat with _$MajorStat {
-  const factory MajorStat({
-    required String play,
-    required String danmaku,
-  }) = _MajorStat;
+  const factory MajorStat({required String play, required String danmaku}) = _MajorStat;
 }
 
 @freezed
@@ -263,10 +255,8 @@ sealed class StatCommon with _$StatCommon {
 
 @freezed
 sealed class ModuleTopic with _$ModuleTopic {
-  const factory ModuleTopic({
-    required String name,
-    required String jumpUrl,
-  }) = _ModuleTopic;
+  const factory ModuleTopic({required String name, required String jumpUrl}) =
+      _ModuleTopic;
 }
 
 @freezed
@@ -318,10 +308,7 @@ sealed class MajorOpus with _$MajorOpus {
 
 @freezed
 sealed class OpusSummary with _$OpusSummary {
-  const factory OpusSummary({
-    String? text,
-    List<dynamic>? richTextNodes,
-  }) = _OpusSummary;
+  const factory OpusSummary({String? text, List<dynamic>? richTextNodes}) = _OpusSummary;
 }
 
 @freezed
@@ -343,17 +330,13 @@ sealed class MajorLive with _$MajorLive {
 
 @freezed
 sealed class MajorLiveRcmd with _$MajorLiveRcmd {
-  const factory MajorLiveRcmd({
-    required String content,
-    required int reserveType,
-  }) = _MajorLiveRcmd;
+  const factory MajorLiveRcmd({required String content, required int reserveType}) =
+      _MajorLiveRcmd;
 }
 
 @freezed
 sealed class DynamicPublishData with _$DynamicPublishData {
-  const factory DynamicPublishData({
-    required String dynIdStr,
-  }) = _DynamicPublishData;
+  const factory DynamicPublishData({required String dynIdStr}) = _DynamicPublishData;
 }
 
 @freezed

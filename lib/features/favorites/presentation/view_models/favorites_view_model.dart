@@ -1,4 +1,5 @@
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
+import 'package:culcul/core/result/run_result.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
@@ -27,23 +28,23 @@ class FavCreatedFolders extends _$FavCreatedFolders {
           return folder;
         }
 
-        try {
-          final resources = await repository.getFolderResources(
+        final result = await runResult(
+          () => repository.getFolderResources(
             mediaId: folder.id,
             page: 1,
-            pageSize: 1,
-          );
-          String cover = resources.info.cover;
-
-          if (cover.isEmpty && resources.medias.isNotEmpty) {
-            cover = resources.medias.first.cover;
-          }
-
-          if (cover.isNotEmpty) {
-            return folder.copyWith(cover: cover);
-          }
-        } catch (_) {
+          ),
+        );
+        final resources = result.dataOrNull;
+        if (resources == null) {
           return folder;
+        }
+
+        String cover = resources.info.cover;
+        if (cover.isEmpty && resources.medias.isNotEmpty) {
+          cover = resources.medias.first.cover;
+        }
+        if (cover.isNotEmpty) {
+          return folder.copyWith(cover: cover);
         }
 
         return folder;
@@ -57,7 +58,6 @@ class FavCreatedFolders extends _$FavCreatedFolders {
 @riverpod
 class FavCollectedFolders extends _$FavCollectedFolders
     with OffsetPagedAsyncNotifier<FavoriteFolder> {
-  static const int _pageSize = 20;
   late int _mid;
 
   @override
@@ -72,11 +72,9 @@ class FavCollectedFolders extends _$FavCollectedFolders
 
   @override
   Future<List<FavoriteFolder>> fetchPage(int page, {bool refresh = false}) async {
-    final response = await ref.read(favRepositoryProvider).getCollectedFolders(
-      upMid: _mid,
-      page: page,
-      pageSize: _pageSize,
-    );
+    final response = await ref
+        .read(favRepositoryProvider)
+        .getCollectedFolders(upMid: _mid, page: page);
     return response.folders;
   }
 
@@ -84,7 +82,7 @@ class FavCollectedFolders extends _$FavCollectedFolders
   Object itemId(FavoriteFolder item) => item.id;
 
   @override
-  bool hasMoreAfterPage(List<FavoriteFolder> items) => items.length >= _pageSize;
+  bool hasMoreAfterPage(List<FavoriteFolder> items) => items.isNotEmpty;
 
   Future<void> loadMore() {
     return loadNextPage();
@@ -101,7 +99,6 @@ class FavFolderDetailState {
 @riverpod
 class FavFolderResources extends _$FavFolderResources {
   int _page = 1;
-  static const int _pageSize = 20;
   bool _hasMore = true;
 
   @override
@@ -112,11 +109,9 @@ class FavFolderResources extends _$FavFolderResources {
   }
 
   Future<FavFolderDetailState> _fetchItems(int mediaId, int page) async {
-    final response = await ref.read(favRepositoryProvider).getFolderResources(
-      mediaId: mediaId,
-      page: page,
-      pageSize: _pageSize,
-    );
+    final response = await ref
+        .read(favRepositoryProvider)
+        .getFolderResources(mediaId: mediaId, page: page);
     _hasMore = response.hasMore;
     return FavFolderDetailState(info: response.info, list: response.medias);
   }
@@ -125,18 +120,19 @@ class FavFolderResources extends _$FavFolderResources {
     if (!_hasMore || state.isLoading) return;
 
     final currentList = state.value?.list ?? [];
-
-    try {
-      final newState = await _fetchItems(mediaId, _page + 1);
-      _page++;
-      state = AsyncValue.data(
-        FavFolderDetailState(
-          info: newState.info,
-          list: [...currentList, ...newState.list],
-        ),
-      );
-    } catch (e) {
-      rethrow;
+    final result = await runResult(() => _fetchItems(mediaId, _page + 1));
+    final newState = result.dataOrNull;
+    if (newState == null) {
+      state = AsyncError(result.errorOrNull!, StackTrace.current);
+      return;
     }
+
+    _page++;
+    state = AsyncValue.data(
+      FavFolderDetailState(
+        info: newState.info,
+        list: [...currentList, ...newState.list],
+      ),
+    );
   }
 }

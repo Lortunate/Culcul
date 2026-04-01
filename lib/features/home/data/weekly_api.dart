@@ -13,5 +13,3 @@ abstract class WeeklyApi {
   @GET('/x/web-interface/popular/weekly')
   Future<ApiResponse<WeeklyModelDto>> getWeeklyList();
 }
-
-

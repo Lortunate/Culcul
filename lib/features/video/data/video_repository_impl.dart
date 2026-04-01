@@ -1,12 +1,15 @@
 import 'package:culcul/core/base_repository.dart';
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/core/network/resource_api.dart';
+import 'package:culcul/core/result/result.dart';
+import 'package:culcul/core/result/run_result.dart';
 import 'package:culcul/features/video/data/dtos/subtitle_dto.dart' as subtitle_dto;
 import 'package:culcul/features/video/data/video_mapper.dart';
 import 'package:culcul/features/video/domain/repositories/video_repository.dart'
     as domain;
 import 'package:culcul/features/video/data/video_api.dart';
-import 'package:culcul/features/video/domain/entities/video_models.dart';
+import 'package:culcul/features/video/domain/entities/video_entities_exports.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'video_repository_impl.g.dart';
@@ -22,9 +25,6 @@ domain.VideoRepository videoRepository(Ref ref) {
 class VideoRepositoryImpl extends BaseRepository implements domain.VideoRepository {
   static const _videoCommentType = 1;
   static const _defaultCommentPageSize = 20;
-  static const _defaultFnval = 1;
-  static const _defaultFnver = 0;
-  static const _defaultFourk = 1;
 
   final VideoApi api;
   final ResourceApi resourceApi;
@@ -32,35 +32,41 @@ class VideoRepositoryImpl extends BaseRepository implements domain.VideoReposito
   VideoRepositoryImpl({required this.api, required this.resourceApi});
 
   @override
-  Future<void> setCommentLike({
+  Future<Result<void, AppError>> setCommentLike({
     required int oid,
     required int rpid,
     required bool isLiked,
   }) {
-    return requestVoid(
-      () => api.actionComment(oid, rpid, isLiked ? 1 : 0, _videoCommentType),
+    return runVoidResult(
+      () => requestVoid(
+        () => api.actionComment(oid, rpid, isLiked ? 1 : 0, _videoCommentType),
+      ),
     );
   }
 
   @override
-  Future<void> setCommentDislike({
+  Future<Result<void, AppError>> setCommentDislike({
     required int oid,
     required int rpid,
     bool isDisliked = true,
   }) {
-    return requestVoid(
-      () => api.hateComment(oid, rpid, isDisliked ? 1 : 0, _videoCommentType),
+    return runVoidResult(
+      () => requestVoid(
+        () => api.hateComment(oid, rpid, isDisliked ? 1 : 0, _videoCommentType),
+      ),
     );
   }
 
   @override
-  Future<CommentItem> replyToComment({
+  Future<Result<CommentItem, AppError>> replyToComment({
     required int oid,
     required int root,
     required int parent,
     required String message,
   }) {
-    return requestApi(() => api.addReply(oid, root, parent, message, _videoCommentType));
+    return runResult(
+      () => requestApi(() => api.addReply(oid, root, parent, message, _videoCommentType)),
+    );
   }
 
   @override
@@ -82,14 +88,7 @@ class VideoRepositoryImpl extends BaseRepository implements domain.VideoReposito
     int quality = 80,
   }) {
     return requestApi(
-      () => api.fetchVideoPlayUrl(
-        aid,
-        cid,
-        quality,
-        _defaultFnval,
-        _defaultFnver,
-        _defaultFourk,
-      ),
+      () => api.fetchVideoPlayUrl(aid, cid, quality),
     ).then((value) => value.toDomain());
   }
 
@@ -139,11 +138,13 @@ class VideoRepositoryImpl extends BaseRepository implements domain.VideoReposito
   }
 
   @override
-  Future<void> reportVideoProgress({
+  Future<Result<void, AppError>> reportVideoProgress({
     required int aid,
     required int cid,
     required int progress,
   }) {
-    return requestVoid(() => api.reportVideoProgress(aid, cid, progress, 'android', 3));
+    return runVoidResult(
+      () => requestVoid(() => api.reportVideoProgress(aid, cid, progress, 'android', 3)),
+    );
   }
 }

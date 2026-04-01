@@ -19,10 +19,7 @@ class ChatState {
     PagedListState<PrivateMessage>? paging,
     Map<String, String>? emojiMap,
   }) {
-    return ChatState(
-      paging: paging ?? this.paging,
-      emojiMap: emojiMap ?? this.emojiMap,
-    );
+    return ChatState(paging: paging ?? this.paging, emojiMap: emojiMap ?? this.emojiMap);
   }
 }
 
@@ -138,9 +135,21 @@ class Chat extends _$Chat {
   }
 
   Future<void> sendImage(File imageFile) async {
-    final uploadRes = await ref
+    final uploadResult = await ref
         .read(notificationRepositoryProvider)
         .uploadImage(imageFile);
+    final uploadRes = uploadResult.dataOrNull;
+    if (uploadRes == null) {
+      final current = state.value;
+      if (current != null) {
+        state = AsyncData(
+          current.copyWith(
+            paging: current.paging.copyWith(error: uploadResult.errorOrNull),
+          ),
+        );
+      }
+      return;
+    }
     final content = PrivateMessageContent.image(
       url: uploadRes.imageUrl,
       height: uploadRes.imageHeight,
@@ -158,7 +167,14 @@ class Chat extends _$Chat {
     final currentUser = ref.read(authProvider).user;
 
     if (currentUser == null) {
-      throw AppError.auth('Not logged in');
+      final message = AppError.auth('Not logged in');
+      final current = state.value;
+      if (current != null) {
+        state = AsyncData(
+          current.copyWith(paging: current.paging.copyWith(error: message)),
+        );
+      }
+      return;
     }
 
     final senderUid = int.parse(currentUser.id);
@@ -193,19 +209,23 @@ class Chat extends _$Chat {
       );
     }
 
-    try {
-      await ref
-          .read(notificationRepositoryProvider)
-          .sendPrivateMessage(
-            senderUid: senderUid,
-            receiverId: talkerId,
-            receiverType: sessionType,
-            msgType: msgType,
-            content: content,
-          );
-    } catch (e) {
+    final result = await ref
+        .read(notificationRepositoryProvider)
+        .sendPrivateMessage(
+          senderUid: senderUid,
+          receiverId: talkerId,
+          receiverType: sessionType,
+          msgType: msgType,
+          content: content,
+        );
+    if (result.isFailure) {
       state = previousState;
-      rethrow;
+      final current = state.value;
+      if (current != null) {
+        state = AsyncData(
+          current.copyWith(paging: current.paging.copyWith(error: result.errorOrNull)),
+        );
+      }
     }
   }
 }

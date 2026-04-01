@@ -8,4 +8,3 @@ Widget buildDynamicRoutePage() => const DynamicPage();
 Widget buildDynamicDetailRoutePage(String id) => DynamicDetailPage(dynamicId: id);
 
 Widget buildPublishDynamicRoutePage() => const PublishDynamicPage();
-

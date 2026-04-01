@@ -5,5 +5,3 @@ import 'package:flutter/widgets.dart';
 Widget buildHomeRoutePage() => const HomePage();
 
 Widget buildWeeklyRoutePage() => const WeeklyScreen();
-
-

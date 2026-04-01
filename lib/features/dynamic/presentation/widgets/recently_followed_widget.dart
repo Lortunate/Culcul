@@ -95,4 +95,3 @@ class _UserItem extends StatelessWidget {
     );
   }
 }
-

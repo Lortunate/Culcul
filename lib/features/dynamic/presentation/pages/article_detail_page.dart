@@ -819,4 +819,3 @@ Color? _parseColor(String? color) {
   }
   return null;
 }
-

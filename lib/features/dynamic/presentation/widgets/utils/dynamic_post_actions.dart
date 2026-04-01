@@ -57,4 +57,3 @@ Future<void> showDynamicPostActions(BuildContext context, DynamicItem post) asyn
       break;
   }
 }
-

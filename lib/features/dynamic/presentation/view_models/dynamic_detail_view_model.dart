@@ -61,9 +61,9 @@ class DynamicDetailViewModel extends _$DynamicDetailViewModel {
     );
 
     state = state.copyWith(post: nextItem);
-    final result = await runVoidResult(
-      () => ref.read(dynamicRepositoryProvider).likeDynamic(item.id, newStatus),
-    );
+    final result = await ref
+        .read(dynamicRepositoryProvider)
+        .likeDynamic(item.id, newStatus);
     if (result.isFailure) {
       state = state.copyWith(post: item);
       return result.errorOrNull?.message;

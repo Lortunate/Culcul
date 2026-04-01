@@ -29,5 +29,3 @@ class WeeklyRepositoryImpl extends BaseRepository implements domain.WeeklyReposi
     return (await getWeeklyListModel()).toDomain();
   }
 }
-
-

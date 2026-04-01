@@ -1,1 +1,1 @@
-export 'package:culcul/features/dynamic/domain/entities/dynamic_models.dart';
+export 'package:culcul/features/dynamic/domain/entities/dynamic_entities_exports.dart';

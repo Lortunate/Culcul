@@ -96,6 +96,3 @@ class _LiveGrid extends StatelessWidget {
     );
   }
 }
-
-
-

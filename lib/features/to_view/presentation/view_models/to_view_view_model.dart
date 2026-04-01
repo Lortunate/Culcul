@@ -18,30 +18,24 @@ class ToViewList extends _$ToViewList {
   }
 
   Future<void> add(int aid) async {
-    try {
-      await ref.read(toViewRepositoryProvider).add(aid: aid);
+    final result = await ref.read(toViewRepositoryProvider).add(aid: aid);
+    if (result.isSuccess) {
       ref.invalidateSelf();
-    } catch (_) {
-      // Keep current state when action fails.
     }
   }
 
   Future<void> delete(int aid) async {
-    try {
-      await ref.read(toViewRepositoryProvider).delete(aid: aid);
+    final result = await ref.read(toViewRepositoryProvider).delete(aid: aid);
+    if (result.isSuccess) {
       final currentList = state.asData?.value ?? [];
       state = AsyncValue.data(currentList.where((item) => item.aid != aid).toList());
-    } catch (_) {
-      // Keep current state when action fails.
     }
   }
 
   Future<void> clear() async {
-    try {
-      await ref.read(toViewRepositoryProvider).clear();
+    final result = await ref.read(toViewRepositoryProvider).clear();
+    if (result.isSuccess) {
       state = const AsyncValue.data([]);
-    } catch (_) {
-      // Keep current state when action fails.
     }
   }
 }

@@ -19,12 +19,11 @@ class UserSpaceNotifier extends _$UserSpaceNotifier {
     // Optimistic update
     state = AsyncData(currentProfile.copyWith(isFollowing: newFollowStatus));
 
-    try {
-      await ref
-          .read(profileRepositoryProvider)
-          .modifyRelation(mid: int.parse(currentProfile.id), isFollow: newFollowStatus);
-    } catch (_) {
-      // Revert if failed
+    final result = await ref
+        .read(profileRepositoryProvider)
+        .modifyRelation(mid: int.parse(currentProfile.id), isFollow: newFollowStatus);
+    if (result.isFailure) {
+      // Revert if failed.
       state = AsyncData(currentProfile);
     }
   }

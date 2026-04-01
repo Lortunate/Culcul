@@ -64,4 +64,3 @@ class DynamicCommonWidget extends StatelessWidget {
     );
   }
 }
-
