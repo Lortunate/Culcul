@@ -90,7 +90,7 @@ class AppSearchBar extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(22),
       child: Container(
-        height: 44,
+        height: 40,
         padding: const EdgeInsets.symmetric(horizontal: 14),
         decoration: _buildDecoration(theme),
         child: Row(
