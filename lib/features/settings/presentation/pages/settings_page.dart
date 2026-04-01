@@ -1,9 +1,10 @@
-import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/core/network/bilibili_acceleration.dart';
 import 'package:culcul/features/settings/presentation/view_models/settings_view_model.dart';
-import 'package:culcul/features/settings/presentation/widgets/settings_group.dart';
-import 'package:culcul/features/settings/presentation/widgets/settings_item.dart';
 import 'package:culcul/features/settings/presentation/widgets/settings_selection_item.dart';
 import 'package:culcul/features/settings/presentation/widgets/settings_selection_sheet.dart';
+import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -24,35 +25,55 @@ class SettingsPage extends ConsumerWidget {
       _ => '...',
     };
     final isClearingCache = ref.watch(cacheMaintenanceProvider).isLoading;
+    final accelerationState = ref.watch(bilibiliAccelerationControllerProvider);
+    final activePreset = biliPresetById(accelerationState.activePresetId);
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
       appBar: _SettingsAppBar(title: t.settings.title),
       body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: <Widget>[
-          _GeneralSettingsSection(
-            title: t.settings.sections.general,
-            languageTitle: t.settings.language,
-            currentLanguage: _getLanguageName(t, LocaleSettings.currentLocale),
-            onTapLanguage: () => _showLanguageSelector(context),
+          _SettingsSectionLabel(title: t.settings.sections.general),
+          _SettingsListRow(
+            key: const ValueKey<String>('settings_row_language'),
+            title: t.settings.language,
+            value: _getLanguageName(t, LocaleSettings.currentLocale),
+            onTap: () => _showLanguageSelector(context),
           ),
-          _AppearanceSettingsSection(
-            title: t.settings.sections.appearance,
-            appearanceTitle: t.settings.appearance,
-            currentTheme: _getThemeName(t, themeMode),
-            onTapAppearance: () => _showThemeSelector(context, ref, themeMode),
+          const SizedBox(height: 16),
+          _SettingsSectionLabel(title: t.settings.sections.appearance),
+          _SettingsListRow(
+            key: const ValueKey<String>('settings_row_appearance'),
+            title: t.settings.appearance,
+            value: _getThemeName(t, themeMode),
+            onTap: () => _showThemeSelector(context, ref, themeMode),
           ),
-          _StorageSettingsSection(
-            title: t.settings.sections.storage,
-            clearCacheTitle: t.settings.clear_cache,
-            cacheSize: isClearingCache ? '...' : cacheSize,
-            onTapClearCache: () => _handleClearCache(context, ref),
+          const SizedBox(height: 16),
+          _SettingsSectionLabel(title: t.settings.sections.network),
+          _SettingsListRow(
+            key: const ValueKey<String>('settings_row_network'),
+            title: t.settings.network.page_title,
+            value: _getPresetName(t, activePreset.id),
+            onTap: () => const NetworkSettingsRoute().push(context),
           ),
-          _AboutSettingsSection(
-            title: t.settings.sections.about,
-            versionTitle: t.settings.version,
+          const SizedBox(height: 16),
+          _SettingsSectionLabel(title: t.settings.sections.storage),
+          _SettingsListRow(
+            key: const ValueKey<String>('settings_row_cache'),
+            title: t.settings.clear_cache,
+            value: isClearingCache ? '...' : cacheSize,
+            onTap: () => _handleClearCache(context, ref),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 16),
+          _SettingsSectionLabel(title: t.settings.sections.about),
+          _SettingsListRow(
+            key: const ValueKey<String>('settings_row_version'),
+            title: t.settings.version,
+            value: 'v1.0.0',
+            showArrow: false,
+          ),
+          const SizedBox(height: 20),
         ],
       ),
     );
@@ -71,6 +92,17 @@ class SettingsPage extends ConsumerWidget {
       ThemeMode.system => t.settings.theme_mode.system,
       ThemeMode.light => t.settings.theme_mode.light,
       ThemeMode.dark => t.settings.theme_mode.dark,
+    };
+  }
+
+  String _getPresetName(Translations t, String presetId) {
+    return switch (presetId) {
+      'official_direct' => t.settings.network.presets.official_direct,
+      'dns_backup' => t.settings.network.presets.dns_backup,
+      'cdn_cos' => t.settings.network.presets.cdn_cos,
+      'cdn_ks3' => t.settings.network.presets.cdn_ks3,
+      'cdn_ali' => t.settings.network.presets.cdn_ali,
+      _ => presetId,
     };
   }
 
@@ -115,9 +147,7 @@ class SettingsPage extends ConsumerWidget {
     required String title,
     required List<Widget> children,
   }) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
+    final colorScheme = Theme.of(context).colorScheme;
     showModalBottomSheet(
       context: context,
       backgroundColor: colorScheme.surface,
@@ -143,9 +173,8 @@ class SettingsPage extends ConsumerWidget {
 }
 
 class _SettingsAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String title;
-
   const _SettingsAppBar({required this.title});
+  final String title;
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
@@ -154,7 +183,6 @@ class _SettingsAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
     return AppBar(
       title: Text(
         title,
@@ -170,89 +198,90 @@ class _SettingsAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 }
 
-class _GeneralSettingsSection extends StatelessWidget {
-  final String title;
-  final String languageTitle;
-  final String currentLanguage;
-  final VoidCallback onTapLanguage;
+class _SettingsSectionLabel extends StatelessWidget {
+  const _SettingsSectionLabel({required this.title});
 
-  const _GeneralSettingsSection({
-    required this.title,
-    required this.languageTitle,
-    required this.currentLanguage,
-    required this.onTapLanguage,
-  });
+  final String title;
 
   @override
   Widget build(BuildContext context) {
-    return SettingsGroup(
-      title: title,
-      children: [
-        SettingsItem(title: languageTitle, value: currentLanguage, onTap: onTapLanguage),
-      ],
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Text(
+        title,
+        style: theme.textTheme.labelLarge?.copyWith(
+          color: colorScheme.onSurfaceVariant,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
     );
   }
 }
 
-class _AppearanceSettingsSection extends StatelessWidget {
-  final String title;
-  final String appearanceTitle;
-  final String currentTheme;
-  final VoidCallback onTapAppearance;
-
-  const _AppearanceSettingsSection({
+class _SettingsListRow extends StatelessWidget {
+  const _SettingsListRow({
+    super.key,
     required this.title,
-    required this.appearanceTitle,
-    required this.currentTheme,
-    required this.onTapAppearance,
+    this.value,
+    this.onTap,
+    this.showArrow = true,
   });
 
-  @override
-  Widget build(BuildContext context) {
-    return SettingsGroup(
-      title: title,
-      children: [
-        SettingsItem(title: appearanceTitle, value: currentTheme, onTap: onTapAppearance),
-      ],
-    );
-  }
-}
-
-class _StorageSettingsSection extends StatelessWidget {
   final String title;
-  final String clearCacheTitle;
-  final String cacheSize;
-  final VoidCallback onTapClearCache;
-
-  const _StorageSettingsSection({
-    required this.title,
-    required this.clearCacheTitle,
-    required this.cacheSize,
-    required this.onTapClearCache,
-  });
+  final String? value;
+  final VoidCallback? onTap;
+  final bool showArrow;
 
   @override
   Widget build(BuildContext context) {
-    return SettingsGroup(
-      title: title,
-      children: [
-        SettingsItem(title: clearCacheTitle, value: cacheSize, onTap: onTapClearCache),
-      ],
-    );
-  }
-}
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
-class _AboutSettingsSection extends StatelessWidget {
-  final String title;
-  final String versionTitle;
-
-  const _AboutSettingsSection({required this.title, required this.versionTitle});
-
-  @override
-  Widget build(BuildContext context) {
-    return SettingsGroup(
-      title: title,
-      children: [SettingsItem(title: versionTitle, value: 'v1.0.0', showArrow: false)],
+    return AppClickable(
+      onTap: onTap,
+      child: Container(
+        constraints: const BoxConstraints(minHeight: 58),
+        margin: const EdgeInsets.only(top: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                title,
+                style: theme.textTheme.bodyLarge?.copyWith(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            if (value != null)
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Text(
+                  value!,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontSize: 13,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            if (showArrow) ...[
+              const SizedBox(width: 6),
+              Icon(
+                Icons.chevron_right_rounded,
+                size: 18,
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ],
+          ],
+        ),
+      ),
     );
   }
 }

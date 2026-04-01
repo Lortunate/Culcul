@@ -1,4 +1,6 @@
 import 'package:culcul/core/constants/api_constants.dart';
+import 'package:culcul/core/network/bilibili_acceleration.dart';
+import 'package:culcul/core/network/interceptors/bili_acceleration_interceptor.dart';
 import 'package:culcul/core/network/interceptors/cache_interceptor.dart';
 import 'package:culcul/core/network/interceptors/csrf_interceptor.dart';
 import 'package:culcul/core/network/interceptors/retry_interceptor.dart';
@@ -16,6 +18,8 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'dio_client.g.dart';
 
 Dio _createBaseDio(Ref ref) {
+  ref.read(bilibiliAccelerationControllerProvider);
+
   final dio = Dio(
     BaseOptions(
       baseUrl: ApiConstants.baseUrl,
@@ -34,6 +38,7 @@ Dio _createBaseDio(Ref ref) {
 
   final cookieJar = ref.read(cookieJarProvider);
   dio.interceptors.add(CookieManager(cookieJar));
+  dio.interceptors.add(BiliAccelerationInterceptor(ref));
 
   return dio;
 }
@@ -77,7 +82,7 @@ Dio dioClient(Ref ref) {
       ),
     ),
   );
-  dio.interceptors.add(RetryInterceptor(dio: dio));
+  dio.interceptors.add(RetryInterceptor(dio: dio, ref: ref));
   dio.interceptors.add(CsrfInterceptor(ref));
   dio.interceptors.add(WbiInterceptor(ref));
 

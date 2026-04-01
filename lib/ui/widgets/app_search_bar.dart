@@ -50,7 +50,7 @@ class AppSearchBar extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Container(
-      height: 44,
+      height: 40,
       decoration: _buildDecoration(theme),
       alignment: Alignment.center,
       clipBehavior: Clip.hardEdge,

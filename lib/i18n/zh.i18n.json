@@ -112,6 +112,7 @@
     "sections": {
       "general": "通用设置",
       "appearance": "外观设置",
+      "network": "网络加速",
       "storage": "存储管理",
       "about": "关于"
     },
@@ -128,7 +129,49 @@
     "clear_cache": "清理缓存",
     "user_agreement": "用户协议",
     "privacy_policy": "隐私政策",
-    "version": "当前版本"
+    "version": "当前版本",
+    "network": {
+      "page_title": "网络加速",
+      "page_subtitle": "根据延迟与稳定性智能切换线路",
+      "mode": "切换模式",
+      "mode_auto": "自动切换",
+      "mode_auto_description": "自动测速并优先使用低延迟线路",
+      "mode_manual": "手动切换",
+      "mode_manual_description": "固定使用你指定的线路",
+      "active_preset": "当前线路",
+      "preset_hint": "点击线路可立即切换并进入手动模式",
+      "selected": "已选",
+      "lock_preset": "锁定线路",
+      "lock_description": "锁定后即使失败重试也不会自动切线",
+      "test_latency": "延迟测试",
+      "test_now": "立即测速",
+      "operations": "操作",
+      "testing": "测速中...",
+      "not_tested": "未测试",
+      "active": "当前",
+      "locked": "已锁定",
+      "unlocked": "未锁定",
+      "cooldown_ready": "可切换",
+      "cooldown_until": "冷却至",
+      "health_healthy": "线路状态：正常",
+      "health_degraded": "线路状态：降级",
+      "health_unreachable": "线路状态：不可达",
+      "auto_switch_log": "自动切线日志",
+      "auto_switch_never": "暂无自动切线",
+      "auto_switch_reason_probe": "测速选优",
+      "auto_switch_reason_retry": "请求失败切线",
+      "auto_switch_cost": "耗时",
+      "log_trigger_failure": "失败触发",
+      "score_label": "评分",
+      "latency_unreachable": "不可达",
+      "presets": {
+        "official_direct": "官方直连",
+        "dns_backup": "DNS 备用",
+        "cdn_cos": "CDN COS",
+        "cdn_ks3": "CDN KS3",
+        "cdn_ali": "CDN 阿里"
+      }
+    }
   },
   "auth": {
     "login": "登录",

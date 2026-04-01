@@ -112,6 +112,7 @@
     "sections": {
       "general": "General",
       "appearance": "Appearance",
+      "network": "Network Acceleration",
       "storage": "Storage",
       "about": "About"
     },
@@ -128,7 +129,49 @@
     "clear_cache": "Clear Cache",
     "user_agreement": "User Agreement",
     "privacy_policy": "Privacy Policy",
-    "version": "Version"
+    "version": "Version",
+    "network": {
+      "page_title": "Network Acceleration",
+      "page_subtitle": "Switch routes by latency and stability",
+      "mode": "Mode",
+      "mode_auto": "Auto Switch",
+      "mode_auto_description": "Probe automatically and pick the lowest-latency route",
+      "mode_manual": "Manual Switch",
+      "mode_manual_description": "Keep using the route you choose",
+      "active_preset": "Active Route",
+      "preset_hint": "Tap a route to switch immediately and enter manual mode",
+      "selected": "Selected",
+      "lock_preset": "Lock Route",
+      "lock_description": "When locked, retries will not auto-switch routes",
+      "test_latency": "Latency Test",
+      "test_now": "Test Now",
+      "operations": "Operations",
+      "testing": "Testing...",
+      "not_tested": "Not tested",
+      "active": "Active",
+      "locked": "Locked",
+      "unlocked": "Unlocked",
+      "cooldown_ready": "Ready to switch",
+      "cooldown_until": "Cooldown until",
+      "health_healthy": "Route Health: Healthy",
+      "health_degraded": "Route Health: Degraded",
+      "health_unreachable": "Route Health: Unreachable",
+      "auto_switch_log": "Auto Switch Log",
+      "auto_switch_never": "No auto switch yet",
+      "auto_switch_reason_probe": "Probe best route",
+      "auto_switch_reason_retry": "Request failover",
+      "auto_switch_cost": "Cost",
+      "log_trigger_failure": "Failure Trigger",
+      "score_label": "Score",
+      "latency_unreachable": "Unreachable",
+      "presets": {
+        "official_direct": "Official Direct",
+        "dns_backup": "DNS Backup",
+        "cdn_cos": "CDN COS",
+        "cdn_ks3": "CDN KS3",
+        "cdn_ali": "CDN ALI"
+      }
+    }
   },
   "auth": {
     "login": "Login",

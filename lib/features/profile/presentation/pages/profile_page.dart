@@ -1,10 +1,9 @@
-import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_action_grid.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_app_bar.dart';
+import 'package:culcul/features/profile/presentation/widgets/guest_profile_view.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_menu.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_stats.dart';
-import 'package:culcul/ui/widgets/guest_view.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -16,7 +15,7 @@ class ProfilePage extends HookConsumerWidget {
     final authState = ref.watch(authProvider);
 
     if (!authState.isLoggedIn) {
-      return GuestView(title: t.profile.not_logged_in, message: t.profile.login_hint);
+      return const GuestProfileView();
     }
 
     final colorScheme = Theme.of(context).colorScheme;

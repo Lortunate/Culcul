@@ -1,14 +1,23 @@
 import 'dart:io';
 
-import 'package:culcul/core/constants/api_constants.dart';
+import 'package:culcul/core/network/bilibili_acceleration.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class RetryInterceptor extends Interceptor {
   final Dio dio;
+  final Ref _ref;
   final int maxRetries;
   final int retryInterval;
 
-  RetryInterceptor({required this.dio, this.maxRetries = 3, this.retryInterval = 1000});
+  RetryInterceptor({
+    required this.dio,
+    required Ref ref,
+    this.maxRetries = 3,
+    this.retryInterval = 1000,
+  }) : _ref = ref;
+
+  static const _triedPresetIdsKey = 'bili_accel_tried_preset_ids';
 
   @override
   Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
@@ -23,7 +32,7 @@ class RetryInterceptor extends Interceptor {
         final response = await _retryWithOptionalFallback(err, extra);
 
         return handler.resolve(response);
-      } catch (e) {
+      } catch (_) {
         return super.onError(err, handler);
       }
     }
@@ -43,49 +52,76 @@ class RetryInterceptor extends Interceptor {
   Future<Response<dynamic>> _retryWithOptionalFallback(
     DioException err,
     Map<String, dynamic> extra,
-  ) {
+  ) async {
     final requestOptions = err.requestOptions;
-    final fallbackBaseUrl = _resolveFallbackBaseUrl(err, requestOptions, extra);
-    final fallbackPath = _resolveFallbackPath(requestOptions.path, fallbackBaseUrl);
-    final retryOptions = requestOptions.copyWith(
-      baseUrl: fallbackBaseUrl ?? requestOptions.baseUrl,
-      path: fallbackPath,
+
+    final fallbackPreset = await _resolveFallbackPreset(requestOptions, extra);
+    final retryOptions = _resolveRetryOptions(
+      requestOptions: requestOptions,
+      fallbackPreset: fallbackPreset,
       extra: extra,
     );
+
     return dio.fetch(retryOptions);
   }
 
-  String? _resolveFallbackBaseUrl(
-    DioException err,
+  Future<BiliAccelerationPreset?> _resolveFallbackPreset(
     RequestOptions requestOptions,
     Map<String, dynamic> extra,
-  ) {
-    if (!_isFailedHostLookup(err)) {
+  ) async {
+    if (!isBiliAccelerationTargetHost(requestOptions.uri.host)) {
       return null;
     }
-    if (extra['dns_fallback_used'] == true) {
+
+    final currentState = _ref.read(bilibiliAccelerationControllerProvider);
+    final triedPresetIds = _readTriedPresetIds(extra);
+    triedPresetIds.add(currentState.activePresetId);
+
+    final fallbackPreset = await _ref
+        .read(bilibiliAccelerationControllerProvider.notifier)
+        .registerFailureAndTryFallback(
+          failedPresetId: currentState.activePresetId,
+          triedPresetIds: triedPresetIds,
+        );
+    if (fallbackPreset == null) {
       return null;
     }
-    final isPrimaryHost = requestOptions.uri.host == Uri.parse(ApiConstants.baseUrl).host;
-    if (!isPrimaryHost) {
-      return null;
-    }
-    extra['dns_fallback_used'] = true;
-    return ApiConstants.baseUrlFallback;
+
+    triedPresetIds.add(fallbackPreset.id);
+    extra[_triedPresetIdsKey] = triedPresetIds.toList();
+    return fallbackPreset;
   }
 
-  bool _isFailedHostLookup(DioException err) {
-    final error = err.error;
-    return error is SocketException && error.message.contains('Failed host lookup');
+  RequestOptions _resolveRetryOptions({
+    required RequestOptions requestOptions,
+    required BiliAccelerationPreset? fallbackPreset,
+    required Map<String, dynamic> extra,
+  }) {
+    if (fallbackPreset == null) {
+      return requestOptions.copyWith(extra: extra);
+    }
+
+    final rewrittenUri = rewriteUriWithPreset(requestOptions.uri, fallbackPreset);
+    if (_isAbsoluteUrl(requestOptions.path)) {
+      return requestOptions.copyWith(path: rewrittenUri.toString(), extra: extra);
+    }
+
+    final authority = rewrittenUri.hasPort
+        ? '${rewrittenUri.host}:${rewrittenUri.port}'
+        : rewrittenUri.host;
+    final rewrittenBaseUrl = '${rewrittenUri.scheme}://$authority';
+    return requestOptions.copyWith(baseUrl: rewrittenBaseUrl, extra: extra);
   }
 
-  String _resolveFallbackPath(String path, String? fallbackBaseUrl) {
-    if (fallbackBaseUrl == null) {
-      return path;
+  Set<String> _readTriedPresetIds(Map<String, dynamic> extra) {
+    final rawValues = extra[_triedPresetIdsKey];
+    if (rawValues is List) {
+      return rawValues.whereType<String>().toSet();
     }
-    if (path.startsWith(ApiConstants.baseUrl)) {
-      return path.replaceFirst(ApiConstants.baseUrl, fallbackBaseUrl);
-    }
-    return path;
+    return <String>{};
+  }
+
+  bool _isAbsoluteUrl(String path) {
+    return path.startsWith('http://') || path.startsWith('https://');
   }
 }
