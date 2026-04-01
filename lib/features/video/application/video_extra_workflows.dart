@@ -35,6 +35,10 @@ class VideoExtraWorkflows {
     required int oid,
     required int pid,
   }) async {
+    if (oid <= 0 || pid <= 0) {
+      return const Success(null);
+    }
+
     return runResult(() async {
       final playerInfoResult = await runResult(
         () => videoRepository.fetchPlayerInfo(aid: pid, cid: oid),

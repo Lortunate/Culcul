@@ -15,7 +15,7 @@ part 'video_detail_view_model.g.dart';
 class VideoDetailController extends _$VideoDetailController {
   @override
   VideoDetailState build(String bvid) {
-    unawaited(load());
+    unawaited(Future<void>.microtask(load));
     return const VideoDetailState();
   }
 
