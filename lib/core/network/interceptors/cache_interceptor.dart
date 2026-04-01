@@ -39,14 +39,29 @@ class CacheInterceptor extends Interceptor {
   }
 
   static String _generateKey(RequestOptions options) {
-    final params = Map<String, dynamic>.from(options.queryParameters);
-    params.remove('w_rid');
-    params.remove('wts');
-    params.remove('_');
-    params.remove('force_refresh');
+    if (options.queryParameters.isEmpty) {
+      return 'api_cache_${options.path}';
+    }
+
+    final params = Map<String, dynamic>.from(options.queryParameters)
+      ..remove('w_rid')
+      ..remove('wts')
+      ..remove('_')
+      ..remove('force_refresh');
+    if (params.isEmpty) {
+      return 'api_cache_${options.path}';
+    }
 
     final sortedKeys = params.keys.toList()..sort();
-    final sortedParams = sortedKeys.map((key) => '$key=${params[key]}').join('&');
+    final sortedParams = sortedKeys
+        .map((key) {
+          final value = params[key];
+          if (value is List) {
+            return '$key=${value.join(',')}';
+          }
+          return '$key=$value';
+        })
+        .join('&');
 
     return 'api_cache_${options.path}_$sortedParams';
   }

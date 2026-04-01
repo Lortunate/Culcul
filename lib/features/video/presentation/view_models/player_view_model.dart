@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
 import 'package:culcul/core/services/audio_handler.dart';
+import 'package:culcul/features/video/presentation/view_models/player_session_coordinator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:media_kit/media_kit.dart';
@@ -16,9 +17,13 @@ sealed class PlayerUiState with _$PlayerUiState {
   const factory PlayerUiState({
     @Default(false) bool isPlaying,
     @Default(false) bool isBuffering,
+    @Default(false) bool isMediaReady,
+    @Default(0) int renderEpoch,
     @Default(false) bool isFullscreen,
     @Default(false) bool isLocked,
     @Default(true) bool showControls,
+    String? activeSessionId,
+    @Default(0) int activationVersion,
     DateTime? sleepTimerTarget,
   }) = _PlayerUiState;
 }
@@ -34,6 +39,8 @@ class PlayerController extends _$PlayerController {
   Timer? _controlsTimer;
   Timer? _sleepTimer;
   final List<StreamSubscription> _subscriptions = [];
+  final PlayerSessionCoordinator _sessionCoordinator = PlayerSessionCoordinator();
+  int _renderEpoch = 0;
   bool _mounted = true;
 
   @override
@@ -49,6 +56,7 @@ class PlayerController extends _$PlayerController {
       for (final s in _subscriptions) {
         s.cancel();
       }
+      unawaited(_stopPlaybackSilently());
     });
 
     _startHideTimer();
@@ -56,10 +64,14 @@ class PlayerController extends _$PlayerController {
     if (_mounted) {
       _subscriptions.addAll([
         player.stream.playing.listen((p) {
-          state = state.copyWith(isPlaying: p);
+          if (_mounted) {
+            state = state.copyWith(isPlaying: p);
+          }
         }),
         player.stream.buffering.listen((b) {
-          state = state.copyWith(isBuffering: b);
+          if (_mounted) {
+            state = state.copyWith(isBuffering: b);
+          }
         }),
       ]);
     }
@@ -67,7 +79,83 @@ class PlayerController extends _$PlayerController {
     return PlayerUiState(
       isPlaying: player.state.playing,
       isBuffering: player.state.buffering,
+      isMediaReady: false,
+      renderEpoch: _renderEpoch,
+      activeSessionId: _sessionCoordinator.activeSessionId,
+      activationVersion: _sessionCoordinator.activationVersion,
     );
+  }
+
+  bool isSessionActive(String sessionId) =>
+      _sessionCoordinator.isSessionActive(sessionId);
+
+  Future<void> enterSession(String sessionId) async {
+    final change = _sessionCoordinator.enterSession(sessionId);
+    if (!change.changed || !_mounted) {
+      return;
+    }
+
+    _sleepTimer?.cancel();
+    _markLoadingForSession(
+      activeSessionId: change.activeSessionId,
+      activationVersion: change.activationVersion,
+      resetUi: true,
+      resetPlaybackFlags: true,
+    );
+
+    final switchedFromAnotherSession =
+        change.previousActiveSessionId != null &&
+        change.previousActiveSessionId != sessionId;
+    if (switchedFromAnotherSession) {
+      await _stopPlaybackSilently();
+    }
+  }
+
+  Future<void> leaveSession(String sessionId) async {
+    final change = _sessionCoordinator.leaveSession(sessionId);
+    if (!change.changed || !_mounted) {
+      return;
+    }
+
+    _sleepTimer?.cancel();
+    _markLoadingForSession(
+      activeSessionId: change.activeSessionId,
+      activationVersion: change.activationVersion,
+      resetUi: true,
+      resetPlaybackFlags: true,
+    );
+    await _stopPlaybackSilently();
+  }
+
+  void _markLoadingForSession({
+    required String? activeSessionId,
+    required int activationVersion,
+    bool resetUi = false,
+    bool resetPlaybackFlags = false,
+  }) {
+    if (!_mounted) {
+      return;
+    }
+
+    _renderEpoch++;
+    state = state.copyWith(
+      activeSessionId: activeSessionId,
+      activationVersion: activationVersion,
+      isMediaReady: false,
+      renderEpoch: _renderEpoch,
+      isFullscreen: resetUi ? false : state.isFullscreen,
+      isLocked: resetUi ? false : state.isLocked,
+      showControls: resetUi ? true : state.showControls,
+      sleepTimerTarget: resetUi ? null : state.sleepTimerTarget,
+      isPlaying: resetPlaybackFlags ? false : state.isPlaying,
+      isBuffering: resetPlaybackFlags ? false : state.isBuffering,
+    );
+  }
+
+  Future<void> _stopPlaybackSilently() async {
+    try {
+      await player.stop();
+    } catch (_) {}
   }
 
   void _startHideTimer() {
@@ -108,6 +196,7 @@ class PlayerController extends _$PlayerController {
 
   Future<void> loadVideo(
     List<String> urls, {
+    required String sessionId,
     Map<String, String>? httpHeaders,
     bool isQualitySwitch = false,
     bool autoPlay = true,
@@ -115,6 +204,16 @@ class PlayerController extends _$PlayerController {
     String? artist,
     String? coverUrl,
   }) async {
+    if (!_sessionCoordinator.isSessionActive(sessionId)) {
+      return;
+    }
+
+    final requestToken = _sessionCoordinator.beginLoadRequest();
+    _markLoadingForSession(
+      activeSessionId: _sessionCoordinator.activeSessionId,
+      activationVersion: _sessionCoordinator.activationVersion,
+    );
+
     final candidates = urls
         .map((url) => url.trim())
         .where((url) => url.isNotEmpty)
@@ -130,12 +229,19 @@ class PlayerController extends _$PlayerController {
     StackTrace? lastStackTrace;
 
     for (var i = 0; i < candidates.length; i++) {
+      if (!_isLoadRequestActive(sessionId, requestToken)) {
+        return;
+      }
+
       final candidate = candidates[i];
       final media = Media(candidate, httpHeaders: httpHeaders);
 
       try {
         if (isQualitySwitch) {
           await _openMediaWithTimeout(media, play: false, ensureStarted: false);
+          if (!_isLoadRequestActive(sessionId, requestToken)) {
+            return;
+          }
 
           await player.seek(currentPos);
           if (wasPlaying) {
@@ -143,6 +249,9 @@ class PlayerController extends _$PlayerController {
           }
         } else {
           await _openMediaWithTimeout(media, play: autoPlay, ensureStarted: autoPlay);
+          if (!_isLoadRequestActive(sessionId, requestToken)) {
+            return;
+          }
           final audioHandler = ref.read(audioHandlerProvider);
           await audioHandler.updateMediaItem(
             MediaItem(
@@ -153,22 +262,45 @@ class PlayerController extends _$PlayerController {
             ),
           );
         }
+        _markReadyForRequest(sessionId, requestToken);
         return;
       } catch (error, stackTrace) {
+        if (!_isLoadRequestActive(sessionId, requestToken)) {
+          return;
+        }
         lastError = error;
         lastStackTrace = stackTrace;
         debugPrint(
           'PlayerController.loadVideo failed for candidate ${i + 1}/${candidates.length}: $error',
         );
-        try {
-          await player.stop();
-        } catch (_) {}
+        await _stopPlaybackSilently();
       }
     }
 
-    if (lastError != null && lastStackTrace != null) {
-      Error.throwWithStackTrace(lastError!, lastStackTrace!);
+    final errorToThrow = lastError;
+    final stackToThrow = lastStackTrace;
+    if (errorToThrow != null &&
+        stackToThrow != null &&
+        _isLoadRequestActive(sessionId, requestToken)) {
+      Error.throwWithStackTrace(errorToThrow, stackToThrow);
     }
+  }
+
+  bool _isLoadRequestActive(String sessionId, int requestToken) {
+    if (!_mounted) {
+      return false;
+    }
+    return _sessionCoordinator.isLoadRequestCurrent(
+      requestToken: requestToken,
+      sessionId: sessionId,
+    );
+  }
+
+  void _markReadyForRequest(String sessionId, int requestToken) {
+    if (!_isLoadRequestActive(sessionId, requestToken)) {
+      return;
+    }
+    state = state.copyWith(isMediaReady: true);
   }
 
   Future<void> _openMediaWithTimeout(

@@ -27,10 +27,11 @@ class InteractionLayer extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = i18n(context);
-    final playerController = ref.watch(playerControllerProvider.notifier);
+    final playerController = ref.read(playerControllerProvider.notifier);
     final isLocked = ref.watch(playerControllerProvider.select((s) => s.isLocked));
-    final detailState = ref.watch(videoDetailControllerProvider(bvid));
-    final playbackSpeed = detailState.playbackSpeed;
+    final playbackSpeed = ref.watch(
+      videoDetailControllerProvider(bvid).select((value) => value.playbackSpeed),
+    );
 
     final player = playerController.player;
 

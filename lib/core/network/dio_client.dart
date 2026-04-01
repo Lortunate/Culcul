@@ -1,10 +1,9 @@
-import 'dart:io';
-
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/network/bilibili_acceleration.dart';
 import 'package:culcul/core/network/interceptors/bili_acceleration_interceptor.dart';
 import 'package:culcul/core/network/interceptors/cache_interceptor.dart';
 import 'package:culcul/core/network/interceptors/csrf_interceptor.dart';
+import 'package:culcul/core/network/interceptors/in_flight_dedup_interceptor.dart';
 import 'package:culcul/core/network/interceptors/retry_interceptor.dart';
 import 'package:culcul/core/network/interceptors/token_interceptor.dart';
 import 'package:culcul/core/network/interceptors/wbi_interceptor.dart';
@@ -95,6 +94,7 @@ Dio dioClient(Ref ref) {
       ),
     ),
   );
+  dio.interceptors.add(InFlightDedupInterceptor());
   dio.interceptors.add(RetryInterceptor(dio: dio, ref: ref));
   dio.interceptors.add(CsrfInterceptor(ref));
   dio.interceptors.add(WbiInterceptor(ref));

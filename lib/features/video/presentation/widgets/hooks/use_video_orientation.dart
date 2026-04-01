@@ -9,11 +9,13 @@ VoidCallback useVideoOrientation(
   required VideoDetail? videoDetail,
   required int currentCid,
 }) {
-  final playerController = ref.watch(playerControllerProvider.notifier);
-  final playerState = ref.watch(playerControllerProvider);
+  final playerController = ref.read(playerControllerProvider.notifier);
+  final isFullscreen = ref.watch(
+    playerControllerProvider.select((value) => value.isFullscreen),
+  );
 
   void toggleFullscreen() {
-    if (playerState.isFullscreen) {
+    if (isFullscreen) {
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     } else {

@@ -4,24 +4,70 @@ import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/network/bilibili_acceleration.dart';
 import 'package:culcul/features/video/domain/entities/play_url.dart' as domain;
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
-import 'package:culcul/features/video/presentation/view_models/video_detail_state.dart';
+import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
 
-void useVideoLoader(WidgetRef ref, Player player, VideoDetailState state) {
+typedef VideoLoaderInput = ({
+  domain.PlayUrl? playUrl,
+  int currentCid,
+  double playbackSpeed,
+  String? title,
+  String? artist,
+  String? coverUrl,
+});
+
+VideoLoaderInput watchVideoLoaderInput(WidgetRef ref, String bvid) {
+  return ref.watch(
+    videoDetailControllerProvider(bvid).select(
+      (value) => (
+        playUrl: value.playUrl,
+        currentCid: value.currentCid,
+        playbackSpeed: value.playbackSpeed,
+        title: value.videoDetail?.title,
+        artist: value.videoDetail?.owner.name,
+        coverUrl: value.videoDetail?.pic,
+      ),
+    ),
+  );
+}
+
+void useVideoLoader(
+  WidgetRef ref,
+  Player player,
+  VideoLoaderInput input, {
+  required String sessionId,
+}) {
   final playerController = ref.read(playerControllerProvider.notifier);
   final activePresetId = ref.watch(
     bilibiliAccelerationControllerProvider.select((value) => value.activePresetId),
   );
+  final sessionState = ref.watch(
+    playerControllerProvider.select(
+      (value) => (
+        activeSessionId: value.activeSessionId,
+        activationVersion: value.activationVersion,
+      ),
+    ),
+  );
   final activePreset = biliPresetById(activePresetId);
   final lastLoadedCid = useRef<int?>(null);
   final lastPlayUrl = useRef<String?>(null);
+  final lastActivationVersion = useRef<int?>(null);
+  final currentLoadOperation = useRef<int>(0);
+  final disposed = useRef<bool>(false);
+
+  final isActiveSession = sessionState.activeSessionId == sessionId;
+  final activationVersion = sessionState.activationVersion;
 
   useEffect(() {
-    if (state.playUrl != null && state.playUrl!.durl.isNotEmpty) {
-      final urls = _buildPlayableUrls(state.playUrl!.durl.first, activePreset);
+    if (!isActiveSession) {
+      return null;
+    }
+    if (input.playUrl != null && input.playUrl!.durl.isNotEmpty) {
+      final urls = _buildPlayableUrls(input.playUrl!.durl.first, activePreset);
       if (urls.isEmpty) {
         return null;
       }
@@ -32,37 +78,79 @@ void useVideoLoader(WidgetRef ref, Player player, VideoDetailState state) {
         );
       }
 
-      if (lastPlayUrl.value == url) return null;
+      final reactivated =
+          lastActivationVersion.value != null &&
+          lastActivationVersion.value != activationVersion;
+      final sameMedia =
+          lastPlayUrl.value == url && lastLoadedCid.value == input.currentCid;
+      if (sameMedia && !reactivated) {
+        lastActivationVersion.value = activationVersion;
+        return null;
+      }
 
-      final bool isQualitySwitch =
-          lastLoadedCid.value == state.currentCid && lastPlayUrl.value != null;
+      final isQualitySwitch =
+          !reactivated &&
+          lastLoadedCid.value == input.currentCid &&
+          lastPlayUrl.value != null &&
+          lastPlayUrl.value != url;
+      final opId = ++currentLoadOperation.value;
 
-      unawaited(() async {
-        await playerController.loadVideo(
-          urls,
-          httpHeaders: {
-            'Referer': ApiConstants.referer,
-            'User-Agent': ApiConstants.userAgent,
-          },
-          isQualitySwitch: isQualitySwitch,
-          title: state.videoDetail?.title,
-          artist: state.videoDetail?.owner.name,
-          coverUrl: state.videoDetail?.pic,
-        );
+      unawaited(
+        Future<void>(() async {
+          if (disposed.value ||
+              opId != currentLoadOperation.value ||
+              !playerController.isSessionActive(sessionId)) {
+            return;
+          }
+          try {
+            await playerController.loadVideo(
+              urls,
+              sessionId: sessionId,
+              httpHeaders: {
+                'Referer': ApiConstants.referer,
+                'User-Agent': ApiConstants.userAgent,
+              },
+              isQualitySwitch: isQualitySwitch,
+              title: input.title,
+              artist: input.artist,
+              coverUrl: input.coverUrl,
+            );
 
-        player.setRate(state.playbackSpeed);
+            if (disposed.value ||
+                opId != currentLoadOperation.value ||
+                !playerController.isSessionActive(sessionId)) {
+              return;
+            }
 
-        lastLoadedCid.value = state.currentCid;
-        lastPlayUrl.value = url;
-      }());
+            player.setRate(input.playbackSpeed);
+            lastLoadedCid.value = input.currentCid;
+            lastPlayUrl.value = url;
+            lastActivationVersion.value = activationVersion;
+          } catch (error, stackTrace) {
+            debugPrint(
+              'useVideoLoader failed for session=$sessionId: $error\n$stackTrace',
+            );
+          }
+        }),
+      );
     }
     return null;
-  }, [state.playUrl, activePresetId]);
+  }, [input.playUrl, input.currentCid, activePresetId, isActiveSession, activationVersion]);
 
   useEffect(() {
-    player.setRate(state.playbackSpeed);
+    if (isActiveSession) {
+      player.setRate(input.playbackSpeed);
+    }
     return null;
-  }, [state.playbackSpeed]);
+  }, [input.playbackSpeed, isActiveSession]);
+
+  useEffect(() {
+    disposed.value = false;
+    return () {
+      disposed.value = true;
+      currentLoadOperation.value++;
+    };
+  }, const []);
 }
 
 List<String> _buildPlayableUrls(domain.Durl durl, BiliAccelerationPreset preset) {

@@ -36,7 +36,9 @@ class WbiInterceptor extends Interceptor {
 
         options.queryParameters = signedParams;
       } catch (e, stack) {
-        debugPrint('WbiInterceptor signing failed: $e\n$stack');
+        if (kDebugMode) {
+          debugPrint('WbiInterceptor signing failed: $e\n$stack');
+        }
         return handler.reject(
           DioException(
             requestOptions: options,

@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:culcul/core/network/bilibili_acceleration.dart';
 import 'package:dio/dio.dart';
@@ -10,12 +9,14 @@ class RetryInterceptor extends Interceptor {
   final Ref _ref;
   final int maxRetries;
   final int retryInterval;
+  final int maxRetryDelayMs;
 
   RetryInterceptor({
     required this.dio,
     required Ref ref,
     this.maxRetries = 3,
-    this.retryInterval = 1000,
+    this.retryInterval = 300,
+    this.maxRetryDelayMs = 2000,
   }) : _ref = ref;
 
   static const _triedPresetIdsKey = 'bili_accel_tried_preset_ids';
@@ -26,8 +27,10 @@ class RetryInterceptor extends Interceptor {
     final retries = extra['retries'] as int? ?? 0;
 
     if (retries < maxRetries && _shouldRetry(err)) {
-      final delayMs = retryInterval * pow(2, retries);
-      await Future.delayed(Duration(milliseconds: delayMs.toInt()));
+      final delayMs = _calculateDelayMs(retries);
+      if (delayMs > 0) {
+        await Future.delayed(Duration(milliseconds: delayMs));
+      }
 
       try {
         extra['retries'] = retries + 1;
@@ -125,5 +128,14 @@ class RetryInterceptor extends Interceptor {
 
   bool _isAbsoluteUrl(String path) {
     return path.startsWith('http://') || path.startsWith('https://');
+  }
+
+  int _calculateDelayMs(int retries) {
+    final multiplier = 1 << retries.clamp(0, 6);
+    final delayMs = retryInterval * multiplier;
+    if (delayMs > maxRetryDelayMs) {
+      return maxRetryDelayMs;
+    }
+    return delayMs;
   }
 }

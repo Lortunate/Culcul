@@ -9,9 +9,41 @@ class VideoLayer extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final playerController = ref.watch(playerControllerProvider.notifier);
-    final controller = playerController.videoController;
+    final playerController = ref.read(playerControllerProvider.notifier);
+    final renderState = ref.watch(
+      playerControllerProvider.select(
+        (value) => (
+          isMediaReady: value.isMediaReady,
+          renderEpoch: value.renderEpoch,
+          activeSessionId: value.activeSessionId,
+        ),
+      ),
+    );
+    final key = ValueKey(
+      'video:${renderState.activeSessionId ?? 'none'}:${renderState.renderEpoch}',
+    );
 
-    return Video(controller: controller, controls: (state) => const SizedBox(), fit: fit);
+    if (!renderState.isMediaReady) {
+      return ColoredBox(
+        color: Colors.black,
+        child: renderState.activeSessionId == null
+            ? const SizedBox.expand()
+            : const Center(
+                child: SizedBox(
+                  width: 26,
+                  height: 26,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                ),
+              ),
+      );
+    }
+
+    final controller = playerController.videoController;
+    return Video(
+      key: key,
+      controller: controller,
+      controls: (state) => const SizedBox(),
+      fit: fit,
+    );
   }
 }

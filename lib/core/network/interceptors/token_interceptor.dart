@@ -5,16 +5,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TokenInterceptor extends Interceptor {
   final Ref _ref;
+  Future<void>? _refreshCookieFuture;
 
   TokenInterceptor(this._ref);
 
   @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) async {
+  Future<void> onResponse(Response response, ResponseInterceptorHandler handler) async {
     if (response.data is Map) {
       final data = response.data as Map;
       final code = data['code'];
 
       if (code == -101) {
+        if (response.requestOptions.extra['token_refreshed'] == true) {
+          handler.next(response);
+          return;
+        }
+
         final path = response.requestOptions.path;
         if (path.contains('/passport-login/web/cookie/')) {
           handler.next(response);
@@ -22,21 +28,15 @@ class TokenInterceptor extends Interceptor {
         }
 
         try {
-          final authRepo = _ref.read(authRepositoryProvider);
-          await authRepo.checkAndRefreshCookie();
+          await _ensureCookieRefreshed();
+
+          final retryExtra = Map<String, dynamic>.from(response.requestOptions.extra)
+            ..['token_refreshed'] = true;
 
           final dio = _ref.read(dioClientProvider);
-          final options = Options(
-            method: response.requestOptions.method,
-            headers: response.requestOptions.headers,
-          );
+          final retryOptions = response.requestOptions.copyWith(extra: retryExtra);
 
-          final newResponse = await dio.request(
-            response.requestOptions.path,
-            data: response.requestOptions.data,
-            queryParameters: response.requestOptions.queryParameters,
-            options: options,
-          );
+          final newResponse = await dio.fetch<dynamic>(retryOptions);
 
           handler.resolve(newResponse);
           return;
@@ -46,5 +46,24 @@ class TokenInterceptor extends Interceptor {
       }
     }
     handler.next(response);
+  }
+
+  Future<void> _ensureCookieRefreshed() async {
+    final inFlight = _refreshCookieFuture;
+    if (inFlight != null) {
+      await inFlight;
+      return;
+    }
+
+    final authRepo = _ref.read(authRepositoryProvider);
+    final refreshFuture = authRepo.checkAndRefreshCookie();
+    _refreshCookieFuture = refreshFuture;
+    try {
+      await refreshFuture;
+    } finally {
+      if (identical(_refreshCookieFuture, refreshFuture)) {
+        _refreshCookieFuture = null;
+      }
+    }
   }
 }

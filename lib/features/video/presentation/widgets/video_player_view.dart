@@ -1,5 +1,4 @@
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
-import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/widgets/hooks/use_player_system_settings.dart';
 import 'package:culcul/features/video/presentation/widgets/hooks/use_video_dimensions.dart';
 import 'package:culcul/features/video/presentation/widgets/hooks/use_video_loader.dart';
@@ -15,19 +14,21 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class VideoPlayerView extends HookConsumerWidget {
   final String bvid;
+  final String sessionId;
   final VoidCallback onToggleFullscreen;
 
   const VideoPlayerView({
     super.key,
     required this.bvid,
+    required this.sessionId,
     required this.onToggleFullscreen,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
-    final state = ref.watch(videoDetailControllerProvider(bvid));
-    final playerController = ref.watch(playerControllerProvider.notifier);
+    final playerController = ref.read(playerControllerProvider.notifier);
+    final loaderInput = watchVideoLoaderInput(ref, bvid);
     final isFullscreen = ref.watch(
       playerControllerProvider.select((s) => s.isFullscreen),
     );
@@ -35,7 +36,7 @@ class VideoPlayerView extends HookConsumerWidget {
 
     final player = playerController.player;
 
-    useVideoLoader(ref, player, state);
+    useVideoLoader(ref, player, loaderInput, sessionId: sessionId);
     final brightness = usePlayerSystemSettings(player);
     final dimensions = useVideoDimensions(player);
     useVideoProgressReport(ref, bvid, player, isPlaying);

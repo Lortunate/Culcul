@@ -105,7 +105,9 @@ class WbiHelper {
 
       // Check for API error code
       if (data['code'] != 0) {
-        debugPrint('Nav API error: code=${data['code']}, message=${data['message']}');
+        if (kDebugMode) {
+          debugPrint('Nav API error: code=${data['code']}, message=${data['message']}');
+        }
         // If risk control (-352), we might need to handle it or use fallback
         if (data['code'] == -352) {
           throw Exception('Nav API risk control (-352)');
@@ -132,10 +134,14 @@ class WbiHelper {
       _imgKey = imgUrl.split('/').last.split('.').first;
       _subKey = subUrl.split('/').last.split('.').first;
       _lastUpdate = DateTime.now();
-      debugPrint('Wbi keys updated successfully: $_imgKey, $_subKey');
+      if (kDebugMode) {
+        debugPrint('Wbi keys updated successfully: $_imgKey, $_subKey');
+      }
       _updateCompleter?.complete();
     } catch (e) {
-      debugPrint('Wbi updateKeys failed: $e');
+      if (kDebugMode) {
+        debugPrint('Wbi updateKeys failed: $e');
+      }
       _imgKey = null;
       _subKey = null;
       _updateCompleter?.completeError(e);

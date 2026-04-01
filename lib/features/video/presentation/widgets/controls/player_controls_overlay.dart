@@ -32,8 +32,9 @@ class PlayerControlsOverlay extends HookConsumerWidget {
     );
     final isLocked = ref.watch(playerControllerProvider.select((s) => s.isLocked));
     final playerController = ref.read(playerControllerProvider.notifier);
-    final videoDetailState = ref.watch(videoDetailControllerProvider(bvid));
-    final videoTitle = videoDetailState.videoDetail?.title;
+    final videoTitle = ref.watch(
+      videoDetailControllerProvider(bvid).select((value) => value.videoDetail?.title),
+    );
 
     void showSettings() {
       showSidePanel(

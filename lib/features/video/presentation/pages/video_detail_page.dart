@@ -1,6 +1,8 @@
+import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
-import 'package:culcul/features/video/presentation/view_models/video_page_view_model.dart';
+import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
 import 'package:culcul/features/video/presentation/widgets/hooks/use_video_orientation.dart';
+import 'package:culcul/features/video/presentation/widgets/hooks/use_video_session.dart';
 import 'package:culcul/features/video/presentation/pages/vertical_video_page.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/video_comments_view.dart';
 import 'package:culcul/features/video/presentation/widgets/info/video_info_view.dart';
@@ -17,37 +19,55 @@ class VideoDetailPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(videoDetailControllerProvider(bvid));
-    final pageState = ref.watch(videoPageViewModelProvider(bvid));
+    final sessionId = useVideoSession(ref, bvid);
 
-    if (pageState.shouldUseVerticalLayout && state.videoDetail != null) {
-      return VerticalVideoPage(bvid: bvid, videoDetail: state.videoDetail!);
+    final videoDetail = ref.watch(
+      videoDetailControllerProvider(bvid).select((value) => value.videoDetail),
+    );
+    final currentCid = ref.watch(
+      videoDetailControllerProvider(bvid).select((value) => value.currentCid),
+    );
+    final isFullscreen = ref.watch(
+      playerControllerProvider.select((value) => value.isFullscreen),
+    );
+    final shouldUseVerticalLayout = _isVerticalVideo(videoDetail);
+
+    if (shouldUseVerticalLayout && videoDetail != null) {
+      return VerticalVideoPage(
+        bvid: bvid,
+        videoDetail: videoDetail,
+        sessionId: sessionId,
+      );
     }
 
     final toggleFullscreen = useVideoOrientation(
       ref,
-      videoDetail: state.videoDetail,
-      currentCid: state.currentCid,
+      videoDetail: videoDetail,
+      currentCid: currentCid,
     );
     final tabController = useTabController(initialLength: 2);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: PopScope(
-        canPop: !pageState.isFullscreen,
+        canPop: !isFullscreen,
         onPopInvokedWithResult: (didPop, result) {
           if (didPop) return;
           toggleFullscreen();
         },
         child: SafeArea(
-          top: !pageState.isFullscreen,
-          bottom: !pageState.isFullscreen,
-          left: !pageState.isFullscreen,
-          right: !pageState.isFullscreen,
+          top: !isFullscreen,
+          bottom: !isFullscreen,
+          left: !isFullscreen,
+          right: !isFullscreen,
           child: Column(
             children: [
-              VideoPlayerView(bvid: bvid, onToggleFullscreen: toggleFullscreen),
-              if (!pageState.isFullscreen) ...[
+              VideoPlayerView(
+                bvid: bvid,
+                onToggleFullscreen: toggleFullscreen,
+                sessionId: sessionId,
+              ),
+              if (!isFullscreen) ...[
                 VideoTabBar(controller: tabController),
                 Expanded(
                   child: TabBarView(
@@ -65,4 +85,13 @@ class VideoDetailPage extends HookConsumerWidget {
       ),
     );
   }
+}
+
+bool _isVerticalVideo(VideoDetail? detail) {
+  if (detail == null) {
+    return false;
+  }
+  final width = detail.dimension.width;
+  final height = detail.dimension.height;
+  return width != 0 && height != 0 && width < height;
 }
