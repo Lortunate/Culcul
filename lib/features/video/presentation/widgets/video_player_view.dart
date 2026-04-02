@@ -1,6 +1,5 @@
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
 import 'package:culcul/features/video/presentation/widgets/hooks/use_player_system_settings.dart';
-import 'package:culcul/features/video/presentation/widgets/hooks/use_video_dimensions.dart';
 import 'package:culcul/features/video/presentation/widgets/hooks/use_video_loader.dart';
 import 'package:culcul/features/video/presentation/widgets/hooks/use_video_progress.dart';
 import 'package:culcul/features/video/presentation/widgets/layers/controls_layer.dart';
@@ -38,19 +37,13 @@ class VideoPlayerView extends HookConsumerWidget {
 
     useVideoLoader(ref, player, loaderInput, sessionId: sessionId);
     final brightness = usePlayerSystemSettings(player);
-    final dimensions = useVideoDimensions(player);
     useVideoProgressReport(ref, bvid, player, isPlaying);
 
     final volumeSnapshot = useStream(player.stream.volume);
     final currentVolume = volumeSnapshot.data ?? player.state.volume;
 
-    double aspectRatio = 16 / 9;
-    if (dimensions.width != 0 && dimensions.height != 0) {
-      aspectRatio = dimensions.width / dimensions.height;
-    }
-
     return AspectRatio(
-      aspectRatio: isFullscreen ? MediaQuery.of(context).size.aspectRatio : aspectRatio,
+      aspectRatio: isFullscreen ? MediaQuery.of(context).size.aspectRatio : 16 / 10,
       child: Container(
         color: colorScheme.scrim,
         child: Stack(

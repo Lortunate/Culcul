@@ -1,3 +1,4 @@
+import 'package:culcul/features/video/application/video_entry_layout.dart';
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -96,11 +97,10 @@ VoidCallback useVideoOrientation(
     rotate = 0;
   }
 
-  if (rotate == 90 || rotate == 270) {
-    final temp = width;
-    width = height;
-    height = temp;
-  }
-
-  return (width: width, height: height);
+  final normalized = normalizeVideoDimension(
+    width: width,
+    height: height,
+    rotate: rotate,
+  );
+  return (width: normalized.width, height: normalized.height);
 }

@@ -1,9 +1,7 @@
-import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
 import 'package:culcul/features/video/presentation/widgets/hooks/use_video_orientation.dart';
 import 'package:culcul/features/video/presentation/widgets/hooks/use_video_session.dart';
-import 'package:culcul/features/video/presentation/pages/vertical_video_page.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/video_comments_view.dart';
 import 'package:culcul/features/video/presentation/widgets/info/video_info_view.dart';
 import 'package:culcul/features/video/presentation/widgets/info/video_tab_bar.dart';
@@ -30,15 +28,6 @@ class VideoDetailPage extends HookConsumerWidget {
     final isFullscreen = ref.watch(
       playerControllerProvider.select((value) => value.isFullscreen),
     );
-    final shouldUseVerticalLayout = _isVerticalVideo(videoDetail);
-
-    if (shouldUseVerticalLayout && videoDetail != null) {
-      return VerticalVideoPage(
-        bvid: bvid,
-        videoDetail: videoDetail,
-        sessionId: sessionId,
-      );
-    }
 
     final toggleFullscreen = useVideoOrientation(
       ref,
@@ -85,13 +74,4 @@ class VideoDetailPage extends HookConsumerWidget {
       ),
     );
   }
-}
-
-bool _isVerticalVideo(VideoDetail? detail) {
-  if (detail == null) {
-    return false;
-  }
-  final width = detail.dimension.width;
-  final height = detail.dimension.height;
-  return width != 0 && height != 0 && width < height;
 }

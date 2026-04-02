@@ -15,6 +15,10 @@ abstract class VideoApi {
   @Headers({'x-bili-wbi': 'true'})
   Future<ApiResponse<VideoDetail>> fetchVideoView(@Query('bvid') String bvid);
 
+  @GET(ApiConstants.videoPagelist)
+  @Headers({'x-bili-wbi': 'true'})
+  Future<ApiResponse<List<VideoPage>>> fetchVideoPagelist(@Query('bvid') String bvid);
+
   @GET(ApiConstants.videoTags)
   @Headers({'x-bili-wbi': 'true'})
   Future<ApiResponse<List<VideoTag>>> fetchVideoTags(@Query('bvid') String bvid);

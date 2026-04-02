@@ -23,6 +23,7 @@ abstract class VideoRepository {
   });
 
   Future<VideoDetail> fetchVideoView(String bvid);
+  Future<VideoDimension?> fetchVideoEntryDimension(String bvid);
 
   Future<List<VideoTag>> fetchVideoTags(String bvid);
 

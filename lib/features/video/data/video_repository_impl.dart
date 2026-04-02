@@ -83,6 +83,16 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
   }
 
   @override
+  Future<VideoDimension?> fetchVideoEntryDimension(String bvid) {
+    return requestApi(() => api.fetchVideoPagelist(bvid)).then((value) {
+      if (value.isEmpty) {
+        return null;
+      }
+      return value.first.dimension.toDomain();
+    });
+  }
+
+  @override
   Future<List<VideoTag>> fetchVideoTags(String bvid) {
     return requestApi(
       () => api.fetchVideoTags(bvid),

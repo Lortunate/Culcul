@@ -13,6 +13,7 @@ class ApiConstants {
   static const String popular = '/x/web-interface/popular';
   static const String ranking = '/x/web-interface/ranking/v2';
   static const String videoView = '/x/web-interface/view';
+  static const String videoPagelist = '/x/player/pagelist';
   static const String videoPlayUrl = '/x/player/wbi/playurl';
   static const String playerInfo = '/x/player/wbi/v2';
   static const String related = '/x/web-interface/archive/related';

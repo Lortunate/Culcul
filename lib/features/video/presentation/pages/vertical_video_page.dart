@@ -4,9 +4,11 @@ import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/video/presentation/view_models/playback_snapshot_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
+import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/widgets/hooks/use_player_system_settings.dart';
 import 'package:culcul/features/video/presentation/widgets/hooks/use_video_loader.dart';
 import 'package:culcul/features/video/presentation/widgets/hooks/use_video_progress.dart';
+import 'package:culcul/features/video/presentation/widgets/hooks/use_video_session.dart';
 import 'package:culcul/features/video/presentation/widgets/layers/danmaku_layer.dart';
 import 'package:culcul/features/video/presentation/widgets/layers/interaction_layer.dart';
 import 'package:culcul/features/video/presentation/widgets/layers/subtitle_layer.dart';
@@ -22,19 +24,19 @@ typedef _VideoAction = ({IconData icon, int count, String label});
 
 class VerticalVideoPage extends HookConsumerWidget {
   final String bvid;
-  final VideoDetail videoDetail;
-  final String sessionId;
 
-  const VerticalVideoPage({
-    super.key,
-    required this.bvid,
-    required this.videoDetail,
-    required this.sessionId,
-  });
+  const VerticalVideoPage({super.key, required this.bvid});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
+    final detailState = ref.watch(videoDetailControllerProvider(bvid));
+    final videoDetail = detailState.videoDetail;
+    final sessionId = useVideoSession(ref, bvid);
+
+    if (videoDetail == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
 
     final playerController = ref.read(playerControllerProvider.notifier);
     final isPlaying = ref.watch(
