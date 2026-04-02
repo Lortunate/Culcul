@@ -18,26 +18,35 @@ class LoginPanel extends HookConsumerWidget {
     final t = Translations.of(context);
     final theme = Theme.of(context);
     final selectedTab = useState(0);
+    final feedback = useState<({String message, bool isSuccess})?>(null);
+    final feedbackVersion = useState(0);
+
+    void closePanel() {
+      if (onClose != null) {
+        onClose!();
+      } else {
+        Navigator.of(context).pop();
+      }
+    }
+
+    void showFeedback(String message, {bool isSuccess = false}) {
+      feedback.value = (message: message, isSuccess: isSuccess);
+      feedbackVersion.value++;
+      final currentVersion = feedbackVersion.value;
+      Future<void>.delayed(const Duration(seconds: 2), () {
+        if (!context.mounted || feedbackVersion.value != currentVersion) {
+          return;
+        }
+        feedback.value = null;
+      });
+    }
 
     ref.listen(authProvider, (previous, next) {
       if (next.isLoggedIn && !next.isLoading) {
-        if (onClose != null) {
-          onClose!();
-        } else {
-          Navigator.of(context).pop();
-        }
+        closePanel();
       }
       if (next.error != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(next.error!),
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: theme.colorScheme.error,
-            showCloseIcon: true,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            margin: const EdgeInsets.all(16),
-          ),
-        );
+        showFeedback(next.error!);
         ref.read(authProvider.notifier).clearError();
       }
     });
@@ -91,17 +100,12 @@ class LoginPanel extends HookConsumerWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {
-                    if (onClose != null) {
-                      onClose!();
-                    } else {
-                      Navigator.of(context).pop();
-                    }
-                  },
+                  onPressed: closePanel,
                   icon: const Icon(Icons.close_rounded),
                   style: IconButton.styleFrom(
-                    backgroundColor: theme.colorScheme.surfaceContainerHighest
-                        .withValues(alpha: 0.3),
+                    backgroundColor: theme.colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.3,
+                    ),
                   ),
                 ),
               ],
@@ -154,17 +158,90 @@ class LoginPanel extends HookConsumerWidget {
           Flexible(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: IndexedStack(
-                index: selectedTab.value,
-                children: const [
-                  SmsLoginView(),
-                  PasswordLoginView(),
-                  QrLoginView(),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 180),
+                    switchInCurve: Curves.easeOutCubic,
+                    switchOutCurve: Curves.easeInCubic,
+                    child: feedback.value == null
+                        ? const SizedBox.shrink()
+                        : Padding(
+                            key: ValueKey(
+                              '${feedback.value!.message}-${feedback.value!.isSuccess}',
+                            ),
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: _AuthInlineFeedback(
+                              message: feedback.value!.message,
+                              isSuccess: feedback.value!.isSuccess,
+                            ),
+                          ),
+                  ),
+                  IndexedStack(
+                    index: selectedTab.value,
+                    children: [
+                      SmsLoginView(onFeedback: showFeedback),
+                      PasswordLoginView(onFeedback: showFeedback),
+                      const QrLoginView(),
+                    ],
+                  ),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+}
+
+class _AuthInlineFeedback extends StatelessWidget {
+  const _AuthInlineFeedback({required this.message, required this.isSuccess});
+
+  final String message;
+  final bool isSuccess;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final backgroundColor = isSuccess
+        ? colorScheme.primaryContainer.withValues(alpha: 0.9)
+        : colorScheme.errorContainer.withValues(alpha: 0.9);
+    final foregroundColor = isSuccess
+        ? colorScheme.onPrimaryContainer
+        : colorScheme.onErrorContainer;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isSuccess
+              ? colorScheme.primary.withValues(alpha: 0.2)
+              : colorScheme.error.withValues(alpha: 0.25),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            isSuccess ? Icons.check_circle_rounded : Icons.error_outline_rounded,
+            size: 18,
+            color: foregroundColor,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              message,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: foregroundColor,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
         ],
       ),
     );

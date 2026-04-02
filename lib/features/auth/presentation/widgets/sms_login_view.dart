@@ -12,7 +12,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class SmsLoginView extends HookConsumerWidget {
-  const SmsLoginView({super.key});
+  const SmsLoginView({super.key, required this.onFeedback});
+
+  final void Function(String message, {bool isSuccess}) onFeedback;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,26 +25,6 @@ class SmsLoginView extends HookConsumerWidget {
     final countdown = useState(0);
     final captchaKey = useState<String>('');
     final selectedCountry = useState<CountryCode>(defaultCountryCodes.first);
-
-    void showAuthSnackBar(String message) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            margin: const EdgeInsets.all(16),
-            backgroundColor: theme.colorScheme.inverseSurface,
-            action: SnackBarAction(
-              label: t.auth.ok,
-              textColor: theme.colorScheme.onInverseSurface,
-              onPressed: () {},
-            ),
-          ),
-        );
-      }
-    }
 
     useEffect(() {
       Timer? timer;
@@ -72,40 +54,46 @@ class SmsLoginView extends HookConsumerWidget {
               seccode,
             );
         if (key == null || key.isEmpty) {
-          showAuthSnackBar(t.common.error);
+          onFeedback(t.common.error);
           return;
         }
         captchaKey.value = key;
-        showAuthSnackBar(t.auth.sms_sent);
+        onFeedback(t.auth.sms_sent, isSuccess: true);
         countdown.value = 60;
       },
-      onError: (error) => showAuthSnackBar(error),
+      onError: (error) => onFeedback(error),
     );
 
     Future<void> getCode() async {
       final phone = phoneController.text;
       if (phone.isEmpty) {
-        showAuthSnackBar(t.auth.phone);
+        onFeedback(t.auth.phone);
         return;
       }
       geetest.start();
     }
 
     Future<void> onLogin() async {
-      if (phoneController.text.isNotEmpty && codeController.text.isNotEmpty) {
-        if (captchaKey.value.isEmpty) {
-          showAuthSnackBar(t.auth.get_code);
-          return;
-        }
-        await ref
-            .read(authProvider.notifier)
-            .loginWithSms(
-              selectedCountry.value.id,
-              phoneController.text,
-              codeController.text,
-              captchaKey.value,
-            );
+      if (phoneController.text.isEmpty) {
+        onFeedback(t.auth.phone);
+        return;
       }
+      if (codeController.text.isEmpty) {
+        onFeedback(t.auth.sms_code);
+        return;
+      }
+      if (captchaKey.value.isEmpty) {
+        onFeedback(t.auth.get_code);
+        return;
+      }
+      await ref
+          .read(authProvider.notifier)
+          .loginWithSms(
+            selectedCountry.value.id,
+            phoneController.text,
+            codeController.text,
+            captchaKey.value,
+          );
     }
 
     return SingleChildScrollView(

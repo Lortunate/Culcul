@@ -1,6 +1,4 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
-import 'package:culcul/features/auth/presentation/widgets/login_dialog.dart';
 import 'package:culcul/features/home/presentation/widgets/home_app_bar.dart';
 import 'package:culcul/features/home/presentation/widgets/popular_view.dart';
 import 'package:culcul/features/home/presentation/widgets/recommend_view.dart';
@@ -21,7 +19,6 @@ class HomePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final t = Translations.of(context);
     final defaultSearchAsync = ref.watch(defaultSearchProvider);
-    final authState = ref.watch(authProvider);
 
     final tabs = useMemoized(() => _buildTabs(t), [t]);
 
@@ -36,9 +33,8 @@ class HomePage extends HookConsumerWidget {
             .onTabTapped(index, isChanging: tabController.indexIsChanging),
         onSearchTap: () => const SearchRoute().push(context),
         hintText: defaultSearchAsync.asData?.value?.text,
-        onAvatarTap: () => _handleAvatarTap(context, authState.isLoggedIn),
+        onAvatarTap: () => const ProfileRoute().go(context),
         onMessageTap: () => const NotificationRoute().push(context),
-        onGameTap: () {},
       ),
       body: TabBarView(
         controller: tabController,
@@ -52,12 +48,4 @@ class HomePage extends HookConsumerWidget {
     (title: t.home.tabs.recommend, view: const RecommendView()),
     (title: t.home.tabs.hot, view: const PopularView()),
   ];
-
-  void _handleAvatarTap(BuildContext context, bool isLoggedIn) {
-    if (isLoggedIn) {
-      const ProfileRoute().go(context);
-      return;
-    }
-    LoginDialog.show(context);
-  }
 }

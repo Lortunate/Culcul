@@ -8,7 +8,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class PasswordLoginView extends HookConsumerWidget {
-  const PasswordLoginView({super.key});
+  const PasswordLoginView({super.key, required this.onFeedback});
+
+  final void Function(String message, {bool isSuccess}) onFeedback;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -17,26 +19,6 @@ class PasswordLoginView extends HookConsumerWidget {
     final usernameController = useTextEditingController();
     final passwordController = useTextEditingController();
     final isObscure = useState(true);
-
-    void showAuthSnackBar(String message) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            margin: const EdgeInsets.all(16),
-            backgroundColor: theme.colorScheme.inverseSurface,
-            action: SnackBarAction(
-              label: t.auth.ok,
-              textColor: theme.colorScheme.onInverseSurface,
-              onPressed: () {},
-            ),
-          ),
-        );
-      }
-    }
 
     final geetest = useGeetest(
       ref: ref,
@@ -52,7 +34,7 @@ class PasswordLoginView extends HookConsumerWidget {
               seccode,
             );
       },
-      onError: (error) => showAuthSnackBar(error),
+      onError: (error) => onFeedback(error),
     );
 
     Future<void> login() async {
@@ -60,7 +42,7 @@ class PasswordLoginView extends HookConsumerWidget {
       final password = passwordController.text;
 
       if (username.isEmpty || password.isEmpty) {
-        showAuthSnackBar(t.auth.please_enter_username_password);
+        onFeedback(t.auth.please_enter_username_password);
         return;
       }
       geetest.start();

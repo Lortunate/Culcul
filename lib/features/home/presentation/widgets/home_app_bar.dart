@@ -1,4 +1,5 @@
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/auth/presentation/widgets/login_dialog.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/app_search_bar.dart';
@@ -12,20 +13,18 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final List<String> tabs;
   final VoidCallback? onSearchTap;
   final String? hintText;
-  final VoidCallback? onAvatarTap;
-  final VoidCallback? onMessageTap;
-  final VoidCallback? onGameTap;
+  final VoidCallback onAvatarTap;
+  final VoidCallback onMessageTap;
   final ValueChanged<int>? onTabTap;
 
   const HomeAppBar({
     super.key,
     required this.tabController,
     required this.tabs,
+    required this.onAvatarTap,
+    required this.onMessageTap,
     this.onSearchTap,
     this.hintText,
-    this.onAvatarTap,
-    this.onMessageTap,
-    this.onGameTap,
     this.onTabTap,
   });
 
@@ -34,8 +33,11 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
-
-    final avatarUrl = ref.watch(authProvider.select((state) => state.user?.avatarUrl));
+    final authState = ref.watch(
+      authProvider.select(
+        (state) => (isLoggedIn: state.isLoggedIn, avatarUrl: state.user?.avatarUrl),
+      ),
+    );
 
     return AppBar(
       backgroundColor: colorScheme.surface,
@@ -47,16 +49,43 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
       leading: Padding(
         padding: const EdgeInsets.only(left: 12),
         child: Center(
-          child: AppAvatar(url: avatarUrl, size: 32, onTap: onAvatarTap),
+          child: AppAvatar(
+            url: authState.avatarUrl,
+            size: 32,
+            onTap: () => _handleProtectedTap(
+              context: context,
+              isLoggedIn: authState.isLoggedIn,
+              onAuthenticated: onAvatarTap,
+            ),
+          ),
         ),
       ),
       title: AppSearchBar(onTap: onSearchTap, hintText: hintText ?? t.home.search_hint),
       actions: [
-        _AppBarButton(icon: Icons.mail_outline_rounded, onPressed: onMessageTap),
+        _AppBarButton(
+          icon: Icons.mail_outline_rounded,
+          onPressed: () => _handleProtectedTap(
+            context: context,
+            isLoggedIn: authState.isLoggedIn,
+            onAuthenticated: onMessageTap,
+          ),
+        ),
         const SizedBox(width: 8),
       ],
       bottom: HomeTabBar(controller: tabController, tabs: tabs, onTap: onTabTap),
     );
+  }
+
+  void _handleProtectedTap({
+    required BuildContext context,
+    required bool isLoggedIn,
+    required VoidCallback onAuthenticated,
+  }) {
+    if (isLoggedIn) {
+      onAuthenticated();
+      return;
+    }
+    LoginDialog.show(context);
   }
 
   @override
