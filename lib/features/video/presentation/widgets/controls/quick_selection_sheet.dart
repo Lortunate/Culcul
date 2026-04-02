@@ -1,145 +1,75 @@
-import 'package:culcul/features/video/presentation/widgets/controls/video_overlay_styles.dart';
+import 'package:culcul/features/video/presentation/widgets/controls/player_panel.dart';
 import 'package:flutter/material.dart';
 
 class QuickSelectionSheet<T> extends StatelessWidget {
   final String title;
+  final String? subtitle;
   final List<T> items;
-  final T selectedItem;
+  final T? selectedItem;
   final ValueChanged<T> onSelected;
   final String Function(T) labelBuilder;
+  final String? Function(T)? subtitleBuilder;
+  final String? emptyText;
   final bool isBottomSheet;
 
   const QuickSelectionSheet({
     super.key,
     required this.title,
     required this.items,
-    required this.selectedItem,
     required this.onSelected,
     required this.labelBuilder,
+    this.selectedItem,
+    this.subtitle,
+    this.subtitleBuilder,
+    this.emptyText,
     this.isBottomSheet = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    // Panel width for side menu (landscape)
-    const double panelWidth = 280.0;
+    final mediaQuery = MediaQuery.of(context);
 
-    return Container(
-      width: isBottomSheet ? double.infinity : panelWidth,
-      constraints: BoxConstraints(
-        maxHeight: isBottomSheet
-            ? MediaQuery.of(context).size.height * 0.6
-            : double.infinity,
-      ),
-      child: ClipRRect(
-        borderRadius: isBottomSheet
-            ? const BorderRadius.vertical(top: Radius.circular(24))
-            : const BorderRadius.horizontal(left: Radius.circular(24)),
-        child: Container(
-          color: VideoOverlayStyles.panelBackground(colorScheme),
-          child: Material(
-            color: Colors.transparent,
-            child: SafeArea(
-              top: false,
-              bottom: !isBottomSheet,
-              left: !isBottomSheet,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (isBottomSheet)
-                    VideoOverlayStyles.dragHandle(colorScheme)
-                  else
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
-                      child: Text(
-                        title,
-                        style: TextStyle(
-                          color: VideoOverlayStyles.foreground(colorScheme),
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-
-                  Flexible(
-                    child: ListView.builder(
-                      padding: EdgeInsets.fromLTRB(
-                        16,
-                        isBottomSheet ? 8 : 8,
-                        16,
-                        isBottomSheet ? MediaQuery.of(context).padding.bottom + 16 : 16,
-                      ),
-                      shrinkWrap: true,
-                      itemCount: items.length,
-                      itemBuilder: (context, index) {
-                        final item = items[index];
-                        final isSelected = item == selectedItem;
-                        final colorScheme = Theme.of(context).colorScheme;
-
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
-                          child: InkWell(
-                            onTap: () {
-                              onSelected(item);
-                              Navigator.of(context).pop();
-                            },
-                            borderRadius: BorderRadius.circular(12),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 12,
-                                horizontal: 16,
-                              ),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? colorScheme.primary.withValues(alpha: 0.15)
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(12),
-                                border: isSelected
-                                    ? Border.all(
-                                        color: colorScheme.primary.withValues(alpha: 0.5),
-                                      )
-                                    : null,
-                              ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      labelBuilder(item),
-                                      style: TextStyle(
-                                        color: isSelected
-                                            ? colorScheme.primary
-                                            : colorScheme.onPrimary.withValues(
-                                                alpha: 0.7,
-                                              ),
-                                        fontSize: 15,
-                                        fontWeight: isSelected
-                                            ? FontWeight.w600
-                                            : FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                  if (isSelected)
-                                    Icon(
-                                      Icons.check_rounded,
-                                      color: colorScheme.primary,
-                                      size: 20,
-                                    ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
+    return PlayerPanelScaffold(
+      title: title,
+      subtitle: subtitle,
+      isBottomSheet: isBottomSheet,
+      panelWidth: 320,
+      maxHeightFactor: 0.68,
+      child: items.isEmpty
+          ? Padding(
+              padding: EdgeInsets.fromLTRB(
+                20,
+                20,
+                20,
+                isBottomSheet ? mediaQuery.padding.bottom + 20 : 20,
               ),
+              child: PlayerPanelEmptyState(label: emptyText ?? ''),
+            )
+          : ListView.separated(
+              physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.fromLTRB(
+                20,
+                20,
+                20,
+                isBottomSheet ? mediaQuery.padding.bottom + 20 : 20,
+              ),
+              itemCount: items.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 10),
+              itemBuilder: (context, index) {
+                final item = items[index];
+                final isSelected = item == selectedItem;
+
+                return PlayerMenuOptionTile(
+                  title: labelBuilder(item),
+                  subtitle: subtitleBuilder?.call(item),
+                  isSelected: isSelected,
+                  onTap: () {
+                    onSelected(item);
+                    Navigator.of(context).pop();
+                  },
+                );
+              },
             ),
-          ),
-        ),
-      ),
     );
   }
 }

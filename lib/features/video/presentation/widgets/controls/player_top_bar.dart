@@ -18,29 +18,26 @@ class PlayerTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final iconColor = colorScheme.onPrimary;
 
     return Container(
       height: PlayerTheme.topBarHeight,
       padding: const EdgeInsets.symmetric(horizontal: PlayerTheme.horizontalPadding),
       child: Row(
         children: [
-          IconButton(
-            icon: Icon(Icons.arrow_back_rounded, color: colorScheme.onPrimary),
-            iconSize: PlayerTheme.iconSize,
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+          _buildIconButton(
+            icon: Icons.arrow_back_rounded,
+            color: iconColor,
             onPressed: onClose,
-            splashRadius: 20,
           ),
+
           if (onListen != null)
-            IconButton(
-              icon: Icon(Icons.headphones_rounded, color: colorScheme.onPrimary),
-              iconSize: PlayerTheme.iconSize,
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-              onPressed: onListen,
-              splashRadius: 20,
+            _buildIconButton(
+              icon: Icons.headphones_rounded,
+              color: iconColor,
+              onPressed: onListen!,
             ),
+
           if (title != null)
             Expanded(
               child: Padding(
@@ -48,7 +45,7 @@ class PlayerTopBar extends StatelessWidget {
                 child: Text(
                   title!,
                   style: TextStyle(
-                    color: colorScheme.onPrimary,
+                    color: iconColor,
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                   ),
@@ -56,18 +53,32 @@ class PlayerTopBar extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
-            ),
-          if (title == null) const Spacer(),
-          IconButton(
-            icon: Icon(Icons.more_vert_rounded, color: colorScheme.onPrimary),
-            iconSize: PlayerTheme.iconSize,
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+            )
+          else
+            const Spacer(),
+
+          _buildIconButton(
+            icon: Icons.more_vert_rounded,
+            color: iconColor,
             onPressed: onMore,
-            splashRadius: 20,
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildIconButton({
+    required IconData icon,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
+    return IconButton(
+      icon: Icon(icon, color: color),
+      iconSize: PlayerTheme.iconSize,
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+      onPressed: onPressed,
+      splashRadius: 20,
     );
   }
 }

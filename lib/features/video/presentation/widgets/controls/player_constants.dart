@@ -1,3 +1,4 @@
+import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:culcul/i18n/strings.g.dart';
 
 String getQualityLabel(int? quality, Translations t) {
@@ -17,7 +18,40 @@ String getQualityLabel(int? quality, Translations t) {
   };
 }
 
-const List<double> playbackSpeeds = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
+const List<double> playbackSpeeds = [0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0];
+
+String formatPlaybackSpeedLabel(double speed) {
+  final scaled = (speed * 100).round();
+  final fractionDigits = scaled % 10 == 0 ? 1 : 2;
+  return '${speed.toStringAsFixed(fractionDigits)}x';
+}
+
+String? getPlaybackSpeedDescription(double speed, Translations t) {
+  if (speed == 1.0) {
+    return t.video.player.speed_default;
+  }
+  return null;
+}
+
+Map<int, String> buildQualityLabels(PlayUrl? playUrl, Translations t) {
+  final qualityLabels = <int, String>{};
+  if (playUrl == null) {
+    return qualityLabels;
+  }
+
+  final qualities = playUrl.acceptQuality;
+  final descriptions = playUrl.acceptDescription;
+
+  for (var i = 0; i < qualities.length; i++) {
+    final quality = qualities[i];
+    final description = i < descriptions.length ? descriptions[i].trim() : '';
+    qualityLabels[quality] = description.isNotEmpty
+        ? description
+        : getQualityLabel(quality, t);
+  }
+
+  return qualityLabels;
+}
 
 const double kVolumeSensitivity = 2.0;
 const double kBrightnessSensitivity = 200.0;

@@ -1,124 +1,152 @@
-import 'package:culcul/i18n/i18n.dart';
-import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/video/presentation/view_models/danmaku_settings_view_model.dart';
-import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/player_constants.dart';
+import 'package:culcul/features/video/presentation/widgets/controls/player_panel.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/video_overlay_styles.dart';
+import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class PlayerSettingsSheet extends ConsumerWidget {
   final String bvid;
-  final ValueChanged<Duration?>? onSetSleepTimer;
-  final DateTime? sleepTimerTarget;
   final bool isBottomSheet;
 
-  const PlayerSettingsSheet({
-    super.key,
-    required this.bvid,
-    this.onSetSleepTimer,
-    this.sleepTimerTarget,
-    this.isBottomSheet = false,
-  });
+  const PlayerSettingsSheet({super.key, required this.bvid, this.isBottomSheet = false});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = i18n(context);
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
-
+    final mediaQuery = MediaQuery.of(context);
+    final bottomPadding = mediaQuery.padding.bottom;
     final danmakuSettings = ref.watch(danmakuSettingsControllerProvider);
     final danmakuNotifier = ref.read(danmakuSettingsControllerProvider.notifier);
-
     final videoDetailState = ref.watch(videoDetailControllerProvider(bvid));
     final videoDetailNotifier = ref.read(videoDetailControllerProvider(bvid).notifier);
+    final qualityLabels = buildQualityLabels(videoDetailState.playUrl, t);
 
-    // Calculate quality labels
-    final qualityLabels = <int, String>{};
-    if (videoDetailState.playUrl != null) {
-      final qualities = videoDetailState.playUrl!.acceptQuality;
-      final descs = videoDetailState.playUrl!.acceptDescription;
-      for (int i = 0; i < qualities.length && i < descs.length; i++) {
-        qualityLabels[qualities[i]] = descs[i];
-      }
-    }
+    final playbackSpeed = videoDetailState.playbackSpeed;
+    final selectedQuality = videoDetailState.selectedQuality;
+    final availableQualities = videoDetailState.availableQualities;
 
-    // More compact side panel
-    const double panelWidth = 320.0;
-
-    return Container(
-      width: isBottomSheet ? double.infinity : panelWidth,
-      constraints: BoxConstraints(
-        maxHeight: isBottomSheet
-            ? MediaQuery.of(context).size.height * 0.75
-            : double.infinity,
-      ),
-      child: ClipRRect(
-        borderRadius: isBottomSheet
-            ? const BorderRadius.vertical(top: Radius.circular(24))
-            : const BorderRadius.horizontal(left: Radius.circular(24)),
-        child: Container(
-          color: VideoOverlayStyles.panelBackground(colorScheme),
-          child: Material(
-            color: Colors.transparent,
-            child: SafeArea(
-              top: false,
-              bottom: !isBottomSheet,
-              left: !isBottomSheet,
+    return PlayerPanelScaffold(
+      title: t.video.player.panel_title,
+      subtitle: t.video.player.panel_subtitle,
+      isBottomSheet: isBottomSheet,
+      panelWidth: 380,
+      maxHeightFactor: 0.82,
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: EdgeInsets.fromLTRB(16, 16, 16, isBottomSheet ? bottomPadding + 16 : 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            PlayerPanelSection(
+              title: t.video.player.choose_speed,
+              dense: true,
+              child: _HorizontalTextOptionStrip<double>(
+                items: playbackSpeeds,
+                selectedItem: playbackSpeed,
+                labelBuilder: formatPlaybackSpeedLabel,
+                onSelected: videoDetailNotifier.setPlaybackSpeed,
+              ),
+            ),
+            const SizedBox(height: 12),
+            PlayerPanelSection(
+              title: t.video.player.choose_quality,
+              dense: true,
+              child: availableQualities.isEmpty
+                  ? PlayerPanelEmptyState(label: t.video.player.quality_unavailable)
+                  : _HorizontalTextOptionStrip<int>(
+                      items: availableQualities,
+                      selectedItem: selectedQuality,
+                      labelBuilder: (quality) =>
+                          qualityLabels[quality] ?? getQualityLabel(quality, t),
+                      onSelected: videoDetailNotifier.switchQuality,
+                    ),
+            ),
+            const SizedBox(height: 12),
+            PlayerPanelSection(
+              title: t.video.player.danmaku_settings,
+              subtitle: t.video.player.danmaku_section_hint,
+              dense: true,
+              showBody: danmakuSettings.isEnabled,
+              trailing: Switch.adaptive(
+                value: danmakuSettings.isEnabled,
+                onChanged: danmakuNotifier.setEnabled,
+              ),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (isBottomSheet) VideoOverlayStyles.dragHandle(colorScheme),
-                  Flexible(
+                  _DanmakuSliderRow(
+                    label: t.video.player.danmaku_opacity,
+                    value: danmakuSettings.opacity,
+                    valueText: '${(danmakuSettings.opacity * 100).toInt()}%',
+                    min: 0.1,
+                    max: 1.0,
+                    divisions: 9,
+                    onChanged: danmakuNotifier.setOpacity,
+                  ),
+                  const SizedBox(height: 8),
+                  _DanmakuSliderRow(
+                    label: t.video.player.danmaku_scale,
+                    value: danmakuSettings.fontSizeScale,
+                    valueText: '${(danmakuSettings.fontSizeScale * 100).toInt()}%',
+                    min: 0.5,
+                    max: 2.0,
+                    divisions: 15,
+                    onChanged: danmakuNotifier.setFontSizeScale,
+                  ),
+                  const SizedBox(height: 8),
+                  _DanmakuSliderRow(
+                    label: t.video.player.danmaku_area,
+                    value: danmakuSettings.area,
+                    valueText: '${(danmakuSettings.area * 100).toInt()}%',
+                    min: 0.25,
+                    max: 1.0,
+                    divisions: 3,
+                    onChanged: danmakuNotifier.setArea,
+                  ),
+                  const SizedBox(height: 8),
+                  _DanmakuSliderRow(
+                    label: t.video.player.danmaku_speed,
+                    value: danmakuSettings.speed,
+                    valueText: '${(danmakuSettings.speed * 100).toInt()}%',
+                    min: 0.5,
+                    max: 2.0,
+                    divisions: 6,
+                    onChanged: danmakuNotifier.setSpeed,
+                  ),
+                  const SizedBox(height: 12),
+                  Align(
+                    alignment: Alignment.centerLeft,
                     child: SingleChildScrollView(
-                      padding: EdgeInsets.fromLTRB(
-                        24,
-                        isBottomSheet ? 8 : 24,
-                        24,
-                        isBottomSheet ? bottomPadding + 24 : 24,
-                      ),
+                      scrollDirection: Axis.horizontal,
                       physics: const BouncingScrollPhysics(),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      child: Row(
                         children: [
-                          // Danmaku Settings
-                          _buildDanmakuSection(
-                            danmakuSettings,
-                            danmakuNotifier,
-                            colorScheme,
-                            t,
+                          PlayerFilterChip(
+                            label: t.video.player.danmaku_type_scroll,
+                            isSelected: danmakuSettings.showScroll,
+                            onTap: danmakuNotifier.toggleScroll,
                           ),
-                          const SizedBox(height: 32),
-                          _buildSectionTitle(t.video.player.choose_speed, colorScheme),
-                          const SizedBox(height: 16),
-                          _buildSpeedOptions(
-                            colorScheme,
-                            videoDetailState.playbackSpeed,
-                            (s) {
-                              videoDetailNotifier.setPlaybackSpeed(s);
-                              ref
-                                  .read(playerControllerProvider.notifier)
-                                  .player
-                                  .setRate(s);
-                            },
+                          const SizedBox(width: 8),
+                          PlayerFilterChip(
+                            label: t.video.player.danmaku_type_top,
+                            isSelected: danmakuSettings.showTop,
+                            onTap: danmakuNotifier.toggleTop,
                           ),
-                          const SizedBox(height: 32),
-                          _buildSectionTitle(t.video.player.quality, colorScheme),
-                          const SizedBox(height: 16),
-                          _buildQualityOptions(
-                            colorScheme,
-                            videoDetailState.selectedQuality,
-                            videoDetailState.availableQualities,
-                            qualityLabels,
-                            (q) => videoDetailNotifier.switchQuality(q),
-                            t,
+                          const SizedBox(width: 8),
+                          PlayerFilterChip(
+                            label: t.video.player.danmaku_type_bottom,
+                            isSelected: danmakuSettings.showBottom,
+                            onTap: danmakuNotifier.toggleBottom,
                           ),
-                          const SizedBox(height: 32),
-                          _buildSectionTitle(t.video.player.sleep_timer, colorScheme),
-                          const SizedBox(height: 16),
-                          _buildSleepTimerOptions(colorScheme, context, t),
+                          const SizedBox(width: 8),
+                          PlayerFilterChip(
+                            label: t.video.player.danmaku_type_color,
+                            isSelected: danmakuSettings.showColor,
+                            onTap: danmakuNotifier.toggleColor,
+                          ),
                         ],
                       ),
                     ),
@@ -126,372 +154,165 @@ class PlayerSettingsSheet extends ConsumerWidget {
                 ],
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HorizontalTextOptionStrip<T> extends StatelessWidget {
+  final List<T> items;
+  final T? selectedItem;
+  final String Function(T) labelBuilder;
+  final ValueChanged<T> onSelected;
+
+  const _HorizontalTextOptionStrip({
+    required this.items,
+    required this.selectedItem,
+    required this.labelBuilder,
+    required this.onSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      child: Row(
+        children: [
+          for (var index = 0; index < items.length; index++) ...[
+            _OptionTextChip<T>(
+              item: items[index],
+              selectedItem: selectedItem,
+              labelBuilder: labelBuilder,
+              onSelected: onSelected,
+            ),
+            if (index != items.length - 1) const SizedBox(width: 8),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _OptionTextChip<T> extends StatelessWidget {
+  final T item;
+  final T? selectedItem;
+  final String Function(T) labelBuilder;
+  final ValueChanged<T> onSelected;
+
+  const _OptionTextChip({
+    required this.item,
+    required this.selectedItem,
+    required this.labelBuilder,
+    required this.onSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final isSelected = item == selectedItem;
+    final label = labelBuilder(item);
+
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      label: label,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => onSelected(item),
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+            child: AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.easeOutCubic,
+              style: TextStyle(
+                color: isSelected
+                    ? colorScheme.primary
+                    : VideoOverlayStyles.foreground(colorScheme, alpha: 0.62),
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                height: 1.15,
+              ),
+              child: Text(label),
+            ),
           ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildDanmakuSection(
-    dynamic settings,
-    dynamic notifier,
-    ColorScheme colorScheme,
-    Translations t,
-  ) {
+class _DanmakuSliderRow extends StatelessWidget {
+  final String label;
+  final String valueText;
+  final double value;
+  final double min;
+  final double max;
+  final int? divisions;
+  final ValueChanged<double> onChanged;
+
+  const _DanmakuSliderRow({
+    required this.label,
+    required this.valueText,
+    required this.value,
+    required this.min,
+    required this.max,
+    required this.divisions,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildSectionTitle(t.video.player.danmaku_settings, colorScheme),
-            Transform.scale(
-              scale: 0.8,
-              child: Switch(
-                value: settings.isEnabled,
-                onChanged: (v) => notifier.setEnabled(v),
-                activeThumbColor: colorScheme.primary,
-                activeTrackColor: colorScheme.primary.withValues(alpha: 0.3),
-                inactiveThumbColor: colorScheme.outline,
-                inactiveTrackColor: colorScheme.onSurface.withValues(alpha: 0.1),
+            Expanded(
+              child: Text(
+                label,
+                style: VideoOverlayStyles.titleStyle(
+                  colorScheme,
+                ).copyWith(fontSize: 12.5, fontWeight: FontWeight.w600),
               ),
+            ),
+            Text(
+              valueText,
+              style: VideoOverlayStyles.bodyStyle(
+                colorScheme,
+              ).copyWith(fontSize: 11.5, fontWeight: FontWeight.w600),
             ),
           ],
         ),
-        if (settings.isEnabled) ...[
-          const SizedBox(height: 16),
-          // Settings Grid
-          _buildSliderRow(
-            t.video.player.danmaku_opacity,
-            '${(settings.opacity * 100).toInt()}%',
-            settings.opacity,
-            (v) => notifier.setOpacity(v),
-            min: 0.1,
-            max: 1.0,
-            divisions: 9,
-            colorScheme: colorScheme,
-          ),
-          const SizedBox(height: 12),
-          _buildSliderRow(
-            t.video.player.danmaku_scale,
-            '${(settings.fontSizeScale * 100).toInt()}%',
-            settings.fontSizeScale,
-            (v) => notifier.setFontSizeScale(v),
-            min: 0.5,
-            max: 2.0,
-            divisions: 15,
-            colorScheme: colorScheme,
-          ),
-          const SizedBox(height: 12),
-          _buildSliderRow(
-            t.video.player.danmaku_area,
-            '${(settings.area * 100).toInt()}%',
-            settings.area,
-            (v) => notifier.setArea(v),
-            min: 0.25,
-            max: 1.0,
-            divisions: 3,
-            colorScheme: colorScheme,
-          ),
-          const SizedBox(height: 12),
-          _buildSliderRow(
-            t.video.player.danmaku_speed,
-            '${(settings.speed * 100).toInt()}%',
-            settings.speed,
-            (v) => notifier.setSpeed(v),
-            min: 0.5,
-            max: 2.0,
-            divisions: 6,
-            colorScheme: colorScheme,
-          ),
-
-          const SizedBox(height: 20),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              _ModernFilterChip(
-                label: t.video.player.danmaku_type_scroll,
-                isSelected: settings.showScroll,
-                onTap: notifier.toggleScroll,
-                colorScheme: colorScheme,
-              ),
-              _ModernFilterChip(
-                label: t.video.player.danmaku_type_top,
-                isSelected: settings.showTop,
-                onTap: notifier.toggleTop,
-                colorScheme: colorScheme,
-              ),
-              _ModernFilterChip(
-                label: t.video.player.danmaku_type_bottom,
-                isSelected: settings.showBottom,
-                onTap: notifier.toggleBottom,
-                colorScheme: colorScheme,
-              ),
-              _ModernFilterChip(
-                label: t.video.player.danmaku_type_color,
-                isSelected: settings.showColor,
-                onTap: notifier.toggleColor,
-                colorScheme: colorScheme,
-              ),
-            ],
-          ),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildSliderRow(
-    String label,
-    String valueText,
-    double value,
-    ValueChanged<double> onChanged, {
-    double min = 0.0,
-    double max = 1.0,
-    int? divisions,
-    required ColorScheme colorScheme,
-  }) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 70,
-          child: Text(
-            label,
-            style: TextStyle(
-              color: colorScheme.onPrimary.withValues(alpha: 0.7),
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
+        const SizedBox(height: 8),
+        SliderTheme(
+          data: SliderThemeData(
+            trackHeight: 2.8,
+            thumbShape: const RoundSliderThumbShape(
+              enabledThumbRadius: 5.5,
+              elevation: 0,
             ),
+            overlayShape: const RoundSliderOverlayShape(overlayRadius: 10),
+            activeTrackColor: colorScheme.primary.withValues(alpha: 0.92),
+            inactiveTrackColor: VideoOverlayStyles.panelOutline(colorScheme, alpha: 0.18),
+            thumbColor: colorScheme.primary,
+            overlayColor: colorScheme.primary.withValues(alpha: 0.1),
           ),
-        ),
-        Expanded(
-          child: SizedBox(
-            height: 24,
-            child: SliderTheme(
-              data: SliderThemeData(
-                trackHeight: 4,
-                thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8),
-                overlayShape: const RoundSliderOverlayShape(overlayRadius: 16),
-                activeTrackColor: colorScheme.primary,
-                inactiveTrackColor: colorScheme.onSurface.withValues(alpha: 0.1),
-                thumbColor: colorScheme.onPrimary,
-                trackShape: const RoundedRectSliderTrackShape(),
-              ),
-              child: Slider(
-                value: value,
-                min: min,
-                max: max,
-                divisions: divisions,
-                onChanged: onChanged,
-              ),
-            ),
-          ),
-        ),
-        SizedBox(
-          width: 48,
-          child: Text(
-            valueText,
-            textAlign: TextAlign.end,
-            style: TextStyle(
-              color: colorScheme.onPrimary.withValues(alpha: 0.54),
-              fontSize: 12,
-              fontFeatures: [FontFeature.tabularFigures()],
-            ),
+          child: Slider(
+            value: value,
+            min: min,
+            max: max,
+            divisions: divisions,
+            onChanged: onChanged,
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildSectionTitle(String title, ColorScheme colorScheme) {
-    return Text(title, style: VideoOverlayStyles.titleStyle(colorScheme));
-  }
-
-  Widget _buildSpeedOptions(
-    ColorScheme colorScheme,
-    double playbackSpeed,
-    ValueChanged<double> onSpeedChanged,
-  ) {
-    const speeds = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      children: speeds.map((speed) {
-        final isSelected = playbackSpeed == speed;
-        return _CompactOptionChip(
-          label: '${speed}x',
-          isSelected: isSelected,
-          colorScheme: colorScheme,
-          onTap: () => onSpeedChanged(speed),
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildSleepTimerOptions(
-    ColorScheme colorScheme,
-    BuildContext context,
-    Translations t,
-  ) {
-    final options = [
-      null,
-      const Duration(minutes: 15),
-      const Duration(minutes: 30),
-      const Duration(minutes: 60),
-    ];
-
-    String getLabel(Duration? d) {
-      if (d == null) return t.video.player.sleep_timer_off;
-      return t.video.player.sleep_timer_min(minutes: d.inMinutes.toString());
-    }
-
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      children: options.map((duration) {
-        final isOff = duration == null;
-        final bool selected = isOff ? sleepTimerTarget == null : false;
-
-        return _CompactOptionChip(
-          label: getLabel(duration),
-          isSelected: selected,
-          colorScheme: colorScheme,
-          onTap: () {
-            if (onSetSleepTimer != null) {
-              onSetSleepTimer!(duration);
-            }
-          },
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildQualityOptions(
-    ColorScheme colorScheme,
-    int selectedQuality,
-    List<int> availableQualities,
-    Map<int, String> qualityLabels,
-    ValueChanged<int> onQualityChanged,
-    Translations t,
-  ) {
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      children: availableQualities.map((quality) {
-        final isSelected = selectedQuality == quality;
-        final label = qualityLabels[quality] ?? getQualityLabel(quality, t);
-        final shortLabel = label.split(' ').first;
-
-        return _CompactOptionChip(
-          label: shortLabel,
-          isSelected: isSelected,
-          colorScheme: colorScheme,
-          onTap: () => onQualityChanged(quality),
-        );
-      }).toList(),
-    );
-  }
-}
-
-class _CompactOptionChip extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-  final ColorScheme colorScheme;
-
-  const _CompactOptionChip({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-    required this.colorScheme,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOutQuad,
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? colorScheme.primary
-                : colorScheme.onPrimary.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: isSelected
-                  ? Colors.transparent
-                  : colorScheme.onPrimary.withValues(alpha: 0.1),
-              width: 1,
-            ),
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              color: isSelected
-                  ? colorScheme.onPrimary
-                  : colorScheme.onPrimary.withValues(alpha: 0.7),
-              fontSize: 13,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ModernFilterChip extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-  final ColorScheme colorScheme;
-
-  const _ModernFilterChip({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-    required this.colorScheme,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? colorScheme.primary.withValues(alpha: 0.2)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: isSelected
-                  ? colorScheme.primary
-                  : colorScheme.onPrimary.withValues(alpha: 0.24),
-              width: 1,
-            ),
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              color: isSelected
-                  ? colorScheme.primary
-                  : colorScheme.onPrimary.withValues(alpha: 0.7),
-              fontSize: 12,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

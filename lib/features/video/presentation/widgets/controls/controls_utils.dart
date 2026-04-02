@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
+bool isPlayerBottomSheetLayout(BuildContext context) =>
+    MediaQuery.orientationOf(context) == Orientation.portrait;
+
 void showSidePanel(BuildContext context, Widget child) {
-  final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+  final isLandscape = !isPlayerBottomSheetLayout(context);
 
   if (isLandscape) {
     showGeneralDialog(

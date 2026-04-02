@@ -41,7 +41,7 @@ class PlayerControlsOverlay extends HookConsumerWidget {
         context,
         PlayerSettingsSheet(
           bvid: bvid,
-          isBottomSheet: MediaQuery.of(context).orientation == Orientation.portrait,
+          isBottomSheet: isPlayerBottomSheetLayout(context),
         ),
       );
     }

@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/features/profile/profile.dart';
 import 'package:culcul/features/video/application/video_detail_workflows.dart';
+import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
 import 'package:culcul/features/video/video.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -57,7 +58,11 @@ class VideoDetailController extends _$VideoDetailController {
   }
 
   void setPlaybackSpeed(double speed) {
+    if (state.playbackSpeed == speed) {
+      return;
+    }
     state = state.copyWith(playbackSpeed: speed);
+    unawaited(ref.read(playerControllerProvider.notifier).setPlaybackRate(speed));
   }
 
   Future<void> reportProgress(int progress) async {

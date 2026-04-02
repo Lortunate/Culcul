@@ -6,6 +6,7 @@ import 'package:culcul/features/video/presentation/view_models/video_detail_view
 import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/controls_utils.dart';
+import 'package:culcul/features/video/presentation/widgets/controls/player_constants.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/player_theme.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/quick_selection_sheet.dart';
 import 'package:flutter/material.dart';
@@ -36,32 +37,34 @@ class VideoControlButtons extends ConsumerWidget {
       context,
       QuickSelectionSheet<int>(
         title: t.video.player.choose_quality,
+        subtitle: t.video.player.quality_section_hint,
         items: availableQualities,
         selectedItem: selectedQuality,
         labelBuilder: (q) => qualityLabels[q] ?? t.video.quality.unknown,
+        emptyText: t.video.player.quality_unavailable,
         onSelected: (q) {
           ref.read(videoDetailControllerProvider(bvid).notifier).switchQuality(q);
         },
-        isBottomSheet: MediaQuery.of(context).orientation == Orientation.portrait,
+        isBottomSheet: isPlayerBottomSheetLayout(context),
       ),
     );
   }
 
   void _showSpeedMenu(BuildContext context, WidgetRef ref, double currentSpeed) {
-    const speeds = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0];
     final t = Translations.of(context);
     showSidePanel(
       context,
       QuickSelectionSheet<double>(
         title: t.video.player.choose_speed,
-        items: speeds,
+        subtitle: t.video.player.speed_section_hint,
+        items: playbackSpeeds,
         selectedItem: currentSpeed,
-        labelBuilder: (s) => '${s}x',
+        labelBuilder: formatPlaybackSpeedLabel,
+        subtitleBuilder: (s) => getPlaybackSpeedDescription(s, t),
         onSelected: (s) {
           ref.read(videoDetailControllerProvider(bvid).notifier).setPlaybackSpeed(s);
-          ref.read(playerControllerProvider.notifier).player.setRate(s);
         },
-        isBottomSheet: MediaQuery.of(context).orientation == Orientation.portrait,
+        isBottomSheet: isPlayerBottomSheetLayout(context),
       ),
     );
   }
@@ -87,15 +90,7 @@ class VideoControlButtons extends ConsumerWidget {
     final selectedQuality = videoDetailState.selectedQuality;
     final availableQualities = videoDetailState.availableQualities;
     final playbackSpeed = videoDetailState.playbackSpeed;
-
-    final qualityLabels = <int, String>{};
-    if (videoDetailState.playUrl != null) {
-      final qualities = videoDetailState.playUrl!.acceptQuality;
-      final descs = videoDetailState.playUrl!.acceptDescription;
-      for (int i = 0; i < qualities.length && i < descs.length; i++) {
-        qualityLabels[qualities[i]] = descs[i];
-      }
-    }
+    final qualityLabels = buildQualityLabels(videoDetailState.playUrl, t);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
@@ -115,7 +110,7 @@ class VideoControlButtons extends ConsumerWidget {
           const Spacer(),
           if (isFullscreen) ...[
             PlayerCapsuleButton(
-              text: '${playbackSpeed}X',
+              text: formatPlaybackSpeedLabel(playbackSpeed),
               onTap: () => _showSpeedMenu(context, ref, playbackSpeed),
             ),
             const SizedBox(width: 8),
@@ -247,26 +242,31 @@ class PlayerCapsuleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(4),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+        borderRadius: BorderRadius.circular(999),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
+            color: colorScheme.onPrimary.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(999),
             border: Border.all(
-              color: Theme.of(context).colorScheme.onPrimary.withValues(alpha: 0.24),
+              color: colorScheme.onPrimary.withValues(alpha: 0.16),
               width: 1,
             ),
           ),
           child: Text(
             text,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onPrimary,
+              color: colorScheme.onPrimary,
               fontSize: 11,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ),

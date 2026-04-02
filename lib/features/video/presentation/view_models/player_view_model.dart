@@ -24,7 +24,6 @@ sealed class PlayerUiState with _$PlayerUiState {
     @Default(true) bool showControls,
     String? activeSessionId,
     @Default(0) int activationVersion,
-    DateTime? sleepTimerTarget,
   }) = _PlayerUiState;
 }
 
@@ -37,7 +36,6 @@ class PlayerController extends _$PlayerController {
   late final VideoController videoController;
 
   Timer? _controlsTimer;
-  Timer? _sleepTimer;
   final List<StreamSubscription> _subscriptions = [];
   final PlayerSessionCoordinator _sessionCoordinator = PlayerSessionCoordinator();
   int _renderEpoch = 0;
@@ -52,7 +50,6 @@ class PlayerController extends _$PlayerController {
     ref.onDispose(() {
       _mounted = false;
       _controlsTimer?.cancel();
-      _sleepTimer?.cancel();
       for (final s in _subscriptions) {
         s.cancel();
       }
@@ -95,7 +92,6 @@ class PlayerController extends _$PlayerController {
       return;
     }
 
-    _sleepTimer?.cancel();
     _markLoadingForSession(
       activeSessionId: change.activeSessionId,
       activationVersion: change.activationVersion,
@@ -117,7 +113,6 @@ class PlayerController extends _$PlayerController {
       return;
     }
 
-    _sleepTimer?.cancel();
     _markLoadingForSession(
       activeSessionId: change.activeSessionId,
       activationVersion: change.activationVersion,
@@ -146,7 +141,6 @@ class PlayerController extends _$PlayerController {
       isFullscreen: resetUi ? false : state.isFullscreen,
       isLocked: resetUi ? false : state.isLocked,
       showControls: resetUi ? true : state.showControls,
-      sleepTimerTarget: resetUi ? null : state.sleepTimerTarget,
       isPlaying: resetPlaybackFlags ? false : state.isPlaying,
       isBuffering: resetPlaybackFlags ? false : state.isBuffering,
     );
@@ -187,6 +181,10 @@ class PlayerController extends _$PlayerController {
   Future<void> playOrPause() async {
     resetControlsTimer();
     await player.playOrPause();
+  }
+
+  Future<void> setPlaybackRate(double rate) async {
+    await player.setRate(rate);
   }
 
   Future<void> seek(Duration position) async {
@@ -339,22 +337,5 @@ class PlayerController extends _$PlayerController {
     } else {
       resetControlsTimer();
     }
-  }
-
-  void setSleepTimer(Duration duration) {
-    _sleepTimer?.cancel();
-    final targetTime = DateTime.now().add(duration);
-    state = state.copyWith(sleepTimerTarget: targetTime);
-    _sleepTimer = Timer(duration, () {
-      if (_mounted) {
-        player.pause();
-        cancelSleepTimer();
-      }
-    });
-  }
-
-  void cancelSleepTimer() {
-    _sleepTimer?.cancel();
-    state = state.copyWith(sleepTimerTarget: null);
   }
 }

@@ -30,17 +30,6 @@ class VideoListenPage extends ConsumerWidget {
     final detail = state.videoDetail;
     final t = i18n(context);
 
-    final sleepTimerTarget = playerState.sleepTimerTarget;
-    String? sleepTimerText;
-    if (sleepTimerTarget != null) {
-      final remaining = sleepTimerTarget.difference(DateTime.now());
-      if (remaining.inSeconds > 0) {
-        sleepTimerText = t.video.sleep_timer_remaining(
-          remaining: remaining.formatDuration,
-        );
-      }
-    }
-
     if (detail == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -76,19 +65,7 @@ class VideoListenPage extends ConsumerWidget {
                 backgroundColor: Colors.transparent,
                 isScrollControlled: true,
                 builder: (context) {
-                  return PlayerSettingsSheet(
-                    bvid: bvid,
-                    sleepTimerTarget: playerState.sleepTimerTarget,
-                    onSetSleepTimer: (duration) {
-                      if (duration == null) {
-                        playerController.cancelSleepTimer();
-                      } else {
-                        playerController.setSleepTimer(duration);
-                      }
-                      Navigator.pop(context);
-                    },
-                    isBottomSheet: true,
-                  );
+                  return PlayerSettingsSheet(bvid: bvid, isBottomSheet: true);
                 },
               );
             },
@@ -156,24 +133,6 @@ class VideoListenPage extends ConsumerWidget {
                       fontSize: 15,
                     ),
                   ),
-                  if (sleepTimerText != null) ...[
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: colorScheme.onPrimary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        sleepTimerText,
-                        style: TextStyle(
-                          color: colorScheme.primary,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
 
                   const SizedBox(height: 48),
 
