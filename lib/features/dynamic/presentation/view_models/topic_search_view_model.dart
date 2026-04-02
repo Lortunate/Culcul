@@ -1,5 +1,5 @@
 import 'package:culcul/core/contracts/search_result_contract.dart';
-import 'package:culcul/features/search/search_providers.dart';
+import 'package:culcul/features/search/search.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final topicSearchViewModelProvider = FutureProvider.autoDispose
@@ -10,5 +10,8 @@ final topicSearchViewModelProvider = FutureProvider.autoDispose
       final data = await ref
           .read(searchRepositoryProvider)
           .search(keyword: trimmed, searchType: 'topic');
-      return data.items.whereType<SearchTopicEntry>().toList();
+      return data.when(
+        success: (page) => page.items.whereType<SearchTopicEntry>().toList(),
+        failure: (error) => throw error.toException(),
+      );
     });

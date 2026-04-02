@@ -172,7 +172,9 @@ class WbiHelper {
     final mixinKey = _getMixinKey(_imgKey! + _subKey!);
     final currTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
-    final newParams = Map<String, dynamic>.from(params);
+    final newParams = Map<String, dynamic>.from(params)
+      ..remove('wts')
+      ..remove('w_rid');
     newParams['wts'] = currTime;
 
     final sortedKeys = newParams.keys.toList()..sort();

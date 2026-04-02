@@ -2,6 +2,7 @@ import 'package:culcul/i18n/i18n.dart';
 import 'dart:io';
 import 'package:culcul/features/notification/presentation/view_models/chat_view_model.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_input.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_message_list.dart';
@@ -14,14 +15,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class ChatPage extends HookConsumerWidget {
   final int talkerId;
   final String? name;
-  final int sessionType;
+  final PrivateSessionType sessionType;
   final String? avatarUrl;
 
   const ChatPage({
     super.key,
     required this.talkerId,
     this.name,
-    this.sessionType = 1,
+    this.sessionType = PrivateSessionType.user,
     this.avatarUrl,
   });
 
@@ -96,7 +97,9 @@ class ChatPage extends HookConsumerWidget {
     var displayAvatarUrl = avatarUrl ?? '';
     var displayName = name ?? 'Chat';
 
-    if (sessionType != 1) return (avatarUrl: displayAvatarUrl, name: displayName);
+    if (sessionType != PrivateSessionType.user) {
+      return (avatarUrl: displayAvatarUrl, name: displayName);
+    }
 
     final profileAsync = ref.watch(userProfileProvider(talkerId.toString()));
     if (!profileAsync.hasValue) return (avatarUrl: displayAvatarUrl, name: displayName);

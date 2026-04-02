@@ -1,6 +1,7 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/core/network/dtos/video_model_contract_dto.dart';
 import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/home/data/home_api.dart';
@@ -31,8 +32,8 @@ class HomeRepositoryImpl implements domain.HomeRepository {
         .runApi<List<VideoModel>>(
           () async => api.fetchRecommend(
             freshIdx: page,
-            freshIdx1h: page,
-            forceRefresh: forceRefresh ? true : null,
+                freshIdx1h: page,
+                forceRefresh: forceRefresh ? true : null,
           ),
           transform: (data) {
             final items = data.item;
@@ -40,7 +41,7 @@ class HomeRepositoryImpl implements domain.HomeRepository {
             for (final item in items) {
               if (item['goto'] != 'av') continue;
               try {
-                videos.add(VideoModel.fromJson(item));
+                videos.add(VideoModelDto.fromJson(item).toContract());
               } catch (_) {
                 // Skip malformed entries instead of failing the whole page.
               }
@@ -62,7 +63,7 @@ class HomeRepositoryImpl implements domain.HomeRepository {
             ps: _defaultPopularPageSize,
             forceRefresh: forceRefresh ? true : null,
           ),
-          transform: (data) => data.list,
+          transform: (data) => data.list.map((item) => item.toContract()).toList(),
         );
     return _unwrap(result);
   }
@@ -72,21 +73,28 @@ class HomeRepositoryImpl implements domain.HomeRepository {
   }
 
   @override
-  Future<List<HomeVideo>> fetchRecommend({
+  Future<Result<List<HomeVideo>, AppError>> fetchRecommend({
     int page = 1,
     bool forceRefresh = false,
   }) async {
-    return (await fetchRecommendModels(
-      page: page,
-      forceRefresh: forceRefresh,
-    )).map((item) => item.toDomain()).toList();
+    return _executor.run(() async {
+      return (await fetchRecommendModels(
+        page: page,
+        forceRefresh: forceRefresh,
+      )).map((item) => item.toDomain()).toList();
+    });
   }
 
   @override
-  Future<List<HomeVideo>> fetchPopular({int page = 1, bool forceRefresh = false}) async {
-    return (await fetchPopularModels(
-      page: page,
-      forceRefresh: forceRefresh,
-    )).map((item) => item.toDomain()).toList();
+  Future<Result<List<HomeVideo>, AppError>> fetchPopular({
+    int page = 1,
+    bool forceRefresh = false,
+  }) async {
+    return _executor.run(() async {
+      return (await fetchPopularModels(
+        page: page,
+        forceRefresh: forceRefresh,
+      )).map((item) => item.toDomain()).toList();
+    });
   }
 }

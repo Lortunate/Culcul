@@ -1,5 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/features/video/presentation/route_entry.dart';
+import 'package:culcul/features/video/video.dart';
 import 'package:culcul/features/video/presentation/view_models/video_comments_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_item.dart';

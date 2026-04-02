@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:culcul/features/auth/auth_providers.dart';
+import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

@@ -1,6 +1,6 @@
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
-import 'package:culcul/features/notification/notification_providers.dart';
+import 'package:culcul/features/notification/notification.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'at_view_model.g.dart';
@@ -17,19 +17,18 @@ class AtList extends _$AtList
   Future<CursorPage<NotificationEntry, ({int id, int time})>> fetchPage(
     ({int id, int time})? cursor, {
     bool refresh = false,
-  }) {
-    return ref
+  }) async {
+    final result = await ref
         .read(notificationRepositoryProvider)
-        .getAtList(id: cursor?.id, atTime: cursor?.time)
-        .then(
-          (data) => CursorPage(
-            items: data,
-            nextCursor: data.isEmpty
-                ? null
-                : (id: data.last.id, time: data.last.eventTime),
-            hasMore: data.isNotEmpty,
-          ),
-        );
+        .getAtList(id: cursor?.id, atTime: cursor?.time);
+    return result.when(
+      success: (data) => CursorPage(
+        items: data,
+        nextCursor: data.isEmpty ? null : (id: data.last.id, time: data.last.eventTime),
+        hasMore: data.isNotEmpty,
+      ),
+      failure: (error) => throw error.toException(),
+    );
   }
 
   @override

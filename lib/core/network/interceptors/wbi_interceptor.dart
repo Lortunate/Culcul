@@ -17,8 +17,11 @@ class WbiInterceptor extends Interceptor {
   ) async {
     final hasWbiHeader = options.headers.keys.any((k) => k.toLowerCase() == 'x-bili-wbi');
     final isWbiPath = options.uri.path.contains('/wbi/');
+    final markedAsWbi = options.extra['requires_wbi'] == true;
+    final requiresWbi = hasWbiHeader || isWbiPath || markedAsWbi;
 
-    if (hasWbiHeader || isWbiPath) {
+    if (requiresWbi) {
+      options.extra['requires_wbi'] = true;
       options.headers.removeWhere((key, value) => key.toLowerCase() == 'x-bili-wbi');
 
       _ensureCookieCount(options);

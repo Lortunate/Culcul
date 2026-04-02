@@ -79,20 +79,13 @@ class SystemNotificationRoute extends GoRouteData with $SystemNotificationRoute 
 
 class ChatRoute extends GoRouteData with $ChatRoute {
   final int talkerId;
-  final String? name;
-  final int? sessionType;
-  final String? avatarUrl;
+  final ChatRouteInput $extra;
 
-  const ChatRoute({required this.talkerId, this.name, this.sessionType, this.avatarUrl});
+  const ChatRoute({required this.talkerId, required this.$extra});
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildChatRoutePage(
-      talkerId: talkerId,
-      name: name,
-      sessionType: sessionType ?? 1,
-      avatarUrl: avatarUrl,
-    );
+    return buildChatRoutePage(talkerId: talkerId, input: $extra);
   }
 
   @override

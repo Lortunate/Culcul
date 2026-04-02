@@ -1,8 +1,8 @@
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'dart:async';
 
-import 'package:culcul/core/result/run_result.dart';
-import 'package:culcul/features/dynamic/dynamic_providers.dart';
+import 'package:culcul/core/network/request_executor.dart';
+import 'package:culcul/features/dynamic/dynamic.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_comment_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -28,7 +28,7 @@ class DynamicCommentController extends _$DynamicCommentController {
       ),
       error: null,
     );
-    final result = await runResult(
+    final result = await const RequestExecutor().run(
       () => ref
           .read(dynamicRepositoryProvider)
           .getComments(post, sort: state.sort, page: 1),
@@ -68,7 +68,7 @@ class DynamicCommentController extends _$DynamicCommentController {
       paging: state.paging.copyWith(isLoadingMore: true, error: null),
       error: null,
     );
-    final result = await runResult(
+    final result = await const RequestExecutor().run(
       () => ref
           .read(dynamicRepositoryProvider)
           .getComments(post, sort: state.sort, page: nextPage),

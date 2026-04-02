@@ -1,9 +1,9 @@
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/core/network/request_executor.dart';
+import 'package:culcul/core/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/core/result/run_result.dart';
 import 'package:culcul/features/profile/data/dtos/profile_dtos.dart';
 import 'package:culcul/features/profile/data/profile_mapper.dart';
 import 'package:culcul/features/profile/data/profile_api.dart';
@@ -21,16 +21,23 @@ domain.ProfileRepository profileRepository(Ref ref) {
   return ProfileRepositoryImpl(api: ProfileApi(ref.watch(dioClientProvider)));
 }
 
-class ProfileRepositoryImpl extends BaseRepository implements domain.ProfileRepository {
+class ProfileRepositoryImpl with RequestExecutorBinding implements domain.ProfileRepository {
   static const int _defaultSpaceVideoPageSize = 30;
   final ProfileApi api;
+  final RequestExecutor _requestExecutor;
 
-  ProfileRepositoryImpl({required this.api});
+  ProfileRepositoryImpl({required this.api, RequestExecutor? requestExecutor})
+    : _requestExecutor = requestExecutor ?? const RequestExecutor();
 
   @override
-  Future<UserCardModel> getUserCard(int mid) async {
-    final data = await requestApi(() => api.getCard(mid));
-    return _parseUserCard(data, fallbackMid: mid);
+  RequestExecutor get requestExecutor => _requestExecutor;
+
+  @override
+  Future<Result<UserCardModel, AppError>> getUserCard(int mid) async {
+    return requestResult(() async {
+      final data = await requestApi(() => api.getCard(mid));
+      return _parseUserCard(data, fallbackMid: mid);
+    });
   }
 
   Future<UserProfile> getProfileModel(int userId) async {
@@ -121,37 +128,39 @@ class ProfileRepositoryImpl extends BaseRepository implements domain.ProfileRepo
     required int mid,
     required bool isFollow,
   }) {
-    return runVoidResult(
-      () => requestVoid(() => api.modifyRelation(mid, isFollow ? 1 : 2, 11)),
-    );
+    return requestVoidResult(() => api.modifyRelation(mid, isFollow ? 1 : 2, 11));
   }
 
   @override
-  Future<ProfileUser> getProfile(int userId) async {
-    return (await getProfileModel(userId)).toDomain();
+  Future<Result<ProfileUser, AppError>> getProfile(int userId) async {
+    return requestResult(() async => (await getProfileModel(userId)).toDomain());
   }
 
   @override
-  Future<List<ProfileVideo>> getSpaceVideos({
+  Future<Result<List<ProfileVideo>, AppError>> getSpaceVideos({
     required int mid,
     int page = 1,
     String order = 'pubdate',
   }) async {
-    return (await getSpaceVideosModel(
-      mid: mid,
-      page: page,
-      order: order,
-    )).map((item) => item.toDomain()).toList();
+    return requestResult(() async {
+      return (await getSpaceVideosModel(
+        mid: mid,
+        page: page,
+        order: order,
+      )).map((item) => item.toDomain()).toList();
+    });
   }
 
   @override
-  Future<ProfileVideo?> getStickyVideo(int vmid) async {
-    return (await getStickyVideoModel(vmid))?.toDomain();
+  Future<Result<ProfileVideo?, AppError>> getStickyVideo(int vmid) async {
+    return requestResult(() async => (await getStickyVideoModel(vmid))?.toDomain());
   }
 
   @override
-  Future<List<ProfileVideo>> getMasterpiece(int vmid) async {
-    return (await getMasterpieceModels(vmid)).map((item) => item.toDomain()).toList();
+  Future<Result<List<ProfileVideo>, AppError>> getMasterpiece(int vmid) async {
+    return requestResult(
+      () async => (await getMasterpieceModels(vmid)).map((item) => item.toDomain()).toList(),
+    );
   }
 
   UserCardModel _parseUserCard(dynamic data, {required int fallbackMid}) {

@@ -56,22 +56,18 @@ class CommentReplyRoute extends GoRouteData with $CommentReplyRoute {
   final String bvid;
   final int oid;
   final int rootId;
-  final CommentReplyRouteInput? $extra;
+  final CommentReplyRouteInput $extra;
 
   const CommentReplyRoute({
     required this.bvid,
     required this.oid,
     required this.rootId,
-    this.$extra,
+    required this.$extra,
   });
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    final routeExtra = $extra;
-    if (routeExtra == null) {
-      throw ArgumentError('CommentReplyRoute requires CommentReplyRouteInput in \$extra');
-    }
-    return buildCommentReplyRoutePage(oid: oid, rootId: rootId, input: routeExtra);
+    return buildCommentReplyRoutePage(oid: oid, rootId: rootId, input: $extra);
   }
 
   @override
@@ -194,29 +190,13 @@ class LoginRoute extends GoRouteData with $LoginRoute {
 
 @TypedGoRoute<SettingsRoute>(
   path: '/settings',
-  routes: [
-    TypedGoRoute<NetworkSettingsRoute>(path: 'network'),
-    TypedGoRoute<AboutRoute>(path: 'about'),
-  ],
+  routes: [TypedGoRoute<AboutRoute>(path: 'about')],
 )
 class SettingsRoute extends GoRouteData with $SettingsRoute {
   const SettingsRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) => buildSettingsRoutePage();
-
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
-  }
-}
-
-class NetworkSettingsRoute extends GoRouteData with $NetworkSettingsRoute {
-  const NetworkSettingsRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      buildNetworkSettingsRoutePage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {

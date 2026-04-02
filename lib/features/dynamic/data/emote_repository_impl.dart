@@ -1,5 +1,6 @@
-import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/core/network/request_executor.dart';
+import 'package:culcul/core/network/request_executor_binding.dart';
 import 'package:culcul/features/dynamic/data/dtos/emote_response.dart' as dto;
 import 'package:culcul/features/dynamic/data/emote_api.dart';
 import 'package:culcul/features/dynamic/domain/entities/emote_response.dart'
@@ -15,10 +16,15 @@ domain.EmoteRepository emoteRepository(Ref ref) {
   return EmoteRepositoryImpl(EmoteApi(ref.watch(dioClientProvider)));
 }
 
-class EmoteRepositoryImpl extends BaseRepository implements domain.EmoteRepository {
+class EmoteRepositoryImpl with RequestExecutorBinding implements domain.EmoteRepository {
   final EmoteApi _api;
+  final RequestExecutor _requestExecutor;
 
-  EmoteRepositoryImpl(this._api);
+  EmoteRepositoryImpl(this._api, {RequestExecutor? requestExecutor})
+    : _requestExecutor = requestExecutor ?? const RequestExecutor();
+
+  @override
+  RequestExecutor get requestExecutor => _requestExecutor;
 
   @override
   Future<domain_entity.EmoteResponse> getUserEmotes() async {

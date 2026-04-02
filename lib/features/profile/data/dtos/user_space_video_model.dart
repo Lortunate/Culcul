@@ -1,4 +1,4 @@
-import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/core/network/dtos/video_model_contract_dto.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'user_space_video_model.freezed.dart';
@@ -19,8 +19,8 @@ sealed class UserSpaceVideoModel with _$UserSpaceVideoModel {
     @Default(0) int state,
     @Default(0) int attribute,
     required int tid,
-    required Owner owner,
-    required Stat stat,
+    required VideoOwnerDto owner,
+    required VideoStatDto stat,
     @Default('') String reason,
     @JsonKey(name: 'inter_video') @Default(false) bool interVideo,
   }) = _UserSpaceVideoModel;

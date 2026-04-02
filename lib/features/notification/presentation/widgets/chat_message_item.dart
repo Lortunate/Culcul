@@ -36,13 +36,13 @@ class ChatMessageItem extends StatelessWidget {
       );
     }
 
-    if (message.msgType == 10) {
+    if (message.type == PrivateMessageType.notice) {
       // System notice
       final content = message.primaryText ?? t.notification.types.system;
       return ChatSystemMessage(content: content);
     }
 
-    if (message.msgType == 18) {
+    if (message.type == PrivateMessageType.systemTip) {
       // System tip, such as follow restrictions
       final tips = message.systemTipTexts;
       if (tips != null && tips.isNotEmpty) {
@@ -94,11 +94,11 @@ class ChatMessageItem extends StatelessWidget {
     final bubbleColor = isSelf ? colorScheme.primary : colorScheme.surfaceContainerLow;
     final textColor = isSelf ? colorScheme.onPrimary : colorScheme.onSurface;
 
-    if (message.msgType == 2 || message.msgType == 6) {
+    if (message.type.isImage) {
       final url = message.imageUrl;
       if (url == null) return const SizedBox();
       return ChatImageMessage(url: url, placeholderColor: bubbleColor);
-    } else if (message.msgType == 1) {
+    } else if (message.type == PrivateMessageType.text) {
       return ChatBubble(
         isSelf: isSelf,
         color: bubbleColor,
@@ -109,7 +109,7 @@ class ChatMessageItem extends StatelessWidget {
         ),
       );
     } else {
-      String text = t.notification.chat.unsupported_type(type: message.msgType);
+      String text = t.notification.chat.unsupported_type(type: message.type.value);
       if (message.titleText case final title?) {
         text += '\n$title';
       }

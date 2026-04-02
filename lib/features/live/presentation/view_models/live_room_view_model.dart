@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/live/domain/entities/live_entities.dart';
-import 'package:culcul/features/live/live_providers.dart';
+import 'package:culcul/features/live/live.dart';
 import 'package:culcul/features/live/presentation/view_models/services/live_socket_service.dart';
-import 'package:culcul/features/profile/profile_providers.dart';
+import 'package:culcul/features/profile/profile.dart';
 import 'package:culcul/features/live/presentation/view_models/live_room_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -111,7 +111,11 @@ class LiveRoomController extends _$LiveRoomController {
 
   Future<void> _fetchAnchorInfo(int uid) async {
     try {
-      final card = await ref.read(profileRepositoryProvider).getUserCard(uid);
+      final result = await ref.read(profileRepositoryProvider).getUserCard(uid);
+      final card = result.when(
+        success: (value) => value,
+        failure: (error) => throw error.toException(),
+      );
       state = state.copyWith(anchorInfo: card);
     } catch (error, stackTrace) {
       _logIgnoredError('fetchAnchorInfo', error, stackTrace);

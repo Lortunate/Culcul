@@ -4,8 +4,8 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/result/run_result.dart';
-import 'package:culcul/features/dynamic/dynamic_providers.dart';
+import 'package:culcul/core/network/request_executor.dart';
+import 'package:culcul/features/dynamic/dynamic.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'article_detail_view_model.g.dart';
@@ -77,7 +77,7 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
 
   Future<void> loadDetail() async {
     state = state.copyWith(isLoading: true, clearError: true);
-    final result = await runResult(
+    final result = await const RequestExecutor().run(
       () => ref.read(dynamicRepositoryProvider).getArticleDetail(_url),
     );
     state = result.when(
@@ -122,7 +122,7 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
       commentsHasMore: refresh ? true : null,
     );
 
-    final result = await runResult(
+    final result = await const RequestExecutor().run(
       () => ref
           .read(dynamicRepositoryProvider)
           .getArticleCommentList(

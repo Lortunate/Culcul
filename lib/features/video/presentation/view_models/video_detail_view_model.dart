@@ -1,10 +1,10 @@
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'dart:async';
 
-import 'package:culcul/core/result/run_result.dart';
-import 'package:culcul/features/profile/profile_providers.dart';
+import 'package:culcul/core/network/request_executor.dart';
+import 'package:culcul/features/profile/profile.dart';
 import 'package:culcul/features/video/application/video_detail_workflows.dart';
-import 'package:culcul/features/video/video_providers.dart';
+import 'package:culcul/features/video/video.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'video_detail_state.dart';
@@ -94,7 +94,7 @@ class VideoDetailController extends _$VideoDetailController {
   }
 
   Future<void> _loadPlayUrl({required int aid, required int cid, required int qn}) async {
-    final result = await runResult(
+    final result = await const RequestExecutor().run(
       () => ref
           .read(videoRepositoryProvider)
           .fetchVideoPlayUrl(aid: aid, cid: cid, quality: qn),

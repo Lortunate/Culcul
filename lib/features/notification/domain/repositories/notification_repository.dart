@@ -11,31 +11,34 @@ import 'package:culcul/features/notification/domain/entities/send_message_result
 import 'package:culcul/features/notification/domain/entities/system_notice.dart';
 
 abstract class NotificationRepository {
-  Future<NotificationSummary> getUnreadCount();
+  Future<Result<NotificationSummary, AppError>> getUnreadCount();
 
-  Future<List<NotificationEntry>> getReplyList({int? id, int? replyTime});
+  Future<Result<List<NotificationEntry>, AppError>> getReplyList({
+    int? id,
+    int? replyTime,
+  });
 
-  Future<List<NotificationEntry>> getAtList({int? id, int? atTime});
+  Future<Result<List<NotificationEntry>, AppError>> getAtList({int? id, int? atTime});
 
-  Future<List<NotificationEntry>> getLikeList({int? id, int? likeTime});
+  Future<Result<List<NotificationEntry>, AppError>> getLikeList({int? id, int? likeTime});
 
-  Future<List<SystemNotice>> getSystemNotifications();
+  Future<Result<List<SystemNotice>, AppError>> getSystemNotifications();
 
-  Future<PrivateMessagePage> getPrivateMessages({
+  Future<Result<PrivateMessagePage, AppError>> getPrivateMessages({
     required int talkerId,
-    required int sessionType,
+    required PrivateSessionType sessionType,
     int? endSeqno,
   });
 
-  Future<PrivateSessionPage> getPrivateSessions({int? endTs});
+  Future<Result<PrivateSessionPage, AppError>> getPrivateSessions({int? endTs});
 
   Future<Result<ImageUploadResult, AppError>> uploadImage(File file);
 
   Future<Result<SendMessageResult, AppError>> sendPrivateMessage({
     required int senderUid,
     required int receiverId,
-    required int receiverType,
-    required int msgType,
+    required PrivateMessageReceiverType receiverType,
+    required PrivateMessageType messageType,
     required PrivateMessageContent content,
   });
 }

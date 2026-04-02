@@ -1,5 +1,5 @@
 import 'package:culcul/core/network/dio_client.dart';
-import 'package:culcul/features/auth/auth_providers.dart';
+import 'package:culcul/features/auth/auth.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

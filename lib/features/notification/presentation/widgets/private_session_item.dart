@@ -1,4 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/features/notification/notification.dart';
 import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
@@ -23,7 +24,7 @@ class PrivateSessionItem extends ConsumerWidget {
     String avatarUrl = '';
     bool isLoading = false;
 
-    if (session.sessionType == 1) {
+    if (session.sessionType == PrivateSessionType.user) {
       // Type 1: User Session
       if (session.accountInfo != null) {
         // System messages usually carry accountInfo
@@ -42,7 +43,7 @@ class PrivateSessionItem extends ConsumerWidget {
           isLoading = true;
         }
       }
-    } else if (session.sessionType == 2) {
+    } else if (session.sessionType == PrivateSessionType.group) {
       // Type 2: Group/Fan Group
       title = session.groupName ?? 'Group';
       avatarUrl = session.groupCover ?? '';
@@ -65,9 +66,11 @@ class PrivateSessionItem extends ConsumerWidget {
       onTap: () {
         ChatRoute(
           talkerId: session.talkerId,
-          name: title,
-          sessionType: session.sessionType,
-          avatarUrl: avatarUrl,
+          $extra: ChatRouteInput(
+            name: title,
+            sessionType: session.sessionType,
+            avatarUrl: avatarUrl,
+          ),
         ).push(context);
       },
       leading: _buildAvatar(avatarUrl, session.talkerId, context),

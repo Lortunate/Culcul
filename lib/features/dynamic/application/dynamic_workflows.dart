@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/dynamic/dynamic_providers.dart';
+import 'package:culcul/features/dynamic/dynamic.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'package:culcul/features/dynamic/domain/repositories/dynamic_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

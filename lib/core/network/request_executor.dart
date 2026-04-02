@@ -68,6 +68,14 @@ class RequestExecutor {
     );
   }
 
+  Future<Result<void, AppError>> runVoid(Future<void> Function() action) async {
+    final result = await run(action);
+    return result.when(
+      success: (_) => const Success(null),
+      failure: Failure.new,
+    );
+  }
+
   Future<void> runUnitOrThrow(Future<ApiResponse<dynamic>> Function() action) async {
     final result = await runUnit(action);
     return result.when(

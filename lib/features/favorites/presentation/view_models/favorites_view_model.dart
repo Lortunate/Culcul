@@ -1,9 +1,9 @@
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
-import 'package:culcul/core/result/run_result.dart';
+import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
-import 'package:culcul/features/favorites/favorites_providers.dart';
+import 'package:culcul/features/favorites/favorites.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'favorites_view_model.g.dart';
@@ -28,7 +28,7 @@ class FavCreatedFolders extends _$FavCreatedFolders {
           return folder;
         }
 
-        final result = await runResult(
+        final result = await const RequestExecutor().run(
           () => repository.getFolderResources(
             mediaId: folder.id,
             page: 1,
@@ -120,7 +120,7 @@ class FavFolderResources extends _$FavFolderResources {
     if (!_hasMore || state.isLoading) return;
 
     final currentList = state.value?.list ?? [];
-    final result = await runResult(() => _fetchItems(mediaId, _page + 1));
+    final result = await const RequestExecutor().run(() => _fetchItems(mediaId, _page + 1));
     final newState = result.dataOrNull;
     if (newState == null) {
       state = AsyncError(result.errorOrNull!, StackTrace.current);

@@ -1,4 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/features/notification/notification.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/presentation/view_models/user_space_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
@@ -73,8 +74,10 @@ class UserProfileButtons extends ConsumerWidget {
           onTap: () {
             ChatRoute(
               talkerId: int.parse(profile.id),
-              name: profile.username,
-              avatarUrl: profile.avatarUrl,
+              $extra: ChatRouteInput(
+                name: profile.username,
+                avatarUrl: profile.avatarUrl,
+              ),
             ).push(context);
           },
           size: height,

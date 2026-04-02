@@ -107,9 +107,9 @@ extension PrivateMessageDetailMapper on PrivateMessageDetail {
   PrivateMessage toDomain() {
     return PrivateMessage(
       senderUid: senderUid,
-      receiverType: receiverType,
+      receiverType: PrivateMessageReceiverType.fromValue(receiverType),
       receiverId: receiverId,
-      msgType: msgType,
+      type: PrivateMessageType.fromValue(msgType),
       content: PrivateMessageContent.fromRaw(content),
       msgSeqno: msgSeqno,
       timestamp: timestamp,
@@ -133,7 +133,7 @@ extension PrivateMessageSessionMapper on PrivateMessageSession {
   PrivateSession toDomain() {
     return PrivateSession(
       talkerId: talkerId,
-      sessionType: sessionType,
+      sessionType: PrivateSessionType.fromValue(sessionType),
       unreadCount: unreadCount,
       lastMessage: lastMsg?.toDomain(),
       groupName: groupName,

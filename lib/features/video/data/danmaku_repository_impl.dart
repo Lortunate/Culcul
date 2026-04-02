@@ -1,5 +1,6 @@
-import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/core/network/request_executor.dart';
+import 'package:culcul/core/network/request_executor_binding.dart';
 import 'package:culcul/core/network/resource_api.dart';
 import 'package:culcul/features/video/domain/repositories/danmaku_repository.dart'
     as domain;
@@ -17,11 +18,19 @@ domain.DanmakuRepository danmakuRepository(Ref ref) {
   );
 }
 
-class DanmakuRepositoryImpl extends BaseRepository implements domain.DanmakuRepository {
+class DanmakuRepositoryImpl with RequestExecutorBinding implements domain.DanmakuRepository {
   final DanmakuApi _api;
   final ResourceApi _resourceApi;
+  final RequestExecutor _requestExecutor;
 
-  DanmakuRepositoryImpl(this._api, this._resourceApi);
+  DanmakuRepositoryImpl(
+    this._api,
+    this._resourceApi, {
+    RequestExecutor? requestExecutor,
+  }) : _requestExecutor = requestExecutor ?? const RequestExecutor();
+
+  @override
+  RequestExecutor get requestExecutor => _requestExecutor;
 
   @override
   Future<DmSegMobileReply> fetchDanmakuSegment({

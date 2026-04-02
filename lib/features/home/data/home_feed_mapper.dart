@@ -1,4 +1,5 @@
 import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/core/network/dtos/video_model_contract_dto.dart';
 import 'package:culcul/features/home/data/dtos/weekly_model_dto.dart';
 import 'package:culcul/features/home/domain/entities/home_video.dart';
 
@@ -40,6 +41,6 @@ extension HomeVideoMapper on VideoModel {
 
 extension HomeWeeklyMapper on WeeklyModelDto {
   HomeWeeklyFeed toDomain() {
-    return HomeWeeklyFeed(list: list.map((item) => item.toDomain()).toList());
+    return HomeWeeklyFeed(list: list.map((item) => item.toContract().toDomain()).toList());
   }
 }

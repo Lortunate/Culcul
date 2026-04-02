@@ -36,7 +36,11 @@ abstract class VideoRepository {
 
   Future<List<RelatedVideo>> fetchRelatedVideos(String bvid);
 
-  Future<CommentResponse> fetchComments({required int oid, int sort = 1, int page = 1});
+  Future<CommentResponse> fetchComments({
+    required int oid,
+    CommentSort sort = CommentSort.hot,
+    int page = 1,
+  });
 
   Future<CommentResponse> fetchReply({required int oid, required int root, int page = 1});
 

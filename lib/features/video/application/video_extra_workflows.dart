@@ -2,12 +2,12 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/core/result/run_result.dart';
 import 'package:culcul/core/utils/danmaku_mask_parser.dart';
 import 'package:culcul/features/video/domain/repositories/danmaku_repository.dart';
 import 'package:culcul/features/video/domain/repositories/video_repository.dart';
-import 'package:culcul/features/video/video_providers.dart';
+import 'package:culcul/features/video/video.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_drawing/path_drawing.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -23,6 +23,7 @@ VideoExtraWorkflows videoExtraWorkflows(Ref ref) {
 }
 
 class VideoExtraWorkflows {
+  static const RequestExecutor _requestExecutor = RequestExecutor();
   final VideoRepository videoRepository;
   final DanmakuRepository danmakuRepository;
 
@@ -39,8 +40,8 @@ class VideoExtraWorkflows {
       return const Success(null);
     }
 
-    return runResult(() async {
-      final playerInfoResult = await runResult(
+    return _requestExecutor.run(() async {
+      final playerInfoResult = await _requestExecutor.run(
         () => videoRepository.fetchPlayerInfo(aid: pid, cid: oid),
       );
       final playerInfo = playerInfoResult.dataOrNull;

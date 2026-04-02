@@ -1,9 +1,9 @@
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/core/result/run_result.dart';
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:culcul/features/video/domain/repositories/video_repository.dart';
-import 'package:culcul/features/video/video_providers.dart';
+import 'package:culcul/features/video/video.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'video_detail_workflows.g.dart';
@@ -32,12 +32,13 @@ LoadVideoDetailWorkflow loadVideoDetailWorkflow(Ref ref) {
 }
 
 class LoadVideoDetailWorkflow {
+  static const RequestExecutor _requestExecutor = RequestExecutor();
   final VideoRepository _repository;
 
   const LoadVideoDetailWorkflow(this._repository);
 
   Future<Result<VideoInitialData, AppError>> call(String bvid) async {
-    return runResult(() async {
+    return _requestExecutor.run(() async {
       final detail = await _repository.fetchVideoView(bvid);
       final cid = detail.pages.isNotEmpty ? detail.pages.first.cid : 0;
 
@@ -71,5 +72,5 @@ class LoadVideoDetailWorkflow {
 }
 
 Future<Result<T, AppError>> _guard<T>(Future<T> Function() action) async {
-  return runResult(action);
+  return const RequestExecutor().run(action);
 }

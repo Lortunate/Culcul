@@ -1,6 +1,6 @@
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
-import 'package:culcul/features/profile/profile_providers.dart';
+import 'package:culcul/features/profile/profile.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_space_videos_view_model.g.dart';
@@ -21,9 +21,13 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
 
   @override
   Future<List<ProfileVideo>> fetchPage(int page, {bool refresh = false}) async {
-    return ref
+    final result = await ref
         .read(profileRepositoryProvider)
         .getSpaceVideos(mid: _mid, page: page, order: _order);
+    return result.when(
+      success: (videos) => videos,
+      failure: (error) => throw error.toException(),
+    );
   }
 
   @override

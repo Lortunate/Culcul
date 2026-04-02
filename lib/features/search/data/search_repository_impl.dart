@@ -1,7 +1,10 @@
 import 'dart:convert';
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/network/dio_client.dart';
-import 'package:culcul/core/base_repository.dart';
+import 'package:culcul/core/network/request_executor.dart';
+import 'package:culcul/core/network/request_executor_binding.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/search/data/dtos/search_dtos.dart';
 import 'package:culcul/features/search/data/search_mapper.dart';
 import 'package:culcul/features/search/data/search_api.dart';
@@ -20,11 +23,16 @@ domain.SearchRepository searchRepository(Ref ref) {
   return SearchRepositoryImpl(api: SearchApi(ref.watch(dioClientProvider)));
 }
 
-class SearchRepositoryImpl extends BaseRepository implements domain.SearchRepository {
+class SearchRepositoryImpl with RequestExecutorBinding implements domain.SearchRepository {
   static const int _defaultSearchPageSize = 20;
   final SearchApi api;
+  final RequestExecutor _requestExecutor;
 
-  SearchRepositoryImpl({required this.api});
+  SearchRepositoryImpl({required this.api, RequestExecutor? requestExecutor})
+    : _requestExecutor = requestExecutor ?? const RequestExecutor();
+
+  @override
+  RequestExecutor get requestExecutor => _requestExecutor;
 
   Future<List<SearchSuggestionTag>> fetchSearchSuggestions(String term) async {
     if (term.isEmpty) return [];
@@ -87,41 +95,49 @@ class SearchRepositoryImpl extends BaseRepository implements domain.SearchReposi
   }
 
   @override
-  Future<List<SearchSuggestionEntry>> getSuggestions(String term) async {
-    final suggestions = await fetchSearchSuggestions(term);
-    return suggestions
-        .map((item) => item.toDomain())
-        .whereType<SearchSuggestionEntry>()
-        .toList();
+  Future<Result<List<SearchSuggestionEntry>, AppError>> getSuggestions(String term) async {
+    return requestResult(() async {
+      final suggestions = await fetchSearchSuggestions(term);
+      return suggestions
+          .map((item) => item.toDomain())
+          .whereType<SearchSuggestionEntry>()
+          .toList();
+    });
   }
 
   @override
-  Future<SearchDefaultHint?> getDefaultSearch() async {
-    final result = await fetchDefaultSearch();
-    return result.toDomain();
+  Future<Result<SearchDefaultHint?, AppError>> getDefaultSearch() async {
+    return requestResult(() async {
+      final result = await fetchDefaultSearch();
+      return result.toDomain();
+    });
   }
 
   @override
-  Future<List<SearchTrendingKeyword>> getTrendingRanking() async {
-    final result = await fetchTrendingRanking();
-    return result.list.map((item) => item.toDomain()).toList();
+  Future<Result<List<SearchTrendingKeyword>, AppError>> getTrendingRanking() async {
+    return requestResult(() async {
+      final result = await fetchTrendingRanking();
+      return result.list.map((item) => item.toDomain()).toList();
+    });
   }
 
   @override
-  Future<SearchResultPage> search({
+  Future<Result<SearchResultPage, AppError>> search({
     required String keyword,
     int page = 1,
     String searchType = 'all',
     String order = 'totalrank',
     int duration = 0,
   }) async {
-    final result = await fetchSearchAll(
-      keyword: keyword,
-      page: page,
-      searchType: searchType,
-      order: order,
-      duration: duration,
-    );
-    return result.toDomain();
+    return requestResult(() async {
+      final result = await fetchSearchAll(
+        keyword: keyword,
+        page: page,
+        searchType: searchType,
+        order: order,
+        duration: duration,
+      );
+      return result.toDomain();
+    });
   }
 }

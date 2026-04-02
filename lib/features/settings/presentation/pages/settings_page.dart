@@ -1,5 +1,4 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/core/network/bilibili_acceleration.dart';
 import 'package:culcul/features/settings/presentation/view_models/settings_view_model.dart';
 import 'package:culcul/features/settings/presentation/widgets/settings_group.dart';
 import 'package:culcul/features/settings/presentation/widgets/settings_selection_item.dart';
@@ -26,8 +25,6 @@ class SettingsPage extends ConsumerWidget {
       _ => '...',
     };
     final isClearingCache = ref.watch(cacheMaintenanceProvider).isLoading;
-    final accelerationState = ref.watch(bilibiliAccelerationControllerProvider);
-    final activePreset = biliPresetById(accelerationState.activePresetId);
 
     return Scaffold(
       backgroundColor: colorScheme.surfaceContainerLowest,
@@ -56,13 +53,6 @@ class SettingsPage extends ConsumerWidget {
           const SizedBox(height: 24),
           SettingsGroup(
             children: [
-              SettingsTile(
-                key: const ValueKey<String>('settings_row_network'),
-                title: t.settings.network.page_title,
-                icon: Icons.speed_outlined,
-                value: _getPresetName(t, activePreset.id),
-                onTap: () => const NetworkSettingsRoute().push(context),
-              ),
               SettingsTile(
                 key: const ValueKey<String>('settings_row_cache'),
                 title: t.settings.clear_cache,
@@ -102,23 +92,6 @@ class SettingsPage extends ConsumerWidget {
       ThemeMode.system => t.settings.theme_mode.system,
       ThemeMode.light => t.settings.theme_mode.light,
       ThemeMode.dark => t.settings.theme_mode.dark,
-    };
-  }
-
-  String _getPresetName(Translations t, String presetId) {
-    return switch (presetId) {
-      'official_direct' => t.settings.network.presets.official_direct,
-      'dns_backup' => t.settings.network.presets.dns_backup,
-      'app_backup' => t.settings.network.presets.app_backup,
-      'app_dns_backup' => t.settings.network.presets.app_dns_backup,
-      'cdn_cos' => t.settings.network.presets.cdn_cos,
-      'cdn_ks3' => t.settings.network.presets.cdn_ks3,
-      'cdn_ali' => t.settings.network.presets.cdn_ali,
-      'cdn_hw' => t.settings.network.presets.cdn_hw,
-      'cdn_bos' => t.settings.network.presets.cdn_bos,
-      'cdn_tencent' => t.settings.network.presets.cdn_tencent,
-      'cdn_akam' => t.settings.network.presets.cdn_akam,
-      _ => presetId,
     };
   }
 

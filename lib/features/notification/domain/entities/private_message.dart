@@ -1,5 +1,50 @@
 import 'dart:convert';
 
+enum PrivateMessageReceiverType {
+  unknown(0),
+  user(1),
+  group(2);
+
+  const PrivateMessageReceiverType(this.value);
+
+  final int value;
+
+  static PrivateMessageReceiverType fromValue(int value) {
+    return values.firstWhere(
+      (type) => type.value == value,
+      orElse: () => PrivateMessageReceiverType.unknown,
+    );
+  }
+}
+
+enum PrivateMessageType {
+  unknown(0),
+  text(1),
+  image(2),
+  withdrawn(5),
+  imageVariant(6),
+  notice(10),
+  video(11),
+  article(12),
+  card(13),
+  share(14),
+  systemTip(18);
+
+  const PrivateMessageType(this.value);
+
+  final int value;
+
+  static PrivateMessageType fromValue(int value) {
+    return values.firstWhere(
+      (type) => type.value == value,
+      orElse: () => PrivateMessageType.unknown,
+    );
+  }
+
+  bool get isImage =>
+      this == PrivateMessageType.image || this == PrivateMessageType.imageVariant;
+}
+
 enum PrivateMessageSummaryKind {
   withdrawn,
   text,
@@ -102,9 +147,9 @@ class PrivateMessageContent {
 
 class PrivateMessage {
   final int senderUid;
-  final int receiverType;
+  final PrivateMessageReceiverType receiverType;
   final int receiverId;
-  final int msgType;
+  final PrivateMessageType type;
   final PrivateMessageContent content;
   final int msgSeqno;
   final int timestamp;
@@ -119,7 +164,7 @@ class PrivateMessage {
     required this.senderUid,
     required this.receiverType,
     required this.receiverId,
-    required this.msgType,
+    required this.type,
     required this.content,
     required this.msgSeqno,
     required this.timestamp,
@@ -143,21 +188,21 @@ class PrivateMessage {
   String? get titleText => content.title;
 
   String get textContent {
-    if (msgType == 1) {
+    if (type == PrivateMessageType.text) {
       return content.primaryText ?? '';
     }
     return '';
   }
 
   String? get imageUrl {
-    if (msgType == 2 || msgType == 6) {
+    if (type.isImage) {
       return content.imageUrl;
     }
     return null;
   }
 
   List<String>? get systemTipTexts {
-    if (msgType == 18) {
+    if (type == PrivateMessageType.systemTip) {
       return content.systemTipTexts;
     }
     return null;
@@ -169,21 +214,22 @@ class PrivateMessage {
 
   String? get fallbackSummaryText => content.fallbackText;
 
-  bool get isWithdrawn => msgStatus == 1 || msgType == 5;
+  bool get isWithdrawn => msgStatus == 1 || type == PrivateMessageType.withdrawn;
 
   PrivateMessageSummaryKind get summaryKind {
     if (isWithdrawn) {
       return PrivateMessageSummaryKind.withdrawn;
     }
 
-    return switch (msgType) {
-      1 => PrivateMessageSummaryKind.text,
-      2 || 6 => PrivateMessageSummaryKind.image,
-      10 => PrivateMessageSummaryKind.notice,
-      11 => PrivateMessageSummaryKind.video,
-      12 => PrivateMessageSummaryKind.article,
-      13 => PrivateMessageSummaryKind.card,
-      14 => PrivateMessageSummaryKind.share,
+    return switch (type) {
+      PrivateMessageType.text => PrivateMessageSummaryKind.text,
+      PrivateMessageType.image ||
+      PrivateMessageType.imageVariant => PrivateMessageSummaryKind.image,
+      PrivateMessageType.notice => PrivateMessageSummaryKind.notice,
+      PrivateMessageType.video => PrivateMessageSummaryKind.video,
+      PrivateMessageType.article => PrivateMessageSummaryKind.article,
+      PrivateMessageType.card => PrivateMessageSummaryKind.card,
+      PrivateMessageType.share => PrivateMessageSummaryKind.share,
       _ => PrivateMessageSummaryKind.unknown,
     };
   }

@@ -1,5 +1,4 @@
 import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/core/network/bilibili_acceleration.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
 import 'package:extended_image/extended_image.dart';
@@ -74,12 +73,8 @@ class AppNetworkImage extends ConsumerWidget {
       return _buildErrorWidget(colorScheme);
     }
 
-    final accelerationState = ref.watch(bilibiliAccelerationControllerProvider);
-    final activePreset = biliPresetById(accelerationState.activePresetId);
-
     final rawUrl = FormatUtils.formatImageUrl(url);
-    final rewrittenUri = rewriteUriWithPreset(Uri.parse(rawUrl), activePreset);
-    final finalUrl = rewrittenUri.toString();
+    final finalUrl = rawUrl;
 
     final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
     final cacheW = _resolveCacheSize(memCacheWidth, width, devicePixelRatio);

@@ -1,9 +1,10 @@
-import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/network/dtos/comment_contract_dto.dart';
 import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/core/network/request_executor.dart';
+import 'package:culcul/core/network/request_executor_binding.dart';
 import 'package:culcul/core/network/resource_api.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/core/result/run_result.dart';
 import 'package:culcul/features/video/data/dtos/subtitle_dto.dart' as subtitle_dto;
 import 'package:culcul/features/video/data/video_mapper.dart';
 import 'package:culcul/features/video/domain/repositories/video_repository.dart'
@@ -22,14 +23,22 @@ domain.VideoRepository videoRepository(Ref ref) {
   );
 }
 
-class VideoRepositoryImpl extends BaseRepository implements domain.VideoRepository {
+class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRepository {
   static const _videoCommentType = 1;
   static const _defaultCommentPageSize = 20;
 
   final VideoApi api;
   final ResourceApi resourceApi;
+  final RequestExecutor _requestExecutor;
 
-  VideoRepositoryImpl({required this.api, required this.resourceApi});
+  VideoRepositoryImpl({
+    required this.api,
+    required this.resourceApi,
+    RequestExecutor? requestExecutor,
+  }) : _requestExecutor = requestExecutor ?? const RequestExecutor();
+
+  @override
+  RequestExecutor get requestExecutor => _requestExecutor;
 
   @override
   Future<Result<void, AppError>> setCommentLike({
@@ -37,10 +46,8 @@ class VideoRepositoryImpl extends BaseRepository implements domain.VideoReposito
     required int rpid,
     required bool isLiked,
   }) {
-    return runVoidResult(
-      () => requestVoid(
-        () => api.actionComment(oid, rpid, isLiked ? 1 : 0, _videoCommentType),
-      ),
+    return requestVoidResult(
+      () => api.actionComment(oid, rpid, isLiked ? 1 : 0, _videoCommentType),
     );
   }
 
@@ -50,10 +57,8 @@ class VideoRepositoryImpl extends BaseRepository implements domain.VideoReposito
     required int rpid,
     bool isDisliked = true,
   }) {
-    return runVoidResult(
-      () => requestVoid(
-        () => api.hateComment(oid, rpid, isDisliked ? 1 : 0, _videoCommentType),
-      ),
+    return requestVoidResult(
+      () => api.hateComment(oid, rpid, isDisliked ? 1 : 0, _videoCommentType),
     );
   }
 
@@ -64,9 +69,12 @@ class VideoRepositoryImpl extends BaseRepository implements domain.VideoReposito
     required int parent,
     required String message,
   }) {
-    return runResult(
-      () => requestApi(() => api.addReply(oid, root, parent, message, _videoCommentType)),
-    );
+    return requestResult(() async {
+      final dto = await requestApi(
+        () => api.addReply(oid, root, parent, message, _videoCommentType),
+      );
+      return dto.toContract();
+    });
   }
 
   @override
@@ -107,11 +115,21 @@ class VideoRepositoryImpl extends BaseRepository implements domain.VideoReposito
   }
 
   @override
-  Future<CommentResponse> fetchComments({required int oid, int sort = 1, int page = 1}) {
+  Future<CommentResponse> fetchComments({
+    required int oid,
+    CommentSort sort = CommentSort.hot,
+    int page = 1,
+  }) {
     return requestApi(
       () =>
-          api.fetchComments(oid, _videoCommentType, sort, _defaultCommentPageSize, page),
-    );
+          api.fetchComments(
+            oid,
+            _videoCommentType,
+            sort.apiValue,
+            _defaultCommentPageSize,
+            page,
+          ),
+    ).then((value) => value.toContract());
   }
 
   @override
@@ -122,7 +140,7 @@ class VideoRepositoryImpl extends BaseRepository implements domain.VideoReposito
   }) {
     return requestApi(
       () => api.fetchReply(oid, root, _videoCommentType, _defaultCommentPageSize, page),
-    );
+    ).then((value) => value.toContract());
   }
 
   @override
@@ -143,8 +161,8 @@ class VideoRepositoryImpl extends BaseRepository implements domain.VideoReposito
     required int cid,
     required int progress,
   }) {
-    return runVoidResult(
-      () => requestVoid(() => api.reportVideoProgress(aid, cid, progress, 'android', 3)),
+    return requestVoidResult(
+      () => api.reportVideoProgress(aid, cid, progress, 'android', 3),
     );
   }
 }

@@ -1,7 +1,7 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/app/theme/app_theme.dart';
 import 'package:culcul/core/utils/toast_utils.dart';
-import 'package:culcul/features/settings/presentation/view_models/settings_view_model.dart';
+import 'package:culcul/features/settings/settings.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';

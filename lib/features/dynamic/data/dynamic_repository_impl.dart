@@ -4,11 +4,12 @@ import 'dart:io';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/errors/exceptions.dart';
+import 'package:culcul/core/network/dtos/comment_contract_dto.dart';
 import 'package:culcul/core/providers/cookie_jar_provider.dart';
-import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/core/network/request_executor.dart';
+import 'package:culcul/core/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/core/result/run_result.dart';
 import 'package:culcul/features/dynamic/data/dynamic_api.dart';
 import 'package:culcul/features/dynamic/data/dynamic_mapper.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
@@ -29,12 +30,21 @@ domain.DynamicRepository dynamicRepository(Ref ref) {
   );
 }
 
-class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepository {
+class DynamicRepositoryImpl with RequestExecutorBinding implements domain.DynamicRepository {
   final DynamicApi _api;
   final Dio _dio;
   final CookieJar _cookieJar;
+  final RequestExecutor _requestExecutor;
 
-  DynamicRepositoryImpl(this._api, this._dio, this._cookieJar);
+  DynamicRepositoryImpl(
+    this._api,
+    this._dio,
+    this._cookieJar, {
+    RequestExecutor? requestExecutor,
+  }) : _requestExecutor = requestExecutor ?? const RequestExecutor();
+
+  @override
+  RequestExecutor get requestExecutor => _requestExecutor;
 
   Future<String?> _getCsrfToken() async {
     final cookies = await _cookieJar.loadForRequest(Uri.parse('https://bilibili.com'));
@@ -49,7 +59,7 @@ class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepo
   @override
   Future<CommentResponse> getComments(
     DynamicItem post, {
-    int sort = 1,
+    CommentSort sort = CommentSort.hot,
     int page = 1,
   }) async {
     final target = _resolveCommentTarget(post);
@@ -111,7 +121,7 @@ class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepo
   Future<CommentResponse> getCommentList({
     required String oid,
     required int type,
-    int sort = 1,
+    CommentSort sort = CommentSort.hot,
     int page = 1,
     String? referer,
   }) {
@@ -119,13 +129,13 @@ class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepo
       () => _api.getComments(
         oid: oid,
         type: type,
-        sort: sort,
+        sort: sort.apiValue,
         pn: page,
         ps: 20,
         referer: referer,
         origin: referer == null ? null : 'https://www.bilibili.com',
       ),
-    );
+    ).then((value) => value.toContract());
   }
 
   @override
@@ -142,7 +152,7 @@ class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepo
         referer: referer,
         origin: 'https://www.bilibili.com',
       ),
-    );
+    ).then((value) => value.toContract());
   }
 
   @override
@@ -170,8 +180,8 @@ class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepo
     required String message,
     String? referer,
   }) {
-    return runResult(
-      () => requestApi(
+    return requestResult(() async {
+      final dto = await requestApi(
         () => _api.addReply(
           oid: oid,
           type: type,
@@ -181,8 +191,9 @@ class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepo
           referer: referer,
           origin: referer == null ? null : 'https://www.bilibili.com',
         ),
-      ),
-    );
+      );
+      return dto.toContract();
+    });
   }
 
   @override
@@ -207,16 +218,14 @@ class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepo
     required bool isLiked,
     String? referer,
   }) {
-    return runVoidResult(
-      () => requestVoid(
-        () => _api.actionComment(
-          oid: oid,
-          type: type,
-          rpid: rpid,
-          action: isLiked ? 1 : 0,
-          referer: referer,
-          origin: referer == null ? null : 'https://www.bilibili.com',
-        ),
+    return requestVoidResult(
+      () => _api.actionComment(
+        oid: oid,
+        type: type,
+        rpid: rpid,
+        action: isLiked ? 1 : 0,
+        referer: referer,
+        origin: referer == null ? null : 'https://www.bilibili.com',
       ),
     );
   }
@@ -428,7 +437,7 @@ class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepo
 
   @override
   Future<Result<void, AppError>> likeDynamic(String id, bool like) async {
-    return runVoidResult(() async {
+    return requestResult(() async {
       await request(() async {
         final csrf = await _getCsrfToken();
         final response = await _api.likeDynamic(
@@ -444,7 +453,7 @@ class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepo
 
   @override
   Future<Result<DynamicUploadImageData, AppError>> uploadImage(File file) async {
-    return runResult(() async {
+    return requestResult(() async {
       final data = await requestApi(() async {
         final csrf = await _getCsrfToken();
         return _api.uploadImage(file: file, csrf: csrf ?? '');
@@ -458,7 +467,7 @@ class DynamicRepositoryImpl extends BaseRepository implements domain.DynamicRepo
     required String content,
     List<DynamicUploadImageData> images = const [],
   }) async {
-    return runVoidResult(() async {
+    return requestResult(() async {
       await request(() async {
         final csrf = await _getCsrfToken();
 

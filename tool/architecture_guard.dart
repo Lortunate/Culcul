@@ -79,6 +79,17 @@ void main() {
     issues.add('Forbidden empty application directory: ${_rel(dir.path)}');
   }
 
+  final legacyProviderFiles = _projectRoot.listSync(recursive: true).whereType<File>().where((
+    file,
+  ) {
+    final path = file.path.replaceAll('\\', '/');
+    if (path.contains('/.dart_tool/')) return false;
+    return RegExp(r'/lib/features/[^/]+/[^/]+_providers\.dart$').hasMatch(path);
+  }).toList();
+  for (final file in legacyProviderFiles) {
+    issues.add('Forbidden legacy provider entrypoint: ${_rel(file.path)}');
+  }
+
   final modelsDirs = _projectRoot.listSync(recursive: true).whereType<Directory>().where((
     dir,
   ) {
@@ -161,6 +172,27 @@ void main() {
       issues.add('$path must not import core/providers/api_provider.dart');
     }
 
+    if (normalized.contains('/core/contracts/')) {
+      final hasContractJsonOrUiDetails =
+          RegExp(r'\bJsonKey\b').hasMatch(content) ||
+          RegExp(r'\bfromJson\s*\(').hasMatch(content) ||
+          RegExp(r'\btoJson\s*\(').hasMatch(content) ||
+          RegExp("part\\s+['\\\"].*\\.g\\.dart['\\\"]").hasMatch(content) ||
+          content.contains('FormatUtils');
+      if (hasContractJsonOrUiDetails) {
+        issues.add('$path must keep shared contracts free of JSON and presentation details');
+      }
+    }
+
+    if (content.contains('core/base_repository.dart')) {
+      issues.add('$path must not import BaseRepository');
+    }
+
+    if (content.contains('core/result/run_result.dart') ||
+        RegExp(r'\brun(Result|VoidResult)\s*\(').hasMatch(content)) {
+      issues.add('$path must not depend on run_result helpers');
+    }
+
     if (RegExp(
       r'/lib/features/[^/]+/(data/dtos|domain/entities)/[^/]*models[^/]*\.dart$',
     ).hasMatch(normalized)) {
@@ -233,6 +265,9 @@ void main() {
     final domainImportMatches = RegExp(
       r"import 'package:culcul/features/([^/]+)/domain/",
     ).allMatches(content);
+    final featureImportMatches = RegExp(
+      r"import 'package:culcul/features/([^/]+)/([^']+)'",
+    ).allMatches(content);
     if (normalized.contains('/features/') && normalized.contains('/domain/')) {
       final sourceFeatureMatch = RegExp(r'/lib/features/([^/]+)/').firstMatch(normalized);
       final sourceFeature = sourceFeatureMatch?.group(1);
@@ -243,6 +278,36 @@ void main() {
             sourceFeature != targetFeature) {
           issues.add(
             '$path must not import other feature domain symbols directly (use core/contracts)',
+          );
+          break;
+        }
+      }
+    }
+
+    if (normalized.startsWith('lib/app/')) {
+      for (final match in featureImportMatches) {
+        final feature = match.group(1);
+        final suffix = match.group(2);
+        if (feature == null || suffix == null) continue;
+        if (suffix != '$feature.dart') {
+          issues.add(
+            '$path must import feature public entrypoints only (use package:culcul/features/$feature/$feature.dart)',
+          );
+          break;
+        }
+      }
+    }
+
+    if (normalized.contains('/features/')) {
+      final sourceFeatureMatch = RegExp(r'/lib/features/([^/]+)/').firstMatch(normalized);
+      final sourceFeature = sourceFeatureMatch?.group(1);
+      for (final match in featureImportMatches) {
+        final targetFeature = match.group(1);
+        final suffix = match.group(2);
+        if (sourceFeature == null || targetFeature == null || suffix == null) continue;
+        if (sourceFeature != targetFeature && suffix != '$targetFeature.dart') {
+          issues.add(
+            '$path must import other features through their public entrypoint only',
           );
           break;
         }

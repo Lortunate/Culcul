@@ -1,6 +1,6 @@
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
-import 'package:culcul/features/to_view/to_view_providers.dart';
+import 'package:culcul/features/to_view/to_view.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'to_view_view_model.g.dart';
@@ -14,7 +14,11 @@ class ToViewList extends _$ToViewList {
       return [];
     }
 
-    return ref.read(toViewRepositoryProvider).getList();
+    final result = await ref.read(toViewRepositoryProvider).getList();
+    return result.when(
+      success: (items) => items,
+      failure: (error) => throw error.toException(),
+    );
   }
 
   Future<void> add(int aid) async {

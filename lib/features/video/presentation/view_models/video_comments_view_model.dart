@@ -1,8 +1,9 @@
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'dart:async';
 
-import 'package:culcul/core/result/run_result.dart';
-import 'package:culcul/features/video/video_providers.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
+import 'package:culcul/core/network/request_executor.dart';
+import 'package:culcul/features/video/video.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'video_comments_state.dart';
@@ -54,7 +55,7 @@ class VideoCommentsController extends _$VideoCommentsController {
     await _loadPage(page: state.paging.nextPage, replace: false);
   }
 
-  Future<void> switchSort(int sort) async {
+  Future<void> switchSort(CommentSort sort) async {
     if (state.sort == sort) {
       return;
     }
@@ -109,7 +110,7 @@ class VideoCommentsController extends _$VideoCommentsController {
       );
     }
 
-    final result = await runResult(
+    final result = await const RequestExecutor().run(
       () => ref
           .read(videoRepositoryProvider)
           .fetchComments(oid: aid, sort: state.sort, page: page),

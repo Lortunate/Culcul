@@ -1,5 +1,5 @@
 import 'package:culcul/core/providers/storage_provider.dart';
-import 'package:culcul/features/settings/presentation/pages/network_settings_page.dart';
+import 'package:culcul/features/settings/presentation/pages/about_page.dart';
 import 'package:culcul/features/settings/presentation/pages/settings_page.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
@@ -45,13 +45,12 @@ void main() {
     expect(find.byType(SettingsPage), findsOneWidget);
     expect(find.byKey(const ValueKey<String>('settings_row_language')), findsOneWidget);
     expect(find.byKey(const ValueKey<String>('settings_row_appearance')), findsOneWidget);
-    expect(find.byKey(const ValueKey<String>('settings_row_network')), findsOneWidget);
     expect(find.byKey(const ValueKey<String>('settings_row_cache')), findsOneWidget);
     expect(find.byKey(const ValueKey<String>('settings_row_version')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('tapping network row navigates to network settings page', (tester) async {
+  testWidgets('tapping version row navigates to about page', (tester) async {
     final box = _FakeSettingsBox();
     final container = _buildContainer(box);
     addTearDown(container.dispose);
@@ -62,9 +61,7 @@ void main() {
         GoRoute(
           path: '/settings',
           builder: (_, _) => const SettingsPage(),
-          routes: [
-            GoRoute(path: 'network', builder: (_, _) => const NetworkSettingsPage()),
-          ],
+          routes: [GoRoute(path: 'about', builder: (_, _) => const AboutPage())],
         ),
       ],
     );
@@ -78,10 +75,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(const ValueKey<String>('settings_row_network')));
+    await tester.tap(find.byKey(const ValueKey<String>('settings_row_version')));
     await tester.pumpAndSettle();
 
-    expect(find.byType(NetworkSettingsPage), findsOneWidget);
+    expect(find.byType(AboutPage), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

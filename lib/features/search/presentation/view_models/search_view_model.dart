@@ -2,21 +2,33 @@ import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/features/search/domain/entities/search_default_hint.dart';
 import 'package:culcul/features/search/domain/entities/search_suggestion_entry.dart';
 import 'package:culcul/features/search/domain/entities/search_trending_keyword.dart';
-import 'package:culcul/features/search/search_providers.dart';
+import 'package:culcul/features/search/search.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final searchSuggestionsProvider = FutureProvider.autoDispose
     .family<List<SearchSuggestionEntry>, String>((ref, term) async {
       if (term.isEmpty) return [];
-      return ref.watch(searchRepositoryProvider).getSuggestions(term);
+      final result = await ref.watch(searchRepositoryProvider).getSuggestions(term);
+      return result.when(
+        success: (items) => items,
+        failure: (error) => throw error.toException(),
+      );
     });
 
 final defaultSearchProvider = FutureProvider<SearchDefaultHint?>((ref) async {
-  return ref.watch(searchRepositoryProvider).getDefaultSearch();
+  final result = await ref.watch(searchRepositoryProvider).getDefaultSearch();
+  return result.when(
+    success: (hint) => hint,
+    failure: (error) => throw error.toException(),
+  );
 });
 
 final trendingRankingProvider = FutureProvider<List<SearchTrendingKeyword>>((ref) async {
-  return ref.watch(searchRepositoryProvider).getTrendingRanking();
+  final result = await ref.watch(searchRepositoryProvider).getTrendingRanking();
+  return result.when(
+    success: (items) => items,
+    failure: (error) => throw error.toException(),
+  );
 });
 
 class SearchResultParams {
@@ -72,7 +84,7 @@ class SearchResultController extends AsyncNotifier<SearchResultPage?> {
   @override
   Future<SearchResultPage?> build() async {
     if (_params.keyword.isEmpty) return null;
-    return ref
+    final result = await ref
         .watch(searchRepositoryProvider)
         .search(
           keyword: _params.keyword,
@@ -80,6 +92,10 @@ class SearchResultController extends AsyncNotifier<SearchResultPage?> {
           order: _params.order,
           duration: _params.duration,
         );
+    return result.when(
+      success: (page) => page,
+      failure: (error) => throw error.toException(),
+    );
   }
 
   Future<void> fetchMore() async {
@@ -90,7 +106,7 @@ class SearchResultController extends AsyncNotifier<SearchResultPage?> {
 
     state = const AsyncLoading<SearchResultPage?>().copyWithPrevious(state);
     state = await AsyncValue.guard(() async {
-      final newData = await ref
+      final result = await ref
           .read(searchRepositoryProvider)
           .search(
             keyword: _params.keyword,
@@ -99,6 +115,10 @@ class SearchResultController extends AsyncNotifier<SearchResultPage?> {
             duration: _params.duration,
             page: oldState.page + 1,
           );
+      final newData = result.when(
+        success: (page) => page,
+        failure: (error) => throw error.toException(),
+      );
       return newData.copyWith(items: [...oldState.items, ...newData.items]);
     });
   }

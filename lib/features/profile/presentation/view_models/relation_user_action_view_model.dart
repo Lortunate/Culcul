@@ -1,5 +1,5 @@
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/features/profile/profile_providers.dart';
+import 'package:culcul/features/profile/profile.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'relation_user_action_view_model.g.dart';

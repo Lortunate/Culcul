@@ -1,5 +1,5 @@
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
-import 'package:culcul/features/profile/profile_providers.dart';
+import 'package:culcul/features/profile/profile.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_space_view_model.g.dart';
@@ -8,7 +8,11 @@ part 'user_space_view_model.g.dart';
 class UserSpaceNotifier extends _$UserSpaceNotifier {
   @override
   Future<ProfileUser> build(String mid) async {
-    return ref.read(profileRepositoryProvider).getProfile(int.parse(mid));
+    final result = await ref.read(profileRepositoryProvider).getProfile(int.parse(mid));
+    return result.when(
+      success: (profile) => profile,
+      failure: (error) => throw error.toException(),
+    );
   }
 
   Future<void> toggleFollow() async {

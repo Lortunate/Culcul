@@ -1,8 +1,8 @@
-import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/core/network/request_executor.dart';
+import 'package:culcul/core/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/core/result/run_result.dart';
 import 'package:culcul/features/live/data/dtos/live_dtos.dart' as dto;
 import 'package:culcul/features/live/data/live_room_mapper.dart';
 import 'package:culcul/features/live/data/live_api.dart';
@@ -17,12 +17,17 @@ domain.LiveRepository liveRepository(Ref ref) {
   return LiveRepositoryImpl(LiveApi(ref.watch(dioClientProvider)));
 }
 
-class LiveRepositoryImpl extends BaseRepository implements domain.LiveRepository {
+class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepository {
   static const int _recommendPageSize = 30;
   static const int _rankPageSize = 20;
   final LiveApi _api;
+  final RequestExecutor _requestExecutor;
 
-  LiveRepositoryImpl(this._api);
+  LiveRepositoryImpl(this._api, {RequestExecutor? requestExecutor})
+    : _requestExecutor = requestExecutor ?? const RequestExecutor();
+
+  @override
+  RequestExecutor get requestExecutor => _requestExecutor;
 
   @override
   Future<LiveRoomDetailModel> getRoomInfo(int roomId) async {
@@ -106,13 +111,11 @@ class LiveRepositoryImpl extends BaseRepository implements domain.LiveRepository
     required int roomId,
     required String msg,
   }) async {
-    return runVoidResult(
-      () => requestVoid(
-        () => _api.sendDanmaku(
-          msg: msg,
-          roomId: roomId,
-          rnd: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-        ),
+    return requestVoidResult(
+      () => _api.sendDanmaku(
+        msg: msg,
+        roomId: roomId,
+        rnd: DateTime.now().millisecondsSinceEpoch ~/ 1000,
       ),
     );
   }

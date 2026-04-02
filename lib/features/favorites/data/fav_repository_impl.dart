@@ -1,8 +1,8 @@
 import 'package:culcul/core/network/dio_client.dart';
-import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/network/request_executor.dart';
+import 'package:culcul/core/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/core/result/run_result.dart';
 import 'package:culcul/features/favorites/data/fav_api.dart';
 import 'package:culcul/features/favorites/data/dtos/favorite_dtos.dart';
 import 'package:culcul/features/favorites/data/favorite_mapper.dart';
@@ -19,11 +19,16 @@ domain.FavoriteRepository favRepository(Ref ref) {
   return FavRepositoryImpl(FavApi(ref.watch(dioClientProvider)));
 }
 
-class FavRepositoryImpl extends BaseRepository implements domain.FavoriteRepository {
+class FavRepositoryImpl with RequestExecutorBinding implements domain.FavoriteRepository {
   static const int _defaultPageSize = 20;
   final FavApi _api;
+  final RequestExecutor _requestExecutor;
 
-  FavRepositoryImpl(this._api);
+  FavRepositoryImpl(this._api, {RequestExecutor? requestExecutor})
+    : _requestExecutor = requestExecutor ?? const RequestExecutor();
+
+  @override
+  RequestExecutor get requestExecutor => _requestExecutor;
 
   Future<FavFolderListResponse> getCreatedFoldersModel({required int upMid}) async {
     return requestApi(() => _api.getCreatedFolders(upMid));
@@ -93,7 +98,7 @@ class FavRepositoryImpl extends BaseRepository implements domain.FavoriteReposit
 
   @override
   Future<Result<void, AppError>> cleanInvalidResources({required int mediaId}) async {
-    return runVoidResult(() => requestVoid(() => _api.cleanInvalidResources(mediaId)));
+    return requestVoidResult(() => _api.cleanInvalidResources(mediaId));
   }
 
   @override
@@ -135,7 +140,7 @@ class FavRepositoryImpl extends BaseRepository implements domain.FavoriteReposit
     int? privacy,
     String? cover,
   }) async {
-    return runResult(() async {
+    return requestResult(() async {
       return (await addFolderModel(
         title: title,
         intro: intro,
@@ -153,7 +158,7 @@ class FavRepositoryImpl extends BaseRepository implements domain.FavoriteReposit
     int? privacy,
     String? cover,
   }) async {
-    return runResult(() async {
+    return requestResult(() async {
       return (await editFolderModel(
         mediaId: mediaId,
         title: title,
@@ -166,7 +171,9 @@ class FavRepositoryImpl extends BaseRepository implements domain.FavoriteReposit
 
   @override
   Future<Result<void, AppError>> deleteFolder({required String mediaIds}) {
-    return runVoidResult(() => delFolder(mediaIds: mediaIds));
+    return requestResult(() async {
+      await delFolder(mediaIds: mediaIds);
+    });
   }
 
   @override
@@ -174,6 +181,8 @@ class FavRepositoryImpl extends BaseRepository implements domain.FavoriteReposit
     required String resources,
     required int mediaId,
   }) {
-    return runVoidResult(() => batchDelResource(resources: resources, mediaId: mediaId));
+    return requestResult(() async {
+      await batchDelResource(resources: resources, mediaId: mediaId);
+    });
   }
 }

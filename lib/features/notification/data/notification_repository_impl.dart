@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:culcul/core/network/dio_client.dart';
-import 'package:culcul/core/base_repository.dart';
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/network/request_executor.dart';
+import 'package:culcul/core/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/core/result/run_result.dart';
 import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
 import 'package:culcul/features/notification/data/notification_mapper.dart';
 import 'package:culcul/features/notification/data/notification_api.dart';
@@ -28,11 +28,17 @@ domain.NotificationRepository notificationRepository(Ref ref) {
   return NotificationRepositoryImpl(NotificationApi(ref.watch(dioClientProvider)));
 }
 
-class NotificationRepositoryImpl extends BaseRepository
+class NotificationRepositoryImpl
+    with RequestExecutorBinding
     implements domain.NotificationRepository {
   final NotificationApi _api;
+  final RequestExecutor _requestExecutor;
 
-  NotificationRepositoryImpl(this._api);
+  NotificationRepositoryImpl(this._api, {RequestExecutor? requestExecutor})
+    : _requestExecutor = requestExecutor ?? const RequestExecutor();
+
+  @override
+  RequestExecutor get requestExecutor => _requestExecutor;
 
   Future<UnreadCountModel> getUnreadCountModel() async {
     return requestApi(() => _api.getUnreadCount());
@@ -58,18 +64,22 @@ class NotificationRepositoryImpl extends BaseRepository
   }
 
   Future<PrivateMessageSessionResponse> getPrivateSessionsModel({
-    int sessionType = 1,
+    PrivateSessionType sessionType = PrivateSessionType.user,
     int size = 20,
     int? endTs,
   }) async {
     return requestApi(
-      () => _api.getPrivateSessions(sessionType: sessionType, size: size, endTs: endTs),
+      () => _api.getPrivateSessions(
+        sessionType: sessionType.value,
+        size: size,
+        endTs: endTs,
+      ),
     );
   }
 
   Future<PrivateMessageListResponse> getPrivateMessagesModel({
     required int talkerId,
-    int sessionType = 1,
+    PrivateSessionType sessionType = PrivateSessionType.user,
     int size = 20,
     int? beginSeqno,
     int? endSeqno,
@@ -77,7 +87,7 @@ class NotificationRepositoryImpl extends BaseRepository
     return requestApi(
       () => _api.getPrivateMessages(
         talkerId: talkerId,
-        sessionType: sessionType,
+        sessionType: sessionType.value,
         size: size,
         beginSeqno: beginSeqno,
         endSeqno: endSeqno,
@@ -86,7 +96,9 @@ class NotificationRepositoryImpl extends BaseRepository
   }
 
   Future<List<SystemNotificationItem>> fetchSystemNotifications() async {
-    final sessionRes = await getPrivateSessionsModel(sessionType: 7);
+    final sessionRes = await getPrivateSessionsModel(
+      sessionType: PrivateSessionType.system,
+    );
     final systemMsgMap = sessionRes.systemMsg;
 
     if (systemMsgMap == null || !systemMsgMap.containsKey('5')) {
@@ -114,7 +126,7 @@ class NotificationRepositoryImpl extends BaseRepository
 
   @override
   Future<Result<ImageUploadResult, AppError>> uploadImage(File file) async {
-    return runResult(() async {
+    return requestResult(() async {
       final response = await requestApi(() => _api.uploadImage(file: file));
       return response.toDomain();
     });
@@ -124,14 +136,14 @@ class NotificationRepositoryImpl extends BaseRepository
   Future<Result<SendMessageResult, AppError>> sendPrivateMessage({
     required int senderUid,
     required int receiverId,
-    required int receiverType,
-    required int msgType,
+    required PrivateMessageReceiverType receiverType,
+    required PrivateMessageType messageType,
     required PrivateMessageContent content,
   }) async {
     final devId = const Uuid().v4().toUpperCase();
     final timestamp = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
-    return runResult(() async {
+    return requestResult(() async {
       final response = await requestApi(
         () => _api.sendPrivateMessage(
           wSenderUid: senderUid,
@@ -139,8 +151,8 @@ class NotificationRepositoryImpl extends BaseRepository
           wDevId: devId,
           senderUid: senderUid,
           receiverId: receiverId,
-          receiverType: receiverType,
-          msgType: msgType,
+          receiverType: receiverType.value,
+          msgType: messageType.value,
           devId: devId,
           timestamp: timestamp,
           content: jsonEncode(content.toRawMap()),
@@ -151,54 +163,76 @@ class NotificationRepositoryImpl extends BaseRepository
   }
 
   @override
-  Future<NotificationSummary> getUnreadCount() async {
-    return (await getUnreadCountModel()).toDomain();
+  Future<Result<NotificationSummary, AppError>> getUnreadCount() async {
+    return requestResult(() async => (await getUnreadCountModel()).toDomain());
   }
 
   @override
-  Future<List<NotificationEntry>> getReplyList({int? id, int? replyTime}) async {
-    final response = await getReplyListModel(id: id, replyTime: replyTime);
-    return response.items.map((item) => item.toDomain()).toList();
+  Future<Result<List<NotificationEntry>, AppError>> getReplyList({
+    int? id,
+    int? replyTime,
+  }) async {
+    return requestResult(() async {
+      final response = await getReplyListModel(id: id, replyTime: replyTime);
+      return response.items.map((item) => item.toDomain()).toList();
+    });
   }
 
   @override
-  Future<List<NotificationEntry>> getAtList({int? id, int? atTime}) async {
-    final response = await getAtListModel(id: id, atTime: atTime);
-    return response.items.map((item) => item.toDomain()).toList();
+  Future<Result<List<NotificationEntry>, AppError>> getAtList({
+    int? id,
+    int? atTime,
+  }) async {
+    return requestResult(() async {
+      final response = await getAtListModel(id: id, atTime: atTime);
+      return response.items.map((item) => item.toDomain()).toList();
+    });
   }
 
   @override
-  Future<List<NotificationEntry>> getLikeList({int? id, int? likeTime}) async {
-    final response = await getLikeListModel(id: id, likeTime: likeTime);
-    return response.items.map((item) => item.toDomain()).toList();
+  Future<Result<List<NotificationEntry>, AppError>> getLikeList({
+    int? id,
+    int? likeTime,
+  }) async {
+    return requestResult(() async {
+      final response = await getLikeListModel(id: id, likeTime: likeTime);
+      return response.items.map((item) => item.toDomain()).toList();
+    });
   }
 
   @override
-  Future<List<SystemNotice>> getSystemNotifications() async {
-    return (await fetchSystemNotifications()).map((item) => item.toDomain()).toList();
+  Future<Result<List<SystemNotice>, AppError>> getSystemNotifications() async {
+    return requestResult(
+      () async =>
+          (await fetchSystemNotifications()).map((item) => item.toDomain()).toList(),
+    );
   }
 
   @override
-  Future<PrivateMessagePage> getPrivateMessages({
+  Future<Result<PrivateMessagePage, AppError>> getPrivateMessages({
     required int talkerId,
-    required int sessionType,
+    required PrivateSessionType sessionType,
     int? endSeqno,
   }) async {
-    final response = await getPrivateMessagesModel(
-      talkerId: talkerId,
-      sessionType: sessionType,
-      endSeqno: endSeqno,
-    );
-    return response.toDomain();
+    return requestResult(() async {
+      final response = await getPrivateMessagesModel(
+        talkerId: talkerId,
+        sessionType: sessionType,
+        endSeqno: endSeqno,
+      );
+      return response.toDomain();
+    });
   }
 
   @override
-  Future<PrivateSessionPage> getPrivateSessions({int? endTs}) async {
-    final response = await getPrivateSessionsModel(
-      sessionType: 1,
-      size: 20,
-      endTs: endTs,
-    );
-    return response.toDomain();
+  Future<Result<PrivateSessionPage, AppError>> getPrivateSessions({int? endTs}) async {
+    return requestResult(() async {
+      final response = await getPrivateSessionsModel(
+        sessionType: PrivateSessionType.user,
+        size: 20,
+        endTs: endTs,
+      );
+      return response.toDomain();
+    });
   }
 }

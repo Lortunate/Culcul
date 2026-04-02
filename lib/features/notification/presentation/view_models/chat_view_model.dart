@@ -4,7 +4,7 @@ import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/pagination/paged_list_state.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
-import 'package:culcul/features/notification/notification_providers.dart';
+import 'package:culcul/features/notification/notification.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'chat_view_model.g.dart';
@@ -29,13 +29,17 @@ class Chat extends _$Chat {
   bool _hasMore = true;
 
   @override
-  FutureOr<ChatState> build(int talkerId, int sessionType) async {
+  FutureOr<ChatState> build(int talkerId, PrivateSessionType sessionType) async {
     _minSeqno = null;
     _hasMore = true;
 
-    final response = await ref
+    final result = await ref
         .read(notificationRepositoryProvider)
         .getPrivateMessages(talkerId: talkerId, sessionType: sessionType);
+    final response = result.when(
+      success: (page) => page,
+      failure: (error) => throw error.toException(),
+    );
     if (response.messages.isNotEmpty) {
       _minSeqno = response.messages.last.msgSeqno;
     }
@@ -46,7 +50,9 @@ class Chat extends _$Chat {
       emojiMap[emoji.text] = emoji.url;
     }
 
-    final messages = response.messages.where((message) => message.msgType != 5).toList();
+    final messages = response.messages
+        .where((message) => message.type != PrivateMessageType.withdrawn)
+        .toList();
     return ChatState(
       paging: PagedListState(
         items: messages,
@@ -72,17 +78,23 @@ class Chat extends _$Chat {
     }
 
     try {
-      final response = await ref
+      final result = await ref
           .read(notificationRepositoryProvider)
           .getPrivateMessages(
             talkerId: talkerId,
             sessionType: sessionType,
             endSeqno: _minSeqno,
           );
+      final response = result.when(
+        success: (page) => page,
+        failure: (error) => throw error.toException(),
+      );
       final newMessages = response.messages;
       if (newMessages.isNotEmpty) {
         _minSeqno = newMessages.last.msgSeqno;
-        final filteredNew = newMessages.where((m) => m.msgType != 5).toList();
+        final filteredNew = newMessages
+            .where((message) => message.type != PrivateMessageType.withdrawn)
+            .toList();
 
         final latestState = state.value;
         if (latestState != null) {
@@ -131,7 +143,10 @@ class Chat extends _$Chat {
 
   Future<void> sendMessage(String content) async {
     if (content.trim().isEmpty) return;
-    await _send(msgType: 1, content: PrivateMessageContent.text(content));
+    await _send(
+      messageType: PrivateMessageType.text,
+      content: PrivateMessageContent.text(content),
+    );
   }
 
   Future<void> sendImage(File imageFile) async {
@@ -157,11 +172,11 @@ class Chat extends _$Chat {
       imageType: imageFile.path.split('.').last,
       size: await imageFile.length() / 1024,
     );
-    await _send(msgType: 2, content: content);
+    await _send(messageType: PrivateMessageType.image, content: content);
   }
 
   Future<void> _send({
-    required int msgType,
+    required PrivateMessageType messageType,
     required PrivateMessageContent content,
   }) async {
     final currentUser = ref.read(authProvider).user;
@@ -184,8 +199,8 @@ class Chat extends _$Chat {
       msgSeqno: 0,
       senderUid: senderUid,
       receiverId: talkerId,
-      receiverType: sessionType,
-      msgType: msgType,
+      receiverType: sessionType.receiverType,
+      type: messageType,
       msgStatus: 0,
       timestamp: timestamp,
       content: content,
@@ -214,8 +229,8 @@ class Chat extends _$Chat {
         .sendPrivateMessage(
           senderUid: senderUid,
           receiverId: talkerId,
-          receiverType: sessionType,
-          msgType: msgType,
+          receiverType: sessionType.receiverType,
+          messageType: messageType,
           content: content,
         );
     if (result.isFailure) {

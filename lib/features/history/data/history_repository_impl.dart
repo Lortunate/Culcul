@@ -1,5 +1,8 @@
-import 'package:culcul/core/base_repository.dart';
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/core/network/request_executor.dart';
+import 'package:culcul/core/network/request_executor_binding.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/history/data/history_api.dart';
 import 'package:culcul/features/history/data/dtos/history_model_dto.dart';
 import 'package:culcul/features/history/data/history_mapper.dart';
@@ -15,11 +18,16 @@ domain.HistoryRepository historyRepository(Ref ref) {
   return HistoryRepositoryImpl(HistoryApi(ref.watch(dioClientProvider)));
 }
 
-class HistoryRepositoryImpl extends BaseRepository implements domain.HistoryRepository {
+class HistoryRepositoryImpl with RequestExecutorBinding implements domain.HistoryRepository {
   static const int _defaultPageSize = 20;
   final HistoryApi _api;
+  final RequestExecutor _requestExecutor;
 
-  HistoryRepositoryImpl(this._api);
+  HistoryRepositoryImpl(this._api, {RequestExecutor? requestExecutor})
+    : _requestExecutor = requestExecutor ?? const RequestExecutor();
+
+  @override
+  RequestExecutor get requestExecutor => _requestExecutor;
 
   Future<HistoryResponseDataDto> getHistoryCursor({
     int max = 0,
@@ -30,8 +38,13 @@ class HistoryRepositoryImpl extends BaseRepository implements domain.HistoryRepo
   }
 
   @override
-  Future<List<HistoryEntry>> getHistory({int max = 0, int viewAt = 0}) async {
-    final data = await getHistoryCursor(max: max, viewAt: viewAt);
-    return data.list.map((item) => item.toDomain()).toList();
+  Future<Result<List<HistoryEntry>, AppError>> getHistory({
+    int max = 0,
+    int viewAt = 0,
+  }) async {
+    return requestResult(() async {
+      final data = await getHistoryCursor(max: max, viewAt: viewAt);
+      return data.list.map((item) => item.toDomain()).toList();
+    });
   }
 }

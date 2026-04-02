@@ -22,15 +22,4 @@ class StorageKeys {
   static const String authUserCache = 'auth_user_cache';
   static const String themeMode = 'theme_mode';
   static const String searchHistory = 'search_history';
-  static const String biliAccelerationMode = 'bili_acceleration_mode';
-  static const String biliAccelerationLocked = 'bili_acceleration_locked';
-  static const String biliAccelerationActivePresetId =
-      'bili_acceleration_active_preset_id';
-  static const String biliAccelerationAutoSwitchLogs =
-      'bili_acceleration_auto_switch_logs';
-  static const String biliAccelerationProbeSwitchCooldownUntil =
-      'bili_acceleration_probe_switch_cooldown_until';
-  static const String biliAccelerationFailureTrackers =
-      'bili_acceleration_failure_trackers';
-  static const String biliAccelerationPresetHealth = 'bili_acceleration_preset_health';
 }

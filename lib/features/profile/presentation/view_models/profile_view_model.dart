@@ -1,7 +1,7 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
-import 'package:culcul/features/profile/profile_providers.dart';
+import 'package:culcul/features/profile/profile.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'profile_view_model.g.dart';
@@ -10,9 +10,15 @@ part 'profile_view_model.g.dart';
 Future<ProfileUser> myProfile(Ref ref) async {
   final authState = ref.watch(authProvider);
   if (!authState.isLoggedIn || authState.user == null) {
-    return Future.error(AppError.auth('Not logged in'));
+    throw AppError.auth('Not logged in').toException();
   }
-  return ref.watch(profileRepositoryProvider).getProfile(int.parse(authState.user!.id));
+  final result = await ref
+      .watch(profileRepositoryProvider)
+      .getProfile(int.parse(authState.user!.id));
+  return result.when(
+    success: (profile) => profile,
+    failure: (error) => throw error.toException(),
+  );
 }
 
 @riverpod
@@ -42,9 +48,13 @@ class UserProfileNotifier extends _$UserProfileNotifier {
   }
 
   Future<ProfileUser> _loadFresh(String userId) async {
-    final profile = await ref
+    final result = await ref
         .read(profileRepositoryProvider)
         .getProfile(int.parse(userId));
+    final profile = result.when(
+      success: (value) => value,
+      failure: (error) => throw error.toException(),
+    );
     await ref.read(profileCacheRepositoryProvider.notifier).writeProfile(profile);
     return profile;
   }

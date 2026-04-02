@@ -1,5 +1,30 @@
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 
+enum PrivateSessionType {
+  unknown(0),
+  user(1),
+  group(2),
+  system(7);
+
+  const PrivateSessionType(this.value);
+
+  final int value;
+
+  static PrivateSessionType fromValue(int value) {
+    return values.firstWhere(
+      (type) => type.value == value,
+      orElse: () => PrivateSessionType.unknown,
+    );
+  }
+
+  PrivateMessageReceiverType get receiverType {
+    return switch (this) {
+      PrivateSessionType.group => PrivateMessageReceiverType.group,
+      _ => PrivateMessageReceiverType.user,
+    };
+  }
+}
+
 class PrivateSessionAccountInfo {
   final String name;
   final String picUrl;
@@ -9,7 +34,7 @@ class PrivateSessionAccountInfo {
 
 class PrivateSession {
   final int talkerId;
-  final int sessionType;
+  final PrivateSessionType sessionType;
   final int unreadCount;
   final PrivateMessage? lastMessage;
   final String? groupName;
