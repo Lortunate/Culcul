@@ -15,86 +15,77 @@ class QrLoginView extends ConsumerWidget {
     final qrState = ref.watch(authQrLoginControllerProvider);
     final qrController = ref.read(authQrLoginControllerProvider.notifier);
 
-    return Center(
-      child: SingleChildScrollView(
+    return SingleChildScrollView(
+      child: Container(
+        width: double.infinity,
+        alignment: Alignment.center,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainer,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (qrState.qrUrl != null)
-                    Container(
-                      decoration: BoxDecoration(
-                        color: colorScheme.onPrimary,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      padding: const EdgeInsets.all(16),
-                      child: QrImageView(
-                        data: qrState.qrUrl!,
-                        version: QrVersions.auto,
-                        size: 200,
-                        eyeStyle: QrEyeStyle(
-                          eyeShape: QrEyeShape.square,
-                          color: colorScheme.scrim,
-                        ),
-                        dataModuleStyle: QrDataModuleStyle(
-                          dataModuleShape: QrDataModuleShape.square,
-                          color: colorScheme.scrim,
-                        ),
-                        padding: EdgeInsets.zero,
-                      ),
-                    )
-                  else
-                    SizedBox(
-                      height: 224,
-                      width: 224,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: theme.colorScheme.primary,
-                          strokeWidth: 3,
-                        ),
-                      ),
-                    ),
-                  const SizedBox(height: 24),
-                  Text(
-                    switch (qrState.status) {
-                      AuthQrLoginStatus.loading => t.auth.qr_status.loading,
-                      AuthQrLoginStatus.success => t.auth.qr_status.success,
-                      AuthQrLoginStatus.scanned => t.auth.qr_status.scanned,
-                      AuthQrLoginStatus.expired => t.auth.qr_status.expired,
-                      AuthQrLoginStatus.error => t.auth.qr_status.error,
-                    },
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: theme.colorScheme.onSurface,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16,
-                    ),
+            if (qrState.qrUrl != null)
+              Container(
+                decoration: BoxDecoration(
+                  color: colorScheme.onPrimary,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                padding: const EdgeInsets.all(12),
+                child: QrImageView(
+                  data: qrState.qrUrl!,
+                  version: QrVersions.auto,
+                  size: 180,
+                  eyeStyle: QrEyeStyle(
+                    eyeShape: QrEyeShape.square,
+                    color: colorScheme.scrim,
                   ),
-                ],
+                  dataModuleStyle: QrDataModuleStyle(
+                    dataModuleShape: QrDataModuleShape.square,
+                    color: colorScheme.scrim,
+                  ),
+                  padding: EdgeInsets.zero,
+                ),
+              )
+            else
+              SizedBox(
+                height: 180,
+                width: 180,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: theme.colorScheme.primary,
+                    strokeWidth: 3,
+                  ),
+                ),
+              ),
+            const SizedBox(height: 20),
+            Text(
+              switch (qrState.status) {
+                AuthQrLoginStatus.loading => t.auth.qr_status.loading,
+                AuthQrLoginStatus.success => t.auth.qr_status.success,
+                AuthQrLoginStatus.scanned => t.auth.qr_status.scanned,
+                AuthQrLoginStatus.expired => t.auth.qr_status.expired,
+                AuthQrLoginStatus.error => t.auth.qr_status.error,
+              },
+              textAlign: TextAlign.center,
+              style: theme.textTheme.labelLarge?.copyWith(
+                color: theme.colorScheme.onSurface,
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
               ),
             ),
             if (qrState.statusCode == 86038 ||
                 qrState.status == AuthQrLoginStatus.error) ...[
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
               FilledButton.icon(
                 onPressed: qrController.refresh,
                 icon: const Icon(Icons.refresh_rounded, size: 18),
                 label: Text(t.auth.qr_refresh),
                 style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                   shape: const StadiumBorder(),
                 ),
               ),
             ],
+            const SizedBox(height: 12),
           ],
         ),
       ),
