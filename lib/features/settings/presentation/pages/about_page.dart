@@ -27,7 +27,10 @@ class AboutPage extends StatelessWidget {
         ),
       ),
       body: CustomScrollView(
-        physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+        // Use BouncingScrollPhysics without AlwaysScrollableScrollPhysics.
+        // This prevents the page from being draggable when the content fits on one screen,
+        // solving the "strange scrolling behavior" and avoiding the Android 12 stretch effect.
+        physics: const BouncingScrollPhysics(),
         slivers: [
           const SliverToBoxAdapter(
             child: _AboutHeader(),
@@ -65,15 +68,20 @@ class AboutPage extends StatelessWidget {
           ),
           SliverFillRemaining(
             hasScrollBody: false,
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 48, bottom: 24),
-                child: Text(
-                  '© ${DateTime.now().year} Houvven. All rights reserved.',
-                  style: theme.textTheme.bodySmall?.copyWith(color: colorScheme.outline),
+            child: Column(
+              children: [
+                const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.only(top: 48, bottom: 24),
+                  child: Text(
+                    '© ${DateTime.now().year} Houvven. All rights reserved.',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.outline,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ],
@@ -87,6 +95,7 @@ class _AboutHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final t = Translations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -98,16 +107,16 @@ class _AboutHeader extends StatelessWidget {
             width: 100,
             height: 100,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(28),
               image: const DecorationImage(
                 image: AssetImage('assets/icon/icon.png'),
                 fit: BoxFit.cover,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: colorScheme.shadow.withValues(alpha: 0.15),
-                  blurRadius: 24,
-                  offset: const Offset(0, 12),
+                  color: colorScheme.primary.withValues(alpha: 0.2),
+                  blurRadius: 32,
+                  offset: const Offset(0, 16),
                 ),
               ],
             ),
@@ -125,26 +134,26 @@ class _AboutHeader extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           decoration: BoxDecoration(
-            color: colorScheme.primaryContainer,
+            color: colorScheme.primaryContainer.withValues(alpha: 0.7),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Text(
-            'Version 1.0.0',
+            '${t.settings.version} 1.0.0',
             style: theme.textTheme.labelMedium?.copyWith(
               color: colorScheme.onPrimaryContainer,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
         const SizedBox(height: 32),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32),
+          padding: const EdgeInsets.symmetric(horizontal: 48),
           child: Text(
             'A 3rd-party Bilibili client following Clean Architecture patterns.',
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurfaceVariant,
-              height: 1.5,
+              height: 1.6,
             ),
           ),
         ),
