@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/features/video/domain/entities/play_url.dart' as domain;
+import 'package:culcul/features/video/presentation/utils/playable_urls.dart';
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:flutter/foundation.dart';
@@ -62,7 +63,7 @@ void useVideoLoader(
       return null;
     }
     if (input.playUrl != null && input.playUrl!.durl.isNotEmpty) {
-      final urls = _buildPlayableUrls(input.playUrl!.durl.first);
+      final urls = buildPlayableUrlsFromDurl(input.playUrl!.durl.first);
       if (urls.isEmpty) {
         return null;
       }
@@ -146,42 +147,4 @@ void useVideoLoader(
       currentLoadOperation.value++;
     };
   }, const []);
-}
-
-List<String> _buildPlayableUrls(domain.Durl durl) {
-  final seen = <String>{};
-  final candidates = <String>[];
-  for (final raw in <String>[durl.url, ...durl.backupUrl]) {
-    final normalized = _normalizeMediaUrl(raw);
-    if (normalized == null) {
-      continue;
-    }
-    if (seen.add(normalized)) {
-      candidates.add(normalized);
-    }
-  }
-  return candidates;
-}
-
-String? _normalizeMediaUrl(String raw) {
-  final value = raw.trim();
-  if (value.isEmpty) {
-    return null;
-  }
-  final withScheme = value.startsWith('//') ? 'https:$value' : value;
-  final uri = Uri.tryParse(withScheme);
-  if (uri == null) {
-    return withScheme;
-  }
-
-  final host = uri.host.toLowerCase();
-  final isBiliVideoHost =
-      host.endsWith('.bilivideo.com') ||
-      host.endsWith('.bilivideo.cn') ||
-      host.endsWith('.akamaized.net');
-  if (uri.scheme == 'http' && isBiliVideoHost) {
-    return uri.replace(scheme: 'https').toString();
-  }
-
-  return withScheme;
 }

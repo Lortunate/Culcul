@@ -24,11 +24,11 @@ abstract class VideoApi {
   Future<ApiResponse<PlayUrl>> fetchVideoPlayUrl(
     @Query('avid') int aid,
     @Query('cid') int cid,
-    @Query('qn') int qn, [
+    @Query('qn') int qn, {
     @Query('fnval') int fnval = 1,
     @Query('fnver') int fnver = 0,
     @Query('fourk') int fourk = 1,
-  ]);
+  });
 
   @GET(ApiConstants.playerInfo)
   @Headers({'x-bili-wbi': 'true'})

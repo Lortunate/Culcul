@@ -358,6 +358,18 @@
     "expand": "展開",
     "collapse": "收起",
     "listen": "聽視頻",
+    "listen_settings": {
+      "title": "聽視頻設定",
+      "sleep_timer": "定時關閉",
+      "timer_off": "未開啟",
+      "remaining": "剩餘 $time",
+      "preset_minutes": "$minutes 分鐘",
+      "custom_hint": "自訂分鐘（$min-$max）",
+      "custom_invalid_range": "請輸入 $min-$max 之間的分鐘數",
+      "minutes_unit": "分鐘",
+      "set_custom": "設定",
+      "disable": "關閉定時"
+    },
     "watching_count": "$count人正在看",
     "detail_page": "詳情頁"
   },

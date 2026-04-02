@@ -30,6 +30,9 @@ abstract class VideoRepository {
     required int aid,
     required int cid,
     int quality = 80,
+    int fnval = 1,
+    int fnver = 0,
+    int fourk = 1,
   });
 
   Future<PlayerInfo> fetchPlayerInfo({required int aid, required int cid});

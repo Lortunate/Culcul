@@ -94,9 +94,19 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
     required int aid,
     required int cid,
     int quality = 80,
+    int fnval = 1,
+    int fnver = 0,
+    int fourk = 1,
   }) {
     return requestApi(
-      () => api.fetchVideoPlayUrl(aid, cid, quality),
+      () => api.fetchVideoPlayUrl(
+        aid,
+        cid,
+        quality,
+        fnval: fnval,
+        fnver: fnver,
+        fourk: fourk,
+      ),
     ).then((value) => value.toDomain());
   }
 
@@ -121,14 +131,13 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
     int page = 1,
   }) {
     return requestApi(
-      () =>
-          api.fetchComments(
-            oid,
-            _videoCommentType,
-            sort.apiValue,
-            _defaultCommentPageSize,
-            page,
-          ),
+      () => api.fetchComments(
+        oid,
+        _videoCommentType,
+        sort.apiValue,
+        _defaultCommentPageSize,
+        page,
+      ),
     ).then((value) => value.toContract());
   }
 

@@ -142,7 +142,25 @@ extension PlayUrlMapper on play_dto.PlayUrl {
       acceptQuality: acceptQuality,
       videoCodecId: videoCodecId,
       durl: durl.map((item) => item.toDomain()).toList(),
+      dash: dash?.toDomain(),
       supportFormats: supportFormats.map((item) => item.toDomain()).toList(),
+    );
+  }
+}
+
+extension PlayDashMapper on play_dto.DashInfo {
+  domain.DashInfo toDomain() {
+    return domain.DashInfo(audio: audio.map((item) => item.toDomain()).toList());
+  }
+}
+
+extension PlayDashStreamMapper on play_dto.DashStream {
+  domain.DashStream toDomain() {
+    return domain.DashStream(
+      id: id,
+      baseUrl: baseUrl,
+      backupUrl: backupUrl,
+      bandwidth: bandwidth,
     );
   }
 }

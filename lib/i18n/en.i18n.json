@@ -358,6 +358,18 @@
     "expand": "Expand",
     "collapse": "Collapse",
     "listen": "Listen Only",
+    "listen_settings": {
+      "title": "Listen Settings",
+      "sleep_timer": "Sleep Timer",
+      "timer_off": "Off",
+      "remaining": "$time remaining",
+      "preset_minutes": "$minutes min",
+      "custom_hint": "Custom minutes ($min-$max)",
+      "custom_invalid_range": "Enter a value between $min and $max minutes",
+      "minutes_unit": "min",
+      "set_custom": "Set",
+      "disable": "Disable timer"
+    },
     "watching_count": "$count watching",
     "detail_page": "Detail Page"
   },

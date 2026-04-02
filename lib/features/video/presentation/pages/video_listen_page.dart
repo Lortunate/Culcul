@@ -5,24 +5,32 @@ import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/features/video/presentation/view_models/playback_snapshot_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
-import 'package:culcul/features/video/presentation/widgets/controls/player_settings_sheet.dart';
+import 'package:culcul/features/video/presentation/widgets/controls/listen_settings_sheet.dart';
+import 'package:culcul/features/video/presentation/widgets/hooks/use_listen_audio_mode.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/player_theme.dart';
 import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class VideoListenPage extends ConsumerWidget {
+class VideoListenPage extends HookConsumerWidget {
   final String bvid;
 
   const VideoListenPage({super.key, required this.bvid});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(videoDetailControllerProvider(bvid));
-    final detail = state.videoDetail;
+    final detailState = ref.watch(videoDetailControllerProvider(bvid));
+    final detail = detailState.videoDetail;
     final colorScheme = Theme.of(context).colorScheme;
     final t = i18n(context);
+    useListenAudioMode(ref, (
+      aid: detail?.aid,
+      currentCid: detailState.currentCid,
+      selectedQuality: detailState.selectedQuality,
+      playUrl: detailState.playUrl,
+    ));
 
     if (detail == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -40,11 +48,11 @@ class VideoListenPage extends ConsumerWidget {
               child: Column(
                 children: [
                   const Spacer(),
-                  _CoverArt(imageUrl: detail.pic),
+                  RepaintBoundary(child: _CoverArt(imageUrl: detail.pic)),
                   const SizedBox(height: 48),
                   _TrackInfo(title: detail.title, author: detail.owner.name),
                   const SizedBox(height: 48),
-                  const _ProgressBar(),
+                  const RepaintBoundary(child: _ProgressBar()),
                   const SizedBox(height: 24),
                   const _PlaybackControls(),
                   const Spacer(),
@@ -58,10 +66,10 @@ class VideoListenPage extends ConsumerWidget {
   }
 
   PreferredSizeWidget _buildAppBar(
-      BuildContext context,
-      ColorScheme colorScheme,
-      String title,
-      ) {
+    BuildContext context,
+    ColorScheme colorScheme,
+    String title,
+  ) {
     final onPrimary = colorScheme.onPrimary;
 
     return AppBar(
@@ -74,11 +82,7 @@ class VideoListenPage extends ConsumerWidget {
       centerTitle: true,
       title: Text(
         title,
-        style: TextStyle(
-          color: onPrimary,
-          fontSize: 17,
-          fontWeight: FontWeight.w600,
-        ),
+        style: TextStyle(color: onPrimary, fontSize: 17, fontWeight: FontWeight.w600),
       ),
       actions: [
         IconButton(
@@ -88,7 +92,7 @@ class VideoListenPage extends ConsumerWidget {
               context: context,
               backgroundColor: Colors.transparent,
               isScrollControlled: true,
-              builder: (_) => PlayerSettingsSheet(bvid: bvid, isBottomSheet: true),
+              builder: (_) => const ListenSettingsSheet(isBottomSheet: true),
             );
           },
         ),
@@ -110,10 +114,15 @@ class _Background extends StatelessWidget {
       fit: StackFit.expand,
       children: [
         AppNetworkImage(url: imageUrl, fit: BoxFit.cover),
-        BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-          child: Container(color: overlayColor),
+        RepaintBoundary(
+          child: IgnorePointer(
+            child: ImageFiltered(
+              imageFilter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+              child: AppNetworkImage(url: imageUrl, fit: BoxFit.cover, useShimmer: false),
+            ),
+          ),
         ),
+        ColoredBox(color: overlayColor),
       ],
     );
   }
@@ -188,7 +197,7 @@ class _TrackInfo extends StatelessWidget {
   }
 }
 
-class _ProgressBar extends ConsumerWidget {
+class _ProgressBar extends HookConsumerWidget {
   const _ProgressBar();
 
   @override
@@ -197,10 +206,12 @@ class _ProgressBar extends ConsumerWidget {
     final duration = ref.watch(playbackDurationProvider);
     final playerController = ref.read(playerControllerProvider.notifier);
     final colorScheme = Theme.of(context).colorScheme;
+    final draggingValue = useState<double?>(null);
 
     final maxDuration = duration.inMilliseconds.toDouble();
     final validMax = maxDuration > 0 ? maxDuration : 1.0;
-    final currentValue = position.inMilliseconds.toDouble().clamp(0.0, maxDuration);
+    final currentValue = (draggingValue.value ?? position.inMilliseconds.toDouble())
+        .clamp(0.0, validMax);
 
     final textStyle = TextStyle(
       color: colorScheme.onPrimary.withValues(alpha: 0.5),
@@ -210,13 +221,15 @@ class _ProgressBar extends ConsumerWidget {
     return Column(
       children: [
         SliderTheme(
-          data: PlayerTheme.progressSliderTheme(context).copyWith(
-            thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
-          ),
+          data: PlayerTheme.progressSliderTheme(
+            context,
+          ).copyWith(thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6)),
           child: Slider(
             value: currentValue,
             max: validMax,
-            onChanged: (value) {
+            onChanged: (value) => draggingValue.value = value,
+            onChangeEnd: (value) {
+              draggingValue.value = null;
               playerController.seek(Duration(milliseconds: value.toInt()));
             },
           ),
@@ -241,7 +254,7 @@ class _PlaybackControls extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final playerState = ref.watch(playerControllerProvider);
+    final isPlaying = ref.watch(playerControllerProvider.select((s) => s.isPlaying));
     final position = ref.watch(playbackPositionProvider);
     final duration = ref.watch(playbackDurationProvider);
     final playerController = ref.read(playerControllerProvider.notifier);
@@ -265,14 +278,11 @@ class _PlaybackControls extends ConsumerWidget {
         Container(
           width: 72,
           height: 72,
-          decoration: BoxDecoration(
-            color: colorScheme.primary,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: colorScheme.primary, shape: BoxShape.circle),
           child: IconButton(
             onPressed: playerController.playOrPause,
             icon: Icon(
-              playerState.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+              isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
               color: onPrimary,
               size: 36,
             ),
@@ -287,7 +297,10 @@ class _PlaybackControls extends ConsumerWidget {
         ),
         IconButton(
           onPressed: () {},
-          icon: Icon(Icons.playlist_play_rounded, color: onPrimary.withValues(alpha: 0.5)),
+          icon: Icon(
+            Icons.playlist_play_rounded,
+            color: onPrimary.withValues(alpha: 0.5),
+          ),
         ),
       ],
     );

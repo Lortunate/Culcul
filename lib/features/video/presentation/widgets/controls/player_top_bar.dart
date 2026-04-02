@@ -31,13 +31,6 @@ class PlayerTopBar extends StatelessWidget {
             onPressed: onClose,
           ),
 
-          if (onListen != null)
-            _buildIconButton(
-              icon: Icons.headphones_rounded,
-              color: iconColor,
-              onPressed: onListen!,
-            ),
-
           if (title != null)
             Expanded(
               child: Padding(
@@ -56,6 +49,13 @@ class PlayerTopBar extends StatelessWidget {
             )
           else
             const Spacer(),
+
+          if (onListen != null)
+            _buildIconButton(
+              icon: Icons.headphones_rounded,
+              color: iconColor,
+              onPressed: onListen!,
+            ),
 
           _buildIconButton(
             icon: Icons.more_vert_rounded,

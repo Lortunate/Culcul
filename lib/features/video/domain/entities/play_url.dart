@@ -13,8 +13,24 @@ sealed class PlayUrl with _$PlayUrl {
     required List<int> acceptQuality,
     required int videoCodecId,
     required List<Durl> durl,
+    DashInfo? dash,
     @Default([]) List<SupportFormat> supportFormats,
   }) = _PlayUrl;
+}
+
+@freezed
+sealed class DashInfo with _$DashInfo {
+  const factory DashInfo({@Default([]) List<DashStream> audio}) = _DashInfo;
+}
+
+@freezed
+sealed class DashStream with _$DashStream {
+  const factory DashStream({
+    required int id,
+    required String baseUrl,
+    @Default([]) List<String> backupUrl,
+    @Default(0) int bandwidth,
+  }) = _DashStream;
 }
 
 @freezed
