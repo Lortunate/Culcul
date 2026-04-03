@@ -1,7 +1,7 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
-import 'package:culcul/features/notification/presentation/pages/notification_list_page.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +9,7 @@ import 'package:culcul/core/utils/format_extensions.dart';
 
 class NotificationItemWidget extends StatelessWidget {
   final NotificationEntry item;
-  final NotificationType type;
+  final NotificationFeedType type;
 
   const NotificationItemWidget({super.key, required this.item, required this.type});
 
@@ -76,7 +76,7 @@ class NotificationItemWidget extends StatelessWidget {
                 ),
                 const SizedBox(height: 6),
                 // Main Content (Reply message or "Liked your comment")
-                if (type != NotificationType.like) ...[
+                if (type != NotificationFeedType.like) ...[
                   Text(
                     detail.message.isNotEmpty
                         ? detail.message
@@ -172,13 +172,13 @@ class NotificationItemWidget extends StatelessWidget {
 
   String _getActionText() {
     switch (type) {
-      case NotificationType.like:
+      case NotificationFeedType.like:
         return t.notification.types.like;
-      case NotificationType.at:
+      case NotificationFeedType.at:
         return t.notification.types.at;
-      case NotificationType.reply:
+      case NotificationFeedType.reply:
         return t.notification.types.reply;
-      case NotificationType.system:
+      case NotificationFeedType.system:
         return t.notification.types.system;
     }
   }

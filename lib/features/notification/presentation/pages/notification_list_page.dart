@@ -1,18 +1,15 @@
 import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
-import 'package:culcul/features/notification/presentation/view_models/at_view_model.dart';
-import 'package:culcul/features/notification/presentation/view_models/like_view_model.dart';
-import 'package:culcul/features/notification/presentation/view_models/reply_view_model.dart';
+import 'package:culcul/features/notification/presentation/view_models/notification_feed_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_item_widget.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-enum NotificationType { reply, at, like, system }
-
 class NotificationListPage extends ConsumerStatefulWidget {
-  final NotificationType type;
+  final NotificationFeedType type;
 
   const NotificationListPage({super.key, required this.type});
 
@@ -44,31 +41,18 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
   }
 
   void _loadMore() {
-    switch (widget.type) {
-      case NotificationType.reply:
-        if (!ref.read(replyListProvider.notifier).hasMore) return;
-        ref.read(replyListProvider.notifier).loadMore();
-        break;
-      case NotificationType.at:
-        if (!ref.read(atListProvider.notifier).hasMore) return;
-        ref.read(atListProvider.notifier).loadMore();
-        break;
-      case NotificationType.like:
-        if (!ref.read(likeListProvider.notifier).hasMore) return;
-        ref.read(likeListProvider.notifier).loadMore();
-        break;
-      case NotificationType.system:
-        // TODO: Implement system msg provider
-        break;
-    }
+    if (widget.type == NotificationFeedType.system) return;
+    final notifier = ref.read(notificationFeedListProvider(widget.type).notifier);
+    if (!notifier.hasMore) return;
+    notifier.loadMore();
   }
 
-  AsyncValue<List<NotificationEntry>> _providerState(NotificationType type) =>
+  AsyncValue<List<NotificationEntry>> _providerState(NotificationFeedType type) =>
       switch (type) {
-        NotificationType.reply => ref.watch(replyListProvider),
-        NotificationType.at => ref.watch(atListProvider),
-        NotificationType.like => ref.watch(likeListProvider),
-        NotificationType.system => const AsyncValue.data([]),
+        NotificationFeedType.reply => ref.watch(notificationFeedListProvider(type)),
+        NotificationFeedType.at => ref.watch(notificationFeedListProvider(type)),
+        NotificationFeedType.like => ref.watch(notificationFeedListProvider(type)),
+        NotificationFeedType.system => const AsyncValue.data([]),
       };
 
   @override
@@ -76,10 +60,10 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
     final state = _providerState(widget.type);
     final t = i18n(context);
     final title = switch (widget.type) {
-      NotificationType.reply => t.notification.types.reply,
-      NotificationType.at => t.notification.types.at,
-      NotificationType.like => t.notification.types.like,
-      NotificationType.system => t.notification.types.system,
+      NotificationFeedType.reply => t.notification.types.reply,
+      NotificationFeedType.at => t.notification.types.at,
+      NotificationFeedType.like => t.notification.types.like,
+      NotificationFeedType.system => t.notification.types.system,
     };
 
     return Scaffold(
@@ -101,16 +85,16 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
             stackTrace: s,
             onRetry: () {
               switch (widget.type) {
-                case NotificationType.reply:
-                  ref.invalidate(replyListProvider);
+                case NotificationFeedType.reply:
+                  ref.invalidate(notificationFeedListProvider(widget.type));
                   break;
-                case NotificationType.at:
-                  ref.invalidate(atListProvider);
+                case NotificationFeedType.at:
+                  ref.invalidate(notificationFeedListProvider(widget.type));
                   break;
-                case NotificationType.like:
-                  ref.invalidate(likeListProvider);
+                case NotificationFeedType.like:
+                  ref.invalidate(notificationFeedListProvider(widget.type));
                   break;
-                case NotificationType.system:
+                case NotificationFeedType.system:
                   break;
               }
             },

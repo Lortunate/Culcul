@@ -1,4 +1,5 @@
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/presentation/pages/chat_page.dart';
 import 'package:culcul/features/notification/presentation/pages/notification_list_page.dart';
 import 'package:culcul/features/notification/presentation/pages/notification_page.dart';
@@ -20,15 +21,15 @@ class ChatRouteInput {
 Widget buildNotificationRoutePage() => const NotificationPage();
 
 Widget buildReplyNotificationRoutePage() {
-  return const NotificationListPage(type: NotificationType.reply);
+  return const NotificationListPage(type: NotificationFeedType.reply);
 }
 
 Widget buildAtNotificationRoutePage() {
-  return const NotificationListPage(type: NotificationType.at);
+  return const NotificationListPage(type: NotificationFeedType.at);
 }
 
 Widget buildLikeNotificationRoutePage() {
-  return const NotificationListPage(type: NotificationType.like);
+  return const NotificationListPage(type: NotificationFeedType.like);
 }
 
 Widget buildSystemNotificationRoutePage() => const SystemNotificationPage();

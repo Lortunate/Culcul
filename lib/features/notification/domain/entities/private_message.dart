@@ -248,19 +248,3 @@ class PrivateMessageEmoji {
     required this.gifUrl,
   });
 }
-
-class PrivateMessagePage {
-  final List<PrivateMessage> messages;
-  final bool hasMore;
-  final int? minSeqno;
-  final int? maxSeqno;
-  final List<PrivateMessageEmoji> emojiInfos;
-
-  const PrivateMessagePage({
-    required this.messages,
-    required this.hasMore,
-    required this.minSeqno,
-    required this.maxSeqno,
-    required this.emojiInfos,
-  });
-}

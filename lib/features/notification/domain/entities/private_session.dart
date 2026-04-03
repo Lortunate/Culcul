@@ -55,15 +55,3 @@ class PrivateSession {
     required this.accountInfo,
   });
 }
-
-class PrivateSessionPage {
-  final List<PrivateSession> sessions;
-  final bool hasMore;
-  final Map<String, int>? systemMessages;
-
-  const PrivateSessionPage({
-    required this.sessions,
-    required this.hasMore,
-    required this.systemMessages,
-  });
-}

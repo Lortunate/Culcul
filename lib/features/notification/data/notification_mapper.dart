@@ -27,14 +27,7 @@ extension UnreadCountMapper on UnreadCountModel {
 
 extension ReplyUserMapper on ReplyUser {
   NotificationActor toDomain() {
-    return NotificationActor(
-      mid: mid,
-      fans: fans,
-      nickname: nickname,
-      avatar: avatar,
-      midLink: midLink,
-      follow: follow,
-    );
+    return NotificationActor(mid: mid, nickname: nickname, avatar: avatar);
   }
 }
 
@@ -42,24 +35,13 @@ extension ReplyItemDetailMapper on ReplyItemDetail {
   NotificationEntryDetail toDomain() {
     return NotificationEntryDetail(
       subjectId: subjectId,
-      rootId: rootId,
-      sourceId: sourceId,
-      targetId: targetId,
       type: type,
-      businessId: businessId,
       business: business,
       title: title,
-      desc: desc,
       image: image,
       uri: uri,
-      nativeUri: nativeUri,
-      rootReplyContent: rootReplyContent,
       sourceContent: sourceContent,
       targetReplyContent: targetReplyContent,
-      atDetails: atDetails.map((item) => item.toDomain()).toList(),
-      hideReplyButton: hideReplyButton,
-      hideLikeButton: hideLikeButton,
-      likeState: likeState,
       message: message,
     );
   }
@@ -76,8 +58,6 @@ extension ReplyItemMapper on ReplyItem {
       id: id,
       actors: actors,
       detail: item.toDomain(),
-      counts: counts,
-      isMulti: isMulti,
       replyTime: replyTime,
       likeTime: likeTime,
     );
@@ -141,28 +121,6 @@ extension PrivateMessageSessionMapper on PrivateMessageSession {
       isFollow: isFollow,
       sessionTs: sessionTs,
       accountInfo: accountInfo?.toDomain(),
-    );
-  }
-}
-
-extension PrivateMessageListResponseMapper on PrivateMessageListResponse {
-  PrivateMessagePage toDomain() {
-    return PrivateMessagePage(
-      messages: (messages ?? const []).map((item) => item.toDomain()).toList(),
-      hasMore: hasMore == 1,
-      minSeqno: minSeqno,
-      maxSeqno: maxSeqno,
-      emojiInfos: (emojiInfos ?? const []).map((item) => item.toDomain()).toList(),
-    );
-  }
-}
-
-extension PrivateMessageSessionResponseMapper on PrivateMessageSessionResponse {
-  PrivateSessionPage toDomain() {
-    return PrivateSessionPage(
-      sessions: (sessionList ?? const []).map((item) => item.toDomain()).toList(),
-      hasMore: hasMore == 1,
-      systemMessages: systemMsg,
     );
   }
 }
