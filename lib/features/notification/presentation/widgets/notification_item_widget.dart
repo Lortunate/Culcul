@@ -2,6 +2,7 @@ import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
+import 'package:culcul/features/notification/presentation/utils/notification_navigation.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,8 @@ import 'package:culcul/core/utils/format_extensions.dart';
 class NotificationItemWidget extends StatelessWidget {
   final NotificationEntry item;
   final NotificationFeedType type;
+  static const NotificationNavigationParser _navigationParser =
+      NotificationNavigationParser();
 
   const NotificationItemWidget({super.key, required this.item, required this.type});
 
@@ -132,32 +135,11 @@ class NotificationItemWidget extends StatelessWidget {
     );
   }
 
-  void _handleTap(BuildContext context, NotificationEntryDetail detail) {
-    final uri = detail.uri;
+  Future<void> _handleTap(BuildContext context, NotificationEntryDetail detail) async {
+    final target = _navigationParser.fromNotificationDetail(detail);
+    final handled = await openNotificationNavigationTarget(context, target);
+    if (handled || !context.mounted) return;
 
-    // 1. Try URI parsing
-    if (uri.isNotEmpty) {
-      final bvidMatch = RegExp(r'BV[a-zA-Z0-9]+').firstMatch(uri);
-      if (bvidMatch != null) {
-        VideoDetailRoute(bvid: bvidMatch.group(0)!).push(context);
-        return;
-      }
-
-      // Handle av...
-      final avidMatch = RegExp(r'av(\d+)').firstMatch(uri);
-      if (avidMatch != null) {
-        VideoDetailRoute(bvid: 'av${avidMatch.group(1)}').push(context);
-        return;
-      }
-    }
-
-    // 2. Fallback to business/subject id
-    if (detail.business == 'archive' || detail.type == 'video') {
-      VideoDetailRoute(bvid: 'av${detail.subjectId}').push(context);
-      return;
-    }
-
-    // TODO: Dynamic detail, Article detail, etc.
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(

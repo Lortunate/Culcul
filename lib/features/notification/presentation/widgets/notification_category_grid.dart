@@ -35,7 +35,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
               label: t.notification.types.at,
               count: data.at,
               color: semanticColors.warning,
-              onTap: () => context.push('/notification/at'),
+              onTap: () => const AtNotificationRoute().push(context),
             ),
             _buildCategoryItem(
               context,

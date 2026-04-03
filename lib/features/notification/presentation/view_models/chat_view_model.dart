@@ -49,11 +49,18 @@ class Chat extends _$Chat {
     }
 
     final repository = ref.read(notificationRepositoryProvider);
-    final localMessages = await repository.pageMessagesFromLocal(
+    final localMessagesFuture = repository.pageMessagesFromLocal(
       ownerUid: ownerUid,
       talkerId: talkerId,
       sessionType: sessionType,
     );
+    final emojiMapFuture = repository.getMessageEmojiMapFromLocal(
+      ownerUid: ownerUid,
+      talkerId: talkerId,
+      sessionType: sessionType,
+    );
+    final localMessages = await localMessagesFuture;
+    final emojiMap = await emojiMapFuture;
 
     _updateMinSeq(localMessages);
     final initialMessages = _filterMessages(localMessages);
@@ -68,7 +75,7 @@ class Chat extends _$Chat {
         isLoadingMore: false,
         nextPage: 2,
       ),
-      emojiMap: const <String, String>{},
+      emojiMap: emojiMap,
     );
   }
 
@@ -109,6 +116,11 @@ class Chat extends _$Chat {
         sessionType: sessionType,
         endSeqno: _minSeqno,
       );
+      final emojiMap = await repository.getMessageEmojiMapFromLocal(
+        ownerUid: ownerUid,
+        talkerId: talkerId,
+        sessionType: sessionType,
+      );
 
       if (olderMessages.isEmpty) {
         _hasMore = false;
@@ -116,6 +128,7 @@ class Chat extends _$Chat {
         state = AsyncData(
           latest.copyWith(
             paging: latest.paging.copyWith(isLoadingMore: false, hasMore: false),
+            emojiMap: emojiMap,
           ),
         );
         return;
@@ -141,6 +154,7 @@ class Chat extends _$Chat {
             isLoadingMore: false,
             error: null,
           ),
+          emojiMap: emojiMap,
         ),
       );
     } catch (error) {
@@ -242,11 +256,18 @@ class Chat extends _$Chat {
 
   Future<void> _refreshHeadFromLocal(int ownerUid) async {
     final repository = ref.read(notificationRepositoryProvider);
-    final head = await repository.pageMessagesFromLocal(
+    final headFuture = repository.pageMessagesFromLocal(
       ownerUid: ownerUid,
       talkerId: talkerId,
       sessionType: sessionType,
     );
+    final emojiMapFuture = repository.getMessageEmojiMapFromLocal(
+      ownerUid: ownerUid,
+      talkerId: talkerId,
+      sessionType: sessionType,
+    );
+    final head = await headFuture;
+    final emojiMap = await emojiMapFuture;
     final filtered = _filterMessages(head);
     _updateMinSeq(filtered);
     final current = state.value;
@@ -266,6 +287,7 @@ class Chat extends _$Chat {
           isLoadingMore: false,
           error: null,
         ),
+        emojiMap: emojiMap,
       ),
     );
   }

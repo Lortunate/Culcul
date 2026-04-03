@@ -57,10 +57,7 @@ class AboutPage extends StatelessWidget {
                     context: context,
                     applicationName: 'Culcul',
                     applicationVersion: 'v1.0.0',
-                    applicationIcon: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Image.asset('assets/icon/icon.png', width: 64, height: 64),
-                    ),
+                    useRootNavigator: true,
                   ),
                 ),
               ],
@@ -103,22 +100,24 @@ class _AboutHeader extends StatelessWidget {
       children: [
         const SizedBox(height: 48),
         Center(
-          child: Container(
-            width: 100,
-            height: 100,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(28),
-              image: const DecorationImage(
-                image: AssetImage('assets/icon/icon.png'),
-                fit: BoxFit.cover,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: colorScheme.primary.withValues(alpha: 0.2),
-                  blurRadius: 32,
-                  offset: const Offset(0, 16),
+          child: RepaintBoundary(
+            child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(28),
+                image: const DecorationImage(
+                  image: AssetImage('assets/icon/icon.png'),
+                  fit: BoxFit.cover,
                 ),
-              ],
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.primary.withValues(alpha: 0.15),
+                    blurRadius: 24,
+                    offset: const Offset(0, 12),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -181,37 +180,50 @@ class _ActionTile extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return ListTile(
-      onTap: onTap,
-      shape: RoundedRectangleBorder(
+    return Material(
+      color: colorScheme.surfaceContainer,
+      borderRadius: BorderRadius.circular(16),
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(16),
-      ),
-      tileColor: colorScheme.surfaceContainer,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      leading: Container(
-        padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Icon(icon, color: colorScheme.primary, size: 24),
-      ),
-      title: Text(
-        title,
-        style: theme.textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      subtitle: Padding(
-        padding: const EdgeInsets.only(top: 2),
-        child: Text(
-          subtitle,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: colorScheme.onSurfaceVariant,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: colorScheme.primary, size: 24),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right_rounded, color: colorScheme.outline, size: 20),
+            ],
           ),
         ),
       ),
-      trailing: Icon(Icons.chevron_right_rounded, color: colorScheme.outline, size: 20),
     );
   }
 }

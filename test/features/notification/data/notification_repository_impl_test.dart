@@ -6,6 +6,7 @@ import 'package:culcul/features/notification/data/local/notification_local_datab
 import 'package:culcul/features/notification/data/notification_api.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -21,6 +22,9 @@ class _FakeNotificationApi implements NotificationApi {
   final ReplyResponse replyResponse;
   final PrivateMessageSessionResponse systemSessionResponse;
   final PrivateMessageListResponse systemMessageResponse;
+  int? lastSessionType;
+  int? lastMessageTalkerId;
+  int? lastMessageSessionType;
 
   @override
   Future<ApiResponse<UnreadCountModel>> getUnreadCount() async {
@@ -48,6 +52,7 @@ class _FakeNotificationApi implements NotificationApi {
     int size = 20,
     int? endTs,
   }) async {
+    lastSessionType = sessionType;
     return ApiResponse(code: 0, message: 'ok', data: systemSessionResponse);
   }
 
@@ -62,6 +67,8 @@ class _FakeNotificationApi implements NotificationApi {
     int build = 0,
     String mobiApp = 'web',
   }) async {
+    lastMessageTalkerId = talkerId;
+    lastMessageSessionType = sessionType;
     return ApiResponse(code: 0, message: 'ok', data: systemMessageResponse);
   }
 
@@ -96,6 +103,7 @@ class _FakeNotificationApi implements NotificationApi {
 void main() {
   late NotificationLocalDatabase db;
   late NotificationRepositoryImpl repository;
+  late _FakeNotificationApi fakeApi;
 
   setUp(() {
     final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
@@ -144,13 +152,13 @@ void main() {
       lastViewAt: 0,
     );
 
-    final fakeApi = _FakeNotificationApi(
+    fakeApi = _FakeNotificationApi(
       unreadCount: const UnreadCountModel(at: 1, chat: 2, like: 3, reply: 4, sysMsg: 5),
       replyResponse: replyResponse,
       systemSessionResponse: const PrivateMessageSessionResponse(
         sessionList: [],
         hasMore: 0,
-        systemMsg: {'5': 10086},
+        systemMsg: {'7': 10086},
       ),
       systemMessageResponse: PrivateMessageListResponse(
         messages: [
@@ -159,7 +167,12 @@ void main() {
             receiverType: 1,
             receiverId: 1001,
             msgType: 10,
-            content: {'title': 'old', 'content': 'old content', 'jump_text': 'view'},
+            content: {
+              'title': 'old',
+              'text': 'old text',
+              'jump_uri': 'https://old.example.com',
+              'jump_text': 'view',
+            },
             msgSeqno: 1,
             timestamp: now - 1,
           ),
@@ -168,10 +181,17 @@ void main() {
             receiverType: 1,
             receiverId: 1001,
             msgType: 10,
-            content: {'title': 'new', 'content': 'new content', 'jump_text': 'open'},
+            content: {
+              'title': 'new',
+              'content': '{"text":"new content","url":"https://new.example.com"}',
+              'jump_text': 'open',
+            },
             msgSeqno: 2,
             timestamp: now,
           ),
+        ],
+        emojiInfos: const [
+          PrivateMessageEmojiInfo(text: 'doge', url: 'https://example.com/doge.png'),
         ],
       ),
     );
@@ -222,6 +242,29 @@ void main() {
     expect(notices.first.id, 2);
     expect(notices.first.title, 'new');
     expect(notices.first.text, 'new content');
+    expect(notices.first.uri, 'https://new.example.com');
     expect(notices.first.jumpText, 'open');
+    expect(notices.last.text, 'old text');
+    expect(notices.last.uri, 'https://old.example.com');
+    expect(fakeApi.lastSessionType, 7);
+    expect(fakeApi.lastMessageSessionType, 1);
+    expect(fakeApi.lastMessageTalkerId, 10086);
+  });
+
+  test('syncMessagesHead stores emoji map and supports bracket/plain keys', () async {
+    await repository.syncMessagesHead(
+      ownerUid: 1001,
+      talkerId: 2002,
+      sessionType: PrivateSessionType.user,
+    );
+
+    final emojiMap = await repository.getMessageEmojiMapFromLocal(
+      ownerUid: 1001,
+      talkerId: 2002,
+      sessionType: PrivateSessionType.user,
+    );
+
+    expect(emojiMap['[doge]'], 'https://example.com/doge.png');
+    expect(emojiMap['doge'], 'https://example.com/doge.png');
   });
 }

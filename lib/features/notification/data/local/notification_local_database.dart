@@ -31,6 +31,18 @@ class NotificationMessages extends Table {
   Set<Column<Object>> get primaryKey => {ownerUid, sessionType, talkerId, msgSeqno};
 }
 
+class NotificationMessageEmojis extends Table {
+  IntColumn get ownerUid => integer()();
+  IntColumn get sessionType => integer()();
+  IntColumn get talkerId => integer()();
+  TextColumn get emojiText => text()();
+  TextColumn get emojiUrl => text()();
+  IntColumn get updatedAt => integer()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {ownerUid, sessionType, talkerId, emojiText};
+}
+
 class NotificationSessions extends Table {
   IntColumn get ownerUid => integer()();
   IntColumn get sessionType => integer()();
@@ -98,6 +110,7 @@ class NotificationOutbox extends Table {
 @DriftDatabase(
   tables: [
     NotificationMessages,
+    NotificationMessageEmojis,
     NotificationSessions,
     NotificationFeedItems,
     NotificationUnreadSummaries,
@@ -110,12 +123,49 @@ class NotificationLocalDatabase extends _$NotificationLocalDatabase {
     : super(executor ?? _openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) async {
       await m.createAll();
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_notification_message_emojis_lookup '
+        'ON notification_message_emojis(owner_uid, session_type, talker_id)',
+      );
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_notification_message_emojis_updated_at '
+        'ON notification_message_emojis(owner_uid, updated_at)',
+      );
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_notification_messages_time '
+        'ON notification_messages(owner_uid, session_type, talker_id, timestamp DESC, msg_seqno DESC)',
+      );
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_notification_sessions_ts '
+        'ON notification_sessions(owner_uid, session_type, session_ts DESC)',
+      );
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_notification_feed_time '
+        'ON notification_feed_items(owner_uid, feed_type, event_time DESC, event_id DESC)',
+      );
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_notification_outbox_lookup '
+        'ON notification_outbox(owner_uid, session_type, talker_id, status, created_at ASC)',
+      );
+    },
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        await m.createTable(notificationMessageEmojis);
+        await customStatement(
+          'CREATE INDEX IF NOT EXISTS idx_notification_message_emojis_lookup '
+          'ON notification_message_emojis(owner_uid, session_type, talker_id)',
+        );
+        await customStatement(
+          'CREATE INDEX IF NOT EXISTS idx_notification_message_emojis_updated_at '
+          'ON notification_message_emojis(owner_uid, updated_at)',
+        );
+      }
       await customStatement(
         'CREATE INDEX IF NOT EXISTS idx_notification_messages_time '
         'ON notification_messages(owner_uid, session_type, talker_id, timestamp DESC, msg_seqno DESC)',

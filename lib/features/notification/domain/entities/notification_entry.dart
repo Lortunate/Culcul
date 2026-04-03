@@ -17,6 +17,7 @@ class NotificationEntryDetail {
   final String title;
   final String image;
   final String uri;
+  final String nativeUri;
   final String sourceContent;
   final String targetReplyContent;
   final String message;
@@ -28,6 +29,7 @@ class NotificationEntryDetail {
     required this.title,
     required this.image,
     required this.uri,
+    required this.nativeUri,
     required this.sourceContent,
     required this.targetReplyContent,
     required this.message,

@@ -159,6 +159,35 @@ class NotificationRepositoryImpl
   }
 
   @override
+  Future<Map<String, String>> getMessageEmojiMapFromLocal({
+    required int ownerUid,
+    required int talkerId,
+    required PrivateSessionType sessionType,
+  }) async {
+    final rows =
+        await (_database.select(_database.notificationMessageEmojis)
+              ..where(
+                (t) =>
+                    t.ownerUid.equals(ownerUid) &
+                    t.sessionType.equals(sessionType.value) &
+                    t.talkerId.equals(talkerId),
+              )
+              ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)]))
+            .get();
+
+    final map = <String, String>{};
+    for (final row in rows) {
+      _putEmojiVariants(
+        map: map,
+        rawKey: row.emojiText,
+        url: row.emojiUrl,
+        overwrite: false,
+      );
+    }
+    return map;
+  }
+
+  @override
   Future<List<NotificationEntry>> pageFeedFromLocal({
     required int ownerUid,
     required NotificationFeedType type,
@@ -405,6 +434,13 @@ class NotificationRepositoryImpl
           syncStatus: 'synced',
         );
       }
+      await _upsertMessageEmojis(
+        ownerUid: ownerUid,
+        talkerId: talkerId,
+        sessionType: sessionType,
+        emojis: response.emojiInfos ?? const <PrivateMessageEmojiInfo>[],
+        now: now,
+      );
       await _reconcileTemporaryMessages(
         ownerUid: ownerUid,
         talkerId: talkerId,
@@ -788,6 +824,33 @@ class NotificationRepositoryImpl
     }
   }
 
+  Future<void> _upsertMessageEmojis({
+    required int ownerUid,
+    required int talkerId,
+    required PrivateSessionType sessionType,
+    required List<PrivateMessageEmojiInfo> emojis,
+    required int now,
+  }) async {
+    for (final emoji in emojis) {
+      final canonicalKey = _canonicalEmojiKey(emoji.text);
+      final url = emoji.url.trim();
+      if (canonicalKey == null || url.isEmpty) continue;
+
+      await _database
+          .into(_database.notificationMessageEmojis)
+          .insertOnConflictUpdate(
+            NotificationMessageEmojisCompanion.insert(
+              ownerUid: ownerUid,
+              sessionType: sessionType.value,
+              talkerId: talkerId,
+              emojiText: canonicalKey,
+              emojiUrl: url,
+              updatedAt: now,
+            ),
+          );
+    }
+  }
+
   Future<ReplyResponse> _fetchReplyLikeAtResponse({
     required NotificationFeedType type,
     int? id,
@@ -819,12 +882,11 @@ class NotificationRepositoryImpl
         size: _pageSize,
       ),
     );
-    final systemMsgMap = sessionRes.systemMsg;
-    if (systemMsgMap == null || !systemMsgMap.containsKey('5')) {
+    final talkerId = _resolveSystemTalkerId(sessionRes);
+    if (talkerId == null) {
       return const <SystemNotificationItem>[];
     }
 
-    final talkerId = systemMsgMap['5']!;
     final msgsRes = await requestApi(
       () => _api.getPrivateMessages(
         talkerId: talkerId,
@@ -834,19 +896,145 @@ class NotificationRepositoryImpl
     );
     return msgsRes.messages?.map((msg) {
           final contentMap = msg.contentMap;
+          final nestedContentMap = _toJsonMap(contentMap?['content']);
           return SystemNotificationItem(
             id: msg.msgSeqno,
-            title: contentMap?['title'] as String?,
-            text: contentMap?['content'] as String? ?? contentMap?['text'] as String?,
+            title: _firstNonEmptyString([
+              contentMap?['title'],
+              nestedContentMap?['title'],
+            ]),
+            text: _extractSystemNoticeText(contentMap, nestedContentMap),
             time: msg.timestamp,
-            uri:
-                contentMap?['url'] as String? ??
-                contentMap?['uri'] as String? ??
-                contentMap?['jump_uri'] as String?,
-            jumpText: contentMap?['jump_text'] as String?,
+            uri: _extractSystemNoticeUri(contentMap, nestedContentMap),
+            jumpText: _firstNonEmptyString([
+              contentMap?['jump_text'],
+              contentMap?['jumpText'],
+              nestedContentMap?['jump_text'],
+              nestedContentMap?['jumpText'],
+            ]),
           );
         }).toList() ??
         const <SystemNotificationItem>[];
+  }
+
+  int? _resolveSystemTalkerId(PrivateMessageSessionResponse response) {
+    final systemMsgMap = response.systemMsg;
+    if (systemMsgMap != null && systemMsgMap.isNotEmpty) {
+      final preferred =
+          systemMsgMap['5'] ??
+          systemMsgMap['7'] ??
+          systemMsgMap.values.cast<int?>().firstWhere(
+            (item) => item != null && item > 0,
+            orElse: () => null,
+          );
+      if (preferred != null && preferred > 0) {
+        return preferred;
+      }
+    }
+
+    final sessions = response.sessionList ?? const <PrivateMessageSession>[];
+    for (final session in sessions) {
+      if (session.sessionType == PrivateSessionType.system.value &&
+          session.talkerId > 0) {
+        return session.talkerId;
+      }
+    }
+    return null;
+  }
+
+  String? _extractSystemNoticeText(
+    Map<String, dynamic>? contentMap,
+    Map<String, dynamic>? nestedContentMap,
+  ) {
+    final contentString = _firstNonEmptyString([contentMap?['content']]);
+    final decodedContent = _toJsonMap(contentString);
+    return _firstNonEmptyString([
+      contentMap?['text'],
+      contentMap?['desc'],
+      contentMap?['message'],
+      decodedContent?['text'],
+      decodedContent?['content'],
+      nestedContentMap?['text'],
+      nestedContentMap?['content'],
+      contentString,
+    ]);
+  }
+
+  String? _extractSystemNoticeUri(
+    Map<String, dynamic>? contentMap,
+    Map<String, dynamic>? nestedContentMap,
+  ) {
+    final contentString = _firstNonEmptyString([contentMap?['content']]);
+    final decodedContent = _toJsonMap(contentString);
+    return _firstNonEmptyString([
+      contentMap?['url'],
+      contentMap?['uri'],
+      contentMap?['jump_uri'],
+      contentMap?['jumpUrl'],
+      nestedContentMap?['url'],
+      nestedContentMap?['uri'],
+      nestedContentMap?['jump_uri'],
+      nestedContentMap?['jumpUrl'],
+      decodedContent?['url'],
+      decodedContent?['uri'],
+      decodedContent?['jump_uri'],
+      decodedContent?['jumpUrl'],
+    ]);
+  }
+
+  String? _firstNonEmptyString(List<dynamic> values) {
+    for (final value in values) {
+      if (value is String) {
+        final trimmed = value.trim();
+        if (trimmed.isNotEmpty) {
+          return trimmed;
+        }
+      }
+    }
+    return null;
+  }
+
+  Map<String, dynamic>? _toJsonMap(dynamic raw) {
+    if (raw is Map<String, dynamic>) return raw;
+    if (raw is Map) {
+      return raw.map((key, value) => MapEntry(key.toString(), value));
+    }
+    if (raw is String) {
+      try {
+        final decoded = jsonDecode(raw);
+        if (decoded is Map<String, dynamic>) return decoded;
+      } catch (_) {}
+    }
+    return null;
+  }
+
+  String? _canonicalEmojiKey(String rawKey) {
+    final trimmed = rawKey.trim();
+    if (trimmed.isEmpty) return null;
+    if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+      final inner = trimmed.substring(1, trimmed.length - 1).trim();
+      if (inner.isEmpty) return null;
+      return '[$inner]';
+    }
+    return '[$trimmed]';
+  }
+
+  void _putEmojiVariants({
+    required Map<String, String> map,
+    required String rawKey,
+    required String url,
+    required bool overwrite,
+  }) {
+    final canonical = _canonicalEmojiKey(rawKey);
+    if (canonical == null) return;
+    final plain = canonical.substring(1, canonical.length - 1);
+    if (overwrite) {
+      map[canonical] = url;
+      map[plain] = url;
+      return;
+    }
+    map.putIfAbsent(canonical, () => url);
+    map.putIfAbsent(plain, () => url);
   }
 
   PrivateMessage _rowToPrivateMessage(NotificationMessage row) {
@@ -923,6 +1111,11 @@ class NotificationRepositoryImpl
     await _database.transaction(() async {
       await (_database.delete(_database.notificationMessages)..where(
             (t) => t.ownerUid.equals(ownerUid) & t.timestamp.isSmallerThanValue(cutoff),
+          ))
+          .go();
+
+      await (_database.delete(_database.notificationMessageEmojis)..where(
+            (t) => t.ownerUid.equals(ownerUid) & t.updatedAt.isSmallerThanValue(cutoff),
           ))
           .go();
 

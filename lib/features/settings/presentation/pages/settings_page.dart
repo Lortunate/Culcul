@@ -14,35 +14,48 @@ class SettingsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    TranslationProvider.of(context);
     final t = Translations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    
     final themeMode = ref.watch(appThemeModeProvider);
-    final cacheSize = switch (ref.watch(cacheSizeProvider)) {
-      AsyncData(:final value) => value,
-      AsyncError() => '0 B',
-      _ => '...',
-    };
+    final cacheState = ref.watch(cacheSizeProvider);
+    final cacheSize = cacheState.when(
+      data: (value) => value,
+      loading: () => '...',
+      error: (error, stackTrace) => '0 B',
+    );
     final isClearingCache = ref.watch(cacheMaintenanceProvider).isLoading;
 
     return Scaffold(
       backgroundColor: colorScheme.surfaceContainerLowest,
-      appBar: _SettingsAppBar(title: t.settings.title),
+      appBar: AppBar(
+        title: Text(
+          t.settings.title,
+          style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        backgroundColor: colorScheme.surfaceContainerLowest,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
+          onPressed: () => context.pop(),
+        ),
+      ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-        children: <Widget>[
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.all(16),
+        children: [
           SettingsGroup(
             children: [
               SettingsTile(
-                key: const ValueKey<String>('settings_row_appearance'),
+                key: const ValueKey('appearance'),
                 title: t.settings.appearance,
                 icon: Icons.palette_outlined,
                 value: _getThemeName(t, themeMode),
                 onTap: () => _showThemeSelector(context, ref, themeMode),
               ),
               SettingsTile(
-                key: const ValueKey<String>('settings_row_language'),
+                key: const ValueKey('language'),
                 title: t.settings.language,
                 icon: Icons.language_outlined,
                 value: _getLanguageName(t, LocaleSettings.currentLocale),
@@ -50,11 +63,11 @@ class SettingsPage extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           SettingsGroup(
             children: [
               SettingsTile(
-                key: const ValueKey<String>('settings_row_cache'),
+                key: const ValueKey('clear_cache'),
                 title: t.settings.clear_cache,
                 icon: Icons.cleaning_services_outlined,
                 value: isClearingCache ? '...' : cacheSize,
@@ -62,11 +75,11 @@ class SettingsPage extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           SettingsGroup(
             children: [
               SettingsTile(
-                key: const ValueKey<String>('settings_row_version'),
+                key: const ValueKey('about'),
                 title: t.settings.sections.about,
                 icon: Icons.info_outline_rounded,
                 onTap: () => const AboutRoute().push(context),
@@ -79,21 +92,17 @@ class SettingsPage extends ConsumerWidget {
     );
   }
 
-  String _getLanguageName(Translations t, AppLocale locale) {
-    return switch (locale) {
-      AppLocale.zh => t.settings.chinese,
-      AppLocale.zhHant => t.settings.traditional_chinese,
-      AppLocale.en => t.settings.english,
-    };
-  }
+  String _getLanguageName(Translations t, AppLocale locale) => switch (locale) {
+        AppLocale.zh => t.settings.chinese,
+        AppLocale.zhHant => t.settings.traditional_chinese,
+        AppLocale.en => t.settings.english,
+      };
 
-  String _getThemeName(Translations t, ThemeMode mode) {
-    return switch (mode) {
-      ThemeMode.system => t.settings.theme_mode.system,
-      ThemeMode.light => t.settings.theme_mode.light,
-      ThemeMode.dark => t.settings.theme_mode.dark,
-    };
-  }
+  String _getThemeName(Translations t, ThemeMode mode) => switch (mode) {
+        ThemeMode.system => t.settings.theme_mode.system,
+        ThemeMode.light => t.settings.theme_mode.light,
+        ThemeMode.dark => t.settings.theme_mode.dark,
+      };
 
   void _showLanguageSelector(BuildContext context) {
     final t = Translations.of(context);
@@ -136,11 +145,11 @@ class SettingsPage extends ConsumerWidget {
     required String title,
     required List<Widget> children,
   }) {
-    final colorScheme = Theme.of(context).colorScheme;
     showModalBottomSheet(
       context: context,
-      backgroundColor: colorScheme.surface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       clipBehavior: Clip.antiAlias,
+      useRootNavigator: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -159,31 +168,5 @@ class SettingsPage extends ConsumerWidget {
         ),
       );
     }
-  }
-}
-
-class _SettingsAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const _SettingsAppBar({required this.title});
-  final String title;
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    return AppBar(
-      title: Text(
-        title,
-        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-      ),
-      centerTitle: true,
-      backgroundColor: colorScheme.surfaceContainerLowest,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
-        onPressed: () => context.pop(),
-      ),
-    );
   }
 }

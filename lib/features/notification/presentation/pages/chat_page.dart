@@ -32,6 +32,7 @@ class ChatPage extends HookConsumerWidget {
     final chatState = ref.watch(provider);
     final currentUser = ref.watch(authProvider).user;
     final notifier = ref.read(provider.notifier);
+    final colorScheme = Theme.of(context).colorScheme;
 
     final displayInfo = _resolveDisplayInfo(ref);
     final displayAvatarUrl = displayInfo.avatarUrl;
@@ -46,6 +47,7 @@ class ChatPage extends HookConsumerWidget {
     }, [currentUser?.id]);
 
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(title: Text(displayName), centerTitle: true),
       body: Column(
         children: [

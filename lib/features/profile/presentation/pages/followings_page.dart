@@ -12,10 +12,12 @@ class FollowingsPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = Translations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
     final followingsAsync = ref.watch(followingsProvider(vmid));
     final hasMore = ref.watch(followingsProvider(vmid).notifier).hasMore;
 
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(title: Text(t.profile.followings.title), centerTitle: true),
       body: RelationUserList(
         asyncValue: followingsAsync,

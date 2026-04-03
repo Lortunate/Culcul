@@ -15,8 +15,10 @@ class NotificationPage extends ConsumerWidget {
     ref.watch(notificationLifecycleSyncProvider);
     final authState = ref.watch(authProvider);
     final t = Translations.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: Text(t.notification.title),
         centerTitle: true,

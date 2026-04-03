@@ -49,6 +49,13 @@ class _FeedFakeRepository implements NotificationRepository {
   }) async => const [];
 
   @override
+  Future<Map<String, String>> getMessageEmojiMapFromLocal({
+    required int ownerUid,
+    required int talkerId,
+    required PrivateSessionType sessionType,
+  }) async => const {};
+
+  @override
   Future<List<NotificationEntry>> pageFeedFromLocal({
     required int ownerUid,
     required NotificationFeedType type,
@@ -143,6 +150,7 @@ NotificationEntry _entry(int id, int time) {
       title: 'title',
       image: '',
       uri: '',
+      nativeUri: '',
       sourceContent: 'source',
       targetReplyContent: 'target',
       message: 'hello',

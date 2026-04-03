@@ -40,6 +40,7 @@ extension ReplyItemDetailMapper on ReplyItemDetail {
       title: title,
       image: image,
       uri: uri,
+      nativeUri: nativeUri,
       sourceContent: sourceContent,
       targetReplyContent: targetReplyContent,
       message: message,

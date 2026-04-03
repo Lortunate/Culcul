@@ -59,6 +59,7 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
   Widget build(BuildContext context) {
     final state = _providerState(widget.type);
     final t = i18n(context);
+    final colorScheme = Theme.of(context).colorScheme;
     final title = switch (widget.type) {
       NotificationFeedType.reply => t.notification.types.reply,
       NotificationFeedType.at => t.notification.types.at,
@@ -67,6 +68,7 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
     };
 
     return Scaffold(
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(title: Text(title)),
       body: state.when(
         data: (items) {

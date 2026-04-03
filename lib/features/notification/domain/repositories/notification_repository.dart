@@ -29,6 +29,12 @@ abstract class NotificationRepository {
     int? endSeqno,
   });
 
+  Future<Map<String, String>> getMessageEmojiMapFromLocal({
+    required int ownerUid,
+    required int talkerId,
+    required PrivateSessionType sessionType,
+  });
+
   Future<List<NotificationEntry>> pageFeedFromLocal({
     required int ownerUid,
     required NotificationFeedType type,
