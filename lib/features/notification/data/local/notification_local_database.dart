@@ -1,0 +1,148 @@
+import 'package:drift/drift.dart';
+import 'package:drift_flutter/drift_flutter.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'notification_local_database.g.dart';
+
+class NotificationMessages extends Table {
+  IntColumn get ownerUid => integer()();
+  IntColumn get sessionType => integer()();
+  IntColumn get talkerId => integer()();
+  IntColumn get msgSeqno => integer()();
+
+  IntColumn get senderUid => integer()();
+  IntColumn get receiverType => integer()();
+  IntColumn get receiverId => integer()();
+  IntColumn get msgType => integer()();
+  TextColumn get contentJson => text()();
+
+  IntColumn get timestamp => integer()();
+  TextColumn get atUidsJson => text().nullable()();
+  IntColumn get msgKey => integer().nullable()();
+  IntColumn get msgStatus => integer().nullable()();
+  TextColumn get notifyCode => text().nullable()();
+  IntColumn get newFaceVersion => integer().nullable()();
+  IntColumn get msgSource => integer().nullable()();
+  TextColumn get syncStatus => text().withDefault(const Constant('synced'))();
+  IntColumn get createdAt => integer()();
+  IntColumn get updatedAt => integer()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {ownerUid, sessionType, talkerId, msgSeqno};
+}
+
+class NotificationSessions extends Table {
+  IntColumn get ownerUid => integer()();
+  IntColumn get sessionType => integer()();
+  IntColumn get talkerId => integer()();
+  IntColumn get unreadCount => integer().withDefault(const Constant(0))();
+  IntColumn get sessionTs => integer()();
+  TextColumn get sessionJson => text()();
+  IntColumn get updatedAt => integer()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {ownerUid, sessionType, talkerId};
+}
+
+class NotificationFeedItems extends Table {
+  IntColumn get ownerUid => integer()();
+  TextColumn get feedType => text()();
+  IntColumn get eventId => integer()();
+  IntColumn get eventTime => integer()();
+  TextColumn get itemJson => text()();
+  IntColumn get updatedAt => integer()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {ownerUid, feedType, eventId};
+}
+
+class NotificationUnreadSummaries extends Table {
+  IntColumn get ownerUid => integer()();
+  TextColumn get summaryJson => text()();
+  IntColumn get updatedAt => integer()();
+
+  @override
+  Set<Column<Object>>? get primaryKey => {ownerUid};
+}
+
+class NotificationSyncCursors extends Table {
+  IntColumn get ownerUid => integer()();
+  TextColumn get scope => text()();
+  TextColumn get cursorJson => text().nullable()();
+  BoolColumn get hasMore => boolean().withDefault(const Constant(true))();
+  IntColumn get lastSyncedAt => integer().withDefault(const Constant(0))();
+
+  @override
+  Set<Column<Object>> get primaryKey => {ownerUid, scope};
+}
+
+class NotificationOutbox extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  IntColumn get ownerUid => integer()();
+  IntColumn get sessionType => integer()();
+  IntColumn get talkerId => integer()();
+  IntColumn get localMsgSeqno => integer()();
+  IntColumn get senderUid => integer()();
+  IntColumn get receiverType => integer()();
+  IntColumn get receiverId => integer()();
+  IntColumn get msgType => integer()();
+  TextColumn get contentJson => text()();
+  IntColumn get timestamp => integer()();
+  TextColumn get status => text().withDefault(const Constant('pending'))();
+  TextColumn get error => text().nullable()();
+  IntColumn get msgKey => integer().nullable()();
+  IntColumn get createdAt => integer()();
+  IntColumn get updatedAt => integer()();
+}
+
+@DriftDatabase(
+  tables: [
+    NotificationMessages,
+    NotificationSessions,
+    NotificationFeedItems,
+    NotificationUnreadSummaries,
+    NotificationSyncCursors,
+    NotificationOutbox,
+  ],
+)
+class NotificationLocalDatabase extends _$NotificationLocalDatabase {
+  NotificationLocalDatabase({QueryExecutor? executor})
+    : super(executor ?? _openConnection());
+
+  @override
+  int get schemaVersion => 1;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onCreate: (m) async {
+      await m.createAll();
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_notification_messages_time '
+        'ON notification_messages(owner_uid, session_type, talker_id, timestamp DESC, msg_seqno DESC)',
+      );
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_notification_sessions_ts '
+        'ON notification_sessions(owner_uid, session_type, session_ts DESC)',
+      );
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_notification_feed_time '
+        'ON notification_feed_items(owner_uid, feed_type, event_time DESC, event_id DESC)',
+      );
+      await customStatement(
+        'CREATE INDEX IF NOT EXISTS idx_notification_outbox_lookup '
+        'ON notification_outbox(owner_uid, session_type, talker_id, status, created_at ASC)',
+      );
+    },
+  );
+}
+
+QueryExecutor _openConnection() {
+  return driftDatabase(name: 'notification.sqlite', native: const DriftNativeOptions());
+}
+
+@Riverpod(keepAlive: true)
+NotificationLocalDatabase notificationLocalDatabase(Ref ref) {
+  final db = NotificationLocalDatabase();
+  ref.onDispose(db.close);
+  return db;
+}
