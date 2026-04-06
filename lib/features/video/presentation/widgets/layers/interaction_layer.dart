@@ -37,6 +37,9 @@ class InteractionLayer extends HookConsumerWidget {
 
     final horizontalDelta = useRef<double>(0.0);
     final verticalDelta = useRef<double>(0.0);
+    final verticalDragStartVolume = useRef<double>(currentVolume);
+    final verticalDragStartBrightness = useRef<double>(brightness.value);
+    final lastVerticalUpdateMs = useRef<int>(0);
     final isHorizontalDrag = useState(false);
     final isVerticalDrag = useState(false);
     final showIndicator = useState(false);
@@ -58,7 +61,7 @@ class InteractionLayer extends HookConsumerWidget {
       showIndicator.value = false;
 
       if (seekOffset.value != null) {
-        var targetPos = player.state.position + seekOffset.value!;
+        var targetPos = startPosition.value + seekOffset.value!;
         if (targetPos < Duration.zero) {
           targetPos = Duration.zero;
         } else if (targetPos > player.state.duration) {
@@ -121,12 +124,21 @@ class InteractionLayer extends HookConsumerWidget {
           ? null
           : (_) {
               verticalDelta.value = 0.0;
+              verticalDragStartBrightness.value = brightness.value;
+              verticalDragStartVolume.value = currentVolume;
+              lastVerticalUpdateMs.value = 0;
               isVerticalDrag.value = true;
             },
       onVerticalDragUpdate: isLocked
           ? null
           : (details) {
               if (!isVerticalDrag.value) return;
+              final nowMs = DateTime.now().millisecondsSinceEpoch;
+              if (lastVerticalUpdateMs.value != 0 &&
+                  nowMs - lastVerticalUpdateMs.value < 16) {
+                return;
+              }
+              lastVerticalUpdateMs.value = nowMs;
               verticalDelta.value += details.primaryDelta ?? 0;
 
               final isLeft =
@@ -135,9 +147,10 @@ class InteractionLayer extends HookConsumerWidget {
               showIndicator.value = true;
 
               if (isLeft) {
-                final delta = -details.primaryDelta!;
-                final newBrightness = (brightness.value + delta / kBrightnessSensitivity)
-                    .clamp(0.0, 1.0);
+                final newBrightness =
+                    (verticalDragStartBrightness.value -
+                            verticalDelta.value / kBrightnessSensitivity)
+                        .clamp(0.0, 1.0);
                 brightness.value = newBrightness;
                 ScreenBrightness().setApplicationScreenBrightness(newBrightness);
 
@@ -146,11 +159,10 @@ class InteractionLayer extends HookConsumerWidget {
                 indicatorValue.value = brightness.value;
                 indicatorTextValue.value = null;
               } else {
-                final delta = -details.primaryDelta!;
-                final newVolume = (currentVolume + delta / kVolumeSensitivity).clamp(
-                  0.0,
-                  100.0,
-                );
+                final newVolume =
+                    (verticalDragStartVolume.value -
+                            verticalDelta.value / kVolumeSensitivity)
+                        .clamp(0.0, 100.0);
                 player.setVolume(newVolume);
 
                 indicatorIcon.value = Icons.volume_up_rounded;

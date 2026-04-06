@@ -34,14 +34,21 @@ class ProfileRepositoryImpl with RequestExecutorBinding implements domain.Profil
 
   @override
   Future<Result<UserCardModel, AppError>> getUserCard(int mid) async {
-    return requestResult(() async {
-      final data = await requestApi(() => api.getCard(mid));
-      return _parseUserCard(data, fallbackMid: mid);
-    });
+    final result = await requestApiResult(() => api.getCard(mid));
+    return result.when(
+      success: (data) {
+        try {
+          return Success(_parseUserCard(data, fallbackMid: mid));
+        } catch (error) {
+          return Failure(AppError.fromObject(error));
+        }
+      },
+      failure: Failure.new,
+    );
   }
 
-  Future<UserProfile> getProfileModel(int userId) async {
-    return request(() async {
+  Future<Result<UserProfile, AppError>> getProfileModel(int userId) async {
+    return requestResult(() async {
       final infoResponse = await api.getAccountInfo(userId);
 
       if (infoResponse.code != 0) {
@@ -90,12 +97,12 @@ class ProfileRepositoryImpl with RequestExecutorBinding implements domain.Profil
     });
   }
 
-  Future<List<UserSpaceVideoModel>> getSpaceVideosModel({
+  Future<Result<List<UserSpaceVideoModel>, AppError>> getSpaceVideosModel({
     required int mid,
     int page = 1,
     String order = 'pubdate',
   }) async {
-    final data = await requestApi(
+    final result = await requestApiResult(
       () => api.getSpaceVideos(
         mid: mid,
         page: page,
@@ -103,24 +110,28 @@ class ProfileRepositoryImpl with RequestExecutorBinding implements domain.Profil
         order: order,
       ),
     );
-    return data.list.vlist;
+    return result.map((data) => data.list.vlist);
   }
 
-  Future<UserSpaceVideoModel?> getStickyVideoModel(int vmid) async {
-    try {
-      return await requestApi(() => api.getStickyVideo(vmid));
-    } on ServerException catch (e) {
-      if (e.code == 53016) return null;
-      rethrow;
-    }
+  Future<Result<UserSpaceVideoModel?, AppError>> getStickyVideoModel(int vmid) async {
+    final result = await requestApiResult(() => api.getStickyVideo(vmid));
+    return result.when(
+      success: (data) => Success(data),
+      failure: (error) {
+        if (error is ServerAppError && error.code == 53016) {
+          return const Success(null);
+        }
+        return Failure(error);
+      },
+    );
   }
 
-  Future<List<UserSpaceVideoModel>> getMasterpieceModels(int vmid) async {
-    try {
-      return await requestApi(() => api.getMasterpiece(vmid));
-    } catch (_) {
-      return [];
-    }
+  Future<Result<List<UserSpaceVideoModel>, AppError>> getMasterpieceModels(int vmid) async {
+    final result = await requestApiResult(() => api.getMasterpiece(vmid));
+    return result.when(
+      success: (data) => Success(data),
+      failure: (_) => const Success(<UserSpaceVideoModel>[]),
+    );
   }
 
   @override
@@ -133,7 +144,8 @@ class ProfileRepositoryImpl with RequestExecutorBinding implements domain.Profil
 
   @override
   Future<Result<ProfileUser, AppError>> getProfile(int userId) async {
-    return requestResult(() async => (await getProfileModel(userId)).toDomain());
+    final result = await getProfileModel(userId);
+    return result.map((data) => data.toDomain());
   }
 
   @override
@@ -142,25 +154,20 @@ class ProfileRepositoryImpl with RequestExecutorBinding implements domain.Profil
     int page = 1,
     String order = 'pubdate',
   }) async {
-    return requestResult(() async {
-      return (await getSpaceVideosModel(
-        mid: mid,
-        page: page,
-        order: order,
-      )).map((item) => item.toDomain()).toList();
-    });
+    final result = await getSpaceVideosModel(mid: mid, page: page, order: order);
+    return result.map((data) => data.map((item) => item.toDomain()).toList());
   }
 
   @override
   Future<Result<ProfileVideo?, AppError>> getStickyVideo(int vmid) async {
-    return requestResult(() async => (await getStickyVideoModel(vmid))?.toDomain());
+    final result = await getStickyVideoModel(vmid);
+    return result.map((data) => data?.toDomain());
   }
 
   @override
   Future<Result<List<ProfileVideo>, AppError>> getMasterpiece(int vmid) async {
-    return requestResult(
-      () async => (await getMasterpieceModels(vmid)).map((item) => item.toDomain()).toList(),
-    );
+    final result = await getMasterpieceModels(vmid);
+    return result.map((data) => data.map((item) => item.toDomain()).toList());
   }
 
   UserCardModel _parseUserCard(dynamic data, {required int fallbackMid}) {

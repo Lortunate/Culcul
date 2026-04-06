@@ -1,6 +1,5 @@
 import 'package:culcul/core/providers/storage_provider.dart';
-import 'package:culcul/features/settings/presentation/pages/about_page.dart';
-import 'package:culcul/features/settings/presentation/pages/settings_page.dart';
+import 'package:culcul/features/settings/presentation.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,10 +42,10 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(SettingsPage), findsOneWidget);
-    expect(find.byKey(const ValueKey<String>('settings_row_language')), findsOneWidget);
-    expect(find.byKey(const ValueKey<String>('settings_row_appearance')), findsOneWidget);
-    expect(find.byKey(const ValueKey<String>('settings_row_cache')), findsOneWidget);
-    expect(find.byKey(const ValueKey<String>('settings_row_version')), findsOneWidget);
+    expect(find.byKey(const ValueKey<String>('language')), findsOneWidget);
+    expect(find.byKey(const ValueKey<String>('appearance')), findsOneWidget);
+    expect(find.byKey(const ValueKey<String>('clear_cache')), findsOneWidget);
+    expect(find.byKey(const ValueKey<String>('about')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -75,7 +74,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byKey(const ValueKey<String>('settings_row_version')));
+    await tester.tap(find.byKey(const ValueKey<String>('about')));
     await tester.pumpAndSettle();
 
     expect(find.byType(AboutPage), findsOneWidget);

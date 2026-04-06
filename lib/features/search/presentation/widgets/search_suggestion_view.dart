@@ -2,7 +2,6 @@ import 'package:culcul/features/search/presentation/view_models/search_view_mode
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class SearchSuggestionView extends HookConsumerWidget {
@@ -32,21 +31,21 @@ class SearchSuggestionView extends HookConsumerWidget {
             return _EmptyState(colorScheme: colorScheme, theme: theme);
           }
 
-          return ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            itemCount: suggestions.length,
-            itemBuilder: (context, index) {
-              final suggestion = suggestions[index];
-              final displayValue = suggestion.value;
-              if (displayValue.isEmpty) return const SizedBox.shrink();
+          final nonEmptySuggestions = suggestions
+              .map((entry) => entry.value)
+              .where((value) => value.isNotEmpty)
+              .toList(growable: false);
 
-              return _AnimatedSuggestionItem(
-                index: index,
-                displayValue: displayValue,
-                term: term,
-                onTap: () => onSuggestionTap(displayValue),
-              );
-            },
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 180),
+            switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeIn,
+            child: _SuggestionList(
+              key: ValueKey('suggestions_${term}_len_${nonEmptySuggestions.length}'),
+              term: term,
+              suggestions: nonEmptySuggestions,
+              onSuggestionTap: onSuggestionTap,
+            ),
           );
         },
         loading: () => _LoadingState(text: t.search.status.loading),
@@ -103,13 +102,45 @@ class SearchSuggestionView extends HookConsumerWidget {
   }
 }
 
-class _AnimatedSuggestionItem extends HookWidget {
+class _SuggestionList extends StatelessWidget {
+  final List<String> suggestions;
+  final String term;
+  final ValueChanged<String> onSuggestionTap;
+
+  const _SuggestionList({
+    super.key,
+    required this.suggestions,
+    required this.term,
+    required this.onSuggestionTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: suggestions.length,
+      itemBuilder: (context, index) {
+        final displayValue = suggestions[index];
+        return _SuggestionItem(
+          key: ValueKey('search_suggestion_${displayValue}_$index'),
+          index: index,
+          displayValue: displayValue,
+          term: term,
+          onTap: () => onSuggestionTap(displayValue),
+        );
+      },
+    );
+  }
+}
+
+class _SuggestionItem extends StatelessWidget {
   final int index;
   final String displayValue;
   final String term;
   final VoidCallback onTap;
 
-  const _AnimatedSuggestionItem({
+  const _SuggestionItem({
+    super.key,
     required this.index,
     required this.displayValue,
     required this.term,
@@ -120,33 +151,6 @@ class _AnimatedSuggestionItem extends HookWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
-    final controller = useAnimationController(
-      duration: const Duration(milliseconds: 350),
-    );
-
-    useEffect(() {
-      controller.forward();
-      return null;
-    }, []);
-
-    final startDelay = (index * 0.04).clamp(0.0, 0.4);
-
-    final fadeAnimation = useAnimation(
-      CurvedAnimation(
-        parent: controller,
-        curve: Interval(startDelay, 1.0, curve: Curves.easeOut),
-      ),
-    );
-
-    final slideAnimation = useAnimation(
-      Tween<Offset>(begin: const Offset(0.02, 0), end: Offset.zero).animate(
-        CurvedAnimation(
-          parent: controller,
-          curve: Interval(startDelay, 1.0, curve: Curves.easeOutQuad),
-        ),
-      ),
-    );
 
     final normalStyle = theme.textTheme.bodyLarge?.copyWith(
       fontSize: 16,
@@ -161,40 +165,46 @@ class _AnimatedSuggestionItem extends HookWidget {
       letterSpacing: 0.2,
     );
 
-    return Opacity(
-      opacity: fadeAnimation,
-      child: Transform.translate(
-        offset: slideAnimation,
-        child: InkWell(
-          onTap: onTap,
-          splashColor: colorScheme.primary.withValues(alpha: 0.05),
-          highlightColor: Colors.transparent,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Row(
-              children: [
-                Expanded(
-                  child: RichText(
-                    text: TextSpan(
-                      children: SearchSuggestionView._buildHighlightedSpans(
-                        displayValue,
-                        term,
-                        normalStyle ?? const TextStyle(),
-                        highlightStyle ?? const TextStyle(),
-                      ),
+    return TweenAnimationBuilder<double>(
+      duration: Duration(milliseconds: 150 + index * 10),
+      curve: Curves.easeOut,
+      tween: Tween<double>(begin: 0, end: 1),
+      builder: (context, value, child) {
+        final dy = (1 - value) * 6;
+        return Opacity(
+          opacity: value,
+          child: Transform.translate(offset: Offset(0, dy), child: child),
+        );
+      },
+      child: InkWell(
+        onTap: onTap,
+        splashColor: colorScheme.primary.withValues(alpha: 0.05),
+        highlightColor: Colors.transparent,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          child: Row(
+            children: [
+              Expanded(
+                child: RichText(
+                  text: TextSpan(
+                    children: SearchSuggestionView._buildHighlightedSpans(
+                      displayValue,
+                      term,
+                      normalStyle ?? const TextStyle(),
+                      highlightStyle ?? const TextStyle(),
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(width: 12),
-                Icon(
-                  Icons.north_west_rounded,
-                  size: 16,
-                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.25),
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 12),
+              Icon(
+                Icons.north_west_rounded,
+                size: 16,
+                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.25),
+              ),
+            ],
           ),
         ),
       ),

@@ -46,32 +46,35 @@ abstract class NotificationRepository {
 
   Stream<List<SystemNotice>> watchSystemNotices({required int ownerUid});
 
-  Future<void> syncUnreadCount({required int ownerUid, bool force = false});
+  Future<Result<void, AppError>> syncUnreadCount({required int ownerUid, bool force = false});
 
-  Future<void> syncSessions({required int ownerUid, bool force = false});
+  Future<Result<void, AppError>> syncSessions({required int ownerUid, bool force = false});
 
-  Future<void> syncSessionsOlder({
+  Future<Result<void, AppError>> syncSessionsOlder({
     required int ownerUid,
     required PrivateSessionType sessionType,
     required int endTs,
   });
 
-  Future<void> syncMessagesHead({
+  Future<Result<void, AppError>> syncMessagesHead({
     required int ownerUid,
     required int talkerId,
     required PrivateSessionType sessionType,
   });
 
-  Future<void> syncMessagesOlder({
+  Future<Result<void, AppError>> syncMessagesOlder({
     required int ownerUid,
     required int talkerId,
     required PrivateSessionType sessionType,
     required int endSeqno,
   });
 
-  Future<void> syncFeedHead({required int ownerUid, required NotificationFeedType type});
+  Future<Result<void, AppError>> syncFeedHead({
+    required int ownerUid,
+    required NotificationFeedType type,
+  });
 
-  Future<void> syncFeedOlder({
+  Future<Result<void, AppError>> syncFeedOlder({
     required int ownerUid,
     required NotificationFeedType type,
     required int cursorId,

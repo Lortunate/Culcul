@@ -13,9 +13,6 @@ class HistoryList extends _$HistoryList {
 
   Future<List<HistoryEntry>> _fetchHistory() async {
     final result = await ref.read(historyRepositoryProvider).getHistory();
-    return result.when(
-      success: (items) => items,
-      failure: (error) => throw error.toException(),
-    );
+    return result.dataOrNull ?? const <HistoryEntry>[];
   }
 }

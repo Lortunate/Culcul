@@ -20,21 +20,63 @@ class UserVideoTab extends ConsumerStatefulWidget {
 class _UserVideoTabState extends ConsumerState<UserVideoTab>
     with AutomaticKeepAliveClientMixin {
   String _order = 'pubdate'; // pubdate (latest), click (popular), stow (most fav)
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoadingMore = false;
 
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) {
+      return;
+    }
+    if (_scrollController.position.extentAfter > 360) {
+      return;
+    }
+    _loadMoreIfNeeded();
+  }
+
+  Future<void> _loadMoreIfNeeded() async {
+    if (_isLoadingMore) {
+      return;
+    }
+    final notifier = ref.read(
+      userSpaceVideosProvider(widget.mid, order: _order).notifier,
+    );
+    if (!notifier.hasMore) {
+      return;
+    }
+    _isLoadingMore = true;
+    try {
+      await notifier.loadMore();
+    } finally {
+      _isLoadingMore = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
     final t = Translations.of(context);
     final videosAsync = ref.watch(userSpaceVideosProvider(widget.mid, order: _order));
-    final notifier = ref.read(
-      userSpaceVideosProvider(widget.mid, order: _order).notifier,
-    );
     final colorScheme = Theme.of(context).colorScheme;
 
     return CustomScrollView(
+      controller: _scrollController,
       key: PageStorageKey<String>('user_video_tab_${widget.mid}'),
       slivers: [
         SliverOverlapInjector(
@@ -78,10 +120,10 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
             if (videos.isEmpty) {
               return SliverFillRemaining(child: Center(child: Text(t.common.no_content)));
             }
+            final showLoadingFooter = videosAsync.isLoading && videos.isNotEmpty;
             return SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {
-                if (index == videos.length) {
-                  notifier.loadMore();
+                if (index >= videos.length) {
                   return const Padding(
                     padding: EdgeInsets.all(16.0),
                     child: Center(child: CircularProgressIndicator()),
@@ -91,6 +133,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
                 return Column(
                   children: [
                     VideoListCard(
+                      key: ValueKey('space_video_${spaceVideo.bvid}_$index'),
                       coverUrl: spaceVideo.pic,
                       title: spaceVideo.title,
                       duration: spaceVideo.duration,
@@ -129,7 +172,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
                       ),
                   ],
                 );
-              }, childCount: videos.length + 1),
+              }, childCount: videos.length + (showLoadingFooter ? 1 : 0)),
             );
           },
           error: (err, stack) => SliverFillRemaining(

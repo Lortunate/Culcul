@@ -1,5 +1,4 @@
-import 'package:culcul/features/search/presentation/view_models/search_view_model.dart';
-import 'package:culcul/features/search/presentation/widgets/hot_search_section.dart';
+import 'package:culcul/features/search/presentation.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:flutter/material.dart';

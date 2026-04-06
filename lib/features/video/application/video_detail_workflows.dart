@@ -1,8 +1,6 @@
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/network/request_executor.dart';
+import 'package:culcul/core/perf/video_perf_logger.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/video/domain/entities/video_entities.dart';
-import 'package:culcul/features/video/domain/repositories/video_repository.dart';
 import 'package:culcul/features/video/video.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -12,7 +10,6 @@ class VideoInitialData {
   final VideoDetail detail;
   final int currentCid;
   final PlayUrl? playUrl;
-  final List<RelatedVideo> relatedVideos;
   final List<int> availableQualities;
   final int selectedQuality;
 
@@ -20,10 +17,16 @@ class VideoInitialData {
     required this.detail,
     required this.currentCid,
     required this.playUrl,
-    required this.relatedVideos,
     required this.availableQualities,
     required this.selectedQuality,
   });
+}
+
+class VideoAuxiliaryData {
+  final List<RelatedVideo> relatedVideos;
+  final List<VideoTag> tags;
+
+  const VideoAuxiliaryData({required this.relatedVideos, required this.tags});
 }
 
 @riverpod
@@ -32,45 +35,74 @@ LoadVideoDetailWorkflow loadVideoDetailWorkflow(Ref ref) {
 }
 
 class LoadVideoDetailWorkflow {
-  static const RequestExecutor _requestExecutor = RequestExecutor();
   final VideoRepository _repository;
 
   const LoadVideoDetailWorkflow(this._repository);
 
-  Future<Result<VideoInitialData, AppError>> call(String bvid) async {
-    return _requestExecutor.run(() async {
-      final detail = await _repository.fetchVideoView(bvid);
-      final cid = detail.pages.isNotEmpty ? detail.pages.first.cid : 0;
+  Future<Result<VideoInitialData, AppError>> call(String bvid) {
+    return loadCritical(bvid);
+  }
 
-      final relatedResult = await _guard(() => _repository.fetchRelatedVideos(bvid));
-      final tagsResult = await _guard(() => _repository.fetchVideoTags(bvid));
-      final Result<PlayUrl?, AppError> playResult;
-      if (cid == 0) {
-        playResult = const Success(null);
-      } else {
-        final loadedPlayUrl = await _guard(
-          () => _repository.fetchVideoPlayUrl(aid: detail.aid, cid: cid),
+  Future<Result<VideoInitialData, AppError>> loadCritical(String bvid) async {
+    final stopwatch = Stopwatch()..start();
+    final detailResult = await _repository.fetchVideoView(bvid);
+    if (detailResult.errorOrNull case final error?) {
+      return Failure(error);
+    }
+    final detail = detailResult.dataOrNull!;
+    VideoPerfLogger.log(
+      VideoPerfEvent.criticalLoaded,
+      fields: <String, Object?>{'bvid': bvid, 'ms': stopwatch.elapsedMilliseconds},
+    );
+    final cid = detail.pages.isNotEmpty ? detail.pages.first.cid : 0;
+
+    final Result<PlayUrl?, AppError> playResult;
+    if (cid == 0) {
+      playResult = const Success(null);
+    } else {
+      final playUrlStopwatch = Stopwatch()..start();
+      final loadedPlayUrl = await _repository.fetchVideoPlayUrl(
+        aid: detail.aid,
+        cid: cid,
+      );
+      if (loadedPlayUrl.dataOrNull != null) {
+        VideoPerfLogger.log(
+          VideoPerfEvent.playurlLoaded,
+          fields: <String, Object?>{
+            'bvid': bvid,
+            'cid': cid,
+            'ms': playUrlStopwatch.elapsedMilliseconds,
+          },
         );
-        playResult = loadedPlayUrl.map<PlayUrl?>((value) => value);
       }
+      playResult = loadedPlayUrl.map<PlayUrl?>((value) => value);
+    }
 
-      final mergedDetail = tagsResult.dataOrNull == null
-          ? detail
-          : detail.copyWith(tag: tagsResult.dataOrNull!);
-      final playUrl = playResult.dataOrNull;
+    final playUrl = playResult.dataOrNull;
 
-      return VideoInitialData(
-        detail: mergedDetail,
+    return Success(
+      VideoInitialData(
+        detail: detail,
         currentCid: cid,
         playUrl: playUrl,
-        relatedVideos: relatedResult.dataOrNull ?? const [],
         availableQualities: playUrl?.acceptQuality.toList() ?? const [],
         selectedQuality: playUrl?.quality ?? 80,
-      );
-    });
+      ),
+    );
   }
-}
 
-Future<Result<T, AppError>> _guard<T>(Future<T> Function() action) async {
-  return const RequestExecutor().run(action);
+  Future<Result<VideoAuxiliaryData, AppError>> loadAuxiliary(String bvid) async {
+    final relatedFuture = _repository.fetchRelatedVideos(bvid);
+    final tagsFuture = _repository.fetchVideoTags(bvid);
+
+    final relatedResult = await relatedFuture;
+    final tagsResult = await tagsFuture;
+
+    return Success(
+      VideoAuxiliaryData(
+        relatedVideos: relatedResult.dataOrNull ?? const [],
+        tags: tagsResult.dataOrNull ?? const [],
+      ),
+    );
+  }
 }

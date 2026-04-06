@@ -38,8 +38,10 @@ class RenderDanmakuItem {
 class DanmakuPainter extends CustomPainter {
   final List<RenderDanmakuItem> items;
   final double opacity;
+  final Listenable? repaintSignal;
 
-  DanmakuPainter({required this.items, required this.opacity});
+  DanmakuPainter({required this.items, required this.opacity, this.repaintSignal})
+    : super(repaint: repaintSignal);
 
   bool _isVisible(RenderDanmakuItem item, Size size) {
     return !(item.x > size.width || item.x + item.width < 0);
@@ -63,6 +65,6 @@ class DanmakuPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant DanmakuPainter oldDelegate) {
-    return true;
+    return oldDelegate.opacity != opacity || oldDelegate.items != items;
   }
 }

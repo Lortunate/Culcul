@@ -1,7 +1,7 @@
 import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/features/notification/presentation/view_models/system_notification_view_model.dart';
 import 'package:culcul/features/notification/domain/entities/system_notice.dart';
-import 'package:culcul/features/notification/presentation/utils/notification_navigation.dart';
+import 'package:culcul/features/notification/presentation/widgets/notification_navigation.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:flutter/material.dart';

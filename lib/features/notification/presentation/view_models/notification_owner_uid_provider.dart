@@ -1,4 +1,4 @@
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/auth/presentation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'notification_owner_uid_provider.g.dart';

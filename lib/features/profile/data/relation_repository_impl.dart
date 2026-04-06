@@ -29,23 +29,23 @@ class RelationRepositoryImpl with RequestExecutorBinding implements domain.Relat
   @override
   RequestExecutor get requestExecutor => _requestExecutor;
 
-  Future<RelationResponseData> getFollowingsModel(
+  Future<Result<RelationResponseData, AppError>> getFollowingsModel(
     int vmid, {
     int pn = 1,
     int ps = _defaultPageSize,
     String? orderType,
   }) {
-    return requestApi(
+    return requestApiResult(
       () => _api.getFollowings(vmid, pn: pn, ps: ps, orderType: orderType),
     );
   }
 
-  Future<RelationResponseData> getFollowersModel(
+  Future<Result<RelationResponseData, AppError>> getFollowersModel(
     int vmid, {
     int pn = 1,
     int ps = _defaultPageSize,
   }) {
-    return requestApi(() => _api.getFollowers(vmid, pn: pn, ps: ps));
+    return requestApiResult(() => _api.getFollowers(vmid, pn: pn, ps: ps));
   }
 
   @override
@@ -59,10 +59,8 @@ class RelationRepositoryImpl with RequestExecutorBinding implements domain.Relat
     int page = 1,
     String? orderType,
   }) async {
-    return requestResult(() async {
-      final data = await getFollowingsModel(vmid, pn: page, orderType: orderType);
-      return data.list.map((item) => item.toDomain()).toList();
-    });
+    final result = await getFollowingsModel(vmid, pn: page, orderType: orderType);
+    return result.map((data) => data.list.map((item) => item.toDomain()).toList());
   }
 
   @override
@@ -70,9 +68,7 @@ class RelationRepositoryImpl with RequestExecutorBinding implements domain.Relat
     int vmid, {
     int page = 1,
   }) async {
-    return requestResult(() async {
-      final data = await getFollowersModel(vmid, pn: page);
-      return data.list.map((item) => item.toDomain()).toList();
-    });
+    final result = await getFollowersModel(vmid, pn: page);
+    return result.map((data) => data.list.map((item) => item.toDomain()).toList());
   }
 }

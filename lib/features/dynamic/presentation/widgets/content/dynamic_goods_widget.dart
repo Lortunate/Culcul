@@ -1,5 +1,5 @@
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
-import 'package:culcul/features/dynamic/presentation/widgets/utils/dynamic_navigation.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/dynamic_navigation.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_content_surface.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';

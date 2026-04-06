@@ -14,6 +14,9 @@ import 'package:culcul/ui/widgets/danmaku/ns_danmaku/models/danmaku_item.dart';
 import 'package:culcul/ui/widgets/danmaku/ns_danmaku/models/danmaku_option.dart';
 
 const int _segmentDurationMs = 360000;
+const int _segmentLoadCheckIntervalMs = 400;
+const int _maskRefreshIntervalMs = 250;
+const int _prefetchSegmentOffset = 1;
 
 class DanmakuLayer extends HookConsumerWidget {
   final String bvid;
@@ -41,46 +44,68 @@ class DanmakuLayer extends HookConsumerWidget {
 
     final player = ref.read(playerControllerProvider.notifier).player;
 
-    final timelineRef = useRef<_DanmakuTimelineBuffer>(_DanmakuTimelineBuffer());
+    final timelineRef = useRef<DanmakuTimelineBuffer>(DanmakuTimelineBuffer());
     final maskPathNotifier = useRef<ValueNotifier<Path?>>(ValueNotifier(null));
 
     useEffect(() {
       final timeline = timelineRef.value;
       timeline.reset();
       controllerRef.value?.clear();
+      var lastSegmentLoadCheckMs = -_segmentLoadCheckIntervalMs;
+      var lastMaskRefreshMs = -_maskRefreshIntervalMs;
+      var lastSegmentIndex = 0;
+
+      void loadSegmentIfNeeded(int segmentIndex, int currentPosMs) {
+        if (segmentIndex < 1 || aid == null || currentCid == 0) {
+          return;
+        }
+        if (!timeline.tryMarkSegmentLoading(segmentIndex)) {
+          return;
+        }
+
+        ref
+            .read(danmakuProviderProvider.notifier)
+            .loadSegment(oid: currentCid, pid: aid, segmentIndex: segmentIndex)
+            .then((result) {
+              final elems = result.dataOrNull;
+              if (elems == null) {
+                timeline.markSegmentLoadFailed(segmentIndex);
+                return;
+              }
+              final newItems = elems.map((e) {
+                return DanmakuItem(
+                  e.content,
+                  time: e.progress,
+                  color: _toOpaqueDanmakuColor(e.color),
+                  type: _toDanmakuItemType(e.mode),
+                );
+              }).toList();
+              timeline.appendItems(newItems, currentPosMs);
+            })
+            .catchError((e) {
+              timeline.markSegmentLoadFailed(segmentIndex);
+              debugPrint('Failed to load danmaku segment $segmentIndex: $e');
+            });
+      }
 
       final subPosition = player.stream.position.listen((pos) {
         final currentPosMs = pos.inMilliseconds;
         final segmentIndex = (currentPosMs / _segmentDurationMs).ceil();
         final index = segmentIndex < 1 ? 1 : segmentIndex;
+        final hasLargeJump = timeline.hasLargeJump(currentPosMs);
 
-        if (aid != null && currentCid != 0 && timeline.tryMarkSegmentLoading(index)) {
-          ref
-              .read(danmakuProviderProvider.notifier)
-              .loadSegment(oid: currentCid, pid: aid, segmentIndex: index)
-              .then((result) {
-                final elems = result.dataOrNull;
-                if (elems == null) {
-                  timeline.markSegmentLoadFailed(index);
-                  return;
-                }
-                final newItems = elems.map((e) {
-                  return DanmakuItem(
-                    e.content,
-                    time: e.progress,
-                    color: _toOpaqueDanmakuColor(e.color),
-                    type: _toDanmakuItemType(e.mode),
-                  );
-                }).toList();
-                timeline.appendItems(newItems, currentPosMs);
-              })
-              .catchError((e) {
-                timeline.markSegmentLoadFailed(index);
-                debugPrint('Failed to load danmaku segment $index: $e');
-              });
+        final shouldCheckSegmentLoad =
+            hasLargeJump ||
+            index != lastSegmentIndex ||
+            (currentPosMs - lastSegmentLoadCheckMs) >= _segmentLoadCheckIntervalMs;
+        if (shouldCheckSegmentLoad) {
+          lastSegmentLoadCheckMs = currentPosMs;
+          lastSegmentIndex = index;
+          loadSegmentIfNeeded(index, currentPosMs);
+          loadSegmentIfNeeded(index + _prefetchSegmentOffset, currentPosMs);
         }
 
-        if (timeline.hasLargeJump(currentPosMs)) {
+        if (hasLargeJump) {
           controllerRef.value?.clear();
           timeline.seek(currentPosMs);
         }
@@ -93,13 +118,18 @@ class DanmakuLayer extends HookConsumerWidget {
           }
         }
 
-        final nextMaskPath = _resolveMaskPath(
-          settings: settings,
-          maskResultProvider: maskResultProvider,
-          currentPosMs: currentPosMs,
-        );
-        if (nextMaskPath != maskPathNotifier.value.value) {
-          maskPathNotifier.value.value = nextMaskPath;
+        final shouldRefreshMask =
+            hasLargeJump || (currentPosMs - lastMaskRefreshMs) >= _maskRefreshIntervalMs;
+        if (shouldRefreshMask) {
+          lastMaskRefreshMs = currentPosMs;
+          final nextMaskPath = _resolveMaskPath(
+            settings: settings,
+            maskResultProvider: maskResultProvider,
+            currentPosMs: currentPosMs,
+          );
+          if (nextMaskPath != maskPathNotifier.value.value) {
+            maskPathNotifier.value.value = nextMaskPath;
+          }
         }
 
         timeline.updateLastPosition(currentPosMs);
@@ -210,7 +240,7 @@ Path? _resolveMaskPath({
   return masks.getPath(currentPosMs);
 }
 
-class _DanmakuTimelineBuffer {
+class DanmakuTimelineBuffer {
   static const int _seekToleranceMs = 1500;
   static const int _emitWindowMs = 3000;
   static const int _maxItemsPerTick = 50;
@@ -238,8 +268,24 @@ class _DanmakuTimelineBuffer {
 
   void appendItems(List<DanmakuItem> newItems, int currentPosMs) {
     if (newItems.isEmpty) return;
-    _items.addAll(newItems);
-    _items.sort((a, b) => a.time.compareTo(b.time));
+    final sortedNewItems = List<DanmakuItem>.from(newItems)
+      ..sort((a, b) => a.time.compareTo(b.time));
+    if (_items.isEmpty) {
+      _items.addAll(sortedNewItems);
+      _cursor = _findCursor(currentPosMs);
+      return;
+    }
+
+    final lastExistingTime = _items.last.time;
+    if (sortedNewItems.first.time >= lastExistingTime) {
+      _items.addAll(sortedNewItems);
+      _cursor = _findCursor(currentPosMs);
+      return;
+    }
+
+    for (final item in sortedNewItems) {
+      _insertItemByTime(item);
+    }
     _cursor = _findCursor(currentPosMs);
   }
 
@@ -273,20 +319,26 @@ class _DanmakuTimelineBuffer {
   }
 
   int _findCursor(int targetTime) {
-    var left = 0;
-    var right = _items.length - 1;
-    var result = _items.length;
+    return _lowerBoundByTime(targetTime);
+  }
 
-    while (left <= right) {
-      final mid = left + (right - left) ~/ 2;
-      if (_items[mid].time >= targetTime) {
-        result = mid;
-        right = mid - 1;
-      } else {
+  void _insertItemByTime(DanmakuItem item) {
+    final index = _lowerBoundByTime(item.time);
+    _items.insert(index, item);
+  }
+
+  int _lowerBoundByTime(int targetTime) {
+    var left = 0;
+    var right = _items.length;
+    while (left < right) {
+      final mid = left + ((right - left) >> 1);
+      if (_items[mid].time < targetTime) {
         left = mid + 1;
+      } else {
+        right = mid;
       }
     }
-    return result;
+    return left;
   }
 }
 

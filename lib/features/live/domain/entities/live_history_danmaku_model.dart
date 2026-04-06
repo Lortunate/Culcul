@@ -21,9 +21,9 @@ sealed class LiveDanmakuItem with _$LiveDanmakuItem {
     @Default(0) int isadmin,
     @Default(0) int vip,
     @Default(0) int svip,
-    @Default([]) List<dynamic> medal,
-    @Default([]) List<dynamic> title,
-    @Default([]) List<dynamic> userLevel,
+    LiveDanmakuMedal? medal,
+    LiveDanmakuTitle? title,
+    LiveDanmakuUserLevel? userLevel,
     @Default(0) int rank,
     @Default(0) int teamid,
     @Default('') String rnd,
@@ -32,4 +32,26 @@ sealed class LiveDanmakuItem with _$LiveDanmakuItem {
     @Default(0) int bubble,
     @Default({}) Map<String, dynamic> checkInfo,
   }) = _LiveDanmakuItem;
+}
+
+@freezed
+sealed class LiveDanmakuMedal with _$LiveDanmakuMedal {
+  const factory LiveDanmakuMedal({
+    @Default(0) int level,
+    @Default('') String name,
+    @Default(0) int anchorRoomId,
+    @Default(0) int color,
+  }) = _LiveDanmakuMedal;
+}
+
+@freezed
+sealed class LiveDanmakuTitle with _$LiveDanmakuTitle {
+  const factory LiveDanmakuTitle({@Default('') String title, @Default('') String skin}) =
+      _LiveDanmakuTitle;
+}
+
+@freezed
+sealed class LiveDanmakuUserLevel with _$LiveDanmakuUserLevel {
+  const factory LiveDanmakuUserLevel({@Default(0) int level, @Default(0) int rank}) =
+      _LiveDanmakuUserLevel;
 }

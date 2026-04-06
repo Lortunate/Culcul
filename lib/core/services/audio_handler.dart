@@ -1,16 +1,25 @@
+import 'dart:async';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
 
 final audioHandlerProvider = Provider<CilixiliAudioHandler>((ref) {
-  throw UnimplementedError();
+  final handler = CilixiliAudioHandler.shared;
+  unawaited(handler.initializeAudioServiceIfNeeded());
+  return handler;
 });
 
 class CilixiliAudioHandler extends BaseAudioHandler {
+  static final CilixiliAudioHandler _shared = CilixiliAudioHandler._();
+  static Future<void>? _audioServiceInitFuture;
+  static bool _audioServiceInitialized = false;
+
   final Player player = Player();
 
-  CilixiliAudioHandler() {
+  CilixiliAudioHandler._() {
     _initSession();
     // Propagate player events to AudioService
     player.stream.playing.listen((playing) {
@@ -45,6 +54,8 @@ class CilixiliAudioHandler extends BaseAudioHandler {
       _broadcastState();
     });
   }
+
+  static CilixiliAudioHandler get shared => _shared;
 
   Future<void> _initSession() async {
     final session = await AudioSession.instance;
@@ -105,15 +116,38 @@ class CilixiliAudioHandler extends BaseAudioHandler {
     this.mediaItem.add(mediaItem);
   }
 
-  static Future<CilixiliAudioHandler> init() async {
-    final handler = await AudioService.init(
-      builder: () => CilixiliAudioHandler(),
-      config: const AudioServiceConfig(
-        androidNotificationChannelId: 'com.lortunate.culcul.channel.audio',
-        androidNotificationChannelName: 'Video Playback',
-        androidNotificationOngoing: true,
-      ),
-    );
-    return handler;
+  Future<void> initializeAudioServiceIfNeeded() async {
+    if (_audioServiceInitialized) {
+      return;
+    }
+
+    final existing = _audioServiceInitFuture;
+    if (existing != null) {
+      await existing;
+      return;
+    }
+
+    _audioServiceInitFuture = _initializeAudioService();
+    await _audioServiceInitFuture;
+  }
+
+  Future<void> _initializeAudioService() async {
+    try {
+      await AudioService.init(
+        builder: () => shared,
+        config: const AudioServiceConfig(
+          androidNotificationChannelId: 'com.lortunate.culcul.channel.audio',
+          androidNotificationChannelName: 'Video Playback',
+          androidNotificationOngoing: true,
+        ),
+      );
+      _audioServiceInitialized = true;
+    } catch (error) {
+      if (kDebugMode) {
+        debugPrint('AudioService init failed: $error');
+      }
+    } finally {
+      _audioServiceInitFuture = null;
+    }
   }
 }

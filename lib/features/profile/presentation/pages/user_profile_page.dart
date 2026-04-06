@@ -1,7 +1,7 @@
 import 'package:culcul/features/profile/presentation/view_models/user_space_view_model.dart';
-import 'package:culcul/features/profile/presentation/widgets/tabs/user_dynamic_tab.dart';
-import 'package:culcul/features/profile/presentation/widgets/tabs/user_home_tab.dart';
-import 'package:culcul/features/profile/presentation/widgets/tabs/user_video_tab.dart';
+import 'package:culcul/features/profile/presentation/widgets/user_dynamic_tab.dart';
+import 'package:culcul/features/profile/presentation/widgets/user_home_tab.dart';
+import 'package:culcul/features/profile/presentation/widgets/user_video_tab.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_app_bar.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_info.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';

@@ -1,4 +1,4 @@
-import 'package:culcul/features/search/presentation/widgets/hooks/use_search_view_model.dart';
+import 'package:culcul/features/search/presentation/hooks/use_search_view_model.dart';
 import 'package:culcul/features/search/presentation/widgets/hot_search_section.dart';
 import 'package:culcul/features/search/presentation/widgets/search_app_bar.dart';
 import 'package:culcul/features/search/presentation/widgets/search_history_section.dart';

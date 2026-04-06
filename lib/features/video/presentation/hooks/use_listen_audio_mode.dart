@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/features/video/feature_scope.dart';
 import 'package:culcul/features/video/domain/entities/play_url.dart' as domain;
-import 'package:culcul/features/video/presentation/utils/playable_urls.dart';
+import 'package:culcul/features/video/presentation/widgets/playable_urls.dart';
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -59,12 +59,19 @@ void useListenAudioMode(WidgetRef ref, ListenAudioModeInput input) {
                 fnver: 0,
                 fourk: 1,
               );
+          if (dashPlayUrl.errorOrNull != null) {
+            return;
+          }
+          final playUrl = dashPlayUrl.dataOrNull;
+          if (playUrl == null) {
+            return;
+          }
 
           final fallbackDurl = input.playUrl?.durl.isNotEmpty == true
               ? input.playUrl!.durl.first
               : null;
           final audioUrls = buildListenAudioCandidateUrls(
-            dash: dashPlayUrl.dash,
+            dash: playUrl.dash,
             fallbackDurl: fallbackDurl,
           );
           if (disposed || audioUrls.isEmpty) {

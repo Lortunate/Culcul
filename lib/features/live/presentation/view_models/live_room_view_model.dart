@@ -4,7 +4,7 @@ import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/live/domain/entities/live_entities.dart';
 import 'package:culcul/features/live/live.dart';
-import 'package:culcul/features/live/presentation/view_models/services/live_socket_service.dart';
+import 'package:culcul/features/live/presentation/view_models/live_socket_service.dart';
 import 'package:culcul/features/profile/profile.dart';
 import 'package:culcul/features/live/presentation/view_models/live_room_state.dart';
 import 'package:flutter/foundation.dart';
@@ -15,10 +15,12 @@ part 'live_room_view_model.g.dart';
 @riverpod
 class LiveRoomController extends _$LiveRoomController {
   final LiveSocketService _socketService = LiveSocketService();
+  StreamSubscription<LiveDanmakuItem>? _danmakuSubscription;
 
   @override
   LiveRoomState build(int roomId) {
     ref.onDispose(() {
+      _danmakuSubscription?.cancel();
       _socketService.dispose();
     });
     unawaited(_init(roomId));
@@ -37,45 +39,56 @@ class LiveRoomController extends _$LiveRoomController {
       isadmin: 0,
       vip: 0,
       svip: 0,
-      medal: [],
-      userLevel: [],
     );
-    state = state.copyWith(danmakuHistory: [welcomeItem]);
+    final danmakuFeed = _danmakuFeed(roomId);
+    danmakuFeed.clear();
+    danmakuFeed.seed([welcomeItem]);
 
-    try {
-      final info = await ref.read(liveRepositoryProvider).getRoomInfo(roomId);
-      state = state.copyWith(roomInfo: info);
-      await Future.wait([
-        _fetchPlayUrl(info.roomId),
-        _fetchDanmakuConfig(info.roomId),
-        _fetchHistoryDanmaku(info.roomId),
-        _fetchAnchorInfo(info.uid),
-        _fetchLiveAnchorInfo(info.uid),
-        _fetchGoldRank(info.roomId, info.uid),
-        _fetchGuardList(info.roomId, info.uid),
-        _connectDanmaku(info.roomId),
-      ]);
-      state = state.copyWith(isLoading: false);
-    } catch (e) {
-      final exception = e is AppException ? e : UnknownException(e.toString(), cause: e);
-      state = state.copyWith(isLoading: false, error: exception);
+    final infoResult = await ref.read(liveRepositoryProvider).getRoomInfo(roomId);
+    final info = infoResult.dataOrNull;
+    if (info == null) {
+      final error = infoResult.errorOrNull;
+      state = state.copyWith(
+        isLoading: false,
+        error: error?.toException() ?? UnknownException('Failed to load room info'),
+      );
+      return;
     }
+    state = state.copyWith(roomInfo: info);
+    await Future.wait([
+      _fetchPlayUrl(info.roomId),
+      _fetchDanmakuConfig(info.roomId),
+      _fetchHistoryDanmaku(info.roomId),
+      _fetchAnchorInfo(info.uid),
+      _fetchLiveAnchorInfo(info.uid),
+      _fetchGoldRank(info.roomId, info.uid),
+      _fetchGuardList(info.roomId, info.uid),
+      _connectDanmaku(info.roomId),
+    ]);
+    state = state.copyWith(isLoading: false);
   }
 
   Future<void> _connectDanmaku(int roomId) async {
-    try {
-      final info = await ref.read(liveRepositoryProvider).getDanmuInfo(roomId);
-      await _socketService.connect(info: info, roomId: roomId);
-      _socketService.danmakuStream.listen((item) {
-        final newList = [item, ...state.danmakuHistory];
-        if (newList.length > 500) {
-          newList.removeRange(500, newList.length);
-        }
-        state = state.copyWith(danmakuHistory: newList);
-      });
-    } catch (error, stackTrace) {
-      _logIgnoredError('connectDanmaku', error, stackTrace);
+    final danmakuFeed = _danmakuFeed(roomId);
+    final infoResult = await ref.read(liveRepositoryProvider).getDanmuInfo(roomId);
+    final info = infoResult.dataOrNull;
+    if (info == null) {
+      danmakuFeed.setConnected(false);
+      _logIgnoredError(
+        'connectDanmaku',
+        infoResult.errorOrNull ?? 'Unknown error',
+        StackTrace.current,
+      );
+      return;
     }
+    await _socketService.connect(info: info, roomId: roomId);
+    danmakuFeed.setConnected(true);
+    await _danmakuSubscription?.cancel();
+    _danmakuSubscription = _socketService.danmakuStream.listen(
+      danmakuFeed.enqueue,
+      onError: (_, _) => danmakuFeed.setConnected(false),
+      onDone: () => danmakuFeed.setConnected(false),
+    );
   }
 
   Future<void> toggleFollow() async {
@@ -94,14 +107,18 @@ class LiveRoomController extends _$LiveRoomController {
   }
 
   Future<void> _fetchPlayUrl(int roomId, {int? qn}) async {
-    try {
-      final url = await ref
-          .read(liveRepositoryProvider)
-          .getPlayUrl(roomId: roomId, qn: qn);
+    final result = await ref
+        .read(liveRepositoryProvider)
+        .getPlayUrl(roomId: roomId, qn: qn);
+    if (result.dataOrNull case final url?) {
       state = state.copyWith(playUrl: url);
-    } catch (error, stackTrace) {
-      _logIgnoredError('fetchPlayUrl', error, stackTrace);
+      return;
     }
+    _logIgnoredError(
+      'fetchPlayUrl',
+      result.errorOrNull ?? 'Unknown error',
+      StackTrace.current,
+    );
   }
 
   Future<void> switchQuality(int qn) async {
@@ -110,69 +127,89 @@ class LiveRoomController extends _$LiveRoomController {
   }
 
   Future<void> _fetchAnchorInfo(int uid) async {
-    try {
-      final result = await ref.read(profileRepositoryProvider).getUserCard(uid);
-      final card = result.when(
-        success: (value) => value,
-        failure: (error) => throw error.toException(),
-      );
+    final result = await ref.read(profileRepositoryProvider).getUserCard(uid);
+    if (result.dataOrNull case final card?) {
       state = state.copyWith(anchorInfo: card);
-    } catch (error, stackTrace) {
-      _logIgnoredError('fetchAnchorInfo', error, stackTrace);
+      return;
     }
+    _logIgnoredError(
+      'fetchAnchorInfo',
+      result.errorOrNull ?? 'Unknown error',
+      StackTrace.current,
+    );
   }
 
   Future<void> _fetchLiveAnchorInfo(int uid) async {
-    try {
-      final info = await ref.read(liveRepositoryProvider).getAnchorInfo(uid);
+    final result = await ref.read(liveRepositoryProvider).getAnchorInfo(uid);
+    if (result.dataOrNull case final info?) {
       state = state.copyWith(liveAnchorInfo: info);
-    } catch (error, stackTrace) {
-      _logIgnoredError('fetchLiveAnchorInfo', error, stackTrace);
+      return;
     }
+    _logIgnoredError(
+      'fetchLiveAnchorInfo',
+      result.errorOrNull ?? 'Unknown error',
+      StackTrace.current,
+    );
   }
 
   Future<void> _fetchGoldRank(int roomId, int ruid) async {
-    try {
-      final rank = await ref
-          .read(liveRepositoryProvider)
-          .getOnlineGoldRank(roomId: roomId, ruid: ruid);
+    final result = await ref
+        .read(liveRepositoryProvider)
+        .getOnlineGoldRank(roomId: roomId, ruid: ruid);
+    if (result.dataOrNull case final rank?) {
       state = state.copyWith(goldRank: rank);
-    } catch (error, stackTrace) {
-      _logIgnoredError('fetchGoldRank', error, stackTrace);
+      return;
     }
+    _logIgnoredError(
+      'fetchGoldRank',
+      result.errorOrNull ?? 'Unknown error',
+      StackTrace.current,
+    );
   }
 
   Future<void> _fetchGuardList(int roomId, int ruid) async {
-    try {
-      final list = await ref
-          .read(liveRepositoryProvider)
-          .getGuardList(roomId: roomId, ruid: ruid);
+    final result = await ref
+        .read(liveRepositoryProvider)
+        .getGuardList(roomId: roomId, ruid: ruid);
+    if (result.dataOrNull case final list?) {
       state = state.copyWith(guardList: list);
-    } catch (error, stackTrace) {
-      _logIgnoredError('fetchGuardList', error, stackTrace);
+      return;
     }
+    _logIgnoredError(
+      'fetchGuardList',
+      result.errorOrNull ?? 'Unknown error',
+      StackTrace.current,
+    );
   }
 
   Future<void> _fetchDanmakuConfig(int roomId) async {
-    try {
-      final config = await ref.read(liveRepositoryProvider).getDanmakuConfig(roomId);
+    final result = await ref.read(liveRepositoryProvider).getDanmakuConfig(roomId);
+    if (result.dataOrNull case final config?) {
       state = state.copyWith(danmakuConfig: config);
-    } catch (error, stackTrace) {
-      _logIgnoredError('fetchDanmakuConfig', error, stackTrace);
+      return;
     }
+    _logIgnoredError(
+      'fetchDanmakuConfig',
+      result.errorOrNull ?? 'Unknown error',
+      StackTrace.current,
+    );
   }
 
   Future<void> _fetchHistoryDanmaku(int roomId) async {
-    try {
-      final history = await ref.read(liveRepositoryProvider).getHistoryDanmaku(roomId);
-      state = state.copyWith(danmakuHistory: history.room.reversed.toList());
-    } catch (error, stackTrace) {
-      _logIgnoredError('fetchHistoryDanmaku', error, stackTrace);
+    final result = await ref.read(liveRepositoryProvider).getHistoryDanmaku(roomId);
+    if (result.dataOrNull case final history?) {
+      _danmakuFeed(roomId).seed(history.room.reversed);
+      return;
     }
+    _logIgnoredError(
+      'fetchHistoryDanmaku',
+      result.errorOrNull ?? 'Unknown error',
+      StackTrace.current,
+    );
   }
 
   void toggleDanmaku() {
-    state = state.copyWith(isDanmakuEnabled: !state.isDanmakuEnabled);
+    _danmakuFeed(state.roomId).toggleEnabled();
   }
 
   Future<void> sendDanmaku(String msg) async {
@@ -192,5 +229,9 @@ class LiveRoomController extends _$LiveRoomController {
 
   void _logIgnoredError(String scope, Object error, StackTrace stackTrace) {
     debugPrint('LiveRoomController::$scope ignored error: $error\n$stackTrace');
+  }
+
+  LiveDanmakuFeedController _danmakuFeed(int roomId) {
+    return ref.read(liveDanmakuFeedControllerProvider(roomId).notifier);
   }
 }

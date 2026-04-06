@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/notification/notification.dart';
-import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
+import 'package:culcul/features/profile/presentation.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/core/utils/format_extensions.dart';

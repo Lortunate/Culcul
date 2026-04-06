@@ -266,9 +266,18 @@ class NotificationRepositoryImpl
   }
 
   @override
-  Future<void> syncUnreadCount({required int ownerUid, bool force = false}) async {
-    if (!await _shouldSync(ownerUid: ownerUid, scope: 'unread', force: force)) return;
-    final response = await requestApi(() => _api.getUnreadCount());
+  Future<Result<void, AppError>> syncUnreadCount({
+    required int ownerUid,
+    bool force = false,
+  }) async {
+    if (!await _shouldSync(ownerUid: ownerUid, scope: 'unread', force: force)) {
+      return const Success(null);
+    }
+    final responseResult = await requestApiResult(() => _api.getUnreadCount());
+    if (responseResult.errorOrNull case final error?) {
+      return Failure(error);
+    }
+    final response = responseResult.dataOrNull!;
     final now = _nowSeconds();
 
     await _database
@@ -287,11 +296,15 @@ class NotificationRepositoryImpl
       hasMore: true,
     );
     await _maybeCleanup(ownerUid);
+    return const Success(null);
   }
 
   @override
-  Future<void> syncSessions({required int ownerUid, bool force = false}) async {
-    await _syncSessionsRemote(
+  Future<Result<void, AppError>> syncSessions({
+    required int ownerUid,
+    bool force = false,
+  }) async {
+    return _syncSessionsRemote(
       ownerUid: ownerUid,
       sessionType: PrivateSessionType.user,
       force: force,
@@ -299,12 +312,12 @@ class NotificationRepositoryImpl
   }
 
   @override
-  Future<void> syncSessionsOlder({
+  Future<Result<void, AppError>> syncSessionsOlder({
     required int ownerUid,
     required PrivateSessionType sessionType,
     required int endTs,
   }) async {
-    await _syncSessionsRemote(
+    return _syncSessionsRemote(
       ownerUid: ownerUid,
       sessionType: sessionType,
       endTs: endTs,
@@ -312,22 +325,28 @@ class NotificationRepositoryImpl
     );
   }
 
-  Future<void> _syncSessionsRemote({
+  Future<Result<void, AppError>> _syncSessionsRemote({
     required int ownerUid,
     required PrivateSessionType sessionType,
     int? endTs,
     bool force = false,
   }) async {
     final scope = 'sessions:${sessionType.value}:${endTs == null ? "head" : "older"}';
-    if (!await _shouldSync(ownerUid: ownerUid, scope: scope, force: force)) return;
+    if (!await _shouldSync(ownerUid: ownerUid, scope: scope, force: force)) {
+      return const Success(null);
+    }
 
-    final response = await requestApi(
+    final responseResult = await requestApiResult(
       () => _api.getPrivateSessions(
         sessionType: sessionType.value,
         size: _pageSize,
         endTs: endTs,
       ),
     );
+    if (responseResult.errorOrNull case final error?) {
+      return Failure(error);
+    }
+    final response = responseResult.dataOrNull!;
     final now = _nowSeconds();
     final sessions = response.sessionList ?? const <PrivateMessageSession>[];
 
@@ -368,15 +387,16 @@ class NotificationRepositoryImpl
       hasMore: response.hasMore == 1,
     );
     await _maybeCleanup(ownerUid);
+    return const Success(null);
   }
 
   @override
-  Future<void> syncMessagesHead({
+  Future<Result<void, AppError>> syncMessagesHead({
     required int ownerUid,
     required int talkerId,
     required PrivateSessionType sessionType,
   }) async {
-    await _syncMessagesRemote(
+    return _syncMessagesRemote(
       ownerUid: ownerUid,
       talkerId: talkerId,
       sessionType: sessionType,
@@ -385,14 +405,14 @@ class NotificationRepositoryImpl
   }
 
   @override
-  Future<void> syncMessagesOlder({
+  Future<Result<void, AppError>> syncMessagesOlder({
     required int ownerUid,
     required int talkerId,
     required PrivateSessionType sessionType,
     required int endSeqno,
   }) async {
-    if (endSeqno <= 0) return;
-    await _syncMessagesRemote(
+    if (endSeqno <= 0) return const Success(null);
+    return _syncMessagesRemote(
       ownerUid: ownerUid,
       talkerId: talkerId,
       sessionType: sessionType,
@@ -401,7 +421,7 @@ class NotificationRepositoryImpl
     );
   }
 
-  Future<void> _syncMessagesRemote({
+  Future<Result<void, AppError>> _syncMessagesRemote({
     required int ownerUid,
     required int talkerId,
     required PrivateSessionType sessionType,
@@ -410,9 +430,11 @@ class NotificationRepositoryImpl
   }) async {
     final scope =
         'messages:${sessionType.value}:$talkerId:${endSeqno == null ? "head" : "older"}';
-    if (!await _shouldSync(ownerUid: ownerUid, scope: scope, force: force)) return;
+    if (!await _shouldSync(ownerUid: ownerUid, scope: scope, force: force)) {
+      return const Success(null);
+    }
 
-    final response = await requestApi(
+    final responseResult = await requestApiResult(
       () => _api.getPrivateMessages(
         talkerId: talkerId,
         sessionType: sessionType.value,
@@ -420,6 +442,10 @@ class NotificationRepositoryImpl
         endSeqno: endSeqno,
       ),
     );
+    if (responseResult.errorOrNull case final error?) {
+      return Failure(error);
+    }
+    final response = responseResult.dataOrNull!;
     final now = _nowSeconds();
     final messages = response.messages ?? const <PrivateMessageDetail>[];
 
@@ -458,24 +484,25 @@ class NotificationRepositoryImpl
       hasMore: response.hasMore == 1,
     );
     await _maybeCleanup(ownerUid);
+    return const Success(null);
   }
 
   @override
-  Future<void> syncFeedHead({
+  Future<Result<void, AppError>> syncFeedHead({
     required int ownerUid,
     required NotificationFeedType type,
   }) async {
-    await _syncFeedRemote(ownerUid: ownerUid, type: type, force: true);
+    return _syncFeedRemote(ownerUid: ownerUid, type: type, force: true);
   }
 
   @override
-  Future<void> syncFeedOlder({
+  Future<Result<void, AppError>> syncFeedOlder({
     required int ownerUid,
     required NotificationFeedType type,
     required int cursorId,
     required int cursorTime,
   }) async {
-    await _syncFeedRemote(
+    return _syncFeedRemote(
       ownerUid: ownerUid,
       type: type,
       cursorId: cursorId,
@@ -484,7 +511,7 @@ class NotificationRepositoryImpl
     );
   }
 
-  Future<void> _syncFeedRemote({
+  Future<Result<void, AppError>> _syncFeedRemote({
     required int ownerUid,
     required NotificationFeedType type,
     int? cursorId,
@@ -492,11 +519,17 @@ class NotificationRepositoryImpl
     bool force = false,
   }) async {
     final scope = 'feed:${type.value}:${cursorId == null ? "head" : "older"}';
-    if (!await _shouldSync(ownerUid: ownerUid, scope: scope, force: force)) return;
+    if (!await _shouldSync(ownerUid: ownerUid, scope: scope, force: force)) {
+      return const Success(null);
+    }
 
     final now = _nowSeconds();
     if (type == NotificationFeedType.system) {
-      final items = await _fetchSystemNotifications();
+      final itemsResult = await _fetchSystemNotifications();
+      if (itemsResult.errorOrNull case final error?) {
+        return Failure(error);
+      }
+      final items = itemsResult.dataOrNull!;
       await _database.transaction(() async {
         for (final item in items) {
           await _database
@@ -520,14 +553,18 @@ class NotificationRepositoryImpl
         hasMore: false,
       );
       await _maybeCleanup(ownerUid);
-      return;
+      return const Success(null);
     }
 
-    final response = await _fetchReplyLikeAtResponse(
+    final responseResult = await _fetchReplyLikeAtResponse(
       type: type,
       id: cursorId,
       time: cursorTime,
     );
+    if (responseResult.errorOrNull case final error?) {
+      return Failure(error);
+    }
+    final response = responseResult.dataOrNull!;
 
     await _database.transaction(() async {
       for (final item in response.items) {
@@ -559,6 +596,7 @@ class NotificationRepositoryImpl
       hasMore: !response.cursor.isEnd,
     );
     await _maybeCleanup(ownerUid);
+    return const Success(null);
   }
 
   Future<void> retryFailedOutbox({
@@ -592,10 +630,8 @@ class NotificationRepositoryImpl
 
   @override
   Future<Result<ImageUploadResult, AppError>> uploadImage(File file) async {
-    return requestResult(() async {
-      final response = await requestApi(() => _api.uploadImage(file: file));
-      return response.toDomain();
-    });
+    final result = await requestApiResult(() => _api.uploadImage(file: file));
+    return result.map((response) => response.toDomain());
   }
 
   @override
@@ -659,23 +695,21 @@ class NotificationRepositoryImpl
           );
     });
 
-    final result = await requestResult(() async {
-      final response = await requestApi(
-        () => _api.sendPrivateMessage(
-          wSenderUid: ownerUid,
-          wReceiverId: receiverId,
-          wDevId: devId,
-          senderUid: ownerUid,
-          receiverId: receiverId,
-          receiverType: receiverType.value,
-          msgType: messageType.value,
-          devId: devId,
-          timestamp: now,
-          content: contentRawJson,
-        ),
-      );
-      return response.toDomain();
-    });
+    final responseResult = await requestApiResult(
+      () => _api.sendPrivateMessage(
+        wSenderUid: ownerUid,
+        wReceiverId: receiverId,
+        wDevId: devId,
+        senderUid: ownerUid,
+        receiverId: receiverId,
+        receiverType: receiverType.value,
+        msgType: messageType.value,
+        devId: devId,
+        timestamp: now,
+        content: contentRawJson,
+      ),
+    );
+    final result = responseResult.map((response) => response.toDomain());
 
     await result.when(
       success: (value) async {
@@ -851,70 +885,78 @@ class NotificationRepositoryImpl
     }
   }
 
-  Future<ReplyResponse> _fetchReplyLikeAtResponse({
+  Future<Result<ReplyResponse, AppError>> _fetchReplyLikeAtResponse({
     required NotificationFeedType type,
     int? id,
     int? time,
   }) async {
     switch (type) {
       case NotificationFeedType.reply:
-        return requestApi(() => _api.getReplyList(id: id, replyTime: time));
+        return requestApiResult(() => _api.getReplyList(id: id, replyTime: time));
       case NotificationFeedType.at:
-        return requestApi(() => _api.getAtList(id: id, atTime: time));
+        return requestApiResult(() => _api.getAtList(id: id, atTime: time));
       case NotificationFeedType.like:
-        final likeResponse = await requestApi(
+        final likeResult = await requestApiResult(
           () => _api.getLikeList(id: id, likeTime: time),
         );
-        return ReplyResponse(
+        return likeResult.map((likeResponse) => ReplyResponse(
           cursor: likeResponse.total.cursor,
           items: likeResponse.total.items,
           lastViewAt: likeResponse.latest.lastViewAt,
-        );
+        ));
       case NotificationFeedType.system:
-        throw UnsupportedError('System notifications use a dedicated API flow');
+        return Failure(
+          AppError.data('System notifications use a dedicated API flow'),
+        );
     }
   }
 
-  Future<List<SystemNotificationItem>> _fetchSystemNotifications() async {
-    final sessionRes = await requestApi(
+  Future<Result<List<SystemNotificationItem>, AppError>> _fetchSystemNotifications() async {
+    final sessionResult = await requestApiResult(
       () => _api.getPrivateSessions(
         sessionType: PrivateSessionType.system.value,
         size: _pageSize,
       ),
     );
+    if (sessionResult.errorOrNull case final error?) {
+      return Failure(error);
+    }
+    final sessionRes = sessionResult.dataOrNull!;
     final talkerId = _resolveSystemTalkerId(sessionRes);
     if (talkerId == null) {
-      return const <SystemNotificationItem>[];
+      return const Success(<SystemNotificationItem>[]);
     }
 
-    final msgsRes = await requestApi(
+    final msgsResult = await requestApiResult(
       () => _api.getPrivateMessages(
         talkerId: talkerId,
         sessionType: PrivateSessionType.user.value,
         size: _pageSize,
       ),
     );
-    return msgsRes.messages?.map((msg) {
-          final contentMap = msg.contentMap;
-          final nestedContentMap = _toJsonMap(contentMap?['content']);
-          return SystemNotificationItem(
-            id: msg.msgSeqno,
-            title: _firstNonEmptyString([
-              contentMap?['title'],
-              nestedContentMap?['title'],
-            ]),
-            text: _extractSystemNoticeText(contentMap, nestedContentMap),
-            time: msg.timestamp,
-            uri: _extractSystemNoticeUri(contentMap, nestedContentMap),
-            jumpText: _firstNonEmptyString([
-              contentMap?['jump_text'],
-              contentMap?['jumpText'],
-              nestedContentMap?['jump_text'],
-              nestedContentMap?['jumpText'],
-            ]),
-          );
-        }).toList() ??
-        const <SystemNotificationItem>[];
+    return msgsResult.map(
+      (msgsRes) => msgsRes.messages?.map((msg) {
+            final contentMap = msg.contentMap;
+            final nestedContentMap = _toJsonMap(contentMap?['content']);
+            return SystemNotificationItem(
+              id: msg.msgSeqno,
+              title: _firstNonEmptyString([
+                contentMap?['title'],
+                nestedContentMap?['title'],
+              ]),
+              text: _extractSystemNoticeText(contentMap, nestedContentMap),
+              time: msg.timestamp,
+              uri: _extractSystemNoticeUri(contentMap, nestedContentMap),
+              jumpText: _firstNonEmptyString([
+                contentMap?['jump_text'],
+                contentMap?['jumpText'],
+                nestedContentMap?['jump_text'],
+                nestedContentMap?['jumpText'],
+              ]),
+            );
+          }).toList() ??
+          const <SystemNotificationItem>[],
+    );
   }
 
   int? _resolveSystemTalkerId(PrivateMessageSessionResponse response) {

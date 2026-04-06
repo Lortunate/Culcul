@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/features/video/domain/entities/play_url.dart' as domain;
-import 'package:culcul/features/video/presentation/utils/playable_urls.dart';
+import 'package:culcul/features/video/presentation/widgets/playable_urls.dart';
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:flutter/foundation.dart';

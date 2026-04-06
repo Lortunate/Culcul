@@ -6,7 +6,7 @@ import 'package:culcul/features/video/presentation/view_models/playback_snapshot
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/listen_settings_sheet.dart';
-import 'package:culcul/features/video/presentation/widgets/hooks/use_listen_audio_mode.dart';
+import 'package:culcul/features/video/presentation/hooks/use_listen_audio_mode.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/player_theme.dart';
 import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';

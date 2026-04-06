@@ -1,31 +1,34 @@
 import 'package:culcul/features/live/presentation/view_models/live_room_view_model.dart';
-import 'package:culcul/features/live/presentation/view_models/live_room_state.dart';
+import 'package:culcul/features/live/presentation/view_models/live_danmaku_feed_view_model.dart';
 import 'package:culcul/features/live/presentation/widgets/live_danmaku_view.dart';
-import 'package:culcul/features/live/domain/entities/live_entities.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class LiveRoomContent extends ConsumerWidget {
   final int roomId;
-  final LiveRoomState state;
 
-  const LiveRoomContent({super.key, required this.roomId, required this.state});
+  const LiveRoomContent({super.key, required this.roomId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (state.isLoading) return const Center(child: CircularProgressIndicator());
-    if (state.error != null) {
+    final provider = liveRoomControllerProvider(roomId);
+    final isLoading = ref.watch(provider.select((value) => value.isLoading));
+    final error = ref.watch(provider.select((value) => value.error));
+    final title = ref.watch(provider.select((value) => value.roomInfo?.title));
+
+    if (isLoading) return const Center(child: CircularProgressIndicator());
+    if (error != null) {
       return _LiveRoomError(
-        error: state.error!,
+        error: error,
         onRetry: () => ref.read(liveRoomControllerProvider(roomId).notifier).refresh(),
       );
     }
 
     return Column(
       children: [
-        _LiveRoomTitle(title: state.roomInfo?.title),
-        Expanded(child: _DanmakuSection(history: state.danmakuHistory)),
+        _LiveRoomTitle(title: title),
+        Expanded(child: _DanmakuSection(roomId: roomId)),
       ],
     );
   }
@@ -59,16 +62,22 @@ class _LiveRoomTitle extends StatelessWidget {
   }
 }
 
-class _DanmakuSection extends StatelessWidget {
-  const _DanmakuSection({required this.history});
+class _DanmakuSection extends ConsumerWidget {
+  const _DanmakuSection({required this.roomId});
 
-  final List<LiveDanmakuItem> history;
+  final int roomId;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final feed = ref.watch(liveDanmakuFeedProvider(roomId));
+    final history = feed.items;
+
     return Stack(
       children: [
-        LiveDanmakuView(history: history),
+        if (feed.isEnabled)
+          LiveDanmakuView(history: history)
+        else
+          const SizedBox.expand(),
         const _DanmakuTopGradient(),
       ],
     );

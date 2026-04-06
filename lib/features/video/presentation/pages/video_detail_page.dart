@@ -1,7 +1,7 @@
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
-import 'package:culcul/features/video/presentation/widgets/hooks/use_video_orientation.dart';
-import 'package:culcul/features/video/presentation/widgets/hooks/use_video_session.dart';
+import 'package:culcul/features/video/presentation/hooks/use_video_orientation.dart';
+import 'package:culcul/features/video/presentation/hooks/use_video_session.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/video_comments_view.dart';
 import 'package:culcul/features/video/presentation/widgets/info/video_info_view.dart';
 import 'package:culcul/features/video/presentation/widgets/info/video_tab_bar.dart';
@@ -35,6 +35,19 @@ class VideoDetailPage extends HookConsumerWidget {
       currentCid: currentCid,
     );
     final tabController = useTabController(initialLength: 2);
+    final hasVisitedComments = useState(false);
+
+    useEffect(() {
+      void handleTabChanged() {
+        if (!hasVisitedComments.value && tabController.index == 1) {
+          hasVisitedComments.value = true;
+        }
+      }
+
+      tabController.addListener(handleTabChanged);
+      handleTabChanged();
+      return () => tabController.removeListener(handleTabChanged);
+    }, [tabController]);
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -63,7 +76,9 @@ class VideoDetailPage extends HookConsumerWidget {
                     controller: tabController,
                     children: [
                       VideoInfoView(bvid: bvid),
-                      VideoCommentsView(bvid: bvid),
+                      hasVisitedComments.value
+                          ? VideoCommentsView(bvid: bvid)
+                          : const SizedBox.expand(),
                     ],
                   ),
                 ),

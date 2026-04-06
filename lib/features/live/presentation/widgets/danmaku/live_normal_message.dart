@@ -10,68 +10,50 @@ class LiveNormalMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final spans = <InlineSpan>[];
+    final hasBadge = item.guardLevel > 0 || item.medal != null || item.isadmin == 1;
 
-    if (item.guardLevel > 0) {
-      spans.add(
-        WidgetSpan(
-          alignment: PlaceholderAlignment.middle,
-          child: Padding(
-            padding: const EdgeInsets.only(right: 4),
-            child: LiveGuardBadge(level: item.guardLevel),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (hasBadge)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 2),
+            child: Wrap(
+              spacing: 4,
+              runSpacing: 2,
+              children: [
+                if (item.guardLevel > 0) LiveGuardBadge(level: item.guardLevel),
+                if (item.medal != null) LiveMedalBadge(medal: item.medal!),
+                if (item.isadmin == 1) const LiveAdminBadge(),
+              ],
+            ),
           ),
-        ),
-      );
-    }
-
-    if (item.medal.length >= 2) {
-      spans.add(
-        WidgetSpan(
-          alignment: PlaceholderAlignment.middle,
-          child: Padding(
-            padding: const EdgeInsets.only(right: 4),
-            child: LiveMedalBadge(medal: item.medal),
+        RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: '${item.nickname}：',
+                style: TextStyle(
+                  color: colorScheme.onPrimary.withValues(alpha: 0.66),
+                  fontWeight: FontWeight.w500,
+                  fontSize: 13,
+                  height: 1.25,
+                ),
+              ),
+              TextSpan(
+                text: item.text,
+                style: TextStyle(
+                  color: colorScheme.onPrimary.withValues(alpha: 0.92),
+                  fontSize: 13,
+                  height: 1.25,
+                ),
+              ),
+            ],
           ),
+          maxLines: 5,
+          overflow: TextOverflow.ellipsis,
         ),
-      );
-    }
-
-    if (item.isadmin == 1) {
-      spans.add(
-        const WidgetSpan(
-          alignment: PlaceholderAlignment.middle,
-          child: Padding(padding: EdgeInsets.only(right: 4), child: LiveAdminBadge()),
-        ),
-      );
-    }
-
-    spans.add(
-      TextSpan(
-        text: '${item.nickname}：',
-        style: TextStyle(
-          color: colorScheme.onPrimary.withValues(alpha: 0.66),
-          fontWeight: FontWeight.w500,
-          fontSize: 13,
-          height: 1.25,
-        ),
-      ),
-    );
-
-    spans.add(
-      TextSpan(
-        text: item.text,
-        style: TextStyle(
-          color: colorScheme.onPrimary.withValues(alpha: 0.92),
-          fontSize: 13,
-          height: 1.25,
-        ),
-      ),
-    );
-
-    return RichText(
-      text: TextSpan(children: spans),
-      maxLines: 5,
-      overflow: TextOverflow.ellipsis,
+      ],
     );
   }
 }

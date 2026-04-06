@@ -6,18 +6,6 @@ import 'package:culcul/core/result/result.dart';
 mixin RequestExecutorBinding {
   RequestExecutor get requestExecutor;
 
-  Future<T> request<T>(Future<T> Function() apiCall) {
-    return requestExecutor.runOrThrow(apiCall);
-  }
-
-  Future<T> requestApi<T>(Future<ApiResponse<T>> Function() apiCall) {
-    return requestExecutor.runApiOrThrow(apiCall);
-  }
-
-  Future<void> requestVoid(Future<ApiResponse<dynamic>> Function() apiCall) {
-    return requestExecutor.runUnitOrThrow(apiCall);
-  }
-
   Future<Result<T, AppError>> requestResult<T>(Future<T> Function() apiCall) {
     return requestExecutor.run(apiCall);
   }

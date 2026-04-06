@@ -2,19 +2,11 @@ import 'dart:io';
 
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/auth/domain/entities/user_entity.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/auth/domain.dart';
+import 'package:culcul/features/auth/presentation.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';
-import 'package:culcul/features/notification/domain/entities/image_upload_result.dart';
-import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
-import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
-import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
-import 'package:culcul/features/notification/domain/entities/private_message.dart';
-import 'package:culcul/features/notification/domain/entities/private_session.dart';
-import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
-import 'package:culcul/features/notification/domain/entities/system_notice.dart';
-import 'package:culcul/features/notification/domain/repositories/notification_repository.dart';
-import 'package:culcul/features/notification/presentation/view_models/notification_feed_view_model.dart';
+import 'package:culcul/features/notification/domain.dart';
+import 'package:culcul/features/notification/presentation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -77,49 +69,57 @@ class _FeedFakeRepository implements NotificationRepository {
   }
 
   @override
-  Future<void> syncUnreadCount({required int ownerUid, bool force = false}) async {}
+  Future<Result<void, AppError>> syncUnreadCount({
+    required int ownerUid,
+    bool force = false,
+  }) async => const Success(null);
 
   @override
-  Future<void> syncSessions({required int ownerUid, bool force = false}) async {}
+  Future<Result<void, AppError>> syncSessions({
+    required int ownerUid,
+    bool force = false,
+  }) async => const Success(null);
 
   @override
-  Future<void> syncSessionsOlder({
+  Future<Result<void, AppError>> syncSessionsOlder({
     required int ownerUid,
     required PrivateSessionType sessionType,
     required int endTs,
-  }) async {}
+  }) async => const Success(null);
 
   @override
-  Future<void> syncMessagesHead({
+  Future<Result<void, AppError>> syncMessagesHead({
     required int ownerUid,
     required int talkerId,
     required PrivateSessionType sessionType,
-  }) async {}
+  }) async => const Success(null);
 
   @override
-  Future<void> syncMessagesOlder({
+  Future<Result<void, AppError>> syncMessagesOlder({
     required int ownerUid,
     required int talkerId,
     required PrivateSessionType sessionType,
     required int endSeqno,
-  }) async {}
+  }) async => const Success(null);
 
   @override
-  Future<void> syncFeedHead({
+  Future<Result<void, AppError>> syncFeedHead({
     required int ownerUid,
     required NotificationFeedType type,
   }) async {
     syncHeadCalls.add(type);
+    return const Success(null);
   }
 
   @override
-  Future<void> syncFeedOlder({
+  Future<Result<void, AppError>> syncFeedOlder({
     required int ownerUid,
     required NotificationFeedType type,
     required int cursorId,
     required int cursorTime,
   }) async {
     syncOlderCalls.add(type);
+    return const Success(null);
   }
 
   @override

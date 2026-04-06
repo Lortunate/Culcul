@@ -9,26 +9,17 @@ final searchSuggestionsProvider = FutureProvider.autoDispose
     .family<List<SearchSuggestionEntry>, String>((ref, term) async {
       if (term.isEmpty) return [];
       final result = await ref.watch(searchRepositoryProvider).getSuggestions(term);
-      return result.when(
-        success: (items) => items,
-        failure: (error) => throw error.toException(),
-      );
+      return result.dataOrNull ?? const <SearchSuggestionEntry>[];
     });
 
 final defaultSearchProvider = FutureProvider<SearchDefaultHint?>((ref) async {
   final result = await ref.watch(searchRepositoryProvider).getDefaultSearch();
-  return result.when(
-    success: (hint) => hint,
-    failure: (error) => throw error.toException(),
-  );
+  return result.dataOrNull;
 });
 
 final trendingRankingProvider = FutureProvider<List<SearchTrendingKeyword>>((ref) async {
   final result = await ref.watch(searchRepositoryProvider).getTrendingRanking();
-  return result.when(
-    success: (items) => items,
-    failure: (error) => throw error.toException(),
-  );
+  return result.dataOrNull ?? const <SearchTrendingKeyword>[];
 });
 
 class SearchResultParams {
@@ -92,10 +83,7 @@ class SearchResultController extends AsyncNotifier<SearchResultPage?> {
           order: _params.order,
           duration: _params.duration,
         );
-    return result.when(
-      success: (page) => page,
-      failure: (error) => throw error.toException(),
-    );
+    return result.dataOrNull;
   }
 
   Future<void> fetchMore() async {
@@ -115,10 +103,7 @@ class SearchResultController extends AsyncNotifier<SearchResultPage?> {
             duration: _params.duration,
             page: oldState.page + 1,
           );
-      final newData = result.when(
-        success: (page) => page,
-        failure: (error) => throw error.toException(),
-      );
+      final newData = result.dataOrNull ?? oldState;
       return newData.copyWith(items: [...oldState.items, ...newData.items]);
     });
   }

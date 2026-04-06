@@ -22,12 +22,12 @@ abstract class VideoRepository {
     required String message,
   });
 
-  Future<VideoDetail> fetchVideoView(String bvid);
-  Future<VideoDimension?> fetchVideoEntryDimension(String bvid);
+  Future<Result<VideoDetail, AppError>> fetchVideoView(String bvid);
+  Future<Result<VideoDimension?, AppError>> fetchVideoEntryDimension(String bvid);
 
-  Future<List<VideoTag>> fetchVideoTags(String bvid);
+  Future<Result<List<VideoTag>, AppError>> fetchVideoTags(String bvid);
 
-  Future<PlayUrl> fetchVideoPlayUrl({
+  Future<Result<PlayUrl, AppError>> fetchVideoPlayUrl({
     required int aid,
     required int cid,
     int quality = 80,
@@ -36,19 +36,23 @@ abstract class VideoRepository {
     int fourk = 1,
   });
 
-  Future<PlayerInfo> fetchPlayerInfo({required int aid, required int cid});
+  Future<Result<PlayerInfo, AppError>> fetchPlayerInfo({required int aid, required int cid});
 
-  Future<List<RelatedVideo>> fetchRelatedVideos(String bvid);
+  Future<Result<List<RelatedVideo>, AppError>> fetchRelatedVideos(String bvid);
 
-  Future<CommentResponse> fetchComments({
+  Future<Result<CommentResponse, AppError>> fetchComments({
     required int oid,
     CommentSort sort = CommentSort.hot,
     int page = 1,
   });
 
-  Future<CommentResponse> fetchReply({required int oid, required int root, int page = 1});
+  Future<Result<CommentResponse, AppError>> fetchReply({
+    required int oid,
+    required int root,
+    int page = 1,
+  });
 
-  Future<SubtitleContent> fetchSubtitleContent(String url);
+  Future<Result<SubtitleContent, AppError>> fetchSubtitleContent(String url);
 
   Future<Result<void, AppError>> reportVideoProgress({
     required int aid,

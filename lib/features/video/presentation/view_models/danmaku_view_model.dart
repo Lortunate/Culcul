@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/video/video.dart';
 import 'package:culcul/protos/dm.pb.dart';
@@ -19,11 +18,9 @@ class DanmakuProvider extends _$DanmakuProvider {
     required int pid,
     required int segmentIndex,
   }) async {
-    final result = await const RequestExecutor().run(
-      () => ref
-          .read(danmakuRepositoryProvider)
-          .fetchDanmakuSegment(oid: oid, pid: pid, segmentIndex: segmentIndex),
-    );
+    final result = await ref
+        .read(danmakuRepositoryProvider)
+        .fetchDanmakuSegment(oid: oid, pid: pid, segmentIndex: segmentIndex);
     return result.map((value) => value.elems);
   }
 }

@@ -30,19 +30,21 @@ class FavRepositoryImpl with RequestExecutorBinding implements domain.FavoriteRe
   @override
   RequestExecutor get requestExecutor => _requestExecutor;
 
-  Future<FavFolderListResponse> getCreatedFoldersModel({required int upMid}) async {
-    return requestApi(() => _api.getCreatedFolders(upMid));
+  Future<Result<FavFolderListResponse, AppError>> getCreatedFoldersModel({
+    required int upMid,
+  }) async {
+    return requestApiResult(() => _api.getCreatedFolders(upMid));
   }
 
-  Future<FavFolderListResponse> getCollectedFoldersModel({
+  Future<Result<FavFolderListResponse, AppError>> getCollectedFoldersModel({
     required int upMid,
     required int pn,
     int ps = _defaultPageSize,
   }) async {
-    return requestApi(() => _api.getCollectedFolders(upMid, pn, ps));
+    return requestApiResult(() => _api.getCollectedFolders(upMid, pn, ps));
   }
 
-  Future<FavResourceListResponse> getFolderResourcesModel({
+  Future<Result<FavResourceListResponse, AppError>> getFolderResourcesModel({
     required int mediaId,
     required int pn,
     int ps = _defaultPageSize,
@@ -51,7 +53,7 @@ class FavRepositoryImpl with RequestExecutorBinding implements domain.FavoriteRe
     int? type,
     int? tid,
   }) async {
-    return requestApi(
+    return requestApiResult(
       () => _api.getFolderResources(
         mediaId,
         pn,
@@ -65,35 +67,40 @@ class FavRepositoryImpl with RequestExecutorBinding implements domain.FavoriteRe
     );
   }
 
-  Future<FavFolderModel> addFolderModel({
+  Future<Result<FavFolderModel, AppError>> addFolderModel({
     required String title,
     String? intro,
     int? privacy,
     String? cover,
   }) async {
-    return requestApi(
+    return requestApiResult(
       () => _api.addFolder(title, intro: intro, privacy: privacy, cover: cover),
     );
   }
 
-  Future<FavFolderModel> editFolderModel({
+  Future<Result<FavFolderModel, AppError>> editFolderModel({
     required int mediaId,
     required String title,
     String? intro,
     int? privacy,
     String? cover,
   }) async {
-    return requestApi(
+    return requestApiResult(
       () => _api.editFolder(mediaId, title, intro: intro, privacy: privacy, cover: cover),
     );
   }
 
-  Future<void> delFolder({required String mediaIds}) async {
-    return requestVoid(() => _api.delFolder(mediaIds));
+  Future<Result<void, AppError>> delFolder({required String mediaIds}) async {
+    return requestVoidResult(() => _api.delFolder(mediaIds));
   }
 
-  Future<void> batchDelResource({required String resources, required int mediaId}) async {
-    return requestVoid(() => _api.batchDelResource(resources, mediaId, platform: 'web'));
+  Future<Result<void, AppError>> batchDelResource({
+    required String resources,
+    required int mediaId,
+  }) async {
+    return requestVoidResult(
+      () => _api.batchDelResource(resources, mediaId, platform: 'web'),
+    );
   }
 
   @override
@@ -102,20 +109,24 @@ class FavRepositoryImpl with RequestExecutorBinding implements domain.FavoriteRe
   }
 
   @override
-  Future<FavoriteFolderPage> getCreatedFolders({required int upMid}) async {
-    return (await getCreatedFoldersModel(upMid: upMid)).toDomain();
+  Future<Result<FavoriteFolderPage, AppError>> getCreatedFolders({
+    required int upMid,
+  }) async {
+    final result = await getCreatedFoldersModel(upMid: upMid);
+    return result.map((data) => data.toDomain());
   }
 
   @override
-  Future<FavoriteFolderPage> getCollectedFolders({
+  Future<Result<FavoriteFolderPage, AppError>> getCollectedFolders({
     required int upMid,
     required int page,
   }) async {
-    return (await getCollectedFoldersModel(upMid: upMid, pn: page)).toDomain();
+    final result = await getCollectedFoldersModel(upMid: upMid, pn: page);
+    return result.map((data) => data.toDomain());
   }
 
   @override
-  Future<FavoriteResourcePage> getFolderResources({
+  Future<Result<FavoriteResourcePage, AppError>> getFolderResources({
     required int mediaId,
     required int page,
     String? keyword,
@@ -123,14 +134,15 @@ class FavRepositoryImpl with RequestExecutorBinding implements domain.FavoriteRe
     int? type,
     int? tid,
   }) async {
-    return (await getFolderResourcesModel(
+    final result = await getFolderResourcesModel(
       mediaId: mediaId,
       pn: page,
       keyword: keyword,
       order: order,
       type: type,
       tid: tid,
-    )).toDomain();
+    );
+    return result.map((data) => data.toDomain());
   }
 
   @override
@@ -140,14 +152,13 @@ class FavRepositoryImpl with RequestExecutorBinding implements domain.FavoriteRe
     int? privacy,
     String? cover,
   }) async {
-    return requestResult(() async {
-      return (await addFolderModel(
-        title: title,
-        intro: intro,
-        privacy: privacy,
-        cover: cover,
-      )).toDomain();
-    });
+    final result = await addFolderModel(
+      title: title,
+      intro: intro,
+      privacy: privacy,
+      cover: cover,
+    );
+    return result.map((data) => data.toDomain());
   }
 
   @override
@@ -158,22 +169,19 @@ class FavRepositoryImpl with RequestExecutorBinding implements domain.FavoriteRe
     int? privacy,
     String? cover,
   }) async {
-    return requestResult(() async {
-      return (await editFolderModel(
-        mediaId: mediaId,
-        title: title,
-        intro: intro,
-        privacy: privacy,
-        cover: cover,
-      )).toDomain();
-    });
+    final result = await editFolderModel(
+      mediaId: mediaId,
+      title: title,
+      intro: intro,
+      privacy: privacy,
+      cover: cover,
+    );
+    return result.map((data) => data.toDomain());
   }
 
   @override
   Future<Result<void, AppError>> deleteFolder({required String mediaIds}) {
-    return requestResult(() async {
-      await delFolder(mediaIds: mediaIds);
-    });
+    return delFolder(mediaIds: mediaIds);
   }
 
   @override
@@ -181,8 +189,6 @@ class FavRepositoryImpl with RequestExecutorBinding implements domain.FavoriteRe
     required String resources,
     required int mediaId,
   }) {
-    return requestResult(() async {
-      await batchDelResource(resources: resources, mediaId: mediaId);
-    });
+    return batchDelResource(resources: resources, mediaId: mediaId);
   }
 }

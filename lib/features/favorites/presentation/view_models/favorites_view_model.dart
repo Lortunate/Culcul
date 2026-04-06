@@ -1,6 +1,5 @@
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
-import 'package:culcul/core/network/request_executor.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/auth/presentation.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:culcul/features/favorites/favorites.dart';
@@ -18,7 +17,9 @@ class FavCreatedFolders extends _$FavCreatedFolders {
     }
     final mid = int.parse(authState.user!.id);
     final repository = ref.read(favRepositoryProvider);
-    final response = await repository.getCreatedFolders(upMid: mid);
+    final result = await repository.getCreatedFolders(upMid: mid);
+    final response = result.dataOrNull;
+    if (response == null) return <FavoriteFolder>[];
     final folders = response.folders;
     if (folders.isEmpty) return <FavoriteFolder>[];
 
@@ -28,13 +29,11 @@ class FavCreatedFolders extends _$FavCreatedFolders {
           return folder;
         }
 
-        final result = await const RequestExecutor().run(
-          () => repository.getFolderResources(
-            mediaId: folder.id,
-            page: 1,
-          ),
+        final resourcesResult = await repository.getFolderResources(
+          mediaId: folder.id,
+          page: 1,
         );
-        final resources = result.dataOrNull;
+        final resources = resourcesResult.dataOrNull;
         if (resources == null) {
           return folder;
         }
@@ -72,10 +71,10 @@ class FavCollectedFolders extends _$FavCollectedFolders
 
   @override
   Future<List<FavoriteFolder>> fetchPage(int page, {bool refresh = false}) async {
-    final response = await ref
+    final result = await ref
         .read(favRepositoryProvider)
         .getCollectedFolders(upMid: _mid, page: page);
-    return response.folders;
+    return result.dataOrNull?.folders ?? const <FavoriteFolder>[];
   }
 
   @override
@@ -105,13 +104,18 @@ class FavFolderResources extends _$FavFolderResources {
   Future<FavFolderDetailState> build(int mediaId) async {
     _page = 1;
     _hasMore = true;
-    return _fetchItems(mediaId, _page);
+    return (await _fetchItems(mediaId, _page)) ?? FavFolderDetailState(list: const []);
   }
 
-  Future<FavFolderDetailState> _fetchItems(int mediaId, int page) async {
-    final response = await ref
+  Future<FavFolderDetailState?> _fetchItems(int mediaId, int page) async {
+    final result = await ref
         .read(favRepositoryProvider)
         .getFolderResources(mediaId: mediaId, page: page);
+    final response = result.dataOrNull;
+    if (response == null) {
+      _hasMore = false;
+      return null;
+    }
     _hasMore = response.hasMore;
     return FavFolderDetailState(info: response.info, list: response.medias);
   }
@@ -120,10 +124,8 @@ class FavFolderResources extends _$FavFolderResources {
     if (!_hasMore || state.isLoading) return;
 
     final currentList = state.value?.list ?? [];
-    final result = await const RequestExecutor().run(() => _fetchItems(mediaId, _page + 1));
-    final newState = result.dataOrNull;
+    final newState = await _fetchItems(mediaId, _page + 1);
     if (newState == null) {
-      state = AsyncError(result.errorOrNull!, StackTrace.current);
       return;
     }
 

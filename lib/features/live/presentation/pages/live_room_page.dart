@@ -17,7 +17,17 @@ class LiveRoomPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     final provider = liveRoomControllerProvider(roomId);
-    final state = ref.watch(provider);
+    final headerData = ref.watch(
+      provider.select(
+        (state) => (
+          roomInfo: state.roomInfo,
+          anchorInfo: state.anchorInfo,
+          liveAnchorInfo: state.liveAnchorInfo,
+          guardList: state.guardList,
+          goldRank: state.goldRank,
+        ),
+      ),
+    );
     final notifier = ref.read(provider.notifier);
 
     return Scaffold(
@@ -28,17 +38,15 @@ class LiveRoomPage extends HookConsumerWidget {
           child: Column(
             children: [
               LiveHeader(
-                roomInfo: state.roomInfo,
-                anchorInfo: state.anchorInfo,
-                liveAnchorInfo: state.liveAnchorInfo,
-                guardList: state.guardList,
-                goldRank: state.goldRank,
+                roomInfo: headerData.roomInfo,
+                anchorInfo: headerData.anchorInfo,
+                liveAnchorInfo: headerData.liveAnchorInfo,
+                guardList: headerData.guardList,
+                goldRank: headerData.goldRank,
                 onFollow: notifier.toggleFollow,
               ),
               _LivePlayerSection(roomId: roomId),
-              Expanded(
-                child: LiveRoomContent(roomId: roomId, state: state),
-              ),
+              Expanded(child: LiveRoomContent(roomId: roomId)),
               LiveBottomBar(
                 onTapInput: () => _showInputSheet(context),
                 onGift: () {},

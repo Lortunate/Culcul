@@ -30,55 +30,60 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
   RequestExecutor get requestExecutor => _requestExecutor;
 
   @override
-  Future<LiveRoomDetailModel> getRoomInfo(int roomId) async {
-    final data = await requestApi(() => _api.getRoomInfo(roomId));
-    return data.toDomain();
+  Future<Result<LiveRoomDetailModel, AppError>> getRoomInfo(int roomId) async {
+    final result = await requestApiResult(() => _api.getRoomInfo(roomId));
+    return result.map((data) => data.toDomain());
   }
 
   @override
-  Future<LivePlayUrlModel> getPlayUrl({required int roomId, int? qn}) async {
-    final data = await requestApi(() => _api.getPlayUrl(roomId: roomId, qn: qn));
-    return data.toDomain();
+  Future<Result<LivePlayUrlModel, AppError>> getPlayUrl({
+    required int roomId,
+    int? qn,
+  }) async {
+    final result = await requestApiResult(() => _api.getPlayUrl(roomId: roomId, qn: qn));
+    return result.map((data) => data.toDomain());
   }
 
   @override
-  Future<LiveDanmakuConfigModel> getDanmakuConfig(int roomId) async {
-    final data = await requestApi(() => _api.getDanmakuConfig(roomId));
-    return data.toDomain();
+  Future<Result<LiveDanmakuConfigModel, AppError>> getDanmakuConfig(int roomId) async {
+    final result = await requestApiResult(() => _api.getDanmakuConfig(roomId));
+    return result.map((data) => data.toDomain());
   }
 
   @override
-  Future<LiveHistoryDanmakuModel> getHistoryDanmaku(int roomId) async {
-    final data = await requestApi(() => _api.getHistoryDanmaku(roomId));
-    return data.toDomain();
+  Future<Result<LiveHistoryDanmakuModel, AppError>> getHistoryDanmaku(int roomId) async {
+    final result = await requestApiResult(() => _api.getHistoryDanmaku(roomId));
+    return result.map((data) => data.toDomain());
   }
 
   @override
-  Future<LiveDanmuInfoModel> getDanmuInfo(int roomId) async {
-    final data = await requestApi(() => _api.getDanmuInfo(roomId, 0));
-    return data.toDomain();
+  Future<Result<LiveDanmuInfoModel, AppError>> getDanmuInfo(int roomId) async {
+    final result = await requestApiResult(() => _api.getDanmuInfo(roomId, 0));
+    return result.map((data) => data.toDomain());
   }
 
-  Future<List<dto.LiveRoomModel>> fetchRecommendListModels({int page = 1}) async {
-    final data = await requestApi(
+  Future<Result<List<dto.LiveRoomModel>, AppError>> fetchRecommendListModels({
+    int page = 1,
+  }) async {
+    final result = await requestApiResult(
       () => _api.getRecommendList(page: page, pageSize: _recommendPageSize),
     );
-    return data.roomList;
+    return result.map((data) => data.roomList);
   }
 
   @override
-  Future<LiveAnchorInfoModel> getAnchorInfo(int uid) async {
-    final data = await requestApi(() => _api.getAnchorInfo(uid));
-    return data.toDomain();
+  Future<Result<LiveAnchorInfoModel, AppError>> getAnchorInfo(int uid) async {
+    final result = await requestApiResult(() => _api.getAnchorInfo(uid));
+    return result.map((data) => data.toDomain());
   }
 
   @override
-  Future<LiveGoldRankModel> getOnlineGoldRank({
+  Future<Result<LiveGoldRankModel, AppError>> getOnlineGoldRank({
     required int ruid,
     required int roomId,
     int page = 1,
   }) async {
-    final data = await requestApi(
+    final result = await requestApiResult(
       () => _api.getOnlineGoldRank(
         ruid: ruid,
         roomId: roomId,
@@ -86,16 +91,16 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
         pageSize: _rankPageSize,
       ),
     );
-    return data.toDomain();
+    return result.map((data) => data.toDomain());
   }
 
   @override
-  Future<LiveGuardListModel> getGuardList({
+  Future<Result<LiveGuardListModel, AppError>> getGuardList({
     required int ruid,
     required int roomId,
     int page = 1,
   }) async {
-    final data = await requestApi(
+    final result = await requestApiResult(
       () => _api.getGuardList(
         ruid: ruid,
         roomId: roomId,
@@ -103,7 +108,7 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
         pageSize: _rankPageSize,
       ),
     );
-    return data.toDomain();
+    return result.map((data) => data.toDomain());
   }
 
   @override
@@ -121,9 +126,10 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
   }
 
   @override
-  Future<List<LiveRoomSummary>> getRecommendList({int page = 1}) async {
-    return (await fetchRecommendListModels(
-      page: page,
-    )).map((item) => item.toSummary()).toList();
+  Future<Result<List<LiveRoomSummary>, AppError>> getRecommendList({
+    int page = 1,
+  }) async {
+    final result = await fetchRecommendListModels(page: page);
+    return result.map((data) => data.map((item) => item.toSummary()).toList());
   }
 }

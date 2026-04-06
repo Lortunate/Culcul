@@ -39,18 +39,20 @@ class ListenSettingsSheet extends HookConsumerWidget {
           );
 
     void submitCustomMinutes() {
-      if (!isCustomMinutesValid) {
+      final minutes = parsedCustomMinutes;
+      if (!isCustomMinutesValid || minutes == null) {
         return;
       }
-      timerController.setCustomMinutes(parsedCustomMinutes!);
+      timerController.setCustomMinutes(minutes);
       customInputController.clear();
       FocusScope.of(context).unfocus();
     }
 
     String timerStatus;
-    if (timerState.isActive && timerState.remaining != null) {
+    final remaining = timerState.remaining;
+    if (timerState.isActive && remaining != null) {
       timerStatus = t.video.listen_settings.remaining(
-        time: timerState.remaining!.formatDuration,
+        time: remaining.formatDuration,
       );
     } else {
       timerStatus = t.video.listen_settings.timer_off;

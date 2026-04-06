@@ -37,22 +37,6 @@ class RequestExecutor {
     );
   }
 
-  Future<T> runOrThrow<T>(Future<T> Function() action) async {
-    final result = await run(action);
-    return result.when(
-      success: (value) => value,
-      failure: (error) => throw error.toException(),
-    );
-  }
-
-  Future<T> runApiOrThrow<T>(Future<ApiResponse<T>> Function() action) async {
-    final result = await runApi<T>(action, transform: (data) => data as T);
-    return result.when(
-      success: (value) => value,
-      failure: (error) => throw error.toException(),
-    );
-  }
-
   Future<Result<void, AppError>> runUnit(
     Future<ApiResponse<dynamic>> Function() action,
   ) async {
@@ -73,14 +57,6 @@ class RequestExecutor {
     return result.when(
       success: (_) => const Success(null),
       failure: Failure.new,
-    );
-  }
-
-  Future<void> runUnitOrThrow(Future<ApiResponse<dynamic>> Function() action) async {
-    final result = await runUnit(action);
-    return result.when(
-      success: (_) => null,
-      failure: (error) => throw error.toException(),
     );
   }
 }

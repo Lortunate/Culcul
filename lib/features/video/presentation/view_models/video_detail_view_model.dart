@@ -1,7 +1,6 @@
-import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'dart:async';
+import 'dart:developer' as developer;
 
-import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/features/profile/profile.dart';
 import 'package:culcul/features/video/application/video_detail_workflows.dart';
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
@@ -14,6 +13,10 @@ part 'video_detail_view_model.g.dart';
 
 @riverpod
 class VideoDetailController extends _$VideoDetailController {
+  int _loadToken = 0;
+  int _playUrlRequestToken = 0;
+  final Map<String, PlayUrl> _playUrlSessionCache = <String, PlayUrl>{};
+
   @override
   VideoDetailState build(String bvid) {
     unawaited(Future<void>.microtask(load));
@@ -21,20 +24,41 @@ class VideoDetailController extends _$VideoDetailController {
   }
 
   Future<void> load() async {
+    final requestToken = ++_loadToken;
+    _playUrlRequestToken++;
     state = state.copyWith(isLoading: true, error: null);
-    final result = await ref.read(loadVideoDetailWorkflowProvider).call(bvid);
+    final result = await ref.read(loadVideoDetailWorkflowProvider).loadCritical(bvid);
+    if (!_isCurrentLoadRequest(requestToken)) {
+      return;
+    }
+
     state = result.when(
-      success: (data) => state.copyWith(
-        isLoading: false,
-        videoDetail: data.detail,
-        currentCid: data.currentCid,
-        playUrl: data.playUrl,
-        relatedVideos: data.relatedVideos,
-        selectedQuality: data.selectedQuality,
-        availableQualities: data.availableQualities,
-      ),
+      success: (data) {
+        final playUrl = data.playUrl;
+        if (playUrl != null) {
+          _cachePlayUrl(
+            aid: data.detail.aid,
+            cid: data.currentCid,
+            qn: playUrl.quality,
+            playUrl: playUrl,
+          );
+        }
+        return state.copyWith(
+          isLoading: false,
+          videoDetail: data.detail,
+          currentCid: data.currentCid,
+          playUrl: playUrl,
+          selectedQuality: data.selectedQuality,
+          availableQualities: data.availableQualities,
+        );
+      },
       failure: (error) => state.copyWith(isLoading: false, error: error),
     );
+
+    if (result.dataOrNull == null) {
+      return;
+    }
+    unawaited(_loadAuxiliaryData(requestToken: requestToken));
   }
 
   Future<void> switchPart(int cid) async {
@@ -43,7 +67,24 @@ class VideoDetailController extends _$VideoDetailController {
 
     if (state.currentCid == cid && state.playUrl != null) return;
 
-    state = state.copyWith(isLoading: true, currentCid: cid, playUrl: null);
+    final cached = _readCachedPlayUrl(
+      aid: detail.aid,
+      cid: cid,
+      qn: state.selectedQuality,
+    );
+    if (cached != null) {
+      state = state.copyWith(
+        isLoading: false,
+        error: null,
+        currentCid: cid,
+        playUrl: cached,
+        selectedQuality: cached.quality,
+        availableQualities: cached.acceptQuality.toList(),
+      );
+      return;
+    }
+
+    state = state.copyWith(isLoading: true, error: null, currentCid: cid, playUrl: null);
     await _loadPlayUrl(aid: detail.aid, cid: cid, qn: state.selectedQuality);
   }
 
@@ -53,7 +94,19 @@ class VideoDetailController extends _$VideoDetailController {
     final detail = state.videoDetail;
     if (detail == null) return;
 
-    state = state.copyWith(isLoading: true);
+    final cached = _readCachedPlayUrl(aid: detail.aid, cid: state.currentCid, qn: qn);
+    if (cached != null) {
+      state = state.copyWith(
+        isLoading: false,
+        error: null,
+        playUrl: cached,
+        selectedQuality: cached.quality,
+        availableQualities: cached.acceptQuality.toList(),
+      );
+      return;
+    }
+
+    state = state.copyWith(isLoading: true, error: null);
     await _loadPlayUrl(aid: detail.aid, cid: state.currentCid, qn: qn);
   }
 
@@ -99,19 +152,91 @@ class VideoDetailController extends _$VideoDetailController {
   }
 
   Future<void> _loadPlayUrl({required int aid, required int cid, required int qn}) async {
-    final result = await const RequestExecutor().run(
-      () => ref
-          .read(videoRepositoryProvider)
-          .fetchVideoPlayUrl(aid: aid, cid: cid, quality: qn),
-    );
-    state = result.when(
-      success: (playUrl) => state.copyWith(
-        playUrl: playUrl,
+    final cached = _readCachedPlayUrl(aid: aid, cid: cid, qn: qn);
+    if (cached != null) {
+      state = state.copyWith(
+        playUrl: cached,
         isLoading: false,
-        selectedQuality: playUrl.quality,
-        availableQualities: playUrl.acceptQuality.toList(),
-      ),
+        error: null,
+        selectedQuality: cached.quality,
+        availableQualities: cached.acceptQuality.toList(),
+      );
+      return;
+    }
+
+    final requestToken = ++_playUrlRequestToken;
+    final result = await ref
+        .read(videoRepositoryProvider)
+        .fetchVideoPlayUrl(aid: aid, cid: cid, quality: qn);
+    if (!_isCurrentPlayUrlRequest(requestToken)) {
+      return;
+    }
+
+    state = result.when(
+      success: (playUrl) {
+        _cachePlayUrl(aid: aid, cid: cid, qn: playUrl.quality, playUrl: playUrl);
+        return state.copyWith(
+          playUrl: playUrl,
+          isLoading: false,
+          error: null,
+          selectedQuality: playUrl.quality,
+          availableQualities: playUrl.acceptQuality.toList(),
+        );
+      },
       failure: (error) => state.copyWith(isLoading: false, error: error),
     );
+  }
+
+  Future<void> _loadAuxiliaryData({required int requestToken}) async {
+    final result = await ref.read(loadVideoDetailWorkflowProvider).loadAuxiliary(bvid);
+    if (!_isCurrentLoadRequest(requestToken)) {
+      return;
+    }
+
+    final auxiliary = result.dataOrNull;
+    if (auxiliary == null) {
+      return;
+    }
+    final detail = state.videoDetail;
+    if (detail == null) {
+      return;
+    }
+
+    state = state.copyWith(
+      videoDetail: detail.copyWith(tag: auxiliary.tags),
+      relatedVideos: auxiliary.relatedVideos,
+    );
+    assert(() {
+      developer.log(
+        'video_perf auxiliary_loaded bvid=$bvid related=${auxiliary.relatedVideos.length} tags=${auxiliary.tags.length}',
+        name: 'video.performance',
+      );
+      return true;
+    }());
+  }
+
+  String _buildPlayUrlCacheKey({required int aid, required int cid, required int qn}) {
+    return '$aid:$cid:$qn';
+  }
+
+  PlayUrl? _readCachedPlayUrl({required int aid, required int cid, required int qn}) {
+    return _playUrlSessionCache[_buildPlayUrlCacheKey(aid: aid, cid: cid, qn: qn)];
+  }
+
+  void _cachePlayUrl({
+    required int aid,
+    required int cid,
+    required int qn,
+    required PlayUrl playUrl,
+  }) {
+    _playUrlSessionCache[_buildPlayUrlCacheKey(aid: aid, cid: cid, qn: qn)] = playUrl;
+  }
+
+  bool _isCurrentLoadRequest(int requestToken) {
+    return requestToken == _loadToken;
+  }
+
+  bool _isCurrentPlayUrlRequest(int requestToken) {
+    return requestToken == _playUrlRequestToken;
   }
 }

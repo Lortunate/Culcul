@@ -15,24 +15,52 @@ class SubtitleLayer extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     final subtitleState = ref.watch(subtitleControllerProvider(bvid));
-    final player = ref.watch(playerControllerProvider.notifier).player;
-    final playerPosition = useStream(player.stream.position).data ?? Duration.zero;
+    final player = ref.read(playerControllerProvider.notifier).player;
+    final subtitleCursorRef = useRef<int>(0);
+    final activeSubtitle = useState<SubtitleItem?>(null);
+
+    useEffect(() {
+      if (!subtitleState.isEnabled || subtitleState.content.isEmpty) {
+        subtitleCursorRef.value = 0;
+        if (activeSubtitle.value != null) {
+          activeSubtitle.value = null;
+        }
+        return null;
+      }
+
+      void refreshSubtitle(Duration position) {
+        final currentSeconds = position.inMilliseconds / 1000.0;
+        final subtitleIndex = _resolveSubtitleIndex(
+          subtitleState.content,
+          currentSeconds,
+          subtitleCursorRef.value,
+        );
+        if (subtitleIndex < 0) {
+          if (activeSubtitle.value != null) {
+            activeSubtitle.value = null;
+          }
+          return;
+        }
+        if (subtitleIndex == subtitleCursorRef.value &&
+            activeSubtitle.value?.content ==
+                subtitleState.content[subtitleIndex].content) {
+          return;
+        }
+        subtitleCursorRef.value = subtitleIndex;
+        activeSubtitle.value = subtitleState.content[subtitleIndex];
+      }
+
+      refreshSubtitle(player.state.position);
+      final subscription = player.stream.position.listen(refreshSubtitle);
+      return subscription.cancel;
+    }, [player, subtitleState.content, subtitleState.isEnabled]);
 
     if (!subtitleState.isEnabled || subtitleState.content.isEmpty) {
       return const SizedBox();
     }
 
-    final currentSeconds = playerPosition.inMilliseconds / 1000.0;
-
-    // Find current subtitle item
-    // Since subtitles are usually sorted by time, we can optimize this.
-    // For now, a simple iteration is fine for typical subtitle counts.
-    final currentItem = subtitleState.content.firstWhere(
-      (item) => item.from <= currentSeconds && item.to >= currentSeconds,
-      orElse: () => const SubtitleItem(from: 0, to: 0, location: 0, content: ''),
-    );
-
-    if (currentItem.content.isEmpty) {
+    final currentItem = activeSubtitle.value;
+    if (currentItem == null) {
       return const SizedBox();
     }
 
@@ -57,4 +85,48 @@ class SubtitleLayer extends HookConsumerWidget {
       ),
     );
   }
+}
+
+int _resolveSubtitleIndex(List<SubtitleItem> items, double target, int previousIndex) {
+  if (items.isEmpty) {
+    return -1;
+  }
+
+  if (_containsSubtitle(items, previousIndex, target)) {
+    return previousIndex;
+  }
+  if (_containsSubtitle(items, previousIndex + 1, target)) {
+    return previousIndex + 1;
+  }
+  if (_containsSubtitle(items, previousIndex - 1, target)) {
+    return previousIndex - 1;
+  }
+
+  return _findSubtitleIndexBinary(items, target);
+}
+
+bool _containsSubtitle(List<SubtitleItem> items, int index, double target) {
+  if (index < 0 || index >= items.length) {
+    return false;
+  }
+  final item = items[index];
+  return item.from <= target && item.to >= target;
+}
+
+int _findSubtitleIndexBinary(List<SubtitleItem> items, double target) {
+  var left = 0;
+  var right = items.length - 1;
+
+  while (left <= right) {
+    final mid = left + ((right - left) ~/ 2);
+    final item = items[mid];
+    if (target < item.from) {
+      right = mid - 1;
+    } else if (target > item.to) {
+      left = mid + 1;
+    } else {
+      return mid;
+    }
+  }
+  return -1;
 }

@@ -4,11 +4,14 @@ import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 
 abstract class FavoriteRepository {
-  Future<FavoriteFolderPage> getCreatedFolders({required int upMid});
+  Future<Result<FavoriteFolderPage, AppError>> getCreatedFolders({required int upMid});
 
-  Future<FavoriteFolderPage> getCollectedFolders({required int upMid, required int page});
+  Future<Result<FavoriteFolderPage, AppError>> getCollectedFolders({
+    required int upMid,
+    required int page,
+  });
 
-  Future<FavoriteResourcePage> getFolderResources({
+  Future<Result<FavoriteResourcePage, AppError>> getFolderResources({
     required int mediaId,
     required int page,
     String? keyword,

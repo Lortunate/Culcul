@@ -1,7 +1,7 @@
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
-import 'package:culcul/features/video/presentation/widgets/hooks/use_player_system_settings.dart';
-import 'package:culcul/features/video/presentation/widgets/hooks/use_video_loader.dart';
-import 'package:culcul/features/video/presentation/widgets/hooks/use_video_progress.dart';
+import 'package:culcul/features/video/presentation/hooks/use_player_system_settings.dart';
+import 'package:culcul/features/video/presentation/hooks/use_video_loader.dart';
+import 'package:culcul/features/video/presentation/hooks/use_video_progress.dart';
 import 'package:culcul/features/video/presentation/widgets/layers/controls_layer.dart';
 import 'package:culcul/features/video/presentation/widgets/layers/danmaku_layer.dart';
 import 'package:culcul/features/video/presentation/widgets/layers/interaction_layer.dart';

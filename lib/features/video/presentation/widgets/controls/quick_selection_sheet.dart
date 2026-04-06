@@ -54,7 +54,7 @@ class QuickSelectionSheet<T> extends StatelessWidget {
                 isBottomSheet ? mediaQuery.padding.bottom + 20 : 20,
               ),
               itemCount: items.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 10),
+              separatorBuilder: (_, index) => const SizedBox(height: 10),
               itemBuilder: (context, index) {
                 final item = items[index];
                 final isSelected = item == selectedItem;

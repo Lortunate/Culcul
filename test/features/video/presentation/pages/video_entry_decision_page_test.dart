@@ -1,7 +1,8 @@
 import 'package:culcul/features/video/application/video_entry_workflows.dart';
-import 'package:culcul/features/video/domain/entities/video_entities.dart';
-import 'package:culcul/features/video/domain/repositories/video_repository.dart';
-import 'package:culcul/features/video/presentation/pages/video_entry_decision_page.dart';
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
+import 'package:culcul/features/video/domain.dart';
+import 'package:culcul/features/video/presentation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -97,10 +98,10 @@ class _FakeVideoRepository extends Fake implements VideoRepository {
   _FakeVideoRepository({this.dimension, this.shouldThrow = false});
 
   @override
-  Future<VideoDimension?> fetchVideoEntryDimension(String bvid) async {
+  Future<Result<VideoDimension?, AppError>> fetchVideoEntryDimension(String bvid) async {
     if (shouldThrow) {
-      throw Exception('fetch failed');
+      return Failure(AppError.data('fetch failed'));
     }
-    return dimension;
+    return Success(dimension);
   }
 }

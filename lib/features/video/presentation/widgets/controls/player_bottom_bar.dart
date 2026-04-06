@@ -1,5 +1,5 @@
-import 'package:culcul/features/video/presentation/widgets/controls/bottom_bar/video_control_buttons.dart';
-import 'package:culcul/features/video/presentation/widgets/controls/bottom_bar/video_progress_bar.dart';
+import 'package:culcul/features/video/presentation/widgets/controls/video_control_buttons.dart';
+import 'package:culcul/features/video/presentation/widgets/controls/video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

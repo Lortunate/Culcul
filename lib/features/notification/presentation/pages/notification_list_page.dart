@@ -20,6 +20,7 @@ class NotificationListPage extends ConsumerStatefulWidget {
 class _NotificationListPageState extends ConsumerState<NotificationListPage> {
   final ScrollController _scrollController = ScrollController();
   final EasyRefreshController _erController = EasyRefreshController();
+  bool _isLoadingMore = false;
 
   @override
   void initState() {
@@ -30,21 +31,29 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _erController.dispose();
     super.dispose();
   }
 
   void _onScroll() {
+    if (_isLoadingMore) return;
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
       _erController.callLoad();
     }
   }
 
-  void _loadMore() {
+  Future<void> _loadMore() async {
+    if (_isLoadingMore) return;
     if (widget.type == NotificationFeedType.system) return;
     final notifier = ref.read(notificationFeedListProvider(widget.type).notifier);
     if (!notifier.hasMore) return;
-    notifier.loadMore();
+    _isLoadingMore = true;
+    try {
+      await notifier.loadMore();
+    } finally {
+      _isLoadingMore = false;
+    }
   }
 
   AsyncValue<List<NotificationEntry>> _providerState(NotificationFeedType type) =>
@@ -124,7 +133,7 @@ class _NotificationListView extends StatelessWidget {
   final List<NotificationEntry> items;
   final ScrollController scrollController;
   final EasyRefreshController refreshController;
-  final VoidCallback onLoadMore;
+  final Future<void> Function() onLoadMore;
   final Widget Function(BuildContext context, NotificationEntry item) itemBuilder;
 
   @override
@@ -133,7 +142,7 @@ class _NotificationListView extends StatelessWidget {
       controller: refreshController,
       footer: const MaterialFooter(),
       onLoad: () async {
-        onLoadMore();
+        await onLoadMore();
         return IndicatorResult.success;
       },
       child: ListView.separated(
@@ -143,7 +152,10 @@ class _NotificationListView extends StatelessWidget {
         separatorBuilder: (_, _) => const Column(
           children: [SizedBox(height: 12), Divider(height: 1), SizedBox(height: 12)],
         ),
-        itemBuilder: (context, index) => itemBuilder(context, items[index]),
+        itemBuilder: (context, index) => KeyedSubtree(
+          key: ValueKey('notification_${items[index].id}_$index'),
+          child: itemBuilder(context, items[index]),
+        ),
       ),
     );
   }

@@ -1,5 +1,4 @@
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
-import 'package:culcul/features/auth/presentation/widgets/login_dialog.dart';
+import 'package:culcul/features/auth/presentation.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/app_search_bar.dart';

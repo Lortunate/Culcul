@@ -3,27 +3,27 @@ import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/live/domain/entities/live_entities.dart';
 
 abstract class LiveRepository {
-  Future<LiveRoomDetailModel> getRoomInfo(int roomId);
+  Future<Result<LiveRoomDetailModel, AppError>> getRoomInfo(int roomId);
 
-  Future<LivePlayUrlModel> getPlayUrl({required int roomId, int? qn});
+  Future<Result<LivePlayUrlModel, AppError>> getPlayUrl({required int roomId, int? qn});
 
-  Future<LiveDanmakuConfigModel> getDanmakuConfig(int roomId);
+  Future<Result<LiveDanmakuConfigModel, AppError>> getDanmakuConfig(int roomId);
 
-  Future<LiveHistoryDanmakuModel> getHistoryDanmaku(int roomId);
+  Future<Result<LiveHistoryDanmakuModel, AppError>> getHistoryDanmaku(int roomId);
 
-  Future<LiveDanmuInfoModel> getDanmuInfo(int roomId);
+  Future<Result<LiveDanmuInfoModel, AppError>> getDanmuInfo(int roomId);
 
-  Future<List<LiveRoomSummary>> getRecommendList({int page = 1});
+  Future<Result<List<LiveRoomSummary>, AppError>> getRecommendList({int page = 1});
 
-  Future<LiveAnchorInfoModel> getAnchorInfo(int uid);
+  Future<Result<LiveAnchorInfoModel, AppError>> getAnchorInfo(int uid);
 
-  Future<LiveGoldRankModel> getOnlineGoldRank({
+  Future<Result<LiveGoldRankModel, AppError>> getOnlineGoldRank({
     required int ruid,
     required int roomId,
     int page = 1,
   });
 
-  Future<LiveGuardListModel> getGuardList({
+  Future<Result<LiveGuardListModel, AppError>> getGuardList({
     required int ruid,
     required int roomId,
     int page = 1,

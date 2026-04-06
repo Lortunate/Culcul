@@ -1,7 +1,7 @@
 import 'package:culcul/core/constants/app_dimens.dart';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/profile/presentation/widgets/relation/relation_user_item.dart';
+import 'package:culcul/features/profile/presentation/widgets/relation_user_item.dart';
 import 'package:culcul/core/contracts/relation_user_contract.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';

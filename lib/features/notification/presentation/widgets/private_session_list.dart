@@ -39,7 +39,11 @@ class PrivateSessionList extends ConsumerWidget {
               : ListView.builder(
                   itemCount: sessions.length,
                   itemBuilder: (context, index) {
-                    return PrivateSessionItem(session: sessions[index]);
+                    final session = sessions[index];
+                    return KeyedSubtree(
+                      key: ValueKey('private_session_${session.talkerId}_$index'),
+                      child: PrivateSessionItem(session: session),
+                    );
                   },
                 ),
         );

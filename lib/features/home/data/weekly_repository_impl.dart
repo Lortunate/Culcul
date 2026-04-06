@@ -28,12 +28,13 @@ class WeeklyRepositoryImpl with RequestExecutorBinding implements domain.WeeklyR
   @override
   RequestExecutor get requestExecutor => _requestExecutor;
 
-  Future<WeeklyModelDto> getWeeklyListModel() {
-    return requestApi(() => _api.getWeeklyList());
+  Future<Result<WeeklyModelDto, AppError>> getWeeklyListModel() {
+    return requestApiResult(() => _api.getWeeklyList());
   }
 
   @override
   Future<Result<HomeWeeklyFeed, AppError>> getWeeklyList() async {
-    return requestResult(() async => (await getWeeklyListModel()).toDomain());
+    final result = await getWeeklyListModel();
+    return result.map((data) => data.toDomain());
   }
 }

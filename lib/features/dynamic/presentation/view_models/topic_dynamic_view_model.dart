@@ -22,9 +22,13 @@ class TopicDynamicNotifier extends _$TopicDynamicNotifier
     String? currentCursor, {
     bool refresh = false,
   }) async {
-    final feed = await ref
+    final result = await ref
         .read(dynamicRepositoryProvider)
         .getTopicFeed(topicId: _topicId, offset: currentCursor);
+    if (result.errorOrNull != null) {
+      return const CursorPage(items: [], nextCursor: null, hasMore: false);
+    }
+    final feed = result.dataOrNull!;
     return CursorPage(items: feed.items, nextCursor: feed.offset, hasMore: feed.hasMore);
   }
 

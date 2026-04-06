@@ -1,5 +1,5 @@
-import 'package:culcul/features/video/domain/entities/video_model.dart';
-import 'package:culcul/features/home/presentation/widgets/video_more_bottom_sheet.dart';
+import 'package:culcul/features/video/domain.dart';
+import 'package:culcul/features/home/presentation.dart';
 import 'package:culcul/ui/widgets/app_card_container.dart';
 import 'package:culcul/ui/widgets/app_overlay_tag.dart';
 import 'package:culcul/ui/widgets/video_thumbnail.dart';

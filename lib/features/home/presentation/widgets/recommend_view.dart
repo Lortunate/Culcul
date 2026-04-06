@@ -1,12 +1,12 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
 import 'package:culcul/features/home/presentation/view_models/home_recommend_view_model.dart';
-import 'package:culcul/features/home/presentation/widgets/hooks/use_home_scroll_sync.dart';
+import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
 import 'package:culcul/features/home/domain/entities/home_video.dart';
 import 'package:culcul/ui/widgets/skeletons/page_skeletons.dart';
 import 'package:culcul/ui/widgets/skeletons/video_card_skeleton.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:culcul/ui/widgets/video_card.dart';
-import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -28,7 +28,7 @@ class RecommendView extends HookConsumerWidget {
 
     final recommendAsync = ref.watch(homeRecommendProvider);
     final scrollController = useScrollController();
-    final refreshController = useMemoized(() => EasyRefreshController());
+    final refreshController = useManagedEasyRefreshController();
 
     useHomeScrollSync(ref, scrollController, refreshController, 1);
 

@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/utils/danmaku_mask_parser.dart';
 import 'package:culcul/features/video/domain/repositories/danmaku_repository.dart';
@@ -23,7 +22,6 @@ VideoExtraWorkflows videoExtraWorkflows(Ref ref) {
 }
 
 class VideoExtraWorkflows {
-  static const RequestExecutor _requestExecutor = RequestExecutor();
   final VideoRepository videoRepository;
   final DanmakuRepository danmakuRepository;
 
@@ -40,27 +38,30 @@ class VideoExtraWorkflows {
       return const Success(null);
     }
 
-    return _requestExecutor.run(() async {
-      final playerInfoResult = await _requestExecutor.run(
-        () => videoRepository.fetchPlayerInfo(aid: pid, cid: oid),
-      );
-      final playerInfo = playerInfoResult.dataOrNull;
-      if (playerInfo == null) {
-        return null;
-      }
+    final playerInfoResult = await videoRepository.fetchPlayerInfo(aid: pid, cid: oid);
+    if (playerInfoResult.errorOrNull case final error?) {
+      return Failure(error);
+    }
+    final playerInfo = playerInfoResult.dataOrNull;
+    if (playerInfo == null) {
+      return const Success(null);
+    }
 
-      final dmMask = playerInfo.dmMask;
-      if (dmMask == null) {
-        return null;
-      }
+    final dmMask = playerInfo.dmMask;
+    if (dmMask == null) {
+      return const Success(null);
+    }
 
-      final bytes = await danmakuRepository.fetchMaskData(dmMask.maskUrl);
-      final paths = await compute(
-        _parseMaskData,
-        _ParseDanmakuMaskData(bytes, dmMask.fps),
-      );
-      return DanmakuMasks(paths, dmMask.fps);
-    });
+    final bytesResult = await danmakuRepository.fetchMaskData(dmMask.maskUrl);
+    if (bytesResult.errorOrNull case final error?) {
+      return Failure(error);
+    }
+    final bytes = bytesResult.dataOrNull!;
+    final paths = await compute(
+      _parseMaskData,
+      _ParseDanmakuMaskData(bytes, dmMask.fps),
+    );
+    return Success(DanmakuMasks(paths, dmMask.fps));
   }
 }
 

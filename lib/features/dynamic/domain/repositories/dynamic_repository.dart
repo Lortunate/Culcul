@@ -6,7 +6,7 @@ import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 
 abstract class DynamicRepository {
-  Future<CommentResponse> getComments(
+  Future<Result<CommentResponse, AppError>> getComments(
     DynamicItem post, {
     CommentSort sort = CommentSort.hot,
     int page = 1,
@@ -25,7 +25,7 @@ abstract class DynamicRepository {
     required bool isLiked,
   });
 
-  Future<CommentResponse> getArticleCommentList({
+  Future<Result<CommentResponse, AppError>> getArticleCommentList({
     required ArticleDetailData article,
     int? next,
   });
@@ -43,15 +43,21 @@ abstract class DynamicRepository {
     required bool isLiked,
   });
 
-  Future<DynamicData> getFeed({String? type, String? offset});
+  Future<Result<DynamicData, AppError>> getFeed({String? type, String? offset});
 
-  Future<DynamicData> getSpaceDynamicFeed({required int hostMid, String? offset});
+  Future<Result<DynamicData, AppError>> getSpaceDynamicFeed({
+    required int hostMid,
+    String? offset,
+  });
 
-  Future<DynamicData> getTopicFeed({required int topicId, String? offset});
+  Future<Result<DynamicData, AppError>> getTopicFeed({
+    required int topicId,
+    String? offset,
+  });
 
-  Future<DynamicItem> getDetail(String id);
+  Future<Result<DynamicItem, AppError>> getDetail(String id);
 
-  Future<ArticleDetailData> getArticleDetail(String url);
+  Future<Result<ArticleDetailData, AppError>> getArticleDetail(String url);
 
   Future<Result<void, AppError>> likeDynamic(String id, bool like);
 

@@ -2,6 +2,8 @@ import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/network/request_executor_binding.dart';
 import 'package:culcul/core/network/resource_api.dart';
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/video/domain/repositories/danmaku_repository.dart'
     as domain;
 import 'package:culcul/features/video/data/danmaku_api.dart';
@@ -33,12 +35,12 @@ class DanmakuRepositoryImpl with RequestExecutorBinding implements domain.Danmak
   RequestExecutor get requestExecutor => _requestExecutor;
 
   @override
-  Future<DmSegMobileReply> fetchDanmakuSegment({
+  Future<Result<DmSegMobileReply, AppError>> fetchDanmakuSegment({
     required int oid,
     required int pid,
     required int segmentIndex,
   }) {
-    return request(() async {
+    return requestResult(() async {
       final response = await _api.fetchDanmakuSegment(
         oid: oid,
         pid: pid,
@@ -49,16 +51,19 @@ class DanmakuRepositoryImpl with RequestExecutorBinding implements domain.Danmak
   }
 
   @override
-  Future<DmViewReply> fetchDanmakuView({required int oid, required int pid}) {
-    return request(() async {
+  Future<Result<DmViewReply, AppError>> fetchDanmakuView({
+    required int oid,
+    required int pid,
+  }) {
+    return requestResult(() async {
       final response = await _api.fetchDanmakuView(oid: oid, pid: pid);
       return DmViewReply.fromBuffer(response);
     });
   }
 
   @override
-  Future<List<int>> fetchMaskData(String url) async {
-    return request(() async {
+  Future<Result<List<int>, AppError>> fetchMaskData(String url) async {
+    return requestResult(() async {
       return _resourceApi.fetchBytes(url);
     });
   }

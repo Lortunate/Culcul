@@ -1,4 +1,4 @@
-import 'package:culcul/features/notification/presentation/utils/notification_navigation.dart';
+import 'package:culcul/features/notification/presentation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

@@ -52,5 +52,9 @@ class ApiConstants {
   static const String referer = 'https://www.bilibili.com/';
 
   // Cache Configuration
-  static const Map<String, int> cacheConfig = {};
+  static const Map<String, int> cacheConfig = {
+    videoView: 120,
+    related: 120,
+    videoTags: 180,
+  };
 }

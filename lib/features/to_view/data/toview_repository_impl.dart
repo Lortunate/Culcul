@@ -1,4 +1,3 @@
-import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/core/network/request_executor.dart';
@@ -29,55 +28,49 @@ class ToViewRepositoryImpl with RequestExecutorBinding implements domain.ToViewR
   @override
   RequestExecutor get requestExecutor => _requestExecutor;
 
-  Future<ToViewListResponseDto> getToViewList() async {
-    try {
-      return await requestApi(() => _api.getToViewList());
-    } on ServerException catch (e) {
-      if (e.code == 0 && e.message == 'No Data') {
-        return const ToViewListResponseDto(count: 0, list: []);
-      }
-      rethrow;
-    }
+  Future<Result<ToViewListResponseDto, AppError>> getToViewList() async {
+    final result = await requestApiResult(() => _api.getToViewList());
+    return result.when(
+      success: Success.new,
+      failure: (error) {
+        if (error is ServerAppError && error.code == 0 && error.message == 'No Data') {
+          return const Success(ToViewListResponseDto(count: 0, list: []));
+        }
+        return Failure(error);
+      },
+    );
   }
 
-  Future<void> addToView({required int aid}) {
-    return request(() => _api.addToView(aid));
+  Future<Result<void, AppError>> addToView({required int aid}) {
+    return requestResult(() => _api.addToView(aid));
   }
 
-  Future<void> deleteToView({required int aid}) {
-    return request(() => _api.deleteToView(aid));
+  Future<Result<void, AppError>> deleteToView({required int aid}) {
+    return requestResult(() => _api.deleteToView(aid));
   }
 
-  Future<void> clearToView() {
-    return request(() => _api.clearToView());
+  Future<Result<void, AppError>> clearToView() {
+    return requestResult(() => _api.clearToView());
   }
 
   @override
   Future<Result<List<ToViewEntry>, AppError>> getList() async {
-    return requestResult(() async {
-      final data = await getToViewList();
-      return data.list.map((item) => item.toDomain()).toList();
-    });
+    final result = await getToViewList();
+    return result.map((data) => data.list.map((item) => item.toDomain()).toList());
   }
 
   @override
   Future<Result<void, AppError>> add({required int aid}) {
-    return requestResult(() async {
-      await addToView(aid: aid);
-    });
+    return addToView(aid: aid);
   }
 
   @override
   Future<Result<void, AppError>> delete({required int aid}) {
-    return requestResult(() async {
-      await deleteToView(aid: aid);
-    });
+    return deleteToView(aid: aid);
   }
 
   @override
   Future<Result<void, AppError>> clear() {
-    return requestResult(() async {
-      await clearToView();
-    });
+    return clearToView();
   }
 }

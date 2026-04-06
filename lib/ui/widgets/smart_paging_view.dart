@@ -1,10 +1,10 @@
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
 import 'package:culcul/ui/widgets/app_empty_state_widget.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 part 'smart_paging_view/content.dart';
@@ -41,8 +41,7 @@ class SmartPagingView<T> extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final refreshController =
-        controller ?? useMemoized(() => EasyRefreshController(), []);
+    final refreshController = controller ?? useManagedEasyRefreshController();
 
     if (asyncValue.isLoading && !asyncValue.hasValue) {
       return KeyedSubtree(key: const ValueKey('paging_loading'), child: skeleton);

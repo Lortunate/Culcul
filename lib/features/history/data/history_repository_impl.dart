@@ -29,12 +29,12 @@ class HistoryRepositoryImpl with RequestExecutorBinding implements domain.Histor
   @override
   RequestExecutor get requestExecutor => _requestExecutor;
 
-  Future<HistoryResponseDataDto> getHistoryCursor({
+  Future<Result<HistoryResponseDataDto, AppError>> getHistoryCursor({
     int max = 0,
     int viewAt = 0,
     int ps = _defaultPageSize,
   }) {
-    return requestApi(() => _api.getHistoryCursor(max, viewAt, '', ps));
+    return requestApiResult(() => _api.getHistoryCursor(max, viewAt, '', ps));
   }
 
   @override
@@ -42,9 +42,7 @@ class HistoryRepositoryImpl with RequestExecutorBinding implements domain.Histor
     int max = 0,
     int viewAt = 0,
   }) async {
-    return requestResult(() async {
-      final data = await getHistoryCursor(max: max, viewAt: viewAt);
-      return data.list.map((item) => item.toDomain()).toList();
-    });
+    final result = await getHistoryCursor(max: max, viewAt: viewAt);
+    return result.map((data) => data.list.map((item) => item.toDomain()).toList());
   }
 }

@@ -3,13 +3,8 @@ import 'dart:async';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/auth/data/auth_repository_impl.dart';
-import 'package:culcul/features/auth/domain/entities/auth_captcha_challenge.dart';
-import 'package:culcul/features/auth/domain/entities/auth_qr_code.dart';
-import 'package:culcul/features/auth/domain/entities/auth_qr_poll_result.dart';
-import 'package:culcul/features/auth/domain/entities/country_code.dart';
-import 'package:culcul/features/auth/domain/entities/user_entity.dart';
-import 'package:culcul/features/auth/domain/repositories/auth_repository.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/auth/domain.dart';
+import 'package:culcul/features/auth/presentation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 

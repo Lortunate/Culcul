@@ -22,10 +22,7 @@ class Followings extends _$Followings with OffsetPagedAsyncNotifier<ProfileRelat
     final result = await ref
         .read(relationRepositoryProvider)
         .getFollowings(_vmid, page: page);
-    return result.when(
-      success: (items) => items,
-      failure: (error) => throw error.toException(),
-    );
+    return result.dataOrNull ?? const <ProfileRelationUser>[];
   }
 
   @override
@@ -59,10 +56,7 @@ class Followers extends _$Followers with OffsetPagedAsyncNotifier<ProfileRelatio
     final result = await ref
         .read(relationRepositoryProvider)
         .getFollowers(_vmid, page: page);
-    return result.when(
-      success: (items) => items,
-      failure: (error) => throw error.toException(),
-    );
+    return result.dataOrNull ?? const <ProfileRelationUser>[];
   }
 
   @override

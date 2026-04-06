@@ -1,13 +1,18 @@
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/protos/dm.pb.dart';
 
 abstract class DanmakuRepository {
-  Future<DmSegMobileReply> fetchDanmakuSegment({
+  Future<Result<DmSegMobileReply, AppError>> fetchDanmakuSegment({
     required int oid,
     required int pid,
     required int segmentIndex,
   });
 
-  Future<DmViewReply> fetchDanmakuView({required int oid, required int pid});
+  Future<Result<DmViewReply, AppError>> fetchDanmakuView({
+    required int oid,
+    required int pid,
+  });
 
-  Future<List<int>> fetchMaskData(String url);
+  Future<Result<List<int>, AppError>> fetchMaskData(String url);
 }

@@ -39,6 +39,7 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
   double _lineHeight = 0;
 
   int _lastFrameTime = 0;
+  final ValueNotifier<int> _repaintTick = ValueNotifier<int>(0);
 
   bool get _isReady => _viewWidth > 0 && _viewHeight > 0;
 
@@ -66,6 +67,7 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
   void dispose() {
     _controller.dispose();
     _ticker.dispose();
+    _repaintTick.dispose();
     super.dispose();
   }
 
@@ -79,6 +81,10 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
 
   void _onTick(Duration elapsed) {
     final currentMs = elapsed.inMilliseconds;
+    if (_lastFrameTime == 0) {
+      _lastFrameTime = currentMs;
+      return;
+    }
     final delta = currentMs - _lastFrameTime;
     _lastFrameTime = currentMs;
 
@@ -91,7 +97,7 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
     _removeExpiredStaticItems(currentMs);
 
     if (!mounted) return;
-    setState(() {});
+    _requestRepaint();
   }
 
   void _processWaitingItems() {
@@ -307,6 +313,7 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
     setState(() {
       _option = option;
     });
+    _requestRepaint();
   }
 
   void _pause() {
@@ -329,7 +336,12 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
     _topTracks.clear();
     _bottomTracks.clear();
     if (!mounted) return;
+    _requestRepaint();
     setState(() {});
+  }
+
+  void _requestRepaint() {
+    _repaintTick.value++;
   }
 
   @override
@@ -341,7 +353,11 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
 
         return RepaintBoundary(
           child: CustomPaint(
-            painter: DanmakuPainter(items: _activeItems, opacity: _option.opacity),
+            painter: DanmakuPainter(
+              items: _activeItems,
+              opacity: _option.opacity,
+              repaintSignal: _repaintTick,
+            ),
             size: Size.infinite,
           ),
         );

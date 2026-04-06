@@ -1,4 +1,4 @@
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/auth/presentation.dart';
 import 'package:culcul/features/to_view/presentation/view_models/to_view_view_model.dart';
 import 'package:culcul/features/to_view/presentation/widgets/to_view_list.dart';
 import 'package:culcul/features/to_view/presentation/widgets/to_view_page_app_bar.dart';

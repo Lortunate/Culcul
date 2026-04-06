@@ -1,5 +1,4 @@
-import 'package:culcul/features/dynamic/presentation/view_models/user_dynamic_view_model.dart';
-import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_card.dart';
+import 'package:culcul/features/dynamic/presentation.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/skeletons/dynamic_skeleton.dart';
@@ -16,8 +15,51 @@ class UserDynamicTab extends ConsumerStatefulWidget {
 
 class _UserDynamicTabState extends ConsumerState<UserDynamicTab>
     with AutomaticKeepAliveClientMixin {
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoadingMore = false;
+
   @override
   bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) {
+      return;
+    }
+    if (_scrollController.position.extentAfter > 360) {
+      return;
+    }
+    _loadMoreIfNeeded();
+  }
+
+  Future<void> _loadMoreIfNeeded() async {
+    if (_isLoadingMore) {
+      return;
+    }
+    final notifier = ref.read(userDynamicProvider(widget.mid).notifier);
+    if (!notifier.hasMore) {
+      return;
+    }
+    _isLoadingMore = true;
+    try {
+      await notifier.loadMore();
+    } finally {
+      _isLoadingMore = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +69,7 @@ class _UserDynamicTabState extends ConsumerState<UserDynamicTab>
     final notifier = ref.read(userDynamicProvider(widget.mid).notifier);
 
     return CustomScrollView(
+      controller: _scrollController,
       key: PageStorageKey<String>('user_dynamic_tab_${widget.mid}'),
       slivers: [
         SliverOverlapInjector(
@@ -38,13 +81,13 @@ class _UserDynamicTabState extends ConsumerState<UserDynamicTab>
               return SliverFillRemaining(child: Center(child: Text(t.common.no_content)));
             }
             final contentCount = items.length * 2 - 1;
-            final totalCount = contentCount + 1;
+            final showLoadingFooter = feedAsync.isLoading && items.isNotEmpty;
+            final totalCount = contentCount + (showLoadingFooter ? 1 : 0);
             return SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
-                  if (index == contentCount) {
-                    notifier.loadMore();
+                  if (index >= contentCount) {
                     return const Padding(
                       padding: EdgeInsets.all(16.0),
                       child: Center(child: CircularProgressIndicator()),
@@ -55,6 +98,7 @@ class _UserDynamicTabState extends ConsumerState<UserDynamicTab>
                   }
                   final item = items[index ~/ 2];
                   return DynamicPostCard(
+                    key: ValueKey('user_dynamic_${item.idStr}_$index'),
                     post: item,
                     onLike: (post) => notifier.toggleLike(
                       post.idStr,

@@ -2,16 +2,24 @@ import 'dart:io';
 
 final _projectRoot = Directory.current;
 const _applicationAllowedFeatures = {'dynamic', 'video'};
-const _presentationAllowedSubdirs = {'pages', 'widgets', 'view_models'};
+const _presentationAllowedSubdirs = {'pages', 'widgets', 'view_models', 'hooks'};
 const _allowedCrossFeatureDomainExportFiles = <String>{};
 const _allowedDomainDtoForwardFiles = <String>{
   'lib/features/dynamic/domain/entities/dynamic_response.dart',
 };
-const _allowedVoidRepositoryMethods = <String>{
+const _allowedNonResultRepositoryMethods = <String>{
   'checkAndRefreshCookie',
   'writeProfile',
   'saveThemePreference',
   'clearCache',
+  'getCacheSizeInBytes',
+  'readProfile',
+  'getUnreadCountFromLocal',
+  'listSystemNoticesFromLocal',
+  'pageSessionsFromLocal',
+  'pageMessagesFromLocal',
+  'getMessageEmojiMapFromLocal',
+  'pageFeedFromLocal',
 };
 
 void main() {
@@ -148,7 +156,7 @@ void main() {
     if (RegExp(
       r'/lib/features/[^/]+/presentation/[^/]+_route_entry\.dart$',
     ).hasMatch(normalized)) {
-      issues.add('$path must be renamed to presentation/route_entry.dart');
+      issues.add('$path must be renamed to route_entry.dart at feature root');
     }
 
     if (RegExp(
@@ -157,9 +165,10 @@ void main() {
       issues.add('$path must be moved under presentation/pages/');
     }
 
-    if (RegExp(r'/lib/features/[^/]+/presentation/[^/]+\.dart$').hasMatch(normalized) &&
-        !normalized.endsWith('/presentation/route_entry.dart')) {
-      issues.add('$path must be moved under presentation/pages or presentation/widgets');
+    if (RegExp(r'/lib/features/[^/]+/presentation/[^/]+\.dart$').hasMatch(normalized)) {
+      issues.add(
+        '$path must be moved under presentation/pages, presentation/widgets, or presentation/hooks',
+      );
     }
 
     if (RegExp(r'/lib/features/[^/]+/application/.+\.dart$').hasMatch(normalized) &&
@@ -305,7 +314,13 @@ void main() {
         final targetFeature = match.group(1);
         final suffix = match.group(2);
         if (sourceFeature == null || targetFeature == null || suffix == null) continue;
-        if (sourceFeature != targetFeature && suffix != '$targetFeature.dart') {
+        final allowedCrossFeatureEntrypoints = <String>{
+          '$targetFeature.dart',
+          'presentation.dart',
+          'domain.dart',
+        };
+        if (sourceFeature != targetFeature &&
+            !allowedCrossFeatureEntrypoints.contains(suffix)) {
           issues.add(
             '$path must import other features through their public entrypoint only',
           );
@@ -339,6 +354,18 @@ void main() {
     }
 
     if (normalized.contains('/features/') &&
+        normalized.contains('/presentation/') &&
+        RegExp(r'throw\s+.+toException\s*\(').hasMatch(content)) {
+      issues.add('$path must not throw toException() in presentation layer');
+    }
+
+    if (normalized.contains('/features/') &&
+        normalized.contains('/presentation/') &&
+        RegExp(r'throw\s+Exception\s*\(').hasMatch(content)) {
+      issues.add('$path must not throw Exception(...) in presentation layer');
+    }
+
+    if (normalized.contains('/features/') &&
         normalized.contains('/application/') &&
         RegExp(r'\bclass\s+\w*(Command|Query)\b').hasMatch(content)) {
       issues.add(
@@ -355,12 +382,14 @@ void main() {
 
     if (normalized.contains('/features/') &&
         normalized.contains('/domain/repositories/')) {
-      final voidMethodMatches = RegExp(r'Future<void>\s+(\w+)\s*\(').allMatches(content);
-      for (final match in voidMethodMatches) {
-        final method = match.group(1);
-        if (method != null && !_allowedVoidRepositoryMethods.contains(method)) {
+      final nonResultMethodMatches = RegExp(
+        r'Future<(?!Result<)(.+?)>\s+(\w+)\s*\(',
+      ).allMatches(content);
+      for (final match in nonResultMethodMatches) {
+        final method = match.group(2);
+        if (method != null && !_allowedNonResultRepositoryMethods.contains(method)) {
           issues.add(
-            '$path must use Result return type for write/failure-sensitive repository methods ($method)',
+            '$path must use Result return type for remote repository methods ($method)',
           );
         }
       }
@@ -376,6 +405,18 @@ void main() {
           '$path must not expose transport-level parameters in domain repositories',
         );
       }
+    }
+
+    if (normalized == 'lib/core/network/request_executor_binding.dart' &&
+        RegExp(r'Future<[^>]+>\s+request(Api|Void)?\s*\(').hasMatch(content)) {
+      issues.add(
+        '$path must not expose throw-based request/requestApi/requestVoid APIs',
+      );
+    }
+
+    if (normalized == 'lib/core/network/request_executor.dart' &&
+        RegExp(r'runOrThrow|runApiOrThrow|runUnitOrThrow').hasMatch(content)) {
+      issues.add('$path must not expose throw-based run*OrThrow APIs');
     }
   }
 

@@ -1,4 +1,5 @@
 import 'package:culcul/app/theme/app_theme.dart';
+import 'package:culcul/features/live/domain/entities/live_entities.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 
@@ -36,20 +37,15 @@ class LiveGuardBadge extends StatelessWidget {
 }
 
 class LiveMedalBadge extends StatelessWidget {
-  final List<dynamic> medal;
+  final LiveDanmakuMedal medal;
 
   const LiveMedalBadge({super.key, required this.medal});
 
   @override
   Widget build(BuildContext context) {
-    if (medal.length < 2) return const SizedBox.shrink();
-
-    final name = medal[1].toString();
-    final level = medal[0].toString();
-    int colorInt = 0;
-    if (medal.length > 4 && medal[4] is int) {
-      colorInt = medal[4] as int;
-    }
+    final name = medal.name;
+    final level = medal.level.toString();
+    final colorInt = medal.color;
 
     final color = colorInt != 0
         ? Color.fromARGB(

@@ -1,7 +1,6 @@
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'dart:async';
 
-import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/features/video/video.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -33,9 +32,9 @@ class CommentReplyController extends _$CommentReplyController {
       ),
     );
 
-    final result = await const RequestExecutor().run(
-      () => ref.read(videoRepositoryProvider).fetchReply(oid: oid, root: rootId, page: 1),
-    );
+    final result = await ref
+        .read(videoRepositoryProvider)
+        .fetchReply(oid: oid, root: rootId, page: 1);
     state = result.when(
       success: (response) => state.copyWith(
         paging: state.paging.copyWith(
@@ -68,11 +67,9 @@ class CommentReplyController extends _$CommentReplyController {
       paging: state.paging.copyWith(isLoadingMore: true, error: null),
     );
 
-    final result = await const RequestExecutor().run(
-      () => ref
-          .read(videoRepositoryProvider)
-          .fetchReply(oid: oid, root: rootId, page: state.paging.nextPage),
-    );
+    final result = await ref
+        .read(videoRepositoryProvider)
+        .fetchReply(oid: oid, root: rootId, page: state.paging.nextPage);
     state = result.when(
       success: (response) => state.copyWith(
         paging: state.paging.copyWith(

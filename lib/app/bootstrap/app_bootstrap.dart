@@ -9,7 +9,6 @@ import 'package:media_kit/media_kit.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:culcul/app/bootstrap/app_dependencies.dart';
-import 'package:culcul/core/services/audio_handler.dart';
 import 'package:culcul/i18n/strings.g.dart';
 
 class AppBootstrap {
@@ -20,7 +19,6 @@ class AppBootstrap {
     MediaKit.ensureInitialized();
     await Hive.initFlutter();
 
-    final audioHandler = await CilixiliAudioHandler.init();
     final sessionStorageBox = await Hive.openBox('culcul_session_box');
     final settingsStorageBox = await Hive.openBox('culcul_settings_box');
     final searchStorageBox = await Hive.openBox('culcul_search_box');
@@ -39,7 +37,6 @@ class AppBootstrap {
       sessionStorageBox: sessionStorageBox,
       settingsStorageBox: settingsStorageBox,
       searchStorageBox: searchStorageBox,
-      audioHandler: audioHandler,
     );
   }
 

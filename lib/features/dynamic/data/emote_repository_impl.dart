@@ -1,6 +1,8 @@
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/network/request_executor_binding.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/dynamic/data/dtos/emote_response.dart' as dto;
 import 'package:culcul/features/dynamic/data/emote_api.dart';
 import 'package:culcul/features/dynamic/domain/entities/emote_response.dart'
@@ -27,9 +29,9 @@ class EmoteRepositoryImpl with RequestExecutorBinding implements domain.EmoteRep
   RequestExecutor get requestExecutor => _requestExecutor;
 
   @override
-  Future<domain_entity.EmoteResponse> getUserEmotes() async {
-    final data = await requestApi(() => _api.getUserEmotes(business: 'dynamic'));
-    return data.toDomain();
+  Future<Result<domain_entity.EmoteResponse, AppError>> getUserEmotes() async {
+    final result = await requestApiResult(() => _api.getUserEmotes(business: 'dynamic'));
+    return result.map((data) => data.toDomain());
   }
 }
 

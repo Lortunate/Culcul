@@ -30,20 +30,18 @@ class RankingRepositoryImpl with RequestExecutorBinding implements domain.Rankin
   @override
   RequestExecutor get requestExecutor => _requestExecutor;
 
-  Future<RankingResponseDto> getRankingResponseDto({int? rid}) {
-    return requestApi(() => _api.fetchRanking(rid: rid));
+  Future<Result<RankingResponseDto, AppError>> getRankingResponseDto({int? rid}) {
+    return requestApiResult(() => _api.fetchRanking(rid: rid));
   }
 
-  Future<List<VideoModel>> getRankingModels({int? rid}) async {
-    final data = await getRankingResponseDto(rid: rid);
-    return data.list.map((item) => item.toContract()).toList();
+  Future<Result<List<VideoModel>, AppError>> getRankingModels({int? rid}) async {
+    final result = await getRankingResponseDto(rid: rid);
+    return result.map((data) => data.list.map((item) => item.toContract()).toList());
   }
 
   @override
   Future<Result<List<RankingVideo>, AppError>> getRanking({int? rid}) async {
-    return requestResult(() async {
-      final videos = await getRankingModels(rid: rid);
-      return videos.map((video) => video.toDomain()).toList();
-    });
+    final result = await getRankingModels(rid: rid);
+    return result.map((videos) => videos.map((video) => video.toDomain()).toList());
   }
 }

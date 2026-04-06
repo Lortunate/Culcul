@@ -1,11 +1,10 @@
-import 'dart:ui';
-
 import 'package:culcul/core/services/media_service.dart';
 import 'package:culcul/core/utils/id_utils.dart';
 import 'package:culcul/core/utils/toast_utils.dart';
 import 'package:culcul/features/home/domain/entities/home_video.dart';
-import 'package:culcul/features/to_view/presentation/view_models/to_view_view_model.dart';
+import 'package:culcul/features/to_view/presentation.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/widgets/adaptive_blur.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -31,8 +30,9 @@ class VideoMoreBottomSheet extends ConsumerWidget {
 
     return ClipRRect(
       borderRadius: topRadius,
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20.0, sigmaY: 20.0),
+      child: AdaptiveBlur(
+        sigmaX: 20,
+        sigmaY: 20,
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: colorScheme.surface.withValues(alpha: 0.8),

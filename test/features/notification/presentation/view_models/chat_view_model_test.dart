@@ -3,16 +3,8 @@ import 'dart:io';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/notification/notification.dart';
-import 'package:culcul/features/notification/domain/entities/image_upload_result.dart';
-import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
-import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
-import 'package:culcul/features/notification/domain/entities/private_message.dart';
-import 'package:culcul/features/notification/domain/entities/private_session.dart';
-import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
-import 'package:culcul/features/notification/domain/entities/system_notice.dart';
-import 'package:culcul/features/notification/domain/repositories/notification_repository.dart';
-import 'package:culcul/features/notification/presentation/view_models/chat_view_model.dart';
-import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
+import 'package:culcul/features/notification/domain.dart';
+import 'package:culcul/features/notification/presentation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -86,20 +78,21 @@ class _ChatFakeRepository implements NotificationRepository {
   }
 
   @override
-  Future<void> syncMessagesHead({
+  Future<Result<void, AppError>> syncMessagesHead({
     required int ownerUid,
     required int talkerId,
     required PrivateSessionType sessionType,
-  }) async {}
+  }) async => const Success(null);
 
   @override
-  Future<void> syncMessagesOlder({
+  Future<Result<void, AppError>> syncMessagesOlder({
     required int ownerUid,
     required int talkerId,
     required PrivateSessionType sessionType,
     required int endSeqno,
   }) async {
     _olderSynced = true;
+    return const Success(null);
   }
 
   @override
@@ -136,31 +129,37 @@ class _ChatFakeRepository implements NotificationRepository {
   }
 
   @override
-  Future<void> syncUnreadCount({required int ownerUid, bool force = false}) async {}
+  Future<Result<void, AppError>> syncUnreadCount({
+    required int ownerUid,
+    bool force = false,
+  }) async => const Success(null);
 
   @override
-  Future<void> syncSessions({required int ownerUid, bool force = false}) async {}
+  Future<Result<void, AppError>> syncSessions({
+    required int ownerUid,
+    bool force = false,
+  }) async => const Success(null);
 
   @override
-  Future<void> syncSessionsOlder({
+  Future<Result<void, AppError>> syncSessionsOlder({
     required int ownerUid,
     required PrivateSessionType sessionType,
     required int endTs,
-  }) async {}
+  }) async => const Success(null);
 
   @override
-  Future<void> syncFeedHead({
+  Future<Result<void, AppError>> syncFeedHead({
     required int ownerUid,
     required NotificationFeedType type,
-  }) async {}
+  }) async => const Success(null);
 
   @override
-  Future<void> syncFeedOlder({
+  Future<Result<void, AppError>> syncFeedOlder({
     required int ownerUid,
     required NotificationFeedType type,
     required int cursorId,
     required int cursorTime,
-  }) async {}
+  }) async => const Success(null);
 
   @override
   Future<Result<ImageUploadResult, AppError>> uploadImage(File file) async {

@@ -20,9 +20,6 @@ class HomeRecommend extends _$HomeRecommend
     final result = await ref
         .read(homeRepositoryProvider)
         .fetchRecommend(page: page, forceRefresh: refresh);
-    return result.when(
-      success: (items) => items,
-      failure: (error) => throw error.toException(),
-    );
+    return result.dataOrNull ?? const <HomeVideo>[];
   }
 }

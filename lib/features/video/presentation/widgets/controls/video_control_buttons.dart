@@ -82,15 +82,27 @@ class VideoControlButtons extends ConsumerWidget {
     final danmakuEnabled = ref.watch(
       danmakuSettingsControllerProvider.select((s) => s.isEnabled),
     );
-    final subtitleState = ref.watch(subtitleControllerProvider(bvid));
-    final videoDetailState = ref.watch(videoDetailControllerProvider(bvid));
+    final subtitleState = ref.watch(
+      subtitleControllerProvider(bvid).select(
+        (s) => (isEnabled: s.isEnabled, hasSubtitles: s.availableSubtitles.isNotEmpty),
+      ),
+    );
 
     final playerController = ref.read(playerControllerProvider.notifier);
 
-    final selectedQuality = videoDetailState.selectedQuality;
-    final availableQualities = videoDetailState.availableQualities;
-    final playbackSpeed = videoDetailState.playbackSpeed;
-    final qualityLabels = buildQualityLabels(videoDetailState.playUrl, t);
+    final selectedQuality = ref.watch(
+      videoDetailControllerProvider(bvid).select((s) => s.selectedQuality),
+    );
+    final availableQualities = ref.watch(
+      videoDetailControllerProvider(bvid).select((s) => s.availableQualities),
+    );
+    final playbackSpeed = ref.watch(
+      videoDetailControllerProvider(bvid).select((s) => s.playbackSpeed),
+    );
+    final playUrl = ref.watch(
+      videoDetailControllerProvider(bvid).select((s) => s.playUrl),
+    );
+    final qualityLabels = buildQualityLabels(playUrl, t);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
@@ -136,7 +148,7 @@ class VideoControlButtons extends ConsumerWidget {
               size: 20,
             ),
             const SizedBox(width: 4),
-            if (subtitleState.availableSubtitles.isNotEmpty) ...[
+            if (subtitleState.hasSubtitles) ...[
               ControlButton(
                 onPressed: () {
                   ref.read(subtitleControllerProvider(bvid).notifier).toggleSubtitle();

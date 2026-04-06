@@ -18,9 +18,7 @@ sealed class LiveRoomState with _$LiveRoomState {
     LiveGuardListModel? guardList,
     LivePlayUrlModel? playUrl,
     LiveDanmakuConfigModel? danmakuConfig,
-    @Default([]) List<LiveDanmakuItem> danmakuHistory,
     @Default(false) bool isPlaying,
     @Default(1.0) double volume,
-    @Default(false) bool isDanmakuEnabled,
   }) = _LiveRoomState;
 }

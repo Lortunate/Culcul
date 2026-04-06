@@ -1,5 +1,5 @@
 import 'package:culcul/features/profile/presentation/view_models/relation_view_model.dart';
-import 'package:culcul/features/profile/presentation/widgets/relation/relation_user_list.dart';
+import 'package:culcul/features/profile/presentation/widgets/relation_user_list.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

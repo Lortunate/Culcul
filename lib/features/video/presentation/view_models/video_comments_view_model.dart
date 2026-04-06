@@ -2,7 +2,7 @@ import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'dart:async';
 
 import 'package:culcul/core/contracts/comment_contract.dart';
-import 'package:culcul/core/network/request_executor.dart';
+import 'package:culcul/core/pagination/paged_list_state.dart';
 import 'package:culcul/features/video/video.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -15,8 +15,17 @@ part 'video_comments_view_model.g.dart';
 class VideoCommentsController extends _$VideoCommentsController {
   @override
   VideoCommentsState build(String bvid) {
-    unawaited(refresh());
-    return const VideoCommentsState();
+    return const VideoCommentsState(
+      paging: PagedListState<CommentItem>(isInitialLoading: false, hasMore: true),
+    );
+  }
+
+  Future<void> ensureLoaded() async {
+    final paging = state.paging;
+    if (paging.isInitialLoading || paging.items.isNotEmpty) {
+      return;
+    }
+    await refresh();
   }
 
   Future<void> refresh() async {
@@ -110,11 +119,9 @@ class VideoCommentsController extends _$VideoCommentsController {
       );
     }
 
-    final result = await const RequestExecutor().run(
-      () => ref
-          .read(videoRepositoryProvider)
-          .fetchComments(oid: aid, sort: state.sort, page: page),
-    );
+    final result = await ref
+        .read(videoRepositoryProvider)
+        .fetchComments(oid: aid, sort: state.sort, page: page);
     result.when(
       success: (response) {
         final comments = replace

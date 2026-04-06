@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:culcul/core/perf/video_perf_logger.dart';
 import 'package:culcul/core/services/audio_handler.dart';
 import 'package:culcul/features/video/presentation/view_models/player_session_coordinator.dart';
 import 'package:flutter/foundation.dart';
@@ -40,6 +41,7 @@ class PlayerController extends _$PlayerController {
   final PlayerSessionCoordinator _sessionCoordinator = PlayerSessionCoordinator();
   int _renderEpoch = 0;
   bool _mounted = true;
+  bool _controlsInteractionLogged = false;
 
   @override
   PlayerUiState build() {
@@ -133,6 +135,9 @@ class PlayerController extends _$PlayerController {
     }
 
     _renderEpoch++;
+    if (resetUi) {
+      _controlsInteractionLogged = false;
+    }
     state = state.copyWith(
       activeSessionId: activeSessionId,
       activationVersion: activationVersion,
@@ -170,6 +175,7 @@ class PlayerController extends _$PlayerController {
   }
 
   void toggleControls() {
+    _logControlsInteractionOnce('toggle_controls');
     if (state.showControls) {
       _controlsTimer?.cancel();
       state = state.copyWith(showControls: false);
@@ -179,6 +185,7 @@ class PlayerController extends _$PlayerController {
   }
 
   Future<void> playOrPause() async {
+    _logControlsInteractionOnce('play_or_pause');
     resetControlsTimer();
     await player.playOrPause();
   }
@@ -188,6 +195,7 @@ class PlayerController extends _$PlayerController {
   }
 
   Future<void> seek(Duration position) async {
+    _logControlsInteractionOnce('seek');
     resetControlsTimer();
     await player.seek(position);
   }
@@ -298,6 +306,14 @@ class PlayerController extends _$PlayerController {
     if (!_isLoadRequestActive(sessionId, requestToken)) {
       return;
     }
+    VideoPerfLogger.log(
+      VideoPerfEvent.firstFrameReady,
+      fields: <String, Object?>{
+        'session': sessionId,
+        'token': requestToken,
+        'positionMs': player.state.position.inMilliseconds,
+      },
+    );
     state = state.copyWith(isMediaReady: true);
   }
 
@@ -323,11 +339,13 @@ class PlayerController extends _$PlayerController {
   }
 
   void toggleFullscreen() {
+    _logControlsInteractionOnce('fullscreen_toggle');
     state = state.copyWith(isFullscreen: !state.isFullscreen);
     resetControlsTimer();
   }
 
   void toggleLock() {
+    _logControlsInteractionOnce('lock_toggle');
     if (!_mounted) return;
     final newIsLocked = !state.isLocked;
     state = state.copyWith(isLocked: newIsLocked);
@@ -337,5 +355,20 @@ class PlayerController extends _$PlayerController {
     } else {
       resetControlsTimer();
     }
+  }
+
+  void _logControlsInteractionOnce(String action) {
+    if (_controlsInteractionLogged) {
+      return;
+    }
+    final sessionId = state.activeSessionId;
+    if (sessionId == null || sessionId.isEmpty) {
+      return;
+    }
+    _controlsInteractionLogged = true;
+    VideoPerfLogger.log(
+      VideoPerfEvent.controlsFirstInteraction,
+      fields: <String, Object?>{'session': sessionId, 'action': action},
+    );
   }
 }

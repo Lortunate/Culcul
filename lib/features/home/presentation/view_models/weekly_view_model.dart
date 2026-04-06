@@ -7,8 +7,5 @@ part 'weekly_view_model.g.dart';
 @riverpod
 Future<HomeWeeklyFeed> weeklyList(Ref ref) async {
   final result = await ref.watch(weeklyRepositoryProvider).getWeeklyList();
-  return result.when(
-    success: (feed) => feed,
-    failure: (error) => throw error.toException(),
-  );
+  return result.dataOrNull ?? const HomeWeeklyFeed(list: []);
 }

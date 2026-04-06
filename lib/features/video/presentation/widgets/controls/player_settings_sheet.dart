@@ -4,7 +4,6 @@ import 'package:culcul/features/video/presentation/widgets/controls/player_const
 import 'package:culcul/features/video/presentation/widgets/controls/player_panel.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/video_overlay_styles.dart';
 import 'package:culcul/i18n/i18n.dart';
-import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

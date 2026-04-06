@@ -34,10 +34,12 @@ class SearchRepositoryImpl with RequestExecutorBinding implements domain.SearchR
   @override
   RequestExecutor get requestExecutor => _requestExecutor;
 
-  Future<List<SearchSuggestionTag>> fetchSearchSuggestions(String term) async {
-    if (term.isEmpty) return [];
-    final responseStr = await request(() => api.fetchSearchSuggestions(term));
-    return _parseSuggestions(responseStr);
+  Future<Result<List<SearchSuggestionTag>, AppError>> fetchSearchSuggestions(
+    String term,
+  ) async {
+    if (term.isEmpty) return const Success(<SearchSuggestionTag>[]);
+    final result = await requestResult(() => api.fetchSearchSuggestions(term));
+    return result.map(_parseSuggestions);
   }
 
   List<SearchSuggestionTag> _parseSuggestions(String responseStr) {
@@ -50,27 +52,29 @@ class SearchRepositoryImpl with RequestExecutorBinding implements domain.SearchR
     }
   }
 
-  Future<DefaultSearchData> fetchDefaultSearch() {
-    return requestApi(() => api.fetchDefaultSearch());
+  Future<Result<DefaultSearchData, AppError>> fetchDefaultSearch() {
+    return requestApiResult(() => api.fetchDefaultSearch());
   }
 
-  Future<TrendingRankingData> fetchTrendingRanking() async {
-    final response = await request(() => api.fetchTrendingRanking());
-    if (response.code != 0) {
-      throw ServerException(response.message, code: response.code);
-    }
-    return response.data;
+  Future<Result<TrendingRankingData, AppError>> fetchTrendingRanking() async {
+    return requestResult(() async {
+      final response = await api.fetchTrendingRanking();
+      if (response.code != 0) {
+        throw ServerException(response.message, code: response.code);
+      }
+      return response.data;
+    });
   }
 
-  Future<SearchResultData> fetchSearchAll({
+  Future<Result<SearchResultData, AppError>> fetchSearchAll({
     required String keyword,
     int page = 1,
     String searchType = 'all',
     String order = 'totalrank',
     int duration = 0,
   }) async {
-    final response = await request(() async {
-      return searchType == 'all'
+    return requestResult(() async {
+      final response = searchType == 'all'
           ? await api.fetchSearchAll(
               keyword: keyword,
               page: page,
@@ -87,38 +91,34 @@ class SearchRepositoryImpl with RequestExecutorBinding implements domain.SearchR
               order: order,
               duration: duration,
             );
+      if (response.code != 0 || response.data == null) {
+        throw ServerException(response.message, code: response.code);
+      }
+      return response.data!;
     });
-    if (response.code != 0 || response.data == null) {
-      throw ServerException(response.message, code: response.code);
-    }
-    return response.data!;
   }
 
   @override
   Future<Result<List<SearchSuggestionEntry>, AppError>> getSuggestions(String term) async {
-    return requestResult(() async {
-      final suggestions = await fetchSearchSuggestions(term);
-      return suggestions
+    final result = await fetchSearchSuggestions(term);
+    return result.map(
+      (suggestions) => suggestions
           .map((item) => item.toDomain())
           .whereType<SearchSuggestionEntry>()
-          .toList();
-    });
+          .toList(),
+    );
   }
 
   @override
   Future<Result<SearchDefaultHint?, AppError>> getDefaultSearch() async {
-    return requestResult(() async {
-      final result = await fetchDefaultSearch();
-      return result.toDomain();
-    });
+    final result = await fetchDefaultSearch();
+    return result.map((data) => data.toDomain());
   }
 
   @override
   Future<Result<List<SearchTrendingKeyword>, AppError>> getTrendingRanking() async {
-    return requestResult(() async {
-      final result = await fetchTrendingRanking();
-      return result.list.map((item) => item.toDomain()).toList();
-    });
+    final result = await fetchTrendingRanking();
+    return result.map((data) => data.list.map((item) => item.toDomain()).toList());
   }
 
   @override
@@ -129,15 +129,13 @@ class SearchRepositoryImpl with RequestExecutorBinding implements domain.SearchR
     String order = 'totalrank',
     int duration = 0,
   }) async {
-    return requestResult(() async {
-      final result = await fetchSearchAll(
-        keyword: keyword,
-        page: page,
-        searchType: searchType,
-        order: order,
-        duration: duration,
-      );
-      return result.toDomain();
-    });
+    final result = await fetchSearchAll(
+      keyword: keyword,
+      page: page,
+      searchType: searchType,
+      order: order,
+      duration: duration,
+    );
+    return result.map((data) => data.toDomain());
   }
 }

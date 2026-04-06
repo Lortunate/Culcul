@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/video/video.dart';
 import 'package:culcul/features/video/presentation/view_models/video_comments_view_model.dart';
@@ -8,9 +10,10 @@ import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class VideoCommentsView extends ConsumerWidget {
+class VideoCommentsView extends HookConsumerWidget {
   final String bvid;
 
   const VideoCommentsView({super.key, required this.bvid});
@@ -21,6 +24,11 @@ class VideoCommentsView extends ConsumerWidget {
     final state = ref.watch(videoCommentsControllerProvider(bvid));
     final notifier = ref.read(videoCommentsControllerProvider(bvid).notifier);
     final paging = state.paging;
+
+    useEffect(() {
+      unawaited(notifier.ensureLoaded());
+      return null;
+    }, [notifier]);
 
     if (paging.isInitialLoading && paging.items.isEmpty) {
       return const Center(child: CircularProgressIndicator());

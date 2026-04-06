@@ -57,14 +57,14 @@ class DynamicRepositoryImpl with RequestExecutorBinding implements domain.Dynami
   }
 
   @override
-  Future<CommentResponse> getComments(
+  Future<Result<CommentResponse, AppError>> getComments(
     DynamicItem post, {
     CommentSort sort = CommentSort.hot,
     int page = 1,
   }) async {
     final target = _resolveCommentTarget(post);
     if (target == null) {
-      throw const UnknownException('Unsupported dynamic type for comments');
+      return Failure(AppError.data('Unsupported dynamic type for comments'));
     }
 
     return getCommentList(
@@ -118,14 +118,14 @@ class DynamicRepositoryImpl with RequestExecutorBinding implements domain.Dynami
     );
   }
 
-  Future<CommentResponse> getCommentList({
+  Future<Result<CommentResponse, AppError>> getCommentList({
     required String oid,
     required int type,
     CommentSort sort = CommentSort.hot,
     int page = 1,
     String? referer,
   }) {
-    return requestApi(
+    return requestApiResult(
       () => _api.getComments(
         oid: oid,
         type: type,
@@ -135,16 +135,16 @@ class DynamicRepositoryImpl with RequestExecutorBinding implements domain.Dynami
         referer: referer,
         origin: referer == null ? null : 'https://www.bilibili.com',
       ),
-    ).then((value) => value.toContract());
+    ).then((result) => result.map((value) => value.toContract()));
   }
 
   @override
-  Future<CommentResponse> getArticleCommentList({
+  Future<Result<CommentResponse, AppError>> getArticleCommentList({
     required ArticleDetailData article,
     int? next,
   }) {
     final referer = article.url;
-    return requestApi(
+    return requestApiResult(
       () => _api.getArticleComments(
         oid: article.commentOid,
         mode: 3,
@@ -152,7 +152,7 @@ class DynamicRepositoryImpl with RequestExecutorBinding implements domain.Dynami
         referer: referer,
         origin: 'https://www.bilibili.com',
       ),
-    ).then((value) => value.toContract());
+    ).then((result) => result.map((value) => value.toContract()));
   }
 
   @override
@@ -180,20 +180,17 @@ class DynamicRepositoryImpl with RequestExecutorBinding implements domain.Dynami
     required String message,
     String? referer,
   }) {
-    return requestResult(() async {
-      final dto = await requestApi(
-        () => _api.addReply(
-          oid: oid,
-          type: type,
-          root: root,
-          parent: parent,
-          message: message,
-          referer: referer,
-          origin: referer == null ? null : 'https://www.bilibili.com',
-        ),
-      );
-      return dto.toContract();
-    });
+    return requestApiResult(
+      () => _api.addReply(
+        oid: oid,
+        type: type,
+        root: root,
+        parent: parent,
+        message: message,
+        referer: referer,
+        origin: referer == null ? null : 'https://www.bilibili.com',
+      ),
+    ).then((result) => result.map((dto) => dto.toContract()));
   }
 
   @override
@@ -319,44 +316,52 @@ class DynamicRepositoryImpl with RequestExecutorBinding implements domain.Dynami
   }
 
   @override
-  Future<DynamicData> getFeed({String? type, String? offset}) {
-    return requestApi(
+  Future<Result<DynamicData, AppError>> getFeed({String? type, String? offset}) {
+    return requestApiResult(
       () => _api.getDynamicFeed(type: type, offset: offset, page: 1),
-    ).then((data) => data.toDomain());
+    ).then((result) => result.map((data) => data.toDomain()));
   }
 
   @override
-  Future<DynamicData> getSpaceDynamicFeed({required int hostMid, String? offset}) {
-    return requestApi(
+  Future<Result<DynamicData, AppError>> getSpaceDynamicFeed({
+    required int hostMid,
+    String? offset,
+  }) {
+    return requestApiResult(
       () => _api.getSpaceDynamicFeed(hostMid: hostMid, offset: offset),
-    ).then((data) => data.toDomain());
+    ).then((result) => result.map((data) => data.toDomain()));
   }
 
   @override
-  Future<DynamicData> getTopicFeed({required int topicId, String? offset}) {
-    return requestApi(
+  Future<Result<DynamicData, AppError>> getTopicFeed({
+    required int topicId,
+    String? offset,
+  }) {
+    return requestApiResult(
       () => _api.getTopicFeed(topicId: topicId, offset: offset),
-    ).then((data) => data.toDomain());
+    ).then((result) => result.map((data) => data.toDomain()));
   }
 
   @override
-  Future<DynamicItem> getDetail(String id) async {
-    final data = await requestApi(() => _api.getDynamicDetail(id: id));
-    return data.toDomain().item;
+  Future<Result<DynamicItem, AppError>> getDetail(String id) async {
+    final result = await requestApiResult(() => _api.getDynamicDetail(id: id));
+    return result.map((data) => data.toDomain().item);
   }
 
   @override
-  Future<ArticleDetailData> getArticleDetail(String url) async {
-    final uri = Uri.parse(url);
-    if (uri.path.contains('/opus/')) {
-      return _getOpusDetail(uri);
-    }
+  Future<Result<ArticleDetailData, AppError>> getArticleDetail(String url) async {
+    return requestResult(() async {
+      final uri = Uri.parse(url);
+      if (uri.path.contains('/opus/')) {
+        return _getOpusDetail(uri);
+      }
 
-    if (uri.path.contains('/read/cv')) {
-      return _getReadArticleDetail(uri);
-    }
+      if (uri.path.contains('/read/cv')) {
+        return _getReadArticleDetail(uri);
+      }
 
-    throw const UnknownException('Unsupported article url');
+      throw const UnknownException('Unsupported article url');
+    });
   }
 
   Future<ArticleDetailData> _getReadArticleDetail(Uri uri) async {
@@ -438,28 +443,24 @@ class DynamicRepositoryImpl with RequestExecutorBinding implements domain.Dynami
   @override
   Future<Result<void, AppError>> likeDynamic(String id, bool like) async {
     return requestResult(() async {
-      await request(() async {
-        final csrf = await _getCsrfToken();
-        final response = await _api.likeDynamic(
-          body: {'dyn_id_str': id, 'up': like ? 1 : 2},
-          csrf: csrf ?? '',
-        );
-        if (!response.isSuccess) {
-          throw ServerException(response.message, code: response.code);
-        }
-      });
+      final csrf = await _getCsrfToken();
+      final response = await _api.likeDynamic(
+        body: {'dyn_id_str': id, 'up': like ? 1 : 2},
+        csrf: csrf ?? '',
+      );
+      if (!response.isSuccess) {
+        throw ServerException(response.message, code: response.code);
+      }
     });
   }
 
   @override
   Future<Result<DynamicUploadImageData, AppError>> uploadImage(File file) async {
-    return requestResult(() async {
-      final data = await requestApi(() async {
-        final csrf = await _getCsrfToken();
-        return _api.uploadImage(file: file, csrf: csrf ?? '');
-      });
-      return data.toDomain();
+    final result = await requestApiResult(() async {
+      final csrf = await _getCsrfToken();
+      return _api.uploadImage(file: file, csrf: csrf ?? '');
     });
+    return result.map((data) => data.toDomain());
   }
 
   @override
@@ -468,40 +469,38 @@ class DynamicRepositoryImpl with RequestExecutorBinding implements domain.Dynami
     List<DynamicUploadImageData> images = const [],
   }) async {
     return requestResult(() async {
-      await request(() async {
-        final csrf = await _getCsrfToken();
+      final csrf = await _getCsrfToken();
 
-        // Construct dyn_req
-        final List<Map<String, dynamic>> contents = [];
-        contents.add({'raw_text': content, 'type': 1, 'biz_id': ''});
+      // Construct dyn_req
+      final List<Map<String, dynamic>> contents = [];
+      contents.add({'raw_text': content, 'type': 1, 'biz_id': ''});
 
-        final List<Map<String, dynamic>> pics = [];
-        for (var img in images) {
-          pics.add({
-            'img_src': img.imageUrl,
-            'img_width': img.width,
-            'img_height': img.height,
-          });
-        }
+      final List<Map<String, dynamic>> pics = [];
+      for (var img in images) {
+        pics.add({
+          'img_src': img.imageUrl,
+          'img_width': img.width,
+          'img_height': img.height,
+        });
+      }
 
-        final Map<String, dynamic> dynReq = {
-          'content': {'contents': contents},
-          'scene': images.isNotEmpty ? 2 : 1, // 1: text, 2: image
-        };
+      final Map<String, dynamic> dynReq = {
+        'content': {'contents': contents},
+        'scene': images.isNotEmpty ? 2 : 1, // 1: text, 2: image
+      };
 
-        if (images.isNotEmpty) {
-          dynReq['pics'] = pics;
-        }
+      if (images.isNotEmpty) {
+        dynReq['pics'] = pics;
+      }
 
-        final response = await _api.createDynamic(
-          csrf: csrf ?? '',
-          body: {'dyn_req': dynReq},
-        );
+      final response = await _api.createDynamic(
+        csrf: csrf ?? '',
+        body: {'dyn_req': dynReq},
+      );
 
-        if (!response.isSuccess) {
-          throw ServerException(response.message, code: response.code);
-        }
-      });
+      if (!response.isSuccess) {
+        throw ServerException(response.message, code: response.code);
+      }
     });
   }
 }

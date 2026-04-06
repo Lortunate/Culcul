@@ -69,38 +69,39 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
     required int parent,
     required String message,
   }) {
-    return requestResult(() async {
-      final dto = await requestApi(
-        () => api.addReply(oid, root, parent, message, _videoCommentType),
-      );
-      return dto.toContract();
-    });
+    return requestApiResult(
+      () => api.addReply(oid, root, parent, message, _videoCommentType),
+    ).then((result) => result.map((dto) => dto.toContract()));
   }
 
   @override
-  Future<VideoDetail> fetchVideoView(String bvid) {
-    return requestApi(() => api.fetchVideoView(bvid)).then((value) => value.toDomain());
+  Future<Result<VideoDetail, AppError>> fetchVideoView(String bvid) {
+    return requestApiResult(() => api.fetchVideoView(bvid)).then(
+      (result) => result.map((value) => value.toDomain()),
+    );
   }
 
   @override
-  Future<VideoDimension?> fetchVideoEntryDimension(String bvid) {
-    return requestApi(() => api.fetchVideoPagelist(bvid)).then((value) {
-      if (value.isEmpty) {
-        return null;
-      }
-      return value.first.dimension.toDomain();
-    });
+  Future<Result<VideoDimension?, AppError>> fetchVideoEntryDimension(String bvid) {
+    return requestApiResult(() => api.fetchVideoPagelist(bvid)).then(
+      (result) => result.map((value) {
+        if (value.isEmpty) {
+          return null;
+        }
+        return value.first.dimension.toDomain();
+      }),
+    );
   }
 
   @override
-  Future<List<VideoTag>> fetchVideoTags(String bvid) {
-    return requestApi(
+  Future<Result<List<VideoTag>, AppError>> fetchVideoTags(String bvid) {
+    return requestApiResult(
       () => api.fetchVideoTags(bvid),
-    ).then((value) => value.map((item) => item.toDomain()).toList());
+    ).then((result) => result.map((value) => value.map((item) => item.toDomain()).toList()));
   }
 
   @override
-  Future<PlayUrl> fetchVideoPlayUrl({
+  Future<Result<PlayUrl, AppError>> fetchVideoPlayUrl({
     required int aid,
     required int cid,
     int quality = 80,
@@ -108,7 +109,7 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
     int fnver = 0,
     int fourk = 1,
   }) {
-    return requestApi(
+    return requestApiResult(
       () => api.fetchVideoPlayUrl(
         aid,
         cid,
@@ -117,30 +118,33 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
         fnver: fnver,
         fourk: fourk,
       ),
-    ).then((value) => value.toDomain());
+    ).then((result) => result.map((value) => value.toDomain()));
   }
 
   @override
-  Future<PlayerInfo> fetchPlayerInfo({required int aid, required int cid}) {
-    return requestApi(
+  Future<Result<PlayerInfo, AppError>> fetchPlayerInfo({
+    required int aid,
+    required int cid,
+  }) {
+    return requestApiResult(
       () => api.fetchPlayerInfo(aid, cid),
-    ).then((value) => value.toDomain());
+    ).then((result) => result.map((value) => value.toDomain()));
   }
 
   @override
-  Future<List<RelatedVideo>> fetchRelatedVideos(String bvid) {
-    return requestApi(
+  Future<Result<List<RelatedVideo>, AppError>> fetchRelatedVideos(String bvid) {
+    return requestApiResult(
       () => api.fetchRelatedVideos(bvid),
-    ).then((value) => value.map((item) => item.toDomain()).toList());
+    ).then((result) => result.map((value) => value.map((item) => item.toDomain()).toList()));
   }
 
   @override
-  Future<CommentResponse> fetchComments({
+  Future<Result<CommentResponse, AppError>> fetchComments({
     required int oid,
     CommentSort sort = CommentSort.hot,
     int page = 1,
   }) {
-    return requestApi(
+    return requestApiResult(
       () => api.fetchComments(
         oid,
         _videoCommentType,
@@ -148,23 +152,23 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
         _defaultCommentPageSize,
         page,
       ),
-    ).then((value) => value.toContract());
+    ).then((result) => result.map((value) => value.toContract()));
   }
 
   @override
-  Future<CommentResponse> fetchReply({
+  Future<Result<CommentResponse, AppError>> fetchReply({
     required int oid,
     required int root,
     int page = 1,
   }) {
-    return requestApi(
+    return requestApiResult(
       () => api.fetchReply(oid, root, _videoCommentType, _defaultCommentPageSize, page),
-    ).then((value) => value.toContract());
+    ).then((result) => result.map((value) => value.toContract()));
   }
 
   @override
-  Future<SubtitleContent> fetchSubtitleContent(String url) {
-    return request(() async {
+  Future<Result<SubtitleContent, AppError>> fetchSubtitleContent(String url) {
+    return requestResult(() async {
       final fullUrl = url.startsWith('http') ? url : 'https:$url';
       final response = await resourceApi.fetchJson(fullUrl);
       final dto = subtitle_dto.SubtitleContent.fromJson(

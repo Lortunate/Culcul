@@ -7,8 +7,5 @@ part 'category_ranking_view_model.g.dart';
 @riverpod
 Future<List<RankingVideo>> categoryRankingList(Ref ref, {int? rid}) async {
   final result = await ref.watch(rankingRepositoryProvider).getRanking(rid: rid);
-  return result.when(
-    success: (items) => items,
-    failure: (error) => throw error.toException(),
-  );
+  return result.dataOrNull ?? const <RankingVideo>[];
 }

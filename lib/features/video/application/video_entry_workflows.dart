@@ -16,9 +16,10 @@ class ResolveVideoEntryLayoutWorkflow {
 
   Future<VideoEntryLayout> call(String bvid) async {
     try {
-      final dimension = await _repository
+      final result = await _repository
           .fetchVideoEntryDimension(bvid)
           .timeout(const Duration(seconds: 5));
+      final dimension = result.dataOrNull;
       if (dimension == null) {
         return VideoEntryLayout.normal;
       }

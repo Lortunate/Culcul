@@ -23,9 +23,13 @@ class DynamicNotifier extends _$DynamicNotifier
     bool refresh = false,
   }) async {
     final apiType = _type == 'all' ? null : _type;
-    final data = await ref
+    final result = await ref
         .read(dynamicRepositoryProvider)
         .getFeed(type: apiType, offset: currentCursor);
+    if (result.errorOrNull != null) {
+      return const CursorPage(items: [], nextCursor: null, hasMore: false);
+    }
+    final data = result.dataOrNull!;
     return CursorPage(items: data.items, nextCursor: data.offset, hasMore: data.hasMore);
   }
 

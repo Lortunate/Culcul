@@ -1,4 +1,4 @@
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/auth/presentation.dart';
 import 'package:culcul/features/profile/profile.dart';
 import 'package:culcul/core/contracts/relation_user_contract.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
