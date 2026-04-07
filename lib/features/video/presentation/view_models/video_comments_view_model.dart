@@ -1,8 +1,7 @@
-import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'dart:async';
 
-import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/pagination/paged_list_state.dart';
+import 'package:culcul/core/pagination/paged_list_state_transitions.dart';
 import 'package:culcul/features/video/video.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -40,16 +39,7 @@ class VideoCommentsController extends _$VideoCommentsController {
       return;
     }
 
-    state = state.copyWith(
-      paging: state.paging.copyWith(
-        isInitialLoading: true,
-        isLoadingMore: false,
-        error: null,
-        nextPage: 1,
-        hasMore: true,
-        items: const [],
-      ),
-    );
+    state = state.copyWith(paging: PagedListStateTransitions.beginRefresh(state.paging));
 
     await _loadPage(page: 1, replace: true);
   }
@@ -111,11 +101,11 @@ class VideoCommentsController extends _$VideoCommentsController {
 
     if (replace) {
       state = state.copyWith(
-        paging: state.paging.copyWith(isInitialLoading: true, error: null),
+        paging: PagedListStateTransitions.beginRefresh(state.paging, clearItems: false),
       );
     } else {
       state = state.copyWith(
-        paging: state.paging.copyWith(isLoadingMore: true, error: null),
+        paging: PagedListStateTransitions.beginLoadMore(state.paging),
       );
     }
 
@@ -128,23 +118,24 @@ class VideoCommentsController extends _$VideoCommentsController {
             ? response.replies
             : [...state.paging.items, ...response.replies];
         state = state.copyWith(
-          paging: state.paging.copyWith(
-            items: comments,
-            isInitialLoading: false,
-            isLoadingMore: false,
-            hasMore: response.replies.isNotEmpty,
-            nextPage: page + 1,
-            error: null,
-          ),
+          paging: replace
+              ? PagedListStateTransitions.completeRefresh(
+                  state.paging,
+                  items: comments,
+                  hasMore: response.replies.isNotEmpty,
+                  nextPage: page + 1,
+                )
+              : PagedListStateTransitions.completeLoadMore(
+                  state.paging,
+                  items: comments,
+                  hasMore: response.replies.isNotEmpty,
+                  nextPage: page + 1,
+                ),
         );
       },
       failure: (error) {
         state = state.copyWith(
-          paging: state.paging.copyWith(
-            isInitialLoading: false,
-            isLoadingMore: false,
-            error: error,
-          ),
+          paging: PagedListStateTransitions.fail(state.paging, error),
         );
       },
     );

@@ -39,6 +39,7 @@ class PlayerController extends _$PlayerController {
   Timer? _controlsTimer;
   final List<StreamSubscription> _subscriptions = [];
   final PlayerSessionCoordinator _sessionCoordinator = PlayerSessionCoordinator();
+  final Map<int, Stopwatch> _loadRequestTimings = <int, Stopwatch>{};
   int _renderEpoch = 0;
   bool _mounted = true;
   bool _controlsInteractionLogged = false;
@@ -215,6 +216,7 @@ class PlayerController extends _$PlayerController {
     }
 
     final requestToken = _sessionCoordinator.beginLoadRequest();
+    _loadRequestTimings[requestToken] = Stopwatch()..start();
     _markLoadingForSession(
       activeSessionId: _sessionCoordinator.activeSessionId,
       activationVersion: _sessionCoordinator.activationVersion,
@@ -236,6 +238,7 @@ class PlayerController extends _$PlayerController {
 
     for (var i = 0; i < candidates.length; i++) {
       if (!_isLoadRequestActive(sessionId, requestToken)) {
+        _loadRequestTimings.remove(requestToken);
         return;
       }
 
@@ -246,6 +249,7 @@ class PlayerController extends _$PlayerController {
         if (isQualitySwitch) {
           await _openMediaWithTimeout(media, play: false, ensureStarted: false);
           if (!_isLoadRequestActive(sessionId, requestToken)) {
+            _loadRequestTimings.remove(requestToken);
             return;
           }
 
@@ -256,6 +260,7 @@ class PlayerController extends _$PlayerController {
         } else {
           await _openMediaWithTimeout(media, play: autoPlay, ensureStarted: autoPlay);
           if (!_isLoadRequestActive(sessionId, requestToken)) {
+            _loadRequestTimings.remove(requestToken);
             return;
           }
           final audioHandler = ref.read(audioHandlerProvider);
@@ -272,6 +277,7 @@ class PlayerController extends _$PlayerController {
         return;
       } catch (error, stackTrace) {
         if (!_isLoadRequestActive(sessionId, requestToken)) {
+          _loadRequestTimings.remove(requestToken);
           return;
         }
         lastError = error;
@@ -288,8 +294,10 @@ class PlayerController extends _$PlayerController {
     if (errorToThrow != null &&
         stackToThrow != null &&
         _isLoadRequestActive(sessionId, requestToken)) {
+      _loadRequestTimings.remove(requestToken);
       Error.throwWithStackTrace(errorToThrow, stackToThrow);
     }
+    _loadRequestTimings.remove(requestToken);
   }
 
   bool _isLoadRequestActive(String sessionId, int requestToken) {
@@ -306,11 +314,14 @@ class PlayerController extends _$PlayerController {
     if (!_isLoadRequestActive(sessionId, requestToken)) {
       return;
     }
+    final requestTiming = _loadRequestTimings.remove(requestToken);
+    final elapsedMs = requestTiming?.elapsedMilliseconds;
     VideoPerfLogger.log(
       VideoPerfEvent.firstFrameReady,
       fields: <String, Object?>{
         'session': sessionId,
         'token': requestToken,
+        'elapsedMs': elapsedMs,
         'positionMs': player.state.position.inMilliseconds,
       },
     );

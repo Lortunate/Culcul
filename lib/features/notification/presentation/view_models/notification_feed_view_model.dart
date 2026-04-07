@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
-import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/notification.dart';
-import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'notification_feed_view_model.g.dart';
@@ -23,16 +21,15 @@ class NotificationFeedList extends _$NotificationFeedList
 
   @override
   Future<CursorPage<NotificationEntry, ({int id, int time})>> fetchPage(
-    ({int id, int time})? cursor, {
-    bool refresh = false,
-  }) async {
+    ({int id, int time})? cursor,
+  ) async {
     final ownerUid = ref.read(notificationOwnerUidProvider);
     if (ownerUid == null || type == NotificationFeedType.system) {
       return const CursorPage(items: [], nextCursor: null, hasMore: false);
     }
 
     final repository = ref.read(notificationRepositoryProvider);
-    if (refresh || cursor == null) {
+    if (isRefreshing || cursor == null) {
       await repository.syncFeedHead(ownerUid: ownerUid, type: type);
     } else {
       await repository.syncFeedOlder(

@@ -1,17 +1,3 @@
-class SystemNotice {
-  final int id;
-  final String? title;
-  final String? text;
-  final int time;
-  final String? uri;
-  final String? jumpText;
+import 'package:culcul/features/notification/data/dtos/system_notification_model.dart';
 
-  const SystemNotice({
-    required this.id,
-    required this.title,
-    required this.text,
-    required this.time,
-    required this.uri,
-    required this.jumpText,
-  });
-}
+typedef SystemNotice = SystemNotificationItem;

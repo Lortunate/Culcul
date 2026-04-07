@@ -18,10 +18,7 @@ class DynamicNotifier extends _$DynamicNotifier
   }
 
   @override
-  Future<CursorPage<DynamicItem, String>> fetchPage(
-    String? currentCursor, {
-    bool refresh = false,
-  }) async {
+  Future<CursorPage<DynamicItem, String>> fetchPage(String? currentCursor) async {
     final apiType = _type == 'all' ? null : _type;
     final result = await ref
         .read(dynamicRepositoryProvider)

@@ -1,4 +1,4 @@
-import 'package:culcul/features/video/presentation.dart';
+import 'package:culcul/features/video/video.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -46,3 +46,4 @@ void main() {
     );
   });
 }
+

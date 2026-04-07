@@ -33,11 +33,11 @@ class RecommendView extends HookConsumerWidget {
     useHomeScrollSync(ref, scrollController, refreshController, 1);
 
     return SmartPagingView(
-      provider: homeRecommendProvider,
       asyncValue: recommendAsync,
       controller: refreshController,
       onRefresh: ref.read(homeRecommendProvider.notifier).refresh,
       onLoadMore: ref.read(homeRecommendProvider.notifier).loadMore,
+      itemCount: () => ref.read(homeRecommendProvider).value?.length ?? 0,
       skeleton: const GridSkeletonView(
         itemSkeleton: VideoCardSkeleton(),
         gridDelegate: _recommendGridDelegate,

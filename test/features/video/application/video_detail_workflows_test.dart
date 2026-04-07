@@ -1,7 +1,7 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/video/application/video_detail_workflows.dart';
-import 'package:culcul/features/video/domain.dart';
+import 'package:culcul/features/video/video.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -163,3 +163,4 @@ RelatedVideo _buildRelatedVideo() {
     pubDate: 0,
   );
 }
+

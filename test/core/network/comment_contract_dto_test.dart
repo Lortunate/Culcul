@@ -1,9 +1,9 @@
-import 'package:culcul/core/network/dtos/comment_contract_dto.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('comment dto maps to pure contract', () {
-    final dto = CommentResponseDto.fromJson(<String, dynamic>{
+  test('comment contract parses API payload directly', () {
+    final contract = CommentResponse.fromJson(<String, dynamic>{
       'replies': [
         <String, dynamic>{
           'rpid': 1,
@@ -49,8 +49,6 @@ void main() {
       },
       'page': <String, dynamic>{'num': 1, 'size': 20, 'count': 10, 'acount': 10},
     });
-
-    final contract = dto.toContract();
 
     expect(contract.replies.single.content.message, 'hello');
     expect(contract.cursor?.allCount, 10);

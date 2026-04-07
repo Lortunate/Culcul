@@ -1,12 +1,9 @@
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/network/dtos/comment_contract_dto.dart';
 import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/network/request_executor_binding.dart';
 import 'package:culcul/core/network/resource_api.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/video/data/dtos/subtitle_dto.dart' as subtitle_dto;
-import 'package:culcul/features/video/data/video_mapper.dart';
 import 'package:culcul/features/video/domain/repositories/video_repository.dart'
     as domain;
 import 'package:culcul/features/video/data/video_api.dart';
@@ -71,14 +68,12 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
   }) {
     return requestApiResult(
       () => api.addReply(oid, root, parent, message, _videoCommentType),
-    ).then((result) => result.map((dto) => dto.toContract()));
+    );
   }
 
   @override
   Future<Result<VideoDetail, AppError>> fetchVideoView(String bvid) {
-    return requestApiResult(() => api.fetchVideoView(bvid)).then(
-      (result) => result.map((value) => value.toDomain()),
-    );
+    return requestApiResult(() => api.fetchVideoView(bvid));
   }
 
   @override
@@ -88,16 +83,14 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
         if (value.isEmpty) {
           return null;
         }
-        return value.first.dimension.toDomain();
+        return value.first.dimension;
       }),
     );
   }
 
   @override
   Future<Result<List<VideoTag>, AppError>> fetchVideoTags(String bvid) {
-    return requestApiResult(
-      () => api.fetchVideoTags(bvid),
-    ).then((result) => result.map((value) => value.map((item) => item.toDomain()).toList()));
+    return requestApiResult(() => api.fetchVideoTags(bvid));
   }
 
   @override
@@ -118,7 +111,7 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
         fnver: fnver,
         fourk: fourk,
       ),
-    ).then((result) => result.map((value) => value.toDomain()));
+    );
   }
 
   @override
@@ -126,16 +119,12 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
     required int aid,
     required int cid,
   }) {
-    return requestApiResult(
-      () => api.fetchPlayerInfo(aid, cid),
-    ).then((result) => result.map((value) => value.toDomain()));
+    return requestApiResult(() => api.fetchPlayerInfo(aid, cid));
   }
 
   @override
   Future<Result<List<RelatedVideo>, AppError>> fetchRelatedVideos(String bvid) {
-    return requestApiResult(
-      () => api.fetchRelatedVideos(bvid),
-    ).then((result) => result.map((value) => value.map((item) => item.toDomain()).toList()));
+    return requestApiResult(() => api.fetchRelatedVideos(bvid));
   }
 
   @override
@@ -152,7 +141,7 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
         _defaultCommentPageSize,
         page,
       ),
-    ).then((result) => result.map((value) => value.toContract()));
+    );
   }
 
   @override
@@ -163,7 +152,7 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
   }) {
     return requestApiResult(
       () => api.fetchReply(oid, root, _videoCommentType, _defaultCommentPageSize, page),
-    ).then((result) => result.map((value) => value.toContract()));
+    );
   }
 
   @override
@@ -171,10 +160,10 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
     return requestResult(() async {
       final fullUrl = url.startsWith('http') ? url : 'https:$url';
       final response = await resourceApi.fetchJson(fullUrl);
-      final dto = subtitle_dto.SubtitleContent.fromJson(
+      final subtitleContent = SubtitleContent.fromJson(
         Map<String, dynamic>.from(response as Map),
       );
-      return dto.toDomain();
+      return subtitleContent;
     });
   }
 

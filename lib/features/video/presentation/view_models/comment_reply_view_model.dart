@@ -1,6 +1,6 @@
-import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'dart:async';
 
+import 'package:culcul/core/pagination/paged_list_state_transitions.dart';
 import 'package:culcul/features/video/video.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -21,38 +21,22 @@ class CommentReplyController extends _$CommentReplyController {
   }
 
   Future<void> refresh() async {
-    state = state.copyWith(
-      paging: state.paging.copyWith(
-        isInitialLoading: true,
-        isLoadingMore: false,
-        error: null,
-        nextPage: 1,
-        hasMore: true,
-        items: const [],
-      ),
-    );
+    state = state.copyWith(paging: PagedListStateTransitions.beginRefresh(state.paging));
 
     final result = await ref
         .read(videoRepositoryProvider)
         .fetchReply(oid: oid, root: rootId, page: 1);
     state = result.when(
       success: (response) => state.copyWith(
-        paging: state.paging.copyWith(
+        paging: PagedListStateTransitions.completeRefresh(
+          state.paging,
           items: response.replies,
           nextPage: 2,
           hasMore: response.replies.isNotEmpty,
-          isInitialLoading: false,
-          isLoadingMore: false,
-          error: null,
         ),
       ),
-      failure: (error) => state.copyWith(
-        paging: state.paging.copyWith(
-          isInitialLoading: false,
-          isLoadingMore: false,
-          error: error,
-        ),
-      ),
+      failure: (error) =>
+          state.copyWith(paging: PagedListStateTransitions.fail(state.paging, error)),
     );
   }
 
@@ -63,31 +47,22 @@ class CommentReplyController extends _$CommentReplyController {
       return;
     }
 
-    state = state.copyWith(
-      paging: state.paging.copyWith(isLoadingMore: true, error: null),
-    );
+    state = state.copyWith(paging: PagedListStateTransitions.beginLoadMore(state.paging));
 
     final result = await ref
         .read(videoRepositoryProvider)
         .fetchReply(oid: oid, root: rootId, page: state.paging.nextPage);
     state = result.when(
       success: (response) => state.copyWith(
-        paging: state.paging.copyWith(
+        paging: PagedListStateTransitions.completeLoadMore(
+          state.paging,
           items: [...state.paging.items, ...response.replies],
           nextPage: state.paging.nextPage + 1,
           hasMore: response.replies.isNotEmpty,
-          isInitialLoading: false,
-          isLoadingMore: false,
-          error: null,
         ),
       ),
-      failure: (error) => state.copyWith(
-        paging: state.paging.copyWith(
-          isInitialLoading: false,
-          isLoadingMore: false,
-          error: error,
-        ),
-      ),
+      failure: (error) =>
+          state.copyWith(paging: PagedListStateTransitions.fail(state.paging, error)),
     );
   }
 

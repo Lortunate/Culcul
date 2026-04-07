@@ -1,5 +1,5 @@
 import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/core/network/dtos/comment_contract_dto.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/network/models/api_response.dart';
 import 'package:culcul/features/video/data/dtos/video_dtos.dart';
 import 'package:dio/dio.dart' hide Headers;
@@ -47,7 +47,7 @@ abstract class VideoApi {
 
   @GET(ApiConstants.reply)
   @Headers({'x-bili-wbi': 'true'})
-  Future<ApiResponse<CommentResponseDto>> fetchComments(
+  Future<ApiResponse<CommentResponse>> fetchComments(
     @Query('oid') int oid,
     @Query('type') int type,
     @Query('sort') int sort,
@@ -57,7 +57,7 @@ abstract class VideoApi {
 
   @GET(ApiConstants.replyReply)
   @Headers({'x-bili-wbi': 'true'})
-  Future<ApiResponse<CommentResponseDto>> fetchReply(
+  Future<ApiResponse<CommentResponse>> fetchReply(
     @Query('oid') int oid,
     @Query('root') int root,
     @Query('type') int type,
@@ -88,7 +88,7 @@ abstract class VideoApi {
   @POST(ApiConstants.replyAdd)
   @FormUrlEncoded()
   @Headers({'x-bili-csrf': 'true'})
-  Future<ApiResponse<CommentItemDto>> addReply(
+  Future<ApiResponse<CommentItem>> addReply(
     @Field('oid') int oid,
     @Field('root') int root,
     @Field('parent') int parent,

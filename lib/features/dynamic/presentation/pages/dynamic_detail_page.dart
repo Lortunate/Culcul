@@ -5,6 +5,8 @@ import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_deta
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_comments_view.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_content_widget.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/core/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/pagination/scroll_load_trigger.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
@@ -24,6 +26,7 @@ class DynamicDetailPage extends HookConsumerWidget {
     final state = ref.watch(provider);
     final notifier = ref.read(provider.notifier);
     final commentController = useTextEditingController();
+    final loadGate = useMemoized(PaginationLoadGate.new, [dynamicId]);
 
     void submitComment() {
       final post = state.post;
@@ -63,6 +66,8 @@ class DynamicDetailPage extends HookConsumerWidget {
 
     final post = state.post;
     if (post == null) return const SizedBox();
+    final commentState = ref.watch(dynamicCommentControllerProvider(post));
+    final hasMore = commentState.paging.hasMore;
 
     return Scaffold(
       appBar: AppBar(title: Text(t.moments.detail_title)),
@@ -76,16 +81,54 @@ class DynamicDetailPage extends HookConsumerWidget {
                 .refresh();
           }
         },
-        onLoad: () async {
-          final latestPost = ref.read(provider).post;
-          if (latestPost != null) {
-            return ref
-                .read(dynamicCommentControllerProvider(latestPost).notifier)
-                .loadMore();
-          }
-        },
+        onLoad: !hasMore
+            ? null
+            : () => ScrollLoadTrigger.runWithNotifier(
+                gate: loadGate,
+                hasMore: () {
+                  final latestPost = ref.read(provider).post;
+                  if (latestPost == null) {
+                    return false;
+                  }
+                  return ref
+                      .read(dynamicCommentControllerProvider(latestPost))
+                      .paging
+                      .hasMore;
+                },
+                isLoadingMore: () {
+                  final latestPost = ref.read(provider).post;
+                  if (latestPost == null) {
+                    return false;
+                  }
+                  return ref
+                      .read(dynamicCommentControllerProvider(latestPost))
+                      .paging
+                      .isLoadingMore;
+                },
+                loadMore: () async {
+                  final latestPost = ref.read(provider).post;
+                  if (latestPost == null) {
+                    throw StateError('Dynamic detail post is missing');
+                  }
+                  await ref
+                      .read(dynamicCommentControllerProvider(latestPost).notifier)
+                      .loadMore();
+                },
+                itemCount: () {
+                  final latestPost = ref.read(provider).post;
+                  if (latestPost == null) {
+                    return 0;
+                  }
+                  return ref
+                      .read(dynamicCommentControllerProvider(latestPost))
+                      .paging
+                      .items
+                      .length;
+                },
+                source: 'dynamic.dynamic_detail_comments',
+              ),
         header: const AppRefreshHeader(),
-        footer: AppLoadFooter(),
+        footer: hasMore ? AppLoadFooter() : null,
         child: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(child: DynamicDetailHeader(post: post)),

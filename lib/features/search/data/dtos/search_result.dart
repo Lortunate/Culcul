@@ -1,3 +1,4 @@
+import 'package:culcul/core/perf/list_perf_logger.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'search_result.freezed.dart';
@@ -34,7 +35,7 @@ sealed class SearchResultData with _$SearchResultData {
       _$SearchResultDataFromJson(json);
 }
 
-@Freezed(unionKey: 'type', fallbackUnion: 'video')
+@Freezed(unionKey: 'type')
 sealed class SearchResultItem with _$SearchResultItem {
   @FreezedUnionValue('video')
   const factory SearchResultItem.video({
@@ -114,29 +115,63 @@ sealed class SearchResultItem with _$SearchResultItem {
 class _SearchResultConverter implements JsonConverter<List<SearchResultItem>, dynamic> {
   const _SearchResultConverter();
 
+  static const Set<String> _supportedTypes = <String>{
+    'video',
+    'bili_user',
+    'media_bangumi',
+    'article',
+    'topic',
+  };
+
   @override
   List<SearchResultItem> fromJson(dynamic json) {
     final items = <SearchResultItem>[];
+    var droppedUnknownTypeCount = 0;
     if (json is List) {
       for (final element in json) {
         if (element is Map<String, dynamic>) {
           if (element.containsKey('result_type') && element.containsKey('data')) {
-            final type = element['result_type'] as String;
+            final type = element['result_type'] as String?;
             final dataList = element['data'] as List?;
-            if (dataList != null) {
+            if (type != null && _supportedTypes.contains(type) && dataList != null) {
               for (final itemJson in dataList) {
                 if (itemJson is Map<String, dynamic>) {
                   final map = Map<String, dynamic>.from(itemJson);
                   map['type'] = type;
-                  items.add(SearchResultItem.fromJson(map));
+                  try {
+                    items.add(SearchResultItem.fromJson(map));
+                  } catch (_) {
+                    droppedUnknownTypeCount++;
+                  }
                 }
               }
+            } else {
+              droppedUnknownTypeCount += dataList?.length ?? 1;
             }
           } else {
-            items.add(SearchResultItem.fromJson(element));
+            final type = element['type'] as String?;
+            if (type == null || !_supportedTypes.contains(type)) {
+              droppedUnknownTypeCount++;
+              continue;
+            }
+            try {
+              items.add(SearchResultItem.fromJson(element));
+            } catch (_) {
+              droppedUnknownTypeCount++;
+            }
           }
         }
       }
+    }
+
+    if (droppedUnknownTypeCount > 0) {
+      ListPerfLogger.log(
+        ListPerfEvent.dropUnknownSearchType,
+        fields: <String, Object?>{
+          'source': 'search.result_converter',
+          'count': droppedUnknownTypeCount,
+        },
+      );
     }
     return items;
   }

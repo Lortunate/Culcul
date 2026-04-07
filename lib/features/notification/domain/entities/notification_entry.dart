@@ -1,40 +1,7 @@
-class NotificationActor {
-  final int mid;
-  final String nickname;
-  final String avatar;
+import 'package:culcul/features/notification/data/dtos/reply_model.dart';
 
-  const NotificationActor({
-    required this.mid,
-    required this.nickname,
-    required this.avatar,
-  });
-}
-
-class NotificationEntryDetail {
-  final int subjectId;
-  final String type;
-  final String business;
-  final String title;
-  final String image;
-  final String uri;
-  final String nativeUri;
-  final String sourceContent;
-  final String targetReplyContent;
-  final String message;
-
-  const NotificationEntryDetail({
-    required this.subjectId,
-    required this.type,
-    required this.business,
-    required this.title,
-    required this.image,
-    required this.uri,
-    required this.nativeUri,
-    required this.sourceContent,
-    required this.targetReplyContent,
-    required this.message,
-  });
-}
+typedef NotificationActor = ReplyUser;
+typedef NotificationEntryDetail = ReplyItemDetail;
 
 class NotificationEntry {
   final int id;

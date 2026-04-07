@@ -58,4 +58,30 @@ void main() {
       reason: 'Found forbidden auth DTO exports: ${violations.join(', ')}',
     );
   });
+
+  test('Feature modules do not import removed domain/presentation facades', () async {
+    final forbiddenImport = RegExp(
+      r'''import\s+['"]package:culcul/features/[^'"]+/(domain|presentation)\.dart['"]''',
+    );
+    final violations = <String>[];
+    final libDir = Directory('lib');
+
+    if (libDir.existsSync()) {
+      for (final file in libDir.listSync(recursive: true)) {
+        if (file is! File || !file.path.endsWith('.dart')) {
+          continue;
+        }
+        final content = await file.readAsString();
+        if (forbiddenImport.hasMatch(content)) {
+          violations.add(file.path);
+        }
+      }
+    }
+
+    expect(
+      violations,
+      isEmpty,
+      reason: 'Found forbidden facade imports: ${violations.join(', ')}',
+    );
+  });
 }

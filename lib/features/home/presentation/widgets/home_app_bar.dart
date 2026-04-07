@@ -1,4 +1,4 @@
-import 'package:culcul/features/auth/presentation.dart';
+import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/app_search_bar.dart';
@@ -115,3 +115,4 @@ class _AppBarButton extends StatelessWidget {
     );
   }
 }
+

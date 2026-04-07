@@ -16,7 +16,7 @@ class LiveRecommend extends _$LiveRecommend
   }
 
   @override
-  Future<List<LiveRoomSummary>> fetchPage(int page, {bool refresh = false}) async {
+  Future<List<LiveRoomSummary>> fetchPage(int page) async {
     final result = await ref.read(liveRepositoryProvider).getRecommendList(page: page);
     return result.dataOrNull ?? const <LiveRoomSummary>[];
   }

@@ -4,9 +4,7 @@ import 'dart:io';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/pagination/paged_list_state.dart';
 import 'package:culcul/core/utils/list_utils.dart';
-import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/notification.dart';
-import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'chat_view_model.g.dart';
@@ -28,12 +26,10 @@ class ChatState {
 @riverpod
 class Chat extends _$Chat {
   int? _minSeqno;
-  bool _hasMore = true;
 
   @override
   FutureOr<ChatState> build(int talkerId, PrivateSessionType sessionType) async {
     _minSeqno = null;
-    _hasMore = true;
 
     final ownerUid = ref.read(notificationOwnerUidProvider);
     if (ownerUid == null) {
@@ -70,7 +66,7 @@ class Chat extends _$Chat {
     return ChatState(
       paging: PagedListState(
         items: initialMessages,
-        hasMore: _hasMore,
+        hasMore: _canLoadOlder(),
         isInitialLoading: false,
         isLoadingMore: false,
         nextPage: 2,
@@ -80,15 +76,15 @@ class Chat extends _$Chat {
   }
 
   Future<void> loadMore() async {
-    if (!_hasMore || state.isLoading) return;
+    if (state.isLoading) return;
 
     final ownerUid = ref.read(notificationOwnerUidProvider);
     if (ownerUid == null) return;
     final current = state.value;
     if (current == null) return;
+    if (!current.paging.hasMore || current.paging.isLoadingMore) return;
 
     if (_minSeqno == null || _minSeqno! <= 0) {
-      _hasMore = false;
       state = AsyncData(
         current.copyWith(
           paging: current.paging.copyWith(hasMore: false, isLoadingMore: false),
@@ -123,7 +119,6 @@ class Chat extends _$Chat {
       );
 
       if (olderMessages.isEmpty) {
-        _hasMore = false;
         final latest = state.value ?? current;
         state = AsyncData(
           latest.copyWith(
@@ -135,9 +130,7 @@ class Chat extends _$Chat {
       }
 
       _updateMinSeq(olderMessages);
-      if (olderMessages.length < 20) {
-        _hasMore = false;
-      }
+      final hasMoreAfterLoad = olderMessages.length >= 20 && _canLoadOlder();
 
       final filteredOlder = _filterMessages(olderMessages);
       final latest = state.value ?? current;
@@ -150,7 +143,7 @@ class Chat extends _$Chat {
         latest.copyWith(
           paging: latest.paging.copyWith(
             items: merged,
-            hasMore: _hasMore,
+            hasMore: hasMoreAfterLoad,
             isLoadingMore: false,
             error: null,
           ),
@@ -282,7 +275,7 @@ class Chat extends _$Chat {
       current.copyWith(
         paging: current.paging.copyWith(
           items: merged,
-          hasMore: _hasMore,
+          hasMore: current.paging.hasMore && _canLoadOlder(),
           isInitialLoading: false,
           isLoadingMore: false,
           error: null,
@@ -290,6 +283,10 @@ class Chat extends _$Chat {
         emojiMap: emojiMap,
       ),
     );
+  }
+
+  bool _canLoadOlder() {
+    return _minSeqno != null && _minSeqno! > 0;
   }
 
   List<PrivateMessage> _filterMessages(List<PrivateMessage> source) {

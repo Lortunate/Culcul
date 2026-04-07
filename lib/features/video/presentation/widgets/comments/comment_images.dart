@@ -43,6 +43,12 @@ class CommentImagesWidget extends StatelessWidget {
     // Constraints
     const double maxSide = 200.0;
     const double minSide = 100.0;
+    final displaySize = _resolveSingleImageDisplaySize(
+      aspectRatio: aspectRatio,
+      maxSide: maxSide,
+      minSide: minSide,
+    );
+    final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
 
     // Simple constrained box approach
     return GestureDetector(
@@ -64,6 +70,8 @@ class CommentImagesWidget extends StatelessWidget {
                 FormatUtils.formatImageUrl(picture.imgSrc),
                 fit: BoxFit.cover,
                 cache: true,
+                cacheWidth: _toCacheDimension(displaySize.width, devicePixelRatio),
+                cacheHeight: _toCacheDimension(displaySize.height, devicePixelRatio),
                 loadStateChanged: (state) => _buildLoadState(context, state),
               ),
             ),
@@ -88,6 +96,8 @@ class CommentImagesWidget extends StatelessWidget {
         final double totalWidth = constraints.maxWidth;
         final double itemSize =
             (totalWidth - (spacing * (crossAxisCount - 1))) / crossAxisCount;
+        final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
+        final decodeSize = _toCacheDimension(itemSize, devicePixelRatio);
 
         // We might want to cap the item size if it's too big (e.g. on tablet)
         // But usually in comments column it's fine.
@@ -109,6 +119,8 @@ class CommentImagesWidget extends StatelessWidget {
                       FormatUtils.formatImageUrl(pictures[index].imgSrc),
                       fit: BoxFit.cover,
                       cache: true,
+                      cacheWidth: decodeSize,
+                      cacheHeight: decodeSize,
                       loadStateChanged: (state) => _buildLoadState(context, state),
                     ),
                   ),
@@ -137,5 +149,23 @@ class CommentImagesWidget extends StatelessWidget {
 
   void _openPreview(BuildContext context, List<String> imageUrls, int index) {
     AppImagePreview.open(context, imageUrls: imageUrls, initialIndex: index);
+  }
+
+  Size _resolveSingleImageDisplaySize({
+    required double aspectRatio,
+    required double maxSide,
+    required double minSide,
+  }) {
+    if (aspectRatio >= 1.0) {
+      final height = (maxSide / aspectRatio).clamp(minSide, maxSide);
+      return Size(maxSide, height);
+    }
+    final width = (maxSide * aspectRatio).clamp(minSide, maxSide);
+    return Size(width, maxSide);
+  }
+
+  int _toCacheDimension(double logicalSize, double devicePixelRatio) {
+    final scaled = (logicalSize * devicePixelRatio).round();
+    return scaled <= 0 ? 1 : scaled;
   }
 }

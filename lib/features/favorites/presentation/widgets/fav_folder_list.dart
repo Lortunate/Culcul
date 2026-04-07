@@ -24,12 +24,12 @@ class FavFolderList extends ConsumerWidget {
         : () => ref.read(favCollectedFoldersProvider.notifier).loadMore();
 
     return SmartPagingView<FavoriteFolder>(
-      provider: provider,
       asyncValue: asyncValue,
       onRefresh: () async {
         ref.invalidate(provider);
       },
       onLoadMore: onLoadMore,
+      itemCount: () => ref.read(provider).value?.length ?? 0,
       builder: (context, list) {
         return ListView.separated(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -37,15 +37,18 @@ class FavFolderList extends ConsumerWidget {
           separatorBuilder: (context, index) => const SizedBox(height: 12),
           itemBuilder: (context, index) {
             final item = list[index];
-            return FavFolderItem(
-              item: item,
-              onTap: () {
-                FavoriteDetailRoute(
-                  mediaId: item.id,
-                  title: item.title,
-                  mid: item.mid,
-                ).push(context);
-              },
+            return KeyedSubtree(
+              key: ValueKey('fav_folder_${item.id}_$index'),
+              child: FavFolderItem(
+                item: item,
+                onTap: () {
+                  FavoriteDetailRoute(
+                    mediaId: item.id,
+                    title: item.title,
+                    mid: item.mid,
+                  ).push(context);
+                },
+              ),
             );
           },
         );

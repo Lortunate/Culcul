@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:culcul/core/network/dtos/comment_contract_dto.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/network/models/api_response.dart';
 import 'package:culcul/features/dynamic/data/dtos/dynamic_dtos.dart';
 import 'package:dio/dio.dart' hide Headers;
@@ -51,7 +51,7 @@ abstract class DynamicApi {
   });
 
   @GET('/x/v2/reply')
-  Future<ApiResponse<CommentResponseDto>> getComments({
+  Future<ApiResponse<CommentResponse>> getComments({
     @Query('oid') required String oid,
     @Query('type') required int type,
     @Query('sort') int sort = 1,
@@ -63,7 +63,7 @@ abstract class DynamicApi {
 
   @GET('/x/v2/reply/wbi/main')
   @Headers({'x-bili-wbi': 'true'})
-  Future<ApiResponse<CommentResponseDto>> getArticleComments({
+  Future<ApiResponse<CommentResponse>> getArticleComments({
     @Query('oid') required String oid,
     @Query('type') int type = 12,
     @Query('mode') int mode = 3,
@@ -77,7 +77,7 @@ abstract class DynamicApi {
   @POST('/x/v2/reply/add')
   @FormUrlEncoded()
   @Headers({'x-bili-csrf': 'true'})
-  Future<ApiResponse<CommentItemDto>> addReply({
+  Future<ApiResponse<CommentItem>> addReply({
     @Field('oid') required String oid,
     @Field('root') required int root,
     @Field('parent') required int parent,

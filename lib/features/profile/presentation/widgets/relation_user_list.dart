@@ -32,6 +32,7 @@ class RelationUserList extends StatelessWidget {
       asyncValue: asyncValue,
       onRefresh: onRefresh,
       onLoadMore: onLoadMore,
+      itemCount: () => asyncValue.value?.length ?? 0,
       hasMore: hasMore,
       emptyText: emptyText.isEmpty ? t.common.no_data : emptyText,
       skeleton: const Center(child: CircularProgressIndicator()), // TODO: Better skeleton

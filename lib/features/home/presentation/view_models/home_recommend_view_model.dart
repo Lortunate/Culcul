@@ -16,10 +16,10 @@ class HomeRecommend extends _$HomeRecommend
   }
 
   @override
-  Future<List<HomeVideo>> fetchPage(int page, {bool refresh = false}) async {
+  Future<List<HomeVideo>> fetchPage(int page) async {
     final result = await ref
         .read(homeRepositoryProvider)
-        .fetchRecommend(page: page, forceRefresh: refresh);
+        .fetchRecommend(page: page, forceRefresh: isRefreshing);
     return result.dataOrNull ?? const <HomeVideo>[];
   }
 }

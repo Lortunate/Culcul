@@ -1,4 +1,4 @@
-import 'package:culcul/features/home/presentation.dart';
+import 'package:culcul/features/home/home.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
@@ -23,3 +23,4 @@ void main() {
     expect(find.byType(AppErrorWidget), findsOneWidget);
   });
 }
+

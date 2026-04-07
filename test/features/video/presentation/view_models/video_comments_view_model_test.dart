@@ -1,4 +1,3 @@
-import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/video/presentation/view_models/video_comments_view_model.dart';

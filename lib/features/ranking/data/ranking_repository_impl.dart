@@ -1,7 +1,6 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/network/dio_client.dart';
-import 'package:culcul/core/network/dtos/video_model_contract_dto.dart';
 import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
@@ -20,7 +19,9 @@ domain.RankingRepository rankingRepository(Ref ref) {
   return RankingRepositoryImpl(RankingApi(ref.watch(dioClientProvider)));
 }
 
-class RankingRepositoryImpl with RequestExecutorBinding implements domain.RankingRepository {
+class RankingRepositoryImpl
+    with RequestExecutorBinding
+    implements domain.RankingRepository {
   final RankingApi _api;
   final RequestExecutor _requestExecutor;
 
@@ -36,7 +37,7 @@ class RankingRepositoryImpl with RequestExecutorBinding implements domain.Rankin
 
   Future<Result<List<VideoModel>, AppError>> getRankingModels({int? rid}) async {
     final result = await getRankingResponseDto(rid: rid);
-    return result.map((data) => data.list.map((item) => item.toContract()).toList());
+    return result.map((data) => data.list);
   }
 
   @override

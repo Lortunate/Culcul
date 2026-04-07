@@ -1,5 +1,4 @@
 import 'package:culcul/features/notification/notification.dart';
-import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
 import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

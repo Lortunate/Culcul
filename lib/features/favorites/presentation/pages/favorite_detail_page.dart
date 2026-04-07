@@ -2,7 +2,10 @@ import 'package:culcul/features/favorites/presentation/view_models/favorites_vie
 import 'package:culcul/features/favorites/presentation/view_models/favorite_folder_action_view_model.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_resource_item.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
-import 'package:culcul/features/auth/presentation.dart';
+import 'package:culcul/features/auth/auth.dart';
+import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
+import 'package:culcul/core/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/pagination/scroll_load_trigger.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_empty_state_widget.dart';
@@ -39,6 +42,8 @@ class FavoriteDetailPage extends HookConsumerWidget {
     final isMine = authState.isLoggedIn && authState.user?.id == mid.toString();
     final isSelectionMode = useState(false);
     final selectedItems = useState<Set<int>>({});
+    final refreshController = useManagedEasyRefreshController();
+    final loadGate = useMemoized(PaginationLoadGate.new, [mediaId]);
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -174,18 +179,29 @@ class FavoriteDetailPage extends HookConsumerWidget {
       ),
       body: asyncValue.when(
         data: (state) {
-          final items = state.list;
+          final pager = ref.read(provider.notifier);
+          final items = state.paging.items;
           final info = state.info;
 
           return EasyRefresh(
+            controller: refreshController,
             header: AppRefreshHeader(),
-            footer: AppLoadFooter(),
+            footer: pager.hasMore ? AppLoadFooter() : null,
             onRefresh: () async {
               return ref.refresh(provider.future);
             },
-            onLoad: () async {
-              await ref.read(provider.notifier).loadMore(mediaId);
-            },
+            onLoad: !pager.hasMore
+                ? null
+                : () => ScrollLoadTrigger.runWithNotifier(
+                    gate: loadGate,
+                    hasMore: () => ref.read(provider.notifier).hasMore,
+                    isLoadingMore: () => ref.read(provider.notifier).isLoadingMore,
+                    loadMore: () => pager.loadMore(mediaId),
+                    itemCount: () =>
+                        ref.read(provider).asData?.value.paging.items.length ??
+                        items.length,
+                    source: 'favorites.favorite_detail',
+                  ),
             child: CustomScrollView(
               slivers: [
                 if (info != null)
@@ -204,33 +220,47 @@ class FavoriteDetailPage extends HookConsumerWidget {
                   SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
                       final item = items[index];
-                      return _FavoriteResourceRow(
-                        item: item,
-                        isSelectionMode: isSelectionMode.value,
-                        isSelected: selectedItems.value.contains(item.id),
-                        onSelectionChanged: (selected) {
-                          final newSet = Set<int>.from(selectedItems.value);
-                          if (selected) {
-                            newSet.add(item.id);
-                          } else {
-                            newSet.remove(item.id);
-                          }
-                          selectedItems.value = newSet;
-                        },
-                        onTap: () {
-                          if (!isSelectionMode.value) {
-                            return;
-                          }
-                          final newSet = Set<int>.from(selectedItems.value);
-                          if (newSet.contains(item.id)) {
-                            newSet.remove(item.id);
-                          } else {
-                            newSet.add(item.id);
-                          }
-                          selectedItems.value = newSet;
-                        },
+                      return KeyedSubtree(
+                        key: ValueKey('fav_resource_${item.id}_$index'),
+                        child: _FavoriteResourceRow(
+                          item: item,
+                          isSelectionMode: isSelectionMode.value,
+                          isSelected: selectedItems.value.contains(item.id),
+                          onSelectionChanged: (selected) {
+                            final newSet = Set<int>.from(selectedItems.value);
+                            if (selected) {
+                              newSet.add(item.id);
+                            } else {
+                              newSet.remove(item.id);
+                            }
+                            selectedItems.value = newSet;
+                          },
+                          onTap: () {
+                            if (!isSelectionMode.value) {
+                              return;
+                            }
+                            final newSet = Set<int>.from(selectedItems.value);
+                            if (newSet.contains(item.id)) {
+                              newSet.remove(item.id);
+                            } else {
+                              newSet.add(item.id);
+                            }
+                            selectedItems.value = newSet;
+                          },
+                        ),
                       );
                     }, childCount: items.length),
+                  ),
+                if (state.paging.error != null && items.isNotEmpty)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                      child: AppErrorWidget(
+                        error: state.paging.error!,
+                        onRetry: () => pager.loadMore(mediaId),
+                        variant: AppErrorWidgetVariant.compact,
+                      ),
+                    ),
                   ),
               ],
             ),
@@ -402,3 +432,4 @@ class _FavoriteDetailSkeleton extends StatelessWidget {
     );
   }
 }
+

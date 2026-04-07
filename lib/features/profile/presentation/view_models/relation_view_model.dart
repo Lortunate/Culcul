@@ -18,7 +18,7 @@ class Followings extends _$Followings with OffsetPagedAsyncNotifier<ProfileRelat
   }
 
   @override
-  Future<List<ProfileRelationUser>> fetchPage(int page, {bool refresh = false}) async {
+  Future<List<ProfileRelationUser>> fetchPage(int page) async {
     final result = await ref
         .read(relationRepositoryProvider)
         .getFollowings(_vmid, page: page);
@@ -52,7 +52,7 @@ class Followers extends _$Followers with OffsetPagedAsyncNotifier<ProfileRelatio
   }
 
   @override
-  Future<List<ProfileRelationUser>> fetchPage(int page, {bool refresh = false}) async {
+  Future<List<ProfileRelationUser>> fetchPage(int page) async {
     final result = await ref
         .read(relationRepositoryProvider)
         .getFollowers(_vmid, page: page);

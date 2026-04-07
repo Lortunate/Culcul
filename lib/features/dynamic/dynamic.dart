@@ -1,4 +1,5 @@
 export 'feature_scope.dart';
 export 'route_entry.dart';
-export 'presentation.dart';
-export 'domain.dart';
+export 'presentation/pages/topic_detail_page.dart';
+export 'presentation/view_models/user_dynamic_view_model.dart';
+export 'presentation/widgets/dynamic_post_card.dart';

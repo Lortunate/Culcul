@@ -11,7 +11,7 @@ class _OffsetHarness with OffsetPagedAsyncNotifier<int> {
   AsyncValue<List<int>> state = const AsyncValue.data([]);
 
   @override
-  Future<List<int>> fetchPage(int page, {bool refresh = false}) async {
+  Future<List<int>> fetchPage(int page) async {
     return _pages[page] ?? const [];
   }
 
@@ -30,8 +30,8 @@ class _OffsetFailureHarness with OffsetPagedAsyncNotifier<int> {
   AsyncValue<List<int>> state = const AsyncValue.data([1, 2]);
 
   @override
-  Future<List<int>> fetchPage(int page, {bool refresh = false}) async {
-    if (refresh) {
+  Future<List<int>> fetchPage(int page) async {
+    if (isRefreshing) {
       throw StateError('refresh failed');
     }
     return const [];
@@ -52,10 +52,7 @@ class _CursorHarness with CursorPagedAsyncNotifier<int, String> {
   AsyncValue<List<int>> state = const AsyncValue.data([]);
 
   @override
-  Future<CursorPage<int, String>> fetchPage(
-    String? cursor, {
-    bool refresh = false,
-  }) async {
+  Future<CursorPage<int, String>> fetchPage(String? cursor) async {
     return _pages[cursor]!;
   }
 

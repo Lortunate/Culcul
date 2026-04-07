@@ -10,46 +10,33 @@ Future<IndicatorResult> _handleRefresh(Future<void> Function() onRefresh) async 
 }
 
 Future<IndicatorResult> _handleLoadMore<T>({
-  required WidgetRef ref,
   required List<T> items,
   required Future<void> Function() onLoadMore,
-  required dynamic provider,
+  required PaginationLoadGate loadGate,
+  required bool hasMore,
+  required int Function()? itemCount,
+  required bool Function({required int previousCount, required int currentCount})?
+  hasMoreAfterLoad,
 }) async {
-  final previousCount = items.length;
-
-  try {
-    await onLoadMore();
-
-    final nextCount = _readItemCount<T>(ref: ref, provider: provider);
-    if (nextCount == null) {
-      return IndicatorResult.success;
-    }
-
-    return nextCount > previousCount ? IndicatorResult.success : IndicatorResult.noMore;
-  } catch (_) {
-    return IndicatorResult.fail;
-  }
-}
-
-int? _readItemCount<T>({required WidgetRef ref, required dynamic provider}) {
-  if (provider == null) {
-    return null;
-  }
-
-  try {
-    final newValue = ref.read(provider);
-    if (newValue is AsyncValue<List<T>>) {
-      return newValue.value?.length;
-    }
-    if (newValue is AsyncValue) {
-      final value = newValue.value;
-      if (value is List) {
-        return value.length;
+  final previousCount = itemCount?.call() ?? items.length;
+  return ScrollLoadTrigger.runWithGate(
+    gate: loadGate,
+    hasMore: hasMore,
+    task: onLoadMore,
+    itemCount: itemCount,
+    hasMoreAfter: () {
+      final currentCount = itemCount?.call();
+      if (hasMoreAfterLoad != null) {
+        return hasMoreAfterLoad(
+          previousCount: previousCount,
+          currentCount: currentCount ?? previousCount,
+        );
       }
-    }
-  } catch (error) {
-    debugPrint('SmartPagingView: Failed to read provider: $error');
-  }
-
-  return null;
+      if (currentCount == null) {
+        return true;
+      }
+      return currentCount > previousCount;
+    },
+    source: 'ui.smart_paging_view',
+  );
 }

@@ -2,28 +2,43 @@ import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/features/notification/presentation/view_models/private_session_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_skeletons.dart';
 import 'package:culcul/features/notification/presentation/widgets/private_session_item.dart';
+import 'package:culcul/core/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/pagination/scroll_load_trigger.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class PrivateSessionList extends ConsumerWidget {
+class PrivateSessionList extends HookConsumerWidget {
   const PrivateSessionList({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final sessionListAsync = ref.watch(privateSessionListProvider);
+    final loadGate = useMemoized(PaginationLoadGate.new, const []);
     final t = i18n(context);
 
     return sessionListAsync.when(
       data: (sessions) {
+        final notifier = ref.read(privateSessionListProvider.notifier);
+        final hasMore = notifier.hasMore;
         return EasyRefresh(
           onRefresh: () async {
             return ref.refresh(privateSessionListProvider.future);
           },
-          onLoad: () async {
-            await ref.read(privateSessionListProvider.notifier).loadMore();
-          },
+          onLoad: !hasMore
+              ? null
+              : () => ScrollLoadTrigger.runWithNotifier(
+                  gate: loadGate,
+                  hasMore: () => ref.read(privateSessionListProvider.notifier).hasMore,
+                  loadMore: notifier.loadMore,
+                  itemCount: () =>
+                      ref.read(privateSessionListProvider).asData?.value.length ??
+                      sessions.length,
+                  source: 'notification.private_session_list',
+                ),
+          footer: hasMore ? const MaterialFooter() : null,
           child: sessions.isEmpty
               ? LayoutBuilder(
                   builder: (context, constraints) {

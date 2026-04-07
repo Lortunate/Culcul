@@ -1,5 +1,5 @@
 import 'package:culcul/features/video/domain/entities/play_url.dart' as domain;
-import 'package:culcul/features/video/presentation.dart';
+import 'package:culcul/features/video/video.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -52,3 +52,4 @@ void main() {
     },
   );
 }
+

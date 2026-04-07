@@ -16,10 +16,10 @@ class HomePopular extends _$HomePopular
   }
 
   @override
-  Future<List<HomeVideo>> fetchPage(int page, {bool refresh = false}) async {
+  Future<List<HomeVideo>> fetchPage(int page) async {
     final result = await ref
         .read(homeRepositoryProvider)
-        .fetchPopular(page: page, forceRefresh: refresh);
+        .fetchPopular(page: page, forceRefresh: isRefreshing);
     return result.dataOrNull ?? const <HomeVideo>[];
   }
 }

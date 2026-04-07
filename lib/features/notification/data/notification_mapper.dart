@@ -1,86 +1,20 @@
 import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
-import 'package:culcul/features/notification/domain/entities/image_upload_result.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
-import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
-import 'package:culcul/features/notification/domain/entities/system_notice.dart';
-
-extension UnreadCountMapper on UnreadCountModel {
-  NotificationSummary toDomain() {
-    return NotificationSummary(
-      at: at,
-      chat: chat,
-      coin: coin,
-      danmu: danmu,
-      favorite: favorite,
-      like: like,
-      recvLike: recvLike,
-      recvReply: recvReply,
-      reply: reply,
-      system: sysMsg,
-      up: up,
-    );
-  }
-}
-
-extension ReplyUserMapper on ReplyUser {
-  NotificationActor toDomain() {
-    return NotificationActor(mid: mid, nickname: nickname, avatar: avatar);
-  }
-}
-
-extension ReplyItemDetailMapper on ReplyItemDetail {
-  NotificationEntryDetail toDomain() {
-    return NotificationEntryDetail(
-      subjectId: subjectId,
-      type: type,
-      business: business,
-      title: title,
-      image: image,
-      uri: uri,
-      nativeUri: nativeUri,
-      sourceContent: sourceContent,
-      targetReplyContent: targetReplyContent,
-      message: message,
-    );
-  }
-}
 
 extension ReplyItemMapper on ReplyItem {
   NotificationEntry toDomain() {
-    final actors = <NotificationActor>[
-      if (user != null) user!.toDomain(),
-      ...?users?.map((item) => item.toDomain()),
-    ];
+    final actors = <NotificationActor>[if (user != null) user!, ...?users];
 
     return NotificationEntry(
       id: id,
       actors: actors,
-      detail: item.toDomain(),
+      detail: item,
       replyTime: replyTime,
       likeTime: likeTime,
     );
-  }
-}
-
-extension SystemNotificationMapper on SystemNotificationItem {
-  SystemNotice toDomain() {
-    return SystemNotice(
-      id: id,
-      title: title,
-      text: text,
-      time: time,
-      uri: uri,
-      jumpText: jumpText,
-    );
-  }
-}
-
-extension PrivateMessageEmojiMapper on PrivateMessageEmojiInfo {
-  PrivateMessageEmoji toDomain() {
-    return PrivateMessageEmoji(text: text, url: url, size: size, gifUrl: gifUrl);
   }
 }
 
@@ -104,12 +38,6 @@ extension PrivateMessageDetailMapper on PrivateMessageDetail {
   }
 }
 
-extension PrivateMessageAccountInfoMapper on PrivateMessageAccountInfo {
-  PrivateSessionAccountInfo toDomain() {
-    return PrivateSessionAccountInfo(name: name, picUrl: picUrl);
-  }
-}
-
 extension PrivateMessageSessionMapper on PrivateMessageSession {
   PrivateSession toDomain() {
     return PrivateSession(
@@ -121,27 +49,7 @@ extension PrivateMessageSessionMapper on PrivateMessageSession {
       groupCover: groupCover,
       isFollow: isFollow,
       sessionTs: sessionTs,
-      accountInfo: accountInfo?.toDomain(),
-    );
-  }
-}
-
-extension ImageUploadResponseMapper on ImageUploadResponse {
-  ImageUploadResult toDomain() {
-    return ImageUploadResult(
-      imageUrl: imageUrl,
-      imageWidth: imageWidth,
-      imageHeight: imageHeight,
-    );
-  }
-}
-
-extension SendMessageResponseMapper on SendMessageResponse {
-  SendMessageResult toDomain() {
-    return SendMessageResult(
-      msgKey: msgKey,
-      msgContent: msgContent,
-      keyHitInfos: keyHitInfos,
+      accountInfo: accountInfo,
     );
   }
 }

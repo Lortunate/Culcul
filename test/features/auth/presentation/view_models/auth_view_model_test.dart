@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/auth/data/auth_repository_impl.dart';
-import 'package:culcul/features/auth/domain.dart';
-import 'package:culcul/features/auth/presentation.dart';
+import 'package:culcul/features/auth/auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -119,3 +117,4 @@ void main() {
     expect(state.user, cachedUser);
   });
 }
+

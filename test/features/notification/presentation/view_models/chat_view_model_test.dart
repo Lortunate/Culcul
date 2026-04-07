@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/notification/notification.dart';
-import 'package:culcul/features/notification/domain.dart';
-import 'package:culcul/features/notification/presentation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

@@ -5,7 +5,7 @@ import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
 import 'package:culcul/features/notification/data/notification_api.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';
-import 'package:culcul/features/notification/domain.dart';
+import 'package:culcul/features/notification/notification.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -152,7 +152,7 @@ void main() {
     );
 
     fakeApi = _FakeNotificationApi(
-      unreadCount: const UnreadCountModel(at: 1, chat: 2, like: 3, reply: 4, sysMsg: 5),
+      unreadCount: const UnreadCountModel(at: 1, chat: 2, like: 3, reply: 4, system: 5),
       replyResponse: replyResponse,
       systemSessionResponse: const PrivateMessageSessionResponse(
         sessionList: [],

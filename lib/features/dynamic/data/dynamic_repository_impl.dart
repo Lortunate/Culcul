@@ -2,16 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cookie_jar/cookie_jar.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/errors/exceptions.dart';
-import 'package:culcul/core/network/dtos/comment_contract_dto.dart';
 import 'package:culcul/core/providers/cookie_jar_provider.dart';
 import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/dynamic/data/dynamic_api.dart';
-import 'package:culcul/features/dynamic/data/dynamic_mapper.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'package:culcul/features/dynamic/domain/repositories/dynamic_repository.dart'
@@ -30,7 +29,9 @@ domain.DynamicRepository dynamicRepository(Ref ref) {
   );
 }
 
-class DynamicRepositoryImpl with RequestExecutorBinding implements domain.DynamicRepository {
+class DynamicRepositoryImpl
+    with RequestExecutorBinding
+    implements domain.DynamicRepository {
   final DynamicApi _api;
   final Dio _dio;
   final CookieJar _cookieJar;
@@ -135,7 +136,7 @@ class DynamicRepositoryImpl with RequestExecutorBinding implements domain.Dynami
         referer: referer,
         origin: referer == null ? null : 'https://www.bilibili.com',
       ),
-    ).then((result) => result.map((value) => value.toContract()));
+    );
   }
 
   @override
@@ -152,7 +153,7 @@ class DynamicRepositoryImpl with RequestExecutorBinding implements domain.Dynami
         referer: referer,
         origin: 'https://www.bilibili.com',
       ),
-    ).then((result) => result.map((value) => value.toContract()));
+    );
   }
 
   @override
@@ -190,7 +191,7 @@ class DynamicRepositoryImpl with RequestExecutorBinding implements domain.Dynami
         referer: referer,
         origin: referer == null ? null : 'https://www.bilibili.com',
       ),
-    ).then((result) => result.map((dto) => dto.toContract()));
+    );
   }
 
   @override
@@ -319,7 +320,7 @@ class DynamicRepositoryImpl with RequestExecutorBinding implements domain.Dynami
   Future<Result<DynamicData, AppError>> getFeed({String? type, String? offset}) {
     return requestApiResult(
       () => _api.getDynamicFeed(type: type, offset: offset, page: 1),
-    ).then((result) => result.map((data) => data.toDomain()));
+    );
   }
 
   @override
@@ -329,7 +330,7 @@ class DynamicRepositoryImpl with RequestExecutorBinding implements domain.Dynami
   }) {
     return requestApiResult(
       () => _api.getSpaceDynamicFeed(hostMid: hostMid, offset: offset),
-    ).then((result) => result.map((data) => data.toDomain()));
+    );
   }
 
   @override
@@ -337,15 +338,13 @@ class DynamicRepositoryImpl with RequestExecutorBinding implements domain.Dynami
     required int topicId,
     String? offset,
   }) {
-    return requestApiResult(
-      () => _api.getTopicFeed(topicId: topicId, offset: offset),
-    ).then((result) => result.map((data) => data.toDomain()));
+    return requestApiResult(() => _api.getTopicFeed(topicId: topicId, offset: offset));
   }
 
   @override
   Future<Result<DynamicItem, AppError>> getDetail(String id) async {
     final result = await requestApiResult(() => _api.getDynamicDetail(id: id));
-    return result.map((data) => data.toDomain().item);
+    return result.map((data) => data.item);
   }
 
   @override
@@ -460,7 +459,7 @@ class DynamicRepositoryImpl with RequestExecutorBinding implements domain.Dynami
       final csrf = await _getCsrfToken();
       return _api.uploadImage(file: file, csrf: csrf ?? '');
     });
-    return result.map((data) => data.toDomain());
+    return result;
   }
 
   @override

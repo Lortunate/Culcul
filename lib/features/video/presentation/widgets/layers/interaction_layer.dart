@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
@@ -35,13 +37,8 @@ class InteractionLayer extends HookConsumerWidget {
 
     final player = playerController.player;
 
-    final horizontalDelta = useRef<double>(0.0);
-    final verticalDelta = useRef<double>(0.0);
-    final verticalDragStartVolume = useRef<double>(currentVolume);
-    final verticalDragStartBrightness = useRef<double>(brightness.value);
-    final lastVerticalUpdateMs = useRef<int>(0);
-    final isHorizontalDrag = useState(false);
-    final isVerticalDrag = useState(false);
+    final dragSession = useRef<_DragSession>(_DragSession());
+    final dragMode = useState<_DragMode>(_DragMode.idle);
     final showIndicator = useState(false);
     final indicatorIcon = useState<IconData>(Icons.volume_up);
     final indicatorLabel = useState('');
@@ -54,10 +51,11 @@ class InteractionLayer extends HookConsumerWidget {
     final seekOffset = useState<Duration?>(null);
 
     void resetDrag() {
-      horizontalDelta.value = 0.0;
-      verticalDelta.value = 0.0;
-      isHorizontalDrag.value = false;
-      isVerticalDrag.value = false;
+      dragSession.value.reset(
+        currentBrightness: brightness.value,
+        currentVolume: currentVolume,
+      );
+      dragMode.value = _DragMode.idle;
       showIndicator.value = false;
 
       if (seekOffset.value != null) {
@@ -90,19 +88,20 @@ class InteractionLayer extends HookConsumerWidget {
       onHorizontalDragStart: isLocked
           ? null
           : (_) {
-              horizontalDelta.value = 0.0;
-              isHorizontalDrag.value = true;
+              dragSession.value.startHorizontal();
+              dragMode.value = _DragMode.horizontal;
               startPosition.value = player.state.position;
               totalDuration.value = player.state.duration;
             },
       onHorizontalDragUpdate: isLocked
           ? null
           : (details) {
-              if (!isHorizontalDrag.value) return;
-              horizontalDelta.value += details.primaryDelta ?? 0;
+              if (dragMode.value != _DragMode.horizontal) return;
+              dragSession.value.horizontalDelta += details.primaryDelta ?? 0;
 
               showIndicator.value = true;
-              final seconds = (horizontalDelta.value / kSeekSensitivity).toInt();
+              final seconds = (dragSession.value.horizontalDelta / kSeekSensitivity)
+                  .toInt();
               seekOffset.value = Duration(seconds: seconds);
 
               final targetSeconds = (startPosition.value.inSeconds + seconds).clamp(
@@ -123,23 +122,23 @@ class InteractionLayer extends HookConsumerWidget {
       onVerticalDragStart: isLocked
           ? null
           : (_) {
-              verticalDelta.value = 0.0;
-              verticalDragStartBrightness.value = brightness.value;
-              verticalDragStartVolume.value = currentVolume;
-              lastVerticalUpdateMs.value = 0;
-              isVerticalDrag.value = true;
+              dragSession.value.startVertical(
+                currentBrightness: brightness.value,
+                currentVolume: currentVolume,
+              );
+              dragMode.value = _DragMode.vertical;
             },
       onVerticalDragUpdate: isLocked
           ? null
           : (details) {
-              if (!isVerticalDrag.value) return;
+              if (dragMode.value != _DragMode.vertical) return;
               final nowMs = DateTime.now().millisecondsSinceEpoch;
-              if (lastVerticalUpdateMs.value != 0 &&
-                  nowMs - lastVerticalUpdateMs.value < 16) {
+              if (dragSession.value.lastVerticalUpdateMs != 0 &&
+                  nowMs - dragSession.value.lastVerticalUpdateMs < 16) {
                 return;
               }
-              lastVerticalUpdateMs.value = nowMs;
-              verticalDelta.value += details.primaryDelta ?? 0;
+              dragSession.value.lastVerticalUpdateMs = nowMs;
+              dragSession.value.verticalDelta += details.primaryDelta ?? 0;
 
               final isLeft =
                   details.globalPosition.dx < MediaQuery.of(context).size.width / 2;
@@ -148,22 +147,32 @@ class InteractionLayer extends HookConsumerWidget {
 
               if (isLeft) {
                 final newBrightness =
-                    (verticalDragStartBrightness.value -
-                            verticalDelta.value / kBrightnessSensitivity)
+                    (dragSession.value.verticalStartBrightness -
+                            dragSession.value.verticalDelta / kBrightnessSensitivity)
                         .clamp(0.0, 1.0);
-                brightness.value = newBrightness;
-                ScreenBrightness().setApplicationScreenBrightness(newBrightness);
+                if ((newBrightness - dragSession.value.lastAppliedBrightness).abs() >=
+                    _brightnessStep) {
+                  brightness.value = newBrightness;
+                  dragSession.value.lastAppliedBrightness = newBrightness;
+                  unawaited(
+                    ScreenBrightness().setApplicationScreenBrightness(newBrightness),
+                  );
+                }
 
                 indicatorIcon.value = Icons.brightness_6_rounded;
                 indicatorLabel.value = t.video.player.brightness;
-                indicatorValue.value = brightness.value;
+                indicatorValue.value = newBrightness;
                 indicatorTextValue.value = null;
               } else {
                 final newVolume =
-                    (verticalDragStartVolume.value -
-                            verticalDelta.value / kVolumeSensitivity)
+                    (dragSession.value.verticalStartVolume -
+                            dragSession.value.verticalDelta / kVolumeSensitivity)
                         .clamp(0.0, 100.0);
-                player.setVolume(newVolume);
+                if ((newVolume - dragSession.value.lastAppliedVolume).abs() >=
+                    _volumeStep) {
+                  player.setVolume(newVolume);
+                  dragSession.value.lastAppliedVolume = newVolume;
+                }
 
                 indicatorIcon.value = Icons.volume_up_rounded;
                 indicatorLabel.value = t.video.player.volume;
@@ -212,5 +221,43 @@ class InteractionLayer extends HookConsumerWidget {
         ],
       ),
     );
+  }
+}
+
+const double _brightnessStep = 0.01;
+const double _volumeStep = 1.0;
+
+enum _DragMode { idle, horizontal, vertical }
+
+class _DragSession {
+  double horizontalDelta = 0.0;
+  double verticalDelta = 0.0;
+  double verticalStartVolume = 0.0;
+  double verticalStartBrightness = 0.0;
+  double lastAppliedVolume = 0.0;
+  double lastAppliedBrightness = 0.0;
+  int lastVerticalUpdateMs = 0;
+
+  void startHorizontal() {
+    horizontalDelta = 0.0;
+  }
+
+  void startVertical({required double currentBrightness, required double currentVolume}) {
+    verticalDelta = 0.0;
+    verticalStartBrightness = currentBrightness;
+    verticalStartVolume = currentVolume;
+    lastAppliedBrightness = currentBrightness;
+    lastAppliedVolume = currentVolume;
+    lastVerticalUpdateMs = 0;
+  }
+
+  void reset({required double currentBrightness, required double currentVolume}) {
+    horizontalDelta = 0.0;
+    verticalDelta = 0.0;
+    verticalStartBrightness = currentBrightness;
+    verticalStartVolume = currentVolume;
+    lastAppliedBrightness = currentBrightness;
+    lastAppliedVolume = currentVolume;
+    lastVerticalUpdateMs = 0;
   }
 }

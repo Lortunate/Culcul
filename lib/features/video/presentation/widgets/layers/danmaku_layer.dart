@@ -40,12 +40,19 @@ class DanmakuLayer extends HookConsumerWidget {
     final maskResultProvider = ref.watch(
       danmakuMaskProvider(oid: currentCid, pid: aid ?? 0),
     );
+    final settingsRef = useRef(settings);
+    settingsRef.value = settings;
+    final maskResultRef = useRef(maskResultProvider);
+    maskResultRef.value = maskResultProvider;
     final danmakuOption = _buildDanmakuOption(settings);
 
     final player = ref.read(playerControllerProvider.notifier).player;
 
     final timelineRef = useRef<DanmakuTimelineBuffer>(DanmakuTimelineBuffer());
     final maskPathNotifier = useRef<ValueNotifier<Path?>>(ValueNotifier(null));
+    useEffect(() {
+      return maskPathNotifier.value.dispose;
+    }, const []);
 
     useEffect(() {
       final timeline = timelineRef.value;
@@ -54,6 +61,8 @@ class DanmakuLayer extends HookConsumerWidget {
       var lastSegmentLoadCheckMs = -_segmentLoadCheckIntervalMs;
       var lastMaskRefreshMs = -_maskRefreshIntervalMs;
       var lastSegmentIndex = 0;
+      var lastMaskBucket = -1;
+      Path? cachedMaskPath;
 
       void loadSegmentIfNeeded(int segmentIndex, int currentPosMs) {
         if (segmentIndex < 1 || aid == null || currentCid == 0) {
@@ -122,11 +131,27 @@ class DanmakuLayer extends HookConsumerWidget {
             hasLargeJump || (currentPosMs - lastMaskRefreshMs) >= _maskRefreshIntervalMs;
         if (shouldRefreshMask) {
           lastMaskRefreshMs = currentPosMs;
-          final nextMaskPath = _resolveMaskPath(
-            settings: settings,
-            maskResultProvider: maskResultProvider,
-            currentPosMs: currentPosMs,
-          );
+          final activeSettings = settingsRef.value;
+          final activeMaskResult = maskResultRef.value;
+          Path? nextMaskPath;
+          if (activeSettings.enableAiMask) {
+            final maskBucket = currentPosMs ~/ _maskRefreshIntervalMs;
+            if (!hasLargeJump && maskBucket == lastMaskBucket) {
+              nextMaskPath = cachedMaskPath;
+            } else {
+              lastMaskBucket = maskBucket;
+              nextMaskPath = _resolveMaskPath(
+                settings: activeSettings,
+                maskResultProvider: activeMaskResult,
+                currentPosMs: currentPosMs,
+              );
+              cachedMaskPath = nextMaskPath;
+            }
+          } else {
+            lastMaskBucket = -1;
+            cachedMaskPath = null;
+            nextMaskPath = null;
+          }
           if (nextMaskPath != maskPathNotifier.value.value) {
             maskPathNotifier.value.value = nextMaskPath;
           }
@@ -283,9 +308,33 @@ class DanmakuTimelineBuffer {
       return;
     }
 
-    for (final item in sortedNewItems) {
-      _insertItemByTime(item);
+    final mergeStart = _lowerBoundByTime(sortedNewItems.first.time);
+    final existingTail = _items.sublist(mergeStart);
+    final mergedTail = <DanmakuItem>[];
+    var existingIndex = 0;
+    var incomingIndex = 0;
+
+    while (existingIndex < existingTail.length && incomingIndex < sortedNewItems.length) {
+      final existingItem = existingTail[existingIndex];
+      final incomingItem = sortedNewItems[incomingIndex];
+      if (incomingItem.time <= existingItem.time) {
+        mergedTail.add(incomingItem);
+        incomingIndex++;
+      } else {
+        mergedTail.add(existingItem);
+        existingIndex++;
+      }
     }
+    if (incomingIndex < sortedNewItems.length) {
+      mergedTail.addAll(sortedNewItems.sublist(incomingIndex));
+    }
+    if (existingIndex < existingTail.length) {
+      mergedTail.addAll(existingTail.sublist(existingIndex));
+    }
+
+    _items
+      ..removeRange(mergeStart, _items.length)
+      ..addAll(mergedTail);
     _cursor = _findCursor(currentPosMs);
   }
 
@@ -320,11 +369,6 @@ class DanmakuTimelineBuffer {
 
   int _findCursor(int targetTime) {
     return _lowerBoundByTime(targetTime);
-  }
-
-  void _insertItemByTime(DanmakuItem item) {
-    final index = _lowerBoundByTime(item.time);
-    _items.insert(index, item);
   }
 
   int _lowerBoundByTime(int targetTime) {

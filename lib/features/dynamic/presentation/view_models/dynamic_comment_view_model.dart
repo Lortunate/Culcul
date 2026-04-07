@@ -1,6 +1,7 @@
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'dart:async';
 
+import 'package:culcul/core/pagination/paged_list_state_transitions.dart';
 import 'package:culcul/features/dynamic/dynamic.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_comment_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -16,40 +17,21 @@ class DynamicCommentController extends _$DynamicCommentController {
   }
 
   Future<void> refresh() async {
-    state = state.copyWith(
-      paging: state.paging.copyWith(
-        isInitialLoading: true,
-        isLoadingMore: false,
-        hasMore: true,
-        nextPage: 1,
-        items: const [],
-        error: null,
-      ),
-      error: null,
-    );
+    state = state.copyWith(paging: PagedListStateTransitions.beginRefresh(state.paging));
     final result = await ref
         .read(dynamicRepositoryProvider)
         .getComments(post, sort: state.sort, page: 1);
     state = result.when(
       success: (data) => state.copyWith(
-        paging: state.paging.copyWith(
+        paging: PagedListStateTransitions.completeRefresh(
+          state.paging,
           items: data.replies,
-          isInitialLoading: false,
-          isLoadingMore: false,
           hasMore: _resolveHasMore(data, currentPage: 1),
           nextPage: 2,
-          error: null,
         ),
-        error: null,
       ),
-      failure: (error) => state.copyWith(
-        paging: state.paging.copyWith(
-          isInitialLoading: false,
-          isLoadingMore: false,
-          error: error,
-        ),
-        error: error,
-      ),
+      failure: (error) =>
+          state.copyWith(paging: PagedListStateTransitions.fail(state.paging, error)),
     );
   }
 
@@ -61,30 +43,24 @@ class DynamicCommentController extends _$DynamicCommentController {
     }
 
     final nextPage = state.paging.nextPage;
-    state = state.copyWith(
-      paging: state.paging.copyWith(isLoadingMore: true, error: null),
-      error: null,
-    );
+    state = state.copyWith(paging: PagedListStateTransitions.beginLoadMore(state.paging));
     final result = await ref
         .read(dynamicRepositoryProvider)
         .getComments(post, sort: state.sort, page: nextPage);
     if (result.isFailure) {
       state = state.copyWith(
-        paging: state.paging.copyWith(isLoadingMore: false, error: result.errorOrNull),
-        error: result.errorOrNull,
+        paging: PagedListStateTransitions.fail(state.paging, result.errorOrNull),
       );
       return;
     }
     final data = result.dataOrNull!;
     state = state.copyWith(
-      paging: state.paging.copyWith(
+      paging: PagedListStateTransitions.completeLoadMore(
+        state.paging,
         items: [...state.paging.items, ...data.replies],
         hasMore: _resolveHasMore(data, currentPage: nextPage),
         nextPage: nextPage + 1,
-        isLoadingMore: false,
-        error: null,
       ),
-      error: null,
     );
   }
 

@@ -1,49 +1,41 @@
-class LiveWatchedShow {
-  final bool switchStatus;
-  final int num;
-  final String textSmall;
-  final String textLarge;
-  final String icon;
-  final String iconWeb;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const LiveWatchedShow({
-    required this.switchStatus,
-    required this.num,
-    required this.textSmall,
-    required this.textLarge,
-    required this.icon,
-    required this.iconWeb,
-  });
+part 'live_room_summary_contract.freezed.dart';
+part 'live_room_summary_contract.g.dart';
+
+@freezed
+sealed class LiveWatchedShow with _$LiveWatchedShow {
+  const factory LiveWatchedShow({
+    @JsonKey(name: 'switch') required bool switchStatus,
+    required int num,
+    @JsonKey(name: 'text_small') required String textSmall,
+    @JsonKey(name: 'text_large') required String textLarge,
+    required String icon,
+    @JsonKey(name: 'icon_web') required String iconWeb,
+  }) = _LiveWatchedShow;
+
+  factory LiveWatchedShow.fromJson(Map<String, dynamic> json) =>
+      _$LiveWatchedShowFromJson(json);
 }
 
-class LiveRoomSummary {
-  final int roomId;
-  final int uid;
-  final String title;
-  final String uname;
-  final String cover;
-  final String face;
-  final int online;
-  final String areaName;
-  final String parentAreaName;
-  final String link;
-  final String? keyframe;
-  final LiveWatchedShow? watchedShow;
-  final int? isAutoPlay;
+@freezed
+sealed class LiveRoomSummary with _$LiveRoomSummary {
+  const factory LiveRoomSummary({
+    @JsonKey(name: 'roomid') required int roomId,
+    @JsonKey(name: 'uid') required int uid,
+    required String title,
+    required String uname,
+    required String cover,
+    required String face,
+    @JsonKey(name: 'online') required int online,
+    @JsonKey(name: 'area_v2_name') required String areaName,
+    @JsonKey(name: 'area_v2_parent_name') required String parentAreaName,
+    @JsonKey(name: 'link') required String link,
+    @JsonKey(name: 'keyframe') String? keyframe,
+    @JsonKey(name: 'watched_show') LiveWatchedShow? watchedShow,
+    @JsonKey(name: 'is_auto_play') int? isAutoPlay,
+  }) = _LiveRoomSummary;
 
-  const LiveRoomSummary({
-    required this.roomId,
-    required this.uid,
-    required this.title,
-    required this.uname,
-    required this.cover,
-    required this.face,
-    required this.online,
-    required this.areaName,
-    required this.parentAreaName,
-    required this.link,
-    required this.keyframe,
-    required this.watchedShow,
-    required this.isAutoPlay,
-  });
+  factory LiveRoomSummary.fromJson(Map<String, dynamic> json) =>
+      _$LiveRoomSummaryFromJson(json);
 }

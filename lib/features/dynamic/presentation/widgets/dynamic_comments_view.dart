@@ -2,7 +2,7 @@ import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_comment_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
-import 'package:culcul/features/video/presentation.dart';
+import 'package:culcul/features/video/video.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -27,11 +27,11 @@ class DynamicCommentsSliver extends ConsumerWidget {
       );
     }
 
-    if (state.error != null && paging.items.isEmpty) {
+    if (paging.error != null && paging.items.isEmpty) {
       return SliverToBoxAdapter(
         child: Padding(
           padding: const EdgeInsets.all(32.0),
-          child: AppErrorWidget(error: state.error!, onRetry: controller.refresh),
+          child: AppErrorWidget(error: paging.error!, onRetry: controller.refresh),
         ),
       );
     }
@@ -48,11 +48,14 @@ class DynamicCommentsSliver extends ConsumerWidget {
     return SliverList(
       delegate: SliverChildBuilderDelegate((context, index) {
         final comment = paging.items[index];
-        return CommentItemWidget(
-          item: comment,
-          onLike: () => controller.toggleLike(comment.rpid, comment.action == 1),
-          onDislike: () {},
-          onReply: () => _showReplySheet(context, ref, comment),
+        return KeyedSubtree(
+          key: ValueKey('dynamic_comment_${comment.rpid}_$index'),
+          child: CommentItemWidget(
+            item: comment,
+            onLike: () => controller.toggleLike(comment.rpid, comment.action == 1),
+            onDislike: () {},
+            onReply: () => _showReplySheet(context, ref, comment),
+          ),
         );
       }, childCount: paging.items.length),
     );
@@ -128,3 +131,4 @@ class DynamicCommentsSliver extends ConsumerWidget {
     );
   }
 }
+

@@ -1,7 +1,6 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/network/dio_client.dart';
-import 'package:culcul/core/network/dtos/video_model_contract_dto.dart';
 import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/home/data/home_api.dart';
@@ -32,8 +31,8 @@ class HomeRepositoryImpl implements domain.HomeRepository {
         .runApi<List<VideoModel>>(
           () async => api.fetchRecommend(
             freshIdx: page,
-                freshIdx1h: page,
-                forceRefresh: forceRefresh ? true : null,
+            freshIdx1h: page,
+            forceRefresh: forceRefresh ? true : null,
           ),
           transform: (data) {
             final items = data.item;
@@ -41,7 +40,7 @@ class HomeRepositoryImpl implements domain.HomeRepository {
             for (final item in items) {
               if (item['goto'] != 'av') continue;
               try {
-                videos.add(VideoModelDto.fromJson(item).toContract());
+                videos.add(VideoModel.fromJson(item));
               } catch (_) {
                 // Skip malformed entries instead of failing the whole page.
               }
@@ -63,7 +62,7 @@ class HomeRepositoryImpl implements domain.HomeRepository {
             ps: _defaultPopularPageSize,
             forceRefresh: forceRefresh ? true : null,
           ),
-          transform: (data) => data.list.map((item) => item.toContract()).toList(),
+          transform: (data) => data.list,
         );
     return _unwrap(result);
   }

@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
 import 'package:culcul/features/notification/notification.dart';
-import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'unread_count_view_model.g.dart';

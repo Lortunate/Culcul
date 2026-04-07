@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/auth/presentation.dart';
+import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -109,3 +109,4 @@ class _MenuItem extends StatelessWidget {
     );
   }
 }
+

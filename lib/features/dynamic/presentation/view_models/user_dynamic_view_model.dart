@@ -18,10 +18,7 @@ class UserDynamicNotifier extends _$UserDynamicNotifier
   }
 
   @override
-  Future<CursorPage<DynamicItem, String>> fetchPage(
-    String? currentCursor, {
-    bool refresh = false,
-  }) async {
+  Future<CursorPage<DynamicItem, String>> fetchPage(String? currentCursor) async {
     final result = await ref
         .read(dynamicRepositoryProvider)
         .getSpaceDynamicFeed(hostMid: _hostMid, offset: currentCursor);

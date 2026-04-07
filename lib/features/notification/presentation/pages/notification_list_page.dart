@@ -3,6 +3,8 @@ import 'package:culcul/features/notification/domain/entities/notification_feed_t
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/presentation/view_models/notification_feed_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_item_widget.dart';
+import 'package:culcul/core/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/pagination/scroll_load_trigger.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
@@ -18,42 +20,35 @@ class NotificationListPage extends ConsumerStatefulWidget {
 }
 
 class _NotificationListPageState extends ConsumerState<NotificationListPage> {
-  final ScrollController _scrollController = ScrollController();
   final EasyRefreshController _erController = EasyRefreshController();
-  bool _isLoadingMore = false;
+  final PaginationLoadGate _loadMoreGate = PaginationLoadGate();
 
   @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_onScroll);
+  void didUpdateWidget(covariant NotificationListPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.type != widget.type) {
+      _loadMoreGate.reset();
+    }
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
     _erController.dispose();
     super.dispose();
   }
 
-  void _onScroll() {
-    if (_isLoadingMore) return;
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent - 200) {
-      _erController.callLoad();
+  Future<IndicatorResult> _loadMore() async {
+    if (widget.type == NotificationFeedType.system) {
+      return IndicatorResult.noMore;
     }
-  }
-
-  Future<void> _loadMore() async {
-    if (_isLoadingMore) return;
-    if (widget.type == NotificationFeedType.system) return;
-    final notifier = ref.read(notificationFeedListProvider(widget.type).notifier);
-    if (!notifier.hasMore) return;
-    _isLoadingMore = true;
-    try {
-      await notifier.loadMore();
-    } finally {
-      _isLoadingMore = false;
-    }
+    return ScrollLoadTrigger.runWithNotifier(
+      gate: _loadMoreGate,
+      hasMore: () => ref.read(notificationFeedListProvider(widget.type).notifier).hasMore,
+      loadMore: ref.read(notificationFeedListProvider(widget.type).notifier).loadMore,
+      itemCount: () =>
+          ref.read(notificationFeedListProvider(widget.type)).asData?.value.length ?? 0,
+      source: 'notification.notification_list',
+    );
   }
 
   AsyncValue<List<NotificationEntry>> _providerState(NotificationFeedType type) =>
@@ -84,7 +79,6 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
           if (items.isEmpty) return const _EmptyNotificationView();
           return _NotificationListView(
             items: items,
-            scrollController: _scrollController,
             refreshController: _erController,
             onLoadMore: _loadMore,
             itemBuilder: _buildItem,
@@ -124,16 +118,14 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
 class _NotificationListView extends StatelessWidget {
   const _NotificationListView({
     required this.items,
-    required this.scrollController,
     required this.refreshController,
     required this.onLoadMore,
     required this.itemBuilder,
   });
 
   final List<NotificationEntry> items;
-  final ScrollController scrollController;
   final EasyRefreshController refreshController;
-  final Future<void> Function() onLoadMore;
+  final Future<IndicatorResult> Function() onLoadMore;
   final Widget Function(BuildContext context, NotificationEntry item) itemBuilder;
 
   @override
@@ -141,12 +133,8 @@ class _NotificationListView extends StatelessWidget {
     return EasyRefresh(
       controller: refreshController,
       footer: const MaterialFooter(),
-      onLoad: () async {
-        await onLoadMore();
-        return IndicatorResult.success;
-      },
+      onLoad: onLoadMore,
       child: ListView.separated(
-        controller: scrollController,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         itemCount: items.length,
         separatorBuilder: (_, _) => const Column(

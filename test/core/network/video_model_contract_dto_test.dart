@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('video model dto maps to pure contract', () {
-    final dto = VideoModelDto.fromJson({
+    final model = VideoModelDto.fromJson({
       'bvid': 'BV1xx',
       'title': 'Video',
       'pic': 'cover',
@@ -14,11 +14,9 @@ void main() {
       'rcmd_reason': {'content': 'hot'},
     });
 
-    final contract = dto.toContract();
-
-    expect(contract.bvid, 'BV1xx');
-    expect(contract.owner.name, 'author');
-    expect(contract.stat.view, 10);
-    expect(contract.rcmdReason, 'hot');
+    expect(model.bvid, 'BV1xx');
+    expect(model.owner.name, 'author');
+    expect(model.stat.view, 10);
+    expect(model.rcmdReason, 'hot');
   });
 }

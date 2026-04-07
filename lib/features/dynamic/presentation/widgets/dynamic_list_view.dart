@@ -21,10 +21,10 @@ class DynamicListView extends HookConsumerWidget {
     final notifier = ref.read(provider.notifier);
 
     return SmartPagingView<DynamicItem>(
-      provider: provider,
       asyncValue: state,
       onRefresh: notifier.refresh,
       onLoadMore: notifier.loadMore,
+      itemCount: () => ref.read(provider).value?.length ?? 0,
       skeleton: const VideoListSkeleton(),
       emptyText: t.common.no_content,
       builder: (context, items) {

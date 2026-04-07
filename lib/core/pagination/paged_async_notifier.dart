@@ -18,15 +18,17 @@ class CursorPage<T, C> {
 mixin OffsetPagedAsyncNotifier<T> {
   int _currentPage = 1;
   bool _hasMore = true;
+  bool _isRefreshing = false;
 
   bool get hasMore => _hasMore;
   int get currentPage => _currentPage;
+  bool get isRefreshing => _isRefreshing;
 
   AsyncValue<List<T>> get state;
   set state(AsyncValue<List<T>> value);
 
   @protected
-  Future<List<T>> fetchPage(int page, {bool refresh = false});
+  Future<List<T>> fetchPage(int page);
 
   @protected
   Object? itemId(T item);
@@ -48,12 +50,15 @@ mixin OffsetPagedAsyncNotifier<T> {
     state = AsyncLoading<List<T>>().copyWithPrevious(previousState);
 
     try {
+      _isRefreshing = true;
       _resetPagination();
-      final items = await fetchPage(_currentPage, refresh: true);
+      final items = await fetchPage(_currentPage);
       _hasMore = hasMoreAfterPage(items);
       state = AsyncData(items);
     } catch (error, stackTrace) {
       state = AsyncError<List<T>>(error, stackTrace).copyWithPrevious(previousState);
+    } finally {
+      _isRefreshing = false;
     }
   }
 
@@ -94,15 +99,17 @@ mixin OffsetPagedAsyncNotifier<T> {
 mixin CursorPagedAsyncNotifier<T, C> {
   C? _cursor;
   bool _hasMore = true;
+  bool _isRefreshing = false;
 
   bool get hasMore => _hasMore;
   C? get cursor => _cursor;
+  bool get isRefreshing => _isRefreshing;
 
   AsyncValue<List<T>> get state;
   set state(AsyncValue<List<T>> value);
 
   @protected
-  Future<CursorPage<T, C>> fetchPage(C? cursor, {bool refresh = false});
+  Future<CursorPage<T, C>> fetchPage(C? cursor);
 
   @protected
   Object? itemId(T item);
@@ -122,13 +129,16 @@ mixin CursorPagedAsyncNotifier<T, C> {
     state = AsyncLoading<List<T>>().copyWithPrevious(previousState);
 
     try {
+      _isRefreshing = true;
       _resetPagination();
-      final page = await fetchPage(_cursor, refresh: true);
+      final page = await fetchPage(_cursor);
       _cursor = page.nextCursor;
       _hasMore = page.hasMore;
       state = AsyncData(page.items);
     } catch (error, stackTrace) {
       state = AsyncError<List<T>>(error, stackTrace).copyWithPrevious(previousState);
+    } finally {
+      _isRefreshing = false;
     }
   }
 

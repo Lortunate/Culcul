@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:developer' as developer;
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:culcul/core/services/audio_playback_state_gate.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
@@ -13,21 +15,28 @@ final audioHandlerProvider = Provider<CilixiliAudioHandler>((ref) {
 });
 
 class CilixiliAudioHandler extends BaseAudioHandler {
+  static const String _loggerName = 'audio.performance';
+  static const Duration _broadcastReportInterval = Duration(seconds: 10);
+
   static final CilixiliAudioHandler _shared = CilixiliAudioHandler._();
   static Future<void>? _audioServiceInitFuture;
   static bool _audioServiceInitialized = false;
 
   final Player player = Player();
+  final AudioPlaybackStateGate _playbackStateGate = AudioPlaybackStateGate();
+
+  DateTime _broadcastWindowStart = DateTime.now();
+  int _broadcastWindowCount = 0;
 
   CilixiliAudioHandler._() {
     _initSession();
     // Propagate player events to AudioService
     player.stream.playing.listen((playing) {
-      _broadcastState();
+      _broadcastState(isCriticalEvent: true, reason: 'playing');
     });
 
     player.stream.position.listen((position) {
-      _broadcastState();
+      _broadcastState(isCriticalEvent: false, reason: 'position');
     });
 
     player.stream.duration.listen((duration) {
@@ -35,23 +44,23 @@ class CilixiliAudioHandler extends BaseAudioHandler {
       if (item != null && item.duration != duration) {
         mediaItem.add(item.copyWith(duration: duration));
       }
-      _broadcastState();
+      _broadcastState(isCriticalEvent: true, reason: 'duration');
     });
 
     player.stream.buffering.listen((buffering) {
-      _broadcastState();
+      _broadcastState(isCriticalEvent: true, reason: 'buffering');
     });
 
     player.stream.buffer.listen((buffer) {
-      _broadcastState();
+      _broadcastState(isCriticalEvent: true, reason: 'buffer');
     });
 
     player.stream.completed.listen((completed) {
-      _broadcastState();
+      _broadcastState(isCriticalEvent: true, reason: 'completed');
     });
 
     player.stream.error.listen((error) {
-      _broadcastState();
+      _broadcastState(isCriticalEvent: true, reason: 'error');
     });
   }
 
@@ -62,11 +71,26 @@ class CilixiliAudioHandler extends BaseAudioHandler {
     await session.configure(const AudioSessionConfiguration.music());
   }
 
-  void _broadcastState() {
+  void _broadcastState({
+    required bool isCriticalEvent,
+    required String reason,
+  }) {
+    final snapshot = _playbackStateGate.nextSnapshotIfShouldEmit(
+      isCriticalEvent: isCriticalEvent,
+      playing: player.state.playing,
+      processingState: _getProcessingState(),
+      position: player.state.position,
+      bufferedPosition: player.state.buffer,
+      speed: player.state.rate,
+    );
+    if (snapshot == null) {
+      return;
+    }
+
     playbackState.add(
       playbackState.value.copyWith(
         controls: [
-          if (player.state.playing) MediaControl.pause else MediaControl.play,
+          if (snapshot.playing) MediaControl.pause else MediaControl.play,
           MediaControl.stop, // Or close?
         ],
         systemActions: const {
@@ -76,14 +100,15 @@ class CilixiliAudioHandler extends BaseAudioHandler {
           MediaAction.playPause,
         },
         androidCompactActionIndices: const [0],
-        processingState: _getProcessingState(),
-        playing: player.state.playing,
-        updatePosition: player.state.position,
-        bufferedPosition: player.state.buffer,
-        speed: player.state.rate,
+        processingState: snapshot.processingState,
+        playing: snapshot.playing,
+        updatePosition: snapshot.position,
+        bufferedPosition: snapshot.bufferedPosition,
+        speed: snapshot.speed,
         queueIndex: 0,
       ),
     );
+    _recordBroadcast(reason: reason);
   }
 
   AudioProcessingState _getProcessingState() {
@@ -149,5 +174,35 @@ class CilixiliAudioHandler extends BaseAudioHandler {
     } finally {
       _audioServiceInitFuture = null;
     }
+  }
+
+  void _recordBroadcast({required String reason}) {
+    if (!kDebugMode && !kProfileMode) {
+      return;
+    }
+
+    final now = DateTime.now();
+    if (_broadcastWindowCount == 0) {
+      _broadcastWindowStart = now;
+    }
+    _broadcastWindowCount++;
+
+    final elapsed = now.difference(_broadcastWindowStart);
+    if (elapsed < _broadcastReportInterval) {
+      return;
+    }
+
+    final seconds = elapsed.inMilliseconds / 1000.0;
+    final rate = seconds == 0 ? 0 : _broadcastWindowCount / seconds;
+    developer.log(
+      'audio_perf playback_state_broadcast '
+      'count=$_broadcastWindowCount '
+      'window_s=${seconds.toStringAsFixed(2)} '
+      'rate=${rate.toStringAsFixed(2)} '
+      'reason=$reason',
+      name: _loggerName,
+    );
+    _broadcastWindowStart = now;
+    _broadcastWindowCount = 0;
   }
 }

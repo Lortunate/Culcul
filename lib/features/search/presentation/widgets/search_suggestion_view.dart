@@ -40,6 +40,16 @@ class SearchSuggestionView extends HookConsumerWidget {
             duration: const Duration(milliseconds: 180),
             switchInCurve: Curves.easeOut,
             switchOutCurve: Curves.easeIn,
+            transitionBuilder: (child, animation) {
+              final offsetAnimation = Tween<Offset>(
+                begin: const Offset(0, 0.03),
+                end: Offset.zero,
+              ).animate(animation);
+              return FadeTransition(
+                opacity: animation,
+                child: SlideTransition(position: offsetAnimation, child: child),
+              );
+            },
             child: _SuggestionList(
               key: ValueKey('suggestions_${term}_len_${nonEmptySuggestions.length}'),
               term: term,
@@ -123,7 +133,6 @@ class _SuggestionList extends StatelessWidget {
         final displayValue = suggestions[index];
         return _SuggestionItem(
           key: ValueKey('search_suggestion_${displayValue}_$index'),
-          index: index,
           displayValue: displayValue,
           term: term,
           onTap: () => onSuggestionTap(displayValue),
@@ -134,14 +143,12 @@ class _SuggestionList extends StatelessWidget {
 }
 
 class _SuggestionItem extends StatelessWidget {
-  final int index;
   final String displayValue;
   final String term;
   final VoidCallback onTap;
 
   const _SuggestionItem({
     super.key,
-    required this.index,
     required this.displayValue,
     required this.term,
     required this.onTap,
@@ -165,47 +172,35 @@ class _SuggestionItem extends StatelessWidget {
       letterSpacing: 0.2,
     );
 
-    return TweenAnimationBuilder<double>(
-      duration: Duration(milliseconds: 150 + index * 10),
-      curve: Curves.easeOut,
-      tween: Tween<double>(begin: 0, end: 1),
-      builder: (context, value, child) {
-        final dy = (1 - value) * 6;
-        return Opacity(
-          opacity: value,
-          child: Transform.translate(offset: Offset(0, dy), child: child),
-        );
-      },
-      child: InkWell(
-        onTap: onTap,
-        splashColor: colorScheme.primary.withValues(alpha: 0.05),
-        highlightColor: Colors.transparent,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          child: Row(
-            children: [
-              Expanded(
-                child: RichText(
-                  text: TextSpan(
-                    children: SearchSuggestionView._buildHighlightedSpans(
-                      displayValue,
-                      term,
-                      normalStyle ?? const TextStyle(),
-                      highlightStyle ?? const TextStyle(),
-                    ),
+    return InkWell(
+      onTap: onTap,
+      splashColor: colorScheme.primary.withValues(alpha: 0.05),
+      highlightColor: Colors.transparent,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Row(
+          children: [
+            Expanded(
+              child: RichText(
+                text: TextSpan(
+                  children: SearchSuggestionView._buildHighlightedSpans(
+                    displayValue,
+                    term,
+                    normalStyle ?? const TextStyle(),
+                    highlightStyle ?? const TextStyle(),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              const SizedBox(width: 12),
-              Icon(
-                Icons.north_west_rounded,
-                size: 16,
-                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.25),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(width: 12),
+            Icon(
+              Icons.north_west_rounded,
+              size: 16,
+              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.25),
+            ),
+          ],
         ),
       ),
     );

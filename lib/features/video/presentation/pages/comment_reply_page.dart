@@ -4,6 +4,8 @@ import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/bottom_input_bar.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_item.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_reply_sheet.dart';
+import 'package:culcul/core/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/pagination/scroll_load_trigger.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
@@ -27,9 +29,12 @@ class CommentReplyPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(commentReplyControllerProvider(oid, rootId));
-    final controller = ref.read(commentReplyControllerProvider(oid, rootId).notifier);
+    final provider = commentReplyControllerProvider(oid, rootId);
+    final state = ref.watch(provider);
+    final controller = ref.read(provider.notifier);
     final paging = state.paging;
+    final hasMore = paging.hasMore;
+    final loadGate = useMemoized(PaginationLoadGate.new, [oid, rootId]);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
@@ -86,9 +91,18 @@ class CommentReplyPage extends HookConsumerWidget {
           Expanded(
             child: EasyRefresh(
               onRefresh: controller.refresh,
-              onLoad: paging.hasMore ? controller.loadMore : null,
+              onLoad: !hasMore
+                  ? null
+                  : () => ScrollLoadTrigger.runWithNotifier(
+                      gate: loadGate,
+                      hasMore: () => ref.read(provider).paging.hasMore,
+                      isLoadingMore: () => ref.read(provider).paging.isLoadingMore,
+                      loadMore: controller.loadMore,
+                      itemCount: () => ref.read(provider).paging.items.length,
+                      source: 'video.comment_reply',
+                    ),
               header: AppRefreshHeader(),
-              footer: AppLoadFooter(),
+              footer: hasMore ? AppLoadFooter() : null,
               child: CustomScrollView(
                 slivers: [
                   SliverToBoxAdapter(

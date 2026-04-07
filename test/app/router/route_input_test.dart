@@ -1,4 +1,3 @@
-import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/features/notification/notification.dart';
 import 'package:culcul/features/video/video.dart';
 import 'package:flutter_test/flutter_test.dart';

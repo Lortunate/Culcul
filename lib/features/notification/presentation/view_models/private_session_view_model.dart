@@ -1,9 +1,7 @@
 import 'dart:async';
 
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
-import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/notification.dart';
-import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'private_session_view_model.g.dart';
@@ -22,17 +20,14 @@ class PrivateSessionList extends _$PrivateSessionList
   }
 
   @override
-  Future<CursorPage<PrivateSession, int>> fetchPage(
-    int? currentCursor, {
-    bool refresh = false,
-  }) async {
+  Future<CursorPage<PrivateSession, int>> fetchPage(int? currentCursor) async {
     final ownerUid = ref.read(notificationOwnerUidProvider);
     if (ownerUid == null) {
       return const CursorPage(items: [], nextCursor: null, hasMore: false);
     }
 
     final repository = ref.read(notificationRepositoryProvider);
-    if (refresh || currentCursor == null) {
+    if (isRefreshing || currentCursor == null) {
       await repository.syncSessions(ownerUid: ownerUid, force: true);
     } else {
       await repository.syncSessionsOlder(

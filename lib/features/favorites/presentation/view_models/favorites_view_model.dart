@@ -1,5 +1,7 @@
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
-import 'package:culcul/features/auth/presentation.dart';
+import 'package:culcul/core/pagination/paged_list_state.dart';
+import 'package:culcul/core/utils/list_utils.dart';
+import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:culcul/features/favorites/favorites.dart';
@@ -70,7 +72,7 @@ class FavCollectedFolders extends _$FavCollectedFolders
   }
 
   @override
-  Future<List<FavoriteFolder>> fetchPage(int page, {bool refresh = false}) async {
+  Future<List<FavoriteFolder>> fetchPage(int page) async {
     final result = await ref
         .read(favRepositoryProvider)
         .getCollectedFolders(upMid: _mid, page: page);
@@ -90,51 +92,105 @@ class FavCollectedFolders extends _$FavCollectedFolders
 
 class FavFolderDetailState {
   final FavoriteFolderInfo? info;
-  final List<FavoriteResource> list;
+  final PagedListState<FavoriteResource> paging;
 
-  FavFolderDetailState({this.info, required this.list});
+  const FavFolderDetailState({
+    this.info,
+    this.paging = const PagedListState<FavoriteResource>(isInitialLoading: false),
+  });
+
+  FavFolderDetailState copyWith({
+    FavoriteFolderInfo? info,
+    PagedListState<FavoriteResource>? paging,
+  }) {
+    return FavFolderDetailState(info: info ?? this.info, paging: paging ?? this.paging);
+  }
 }
 
 @riverpod
 class FavFolderResources extends _$FavFolderResources {
-  int _page = 1;
-  bool _hasMore = true;
+  bool get hasMore => state.value?.paging.hasMore ?? false;
+
+  bool get isLoadingMore => state.value?.paging.isLoadingMore ?? false;
 
   @override
   Future<FavFolderDetailState> build(int mediaId) async {
-    _page = 1;
-    _hasMore = true;
-    return (await _fetchItems(mediaId, _page)) ?? FavFolderDetailState(list: const []);
-  }
-
-  Future<FavFolderDetailState?> _fetchItems(int mediaId, int page) async {
-    final result = await ref
-        .read(favRepositoryProvider)
-        .getFolderResources(mediaId: mediaId, page: page);
-    final response = result.dataOrNull;
-    if (response == null) {
-      _hasMore = false;
-      return null;
+    final page = await _fetchItems(mediaId, 1);
+    if (page == null) {
+      return const FavFolderDetailState();
     }
-    _hasMore = response.hasMore;
-    return FavFolderDetailState(info: response.info, list: response.medias);
-  }
-
-  Future<void> loadMore(int mediaId) async {
-    if (!_hasMore || state.isLoading) return;
-
-    final currentList = state.value?.list ?? [];
-    final newState = await _fetchItems(mediaId, _page + 1);
-    if (newState == null) {
-      return;
-    }
-
-    _page++;
-    state = AsyncValue.data(
-      FavFolderDetailState(
-        info: newState.info,
-        list: [...currentList, ...newState.list],
+    return FavFolderDetailState(
+      info: page.info,
+      paging: PagedListState<FavoriteResource>(
+        items: page.medias,
+        hasMore: page.hasMore,
+        isInitialLoading: false,
+        isLoadingMore: false,
+        nextPage: 2,
+        error: null,
       ),
     );
   }
+
+  Future<FavoriteResourcePage?> _fetchItems(int mediaId, int page) async {
+    final result = await ref
+        .read(favRepositoryProvider)
+        .getFolderResources(mediaId: mediaId, page: page);
+    return result.dataOrNull;
+  }
+
+  Future<void> loadMore(int mediaId) async {
+    final current = state.value;
+    if (current == null ||
+        state.isLoading ||
+        current.paging.isLoadingMore ||
+        !current.paging.hasMore) {
+      return;
+    }
+
+    state = AsyncData(
+      current.copyWith(paging: current.paging.copyWith(isLoadingMore: true, error: null)),
+    );
+    try {
+      final result = await ref
+          .read(favRepositoryProvider)
+          .getFolderResources(mediaId: mediaId, page: current.paging.nextPage);
+      final nextPageData = result.dataOrNull;
+      if (nextPageData == null) {
+        final error =
+            result.errorOrNull ?? StateError('Failed to load favorite resources');
+        state = AsyncData(
+          current.copyWith(
+            paging: current.paging.copyWith(isLoadingMore: false, error: error),
+          ),
+        );
+        throw error;
+      }
+
+      state = AsyncValue.data(
+        current.copyWith(
+          info: nextPageData.info,
+          paging: current.paging.copyWith(
+            items: ListUtils.mergeUnique(
+              current.paging.items,
+              nextPageData.medias,
+              idGetter: (item) => item.id,
+            ),
+            hasMore: nextPageData.hasMore,
+            isLoadingMore: false,
+            nextPage: current.paging.nextPage + 1,
+            error: null,
+          ),
+        ),
+      );
+    } finally {
+      final latest = state.value;
+      if (latest != null && latest.paging.isLoadingMore) {
+        state = AsyncData(
+          latest.copyWith(paging: latest.paging.copyWith(isLoadingMore: false)),
+        );
+      }
+    }
+  }
 }
+

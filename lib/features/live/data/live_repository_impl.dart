@@ -3,7 +3,6 @@ import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/live/data/dtos/live_dtos.dart' as dto;
 import 'package:culcul/features/live/data/live_room_mapper.dart';
 import 'package:culcul/features/live/data/live_api.dart';
 import 'package:culcul/features/live/domain/repositories/live_repository.dart' as domain;
@@ -31,8 +30,7 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
 
   @override
   Future<Result<LiveRoomDetailModel, AppError>> getRoomInfo(int roomId) async {
-    final result = await requestApiResult(() => _api.getRoomInfo(roomId));
-    return result.map((data) => data.toDomain());
+    return requestApiResult(() => _api.getRoomInfo(roomId));
   }
 
   @override
@@ -40,14 +38,12 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
     required int roomId,
     int? qn,
   }) async {
-    final result = await requestApiResult(() => _api.getPlayUrl(roomId: roomId, qn: qn));
-    return result.map((data) => data.toDomain());
+    return requestApiResult(() => _api.getPlayUrl(roomId: roomId, qn: qn));
   }
 
   @override
   Future<Result<LiveDanmakuConfigModel, AppError>> getDanmakuConfig(int roomId) async {
-    final result = await requestApiResult(() => _api.getDanmakuConfig(roomId));
-    return result.map((data) => data.toDomain());
+    return requestApiResult(() => _api.getDanmakuConfig(roomId));
   }
 
   @override
@@ -58,11 +54,10 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
 
   @override
   Future<Result<LiveDanmuInfoModel, AppError>> getDanmuInfo(int roomId) async {
-    final result = await requestApiResult(() => _api.getDanmuInfo(roomId, 0));
-    return result.map((data) => data.toDomain());
+    return requestApiResult(() => _api.getDanmuInfo(roomId, 0));
   }
 
-  Future<Result<List<dto.LiveRoomModel>, AppError>> fetchRecommendListModels({
+  Future<Result<List<LiveRoomModel>, AppError>> fetchRecommendListModels({
     int page = 1,
   }) async {
     final result = await requestApiResult(
@@ -73,8 +68,7 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
 
   @override
   Future<Result<LiveAnchorInfoModel, AppError>> getAnchorInfo(int uid) async {
-    final result = await requestApiResult(() => _api.getAnchorInfo(uid));
-    return result.map((data) => data.toDomain());
+    return requestApiResult(() => _api.getAnchorInfo(uid));
   }
 
   @override
@@ -83,7 +77,7 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
     required int roomId,
     int page = 1,
   }) async {
-    final result = await requestApiResult(
+    return requestApiResult(
       () => _api.getOnlineGoldRank(
         ruid: ruid,
         roomId: roomId,
@@ -91,7 +85,6 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
         pageSize: _rankPageSize,
       ),
     );
-    return result.map((data) => data.toDomain());
   }
 
   @override
@@ -100,7 +93,7 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
     required int roomId,
     int page = 1,
   }) async {
-    final result = await requestApiResult(
+    return requestApiResult(
       () => _api.getGuardList(
         ruid: ruid,
         roomId: roomId,
@@ -108,7 +101,6 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
         pageSize: _rankPageSize,
       ),
     );
-    return result.map((data) => data.toDomain());
   }
 
   @override
@@ -126,10 +118,7 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
   }
 
   @override
-  Future<Result<List<LiveRoomSummary>, AppError>> getRecommendList({
-    int page = 1,
-  }) async {
-    final result = await fetchRecommendListModels(page: page);
-    return result.map((data) => data.map((item) => item.toSummary()).toList());
+  Future<Result<List<LiveRoomSummary>, AppError>> getRecommendList({int page = 1}) async {
+    return fetchRecommendListModels(page: page);
   }
 }

@@ -2,7 +2,7 @@ import 'package:culcul/features/favorites/presentation/view_models/favorites_vie
 import 'package:culcul/features/favorites/presentation/view_models/favorite_folder_action_view_model.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
-import 'package:culcul/features/auth/presentation.dart';
+import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_tab_bar.dart';
 import 'package:culcul/ui/widgets/guest_view.dart';
@@ -107,3 +107,4 @@ class _AddFolderAction extends ConsumerWidget {
     );
   }
 }
+

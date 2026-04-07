@@ -20,7 +20,7 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
   }
 
   @override
-  Future<List<ProfileVideo>> fetchPage(int page, {bool refresh = false}) async {
+  Future<List<ProfileVideo>> fetchPage(int page) async {
     final result = await ref
         .read(profileRepositoryProvider)
         .getSpaceVideos(mid: _mid, page: page, order: _order);

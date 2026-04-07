@@ -1,5 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/features/auth/presentation.dart';
+import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_stat_item.dart';
@@ -298,3 +298,4 @@ class _BioSection extends StatelessWidget {
     );
   }
 }
+

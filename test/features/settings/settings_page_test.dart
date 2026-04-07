@@ -1,5 +1,5 @@
 import 'package:culcul/core/providers/storage_provider.dart';
-import 'package:culcul/features/settings/presentation.dart';
+import 'package:culcul/features/settings/settings.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -81,3 +81,4 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 }
+

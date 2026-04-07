@@ -25,6 +25,15 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
 
 part 'notification_repository_impl.g.dart';
+part 'notification_repository_impl.local_read_store.dart';
+part 'notification_repository_impl.stream_watchers.dart';
+part 'notification_repository_impl.sync_service.dart';
+part 'notification_repository_impl.session_sync.dart';
+part 'notification_repository_impl.message_sync.dart';
+part 'notification_repository_impl.feed_sync.dart';
+part 'notification_repository_impl.message_send_service.dart';
+part 'notification_repository_impl.message_support.dart';
+part 'notification_repository_impl.cleanup_policy.dart';
 
 @riverpod
 domain.NotificationRepository notificationRepository(Ref ref) {
@@ -41,11 +50,23 @@ class NotificationRepositoryImpl
     this._api,
     this._database, {
     RequestExecutor? requestExecutor,
-  }) : _requestExecutor = requestExecutor ?? const RequestExecutor();
+  }) : _requestExecutor = requestExecutor ?? const RequestExecutor() {
+    _localReadStore = _NotificationLocalReadStore(this);
+    _streamWatchers = _NotificationStreamWatchers(this);
+    _syncService = _NotificationSyncService(this);
+    _messageSendService = _NotificationMessageSendService(this);
+    _cleanupPolicy = _NotificationCleanupPolicy(this);
+  }
 
   final NotificationApi _api;
   final NotificationLocalDatabase _database;
   final RequestExecutor _requestExecutor;
+
+  late final _NotificationLocalReadStore _localReadStore;
+  late final _NotificationStreamWatchers _streamWatchers;
+  late final _NotificationSyncService _syncService;
+  late final _NotificationMessageSendService _messageSendService;
+  late final _NotificationCleanupPolicy _cleanupPolicy;
 
   static const int _pageSize = 20;
   static const int _syncThrottleSeconds = 60;
@@ -69,41 +90,13 @@ class NotificationRepositoryImpl
   RequestExecutor get requestExecutor => _requestExecutor;
 
   @override
-  Future<NotificationSummary?> getUnreadCountFromLocal({required int ownerUid}) async {
-    final row =
-        await (_database.select(_database.notificationUnreadSummaries)
-              ..where((t) => t.ownerUid.equals(ownerUid))
-              ..limit(1))
-            .getSingleOrNull();
-    if (row == null) return null;
-    final dto = UnreadCountModel.fromJson(
-      jsonDecode(row.summaryJson) as Map<String, dynamic>,
-    );
-    return dto.toDomain();
+  Future<NotificationSummary?> getUnreadCountFromLocal({required int ownerUid}) {
+    return _localReadStore.getUnreadCountFromLocal(ownerUid: ownerUid);
   }
 
   @override
-  Future<List<SystemNotice>> listSystemNoticesFromLocal({required int ownerUid}) async {
-    final rows =
-        await (_database.select(_database.notificationFeedItems)
-              ..where(
-                (t) =>
-                    t.ownerUid.equals(ownerUid) &
-                    t.feedType.equals(NotificationFeedType.system.value),
-              )
-              ..orderBy([
-                (t) => OrderingTerm.desc(t.eventTime),
-                (t) => OrderingTerm.desc(t.eventId),
-              ]))
-            .get();
-
-    return rows
-        .map(
-          (row) => SystemNotificationItem.fromJson(
-            jsonDecode(row.itemJson) as Map<String, dynamic>,
-          ).toDomain(),
-        )
-        .toList();
+  Future<List<SystemNotice>> listSystemNoticesFromLocal({required int ownerUid}) {
+    return _localReadStore.listSystemNoticesFromLocal(ownerUid: ownerUid);
   }
 
   @override
@@ -111,26 +104,12 @@ class NotificationRepositoryImpl
     required int ownerUid,
     required PrivateSessionType sessionType,
     int? endTs,
-  }) async {
-    final query = _database.select(_database.notificationSessions)
-      ..where(
-        (t) =>
-            t.ownerUid.equals(ownerUid) &
-            t.sessionType.equals(sessionType.value) &
-            (endTs == null
-                ? const Constant(true)
-                : t.sessionTs.isSmallerThanValue(endTs)),
-      )
-      ..orderBy([(t) => OrderingTerm.desc(t.sessionTs)])
-      ..limit(_pageSize);
-    final rows = await query.get();
-    return rows
-        .map(
-          (row) => PrivateMessageSession.fromJson(
-            jsonDecode(row.sessionJson) as Map<String, dynamic>,
-          ).toDomain(),
-        )
-        .toList();
+  }) {
+    return _localReadStore.pageSessionsFromLocal(
+      ownerUid: ownerUid,
+      sessionType: sessionType,
+      endTs: endTs,
+    );
   }
 
   @override
@@ -139,23 +118,13 @@ class NotificationRepositoryImpl
     required int talkerId,
     required PrivateSessionType sessionType,
     int? endSeqno,
-  }) async {
-    final query = _database.select(_database.notificationMessages)
-      ..where((t) {
-        final base =
-            t.ownerUid.equals(ownerUid) &
-            t.sessionType.equals(sessionType.value) &
-            t.talkerId.equals(talkerId);
-        if (endSeqno == null) return base;
-        return base & t.msgSeqno.isSmallerThanValue(endSeqno);
-      })
-      ..orderBy([
-        (t) => OrderingTerm.desc(t.timestamp),
-        (t) => OrderingTerm.desc(t.msgSeqno),
-      ])
-      ..limit(_pageSize);
-    final rows = await query.get();
-    return rows.map(_rowToPrivateMessage).toList();
+  }) {
+    return _localReadStore.pageMessagesFromLocal(
+      ownerUid: ownerUid,
+      talkerId: talkerId,
+      sessionType: sessionType,
+      endSeqno: endSeqno,
+    );
   }
 
   @override
@@ -163,28 +132,12 @@ class NotificationRepositoryImpl
     required int ownerUid,
     required int talkerId,
     required PrivateSessionType sessionType,
-  }) async {
-    final rows =
-        await (_database.select(_database.notificationMessageEmojis)
-              ..where(
-                (t) =>
-                    t.ownerUid.equals(ownerUid) &
-                    t.sessionType.equals(sessionType.value) &
-                    t.talkerId.equals(talkerId),
-              )
-              ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)]))
-            .get();
-
-    final map = <String, String>{};
-    for (final row in rows) {
-      _putEmojiVariants(
-        map: map,
-        rawKey: row.emojiText,
-        url: row.emojiUrl,
-        overwrite: false,
-      );
-    }
-    return map;
+  }) {
+    return _localReadStore.getMessageEmojiMapFromLocal(
+      ownerUid: ownerUid,
+      talkerId: talkerId,
+      sessionType: sessionType,
+    );
   }
 
   @override
@@ -193,122 +146,39 @@ class NotificationRepositoryImpl
     required NotificationFeedType type,
     int? cursorId,
     int? cursorTime,
-  }) async {
-    if (type == NotificationFeedType.system) {
-      return const <NotificationEntry>[];
-    }
-
-    final query = _database.select(_database.notificationFeedItems)
-      ..where((t) {
-        final base = t.ownerUid.equals(ownerUid) & t.feedType.equals(type.value);
-        if (cursorId == null || cursorTime == null) return base;
-        return base &
-            (t.eventTime.isSmallerThanValue(cursorTime) |
-                (t.eventTime.equals(cursorTime) &
-                    t.eventId.isSmallerThanValue(cursorId)));
-      })
-      ..orderBy([
-        (t) => OrderingTerm.desc(t.eventTime),
-        (t) => OrderingTerm.desc(t.eventId),
-      ])
-      ..limit(_pageSize);
-    final rows = await query.get();
-    return rows
-        .map(
-          (row) => ReplyItem.fromJson(
-            jsonDecode(row.itemJson) as Map<String, dynamic>,
-          ).toDomain(),
-        )
-        .toList();
+  }) {
+    return _localReadStore.pageFeedFromLocal(
+      ownerUid: ownerUid,
+      type: type,
+      cursorId: cursorId,
+      cursorTime: cursorTime,
+    );
   }
 
   @override
   Stream<NotificationSummary> watchUnreadCount({required int ownerUid}) {
-    return (_database.select(_database.notificationUnreadSummaries)
-          ..where((t) => t.ownerUid.equals(ownerUid))
-          ..limit(1))
-        .watchSingleOrNull()
-        .map((row) {
-          if (row == null) return _emptySummary;
-          try {
-            final dto = UnreadCountModel.fromJson(
-              jsonDecode(row.summaryJson) as Map<String, dynamic>,
-            );
-            return dto.toDomain();
-          } catch (_) {
-            return _emptySummary;
-          }
-        });
+    return _streamWatchers.watchUnreadCount(ownerUid: ownerUid);
   }
 
   @override
   Stream<List<SystemNotice>> watchSystemNotices({required int ownerUid}) {
-    return (_database.select(_database.notificationFeedItems)
-          ..where(
-            (t) =>
-                t.ownerUid.equals(ownerUid) &
-                t.feedType.equals(NotificationFeedType.system.value),
-          )
-          ..orderBy([
-            (t) => OrderingTerm.desc(t.eventTime),
-            (t) => OrderingTerm.desc(t.eventId),
-          ]))
-        .watch()
-        .map(
-          (rows) => rows
-              .map(
-                (row) => SystemNotificationItem.fromJson(
-                  jsonDecode(row.itemJson) as Map<String, dynamic>,
-                ).toDomain(),
-              )
-              .toList(),
-        );
+    return _streamWatchers.watchSystemNotices(ownerUid: ownerUid);
   }
 
   @override
   Future<Result<void, AppError>> syncUnreadCount({
     required int ownerUid,
     bool force = false,
-  }) async {
-    if (!await _shouldSync(ownerUid: ownerUid, scope: 'unread', force: force)) {
-      return const Success(null);
-    }
-    final responseResult = await requestApiResult(() => _api.getUnreadCount());
-    if (responseResult.errorOrNull case final error?) {
-      return Failure(error);
-    }
-    final response = responseResult.dataOrNull!;
-    final now = _nowSeconds();
-
-    await _database
-        .into(_database.notificationUnreadSummaries)
-        .insertOnConflictUpdate(
-          NotificationUnreadSummariesCompanion.insert(
-            ownerUid: Value(ownerUid),
-            summaryJson: jsonEncode(response.toJson()),
-            updatedAt: now,
-          ),
-        );
-    await _touchCursor(
-      ownerUid: ownerUid,
-      scope: 'unread',
-      cursorJson: null,
-      hasMore: true,
-    );
-    await _maybeCleanup(ownerUid);
-    return const Success(null);
+  }) {
+    return _syncService.syncUnreadCount(ownerUid: ownerUid, force: force);
   }
 
   @override
   Future<Result<void, AppError>> syncSessions({
     required int ownerUid,
     bool force = false,
-  }) async {
-    return _syncSessionsRemote(
-      ownerUid: ownerUid,
-      sessionType: PrivateSessionType.user,
-      force: force,
-    );
+  }) {
+    return _syncService.syncSessions(ownerUid: ownerUid, force: force);
   }
 
   @override
@@ -316,78 +186,12 @@ class NotificationRepositoryImpl
     required int ownerUid,
     required PrivateSessionType sessionType,
     required int endTs,
-  }) async {
-    return _syncSessionsRemote(
+  }) {
+    return _syncService.syncSessionsOlder(
       ownerUid: ownerUid,
       sessionType: sessionType,
       endTs: endTs,
-      force: true,
     );
-  }
-
-  Future<Result<void, AppError>> _syncSessionsRemote({
-    required int ownerUid,
-    required PrivateSessionType sessionType,
-    int? endTs,
-    bool force = false,
-  }) async {
-    final scope = 'sessions:${sessionType.value}:${endTs == null ? "head" : "older"}';
-    if (!await _shouldSync(ownerUid: ownerUid, scope: scope, force: force)) {
-      return const Success(null);
-    }
-
-    final responseResult = await requestApiResult(
-      () => _api.getPrivateSessions(
-        sessionType: sessionType.value,
-        size: _pageSize,
-        endTs: endTs,
-      ),
-    );
-    if (responseResult.errorOrNull case final error?) {
-      return Failure(error);
-    }
-    final response = responseResult.dataOrNull!;
-    final now = _nowSeconds();
-    final sessions = response.sessionList ?? const <PrivateMessageSession>[];
-
-    await _database.transaction(() async {
-      for (final session in sessions) {
-        await _database
-            .into(_database.notificationSessions)
-            .insertOnConflictUpdate(
-              NotificationSessionsCompanion.insert(
-                ownerUid: ownerUid,
-                sessionType: session.sessionType,
-                talkerId: session.talkerId,
-                unreadCount: Value(session.unreadCount),
-                sessionTs: session.sessionTs,
-                sessionJson: jsonEncode(session.toJson()),
-                updatedAt: now,
-              ),
-            );
-
-        if (session.lastMsg != null) {
-          await _upsertMessageDetail(
-            ownerUid: ownerUid,
-            sessionType: PrivateSessionType.fromValue(session.sessionType),
-            talkerId: session.talkerId,
-            message: session.lastMsg!,
-            now: now,
-            syncStatus: 'synced',
-          );
-        }
-      }
-    });
-
-    final nextCursor = sessions.isEmpty ? null : sessions.last.sessionTs;
-    await _touchCursor(
-      ownerUid: ownerUid,
-      scope: scope,
-      cursorJson: nextCursor == null ? null : jsonEncode({'endTs': nextCursor}),
-      hasMore: response.hasMore == 1,
-    );
-    await _maybeCleanup(ownerUid);
-    return const Success(null);
   }
 
   @override
@@ -395,12 +199,11 @@ class NotificationRepositoryImpl
     required int ownerUid,
     required int talkerId,
     required PrivateSessionType sessionType,
-  }) async {
-    return _syncMessagesRemote(
+  }) {
+    return _syncService.syncMessagesHead(
       ownerUid: ownerUid,
       talkerId: talkerId,
       sessionType: sessionType,
-      force: true,
     );
   }
 
@@ -410,89 +213,21 @@ class NotificationRepositoryImpl
     required int talkerId,
     required PrivateSessionType sessionType,
     required int endSeqno,
-  }) async {
-    if (endSeqno <= 0) return const Success(null);
-    return _syncMessagesRemote(
+  }) {
+    return _syncService.syncMessagesOlder(
       ownerUid: ownerUid,
       talkerId: talkerId,
       sessionType: sessionType,
       endSeqno: endSeqno,
-      force: true,
     );
-  }
-
-  Future<Result<void, AppError>> _syncMessagesRemote({
-    required int ownerUid,
-    required int talkerId,
-    required PrivateSessionType sessionType,
-    int? endSeqno,
-    bool force = false,
-  }) async {
-    final scope =
-        'messages:${sessionType.value}:$talkerId:${endSeqno == null ? "head" : "older"}';
-    if (!await _shouldSync(ownerUid: ownerUid, scope: scope, force: force)) {
-      return const Success(null);
-    }
-
-    final responseResult = await requestApiResult(
-      () => _api.getPrivateMessages(
-        talkerId: talkerId,
-        sessionType: sessionType.value,
-        size: _pageSize,
-        endSeqno: endSeqno,
-      ),
-    );
-    if (responseResult.errorOrNull case final error?) {
-      return Failure(error);
-    }
-    final response = responseResult.dataOrNull!;
-    final now = _nowSeconds();
-    final messages = response.messages ?? const <PrivateMessageDetail>[];
-
-    await _database.transaction(() async {
-      for (final message in messages) {
-        await _upsertMessageDetail(
-          ownerUid: ownerUid,
-          sessionType: sessionType,
-          talkerId: talkerId,
-          message: message,
-          now: now,
-          syncStatus: 'synced',
-        );
-      }
-      await _upsertMessageEmojis(
-        ownerUid: ownerUid,
-        talkerId: talkerId,
-        sessionType: sessionType,
-        emojis: response.emojiInfos ?? const <PrivateMessageEmojiInfo>[],
-        now: now,
-      );
-      await _reconcileTemporaryMessages(
-        ownerUid: ownerUid,
-        talkerId: talkerId,
-        sessionType: sessionType,
-      );
-    });
-
-    await _touchCursor(
-      ownerUid: ownerUid,
-      scope: scope,
-      cursorJson: jsonEncode({
-        'minSeqno': response.minSeqno,
-        'maxSeqno': response.maxSeqno,
-      }),
-      hasMore: response.hasMore == 1,
-    );
-    await _maybeCleanup(ownerUid);
-    return const Success(null);
   }
 
   @override
   Future<Result<void, AppError>> syncFeedHead({
     required int ownerUid,
     required NotificationFeedType type,
-  }) async {
-    return _syncFeedRemote(ownerUid: ownerUid, type: type, force: true);
+  }) {
+    return _syncService.syncFeedHead(ownerUid: ownerUid, type: type);
   }
 
   @override
@@ -501,137 +236,30 @@ class NotificationRepositoryImpl
     required NotificationFeedType type,
     required int cursorId,
     required int cursorTime,
-  }) async {
-    return _syncFeedRemote(
+  }) {
+    return _syncService.syncFeedOlder(
       ownerUid: ownerUid,
       type: type,
       cursorId: cursorId,
       cursorTime: cursorTime,
-      force: true,
     );
-  }
-
-  Future<Result<void, AppError>> _syncFeedRemote({
-    required int ownerUid,
-    required NotificationFeedType type,
-    int? cursorId,
-    int? cursorTime,
-    bool force = false,
-  }) async {
-    final scope = 'feed:${type.value}:${cursorId == null ? "head" : "older"}';
-    if (!await _shouldSync(ownerUid: ownerUid, scope: scope, force: force)) {
-      return const Success(null);
-    }
-
-    final now = _nowSeconds();
-    if (type == NotificationFeedType.system) {
-      final itemsResult = await _fetchSystemNotifications();
-      if (itemsResult.errorOrNull case final error?) {
-        return Failure(error);
-      }
-      final items = itemsResult.dataOrNull!;
-      await _database.transaction(() async {
-        for (final item in items) {
-          await _database
-              .into(_database.notificationFeedItems)
-              .insertOnConflictUpdate(
-                NotificationFeedItemsCompanion.insert(
-                  ownerUid: ownerUid,
-                  feedType: type.value,
-                  eventId: item.id,
-                  eventTime: item.time,
-                  itemJson: jsonEncode(item.toJson()),
-                  updatedAt: now,
-                ),
-              );
-        }
-      });
-      await _touchCursor(
-        ownerUid: ownerUid,
-        scope: scope,
-        cursorJson: null,
-        hasMore: false,
-      );
-      await _maybeCleanup(ownerUid);
-      return const Success(null);
-    }
-
-    final responseResult = await _fetchReplyLikeAtResponse(
-      type: type,
-      id: cursorId,
-      time: cursorTime,
-    );
-    if (responseResult.errorOrNull case final error?) {
-      return Failure(error);
-    }
-    final response = responseResult.dataOrNull!;
-
-    await _database.transaction(() async {
-      for (final item in response.items) {
-        await _database
-            .into(_database.notificationFeedItems)
-            .insertOnConflictUpdate(
-              NotificationFeedItemsCompanion.insert(
-                ownerUid: ownerUid,
-                feedType: type.value,
-                eventId: item.id,
-                eventTime: item.replyTime ?? item.likeTime ?? 0,
-                itemJson: jsonEncode(item.toJson()),
-                updatedAt: now,
-              ),
-            );
-      }
-    });
-
-    final next = response.items.isEmpty
-        ? null
-        : {
-            'id': response.items.last.id,
-            'time': response.items.last.replyTime ?? response.items.last.likeTime ?? 0,
-          };
-    await _touchCursor(
-      ownerUid: ownerUid,
-      scope: scope,
-      cursorJson: next == null ? null : jsonEncode(next),
-      hasMore: !response.cursor.isEnd,
-    );
-    await _maybeCleanup(ownerUid);
-    return const Success(null);
   }
 
   Future<void> retryFailedOutbox({
     required int ownerUid,
     required int talkerId,
     required PrivateSessionType sessionType,
-  }) async {
-    final query = _database.select(_database.notificationOutbox)
-      ..where(
-        (t) =>
-            t.ownerUid.equals(ownerUid) &
-            t.talkerId.equals(talkerId) &
-            t.sessionType.equals(sessionType.value) &
-            t.status.equals('failed'),
-      )
-      ..orderBy([(t) => OrderingTerm.asc(t.createdAt)]);
-    final failed = await query.get();
-    for (final item in failed) {
-      await _database
-          .update(_database.notificationOutbox)
-          .replace(item.copyWith(status: 'pending', error: const Value(null)));
-      await sendPrivateMessage(
-        ownerUid: ownerUid,
-        receiverId: item.receiverId,
-        receiverType: PrivateMessageReceiverType.fromValue(item.receiverType),
-        messageType: PrivateMessageType.fromValue(item.msgType),
-        content: PrivateMessageContent.fromRaw(item.contentJson),
-      );
-    }
+  }) {
+    return _messageSendService.retryFailedOutbox(
+      ownerUid: ownerUid,
+      talkerId: talkerId,
+      sessionType: sessionType,
+    );
   }
 
   @override
-  Future<Result<ImageUploadResult, AppError>> uploadImage(File file) async {
-    final result = await requestApiResult(() => _api.uploadImage(file: file));
-    return result.map((response) => response.toDomain());
+  Future<Result<ImageUploadResult, AppError>> uploadImage(File file) {
+    return _messageSendService.uploadImage(file);
   }
 
   @override
@@ -641,546 +269,14 @@ class NotificationRepositoryImpl
     required PrivateMessageReceiverType receiverType,
     required PrivateMessageType messageType,
     required PrivateMessageContent content,
-  }) async {
-    final now = _nowSeconds();
-    final localMsgSeqno = -DateTime.now().microsecondsSinceEpoch;
-    final contentMap = content.toRawMap();
-    final contentRawJson = jsonEncode(contentMap);
-    final devId = const Uuid().v4().toUpperCase();
-
-    await _database.transaction(() async {
-      await _database
-          .into(_database.notificationMessages)
-          .insertOnConflictUpdate(
-            NotificationMessagesCompanion.insert(
-              ownerUid: ownerUid,
-              sessionType: _sessionTypeFromReceiver(receiverType).value,
-              talkerId: receiverId,
-              msgSeqno: localMsgSeqno,
-              senderUid: ownerUid,
-              receiverType: receiverType.value,
-              receiverId: receiverId,
-              msgType: messageType.value,
-              contentJson: contentRawJson,
-              timestamp: now,
-              atUidsJson: const Value(null),
-              msgKey: const Value(null),
-              msgStatus: const Value(0),
-              notifyCode: const Value(null),
-              newFaceVersion: const Value(null),
-              msgSource: const Value(null),
-              syncStatus: const Value('pending'),
-              createdAt: now,
-              updatedAt: now,
-            ),
-          );
-
-      await _database
-          .into(_database.notificationOutbox)
-          .insert(
-            NotificationOutboxCompanion.insert(
-              ownerUid: ownerUid,
-              sessionType: _sessionTypeFromReceiver(receiverType).value,
-              talkerId: receiverId,
-              localMsgSeqno: localMsgSeqno,
-              senderUid: ownerUid,
-              receiverType: receiverType.value,
-              receiverId: receiverId,
-              msgType: messageType.value,
-              contentJson: contentRawJson,
-              timestamp: now,
-              createdAt: now,
-              updatedAt: now,
-            ),
-          );
-    });
-
-    final responseResult = await requestApiResult(
-      () => _api.sendPrivateMessage(
-        wSenderUid: ownerUid,
-        wReceiverId: receiverId,
-        wDevId: devId,
-        senderUid: ownerUid,
-        receiverId: receiverId,
-        receiverType: receiverType.value,
-        msgType: messageType.value,
-        devId: devId,
-        timestamp: now,
-        content: contentRawJson,
-      ),
-    );
-    final result = responseResult.map((response) => response.toDomain());
-
-    await result.when(
-      success: (value) async {
-        await _markOutboxAndTempMessage(
-          ownerUid: ownerUid,
-          localMsgSeqno: localMsgSeqno,
-          status: 'sent',
-          msgKey: value.msgKey,
-        );
-        await syncMessagesHead(
-          ownerUid: ownerUid,
-          talkerId: receiverId,
-          sessionType: _sessionTypeFromReceiver(receiverType),
-        );
-      },
-      failure: (error) async {
-        await _markOutboxAndTempMessage(
-          ownerUid: ownerUid,
-          localMsgSeqno: localMsgSeqno,
-          status: 'failed',
-          error: error.message,
-        );
-      },
-    );
-
-    return result;
-  }
-
-  Future<void> _markOutboxAndTempMessage({
-    required int ownerUid,
-    required int localMsgSeqno,
-    required String status,
-    String? error,
-    int? msgKey,
-  }) async {
-    final now = _nowSeconds();
-    await _database.transaction(() async {
-      await (_database.update(_database.notificationOutbox)..where(
-            (t) => t.ownerUid.equals(ownerUid) & t.localMsgSeqno.equals(localMsgSeqno),
-          ))
-          .write(
-            NotificationOutboxCompanion(
-              status: Value(status),
-              error: Value(error),
-              msgKey: Value(msgKey),
-              updatedAt: Value(now),
-            ),
-          );
-
-      await (_database.update(
-            _database.notificationMessages,
-          )..where((t) => t.ownerUid.equals(ownerUid) & t.msgSeqno.equals(localMsgSeqno)))
-          .write(
-            NotificationMessagesCompanion(
-              syncStatus: Value(status),
-              msgKey: Value(msgKey),
-              updatedAt: Value(now),
-            ),
-          );
-    });
-  }
-
-  Future<void> _upsertMessageDetail({
-    required int ownerUid,
-    required PrivateSessionType sessionType,
-    required int talkerId,
-    required PrivateMessageDetail message,
-    required int now,
-    required String syncStatus,
-  }) async {
-    final atUidsJson = message.atUids == null ? null : jsonEncode(message.atUids);
-    final contentRaw = message.content;
-    final contentJson = contentRaw is String ? contentRaw : jsonEncode(contentRaw);
-
-    await _database
-        .into(_database.notificationMessages)
-        .insertOnConflictUpdate(
-          NotificationMessagesCompanion.insert(
-            ownerUid: ownerUid,
-            sessionType: sessionType.value,
-            talkerId: talkerId,
-            msgSeqno: message.msgSeqno,
-            senderUid: message.senderUid,
-            receiverType: message.receiverType,
-            receiverId: message.receiverId,
-            msgType: message.msgType,
-            contentJson: contentJson,
-            timestamp: message.timestamp,
-            atUidsJson: Value(atUidsJson),
-            msgKey: Value(message.msgKey),
-            msgStatus: Value(message.msgStatus),
-            notifyCode: Value(message.notifyCode),
-            newFaceVersion: Value(message.newFaceVersion),
-            msgSource: Value(message.msgSource),
-            syncStatus: Value(syncStatus),
-            createdAt: now,
-            updatedAt: now,
-          ),
-        );
-  }
-
-  Future<void> _reconcileTemporaryMessages({
-    required int ownerUid,
-    required int talkerId,
-    required PrivateSessionType sessionType,
-  }) async {
-    final tempQuery = _database.select(_database.notificationMessages)
-      ..where(
-        (t) =>
-            t.ownerUid.equals(ownerUid) &
-            t.talkerId.equals(talkerId) &
-            t.sessionType.equals(sessionType.value) &
-            t.msgSeqno.isSmallerOrEqualValue(0) &
-            (t.syncStatus.equals('pending') | t.syncStatus.equals('sent')),
-      );
-    final temps = await tempQuery.get();
-    if (temps.isEmpty) return;
-
-    final syncedQuery = _database.select(_database.notificationMessages)
-      ..where(
-        (t) =>
-            t.ownerUid.equals(ownerUid) &
-            t.talkerId.equals(talkerId) &
-            t.sessionType.equals(sessionType.value) &
-            t.msgSeqno.isBiggerThanValue(0),
-      )
-      ..orderBy([(t) => OrderingTerm.desc(t.timestamp)])
-      ..limit(100);
-    final synced = await syncedQuery.get();
-    if (synced.isEmpty) return;
-
-    for (final temp in temps) {
-      final matched = synced.any(
-        (item) =>
-            item.senderUid == temp.senderUid &&
-            item.msgType == temp.msgType &&
-            item.contentJson == temp.contentJson &&
-            (item.timestamp - temp.timestamp).abs() <= 15,
-      );
-      if (matched) {
-        await (_database.delete(_database.notificationMessages)..where(
-              (t) => t.ownerUid.equals(ownerUid) & t.msgSeqno.equals(temp.msgSeqno),
-            ))
-            .go();
-      }
-    }
-  }
-
-  Future<void> _upsertMessageEmojis({
-    required int ownerUid,
-    required int talkerId,
-    required PrivateSessionType sessionType,
-    required List<PrivateMessageEmojiInfo> emojis,
-    required int now,
-  }) async {
-    for (final emoji in emojis) {
-      final canonicalKey = _canonicalEmojiKey(emoji.text);
-      final url = emoji.url.trim();
-      if (canonicalKey == null || url.isEmpty) continue;
-
-      await _database
-          .into(_database.notificationMessageEmojis)
-          .insertOnConflictUpdate(
-            NotificationMessageEmojisCompanion.insert(
-              ownerUid: ownerUid,
-              sessionType: sessionType.value,
-              talkerId: talkerId,
-              emojiText: canonicalKey,
-              emojiUrl: url,
-              updatedAt: now,
-            ),
-          );
-    }
-  }
-
-  Future<Result<ReplyResponse, AppError>> _fetchReplyLikeAtResponse({
-    required NotificationFeedType type,
-    int? id,
-    int? time,
-  }) async {
-    switch (type) {
-      case NotificationFeedType.reply:
-        return requestApiResult(() => _api.getReplyList(id: id, replyTime: time));
-      case NotificationFeedType.at:
-        return requestApiResult(() => _api.getAtList(id: id, atTime: time));
-      case NotificationFeedType.like:
-        final likeResult = await requestApiResult(
-          () => _api.getLikeList(id: id, likeTime: time),
-        );
-        return likeResult.map((likeResponse) => ReplyResponse(
-          cursor: likeResponse.total.cursor,
-          items: likeResponse.total.items,
-          lastViewAt: likeResponse.latest.lastViewAt,
-        ));
-      case NotificationFeedType.system:
-        return Failure(
-          AppError.data('System notifications use a dedicated API flow'),
-        );
-    }
-  }
-
-  Future<Result<List<SystemNotificationItem>, AppError>> _fetchSystemNotifications() async {
-    final sessionResult = await requestApiResult(
-      () => _api.getPrivateSessions(
-        sessionType: PrivateSessionType.system.value,
-        size: _pageSize,
-      ),
-    );
-    if (sessionResult.errorOrNull case final error?) {
-      return Failure(error);
-    }
-    final sessionRes = sessionResult.dataOrNull!;
-    final talkerId = _resolveSystemTalkerId(sessionRes);
-    if (talkerId == null) {
-      return const Success(<SystemNotificationItem>[]);
-    }
-
-    final msgsResult = await requestApiResult(
-      () => _api.getPrivateMessages(
-        talkerId: talkerId,
-        sessionType: PrivateSessionType.user.value,
-        size: _pageSize,
-      ),
-    );
-    return msgsResult.map(
-      (msgsRes) => msgsRes.messages?.map((msg) {
-            final contentMap = msg.contentMap;
-            final nestedContentMap = _toJsonMap(contentMap?['content']);
-            return SystemNotificationItem(
-              id: msg.msgSeqno,
-              title: _firstNonEmptyString([
-                contentMap?['title'],
-                nestedContentMap?['title'],
-              ]),
-              text: _extractSystemNoticeText(contentMap, nestedContentMap),
-              time: msg.timestamp,
-              uri: _extractSystemNoticeUri(contentMap, nestedContentMap),
-              jumpText: _firstNonEmptyString([
-                contentMap?['jump_text'],
-                contentMap?['jumpText'],
-                nestedContentMap?['jump_text'],
-                nestedContentMap?['jumpText'],
-              ]),
-            );
-          }).toList() ??
-          const <SystemNotificationItem>[],
-    );
-  }
-
-  int? _resolveSystemTalkerId(PrivateMessageSessionResponse response) {
-    final systemMsgMap = response.systemMsg;
-    if (systemMsgMap != null && systemMsgMap.isNotEmpty) {
-      final preferred =
-          systemMsgMap['5'] ??
-          systemMsgMap['7'] ??
-          systemMsgMap.values.cast<int?>().firstWhere(
-            (item) => item != null && item > 0,
-            orElse: () => null,
-          );
-      if (preferred != null && preferred > 0) {
-        return preferred;
-      }
-    }
-
-    final sessions = response.sessionList ?? const <PrivateMessageSession>[];
-    for (final session in sessions) {
-      if (session.sessionType == PrivateSessionType.system.value &&
-          session.talkerId > 0) {
-        return session.talkerId;
-      }
-    }
-    return null;
-  }
-
-  String? _extractSystemNoticeText(
-    Map<String, dynamic>? contentMap,
-    Map<String, dynamic>? nestedContentMap,
-  ) {
-    final contentString = _firstNonEmptyString([contentMap?['content']]);
-    final decodedContent = _toJsonMap(contentString);
-    return _firstNonEmptyString([
-      contentMap?['text'],
-      contentMap?['desc'],
-      contentMap?['message'],
-      decodedContent?['text'],
-      decodedContent?['content'],
-      nestedContentMap?['text'],
-      nestedContentMap?['content'],
-      contentString,
-    ]);
-  }
-
-  String? _extractSystemNoticeUri(
-    Map<String, dynamic>? contentMap,
-    Map<String, dynamic>? nestedContentMap,
-  ) {
-    final contentString = _firstNonEmptyString([contentMap?['content']]);
-    final decodedContent = _toJsonMap(contentString);
-    return _firstNonEmptyString([
-      contentMap?['url'],
-      contentMap?['uri'],
-      contentMap?['jump_uri'],
-      contentMap?['jumpUrl'],
-      nestedContentMap?['url'],
-      nestedContentMap?['uri'],
-      nestedContentMap?['jump_uri'],
-      nestedContentMap?['jumpUrl'],
-      decodedContent?['url'],
-      decodedContent?['uri'],
-      decodedContent?['jump_uri'],
-      decodedContent?['jumpUrl'],
-    ]);
-  }
-
-  String? _firstNonEmptyString(List<dynamic> values) {
-    for (final value in values) {
-      if (value is String) {
-        final trimmed = value.trim();
-        if (trimmed.isNotEmpty) {
-          return trimmed;
-        }
-      }
-    }
-    return null;
-  }
-
-  Map<String, dynamic>? _toJsonMap(dynamic raw) {
-    if (raw is Map<String, dynamic>) return raw;
-    if (raw is Map) {
-      return raw.map((key, value) => MapEntry(key.toString(), value));
-    }
-    if (raw is String) {
-      try {
-        final decoded = jsonDecode(raw);
-        if (decoded is Map<String, dynamic>) return decoded;
-      } catch (_) {}
-    }
-    return null;
-  }
-
-  String? _canonicalEmojiKey(String rawKey) {
-    final trimmed = rawKey.trim();
-    if (trimmed.isEmpty) return null;
-    if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
-      final inner = trimmed.substring(1, trimmed.length - 1).trim();
-      if (inner.isEmpty) return null;
-      return '[$inner]';
-    }
-    return '[$trimmed]';
-  }
-
-  void _putEmojiVariants({
-    required Map<String, String> map,
-    required String rawKey,
-    required String url,
-    required bool overwrite,
   }) {
-    final canonical = _canonicalEmojiKey(rawKey);
-    if (canonical == null) return;
-    final plain = canonical.substring(1, canonical.length - 1);
-    if (overwrite) {
-      map[canonical] = url;
-      map[plain] = url;
-      return;
-    }
-    map.putIfAbsent(canonical, () => url);
-    map.putIfAbsent(plain, () => url);
-  }
-
-  PrivateMessage _rowToPrivateMessage(NotificationMessage row) {
-    final jsonMap = <String, dynamic>{
-      'sender_uid': row.senderUid,
-      'receiver_type': row.receiverType,
-      'receiver_id': row.receiverId,
-      'msg_type': row.msgType,
-      'content': row.contentJson,
-      'msg_seqno': row.msgSeqno,
-      'timestamp': row.timestamp,
-      'at_uids': row.atUidsJson == null
-          ? null
-          : jsonDecode(row.atUidsJson!) as List<dynamic>,
-      'msg_key': row.msgKey,
-      'msg_status': row.msgStatus,
-      'notify_code': row.notifyCode,
-      'new_face_version': row.newFaceVersion,
-      'msg_source': row.msgSource,
-    };
-    return PrivateMessageDetail.fromJson(jsonMap).toDomain();
-  }
-
-  Future<bool> _shouldSync({
-    required int ownerUid,
-    required String scope,
-    required bool force,
-  }) async {
-    if (force) return true;
-    final now = _nowSeconds();
-    final existing =
-        await (_database.select(_database.notificationSyncCursors)
-              ..where((t) => t.ownerUid.equals(ownerUid) & t.scope.equals(scope))
-              ..limit(1))
-            .getSingleOrNull();
-    if (existing == null) return true;
-    return now - existing.lastSyncedAt >= _syncThrottleSeconds;
-  }
-
-  Future<void> _touchCursor({
-    required int ownerUid,
-    required String scope,
-    required String? cursorJson,
-    required bool hasMore,
-  }) async {
-    final now = _nowSeconds();
-    await _database
-        .into(_database.notificationSyncCursors)
-        .insertOnConflictUpdate(
-          NotificationSyncCursorsCompanion.insert(
-            ownerUid: ownerUid,
-            scope: scope,
-            cursorJson: Value(cursorJson),
-            hasMore: Value(hasMore),
-            lastSyncedAt: Value(now),
-          ),
-        );
-  }
-
-  Future<void> _maybeCleanup(int ownerUid) async {
-    final now = _nowSeconds();
-    final cleanupCursor =
-        await (_database.select(_database.notificationSyncCursors)
-              ..where((t) => t.ownerUid.equals(ownerUid) & t.scope.equals(_cleanupScope))
-              ..limit(1))
-            .getSingleOrNull();
-
-    if (cleanupCursor != null && now - cleanupCursor.lastSyncedAt < 24 * 60 * 60) {
-      return;
-    }
-
-    final cutoff = now - (_retentionDays * 24 * 60 * 60);
-
-    await _database.transaction(() async {
-      await (_database.delete(_database.notificationMessages)..where(
-            (t) => t.ownerUid.equals(ownerUid) & t.timestamp.isSmallerThanValue(cutoff),
-          ))
-          .go();
-
-      await (_database.delete(_database.notificationMessageEmojis)..where(
-            (t) => t.ownerUid.equals(ownerUid) & t.updatedAt.isSmallerThanValue(cutoff),
-          ))
-          .go();
-
-      await (_database.delete(_database.notificationFeedItems)..where(
-            (t) => t.ownerUid.equals(ownerUid) & t.eventTime.isSmallerThanValue(cutoff),
-          ))
-          .go();
-
-      await (_database.delete(_database.notificationSessions)..where(
-            (t) =>
-                t.ownerUid.equals(ownerUid) &
-                t.sessionTs.isSmallerThanValue(cutoff) &
-                t.unreadCount.equals(0),
-          ))
-          .go();
-
-      await _touchCursor(
-        ownerUid: ownerUid,
-        scope: _cleanupScope,
-        cursorJson: null,
-        hasMore: false,
-      );
-    });
+    return _messageSendService.sendPrivateMessage(
+      ownerUid: ownerUid,
+      receiverId: receiverId,
+      receiverType: receiverType,
+      messageType: messageType,
+      content: content,
+    );
   }
 
   int _nowSeconds() => DateTime.now().millisecondsSinceEpoch ~/ 1000;

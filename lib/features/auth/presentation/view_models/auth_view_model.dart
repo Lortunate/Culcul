@@ -2,10 +2,7 @@ import 'dart:async';
 
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/auth/domain/entities/country_code.dart';
-import 'package:culcul/features/auth/domain/entities/user_entity.dart';
 import 'package:culcul/features/auth/auth.dart';
-import 'package:culcul/features/auth/domain/entities/auth_captcha_challenge.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

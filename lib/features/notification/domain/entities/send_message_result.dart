@@ -1,7 +1,3 @@
-class SendMessageResult {
-  final int msgKey;
-  final String? msgContent;
-  final Map<String, dynamic>? keyHitInfos;
+import 'package:culcul/features/notification/data/dtos/private_message_model.dart';
 
-  const SendMessageResult({required this.msgKey, this.msgContent, this.keyHitInfos});
-}
+typedef SendMessageResult = SendMessageResponse;

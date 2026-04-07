@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:culcul/features/notification/data/dtos/private_message_model.dart'
+    show PrivateMessageEmojiInfo;
 
 enum PrivateMessageReceiverType {
   unknown(0),
@@ -235,16 +237,4 @@ class PrivateMessage {
   }
 }
 
-class PrivateMessageEmoji {
-  final String text;
-  final String url;
-  final int size;
-  final String? gifUrl;
-
-  const PrivateMessageEmoji({
-    required this.text,
-    required this.url,
-    required this.size,
-    required this.gifUrl,
-  });
-}
+typedef PrivateMessageEmoji = PrivateMessageEmojiInfo;

@@ -1,9 +1,9 @@
 import 'package:culcul/i18n/i18n.dart';
 import 'dart:io';
 import 'package:culcul/features/notification/presentation/view_models/chat_view_model.dart';
-import 'package:culcul/features/auth/presentation.dart';
+import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
-import 'package:culcul/features/profile/presentation.dart';
+import 'package:culcul/features/profile/profile.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_input.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_message_list.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_skeletons.dart';
@@ -162,3 +162,4 @@ class ChatPage extends HookConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 }
+

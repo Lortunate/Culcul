@@ -1,4 +1,4 @@
-import 'package:culcul/features/auth/presentation.dart';
+import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
 import 'package:culcul/features/to_view/to_view.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -40,3 +40,4 @@ class ToViewList extends _$ToViewList {
     }
   }
 }
+

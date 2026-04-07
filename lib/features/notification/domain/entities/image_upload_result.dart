@@ -1,11 +1,3 @@
-class ImageUploadResult {
-  final String imageUrl;
-  final int imageWidth;
-  final int imageHeight;
+import 'package:culcul/features/notification/data/dtos/image_upload_response.dart';
 
-  const ImageUploadResult({
-    required this.imageUrl,
-    required this.imageWidth,
-    required this.imageHeight,
-  });
-}
+typedef ImageUploadResult = ImageUploadResponse;

@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
-import 'package:culcul/features/live/presentation.dart';
+import 'package:culcul/features/live/live.dart';
 import 'package:culcul/core/contracts/live_room_summary_contract.dart';
 import 'package:culcul/features/home/presentation/widgets/live_card_skeleton.dart';
 import 'package:culcul/features/home/presentation/widgets/live_room_card.dart';
@@ -32,11 +32,11 @@ class LiveView extends HookConsumerWidget {
     useHomeScrollSync(ref, scrollController, refreshController, 0);
 
     return SmartPagingView(
-      provider: liveRecommendProvider,
       asyncValue: liveAsync,
       controller: refreshController,
       onRefresh: ref.read(liveRecommendProvider.notifier).refresh,
       onLoadMore: ref.read(liveRecommendProvider.notifier).loadMore,
+      itemCount: () => ref.read(liveRecommendProvider).value?.length ?? 0,
       skeleton: _LiveGridSkeleton(scrollController: scrollController),
       builder: (context, items) =>
           _LiveGrid(items: items, scrollController: scrollController),
@@ -96,3 +96,4 @@ class _LiveGrid extends StatelessWidget {
     );
   }
 }
+

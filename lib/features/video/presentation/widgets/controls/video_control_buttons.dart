@@ -25,94 +25,17 @@ class VideoControlButtons extends ConsumerWidget {
     this.onToggleFullscreen,
   });
 
-  void _showQualityMenu(
-    BuildContext context,
-    WidgetRef ref,
-    int selectedQuality,
-    List<int> availableQualities,
-    Map<int, String> qualityLabels,
-  ) {
-    final t = Translations.of(context);
-    showSidePanel(
-      context,
-      QuickSelectionSheet<int>(
-        title: t.video.player.choose_quality,
-        subtitle: t.video.player.quality_section_hint,
-        items: availableQualities,
-        selectedItem: selectedQuality,
-        labelBuilder: (q) => qualityLabels[q] ?? t.video.quality.unknown,
-        emptyText: t.video.player.quality_unavailable,
-        onSelected: (q) {
-          ref.read(videoDetailControllerProvider(bvid).notifier).switchQuality(q);
-        },
-        isBottomSheet: isPlayerBottomSheetLayout(context),
-      ),
-    );
-  }
-
-  void _showSpeedMenu(BuildContext context, WidgetRef ref, double currentSpeed) {
-    final t = Translations.of(context);
-    showSidePanel(
-      context,
-      QuickSelectionSheet<double>(
-        title: t.video.player.choose_speed,
-        subtitle: t.video.player.speed_section_hint,
-        items: playbackSpeeds,
-        selectedItem: currentSpeed,
-        labelBuilder: formatPlaybackSpeedLabel,
-        subtitleBuilder: (s) => getPlaybackSpeedDescription(s, t),
-        onSelected: (s) {
-          ref.read(videoDetailControllerProvider(bvid).notifier).setPlaybackSpeed(s);
-        },
-        isBottomSheet: isPlayerBottomSheetLayout(context),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final t = Translations.of(context);
-
-    final isPlaying = ref.watch(playerControllerProvider.select((s) => s.isPlaying));
     final isFullscreen = ref.watch(
       playerControllerProvider.select((s) => s.isFullscreen),
     );
-
-    final danmakuEnabled = ref.watch(
-      danmakuSettingsControllerProvider.select((s) => s.isEnabled),
-    );
-    final subtitleState = ref.watch(
-      subtitleControllerProvider(bvid).select(
-        (s) => (isEnabled: s.isEnabled, hasSubtitles: s.availableSubtitles.isNotEmpty),
-      ),
-    );
-
-    final playerController = ref.read(playerControllerProvider.notifier);
-
-    final selectedQuality = ref.watch(
-      videoDetailControllerProvider(bvid).select((s) => s.selectedQuality),
-    );
-    final availableQualities = ref.watch(
-      videoDetailControllerProvider(bvid).select((s) => s.availableQualities),
-    );
-    final playbackSpeed = ref.watch(
-      videoDetailControllerProvider(bvid).select((s) => s.playbackSpeed),
-    );
-    final playUrl = ref.watch(
-      videoDetailControllerProvider(bvid).select((s) => s.playUrl),
-    );
-    final qualityLabels = buildQualityLabels(playUrl, t);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
       child: Row(
         children: [
-          ControlButton(
-            onPressed: playerController.playOrPause,
-            icon: isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-            size: 28,
-          ),
+          const _PlayPauseControlButton(),
           if (onNext != null) ...[
             const SizedBox(width: 4),
             ControlButton(onPressed: onNext, icon: Icons.skip_next_rounded, size: 24),
@@ -121,56 +44,181 @@ class VideoControlButtons extends ConsumerWidget {
           const TimeText(),
           const Spacer(),
           if (isFullscreen) ...[
-            PlayerCapsuleButton(
-              text: formatPlaybackSpeedLabel(playbackSpeed),
-              onTap: () => _showSpeedMenu(context, ref, playbackSpeed),
-            ),
+            _PlaybackSpeedButton(bvid: bvid),
             const SizedBox(width: 8),
-            PlayerCapsuleButton(
-              text: qualityLabels[selectedQuality] ?? t.video.quality.auto,
-              onTap: () => _showQualityMenu(
-                context,
-                ref,
-                selectedQuality,
-                availableQualities,
-                qualityLabels,
-              ),
-            ),
+            _PlaybackQualityButton(bvid: bvid),
             const SizedBox(width: 8),
-            ControlButton(
-              onPressed: () {
-                ref
-                    .read(danmakuSettingsControllerProvider.notifier)
-                    .setEnabled(!danmakuEnabled);
-              },
-              icon: danmakuEnabled ? Icons.notes_rounded : Icons.notes_outlined,
-              color: danmakuEnabled ? colorScheme.primary : colorScheme.onPrimary,
-              size: 20,
-            ),
+            const _DanmakuToggleButton(),
             const SizedBox(width: 4),
-            if (subtitleState.hasSubtitles) ...[
-              ControlButton(
-                onPressed: () {
-                  ref.read(subtitleControllerProvider(bvid).notifier).toggleSubtitle();
-                },
-                icon: subtitleState.isEnabled
-                    ? Icons.closed_caption_rounded
-                    : Icons.closed_caption_off_rounded,
-                color: subtitleState.isEnabled
-                    ? colorScheme.primary
-                    : colorScheme.onPrimary,
-                size: 20,
-              ),
-              const SizedBox(width: 4),
-            ],
+            _SubtitleToggleButton(bvid: bvid),
           ],
-          ControlButton(
-            onPressed: onToggleFullscreen ?? playerController.toggleFullscreen,
-            icon: isFullscreen ? Icons.fullscreen_exit_rounded : Icons.fullscreen_rounded,
-            size: 26,
-          ),
+          _FullscreenToggleButton(onToggleFullscreen: onToggleFullscreen),
         ],
       ),
+    );
+  }
+}
+
+class _PlayPauseControlButton extends ConsumerWidget {
+  const _PlayPauseControlButton();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isPlaying = ref.watch(playerControllerProvider.select((s) => s.isPlaying));
+    final playerController = ref.read(playerControllerProvider.notifier);
+    return ControlButton(
+      onPressed: playerController.playOrPause,
+      icon: isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+      size: 28,
+    );
+  }
+}
+
+class _PlaybackSpeedButton extends ConsumerWidget {
+  final String bvid;
+
+  const _PlaybackSpeedButton({required this.bvid});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final playbackSpeed = ref.watch(
+      videoDetailControllerProvider(bvid).select((s) => s.playbackSpeed),
+    );
+    final t = Translations.of(context);
+    return PlayerCapsuleButton(
+      text: formatPlaybackSpeedLabel(playbackSpeed),
+      onTap: () {
+        showSidePanel(
+          context,
+          QuickSelectionSheet<double>(
+            title: t.video.player.choose_speed,
+            subtitle: t.video.player.speed_section_hint,
+            items: playbackSpeeds,
+            selectedItem: playbackSpeed,
+            labelBuilder: formatPlaybackSpeedLabel,
+            subtitleBuilder: (s) => getPlaybackSpeedDescription(s, t),
+            onSelected: (s) {
+              ref.read(videoDetailControllerProvider(bvid).notifier).setPlaybackSpeed(s);
+            },
+            isBottomSheet: isPlayerBottomSheetLayout(context),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _PlaybackQualityButton extends ConsumerWidget {
+  final String bvid;
+
+  const _PlaybackQualityButton({required this.bvid});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final t = Translations.of(context);
+    final selectedQuality = ref.watch(
+      videoDetailControllerProvider(bvid).select((s) => s.selectedQuality),
+    );
+    final availableQualities = ref.watch(
+      videoDetailControllerProvider(bvid).select((s) => s.availableQualities),
+    );
+    final playUrl = ref.watch(
+      videoDetailControllerProvider(bvid).select((s) => s.playUrl),
+    );
+    final qualityLabels = buildQualityLabels(playUrl, t);
+    return PlayerCapsuleButton(
+      text: qualityLabels[selectedQuality] ?? t.video.quality.auto,
+      onTap: () {
+        showSidePanel(
+          context,
+          QuickSelectionSheet<int>(
+            title: t.video.player.choose_quality,
+            subtitle: t.video.player.quality_section_hint,
+            items: availableQualities,
+            selectedItem: selectedQuality,
+            labelBuilder: (q) => qualityLabels[q] ?? t.video.quality.unknown,
+            emptyText: t.video.player.quality_unavailable,
+            onSelected: (q) {
+              ref.read(videoDetailControllerProvider(bvid).notifier).switchQuality(q);
+            },
+            isBottomSheet: isPlayerBottomSheetLayout(context),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _DanmakuToggleButton extends ConsumerWidget {
+  const _DanmakuToggleButton();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final danmakuEnabled = ref.watch(
+      danmakuSettingsControllerProvider.select((s) => s.isEnabled),
+    );
+    return ControlButton(
+      onPressed: () {
+        ref.read(danmakuSettingsControllerProvider.notifier).setEnabled(!danmakuEnabled);
+      },
+      icon: danmakuEnabled ? Icons.notes_rounded : Icons.notes_outlined,
+      color: danmakuEnabled ? colorScheme.primary : colorScheme.onPrimary,
+      size: 20,
+    );
+  }
+}
+
+class _SubtitleToggleButton extends ConsumerWidget {
+  final String bvid;
+
+  const _SubtitleToggleButton({required this.bvid});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final subtitleState = ref.watch(
+      subtitleControllerProvider(bvid).select(
+        (s) => (isEnabled: s.isEnabled, hasSubtitles: s.availableSubtitles.isNotEmpty),
+      ),
+    );
+    if (!subtitleState.hasSubtitles) {
+      return const SizedBox.shrink();
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        ControlButton(
+          onPressed: () {
+            ref.read(subtitleControllerProvider(bvid).notifier).toggleSubtitle();
+          },
+          icon: subtitleState.isEnabled
+              ? Icons.closed_caption_rounded
+              : Icons.closed_caption_off_rounded,
+          color: subtitleState.isEnabled ? colorScheme.primary : colorScheme.onPrimary,
+          size: 20,
+        ),
+        const SizedBox(width: 4),
+      ],
+    );
+  }
+}
+
+class _FullscreenToggleButton extends ConsumerWidget {
+  final VoidCallback? onToggleFullscreen;
+
+  const _FullscreenToggleButton({required this.onToggleFullscreen});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isFullscreen = ref.watch(
+      playerControllerProvider.select((s) => s.isFullscreen),
+    );
+    final playerController = ref.read(playerControllerProvider.notifier);
+    return ControlButton(
+      onPressed: onToggleFullscreen ?? playerController.toggleFullscreen,
+      icon: isFullscreen ? Icons.fullscreen_exit_rounded : Icons.fullscreen_rounded,
+      size: 26,
     );
   }
 }

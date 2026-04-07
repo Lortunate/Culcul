@@ -27,11 +27,11 @@ class PopularView extends HookConsumerWidget {
     useHomeScrollSync(ref, scrollController, refreshController, 2);
 
     return SmartPagingView(
-      provider: homePopularProvider,
       asyncValue: popularAsync,
       controller: refreshController,
       onRefresh: ref.read(homePopularProvider.notifier).refresh,
       onLoadMore: ref.read(homePopularProvider.notifier).loadMore,
+      itemCount: () => ref.read(homePopularProvider).value?.length ?? 0,
       skeleton: const ListSkeletonView(
         itemSkeleton: VideoListSkeleton(),
         padding: _popularPadding,

@@ -68,7 +68,7 @@ sealed class ReplyItemDetail with _$ReplyItemDetail {
     @JsonKey(name: 'source_id') @Default(0) int sourceId,
     @JsonKey(name: 'target_id') @Default(0) int targetId,
     required String type,
-    @JsonKey(name: 'business_id') required int businessId,
+    @JsonKey(name: 'business_id') @Default(0) int businessId,
     required String business,
     @Default('') String title,
     @Default('') String desc,

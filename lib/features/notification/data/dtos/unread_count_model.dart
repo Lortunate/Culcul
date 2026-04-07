@@ -15,7 +15,7 @@ sealed class UnreadCountModel with _$UnreadCountModel {
     @JsonKey(name: 'recv_like') @Default(0) int recvLike,
     @JsonKey(name: 'recv_reply') @Default(0) int recvReply,
     @Default(0) int reply,
-    @JsonKey(name: 'sys_msg') @Default(0) int sysMsg,
+    @JsonKey(name: 'sys_msg') @Default(0) int system,
     @Default(0) int up,
   }) = _UnreadCountModel;
 

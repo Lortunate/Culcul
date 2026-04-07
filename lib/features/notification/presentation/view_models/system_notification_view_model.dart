@@ -1,8 +1,6 @@
 import 'dart:async';
 
-import 'package:culcul/features/notification/domain/entities/system_notice.dart';
 import 'package:culcul/features/notification/notification.dart';
-import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'system_notification_view_model.g.dart';

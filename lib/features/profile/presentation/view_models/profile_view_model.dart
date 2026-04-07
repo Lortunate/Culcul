@@ -1,4 +1,4 @@
-import 'package:culcul/features/auth/presentation.dart';
+import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/profile.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -79,3 +79,4 @@ ProfileUser _emptyProfileUser({String id = '0'}) {
     createdAt: null,
   );
 }
+
