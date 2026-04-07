@@ -1,5 +1,6 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
+import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
@@ -46,6 +47,115 @@ class _FavFakeRepository implements FavoriteRepository {
   Future<Result<FavoriteFolderPage, AppError>> getCreatedFolders({
     required int upMid,
   }) async => throw UnimplementedError();
+
+  @override
+  Future<Result<FavoriteFolderPage, AppError>> getCollectedFolders({
+    required int upMid,
+    required int page,
+  }) async => throw UnimplementedError();
+
+  @override
+  Future<Result<FavoriteFolder, AppError>> createFolder({
+    required String title,
+    String? intro,
+    int? privacy,
+    String? cover,
+  }) async => throw UnimplementedError();
+
+  @override
+  Future<Result<FavoriteFolder, AppError>> updateFolder({
+    required int mediaId,
+    required String title,
+    String? intro,
+    int? privacy,
+    String? cover,
+  }) async => throw UnimplementedError();
+
+  @override
+  Future<Result<void, AppError>> deleteFolder({required String mediaIds}) async =>
+      throw UnimplementedError();
+
+  @override
+  Future<Result<void, AppError>> deleteResources({
+    required String resources,
+    required int mediaId,
+  }) async => throw UnimplementedError();
+
+  @override
+  Future<Result<void, AppError>> cleanInvalidResources({required int mediaId}) async =>
+      throw UnimplementedError();
+}
+
+class _CreatedFoldersRepository implements FavoriteRepository {
+  int inFlight = 0;
+  int maxInFlight = 0;
+
+  static const FavoriteOwner _owner = FavoriteOwner(mid: 1, name: 'u', face: 'f');
+
+  @override
+  Future<Result<FavoriteFolderPage, AppError>> getCreatedFolders({
+    required int upMid,
+  }) async {
+    return Success(
+      FavoriteFolderPage(
+        count: 6,
+        folders: List<FavoriteFolder>.generate(
+          6,
+          (index) => FavoriteFolder(
+            id: index + 1,
+            fid: index + 1,
+            mid: upMid,
+            attr: 0,
+            title: 'folder-${index + 1}',
+            favState: 0,
+            mediaCount: 1,
+            cover: '',
+            upper: _owner,
+            intro: null,
+            ctime: null,
+            mtime: null,
+            state: null,
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Future<Result<FavoriteResourcePage, AppError>> getFolderResources({
+    required int mediaId,
+    required int page,
+    String? keyword,
+    String? order,
+    int? type,
+    int? tid,
+  }) async {
+    inFlight++;
+    if (inFlight > maxInFlight) {
+      maxInFlight = inFlight;
+    }
+    try {
+      await Future<void>.delayed(const Duration(milliseconds: 90));
+      return Success(
+        FavoriteResourcePage(
+          info: FavoriteFolderInfo(
+            id: mediaId,
+            fid: mediaId,
+            mid: 1,
+            attr: 0,
+            title: 'folder-$mediaId',
+            cover: 'https://cover-$mediaId.jpg',
+            upper: _owner,
+            mediaCount: 1,
+          ),
+          medias: <FavoriteResource>[],
+          hasMore: false,
+        ),
+      );
+    } finally {
+      inFlight--;
+    }
+  }
 
   @override
   Future<Result<FavoriteFolderPage, AppError>> getCollectedFolders({
@@ -189,4 +299,30 @@ void main() {
       expect(latest.paging.error, isA<AppError>());
     },
   );
+
+  test('FavCreatedFolders enriches covers with bounded concurrency', () async {
+    final repository = _CreatedFoldersRepository();
+    final container = ProviderContainer(
+      overrides: [
+        authProvider.overrideWithValue(
+          AuthState(
+            isLoggedIn: true,
+            isLoading: false,
+            user: UserEntity(
+              id: '1001',
+              username: 'tester',
+              createdAt: DateTime(2024, 1, 1),
+            ),
+          ),
+        ),
+        favRepositoryProvider.overrideWithValue(repository),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    final folders = await container.read(favCreatedFoldersProvider.future);
+    expect(folders.length, 6);
+    expect(folders.every((item) => (item.cover ?? '').isNotEmpty), isTrue);
+    expect(repository.maxInFlight, lessThanOrEqualTo(4));
+  });
 }

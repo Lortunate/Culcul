@@ -1,6 +1,9 @@
 import 'dart:async';
 
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/errors/exceptions.dart';
+import 'package:culcul/core/network/network_concurrency_executor.dart';
+import 'package:culcul/core/network/network_concurrency_profiles.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/live/domain/entities/live_entities.dart';
 import 'package:culcul/features/live/live.dart';
@@ -15,6 +18,8 @@ part 'live_room_view_model.g.dart';
 @riverpod
 class LiveRoomController extends _$LiveRoomController {
   final LiveSocketService _socketService = LiveSocketService();
+  final NetworkConcurrencyExecutor _concurrencyExecutor =
+      const NetworkConcurrencyExecutor();
   StreamSubscription<LiveDanmakuItem>? _danmakuSubscription;
 
   @override
@@ -23,7 +28,7 @@ class LiveRoomController extends _$LiveRoomController {
       _danmakuSubscription?.cancel();
       _socketService.dispose();
     });
-    unawaited(_init(roomId));
+    unawaited(Future<void>.microtask(() => _init(roomId)));
     return LiveRoomState(roomId: roomId);
   }
 
@@ -55,17 +60,94 @@ class LiveRoomController extends _$LiveRoomController {
       return;
     }
     state = state.copyWith(roomInfo: info);
-    await Future.wait([
-      _fetchPlayUrl(info.roomId),
-      _fetchDanmakuConfig(info.roomId),
-      _fetchHistoryDanmaku(info.roomId),
-      _fetchAnchorInfo(info.uid),
-      _fetchLiveAnchorInfo(info.uid),
-      _fetchGoldRank(info.roomId, info.uid),
-      _fetchGuardList(info.roomId, info.uid),
-      _connectDanmaku(info.roomId),
-    ]);
-    state = state.copyWith(isLoading: false);
+
+    try {
+      await _concurrencyExecutor.runConcurrent(
+        tasks: <ConcurrentTask<dynamic>>[
+          ConcurrentTask<void>(
+            label: 'play_url',
+            critical: true,
+            task: () => _fetchPlayUrl(info.roomId, critical: true),
+          ),
+          ConcurrentTask<void>(
+            label: 'danmaku_config',
+            critical: true,
+            task: () => _fetchDanmakuConfig(info.roomId, critical: true),
+          ),
+        ],
+        profile: NetworkConcurrencyProfile.enrich,
+        scope: 'live_room_init_critical',
+      );
+    } catch (error) {
+      state = state.copyWith(isLoading: false, error: _toAppException(error));
+      return;
+    }
+
+    state = state.copyWith(isLoading: false, error: null);
+    unawaited(_loadOptionalRoomData(info));
+  }
+
+  Future<void> _loadOptionalRoomData(LiveRoomDetailModel info) async {
+    await _concurrencyExecutor.runConcurrent(
+      tasks: <ConcurrentTask<dynamic>>[
+        ConcurrentTask<Object?>(
+          label: 'history_danmaku',
+          critical: false,
+          fallback: (_) => null,
+          task: () async {
+            await _fetchHistoryDanmaku(info.roomId);
+            return null;
+          },
+        ),
+        ConcurrentTask<Object?>(
+          label: 'anchor_info',
+          critical: false,
+          fallback: (_) => null,
+          task: () async {
+            await _fetchAnchorInfo(info.uid);
+            return null;
+          },
+        ),
+        ConcurrentTask<Object?>(
+          label: 'live_anchor_info',
+          critical: false,
+          fallback: (_) => null,
+          task: () async {
+            await _fetchLiveAnchorInfo(info.uid);
+            return null;
+          },
+        ),
+        ConcurrentTask<Object?>(
+          label: 'gold_rank',
+          critical: false,
+          fallback: (_) => null,
+          task: () async {
+            await _fetchGoldRank(info.roomId, info.uid);
+            return null;
+          },
+        ),
+        ConcurrentTask<Object?>(
+          label: 'guard_list',
+          critical: false,
+          fallback: (_) => null,
+          task: () async {
+            await _fetchGuardList(info.roomId, info.uid);
+            return null;
+          },
+        ),
+        ConcurrentTask<Object?>(
+          label: 'connect_danmaku',
+          critical: false,
+          fallback: (_) => null,
+          task: () async {
+            await _connectDanmaku(info.roomId);
+            return null;
+          },
+        ),
+      ],
+      profile: NetworkConcurrencyProfile.backgroundSync,
+      scope: 'live_room_init_optional',
+    );
   }
 
   Future<void> _connectDanmaku(int roomId) async {
@@ -106,7 +188,7 @@ class LiveRoomController extends _$LiveRoomController {
     }
   }
 
-  Future<void> _fetchPlayUrl(int roomId, {int? qn}) async {
+  Future<void> _fetchPlayUrl(int roomId, {int? qn, bool critical = false}) async {
     final result = await ref
         .read(liveRepositoryProvider)
         .getPlayUrl(roomId: roomId, qn: qn);
@@ -119,6 +201,9 @@ class LiveRoomController extends _$LiveRoomController {
       result.errorOrNull ?? 'Unknown error',
       StackTrace.current,
     );
+    if (critical) {
+      throw result.errorOrNull ?? AppError.data('Failed to load live play url');
+    }
   }
 
   Future<void> switchQuality(int qn) async {
@@ -182,7 +267,7 @@ class LiveRoomController extends _$LiveRoomController {
     );
   }
 
-  Future<void> _fetchDanmakuConfig(int roomId) async {
+  Future<void> _fetchDanmakuConfig(int roomId, {bool critical = false}) async {
     final result = await ref.read(liveRepositoryProvider).getDanmakuConfig(roomId);
     if (result.dataOrNull case final config?) {
       state = state.copyWith(danmakuConfig: config);
@@ -193,6 +278,9 @@ class LiveRoomController extends _$LiveRoomController {
       result.errorOrNull ?? 'Unknown error',
       StackTrace.current,
     );
+    if (critical) {
+      throw result.errorOrNull ?? AppError.data('Failed to load live danmaku config');
+    }
   }
 
   Future<void> _fetchHistoryDanmaku(int roomId) async {
@@ -229,6 +317,16 @@ class LiveRoomController extends _$LiveRoomController {
 
   void _logIgnoredError(String scope, Object error, StackTrace stackTrace) {
     debugPrint('LiveRoomController::$scope ignored error: $error\n$stackTrace');
+  }
+
+  AppException _toAppException(Object error) {
+    if (error is AppError) {
+      return error.toException();
+    }
+    if (error is AppException) {
+      return error;
+    }
+    return UnknownException(error.toString(), cause: error);
   }
 
   LiveDanmakuFeedController _danmakuFeed(int roomId) {

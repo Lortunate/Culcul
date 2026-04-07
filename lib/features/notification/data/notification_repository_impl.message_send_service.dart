@@ -114,9 +114,8 @@ class _NotificationMessageSendService {
         content: contentRawJson,
       ),
     );
-    final result = responseResult;
 
-    await result.when(
+    await responseResult.when(
       success: (value) async {
         await _markOutboxAndTempMessage(
           ownerUid: ownerUid,
@@ -140,7 +139,7 @@ class _NotificationMessageSendService {
       },
     );
 
-    return result;
+    return responseResult;
   }
 
   Future<void> _markOutboxAndTempMessage({

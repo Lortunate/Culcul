@@ -1,12 +1,12 @@
 import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
-import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 
 extension ReplyItemMapper on ReplyItem {
   NotificationEntry toDomain() {
-    final actors = <NotificationActor>[if (user != null) user!, ...?users];
+    final primaryActor = user == null ? null : <NotificationActor>[user!];
+    final actors = <NotificationActor>[...?primaryActor, ...?users];
 
     return NotificationEntry(
       id: id,

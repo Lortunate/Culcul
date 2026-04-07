@@ -1,4 +1,6 @@
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/network/network_concurrency_executor.dart';
+import 'package:culcul/core/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/perf/video_perf_logger.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/video/video.dart';
@@ -36,8 +38,12 @@ LoadVideoDetailWorkflow loadVideoDetailWorkflow(Ref ref) {
 
 class LoadVideoDetailWorkflow {
   final VideoRepository _repository;
+  final NetworkConcurrencyExecutor _concurrencyExecutor;
 
-  const LoadVideoDetailWorkflow(this._repository);
+  const LoadVideoDetailWorkflow(
+    this._repository, {
+    NetworkConcurrencyExecutor concurrencyExecutor = const NetworkConcurrencyExecutor(),
+  }) : _concurrencyExecutor = concurrencyExecutor;
 
   Future<Result<VideoInitialData, AppError>> call(String bvid) {
     return loadCritical(bvid);
@@ -92,16 +98,36 @@ class LoadVideoDetailWorkflow {
   }
 
   Future<Result<VideoAuxiliaryData, AppError>> loadAuxiliary(String bvid) async {
-    final relatedFuture = _repository.fetchRelatedVideos(bvid);
-    final tagsFuture = _repository.fetchVideoTags(bvid);
-
-    final relatedResult = await relatedFuture;
-    final tagsResult = await tagsFuture;
+    final responses = await _concurrencyExecutor.runConcurrent(
+      tasks: <ConcurrentTask<dynamic>>[
+        ConcurrentTask<List<RelatedVideo>>(
+          label: 'related',
+          critical: false,
+          fallback: (_) => const <RelatedVideo>[],
+          task: () async {
+            final result = await _repository.fetchRelatedVideos(bvid);
+            return result.dataOrNull ?? const <RelatedVideo>[];
+          },
+        ),
+        ConcurrentTask<List<VideoTag>>(
+          label: 'tags',
+          critical: false,
+          fallback: (_) => const <VideoTag>[],
+          task: () async {
+            final result = await _repository.fetchVideoTags(bvid);
+            return result.dataOrNull ?? const <VideoTag>[];
+          },
+        ),
+      ],
+      profile: NetworkConcurrencyProfile.enrich,
+      scope: 'video_detail_load_auxiliary',
+    );
 
     return Success(
       VideoAuxiliaryData(
-        relatedVideos: relatedResult.dataOrNull ?? const [],
-        tags: tagsResult.dataOrNull ?? const [],
+        relatedVideos:
+            responses['related'] as List<RelatedVideo>? ?? const <RelatedVideo>[],
+        tags: responses['tags'] as List<VideoTag>? ?? const <VideoTag>[],
       ),
     );
   }

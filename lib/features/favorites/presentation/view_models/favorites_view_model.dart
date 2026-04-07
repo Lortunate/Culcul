@@ -1,5 +1,7 @@
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
 import 'package:culcul/core/pagination/paged_list_state.dart';
+import 'package:culcul/core/network/network_concurrency_executor.dart';
+import 'package:culcul/core/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/utils/list_utils.dart';
 import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
@@ -11,6 +13,9 @@ part 'favorites_view_model.g.dart';
 
 @riverpod
 class FavCreatedFolders extends _$FavCreatedFolders {
+  static const NetworkConcurrencyExecutor _concurrencyExecutor =
+      NetworkConcurrencyExecutor();
+
   @override
   Future<List<FavoriteFolder>> build() async {
     final authState = ref.watch(authProvider);
@@ -25,32 +30,39 @@ class FavCreatedFolders extends _$FavCreatedFolders {
     final folders = response.folders;
     if (folders.isEmpty) return <FavoriteFolder>[];
 
-    final foldersWithCovers = await Future.wait(
-      folders.map((folder) async {
-        if (folder.cover != null && folder.cover!.isNotEmpty) {
-          return folder;
-        }
+    final foldersWithCovers = await _concurrencyExecutor
+        .mapConcurrent<FavoriteFolder, FavoriteFolder>(
+          items: folders,
+          profile: NetworkConcurrencyProfile.enrich,
+          scope: 'favorites_cover_enrich',
+          mapper: (folder) async {
+            if (folder.cover case final cover? when cover.isNotEmpty) {
+              return folder;
+            }
 
-        final resourcesResult = await repository.getFolderResources(
-          mediaId: folder.id,
-          page: 1,
+            try {
+              final resourcesResult = await repository.getFolderResources(
+                mediaId: folder.id,
+                page: 1,
+              );
+              final resources = resourcesResult.dataOrNull;
+              if (resources == null) {
+                return folder;
+              }
+
+              var cover = resources.info.cover;
+              if (cover.isEmpty && resources.medias.isNotEmpty) {
+                cover = resources.medias.first.cover;
+              }
+              if (cover.isEmpty) {
+                return folder;
+              }
+              return folder.copyWith(cover: cover);
+            } catch (_) {
+              return folder;
+            }
+          },
         );
-        final resources = resourcesResult.dataOrNull;
-        if (resources == null) {
-          return folder;
-        }
-
-        String cover = resources.info.cover;
-        if (cover.isEmpty && resources.medias.isNotEmpty) {
-          cover = resources.medias.first.cover;
-        }
-        if (cover.isNotEmpty) {
-          return folder.copyWith(cover: cover);
-        }
-
-        return folder;
-      }),
-    );
 
     return foldersWithCovers;
   }
@@ -193,4 +205,3 @@ class FavFolderResources extends _$FavFolderResources {
     }
   }
 }
-

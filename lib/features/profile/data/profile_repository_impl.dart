@@ -1,6 +1,8 @@
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/core/network/network_concurrency_executor.dart';
+import 'package:culcul/core/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
@@ -18,16 +20,26 @@ part 'profile_repository_impl.g.dart';
 
 @riverpod
 domain.ProfileRepository profileRepository(Ref ref) {
-  return ProfileRepositoryImpl(api: ProfileApi(ref.watch(dioClientProvider)));
+  return ProfileRepositoryImpl(
+    api: ProfileApi(ref.watch(dioClientProvider)),
+    concurrencyExecutor: const NetworkConcurrencyExecutor(),
+  );
 }
 
-class ProfileRepositoryImpl with RequestExecutorBinding implements domain.ProfileRepository {
+class ProfileRepositoryImpl
+    with RequestExecutorBinding
+    implements domain.ProfileRepository {
   static const int _defaultSpaceVideoPageSize = 30;
   final ProfileApi api;
   final RequestExecutor _requestExecutor;
+  final NetworkConcurrencyExecutor _concurrencyExecutor;
 
-  ProfileRepositoryImpl({required this.api, RequestExecutor? requestExecutor})
-    : _requestExecutor = requestExecutor ?? const RequestExecutor();
+  ProfileRepositoryImpl({
+    required this.api,
+    RequestExecutor? requestExecutor,
+    NetworkConcurrencyExecutor? concurrencyExecutor,
+  }) : _requestExecutor = requestExecutor ?? const RequestExecutor(),
+       _concurrencyExecutor = concurrencyExecutor ?? const NetworkConcurrencyExecutor();
 
   @override
   RequestExecutor get requestExecutor => _requestExecutor;
@@ -49,25 +61,52 @@ class ProfileRepositoryImpl with RequestExecutorBinding implements domain.Profil
 
   Future<Result<UserProfile, AppError>> getProfileModel(int userId) async {
     return requestResult(() async {
-      final infoResponse = await api.getAccountInfo(userId);
+      final responses = await _concurrencyExecutor.runConcurrent(
+        tasks: <ConcurrentTask<dynamic>>[
+          ConcurrentTask<dynamic>(
+            label: 'info',
+            critical: true,
+            task: () => api.getAccountInfo(userId),
+          ),
+          ConcurrentTask<dynamic>(
+            label: 'relation',
+            critical: false,
+            fallback: (_) => null,
+            task: () => api.getRelationStat(userId),
+          ),
+          ConcurrentTask<dynamic>(
+            label: 'upStat',
+            critical: false,
+            fallback: (_) => null,
+            task: () => api.getUpStat(userId),
+          ),
+          ConcurrentTask<dynamic>(
+            label: 'navNum',
+            critical: false,
+            fallback: (_) => null,
+            task: () => api.getNavNum(userId),
+          ),
+          ConcurrentTask<dynamic>(
+            label: 'card',
+            critical: false,
+            fallback: (_) => null,
+            task: () => api.getCard(userId, photo: true),
+          ),
+        ],
+        profile: NetworkConcurrencyProfile.enrich,
+        scope: 'profile_get_profile_model',
+      );
+      final infoResponse = responses['info'] as dynamic;
 
       if (infoResponse.code != 0) {
         throw ServerException(infoResponse.message, code: infoResponse.code);
       }
 
       final infoData = infoResponse.data as Map<String, dynamic>;
-
-      final results = await Future.wait([
-        api.getRelationStat(userId),
-        api.getUpStat(userId),
-        api.getNavNum(userId),
-        api.getCard(userId, photo: true),
-      ]);
-
-      final relationResponse = results[0];
-      final upStatResponse = results[1];
-      final navNumResponse = results[2];
-      final cardResponse = results[3];
+      final relationResponse = responses['relation'];
+      final upStatResponse = responses['upStat'];
+      final navNumResponse = responses['navNum'];
+      final cardResponse = responses['card'];
 
       final relation = _parseRelationStats(relationResponse);
       final likes = _parseLikes(upStatResponse);
@@ -126,7 +165,9 @@ class ProfileRepositoryImpl with RequestExecutorBinding implements domain.Profil
     );
   }
 
-  Future<Result<List<UserSpaceVideoModel>, AppError>> getMasterpieceModels(int vmid) async {
+  Future<Result<List<UserSpaceVideoModel>, AppError>> getMasterpieceModels(
+    int vmid,
+  ) async {
     final result = await requestApiResult(() => api.getMasterpiece(vmid));
     return result.when(
       success: (data) => Success(data),
@@ -188,7 +229,9 @@ class ProfileRepositoryImpl with RequestExecutorBinding implements domain.Profil
   }
 
   ({int followers, int following}) _parseRelationStats(dynamic response) {
-    if (response.code != 0 || response.data is! Map<String, dynamic>) {
+    if (response == null ||
+        response.code != 0 ||
+        response.data is! Map<String, dynamic>) {
       return (followers: 0, following: 0);
     }
 
@@ -200,7 +243,9 @@ class ProfileRepositoryImpl with RequestExecutorBinding implements domain.Profil
   }
 
   int _parseLikes(dynamic response) {
-    if (response.code != 0 || response.data is! Map<String, dynamic>) {
+    if (response == null ||
+        response.code != 0 ||
+        response.data is! Map<String, dynamic>) {
       return 0;
     }
     final data = response.data as Map<String, dynamic>;
@@ -208,7 +253,9 @@ class ProfileRepositoryImpl with RequestExecutorBinding implements domain.Profil
   }
 
   int _parseVideoCount(dynamic response) {
-    if (response.code != 0 || response.data is! Map<String, dynamic>) {
+    if (response == null ||
+        response.code != 0 ||
+        response.data is! Map<String, dynamic>) {
       return 0;
     }
     final data = response.data as Map<String, dynamic>;
@@ -235,7 +282,9 @@ class ProfileRepositoryImpl with RequestExecutorBinding implements domain.Profil
 
   String? _resolveBanner(Map<String, dynamic> infoData, dynamic cardResponse) {
     var topPhoto = infoData['top_photo'] as String?;
-    if (cardResponse.code != 0 || cardResponse.data is! Map<String, dynamic>) {
+    if (cardResponse == null ||
+        cardResponse.code != 0 ||
+        cardResponse.data is! Map<String, dynamic>) {
       return topPhoto;
     }
 

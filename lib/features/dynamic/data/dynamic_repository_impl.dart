@@ -2,11 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:cookie_jar/cookie_jar.dart';
-import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/providers/cookie_jar_provider.dart';
 import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/core/network/network_concurrency_executor.dart';
+import 'package:culcul/core/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
@@ -36,13 +37,16 @@ class DynamicRepositoryImpl
   final Dio _dio;
   final CookieJar _cookieJar;
   final RequestExecutor _requestExecutor;
+  final NetworkConcurrencyExecutor _concurrencyExecutor;
 
   DynamicRepositoryImpl(
     this._api,
     this._dio,
     this._cookieJar, {
     RequestExecutor? requestExecutor,
-  }) : _requestExecutor = requestExecutor ?? const RequestExecutor();
+    NetworkConcurrencyExecutor? concurrencyExecutor,
+  }) : _requestExecutor = requestExecutor ?? const RequestExecutor(),
+       _concurrencyExecutor = concurrencyExecutor ?? const NetworkConcurrencyExecutor();
 
   @override
   RequestExecutor get requestExecutor => _requestExecutor;
@@ -55,6 +59,17 @@ class DynamicRepositoryImpl
       }
     }
     return null;
+  }
+
+  @override
+  Future<Result<String, AppError>> getPublishCsrf() {
+    return requestResult(() async {
+      final csrf = await _getCsrfToken();
+      if (csrf == null || csrf.isEmpty) {
+        throw const AuthException('Missing bili_jct csrf token');
+      }
+      return csrf;
+    });
   }
 
   @override
@@ -454,48 +469,63 @@ class DynamicRepositoryImpl
   }
 
   @override
-  Future<Result<DynamicUploadImageData, AppError>> uploadImage(File file) async {
-    final result = await requestApiResult(() async {
-      final csrf = await _getCsrfToken();
-      return _api.uploadImage(file: file, csrf: csrf ?? '');
+  Future<Result<List<DynamicUploadImageData>, AppError>> uploadImagesWithCsrf({
+    required List<File> files,
+    required String csrf,
+  }) async {
+    if (files.isEmpty) {
+      return const Success(<DynamicUploadImageData>[]);
+    }
+
+    return requestResult(() async {
+      return _concurrencyExecutor.mapConcurrent<File, DynamicUploadImageData>(
+        items: files,
+        profile: NetworkConcurrencyProfile.upload,
+        scope: 'dynamic_publish_upload',
+        mapper: (file) async {
+          final uploadResult = await requestApiResult(
+            () => _api.uploadImage(file: file, csrf: csrf),
+          );
+          if (uploadResult.errorOrNull case final error?) {
+            throw error;
+          }
+          return uploadResult.dataOrNull!;
+        },
+      );
     });
-    return result;
   }
 
   @override
   Future<Result<void, AppError>> publishDynamic({
     required String content,
+    required String csrf,
     List<DynamicUploadImageData> images = const [],
   }) async {
     return requestResult(() async {
-      final csrf = await _getCsrfToken();
-
-      // Construct dyn_req
-      final List<Map<String, dynamic>> contents = [];
-      contents.add({'raw_text': content, 'type': 1, 'biz_id': ''});
-
-      final List<Map<String, dynamic>> pics = [];
-      for (var img in images) {
-        pics.add({
-          'img_src': img.imageUrl,
-          'img_width': img.width,
-          'img_height': img.height,
-        });
-      }
+      final pics = images
+          .map(
+            (img) => <String, dynamic>{
+              'img_src': img.imageUrl,
+              'img_width': img.width,
+              'img_height': img.height,
+            },
+          )
+          .toList();
 
       final Map<String, dynamic> dynReq = {
-        'content': {'contents': contents},
-        'scene': images.isNotEmpty ? 2 : 1, // 1: text, 2: image
+        'content': {
+          'contents': <Map<String, dynamic>>[
+            <String, dynamic>{'raw_text': content, 'type': 1, 'biz_id': ''},
+          ],
+        },
+        'scene': images.isNotEmpty ? 2 : 1,
       };
 
       if (images.isNotEmpty) {
         dynReq['pics'] = pics;
       }
 
-      final response = await _api.createDynamic(
-        csrf: csrf ?? '',
-        body: {'dyn_req': dynReq},
-      );
+      final response = await _api.createDynamic(csrf: csrf, body: {'dyn_req': dynReq});
 
       if (!response.isSuccess) {
         throw ServerException(response.message, code: response.code);

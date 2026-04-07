@@ -61,10 +61,16 @@ abstract class DynamicRepository {
 
   Future<Result<void, AppError>> likeDynamic(String id, bool like);
 
-  Future<Result<DynamicUploadImageData, AppError>> uploadImage(File file);
+  Future<Result<String, AppError>> getPublishCsrf();
+
+  Future<Result<List<DynamicUploadImageData>, AppError>> uploadImagesWithCsrf({
+    required List<File> files,
+    required String csrf,
+  });
 
   Future<Result<void, AppError>> publishDynamic({
     required String content,
+    required String csrf,
     List<DynamicUploadImageData> images = const [],
   });
 }
