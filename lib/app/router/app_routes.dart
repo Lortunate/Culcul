@@ -21,6 +21,7 @@ import 'route_transitions.dart';
 
 part 'app_routes.g.dart';
 part 'routes/app_shell_routes.dart';
+part 'routes/app_primary_routes.content_feed.dart';
 part 'routes/app_primary_routes.dart';
 part 'routes/app_secondary_routes.dart';
 

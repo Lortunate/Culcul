@@ -20,6 +20,8 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 part 'favorite_detail_page.list_section.dart';
+part 'favorite_detail_page.list_rows.dart';
+part 'favorite_detail_page.list_skeleton.dart';
 part 'favorite_detail_page.toolbar_actions.dart';
 
 class FavoriteDetailPage extends HookConsumerWidget {

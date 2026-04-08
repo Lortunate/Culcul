@@ -5,6 +5,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
 class CommentImagesWidget extends StatelessWidget {
+  static const int _maxDecodeDimension = 2048;
   final List<CommentPicture> pictures;
 
   const CommentImagesWidget({super.key, required this.pictures});
@@ -166,6 +167,7 @@ class CommentImagesWidget extends StatelessWidget {
 
   int _toCacheDimension(double logicalSize, double devicePixelRatio) {
     final scaled = (logicalSize * devicePixelRatio).round();
-    return scaled <= 0 ? 1 : scaled;
+    if (scaled <= 0) return 1;
+    return scaled > _maxDecodeDimension ? _maxDecodeDimension : scaled;
   }
 }

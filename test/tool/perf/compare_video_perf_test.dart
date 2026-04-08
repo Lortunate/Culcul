@@ -95,7 +95,7 @@ void main() {
     expect(ratioGate['status'], 'fail');
   });
 
-  test('PLAN13 gate thresholds are applied (jank 10%, list ratio 1.05)', () {
+  test('PLAN16 gate thresholds are applied (jank 10%, list ratio 1.10)', () {
     final before = parsePerfLogLines(<String>[
       'I video_perf frame_timing_summary jank_ratio=0.200',
       'I list_perf load_trigger source=feed session_id=s1',
@@ -176,5 +176,48 @@ void main() {
       (gate) => gate['name'] == 'list_ratio_feed',
     );
     expect(ratioGate['status'], 'pass');
+
+    final keyGate = report.gates.firstWhere(
+      (gate) => gate['name'] == 'plan16_two_of_three_key_metrics',
+    );
+    expect(keyGate['status'], 'n/a');
+  });
+
+  test('PLAN16 key metrics gate passes when at least two metrics improve', () {
+    final before = parsePerfLogLines(<String>[
+      'I video_perf first_frame_ready elapsedMs=200',
+      'I video_perf frame_timing_summary jank_ratio=0.200',
+      'I startup_perf home_ready elapsed_ms=1000',
+    ]);
+    final after = parsePerfLogLines(<String>[
+      'I video_perf first_frame_ready elapsedMs=180',
+      'I video_perf frame_timing_summary jank_ratio=0.180',
+      'I startup_perf home_ready elapsed_ms=980',
+    ]);
+
+    final report = comparePerfExtract(before, after);
+    final keyGate = report.gates.firstWhere(
+      (gate) => gate['name'] == 'plan16_two_of_three_key_metrics',
+    );
+    expect(keyGate['status'], 'pass');
+  });
+
+  test('PLAN16 key metrics gate fails when fewer than two metrics improve', () {
+    final before = parsePerfLogLines(<String>[
+      'I video_perf first_frame_ready elapsedMs=200',
+      'I video_perf frame_timing_summary jank_ratio=0.200',
+      'I startup_perf home_ready elapsed_ms=1000',
+    ]);
+    final after = parsePerfLogLines(<String>[
+      'I video_perf first_frame_ready elapsedMs=199',
+      'I video_perf frame_timing_summary jank_ratio=0.220',
+      'I startup_perf home_ready elapsed_ms=1010',
+    ]);
+
+    final report = comparePerfExtract(before, after);
+    final keyGate = report.gates.firstWhere(
+      (gate) => gate['name'] == 'plan16_two_of_three_key_metrics',
+    );
+    expect(keyGate['status'], 'fail');
   });
 }

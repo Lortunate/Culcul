@@ -29,13 +29,13 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
     );
   }
 
-  Future<void> _fetchPlayUrl(int roomId, {int? qn, bool critical = false}) async {
+  Future<AppError?> _fetchPlayUrl(int roomId, {int? qn, bool critical = false}) async {
     final result = await ref
         .read(liveRepositoryProvider)
         .getPlayUrl(roomId: roomId, qn: qn);
     if (result.dataOrNull case final url?) {
       state = state.copyWith(playUrl: url);
-      return;
+      return null;
     }
     _logIgnoredError(
       'fetchPlayUrl',
@@ -43,8 +43,9 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
       StackTrace.current,
     );
     if (critical) {
-      throw result.errorOrNull ?? AppError.data('Failed to load live play url');
+      return result.errorOrNull ?? AppError.data('Failed to load live play url');
     }
+    return null;
   }
 
   Future<void> _fetchAnchorInfo(int uid) async {
@@ -103,11 +104,11 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
     );
   }
 
-  Future<void> _fetchDanmakuConfig(int roomId, {bool critical = false}) async {
+  Future<AppError?> _fetchDanmakuConfig(int roomId, {bool critical = false}) async {
     final result = await ref.read(liveRepositoryProvider).getDanmakuConfig(roomId);
     if (result.dataOrNull case final config?) {
       state = state.copyWith(danmakuConfig: config);
-      return;
+      return null;
     }
     _logIgnoredError(
       'fetchDanmakuConfig',
@@ -115,8 +116,9 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
       StackTrace.current,
     );
     if (critical) {
-      throw result.errorOrNull ?? AppError.data('Failed to load live danmaku config');
+      return result.errorOrNull ?? AppError.data('Failed to load live danmaku config');
     }
+    return null;
   }
 
   Future<void> _fetchHistoryDanmaku(int roomId) async {

@@ -277,10 +277,7 @@ void main() {
 
       final provider = favFolderResourcesProvider(1);
       await container.read(provider.future);
-      await expectLater(
-        container.read(provider.notifier).loadMore(1),
-        throwsA(isA<AppError>()),
-      );
+      await container.read(provider.notifier).loadMore(1);
 
       final latest = container.read(provider).value!;
       expect(latest.paging.items.map((e) => e.id).toList(), <int>[1]);

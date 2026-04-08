@@ -42,7 +42,7 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
   }
 
   Future<ArticleDetailData> _getReadArticleDetail(Uri uri) async {
-    final articleId = _extractArticleIdFromUri(uri);
+    final articleId = ArticleDetailParser.extractArticleId(uri);
     if (articleId == null) {
       throw const UnknownException('Invalid article url');
     }
@@ -113,7 +113,7 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
 
     final parseStopwatch = Stopwatch()..start();
     final html = response.data ?? '';
-    final initialState = _extractInitialState(html);
+    final initialState = ArticleDetailParser.extractInitialState(html);
     if (initialState == null) {
       throw const UnknownException('Failed to parse article page');
     }
@@ -130,32 +130,4 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
     );
     return detail;
   }
-
-  Map<String, dynamic>? _extractInitialState(String html) {
-    final match = RegExp(
-      r'window\.__INITIAL_STATE__\s*=\s*(\{.*?\})\s*;\s*\(function',
-      dotAll: true,
-    ).firstMatch(html);
-    if (match == null) return null;
-
-    try {
-      final data = match.group(1);
-      if (data == null || data.isEmpty) return null;
-      final decoded = jsonDecode(data);
-      if (decoded is Map<String, dynamic>) return decoded;
-      if (decoded is Map) return decoded.cast<String, dynamic>();
-    } catch (_) {
-      return null;
-    }
-    return null;
-  }
-}
-
-int? _extractArticleIdFromUri(Uri uri) {
-  final path = uri.path;
-  final readMatch = RegExp(r'/cv(\d+)').firstMatch(path);
-  if (readMatch != null) return int.tryParse(readMatch.group(1)!);
-  final opusMatch = RegExp(r'/opus/(\d+)').firstMatch(path);
-  if (opusMatch != null) return int.tryParse(opusMatch.group(1)!);
-  return int.tryParse(uri.queryParameters['id'] ?? '');
 }

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:cookie_jar/cookie_jar.dart';
@@ -12,6 +11,7 @@ import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/network/request_executor_binding.dart';
 import 'package:culcul/core/providers/cookie_jar_provider.dart';
 import 'package:culcul/core/result/result.dart';
+import 'package:culcul/features/dynamic/data/article_detail_parser.dart';
 import 'package:culcul/features/dynamic/data/dynamic_api.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
@@ -21,6 +21,7 @@ import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'dynamic_repository_impl.comment.dart';
+part 'dynamic_repository_impl.comment_target.dart';
 part 'dynamic_repository_impl.feed.dart';
 part 'dynamic_repository_impl.publish.dart';
 part 'dynamic_repository_impl.g.dart';

@@ -15,6 +15,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 part 'danmaku_layer.render_bridge.dart';
 part 'danmaku_layer.timeline_scheduler.dart';
+part 'danmaku_layer.timeline_buffer.dart';
 
 const int _segmentDurationMs = 360000;
 const int _segmentLoadCheckIntervalMs = 400;

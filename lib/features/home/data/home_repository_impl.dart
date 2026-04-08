@@ -23,52 +23,44 @@ class HomeRepositoryImpl implements domain.HomeRepository {
 
   HomeRepositoryImpl({required this.api}) : _executor = const RequestExecutor();
 
-  Future<List<VideoModel>> fetchRecommendModels({
+  Future<Result<List<VideoModel>, AppError>> fetchRecommendModels({
     int page = 1,
     bool forceRefresh = false,
   }) async {
-    final Result<List<VideoModel>, AppError> result = await _executor
-        .runApi<List<VideoModel>>(
-          () async => api.fetchRecommend(
-            freshIdx: page,
-            freshIdx1h: page,
-            forceRefresh: forceRefresh ? true : null,
-          ),
-          transform: (data) {
-            final items = data.item;
-            final videos = <VideoModel>[];
-            for (final item in items) {
-              if (item['goto'] != 'av') continue;
-              try {
-                videos.add(VideoModel.fromJson(item));
-              } catch (_) {
-                // Skip malformed entries instead of failing the whole page.
-              }
-            }
-            return videos;
-          },
-        );
-    return _unwrap(result);
+    return _executor.runApi<List<VideoModel>>(
+      () async => api.fetchRecommend(
+        freshIdx: page,
+        freshIdx1h: page,
+        forceRefresh: forceRefresh ? true : null,
+      ),
+      transform: (data) {
+        final items = data.item;
+        final videos = <VideoModel>[];
+        for (final item in items) {
+          if (item['goto'] != 'av') continue;
+          try {
+            videos.add(VideoModel.fromJson(item));
+          } catch (_) {
+            // Skip malformed entries instead of failing the whole page.
+          }
+        }
+        return videos;
+      },
+    );
   }
 
-  Future<List<VideoModel>> fetchPopularModels({
+  Future<Result<List<VideoModel>, AppError>> fetchPopularModels({
     int page = 1,
     bool forceRefresh = false,
   }) async {
-    final Result<List<VideoModel>, AppError> result = await _executor
-        .runApi<List<VideoModel>>(
-          () async => api.fetchPopular(
-            pn: page,
-            ps: _defaultPopularPageSize,
-            forceRefresh: forceRefresh ? true : null,
-          ),
-          transform: (data) => data.list,
-        );
-    return _unwrap(result);
-  }
-
-  List<VideoModel> _unwrap(Result<List<VideoModel>, AppError> result) {
-    return result.when(success: (value) => value, failure: (error) => throw error);
+    return _executor.runApi<List<VideoModel>>(
+      () async => api.fetchPopular(
+        pn: page,
+        ps: _defaultPopularPageSize,
+        forceRefresh: forceRefresh ? true : null,
+      ),
+      transform: (data) => data.list,
+    );
   }
 
   @override
@@ -76,12 +68,8 @@ class HomeRepositoryImpl implements domain.HomeRepository {
     int page = 1,
     bool forceRefresh = false,
   }) async {
-    return _executor.run(() async {
-      return (await fetchRecommendModels(
-        page: page,
-        forceRefresh: forceRefresh,
-      )).map((item) => item.toDomain()).toList();
-    });
+    final result = await fetchRecommendModels(page: page, forceRefresh: forceRefresh);
+    return result.map((models) => models.map((item) => item.toDomain()).toList());
   }
 
   @override
@@ -89,11 +77,7 @@ class HomeRepositoryImpl implements domain.HomeRepository {
     int page = 1,
     bool forceRefresh = false,
   }) async {
-    return _executor.run(() async {
-      return (await fetchPopularModels(
-        page: page,
-        forceRefresh: forceRefresh,
-      )).map((item) => item.toDomain()).toList();
-    });
+    final result = await fetchPopularModels(page: page, forceRefresh: forceRefresh);
+    return result.map((models) => models.map((item) => item.toDomain()).toList());
   }
 }

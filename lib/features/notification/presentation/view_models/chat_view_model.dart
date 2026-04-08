@@ -2,30 +2,25 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/network/network_concurrency_executor.dart';
+import 'package:culcul/core/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/pagination/paged_list_state.dart';
 import 'package:culcul/core/utils/list_utils.dart';
 import 'package:culcul/features/notification/notification.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'chat_view_model.g.dart';
-
-class ChatState {
-  const ChatState({required this.paging, required this.emojiMap});
-
-  final PagedListState<PrivateMessage> paging;
-  final Map<String, String> emojiMap;
-
-  ChatState copyWith({
-    PagedListState<PrivateMessage>? paging,
-    Map<String, String>? emojiMap,
-  }) {
-    return ChatState(paging: paging ?? this.paging, emojiMap: emojiMap ?? this.emojiMap);
-  }
-}
+part 'chat_view_model.helpers.dart';
+part 'chat_view_model.send.dart';
+part 'chat_view_model.types.dart';
 
 @riverpod
-class Chat extends _$Chat {
+class Chat extends _$Chat with _ChatHelpersMixin, _ChatSendMixin {
+  @override
   int? _minSeqno;
+  @override
+  final NetworkConcurrencyExecutor _concurrencyExecutor =
+      const NetworkConcurrencyExecutor();
 
   @override
   FutureOr<ChatState> build(int talkerId, PrivateSessionType sessionType) async {
@@ -44,19 +39,9 @@ class Chat extends _$Chat {
       );
     }
 
-    final repository = ref.read(notificationRepositoryProvider);
-    final localMessagesFuture = repository.pageMessagesFromLocal(
-      ownerUid: ownerUid,
-      talkerId: talkerId,
-      sessionType: sessionType,
-    );
-    final emojiMapFuture = repository.getMessageEmojiMapFromLocal(
-      ownerUid: ownerUid,
-      talkerId: talkerId,
-      sessionType: sessionType,
-    );
-    final localMessages = await localMessagesFuture;
-    final emojiMap = await emojiMapFuture;
+    final localSnapshot = await _loadLocalSnapshot(ownerUid: ownerUid);
+    final localMessages = localSnapshot.messages;
+    final emojiMap = localSnapshot.emojiMap;
 
     _updateMinSeq(localMessages);
     final initialMessages = _filterMessages(localMessages);
@@ -106,17 +91,12 @@ class Chat extends _$Chat {
         endSeqno: _minSeqno!,
       );
 
-      final olderMessages = await repository.pageMessagesFromLocal(
+      final localSnapshot = await _loadLocalSnapshot(
         ownerUid: ownerUid,
-        talkerId: talkerId,
-        sessionType: sessionType,
         endSeqno: _minSeqno,
       );
-      final emojiMap = await repository.getMessageEmojiMapFromLocal(
-        ownerUid: ownerUid,
-        talkerId: talkerId,
-        sessionType: sessionType,
-      );
+      final olderMessages = localSnapshot.messages;
+      final emojiMap = localSnapshot.emojiMap;
 
       if (olderMessages.isEmpty) {
         final latest = state.value ?? current;
@@ -160,152 +140,5 @@ class Chat extends _$Chat {
         );
       }
     }
-  }
-
-  Future<void> sendMessage(String content) async {
-    if (content.trim().isEmpty) return;
-    await _send(
-      messageType: PrivateMessageType.text,
-      content: PrivateMessageContent.text(content),
-    );
-  }
-
-  Future<void> sendImage(File imageFile) async {
-    final uploadResult = await ref
-        .read(notificationRepositoryProvider)
-        .uploadImage(imageFile);
-    final uploadRes = uploadResult.dataOrNull;
-    if (uploadRes == null) {
-      final current = state.value;
-      if (current != null) {
-        state = AsyncData(
-          current.copyWith(
-            paging: current.paging.copyWith(error: uploadResult.errorOrNull),
-          ),
-        );
-      }
-      return;
-    }
-
-    final content = PrivateMessageContent.image(
-      url: uploadRes.imageUrl,
-      height: uploadRes.imageHeight,
-      width: uploadRes.imageWidth,
-      imageType: imageFile.path.split('.').last,
-      size: await imageFile.length() / 1024,
-    );
-    await _send(messageType: PrivateMessageType.image, content: content);
-  }
-
-  Future<void> _send({
-    required PrivateMessageType messageType,
-    required PrivateMessageContent content,
-  }) async {
-    final ownerUid = ref.read(notificationOwnerUidProvider);
-    if (ownerUid == null) {
-      final message = AppError.auth('Not logged in');
-      final current = state.value;
-      if (current != null) {
-        state = AsyncData(
-          current.copyWith(paging: current.paging.copyWith(error: message)),
-        );
-      }
-      return;
-    }
-
-    final repository = ref.read(notificationRepositoryProvider);
-    final result = await repository.sendPrivateMessage(
-      ownerUid: ownerUid,
-      receiverId: talkerId,
-      receiverType: sessionType.receiverType,
-      messageType: messageType,
-      content: content,
-    );
-
-    if (result.isFailure) {
-      final current = state.value;
-      if (current != null) {
-        state = AsyncData(
-          current.copyWith(paging: current.paging.copyWith(error: result.errorOrNull)),
-        );
-      }
-    }
-
-    await _refreshHeadFromLocal(ownerUid);
-  }
-
-  Future<void> _syncHeadAndRefresh(int ownerUid) async {
-    try {
-      await ref
-          .read(notificationRepositoryProvider)
-          .syncMessagesHead(
-            ownerUid: ownerUid,
-            talkerId: talkerId,
-            sessionType: sessionType,
-          );
-      await _refreshHeadFromLocal(ownerUid);
-    } catch (_) {}
-  }
-
-  Future<void> _refreshHeadFromLocal(int ownerUid) async {
-    final repository = ref.read(notificationRepositoryProvider);
-    final headFuture = repository.pageMessagesFromLocal(
-      ownerUid: ownerUid,
-      talkerId: talkerId,
-      sessionType: sessionType,
-    );
-    final emojiMapFuture = repository.getMessageEmojiMapFromLocal(
-      ownerUid: ownerUid,
-      talkerId: talkerId,
-      sessionType: sessionType,
-    );
-    final head = await headFuture;
-    final emojiMap = await emojiMapFuture;
-    final filtered = _filterMessages(head);
-    _updateMinSeq(filtered);
-    final current = state.value;
-    if (current == null) return;
-
-    final merged = ListUtils.mergeUnique(
-      filtered,
-      current.paging.items,
-      idGetter: (item) => item.msgSeqno,
-    );
-    state = AsyncData(
-      current.copyWith(
-        paging: current.paging.copyWith(
-          items: merged,
-          hasMore: current.paging.hasMore && _canLoadOlder(),
-          isInitialLoading: false,
-          isLoadingMore: false,
-          error: null,
-        ),
-        emojiMap: emojiMap,
-      ),
-    );
-  }
-
-  bool _canLoadOlder() {
-    return _minSeqno != null && _minSeqno! > 0;
-  }
-
-  List<PrivateMessage> _filterMessages(List<PrivateMessage> source) {
-    return source
-        .where((message) => message.type != PrivateMessageType.withdrawn)
-        .toList();
-  }
-
-  void _updateMinSeq(List<PrivateMessage> messages) {
-    final positiveSeqs = messages
-        .map((m) => m.msgSeqno)
-        .where((seq) => seq > 0)
-        .toList(growable: false);
-    if (positiveSeqs.isEmpty) {
-      _minSeqno = null;
-      return;
-    }
-    _minSeqno = positiveSeqs.reduce(
-      (value, element) => value < element ? value : element,
-    );
   }
 }

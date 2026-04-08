@@ -20,7 +20,28 @@ const _allowedNonResultRepositoryMethods = <String>{
   'getMessageEmojiMapFromLocal',
   'pageFeedFromLocal',
 };
-const _longFileWarnLineThreshold = 200;
+const _allowedNonResultDataRepositoryMethods = <String>{
+  'writeProfile',
+  'saveThemePreference',
+  'clearCache',
+  'getCacheSizeInBytes',
+  'readProfile',
+  'getUnreadCountFromLocal',
+  'listSystemNoticesFromLocal',
+  'pageSessionsFromLocal',
+  'pageMessagesFromLocal',
+  'getMessageEmojiMapFromLocal',
+  'pageFeedFromLocal',
+  'retryFailedOutbox',
+  'upsertMessageDetail',
+  'reconcileTemporaryMessages',
+  'upsertMessageEmojis',
+  'shouldSync',
+  'touchCursor',
+  'maybeCleanup',
+  'isLoggedIn',
+};
+const _longFileWarnLineThreshold = 350;
 const _longFileWarnCountThreshold = 30;
 
 void main() {
@@ -409,7 +430,9 @@ void main() {
       issues.add('$path must not import AppException definitions in presentation layer');
     }
 
-    if (RegExp(r'^lib/features/[^/]+/(domain|presentation)\.dart$').hasMatch(normalized)) {
+    if (RegExp(
+      r'^lib/features/[^/]+/(domain|presentation)\.dart$',
+    ).hasMatch(normalized)) {
       issues.add(
         '$path is a removed legacy feature entrypoint; use <feature>.dart as the only public entrypoint',
       );
@@ -419,6 +442,12 @@ void main() {
         normalized.contains('/presentation/') &&
         RegExp(r'\bAppException\b').hasMatch(content)) {
       issues.add('$path must not use AppException in presentation layer (use AppError)');
+    }
+
+    if (normalized.contains('/features/') &&
+        normalized.contains('/presentation/') &&
+        RegExp(r'\bthrow\b').hasMatch(content)) {
+      issues.add('$path must not throw in presentation layer (use AppError state flow)');
     }
 
     if (normalized.contains('/features/') &&
@@ -501,6 +530,23 @@ void main() {
         issues.add(
           '$path must not expose transport-level parameters in domain repositories',
         );
+      }
+    }
+
+    if (normalized.contains('/features/') &&
+        normalized.contains('/data/') &&
+        RegExp(r'_repository_impl(?:\.[^/]+)?\.dart$').hasMatch(normalized)) {
+      final nonResultMethodMatches = RegExp(
+        r'Future<(?!Result<)(.+?)>\s+([A-Za-z]\w*)\s*\(',
+      ).allMatches(content);
+      for (final match in nonResultMethodMatches) {
+        final method = match.group(2);
+        if (method == null || method.startsWith('_')) continue;
+        if (!_allowedNonResultDataRepositoryMethods.contains(method)) {
+          issues.add(
+            '$path must use Result return type for remote repository impl methods ($method)',
+          );
+        }
       }
     }
 

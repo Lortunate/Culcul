@@ -108,7 +108,7 @@ class DynamicDetailPage extends HookConsumerWidget {
                 loadMore: () async {
                   final latestPost = ref.read(provider).post;
                   if (latestPost == null) {
-                    throw StateError('Dynamic detail post is missing');
+                    return;
                   }
                   await ref
                       .read(dynamicCommentControllerProvider(latestPost).notifier)

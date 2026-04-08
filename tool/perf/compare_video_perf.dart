@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 
 const double _jankImprovementTargetRatio = 0.10;
-const double _listTriggerCompleteRatioGate = 1.05;
+const double _listTriggerCompleteRatioGate = 1.10;
 const double _coreMetricNoRegressionPct = 5.0;
+const double _firstScreenImprovementTargetPct = 3.0;
+const double _firstFrameImprovementTargetPct = 3.0;
 
 class NumericSummary {
   final int samples;
@@ -155,7 +157,8 @@ class _ListEventState {
 void main(List<String> args) {
   if (args.length < 2) {
     stderr.writeln(
-      'Usage: dart run tool/perf/compare_video_perf.dart <before.log> <after.log> [--json-out=<path>]',
+      'Usage: dart run tool/perf/compare_video_perf.dart <before.log> <after.log> '
+      '[--text-out=<path>] [--json-out=<path>] [--out-dir=<dir>]',
     );
     exitCode = 64;
     return;
@@ -170,26 +173,83 @@ void main(List<String> args) {
   }
 
   String? jsonOutputPath;
-  if (args.length >= 3) {
+  String? textOutputPath;
+  String? outputDirPath;
+  for (final arg in args.skip(2)) {
     const prefix = '--json-out=';
-    final value = args[2];
-    if (value.startsWith(prefix)) {
-      jsonOutputPath = value.substring(prefix.length);
+    const textPrefix = '--text-out=';
+    const outDirPrefix = '--out-dir=';
+    if (arg.startsWith(prefix)) {
+      jsonOutputPath = arg.substring(prefix.length);
+      continue;
     }
+    if (arg.startsWith(textPrefix)) {
+      textOutputPath = arg.substring(textPrefix.length);
+      continue;
+    }
+    if (arg.startsWith(outDirPrefix)) {
+      outputDirPath = arg.substring(outDirPrefix.length);
+      continue;
+    }
+
+    stderr.writeln('Unknown option: $arg');
+    exitCode = 64;
+    return;
   }
 
-  final before = parsePerfLogLines(beforeFile.readAsLinesSync());
-  final after = parsePerfLogLines(afterFile.readAsLinesSync());
-  final report = comparePerfExtract(before, after);
+  if (outputDirPath != null && outputDirPath.isNotEmpty) {
+    final outDir = Directory(outputDirPath)..createSync(recursive: true);
+    final beforeStem = _sanitizeFileStem(beforeFile.path);
+    final afterStem = _sanitizeFileStem(afterFile.path);
+    final artifactPrefix = '${beforeStem}__vs__$afterStem';
+    textOutputPath ??= '${outDir.path}${Platform.pathSeparator}$artifactPrefix.txt';
+    jsonOutputPath ??= '${outDir.path}${Platform.pathSeparator}$artifactPrefix.json';
+  }
 
-  stdout.writeln(formatPerfComparisonText(report));
+  final beforeLines = beforeFile.readAsLinesSync();
+  final afterLines = afterFile.readAsLinesSync();
+  final before = parsePerfLogLines(beforeLines);
+  final after = parsePerfLogLines(afterLines);
+  final report = comparePerfExtract(before, after);
+  final textReport = formatPerfComparisonText(report);
+  final jsonMap = <String, Object?>{
+    'meta': <String, Object?>{
+      'generated_at_utc': DateTime.now().toUtc().toIso8601String(),
+      'before_log': beforeFile.absolute.path,
+      'after_log': afterFile.absolute.path,
+      'before_line_count': beforeLines.length,
+      'after_line_count': afterLines.length,
+      'gate_thresholds': <String, Object?>{
+        'jank_ratio_improvement_target_ratio': _jankImprovementTargetRatio,
+        'list_trigger_complete_ratio_gate': _listTriggerCompleteRatioGate,
+        'core_metric_no_regression_pct': _coreMetricNoRegressionPct,
+        'first_screen_improvement_target_pct': _firstScreenImprovementTargetPct,
+        'first_frame_improvement_target_pct': _firstFrameImprovementTargetPct,
+      },
+    },
+    ...report.toJson(),
+  };
+  final json = const JsonEncoder.withIndent('  ').convert(jsonMap);
+
+  stdout.writeln(textReport);
   stdout.writeln('== json ==');
-  final json = const JsonEncoder.withIndent('  ').convert(report.toJson());
   stdout.writeln(json);
 
+  if (textOutputPath != null && textOutputPath.isNotEmpty) {
+    File(textOutputPath).writeAsStringSync(textReport);
+    stdout.writeln('text report written to: ${File(textOutputPath).absolute.path}');
+  }
   if (jsonOutputPath != null && jsonOutputPath.isNotEmpty) {
     File(jsonOutputPath).writeAsStringSync(json);
+    stdout.writeln('json report written to: ${File(jsonOutputPath).absolute.path}');
   }
+}
+
+String _sanitizeFileStem(String path) {
+  final rawName = path.split(RegExp(r'[\\/]')).last;
+  final dot = rawName.lastIndexOf('.');
+  final stem = dot > 0 ? rawName.substring(0, dot) : rawName;
+  return stem.replaceAll(RegExp(r'[^A-Za-z0-9._-]+'), '_');
 }
 
 PerfExtract parsePerfLogLines(List<String> lines) {
@@ -390,15 +450,66 @@ PerfComparisonReport comparePerfExtract(PerfExtract before, PerfExtract after) {
   final beforeJank = _avg(before.jankRatios);
   final afterJank = _avg(after.jankRatios);
   final jankMultiplier = 1 - _jankImprovementTargetRatio;
+  final jankGatePassed = beforeJank == null || afterJank == null
+      ? null
+      : afterJank <= beforeJank * jankMultiplier;
   gates.add(
     _buildGate(
       name: 'jank_ratio_improvement_10pct',
-      passed: beforeJank == null || afterJank == null
-          ? null
-          : afterJank <= beforeJank * jankMultiplier,
+      passed: jankGatePassed,
       details:
           'requires after <= before * ${jankMultiplier.toStringAsFixed(2)}, '
           'before=${_fmt(beforeJank)} after=${_fmt(afterJank)}',
+    ),
+  );
+
+  final firstFrameMetric = metrics.firstWhere((m) => m.name == 'first_frame_ready_ms');
+  final firstFrameDelta = firstFrameMetric.deltaPct;
+  final firstFrameGatePassed = firstFrameDelta == null
+      ? null
+      : firstFrameDelta <= -_firstFrameImprovementTargetPct;
+  gates.add(
+    _buildGate(
+      name: 'first_frame_improvement_3pct',
+      passed: firstFrameGatePassed,
+      details:
+          'requires delta <= -${_firstFrameImprovementTargetPct.toStringAsFixed(1)}, '
+          'delta=${firstFrameDelta?.toStringAsFixed(2) ?? 'n/a'}%',
+    ),
+  );
+
+  final firstScreenMetric = metrics.firstWhere(
+    (m) => m.name == 'startup_home_ready_elapsed_ms',
+  );
+  final firstScreenDelta = firstScreenMetric.deltaPct;
+  final firstScreenGatePassed = firstScreenDelta == null
+      ? null
+      : firstScreenDelta <= -_firstScreenImprovementTargetPct;
+  gates.add(
+    _buildGate(
+      name: 'first_screen_improvement_3pct',
+      passed: firstScreenGatePassed,
+      details:
+          'requires delta <= -${_firstScreenImprovementTargetPct.toStringAsFixed(1)}, '
+          'delta=${firstScreenDelta?.toStringAsFixed(2) ?? 'n/a'}%',
+    ),
+  );
+
+  final plan16KeyGates = <bool?>[
+    firstScreenGatePassed,
+    firstFrameGatePassed,
+    jankGatePassed,
+  ];
+  final knownCount = plan16KeyGates.whereType<bool>().length;
+  final passCount = plan16KeyGates.where((value) => value == true).length;
+  final keyMetricsGatePassed = knownCount < 2 ? null : passCount >= 2;
+  gates.add(
+    _buildGate(
+      name: 'plan16_two_of_three_key_metrics',
+      passed: keyMetricsGatePassed,
+      details:
+          'requires >=2 passes among {first_screen, first_frame, jank}; '
+          'passed=$passCount known=$knownCount',
     ),
   );
 

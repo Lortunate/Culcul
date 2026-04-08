@@ -114,14 +114,17 @@ mixin _PlayerControllerLoadMixin on _$PlayerController, _PlayerControllerControl
         .where((url) => url.isNotEmpty)
         .toList(growable: false);
     if (candidates.isEmpty) {
-      throw ArgumentError.value(urls, 'urls', 'At least one playable url is required.');
+      _loadRequestTimings.remove(requestToken);
+      debugPrint(
+        'PlayerController.loadVideo ignored empty playable urls for session=$sessionId',
+      );
+      return;
     }
 
     final currentPos = player.state.position;
     final wasPlaying = state.isPlaying;
 
     Object? lastError;
-    StackTrace? lastStackTrace;
 
     for (var i = 0; i < candidates.length; i++) {
       if (!_isLoadRequestActive(sessionId, requestToken)) {
@@ -162,13 +165,12 @@ mixin _PlayerControllerLoadMixin on _$PlayerController, _PlayerControllerControl
         }
         _markReadyForRequest(sessionId, requestToken);
         return;
-      } catch (error, stackTrace) {
+      } catch (error) {
         if (!_isLoadRequestActive(sessionId, requestToken)) {
           _loadRequestTimings.remove(requestToken);
           return;
         }
         lastError = error;
-        lastStackTrace = stackTrace;
         debugPrint(
           'PlayerController.loadVideo failed for candidate ${i + 1}/${candidates.length}: $error',
         );
@@ -177,12 +179,10 @@ mixin _PlayerControllerLoadMixin on _$PlayerController, _PlayerControllerControl
     }
 
     final errorToThrow = lastError;
-    final stackToThrow = lastStackTrace;
-    if (errorToThrow != null &&
-        stackToThrow != null &&
-        _isLoadRequestActive(sessionId, requestToken)) {
-      _loadRequestTimings.remove(requestToken);
-      Error.throwWithStackTrace(errorToThrow, stackToThrow);
+    if (errorToThrow != null && _isLoadRequestActive(sessionId, requestToken)) {
+      debugPrint(
+        'PlayerController.loadVideo exhausted candidates for session=$sessionId: $errorToThrow',
+      );
     }
     _loadRequestTimings.remove(requestToken);
   }

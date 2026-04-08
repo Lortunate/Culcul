@@ -107,7 +107,7 @@ class NotificationLifecycleSync extends _$NotificationLifecycleSync
   Future<void> _runSyncTask(Future<Result<void, AppError>> future) async {
     final result = await future;
     if (result.errorOrNull case final error?) {
-      throw error;
+      debugPrint('NotificationLifecycleSync ignored error: ${error.message}');
     }
   }
 }

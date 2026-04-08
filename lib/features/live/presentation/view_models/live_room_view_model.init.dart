@@ -53,24 +53,29 @@ mixin _LiveRoomControllerInitMixin
       },
     );
 
-    try {
-      final criticalRequestStopwatch = Stopwatch()..start();
-      await _concurrencyExecutor.runConcurrent(
-        tasks: <ConcurrentTask<dynamic>>[
-          ConcurrentTask<void>(
-            label: 'play_url',
-            critical: true,
-            task: () => _fetchPlayUrl(info.roomId, critical: true),
-          ),
-          ConcurrentTask<void>(
-            label: 'danmaku_config',
-            critical: true,
-            task: () => _fetchDanmakuConfig(info.roomId, critical: true),
-          ),
-        ],
-        profile: NetworkConcurrencyProfile.enrich,
-        scope: 'live_room_init_critical',
-      );
+    final criticalRequestStopwatch = Stopwatch()..start();
+    final criticalResults = await _concurrencyExecutor.runConcurrent(
+      tasks: <ConcurrentTask<dynamic>>[
+        ConcurrentTask<AppError?>(
+          label: 'play_url',
+          critical: false,
+          fallback: (error) => error,
+          task: () => _fetchPlayUrl(info.roomId, critical: true),
+        ),
+        ConcurrentTask<AppError?>(
+          label: 'danmaku_config',
+          critical: false,
+          fallback: (error) => error,
+          task: () => _fetchDanmakuConfig(info.roomId, critical: true),
+        ),
+      ],
+      profile: NetworkConcurrencyProfile.enrich,
+      scope: 'live_room_init_critical',
+    );
+    final criticalError =
+        criticalResults['play_url'] as AppError? ??
+        criticalResults['danmaku_config'] as AppError?;
+    if (criticalError != null) {
       FeatureFlowPerfLogger.log(
         chain: 'live.room_init',
         stage: 'request',
@@ -78,22 +83,22 @@ mixin _LiveRoomControllerInitMixin
           'segment': 'critical_group',
           'roomId': roomId,
           'ms': criticalRequestStopwatch.elapsedMilliseconds,
-          'success': true,
-        },
-      );
-    } catch (error) {
-      FeatureFlowPerfLogger.log(
-        chain: 'live.room_init',
-        stage: 'request',
-        fields: <String, Object?>{
-          'segment': 'critical_group',
-          'roomId': roomId,
           'success': false,
         },
       );
-      state = state.copyWith(isLoading: false, error: AppError.fromObject(error));
+      state = state.copyWith(isLoading: false, error: criticalError);
       return;
     }
+    FeatureFlowPerfLogger.log(
+      chain: 'live.room_init',
+      stage: 'request',
+      fields: <String, Object?>{
+        'segment': 'critical_group',
+        'roomId': roomId,
+        'ms': criticalRequestStopwatch.elapsedMilliseconds,
+        'success': true,
+      },
+    );
 
     state = state.copyWith(isLoading: false, error: null);
     FeatureFlowPerfLogger.log(

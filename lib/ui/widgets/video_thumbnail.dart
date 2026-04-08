@@ -86,10 +86,7 @@ class VideoThumbnail extends StatelessWidget {
               Positioned(
                 right: 8,
                 bottom: 8,
-                child: _ThumbnailDuration(
-                  durationText: duration.formatDuration,
-                  textStyle: overlayTextStyle,
-                ),
+                child: Text(duration.formatDuration, style: overlayTextStyle),
               ),
             ],
           );
@@ -125,18 +122,6 @@ class _ThumbnailBottomOverlay extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class _ThumbnailDuration extends StatelessWidget {
-  final String durationText;
-  final TextStyle? textStyle;
-
-  const _ThumbnailDuration({required this.durationText, required this.textStyle});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(durationText, style: textStyle);
   }
 }
 

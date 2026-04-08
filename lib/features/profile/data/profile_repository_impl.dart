@@ -17,6 +17,8 @@ import 'package:culcul/features/profile/domain/repositories/profile_repository.d
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'profile_repository_impl.g.dart';
+part 'profile_repository_impl.flows.dart';
+part 'profile_repository_impl.parsers.dart';
 
 @riverpod
 domain.ProfileRepository profileRepository(Ref ref) {
@@ -27,9 +29,10 @@ domain.ProfileRepository profileRepository(Ref ref) {
 }
 
 class ProfileRepositoryImpl
-    with RequestExecutorBinding
+    with RequestExecutorBinding, _ProfileRepositoryImplFlowsMixin
     implements domain.ProfileRepository {
   static const int _defaultSpaceVideoPageSize = 30;
+  @override
   final ProfileApi api;
   final RequestExecutor _requestExecutor;
   final NetworkConcurrencyExecutor _concurrencyExecutor;
@@ -59,6 +62,7 @@ class ProfileRepositoryImpl
     );
   }
 
+  @override
   Future<Result<UserProfile, AppError>> getProfileModel(int userId) async {
     return requestResult(() async {
       final responses = await _concurrencyExecutor.runConcurrent(
@@ -134,176 +138,5 @@ class ProfileRepositoryImpl
         createdAt: null,
       );
     });
-  }
-
-  Future<Result<List<UserSpaceVideoModel>, AppError>> getSpaceVideosModel({
-    required int mid,
-    int page = 1,
-    String order = 'pubdate',
-  }) async {
-    final result = await requestApiResult(
-      () => api.getSpaceVideos(
-        mid: mid,
-        page: page,
-        pageSize: _defaultSpaceVideoPageSize,
-        order: order,
-      ),
-    );
-    return result.map((data) => data.list.vlist);
-  }
-
-  Future<Result<UserSpaceVideoModel?, AppError>> getStickyVideoModel(int vmid) async {
-    final result = await requestApiResult(() => api.getStickyVideo(vmid));
-    return result.when(
-      success: (data) => Success(data),
-      failure: (error) {
-        if (error is ServerAppError && error.code == 53016) {
-          return const Success(null);
-        }
-        return Failure(error);
-      },
-    );
-  }
-
-  Future<Result<List<UserSpaceVideoModel>, AppError>> getMasterpieceModels(
-    int vmid,
-  ) async {
-    final result = await requestApiResult(() => api.getMasterpiece(vmid));
-    return result.when(
-      success: (data) => Success(data),
-      failure: (_) => const Success(<UserSpaceVideoModel>[]),
-    );
-  }
-
-  @override
-  Future<Result<void, AppError>> modifyRelation({
-    required int mid,
-    required bool isFollow,
-  }) {
-    return requestVoidResult(() => api.modifyRelation(mid, isFollow ? 1 : 2, 11));
-  }
-
-  @override
-  Future<Result<ProfileUser, AppError>> getProfile(int userId) async {
-    final result = await getProfileModel(userId);
-    return result.map((data) => data.toDomain());
-  }
-
-  @override
-  Future<Result<List<ProfileVideo>, AppError>> getSpaceVideos({
-    required int mid,
-    int page = 1,
-    String order = 'pubdate',
-  }) async {
-    final result = await getSpaceVideosModel(mid: mid, page: page, order: order);
-    return result.map((data) => data.map((item) => item.toDomain()).toList());
-  }
-
-  @override
-  Future<Result<ProfileVideo?, AppError>> getStickyVideo(int vmid) async {
-    final result = await getStickyVideoModel(vmid);
-    return result.map((data) => data?.toDomain());
-  }
-
-  @override
-  Future<Result<List<ProfileVideo>, AppError>> getMasterpiece(int vmid) async {
-    final result = await getMasterpieceModels(vmid);
-    return result.map((data) => data.map((item) => item.toDomain()).toList());
-  }
-
-  UserCardModel _parseUserCard(dynamic data, {required int fallbackMid}) {
-    try {
-      final map = Map<String, dynamic>.from(data as Map);
-      final card = Map<String, dynamic>.from(map['card'] as Map? ?? const {});
-      final following = map['following'] as bool? ?? false;
-
-      return UserCardModel(
-        mid: card['mid']?.toString() ?? fallbackMid.toString(),
-        name: card['name']?.toString() ?? '',
-        face: card['face']?.toString() ?? '',
-        isFollowed: following,
-      );
-    } catch (error) {
-      throw UnknownException('Failed to parse user card', cause: error);
-    }
-  }
-
-  ({int followers, int following}) _parseRelationStats(dynamic response) {
-    if (response == null ||
-        response.code != 0 ||
-        response.data is! Map<String, dynamic>) {
-      return (followers: 0, following: 0);
-    }
-
-    final data = response.data as Map<String, dynamic>;
-    return (
-      followers: data['follower'] as int? ?? 0,
-      following: data['following'] as int? ?? 0,
-    );
-  }
-
-  int _parseLikes(dynamic response) {
-    if (response == null ||
-        response.code != 0 ||
-        response.data is! Map<String, dynamic>) {
-      return 0;
-    }
-    final data = response.data as Map<String, dynamic>;
-    return data['likes'] as int? ?? 0;
-  }
-
-  int _parseVideoCount(dynamic response) {
-    if (response == null ||
-        response.code != 0 ||
-        response.data is! Map<String, dynamic>) {
-      return 0;
-    }
-    final data = response.data as Map<String, dynamic>;
-    return data['video'] as int? ?? 0;
-  }
-
-  bool _isVerified(Map<String, dynamic> infoData) {
-    final official = infoData['official'];
-    if (official is! Map<String, dynamic>) {
-      return false;
-    }
-    return (official['role'] as int? ?? 0) != 0;
-  }
-
-  int _parseVipType(Map<String, dynamic> infoData) {
-    final vipInfo = infoData['vip'];
-    return vipInfo is Map<String, dynamic> ? vipInfo['type'] as int? ?? 0 : 0;
-  }
-
-  int _parseVipStatus(Map<String, dynamic> infoData) {
-    final vipInfo = infoData['vip'];
-    return vipInfo is Map<String, dynamic> ? vipInfo['status'] as int? ?? 0 : 0;
-  }
-
-  String? _resolveBanner(Map<String, dynamic> infoData, dynamic cardResponse) {
-    var topPhoto = infoData['top_photo'] as String?;
-    if (cardResponse == null ||
-        cardResponse.code != 0 ||
-        cardResponse.data is! Map<String, dynamic>) {
-      return topPhoto;
-    }
-
-    final data = cardResponse.data as Map<String, dynamic>;
-    final space = data['space'];
-    if (space is! Map<String, dynamic>) {
-      return topPhoto;
-    }
-
-    final large = space['l_img'] as String?;
-    if (large != null && large.isNotEmpty) {
-      return large;
-    }
-
-    final small = space['s_img'] as String?;
-    if (small != null && small.isNotEmpty) {
-      return small;
-    }
-
-    return topPhoto;
   }
 }
