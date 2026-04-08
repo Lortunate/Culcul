@@ -117,30 +117,24 @@ class FavRepositoryImpl with RequestExecutorBinding implements domain.FavoriteRe
   }
 
   @override
-  Future<Result<FavoriteFolderPage, AppError>> getCollectedFolders({
-    required int upMid,
-    required int page,
-  }) async {
-    final result = await getCollectedFoldersModel(upMid: upMid, pn: page);
+  Future<Result<FavoriteFolderPage, AppError>> getCollectedFolders(
+    domain.FavoriteFolderListQuery query,
+  ) async {
+    final result = await getCollectedFoldersModel(upMid: query.upMid, pn: query.page);
     return result.map((data) => data.toDomain());
   }
 
   @override
-  Future<Result<FavoriteResourcePage, AppError>> getFolderResources({
-    required int mediaId,
-    required int page,
-    String? keyword,
-    String? order,
-    int? type,
-    int? tid,
-  }) async {
+  Future<Result<FavoriteResourcePage, AppError>> getFolderResources(
+    domain.FavoriteFolderResourcesQuery query,
+  ) async {
     final result = await getFolderResourcesModel(
-      mediaId: mediaId,
-      pn: page,
-      keyword: keyword,
-      order: order,
-      type: type,
-      tid: tid,
+      mediaId: query.mediaId,
+      pn: query.page,
+      keyword: query.keyword,
+      order: query.order,
+      type: query.type,
+      tid: query.tid,
     );
     return result.map((data) => data.toDomain());
   }

@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 
 import 'culcul_colors.dart';
 
+part 'culcul_theme_palette.dart';
+
 class CulculTheme {
   CulculTheme._();
 
@@ -249,52 +251,4 @@ class CulculTheme {
   static DividerThemeData _dividerTheme(ColorScheme colorScheme) {
     return DividerThemeData(color: colorScheme.outlineVariant, thickness: 1, space: 1);
   }
-}
-
-class _ThemePalette {
-  final Color background;
-  final Color surface;
-  final Color surfaceLow;
-  final Color surfaceHighest;
-  final Color textPrimary;
-  final Color textSecondary;
-  final Color textTertiary;
-  final Color border;
-  final Color divider;
-
-  const _ThemePalette({
-    required this.background,
-    required this.surface,
-    required this.surfaceLow,
-    required this.surfaceHighest,
-    required this.textPrimary,
-    required this.textSecondary,
-    required this.textTertiary,
-    required this.border,
-    required this.divider,
-  });
-
-  static const light = _ThemePalette(
-    background: CulculColors.lightBackground,
-    surface: CulculColors.lightSurface,
-    surfaceLow: CulculColors.lightSurfaceLow,
-    surfaceHighest: CulculColors.lightSurfaceHighest,
-    textPrimary: CulculColors.lightTextPrimary,
-    textSecondary: CulculColors.lightTextSecondary,
-    textTertiary: CulculColors.lightTextTertiary,
-    border: CulculColors.lightBorder,
-    divider: CulculColors.lightDivider,
-  );
-
-  static const dark = _ThemePalette(
-    background: CulculColors.darkBackground,
-    surface: CulculColors.darkSurface,
-    surfaceLow: CulculColors.darkSurfaceLow,
-    surfaceHighest: CulculColors.darkSurfaceHighest,
-    textPrimary: CulculColors.darkTextPrimary,
-    textSecondary: CulculColors.darkTextSecondary,
-    textTertiary: CulculColors.darkTextTertiary,
-    border: CulculColors.darkBorder,
-    divider: CulculColors.darkDivider,
-  );
 }

@@ -10,12 +10,23 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'video_detail_state.dart';
 
 part 'video_detail_view_model.g.dart';
+part 'video_detail_view_model.helpers.dart';
 
 @riverpod
-class VideoDetailController extends _$VideoDetailController {
+class VideoDetailController extends _$VideoDetailController
+    with _VideoDetailControllerHelpersMixin {
   int _loadToken = 0;
   int _playUrlRequestToken = 0;
   final Map<String, PlayUrl> _playUrlSessionCache = <String, PlayUrl>{};
+
+  @override
+  int get loadToken => _loadToken;
+
+  @override
+  int get playUrlRequestToken => _playUrlRequestToken;
+
+  @override
+  Map<String, PlayUrl> get playUrlSessionCache => _playUrlSessionCache;
 
   @override
   VideoDetailState build(String bvid) {
@@ -118,15 +129,6 @@ class VideoDetailController extends _$VideoDetailController {
     unawaited(ref.read(playerControllerProvider.notifier).setPlaybackRate(speed));
   }
 
-  Future<void> reportProgress(int progress) async {
-    final detail = state.videoDetail;
-    if (detail == null) return;
-
-    await ref
-        .read(videoRepositoryProvider)
-        .reportVideoProgress(aid: detail.aid, cid: state.currentCid, progress: progress);
-  }
-
   Future<void> toggleFollow() async {
     final detail = state.videoDetail;
     if (detail == null) return;
@@ -185,58 +187,5 @@ class VideoDetailController extends _$VideoDetailController {
       },
       failure: (error) => state.copyWith(isLoading: false, error: error),
     );
-  }
-
-  Future<void> _loadAuxiliaryData({required int requestToken}) async {
-    final result = await ref.read(loadVideoDetailWorkflowProvider).loadAuxiliary(bvid);
-    if (!_isCurrentLoadRequest(requestToken)) {
-      return;
-    }
-
-    final auxiliary = result.dataOrNull;
-    if (auxiliary == null) {
-      return;
-    }
-    final detail = state.videoDetail;
-    if (detail == null) {
-      return;
-    }
-
-    state = state.copyWith(
-      videoDetail: detail.copyWith(tag: auxiliary.tags),
-      relatedVideos: auxiliary.relatedVideos,
-    );
-    assert(() {
-      developer.log(
-        'video_perf auxiliary_loaded bvid=$bvid related=${auxiliary.relatedVideos.length} tags=${auxiliary.tags.length}',
-        name: 'video.performance',
-      );
-      return true;
-    }());
-  }
-
-  String _buildPlayUrlCacheKey({required int aid, required int cid, required int qn}) {
-    return '$aid:$cid:$qn';
-  }
-
-  PlayUrl? _readCachedPlayUrl({required int aid, required int cid, required int qn}) {
-    return _playUrlSessionCache[_buildPlayUrlCacheKey(aid: aid, cid: cid, qn: qn)];
-  }
-
-  void _cachePlayUrl({
-    required int aid,
-    required int cid,
-    required int qn,
-    required PlayUrl playUrl,
-  }) {
-    _playUrlSessionCache[_buildPlayUrlCacheKey(aid: aid, cid: cid, qn: qn)] = playUrl;
-  }
-
-  bool _isCurrentLoadRequest(int requestToken) {
-    return requestToken == _loadToken;
-  }
-
-  bool _isCurrentPlayUrlRequest(int requestToken) {
-    return requestToken == _playUrlRequestToken;
   }
 }

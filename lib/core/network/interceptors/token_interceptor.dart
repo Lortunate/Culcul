@@ -56,7 +56,12 @@ class TokenInterceptor extends Interceptor {
     }
 
     final authRepo = _ref.read(authRepositoryProvider);
-    final refreshFuture = authRepo.checkAndRefreshCookie();
+    final refreshFuture = authRepo.checkAndRefreshCookie().then((result) {
+      final error = result.errorOrNull;
+      if (error != null) {
+        throw StateError('Cookie refresh failed: ${error.message}');
+      }
+    });
     _refreshCookieFuture = refreshFuture;
     try {
       await refreshFuture;

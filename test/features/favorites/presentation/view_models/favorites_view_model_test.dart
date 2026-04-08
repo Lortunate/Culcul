@@ -27,14 +27,10 @@ class _FavFakeRepository implements FavoriteRepository {
   );
 
   @override
-  Future<Result<FavoriteResourcePage, AppError>> getFolderResources({
-    required int mediaId,
-    required int page,
-    String? keyword,
-    String? order,
-    int? type,
-    int? tid,
-  }) async {
+  Future<Result<FavoriteResourcePage, AppError>> getFolderResources(
+    FavoriteFolderResourcesQuery query,
+  ) async {
+    final page = query.page;
     if (page <= _pages.length) {
       return _pages[page - 1];
     }
@@ -49,10 +45,9 @@ class _FavFakeRepository implements FavoriteRepository {
   }) async => throw UnimplementedError();
 
   @override
-  Future<Result<FavoriteFolderPage, AppError>> getCollectedFolders({
-    required int upMid,
-    required int page,
-  }) async => throw UnimplementedError();
+  Future<Result<FavoriteFolderPage, AppError>> getCollectedFolders(
+    FavoriteFolderListQuery query,
+  ) async => throw UnimplementedError();
 
   @override
   Future<Result<FavoriteFolder, AppError>> createFolder({
@@ -122,14 +117,10 @@ class _CreatedFoldersRepository implements FavoriteRepository {
   }
 
   @override
-  Future<Result<FavoriteResourcePage, AppError>> getFolderResources({
-    required int mediaId,
-    required int page,
-    String? keyword,
-    String? order,
-    int? type,
-    int? tid,
-  }) async {
+  Future<Result<FavoriteResourcePage, AppError>> getFolderResources(
+    FavoriteFolderResourcesQuery query,
+  ) async {
+    final mediaId = query.mediaId;
     inFlight++;
     if (inFlight > maxInFlight) {
       maxInFlight = inFlight;
@@ -158,10 +149,9 @@ class _CreatedFoldersRepository implements FavoriteRepository {
   }
 
   @override
-  Future<Result<FavoriteFolderPage, AppError>> getCollectedFolders({
-    required int upMid,
-    required int page,
-  }) async => throw UnimplementedError();
+  Future<Result<FavoriteFolderPage, AppError>> getCollectedFolders(
+    FavoriteFolderListQuery query,
+  ) async => throw UnimplementedError();
 
   @override
   Future<Result<FavoriteFolder, AppError>> createFolder({

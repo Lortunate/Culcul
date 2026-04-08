@@ -33,6 +33,7 @@ part 'notification_repository_impl.message_sync.dart';
 part 'notification_repository_impl.feed_sync.dart';
 part 'notification_repository_impl.message_send_service.dart';
 part 'notification_repository_impl.message_support.dart';
+part 'notification_repository_impl.message_support_helpers.dart';
 part 'notification_repository_impl.cleanup_policy.dart';
 
 @riverpod

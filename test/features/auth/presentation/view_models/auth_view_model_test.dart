@@ -19,7 +19,7 @@ class _FakeAuthRepository implements AuthRepository {
   Future<Result<UserEntity, AppError>> getCurrentUser() => currentUserCompleter.future;
 
   @override
-  Future<void> checkAndRefreshCookie() async {}
+  Future<Result<void, AppError>> checkAndRefreshCookie() async => const Success(null);
 
   @override
   Future<Result<AuthCaptchaChallenge, AppError>> getCaptchaChallenge() {

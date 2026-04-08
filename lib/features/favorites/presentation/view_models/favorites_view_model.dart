@@ -2,10 +2,12 @@ import 'package:culcul/core/pagination/paged_async_notifier.dart';
 import 'package:culcul/core/pagination/paged_list_state.dart';
 import 'package:culcul/core/network/network_concurrency_executor.dart';
 import 'package:culcul/core/network/network_concurrency_profiles.dart';
+import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
 import 'package:culcul/core/utils/list_utils.dart';
 import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
+import 'package:culcul/features/favorites/domain/repositories/favorite_repository.dart';
 import 'package:culcul/features/favorites/favorites.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -42,8 +44,7 @@ class FavCreatedFolders extends _$FavCreatedFolders {
 
             try {
               final resourcesResult = await repository.getFolderResources(
-                mediaId: folder.id,
-                page: 1,
+                FavoriteFolderResourcesQuery(mediaId: folder.id, page: 1),
               );
               final resources = resourcesResult.dataOrNull;
               if (resources == null) {
@@ -87,7 +88,7 @@ class FavCollectedFolders extends _$FavCollectedFolders
   Future<List<FavoriteFolder>> fetchPage(int page) async {
     final result = await ref
         .read(favRepositoryProvider)
-        .getCollectedFolders(upMid: _mid, page: page);
+        .getCollectedFolders(FavoriteFolderListQuery(upMid: _mid, page: page));
     return result.dataOrNull?.folders ?? const <FavoriteFolder>[];
   }
 
@@ -127,11 +128,17 @@ class FavFolderResources extends _$FavFolderResources {
 
   @override
   Future<FavFolderDetailState> build(int mediaId) async {
+    final firstInteractiveStopwatch = Stopwatch()..start();
     final page = await _fetchItems(mediaId, 1);
     if (page == null) {
+      FeatureFlowPerfLogger.log(
+        chain: 'favorites.detail',
+        stage: 'state_commit',
+        fields: <String, Object?>{'mediaId': mediaId, 'hasData': false},
+      );
       return const FavFolderDetailState();
     }
-    return FavFolderDetailState(
+    final nextState = FavFolderDetailState(
       info: page.info,
       paging: PagedListState<FavoriteResource>(
         items: page.medias,
@@ -142,12 +149,43 @@ class FavFolderResources extends _$FavFolderResources {
         error: null,
       ),
     );
+    FeatureFlowPerfLogger.log(
+      chain: 'favorites.detail',
+      stage: 'state_commit',
+      fields: <String, Object?>{
+        'mediaId': mediaId,
+        'hasData': true,
+        'itemCount': page.medias.length,
+        'hasMore': page.hasMore,
+      },
+    );
+    FeatureFlowPerfLogger.log(
+      chain: 'favorites.detail',
+      stage: 'first_interactive',
+      fields: <String, Object?>{
+        'mediaId': mediaId,
+        'ms': firstInteractiveStopwatch.elapsedMilliseconds,
+        'itemCount': page.medias.length,
+      },
+    );
+    return nextState;
   }
 
   Future<FavoriteResourcePage?> _fetchItems(int mediaId, int page) async {
+    final requestStopwatch = Stopwatch()..start();
     final result = await ref
         .read(favRepositoryProvider)
-        .getFolderResources(mediaId: mediaId, page: page);
+        .getFolderResources(FavoriteFolderResourcesQuery(mediaId: mediaId, page: page));
+    FeatureFlowPerfLogger.log(
+      chain: 'favorites.detail',
+      stage: 'request',
+      fields: <String, Object?>{
+        'mediaId': mediaId,
+        'page': page,
+        'ms': requestStopwatch.elapsedMilliseconds,
+        'success': result.dataOrNull != null,
+      },
+    );
     return result.dataOrNull;
   }
 
@@ -166,7 +204,9 @@ class FavFolderResources extends _$FavFolderResources {
     try {
       final result = await ref
           .read(favRepositoryProvider)
-          .getFolderResources(mediaId: mediaId, page: current.paging.nextPage);
+          .getFolderResources(
+            FavoriteFolderResourcesQuery(mediaId: mediaId, page: current.paging.nextPage),
+          );
       final nextPageData = result.dataOrNull;
       if (nextPageData == null) {
         final error =
@@ -194,6 +234,16 @@ class FavFolderResources extends _$FavFolderResources {
             error: null,
           ),
         ),
+      );
+      FeatureFlowPerfLogger.log(
+        chain: 'favorites.detail',
+        stage: 'state_commit',
+        fields: <String, Object?>{
+          'mediaId': mediaId,
+          'page': current.paging.nextPage,
+          'itemCount': state.value?.paging.items.length ?? 0,
+          'hasMore': state.value?.paging.hasMore ?? false,
+        },
       );
     } finally {
       final latest = state.value;

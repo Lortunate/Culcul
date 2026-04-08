@@ -7,6 +7,8 @@ import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+part 'sticky_video_section.stat.dart';
+
 class StickyVideoSection extends ConsumerWidget {
   final int mid;
   const StickyVideoSection({super.key, required this.mid});
@@ -175,32 +177,6 @@ class StickyVideoSection extends ConsumerWidget {
       },
       error: (error, stack) => const SliverToBoxAdapter(child: SizedBox.shrink()),
       loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
-    );
-  }
-}
-
-class _StatIconText extends StatelessWidget {
-  final IconData icon;
-  final String text;
-
-  const _StatIconText({required this.icon, required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 14, color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7)),
-        const SizedBox(width: 4),
-        Text(
-          text,
-          style: theme.textTheme.labelSmall?.copyWith(
-            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
-          ),
-        ),
-      ],
     );
   }
 }

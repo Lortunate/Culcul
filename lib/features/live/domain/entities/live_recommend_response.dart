@@ -1,1 +1,1 @@
-export 'package:culcul/features/live/data/dtos/live_recommend_response.dart';
+export '../../data/dtos/live_recommend_response.dart';

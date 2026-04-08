@@ -1,4 +1,5 @@
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
+import 'package:culcul/features/dynamic/domain/repositories/dynamic_repository.dart';
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
 import 'package:culcul/features/dynamic/dynamic.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_feed_view_model.dart';
@@ -21,7 +22,9 @@ class UserDynamicNotifier extends _$UserDynamicNotifier
   Future<CursorPage<DynamicItem, String>> fetchPage(String? currentCursor) async {
     final result = await ref
         .read(dynamicRepositoryProvider)
-        .getSpaceDynamicFeed(hostMid: _hostMid, offset: currentCursor);
+        .getSpaceDynamicFeed(
+          SpaceDynamicFeedQuery(hostMid: _hostMid, offset: currentCursor),
+        );
     if (result.errorOrNull != null) {
       return const CursorPage(items: [], nextCursor: null, hasMore: false);
     }

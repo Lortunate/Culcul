@@ -1,7 +1,7 @@
 import 'package:culcul/features/live/domain/entities/live_entities.dart';
 import 'package:culcul/core/contracts/user_card_contract.dart';
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:culcul/core/errors/exceptions.dart';
 
 part 'live_room_state.freezed.dart';
 
@@ -10,7 +10,7 @@ sealed class LiveRoomState with _$LiveRoomState {
   const factory LiveRoomState({
     required int roomId,
     @Default(true) bool isLoading,
-    AppException? error,
+    AppError? error,
     LiveRoomDetailModel? roomInfo,
     UserCardModel? anchorInfo,
     LiveAnchorInfoModel? liveAnchorInfo,

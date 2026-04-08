@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
 import 'package:culcul/features/dynamic/dynamic.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -86,13 +87,31 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
       ),
       failure: (error) => state.copyWith(isLoading: false, error: error),
     );
+    FeatureFlowPerfLogger.log(
+      chain: 'dynamic.article_detail',
+      stage: 'state_commit',
+      fields: <String, Object?>{
+        'hasDetail': state.detail != null,
+        'hasError': state.error != null,
+      },
+    );
   }
 
   Future<void> refreshAll() async {
+    final firstInteractiveStopwatch = Stopwatch()..start();
     await loadDetail();
     if (state.commentsEnabled) {
       await loadComments(refresh: true);
     }
+    FeatureFlowPerfLogger.log(
+      chain: 'dynamic.article_detail',
+      stage: 'first_interactive',
+      fields: <String, Object?>{
+        'ms': firstInteractiveStopwatch.elapsedMilliseconds,
+        'commentsEnabled': state.commentsEnabled,
+        'commentCount': state.comments.length,
+      },
+    );
   }
 
   Future<void> loadComments({bool refresh = false}) async {

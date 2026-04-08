@@ -5,6 +5,27 @@ import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 
+class DynamicFeedQuery {
+  final String? type;
+  final String? offset;
+
+  const DynamicFeedQuery({this.type, this.offset});
+}
+
+class SpaceDynamicFeedQuery {
+  final int hostMid;
+  final String? offset;
+
+  const SpaceDynamicFeedQuery({required this.hostMid, this.offset});
+}
+
+class TopicDynamicFeedQuery {
+  final int topicId;
+  final String? offset;
+
+  const TopicDynamicFeedQuery({required this.topicId, this.offset});
+}
+
 abstract class DynamicRepository {
   Future<Result<CommentResponse, AppError>> getComments(
     DynamicItem post, {
@@ -43,17 +64,11 @@ abstract class DynamicRepository {
     required bool isLiked,
   });
 
-  Future<Result<DynamicData, AppError>> getFeed({String? type, String? offset});
+  Future<Result<DynamicData, AppError>> getFeed(DynamicFeedQuery query);
 
-  Future<Result<DynamicData, AppError>> getSpaceDynamicFeed({
-    required int hostMid,
-    String? offset,
-  });
+  Future<Result<DynamicData, AppError>> getSpaceDynamicFeed(SpaceDynamicFeedQuery query);
 
-  Future<Result<DynamicData, AppError>> getTopicFeed({
-    required int topicId,
-    String? offset,
-  });
+  Future<Result<DynamicData, AppError>> getTopicFeed(TopicDynamicFeedQuery query);
 
   Future<Result<DynamicItem, AppError>> getDetail(String id);
 

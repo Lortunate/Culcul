@@ -2,17 +2,20 @@ import 'dart:ui';
 
 import 'package:culcul/app/theme/app_theme.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
+import 'package:culcul/features/video/presentation/hooks/use_listen_audio_mode.dart';
 import 'package:culcul/features/video/presentation/view_models/playback_snapshot_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/listen_settings_sheet.dart';
-import 'package:culcul/features/video/presentation/hooks/use_listen_audio_mode.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/player_theme.dart';
 import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+part 'video_listen_page.widgets.dart';
+part 'video_listen_page.controls.dart';
 
 class VideoListenPage extends HookConsumerWidget {
   final String bvid;
@@ -95,212 +98,6 @@ class VideoListenPage extends HookConsumerWidget {
               builder: (_) => const ListenSettingsSheet(isBottomSheet: true),
             );
           },
-        ),
-      ],
-    );
-  }
-}
-
-class _Background extends StatelessWidget {
-  final String imageUrl;
-
-  const _Background({required this.imageUrl});
-
-  @override
-  Widget build(BuildContext context) {
-    final overlayColor = context.semanticColors.overlayBackground;
-
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        AppNetworkImage(url: imageUrl, fit: BoxFit.cover),
-        RepaintBoundary(
-          child: IgnorePointer(
-            child: ImageFiltered(
-              imageFilter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-              child: AppNetworkImage(url: imageUrl, fit: BoxFit.cover, useShimmer: false),
-            ),
-          ),
-        ),
-        ColoredBox(color: overlayColor),
-      ],
-    );
-  }
-}
-
-class _CoverArt extends StatelessWidget {
-  final String imageUrl;
-
-  const _CoverArt({required this.imageUrl});
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Container(
-      width: 260,
-      height: 260,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(
-            color: colorScheme.shadow.withValues(alpha: 0.3),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
-        border: Border.all(
-          color: colorScheme.onPrimary.withValues(alpha: 0.12),
-          width: 4,
-        ),
-      ),
-      child: ClipOval(
-        child: AppNetworkImage(url: imageUrl, fit: BoxFit.cover),
-      ),
-    );
-  }
-}
-
-class _TrackInfo extends StatelessWidget {
-  final String title;
-  final String author;
-
-  const _TrackInfo({required this.title, required this.author});
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Column(
-      children: [
-        Text(
-          title,
-          textAlign: TextAlign.center,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            color: colorScheme.onPrimary,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 12),
-        Text(
-          author,
-          style: TextStyle(
-            color: colorScheme.onPrimary.withValues(alpha: 0.7),
-            fontSize: 15,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ProgressBar extends HookConsumerWidget {
-  const _ProgressBar();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final position = ref.watch(playbackPositionProvider);
-    final duration = ref.watch(playbackDurationProvider);
-    final playerController = ref.read(playerControllerProvider.notifier);
-    final colorScheme = Theme.of(context).colorScheme;
-    final draggingValue = useState<double?>(null);
-
-    final maxDuration = duration.inMilliseconds.toDouble();
-    final validMax = maxDuration > 0 ? maxDuration : 1.0;
-    final currentValue = (draggingValue.value ?? position.inMilliseconds.toDouble())
-        .clamp(0.0, validMax);
-
-    final textStyle = TextStyle(
-      color: colorScheme.onPrimary.withValues(alpha: 0.5),
-      fontSize: 12,
-    );
-
-    return Column(
-      children: [
-        SliderTheme(
-          data: PlayerTheme.progressSliderTheme(
-            context,
-          ).copyWith(thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6)),
-          child: Slider(
-            value: currentValue,
-            max: validMax,
-            onChanged: (value) => draggingValue.value = value,
-            onChangeEnd: (value) {
-              draggingValue.value = null;
-              playerController.seek(Duration(milliseconds: value.toInt()));
-            },
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(position.formatDuration, style: textStyle),
-              Text(duration.formatDuration, style: textStyle),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _PlaybackControls extends ConsumerWidget {
-  const _PlaybackControls();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isPlaying = ref.watch(playerControllerProvider.select((s) => s.isPlaying));
-    final position = ref.watch(playbackPositionProvider);
-    final duration = ref.watch(playbackDurationProvider);
-    final playerController = ref.read(playerControllerProvider.notifier);
-    final colorScheme = Theme.of(context).colorScheme;
-    final onPrimary = colorScheme.onPrimary;
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.repeat_rounded, color: onPrimary.withValues(alpha: 0.5)),
-        ),
-        IconButton(
-          onPressed: () {
-            final newPos = position - const Duration(seconds: 10);
-            playerController.seek(newPos < Duration.zero ? Duration.zero : newPos);
-          },
-          icon: Icon(Icons.replay_10_rounded, color: onPrimary, size: 28),
-        ),
-        Container(
-          width: 72,
-          height: 72,
-          decoration: BoxDecoration(color: colorScheme.primary, shape: BoxShape.circle),
-          child: IconButton(
-            onPressed: playerController.playOrPause,
-            icon: Icon(
-              isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-              color: onPrimary,
-              size: 36,
-            ),
-          ),
-        ),
-        IconButton(
-          onPressed: () {
-            final newPos = position + const Duration(seconds: 10);
-            playerController.seek(newPos > duration ? duration : newPos);
-          },
-          icon: Icon(Icons.forward_10_rounded, color: onPrimary, size: 28),
-        ),
-        IconButton(
-          onPressed: () {},
-          icon: Icon(
-            Icons.playlist_play_rounded,
-            color: onPrimary.withValues(alpha: 0.5),
-          ),
         ),
       ],
     );

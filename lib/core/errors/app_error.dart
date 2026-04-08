@@ -8,18 +8,7 @@ sealed class AppError {
 
   const AppError(this.message, {this.code, this.cause});
 
-  AppException toException() {
-    return switch (this) {
-      NetworkAppError _ => NetworkException(message, code: code, cause: cause),
-      ServerAppError _ => ServerException(message, code: code, cause: cause),
-      AuthAppError _ => AuthException(message, code: code, cause: cause),
-      DataAppError _ => DataException(message, code: code, cause: cause),
-      CancelAppError _ => CancelException(message, code: code, cause: cause),
-      UnknownAppError _ => UnknownException(message, code: code, cause: cause),
-    };
-  }
-
-  static AppError fromException(AppException exception) {
+  static AppError _fromException(AppException exception) {
     if (exception is NetworkException) {
       return NetworkAppError(
         exception.message,
@@ -64,12 +53,40 @@ sealed class AppError {
 
   static AppError fromObject(Object error) {
     if (error is AppException) {
-      return fromException(error);
+      return _fromException(error);
     }
     if (error is DioException) {
-      return fromException(dioExceptionToAppException(error));
+      return _fromDioException(error);
     }
-    return UnknownAppError('Unexpected error occurred: $error', cause: error);
+    return UnknownAppError(error.toString(), cause: error);
+  }
+
+  static AppError _fromDioException(DioException error) {
+    return switch (error.type) {
+      DioExceptionType.connectionTimeout ||
+      DioExceptionType.sendTimeout ||
+      DioExceptionType.receiveTimeout ||
+      DioExceptionType.connectionError => NetworkAppError(
+        'Network error: ${error.message}',
+        cause: error,
+      ),
+      DioExceptionType.badResponse => _fromBadResponse(error),
+      DioExceptionType.cancel => CancelAppError('Request cancelled', cause: error),
+      DioExceptionType.badCertificate => NetworkAppError('Bad certificate', cause: error),
+      DioExceptionType.unknown => UnknownAppError(
+        'Unknown error: ${error.message}',
+        cause: error,
+      ),
+    };
+  }
+
+  static AppError _fromBadResponse(DioException error) {
+    final statusCode = error.response?.statusCode;
+    final message = error.response?.statusMessage ?? 'Server error';
+    if (statusCode == 401 || statusCode == 403) {
+      return AuthAppError(message, code: statusCode, cause: error);
+    }
+    return ServerAppError(message, code: statusCode, cause: error);
   }
 
   static AppError network(String message, {int? code, Object? cause}) {

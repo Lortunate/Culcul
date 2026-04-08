@@ -38,9 +38,10 @@ class AuthRepositoryImpl implements domain.AuthRepository {
   AuthRepositoryImpl(this._api, this._box) : _executor = const RequestExecutor();
 
   @override
-  Future<void> checkAndRefreshCookie() async {
+  Future<Result<void, AppError>> checkAndRefreshCookie() async {
     // Basic implementation or placeholder for cookie refresh logic
     // This method is required by TokenInterceptor
+    return const Success(null);
   }
 
   @override

@@ -1,1 +1,1 @@
-export 'package:culcul/features/dynamic/data/dtos/emote_response.dart';
+export '../../data/dtos/emote_response.dart';

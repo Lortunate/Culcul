@@ -1,5 +1,5 @@
 import 'package:culcul/core/constants/app_dimens.dart';
-import 'package:culcul/core/errors/exceptions.dart';
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/presentation/widgets/relation_user_item.dart';
 import 'package:culcul/core/contracts/relation_user_contract.dart';
@@ -37,7 +37,7 @@ class RelationUserList extends StatelessWidget {
       emptyText: emptyText.isEmpty ? t.common.no_data : emptyText,
       skeleton: const Center(child: CircularProgressIndicator()), // TODO: Better skeleton
       errorBuilder: (context, error, stack) {
-        if (error is AppException && error.code == 22115) {
+        if (error is AppError && error.code == 22115) {
           return const PrivacyErrorWidget();
         }
         return AppErrorWidget(error: error, stackTrace: stack, onRetry: onRefresh);

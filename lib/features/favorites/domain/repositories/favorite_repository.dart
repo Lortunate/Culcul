@@ -3,22 +3,41 @@ import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 
+class FavoriteFolderListQuery {
+  final int upMid;
+  final int page;
+
+  const FavoriteFolderListQuery({required this.upMid, required this.page});
+}
+
+class FavoriteFolderResourcesQuery {
+  final int mediaId;
+  final int page;
+  final String? keyword;
+  final String? order;
+  final int? type;
+  final int? tid;
+
+  const FavoriteFolderResourcesQuery({
+    required this.mediaId,
+    required this.page,
+    this.keyword,
+    this.order,
+    this.type,
+    this.tid,
+  });
+}
+
 abstract class FavoriteRepository {
   Future<Result<FavoriteFolderPage, AppError>> getCreatedFolders({required int upMid});
 
-  Future<Result<FavoriteFolderPage, AppError>> getCollectedFolders({
-    required int upMid,
-    required int page,
-  });
+  Future<Result<FavoriteFolderPage, AppError>> getCollectedFolders(
+    FavoriteFolderListQuery query,
+  );
 
-  Future<Result<FavoriteResourcePage, AppError>> getFolderResources({
-    required int mediaId,
-    required int page,
-    String? keyword,
-    String? order,
-    int? type,
-    int? tid,
-  });
+  Future<Result<FavoriteResourcePage, AppError>> getFolderResources(
+    FavoriteFolderResourcesQuery query,
+  );
 
   Future<Result<FavoriteFolder, AppError>> createFolder({
     required String title,

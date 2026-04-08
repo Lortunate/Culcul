@@ -1,5 +1,4 @@
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 
@@ -8,36 +7,19 @@ class ErrorHandler {
 
   static String getErrorMessage(BuildContext context, dynamic error) {
     final t = Translations.of(context);
+    final rawError = error is Object ? error : StateError('Unknown null error');
+    final appError = rawError is AppError ? rawError : AppError.fromObject(rawError);
 
-    if (error is AppError) {
-      return switch (error) {
-        NetworkAppError _ => t.error.network,
-        AuthAppError _ => t.error.auth_failed,
-        ServerAppError _ =>
-          error.code != null
-              ? t.error.bad_response(code: error.code!)
-              : t.error.server_error,
-        CancelAppError _ => t.error.cancel,
-        DataAppError _ || UnknownAppError _ => error.message,
-      };
-    }
-
-    if (error is NetworkException) {
-      return t.error.network;
-    } else if (error is AuthException) {
-      return t.error.auth_failed;
-    } else if (error is ServerException) {
-      if (error.code != null) {
-        return t.error.bad_response(code: error.code!);
-      }
-      return t.error.server_error;
-    } else if (error is CancelException) {
-      return t.error.cancel;
-    } else if (error is AppException) {
-      return error.message;
-    } else {
-      return error.toString();
-    }
+    return switch (appError) {
+      NetworkAppError _ => t.error.network,
+      AuthAppError _ => t.error.auth_failed,
+      ServerAppError _ =>
+        appError.code != null
+            ? t.error.bad_response(code: appError.code!)
+            : t.error.server_error,
+      CancelAppError _ => t.error.cancel,
+      DataAppError _ || UnknownAppError _ => appError.message,
+    };
   }
 
   static String getShortErrorMessage(

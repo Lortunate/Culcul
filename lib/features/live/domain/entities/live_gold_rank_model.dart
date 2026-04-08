@@ -1,1 +1,1 @@
-export 'package:culcul/features/live/data/dtos/live_gold_rank_model.dart';
+export '../../data/dtos/live_gold_rank_model.dart';

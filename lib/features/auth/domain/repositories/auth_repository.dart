@@ -9,7 +9,7 @@ import 'package:culcul/features/auth/domain/entities/auth_qr_poll_result.dart';
 abstract class AuthRepository {
   UserEntity? getCachedUser();
 
-  Future<void> checkAndRefreshCookie();
+  Future<Result<void, AppError>> checkAndRefreshCookie();
 
   Future<Result<List<CountryCode>, AppError>> getCountryList();
 
