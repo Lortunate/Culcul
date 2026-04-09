@@ -1,4 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/core/responsive/responsive.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
@@ -34,51 +35,54 @@ class ProfileStats extends ConsumerWidget {
     );
 
     return SliverToBoxAdapter(
-      child: Container(
-        decoration: BoxDecoration(
-          color: colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
-        ),
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _StatItem(
-              count: postsCount,
-              label: t.profile.stats.posts,
-              onTap: () {
-                // TODO: Dynamic page
-              },
-            ),
-            Container(
-              height: 14,
-              width: 1,
-              color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-            ),
-            _StatItem(
-              count: followingCount,
-              label: t.profile.stats.following,
-              onTap: () {
-                if (vmid != 0) {
-                  FollowingsRoute(vmid: vmid).push(context);
-                }
-              },
-            ),
-            Container(
-              height: 14,
-              width: 1,
-              color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-            ),
-            _StatItem(
-              count: followersCount,
-              label: t.profile.stats.followers,
-              onTap: () {
-                if (vmid != 0) {
-                  FollowersRoute(vmid: vmid).push(context);
-                }
-              },
-            ),
-          ],
+      child: ResponsiveContentContainer(
+        maxWidth: AppBreakpoints.pageMaxWidth,
+        child: Container(
+          decoration: BoxDecoration(
+            color: colorScheme.surface,
+            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
+          ),
+          padding: EdgeInsets.fromLTRB(16, 0, 16, context.isDesktopLayout ? 24 : 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _StatItem(
+                count: postsCount,
+                label: t.profile.stats.posts,
+                onTap: () {
+                  // TODO: Dynamic page
+                },
+              ),
+              Container(
+                height: 14,
+                width: 1,
+                color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+              ),
+              _StatItem(
+                count: followingCount,
+                label: t.profile.stats.following,
+                onTap: () {
+                  if (vmid != 0) {
+                    FollowingsRoute(vmid: vmid).push(context);
+                  }
+                },
+              ),
+              Container(
+                height: 14,
+                width: 1,
+                color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+              ),
+              _StatItem(
+                count: followersCount,
+                label: t.profile.stats.followers,
+                onTap: () {
+                  if (vmid != 0) {
+                    FollowersRoute(vmid: vmid).push(context);
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

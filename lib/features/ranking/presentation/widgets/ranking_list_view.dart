@@ -4,6 +4,7 @@ import 'package:culcul/features/ranking/domain/entities/ranking_video.dart';
 import 'package:culcul/features/ranking/presentation/view_models/category_ranking_view_model.dart';
 import 'package:culcul/features/ranking/presentation/widgets/ranking_item_card.dart';
 import 'package:culcul/features/ranking/presentation/widgets/ranking_skeleton_item.dart';
+import 'package:culcul/core/responsive/responsive.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/app_empty_state_widget.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';
@@ -32,6 +33,18 @@ class _RankingListViewState extends ConsumerState<RankingListView>
     final t = Translations.of(context);
     final provider = categoryRankingListProvider(rid: widget.category.rid);
     final rankingListAsync = ref.watch(provider);
+    final content = switch (rankingListAsync) {
+      AsyncData(:final value) when value.isEmpty => AppEmptyStateWidget(
+        message: t.common.no_content,
+      ),
+      AsyncData(:final value) => _RankingItemsList(items: value),
+      AsyncError(:final error, :final stackTrace) => AppErrorWidget(
+        error: error,
+        stackTrace: stackTrace,
+        onRetry: () => ref.invalidate(provider),
+      ),
+      _ => const _RankingSkeletonList(),
+    };
 
     return EasyRefresh(
       header: const AppRefreshHeader(),
@@ -39,18 +52,10 @@ class _RankingListViewState extends ConsumerState<RankingListView>
         ref.invalidate(provider);
         return IndicatorResult.success;
       },
-      child: switch (rankingListAsync) {
-        AsyncData(:final value) when value.isEmpty => AppEmptyStateWidget(
-          message: t.common.no_content,
-        ),
-        AsyncData(:final value) => _RankingItemsList(items: value),
-        AsyncError(:final error, :final stackTrace) => AppErrorWidget(
-          error: error,
-          stackTrace: stackTrace,
-          onRetry: () => ref.invalidate(provider),
-        ),
-        _ => const _RankingSkeletonList(),
-      },
+      child: ResponsiveContentContainer(
+        maxWidth: AppBreakpoints.pageMaxWidth,
+        child: content,
+      ),
     );
   }
 }
@@ -62,10 +67,11 @@ class _RankingItemsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = context.isDesktopLayout;
     return ListView.separated(
-      padding: const EdgeInsets.all(4),
+      padding: EdgeInsets.all(isDesktop ? 8 : 4),
       itemCount: items.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 2),
+      separatorBuilder: (_, _) => SizedBox(height: isDesktop ? 6 : 2),
       itemBuilder: (context, index) =>
           RankingItemCard(video: items[index], rank: index + 1),
     );
@@ -77,12 +83,17 @@ class _RankingSkeletonList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = context.isDesktopLayout;
     return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+      padding: EdgeInsets.fromLTRB(
+        isDesktop ? 24 : 20,
+        isDesktop ? 16 : 12,
+        isDesktop ? 24 : 20,
+        isDesktop ? 16 : 12,
+      ),
       itemCount: 10,
-      separatorBuilder: (_, _) => const SizedBox(height: 18),
+      separatorBuilder: (_, _) => SizedBox(height: isDesktop ? 20 : 18),
       itemBuilder: (_, _) => const RankingSkeletonItem(),
     );
   }
 }
-

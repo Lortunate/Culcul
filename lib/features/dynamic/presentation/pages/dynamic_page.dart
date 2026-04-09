@@ -3,6 +3,7 @@ import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/dynamic/presentation/pages/publish_dynamic_page.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_list_view.dart';
+import 'package:culcul/core/responsive/responsive.dart';
 import 'package:culcul/ui/widgets/app_tab_bar.dart';
 import 'package:culcul/ui/widgets/guest_view.dart';
 import 'package:flutter/material.dart';
@@ -68,8 +69,13 @@ class DynamicPage extends HookConsumerWidget {
                 DynamicListView(type: 'article'),
               ],
             )
-          : GuestView(title: t.profile.not_logged_in, message: t.profile.login_hint),
+          : ResponsiveContentContainer(
+              maxWidth: 760,
+              child: GuestView(
+                title: t.profile.not_logged_in,
+                message: t.profile.login_hint,
+              ),
+            ),
     );
   }
 }
-

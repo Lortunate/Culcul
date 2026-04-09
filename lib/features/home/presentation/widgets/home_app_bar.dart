@@ -1,4 +1,5 @@
 import 'package:culcul/features/auth/auth.dart';
+import 'package:culcul/core/responsive/responsive.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/app_search_bar.dart';
@@ -32,6 +33,7 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
+    final isDesktop = context.isDesktopLayout;
     final authState = ref.watch(
       authProvider.select(
         (state) => (isLoggedIn: state.isLoggedIn, avatarUrl: state.user?.avatarUrl),
@@ -42,11 +44,11 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
       backgroundColor: colorScheme.surface,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
-      titleSpacing: 12,
+      titleSpacing: isDesktop ? 16 : 12,
       centerTitle: false,
-      leadingWidth: 44,
+      leadingWidth: isDesktop ? 52 : 44,
       leading: Padding(
-        padding: const EdgeInsets.only(left: 12),
+        padding: EdgeInsets.only(left: isDesktop ? 16 : 12),
         child: Center(
           child: AppAvatar(
             url: authState.avatarUrl,
@@ -59,7 +61,16 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
           ),
         ),
       ),
-      title: AppSearchBar(onTap: onSearchTap, hintText: hintText ?? t.home.search_hint),
+      title: Align(
+        alignment: Alignment.centerLeft,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: isDesktop ? 560 : double.infinity),
+          child: AppSearchBar(
+            onTap: onSearchTap,
+            hintText: hintText ?? t.home.search_hint,
+          ),
+        ),
+      ),
       actions: [
         _AppBarButton(
           icon: Icons.mail_outline_rounded,
@@ -69,7 +80,7 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
             onAuthenticated: onMessageTap,
           ),
         ),
-        const SizedBox(width: 8),
+        SizedBox(width: isDesktop ? 12 : 8),
       ],
       bottom: HomeTabBar(controller: tabController, tabs: tabs, onTap: onTabTap),
     );
@@ -115,4 +126,3 @@ class _AppBarButton extends StatelessWidget {
     );
   }
 }
-

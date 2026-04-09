@@ -1,5 +1,6 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/auth/auth.dart';
+import 'package:culcul/core/responsive/responsive.dart';
 import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -14,48 +15,52 @@ class ProfileMenu extends ConsumerWidget {
     final t = Translations.of(context);
 
     return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: context.pageHorizontalPadding),
       sliver: SliverList(
         delegate: SliverChildListDelegate([
-          Container(
-            decoration: BoxDecoration(
-              color: colorScheme.surface,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: _MenuItem(
-              icon: Icons.logout_rounded,
-              label: t.auth.logout,
-              textColor: colorScheme.error,
-              iconColor: colorScheme.error,
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text(t.auth.logout),
-                    content: Text(t.profile.logout_confirm),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: Text(t.common.cancel),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                          ref.read(authProvider.notifier).logout();
-                        },
-                        child: Text(
-                          t.auth.logout,
-                          style: TextStyle(color: colorScheme.error),
+          ResponsiveContentContainer(
+            maxWidth: AppBreakpoints.pageMaxWidth,
+            horizontalPadding: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: colorScheme.surface,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: _MenuItem(
+                icon: Icons.logout_rounded,
+                label: t.auth.logout,
+                textColor: colorScheme.error,
+                iconColor: colorScheme.error,
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(t.auth.logout),
+                      content: Text(t.profile.logout_confirm),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: Text(t.common.cancel),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            ref.read(authProvider.notifier).logout();
+                          },
+                          child: Text(
+                            t.auth.logout,
+                            style: TextStyle(color: colorScheme.error),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: context.isDesktopLayout ? 40 : 32),
         ]),
       ),
     );
@@ -109,4 +114,3 @@ class _MenuItem extends StatelessWidget {
     );
   }
 }
-

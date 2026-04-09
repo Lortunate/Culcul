@@ -8,8 +8,16 @@ import 'package:flutter/material.dart';
 class PopularVideoCard extends StatelessWidget {
   final HomeVideo video;
   final VoidCallback? onTap;
+  final double cardHeight;
+  final double thumbnailWidth;
 
-  const PopularVideoCard({super.key, required this.video, this.onTap});
+  const PopularVideoCard({
+    super.key,
+    required this.video,
+    this.onTap,
+    this.cardHeight = 100,
+    this.thumbnailWidth = 160,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +36,8 @@ class PopularVideoCard extends StatelessWidget {
           builder: (context) => VideoMoreBottomSheet.homeVideo(video: video),
         );
       },
-      height: 100,
-      thumbnailWidth: 160,
+      height: cardHeight,
+      thumbnailWidth: thumbnailWidth,
       coverUrl: video.pic,
       title: video.title,
       duration: video.duration,
