@@ -1,7 +1,18 @@
-part of 'notification_repository_impl.dart';
+import 'dart:convert';
 
-class _NotificationMessageSupport {
-  const _NotificationMessageSupport(this.repo);
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
+import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
+import 'package:culcul/features/notification/data/local/notification_local_database.dart';
+import 'package:culcul/features/notification/data/notification_mapper.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.message_support_helpers.dart';
+import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
+import 'package:culcul/features/notification/domain/entities/private_message.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
+
+class NotificationMessageSupport {
+  const NotificationMessageSupport(this.repo);
 
   final NotificationRepositoryImpl repo;
 
@@ -13,13 +24,13 @@ class _NotificationMessageSupport {
     switch (type) {
       case NotificationFeedType.reply:
         return repo.requestApiResult(
-          () => repo._api.getReplyList(id: id, replyTime: time),
+          () => repo.api.getReplyList(id: id, replyTime: time),
         );
       case NotificationFeedType.at:
-        return repo.requestApiResult(() => repo._api.getAtList(id: id, atTime: time));
+        return repo.requestApiResult(() => repo.api.getAtList(id: id, atTime: time));
       case NotificationFeedType.like:
         final likeResult = await repo.requestApiResult(
-          () => repo._api.getLikeList(id: id, likeTime: time),
+          () => repo.api.getLikeList(id: id, likeTime: time),
         );
         return likeResult.map(
           (likeResponse) => ReplyResponse(
@@ -36,42 +47,42 @@ class _NotificationMessageSupport {
   Future<Result<List<SystemNotificationItem>, AppError>>
   fetchSystemNotifications() async {
     final sessionResult = await repo.requestApiResult(
-      () => repo._api.getPrivateSessions(
+      () => repo.api.getPrivateSessions(
         sessionType: PrivateSessionType.system.value,
-        size: NotificationRepositoryImpl._pageSize,
+        size: NotificationRepositoryImpl.pageSize,
       ),
     );
     if (sessionResult.errorOrNull case final error?) {
       return Failure(error);
     }
     final sessionRes = sessionResult.dataOrNull!;
-    final talkerId = _resolveSystemTalkerId(sessionRes);
+    final talkerId = resolveSystemTalkerId(sessionRes);
     if (talkerId == null) {
       return const Success(<SystemNotificationItem>[]);
     }
 
     final msgsResult = await repo.requestApiResult(
-      () => repo._api.getPrivateMessages(
+      () => repo.api.getPrivateMessages(
         talkerId: talkerId,
         sessionType: PrivateSessionType.user.value,
-        size: NotificationRepositoryImpl._pageSize,
+        size: NotificationRepositoryImpl.pageSize,
       ),
     );
     return msgsResult.map(
       (msgsRes) =>
           msgsRes.messages?.map((msg) {
             final contentMap = msg.contentMap;
-            final nestedContentMap = _toJsonMap(contentMap?['content']);
+            final nestedContentMap = toJsonMap(contentMap?['content']);
             return SystemNotificationItem(
               id: msg.msgSeqno,
-              title: _firstNonEmptyString([
+              title: firstNonEmptyString([
                 contentMap?['title'],
                 nestedContentMap?['title'],
               ]),
-              text: _extractSystemNoticeText(contentMap, nestedContentMap),
+              text: extractSystemNoticeText(contentMap, nestedContentMap),
               time: msg.timestamp,
-              uri: _extractSystemNoticeUri(contentMap, nestedContentMap),
-              jumpText: _firstNonEmptyString([
+              uri: extractSystemNoticeUri(contentMap, nestedContentMap),
+              jumpText: firstNonEmptyString([
                 contentMap?['jump_text'],
                 contentMap?['jumpText'],
                 nestedContentMap?['jump_text'],

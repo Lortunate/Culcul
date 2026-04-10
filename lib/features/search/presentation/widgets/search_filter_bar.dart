@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/features/search/domain/entities/search_query.dart';
 
 class SearchFilterBar extends StatelessWidget {
-  final String order;
-  final int duration;
-  final ValueChanged<String> onOrderChanged;
-  final ValueChanged<int> onDurationChanged;
+  final SearchOrder order;
+  final SearchDuration duration;
+  final ValueChanged<SearchOrder> onOrderChanged;
+  final ValueChanged<SearchDuration> onDurationChanged;
   final bool showDuration;
 
   const SearchFilterBar({
@@ -42,28 +43,28 @@ class SearchFilterBar extends StatelessWidget {
               children: [
                 _FilterChip(
                   label: t.search.filter.sort_default,
-                  selected: order == 'totalrank',
-                  onSelected: (_) => onOrderChanged('totalrank'),
+                  selected: order == SearchOrder.totalrank,
+                  onSelected: (_) => onOrderChanged(SearchOrder.totalrank),
                 ),
                 _FilterChip(
                   label: t.search.filter.sort_newest,
-                  selected: order == 'pubdate',
-                  onSelected: (_) => onOrderChanged('pubdate'),
+                  selected: order == SearchOrder.pubdate,
+                  onSelected: (_) => onOrderChanged(SearchOrder.pubdate),
                 ),
                 _FilterChip(
                   label: t.search.filter.sort_click,
-                  selected: order == 'click',
-                  onSelected: (_) => onOrderChanged('click'),
+                  selected: order == SearchOrder.click,
+                  onSelected: (_) => onOrderChanged(SearchOrder.click),
                 ),
                 _FilterChip(
                   label: t.search.filter.sort_danmaku,
-                  selected: order == 'dm',
-                  onSelected: (_) => onOrderChanged('dm'),
+                  selected: order == SearchOrder.dm,
+                  onSelected: (_) => onOrderChanged(SearchOrder.dm),
                 ),
                 _FilterChip(
                   label: t.search.filter.sort_favorite,
-                  selected: order == 'stow',
-                  onSelected: (_) => onOrderChanged('stow'),
+                  selected: order == SearchOrder.stow,
+                  onSelected: (_) => onOrderChanged(SearchOrder.stow),
                 ),
               ],
             ),
@@ -76,28 +77,28 @@ class SearchFilterBar extends StatelessWidget {
                 children: [
                   _FilterChip(
                     label: t.search.filter.duration_all,
-                    selected: duration == 0,
-                    onSelected: (_) => onDurationChanged(0),
+                    selected: duration == SearchDuration.all,
+                    onSelected: (_) => onDurationChanged(SearchDuration.all),
                   ),
                   _FilterChip(
                     label: t.search.filter.duration_short,
-                    selected: duration == 1,
-                    onSelected: (_) => onDurationChanged(1),
+                    selected: duration == SearchDuration.short,
+                    onSelected: (_) => onDurationChanged(SearchDuration.short),
                   ),
                   _FilterChip(
                     label: t.search.filter.duration_medium,
-                    selected: duration == 2,
-                    onSelected: (_) => onDurationChanged(2),
+                    selected: duration == SearchDuration.medium,
+                    onSelected: (_) => onDurationChanged(SearchDuration.medium),
                   ),
                   _FilterChip(
                     label: t.search.filter.duration_long,
-                    selected: duration == 3,
-                    onSelected: (_) => onDurationChanged(3),
+                    selected: duration == SearchDuration.long,
+                    onSelected: (_) => onDurationChanged(SearchDuration.long),
                   ),
                   _FilterChip(
                     label: t.search.filter.duration_extra_long,
-                    selected: duration == 4,
-                    onSelected: (_) => onDurationChanged(4),
+                    selected: duration == SearchDuration.extraLong,
+                    onSelected: (_) => onDurationChanged(SearchDuration.extraLong),
                   ),
                 ],
               ),

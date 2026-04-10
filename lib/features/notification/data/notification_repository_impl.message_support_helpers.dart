@@ -1,7 +1,11 @@
-part of 'notification_repository_impl.dart';
+import 'dart:convert';
 
-extension _NotificationMessageSupportHelpers on _NotificationMessageSupport {
-  int? _resolveSystemTalkerId(PrivateMessageSessionResponse response) {
+import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.message_support.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
+
+extension NotificationMessageSupportHelpers on NotificationMessageSupport {
+  int? resolveSystemTalkerId(PrivateMessageSessionResponse response) {
     final systemMsgMap = response.systemMsg;
     if (systemMsgMap != null && systemMsgMap.isNotEmpty) {
       final preferred =
@@ -26,13 +30,13 @@ extension _NotificationMessageSupportHelpers on _NotificationMessageSupport {
     return null;
   }
 
-  String? _extractSystemNoticeText(
+  String? extractSystemNoticeText(
     Map<String, dynamic>? contentMap,
     Map<String, dynamic>? nestedContentMap,
   ) {
-    final contentString = _firstNonEmptyString([contentMap?['content']]);
-    final decodedContent = _toJsonMap(contentString);
-    return _firstNonEmptyString([
+    final contentString = firstNonEmptyString([contentMap?['content']]);
+    final decodedContent = toJsonMap(contentString);
+    return firstNonEmptyString([
       contentMap?['text'],
       contentMap?['desc'],
       contentMap?['message'],
@@ -44,13 +48,13 @@ extension _NotificationMessageSupportHelpers on _NotificationMessageSupport {
     ]);
   }
 
-  String? _extractSystemNoticeUri(
+  String? extractSystemNoticeUri(
     Map<String, dynamic>? contentMap,
     Map<String, dynamic>? nestedContentMap,
   ) {
-    final contentString = _firstNonEmptyString([contentMap?['content']]);
-    final decodedContent = _toJsonMap(contentString);
-    return _firstNonEmptyString([
+    final contentString = firstNonEmptyString([contentMap?['content']]);
+    final decodedContent = toJsonMap(contentString);
+    return firstNonEmptyString([
       contentMap?['url'],
       contentMap?['uri'],
       contentMap?['jump_uri'],
@@ -66,7 +70,7 @@ extension _NotificationMessageSupportHelpers on _NotificationMessageSupport {
     ]);
   }
 
-  String? _firstNonEmptyString(List<dynamic> values) {
+  String? firstNonEmptyString(List<dynamic> values) {
     for (final value in values) {
       if (value is String) {
         final trimmed = value.trim();
@@ -78,7 +82,7 @@ extension _NotificationMessageSupportHelpers on _NotificationMessageSupport {
     return null;
   }
 
-  Map<String, dynamic>? _toJsonMap(dynamic raw) {
+  Map<String, dynamic>? toJsonMap(dynamic raw) {
     if (raw is Map<String, dynamic>) return raw;
     if (raw is Map) {
       return raw.map((key, value) => MapEntry(key.toString(), value));

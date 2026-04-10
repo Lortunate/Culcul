@@ -1,19 +1,28 @@
-part of 'notification_repository_impl.dart';
+import 'dart:convert';
 
-mixin _NotificationMessageSendHelpersMixin on Object {
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
+import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
+import 'package:culcul/features/notification/data/local/notification_local_database.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.message_support.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:drift/drift.dart';
+
+mixin NotificationMessageSendHelpersMixin on Object {
   abstract final NotificationRepositoryImpl repo;
-  abstract final _NotificationMessageSupport _support;
+  abstract final NotificationMessageSupport support;
 
-  Future<void> _markOutboxAndTempMessage({
+  Future<Result<void, AppError>> markOutboxAndTempMessage({
     required int ownerUid,
     required int localMsgSeqno,
     required String status,
     String? error,
     int? msgKey,
   }) async {
-    final now = repo._nowSeconds();
-    await repo._database.transaction(() async {
-      await (repo._database.update(repo._database.notificationOutbox)..where(
+    final now = repo.nowSeconds();
+    await repo.database.transaction(() async {
+      await (repo.database.update(repo.database.notificationOutbox)..where(
             (t) => t.ownerUid.equals(ownerUid) & t.localMsgSeqno.equals(localMsgSeqno),
           ))
           .write(
@@ -25,8 +34,8 @@ mixin _NotificationMessageSendHelpersMixin on Object {
             ),
           );
 
-      await (repo._database.update(
-            repo._database.notificationMessages,
+      await (repo.database.update(
+            repo.database.notificationMessages,
           )..where((t) => t.ownerUid.equals(ownerUid) & t.msgSeqno.equals(localMsgSeqno)))
           .write(
             NotificationMessagesCompanion(
@@ -36,6 +45,7 @@ mixin _NotificationMessageSendHelpersMixin on Object {
             ),
           );
     });
+    return const Success(null);
   }
 
   Future<void> upsertMessageDetail({
@@ -50,8 +60,8 @@ mixin _NotificationMessageSendHelpersMixin on Object {
     final contentRaw = message.content;
     final contentJson = contentRaw is String ? contentRaw : jsonEncode(contentRaw);
 
-    await repo._database
-        .into(repo._database.notificationMessages)
+    await repo.database
+        .into(repo.database.notificationMessages)
         .insertOnConflictUpdate(
           NotificationMessagesCompanion.insert(
             ownerUid: ownerUid,
@@ -82,7 +92,7 @@ mixin _NotificationMessageSendHelpersMixin on Object {
     required int talkerId,
     required PrivateSessionType sessionType,
   }) async {
-    final tempQuery = repo._database.select(repo._database.notificationMessages)
+    final tempQuery = repo.database.select(repo.database.notificationMessages)
       ..where(
         (t) =>
             t.ownerUid.equals(ownerUid) &
@@ -94,7 +104,7 @@ mixin _NotificationMessageSendHelpersMixin on Object {
     final temps = await tempQuery.get();
     if (temps.isEmpty) return;
 
-    final syncedQuery = repo._database.select(repo._database.notificationMessages)
+    final syncedQuery = repo.database.select(repo.database.notificationMessages)
       ..where(
         (t) =>
             t.ownerUid.equals(ownerUid) &
@@ -116,7 +126,7 @@ mixin _NotificationMessageSendHelpersMixin on Object {
             (item.timestamp - temp.timestamp).abs() <= 15,
       );
       if (matched) {
-        await (repo._database.delete(repo._database.notificationMessages)..where(
+        await (repo.database.delete(repo.database.notificationMessages)..where(
               (t) => t.ownerUid.equals(ownerUid) & t.msgSeqno.equals(temp.msgSeqno),
             ))
             .go();
@@ -132,12 +142,12 @@ mixin _NotificationMessageSendHelpersMixin on Object {
     required int now,
   }) async {
     for (final emoji in emojis) {
-      final canonicalKey = _support.canonicalEmojiKey(emoji.text);
+      final canonicalKey = support.canonicalEmojiKey(emoji.text);
       final url = emoji.url.trim();
       if (canonicalKey == null || url.isEmpty) continue;
 
-      await repo._database
-          .into(repo._database.notificationMessageEmojis)
+      await repo.database
+          .into(repo.database.notificationMessageEmojis)
           .insertOnConflictUpdate(
             NotificationMessageEmojisCompanion.insert(
               ownerUid: ownerUid,

@@ -1,13 +1,24 @@
-part of 'notification_repository_impl.dart';
+import 'dart:convert';
 
-class _NotificationLocalReadStore {
-  const _NotificationLocalReadStore(this.repo);
+import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
+import 'package:culcul/features/notification/data/notification_mapper.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.dart';
+import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
+import 'package:culcul/features/notification/domain/entities/notification_feed_cursor.dart';
+import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
+import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
+import 'package:culcul/features/notification/domain/entities/private_message.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:drift/drift.dart';
+
+class NotificationLocalReadStore {
+  const NotificationLocalReadStore(this.repo);
 
   final NotificationRepositoryImpl repo;
 
   Future<NotificationSummary?> getUnreadCountFromLocal({required int ownerUid}) async {
     final row =
-        await (repo._database.select(repo._database.notificationUnreadSummaries)
+        await (repo.database.select(repo.database.notificationUnreadSummaries)
               ..where((t) => t.ownerUid.equals(ownerUid))
               ..limit(1))
             .getSingleOrNull();
@@ -18,35 +29,12 @@ class _NotificationLocalReadStore {
     return dto;
   }
 
-  Future<List<SystemNotice>> listSystemNoticesFromLocal({required int ownerUid}) async {
-    final rows =
-        await (repo._database.select(repo._database.notificationFeedItems)
-              ..where(
-                (t) =>
-                    t.ownerUid.equals(ownerUid) &
-                    t.feedType.equals(NotificationFeedType.system.value),
-              )
-              ..orderBy([
-                (t) => OrderingTerm.desc(t.eventTime),
-                (t) => OrderingTerm.desc(t.eventId),
-              ]))
-            .get();
-
-    return rows
-        .map(
-          (row) => SystemNotificationItem.fromJson(
-            jsonDecode(row.itemJson) as Map<String, dynamic>,
-          ),
-        )
-        .toList();
-  }
-
   Future<List<PrivateSession>> pageSessionsFromLocal({
     required int ownerUid,
     required PrivateSessionType sessionType,
     int? endTs,
   }) async {
-    final query = repo._database.select(repo._database.notificationSessions)
+    final query = repo.database.select(repo.database.notificationSessions)
       ..where(
         (t) =>
             t.ownerUid.equals(ownerUid) &
@@ -56,7 +44,7 @@ class _NotificationLocalReadStore {
                 : t.sessionTs.isSmallerThanValue(endTs)),
       )
       ..orderBy([(t) => OrderingTerm.desc(t.sessionTs)])
-      ..limit(NotificationRepositoryImpl._pageSize);
+      ..limit(NotificationRepositoryImpl.pageSize);
     final rows = await query.get();
     return rows
         .map(
@@ -73,7 +61,7 @@ class _NotificationLocalReadStore {
     required PrivateSessionType sessionType,
     int? endSeqno,
   }) async {
-    final query = repo._database.select(repo._database.notificationMessages)
+    final query = repo.database.select(repo.database.notificationMessages)
       ..where((t) {
         final base =
             t.ownerUid.equals(ownerUid) &
@@ -86,9 +74,9 @@ class _NotificationLocalReadStore {
         (t) => OrderingTerm.desc(t.timestamp),
         (t) => OrderingTerm.desc(t.msgSeqno),
       ])
-      ..limit(NotificationRepositoryImpl._pageSize);
+      ..limit(NotificationRepositoryImpl.pageSize);
     final rows = await query.get();
-    return rows.map(repo._messageSendService.rowToPrivateMessage).toList();
+    return rows.map(repo.messageSendService.rowToPrivateMessage).toList();
   }
 
   Future<Map<String, String>> getMessageEmojiMapFromLocal({
@@ -97,7 +85,7 @@ class _NotificationLocalReadStore {
     required PrivateSessionType sessionType,
   }) async {
     final rows =
-        await (repo._database.select(repo._database.notificationMessageEmojis)
+        await (repo.database.select(repo.database.notificationMessageEmojis)
               ..where(
                 (t) =>
                     t.ownerUid.equals(ownerUid) &
@@ -109,7 +97,7 @@ class _NotificationLocalReadStore {
 
     final map = <String, String>{};
     for (final row in rows) {
-      repo._messageSendService.putEmojiVariants(
+      repo.messageSendService.putEmojiVariants(
         map: map,
         rawKey: row.emojiText,
         url: row.emojiUrl,
@@ -122,27 +110,26 @@ class _NotificationLocalReadStore {
   Future<List<NotificationEntry>> pageFeedFromLocal({
     required int ownerUid,
     required NotificationFeedType type,
-    int? cursorId,
-    int? cursorTime,
+    NotificationFeedCursor? cursor,
   }) async {
     if (type == NotificationFeedType.system) {
       return const <NotificationEntry>[];
     }
 
-    final query = repo._database.select(repo._database.notificationFeedItems)
+    final query = repo.database.select(repo.database.notificationFeedItems)
       ..where((t) {
         final base = t.ownerUid.equals(ownerUid) & t.feedType.equals(type.value);
-        if (cursorId == null || cursorTime == null) return base;
+        if (cursor == null) return base;
         return base &
-            (t.eventTime.isSmallerThanValue(cursorTime) |
-                (t.eventTime.equals(cursorTime) &
-                    t.eventId.isSmallerThanValue(cursorId)));
+            (t.eventTime.isSmallerThanValue(cursor.time) |
+                (t.eventTime.equals(cursor.time) &
+                    t.eventId.isSmallerThanValue(cursor.id)));
       })
       ..orderBy([
         (t) => OrderingTerm.desc(t.eventTime),
         (t) => OrderingTerm.desc(t.eventId),
       ])
-      ..limit(NotificationRepositoryImpl._pageSize);
+      ..limit(NotificationRepositoryImpl.pageSize);
     final rows = await query.get();
     return rows
         .map(

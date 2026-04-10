@@ -9,7 +9,7 @@ final topicSearchViewModelProvider = FutureProvider.autoDispose
 
       final data = await ref
           .read(searchRepositoryProvider)
-          .search(keyword: trimmed, searchType: 'topic');
+          .search(query: SearchQuery(keyword: trimmed, type: SearchType.topic));
       final page = data.dataOrNull;
       if (page == null) return const <SearchTopicEntry>[];
       return page.items.whereType<SearchTopicEntry>().toList();

@@ -2,6 +2,7 @@ import 'package:culcul/features/search/presentation/view_models/search_view_mode
 import 'package:culcul/features/search/presentation/widgets/search_filter_bar.dart';
 import 'package:culcul/features/search/presentation/widgets/search_result_list.dart';
 import 'package:culcul/features/search/presentation/widgets/search_result_skeleton.dart';
+import 'package:culcul/features/search/domain/entities/search_query.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/app_tab_bar.dart';
@@ -9,7 +10,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-const _searchTypeConfigs = ['all', 'video', 'media_bangumi', 'bili_user', 'article'];
+const _searchTypeConfigs = <SearchType>[
+  SearchType.all,
+  SearchType.video,
+  SearchType.mediaBangumi,
+  SearchType.biliUser,
+  SearchType.article,
+];
 
 class SearchResultView extends HookConsumerWidget {
   final String keyword;
@@ -48,20 +55,24 @@ class SearchResultView extends HookConsumerWidget {
 
 class SearchResultTab extends HookConsumerWidget {
   final String keyword;
-  final String searchType;
+  final SearchType searchType;
 
-  const SearchResultTab({super.key, required this.keyword, this.searchType = 'all'});
+  const SearchResultTab({
+    super.key,
+    required this.keyword,
+    this.searchType = SearchType.all,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     useAutomaticKeepAlive(wantKeepAlive: true);
 
-    final order = useState('totalrank');
-    final duration = useState(0);
-    final showFilter = searchType == 'video' || searchType == 'article';
-    final params = searchResultParams(
-      keyword,
-      searchType: searchType,
+    final order = useState(SearchOrder.totalrank);
+    final duration = useState(SearchDuration.all);
+    final showFilter = searchType == SearchType.video || searchType == SearchType.article;
+    final query = SearchQuery(
+      keyword: keyword,
+      type: searchType,
       order: order.value,
       duration: duration.value,
     );
@@ -74,22 +85,22 @@ class SearchResultTab extends HookConsumerWidget {
             duration: duration.value,
             onOrderChanged: (v) => order.value = v,
             onDurationChanged: (v) => duration.value = v,
-            showDuration: searchType == 'video',
+            showDuration: searchType.supportsDuration,
           ),
-        Expanded(child: _SearchResultPane(params: params)),
+        Expanded(child: _SearchResultPane(query: query)),
       ],
     );
   }
 }
 
 class _SearchResultPane extends ConsumerWidget {
-  final SearchResultParams params;
+  final SearchQuery query;
 
-  const _SearchResultPane({required this.params});
+  const _SearchResultPane({required this.query});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final provider = searchResultProvider(params);
+    final provider = searchResultProvider(query);
     final searchResultAsync = ref.watch(provider);
     final notifier = ref.read(provider.notifier);
 

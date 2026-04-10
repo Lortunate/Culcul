@@ -98,10 +98,6 @@ class _ChatFakeRepository implements NotificationRepository {
       null;
 
   @override
-  Future<List<SystemNotice>> listSystemNoticesFromLocal({required int ownerUid}) async =>
-      const [];
-
-  @override
   Future<List<PrivateSession>> pageSessionsFromLocal({
     required int ownerUid,
     required PrivateSessionType sessionType,
@@ -112,8 +108,7 @@ class _ChatFakeRepository implements NotificationRepository {
   Future<List<NotificationEntry>> pageFeedFromLocal({
     required int ownerUid,
     required NotificationFeedType type,
-    int? cursorId,
-    int? cursorTime,
+    NotificationFeedCursor? cursor,
   }) async => const [];
 
   @override
@@ -155,8 +150,7 @@ class _ChatFakeRepository implements NotificationRepository {
   Future<Result<void, AppError>> syncFeedOlder({
     required int ownerUid,
     required NotificationFeedType type,
-    required int cursorId,
-    required int cursorTime,
+    required NotificationFeedCursor cursor,
   }) async => const Success(null);
 
   @override

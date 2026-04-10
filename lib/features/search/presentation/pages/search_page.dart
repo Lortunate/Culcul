@@ -30,30 +30,16 @@ class SearchPage extends HookConsumerWidget {
 }
 
 Widget _buildSearchBody(
-  ({
-    TextEditingController controller,
-    FocusNode focusNode,
-    String suggestionTerm,
-    String? confirmedKeyword,
-    VoidCallback onClear,
-    void Function(String) onSearch,
-    String? defaultSearchHint,
-  })
-  search,
+  SearchPageState search,
 ) {
-  if (search.focusNode.hasFocus && search.controller.text.isNotEmpty) {
-    return SearchSuggestionView(
+  return switch (search.mode) {
+    SearchPageMode.suggestion => SearchSuggestionView(
       term: search.suggestionTerm,
       onSuggestionTap: search.onSearch,
-    );
-  }
-
-  final keyword = search.confirmedKeyword;
-  if (!search.focusNode.hasFocus && keyword != null) {
-    return SearchResultView(keyword: keyword);
-  }
-
-  return _SearchLandingContent(onTap: search.onSearch);
+    ),
+    SearchPageMode.result => SearchResultView(keyword: search.confirmedKeyword!),
+    SearchPageMode.landing => _SearchLandingContent(onTap: search.onSearch),
+  };
 }
 
 class _SearchLandingContent extends StatelessWidget {

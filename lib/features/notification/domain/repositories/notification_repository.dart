@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
+import 'package:culcul/features/notification/domain/entities/notification_feed_cursor.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
@@ -13,8 +14,6 @@ import 'package:culcul/features/notification/domain/entities/system_notice.dart'
 
 abstract class NotificationRepository {
   Future<NotificationSummary?> getUnreadCountFromLocal({required int ownerUid});
-
-  Future<List<SystemNotice>> listSystemNoticesFromLocal({required int ownerUid});
 
   Future<List<PrivateSession>> pageSessionsFromLocal({
     required int ownerUid,
@@ -38,8 +37,7 @@ abstract class NotificationRepository {
   Future<List<NotificationEntry>> pageFeedFromLocal({
     required int ownerUid,
     required NotificationFeedType type,
-    int? cursorId,
-    int? cursorTime,
+    NotificationFeedCursor? cursor,
   });
 
   Stream<NotificationSummary> watchUnreadCount({required int ownerUid});
@@ -77,8 +75,7 @@ abstract class NotificationRepository {
   Future<Result<void, AppError>> syncFeedOlder({
     required int ownerUid,
     required NotificationFeedType type,
-    required int cursorId,
-    required int cursorTime,
+    required NotificationFeedCursor cursor,
   });
 
   Future<Result<ImageUploadResult, AppError>> uploadImage(File file);

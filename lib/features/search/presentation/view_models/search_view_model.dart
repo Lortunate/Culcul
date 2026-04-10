@@ -32,55 +32,15 @@ final trendingRankingProvider =
       TrendingRankingController.new,
     );
 
-class SearchResultParams {
-  final String keyword;
-  final String searchType;
-  final String order;
-  final int duration;
-
-  const SearchResultParams({
-    required this.keyword,
-    this.searchType = 'all',
-    this.order = 'totalrank',
-    this.duration = 0,
-  });
-
-  @override
-  bool operator ==(Object other) {
-    return other is SearchResultParams &&
-        other.keyword == keyword &&
-        other.searchType == searchType &&
-        other.order == order &&
-        other.duration == duration;
-  }
-
-  @override
-  int get hashCode => Object.hash(keyword, searchType, order, duration);
-}
-
-SearchResultParams searchResultParams(
-  String keyword, {
-  String searchType = 'all',
-  String order = 'totalrank',
-  int duration = 0,
-}) {
-  return SearchResultParams(
-    keyword: keyword,
-    searchType: searchType,
-    order: order,
-    duration: duration,
-  );
-}
-
 final searchResultProvider = AsyncNotifierProvider.autoDispose
-    .family<SearchResultController, SearchResultPage?, SearchResultParams>(
+    .family<SearchResultController, SearchResultPage?, SearchQuery>(
       SearchResultController.new,
     );
 
 class SearchResultController extends AsyncNotifier<SearchResultPage?> {
-  SearchResultController(this._params);
+  SearchResultController(this._query);
 
-  final SearchResultParams _params;
+  final SearchQuery _query;
   RequestCancelToken? _activeRequestCancelToken;
 
   @override
@@ -88,19 +48,13 @@ class SearchResultController extends AsyncNotifier<SearchResultPage?> {
     ref.onDispose(() {
       _activeRequestCancelToken?.cancel('search_result_disposed');
     });
-    if (_params.keyword.isEmpty) return null;
+    if (_query.keyword.isEmpty) return null;
     _activeRequestCancelToken?.cancel('search_result_rebuilt');
     final cancelToken = RequestCancelToken();
     _activeRequestCancelToken = cancelToken;
     final result = await ref
         .watch(searchRepositoryProvider)
-        .search(
-          keyword: _params.keyword,
-          searchType: _params.searchType,
-          order: _params.order,
-          duration: _params.duration,
-          cancelToken: cancelToken,
-        );
+        .search(query: _query, cancelToken: cancelToken);
     return result.dataOrNull;
   }
 
@@ -115,16 +69,10 @@ class SearchResultController extends AsyncNotifier<SearchResultPage?> {
     final cancelToken = RequestCancelToken();
     _activeRequestCancelToken = cancelToken;
     state = await AsyncValue.guard(() async {
+      final nextQuery = _query.copyWith(page: oldState.page + 1);
       final result = await ref
           .read(searchRepositoryProvider)
-          .search(
-            keyword: _params.keyword,
-            searchType: _params.searchType,
-            order: _params.order,
-            duration: _params.duration,
-            page: oldState.page + 1,
-            cancelToken: cancelToken,
-          );
+          .search(query: nextQuery, cancelToken: cancelToken);
       final newData = result.dataOrNull ?? oldState;
       return newData.copyWith(items: [...oldState.items, ...newData.items]);
     });

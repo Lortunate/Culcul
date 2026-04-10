@@ -8,7 +8,7 @@ part 'notification_feed_view_model.g.dart';
 
 @riverpod
 class NotificationFeedList extends _$NotificationFeedList
-    with CursorPagedAsyncNotifier<NotificationEntry, ({int id, int time})> {
+    with CursorPagedAsyncNotifier<NotificationEntry, NotificationFeedCursor> {
   @override
   FutureOr<List<NotificationEntry>> build(NotificationFeedType type) async {
     final firstPage = await buildFirstPage();
@@ -20,8 +20,8 @@ class NotificationFeedList extends _$NotificationFeedList
   }
 
   @override
-  Future<CursorPage<NotificationEntry, ({int id, int time})>> fetchPage(
-    ({int id, int time})? cursor,
+  Future<CursorPage<NotificationEntry, NotificationFeedCursor>> fetchPage(
+    NotificationFeedCursor? cursor,
   ) async {
     final ownerUid = ref.read(notificationOwnerUidProvider);
     if (ownerUid == null || type == NotificationFeedType.system) {
@@ -35,21 +35,21 @@ class NotificationFeedList extends _$NotificationFeedList
       await repository.syncFeedOlder(
         ownerUid: ownerUid,
         type: type,
-        cursorId: cursor.id,
-        cursorTime: cursor.time,
+        cursor: cursor,
       );
     }
 
     final data = await repository.pageFeedFromLocal(
       ownerUid: ownerUid,
       type: type,
-      cursorId: cursor?.id,
-      cursorTime: cursor?.time,
+      cursor: cursor,
     );
 
     return CursorPage(
       items: data,
-      nextCursor: data.isEmpty ? null : (id: data.last.id, time: data.last.eventTime),
+      nextCursor: data.isEmpty
+          ? null
+          : NotificationFeedCursor(id: data.last.id, time: data.last.eventTime),
       hasMore: data.length >= 20,
     );
   }

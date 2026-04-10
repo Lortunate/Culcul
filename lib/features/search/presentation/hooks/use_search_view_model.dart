@@ -5,15 +5,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-({
-  TextEditingController controller,
-  FocusNode focusNode,
-  String suggestionTerm,
-  String? confirmedKeyword,
-  VoidCallback onClear,
-  void Function(String) onSearch,
-  String? defaultSearchHint,
-})
+enum SearchPageMode { landing, suggestion, result }
+
+class SearchPageState {
+  const SearchPageState({
+    required this.controller,
+    required this.focusNode,
+    required this.suggestionTerm,
+    required this.confirmedKeyword,
+    required this.mode,
+    required this.onClear,
+    required this.onSearch,
+    required this.defaultSearchHint,
+  });
+
+  final TextEditingController controller;
+  final FocusNode focusNode;
+  final String suggestionTerm;
+  final String? confirmedKeyword;
+  final SearchPageMode mode;
+  final VoidCallback onClear;
+  final void Function(String) onSearch;
+  final String? defaultSearchHint;
+}
+
+SearchPageState
 useSearchViewModel(WidgetRef ref) {
   final defaultSearchAsync = ref.watch(defaultSearchProvider);
   final searchController = useTextEditingController();
@@ -79,11 +95,18 @@ useSearchViewModel(WidgetRef ref) {
     };
   }, [searchController]);
 
-  return (
+  final mode = switch ((focusNode.hasFocus, searchController.text.isNotEmpty, confirmedKeyword.value)) {
+    (true, true, _) => SearchPageMode.suggestion,
+    (false, _, final keyword?) when keyword.isNotEmpty => SearchPageMode.result,
+    _ => SearchPageMode.landing,
+  };
+
+  return SearchPageState(
     controller: searchController,
     focusNode: focusNode,
     suggestionTerm: suggestionTerm.value,
     confirmedKeyword: confirmedKeyword.value,
+    mode: mode,
     onClear: onClear,
     onSearch: performSearch,
     defaultSearchHint: defaultSearchAsync.asData?.value?.text,

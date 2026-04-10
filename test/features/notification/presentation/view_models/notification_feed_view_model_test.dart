@@ -19,10 +19,6 @@ class _FeedFakeRepository implements NotificationRepository {
       null;
 
   @override
-  Future<List<SystemNotice>> listSystemNoticesFromLocal({required int ownerUid}) async =>
-      const [];
-
-  @override
   Future<List<PrivateSession>> pageSessionsFromLocal({
     required int ownerUid,
     required PrivateSessionType sessionType,
@@ -48,10 +44,9 @@ class _FeedFakeRepository implements NotificationRepository {
   Future<List<NotificationEntry>> pageFeedFromLocal({
     required int ownerUid,
     required NotificationFeedType type,
-    int? cursorId,
-    int? cursorTime,
+    NotificationFeedCursor? cursor,
   }) async {
-    if (cursorId != null || cursorTime != null) return const [];
+    if (cursor != null) return const [];
     return _itemsByType[type] ?? const [];
   }
 
@@ -112,8 +107,7 @@ class _FeedFakeRepository implements NotificationRepository {
   Future<Result<void, AppError>> syncFeedOlder({
     required int ownerUid,
     required NotificationFeedType type,
-    required int cursorId,
-    required int cursorTime,
+    required NotificationFeedCursor cursor,
   }) async {
     syncOlderCalls.add(type);
     return const Success(null);

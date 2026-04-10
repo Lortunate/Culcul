@@ -1,44 +1,30 @@
-part of 'notification_repository_impl.dart';
+import 'dart:convert';
+import 'dart:io';
 
-class _NotificationMessageSendService with _NotificationMessageSendHelpersMixin {
-  _NotificationMessageSendService(this.repo);
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
+import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
+import 'package:culcul/features/notification/data/local/notification_local_database.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.message_send_helpers.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.message_support.dart';
+import 'package:culcul/features/notification/domain/entities/image_upload_result.dart';
+import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
+import 'package:culcul/features/notification/domain/entities/private_message.dart';
+import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
+import 'package:drift/drift.dart';
+import 'package:uuid/uuid.dart';
+
+class NotificationMessageSendService with NotificationMessageSendHelpersMixin {
+  NotificationMessageSendService(this.repo);
 
   @override
   final NotificationRepositoryImpl repo;
   @override
-  late final _NotificationMessageSupport _support = _NotificationMessageSupport(repo);
-
-  Future<void> retryFailedOutbox({
-    required int ownerUid,
-    required int talkerId,
-    required PrivateSessionType sessionType,
-  }) async {
-    final query = repo._database.select(repo._database.notificationOutbox)
-      ..where(
-        (t) =>
-            t.ownerUid.equals(ownerUid) &
-            t.talkerId.equals(talkerId) &
-            t.sessionType.equals(sessionType.value) &
-            t.status.equals('failed'),
-      )
-      ..orderBy([(t) => OrderingTerm.asc(t.createdAt)]);
-    final failed = await query.get();
-    for (final item in failed) {
-      await repo._database
-          .update(repo._database.notificationOutbox)
-          .replace(item.copyWith(status: 'pending', error: const Value(null)));
-      await sendPrivateMessage(
-        ownerUid: ownerUid,
-        receiverId: item.receiverId,
-        receiverType: PrivateMessageReceiverType.fromValue(item.receiverType),
-        messageType: PrivateMessageType.fromValue(item.msgType),
-        content: PrivateMessageContent.fromRaw(item.contentJson),
-      );
-    }
-  }
+  late final NotificationMessageSupport support = NotificationMessageSupport(repo);
 
   Future<Result<ImageUploadResult, AppError>> uploadImage(File file) async {
-    final result = await repo.requestApiResult(() => repo._api.uploadImage(file: file));
+    final result = await repo.requestApiResult(() => repo.api.uploadImage(file: file));
     return result;
   }
 
@@ -49,19 +35,19 @@ class _NotificationMessageSendService with _NotificationMessageSendHelpersMixin 
     required PrivateMessageType messageType,
     required PrivateMessageContent content,
   }) async {
-    final now = repo._nowSeconds();
+    final now = repo.nowSeconds();
     final localMsgSeqno = -DateTime.now().microsecondsSinceEpoch;
     final contentMap = content.toRawMap();
     final contentRawJson = jsonEncode(contentMap);
     final devId = const Uuid().v4().toUpperCase();
 
-    await repo._database.transaction(() async {
-      await repo._database
-          .into(repo._database.notificationMessages)
+    await repo.database.transaction(() async {
+      await repo.database
+          .into(repo.database.notificationMessages)
           .insertOnConflictUpdate(
             NotificationMessagesCompanion.insert(
               ownerUid: ownerUid,
-              sessionType: repo._sessionTypeFromReceiver(receiverType).value,
+              sessionType: repo.sessionTypeFromReceiver(receiverType).value,
               talkerId: receiverId,
               msgSeqno: localMsgSeqno,
               senderUid: ownerUid,
@@ -82,12 +68,12 @@ class _NotificationMessageSendService with _NotificationMessageSendHelpersMixin 
             ),
           );
 
-      await repo._database
-          .into(repo._database.notificationOutbox)
+      await repo.database
+          .into(repo.database.notificationOutbox)
           .insert(
             NotificationOutboxCompanion.insert(
               ownerUid: ownerUid,
-              sessionType: repo._sessionTypeFromReceiver(receiverType).value,
+              sessionType: repo.sessionTypeFromReceiver(receiverType).value,
               talkerId: receiverId,
               localMsgSeqno: localMsgSeqno,
               senderUid: ownerUid,
@@ -103,7 +89,7 @@ class _NotificationMessageSendService with _NotificationMessageSendHelpersMixin 
     });
 
     final responseResult = await repo.requestApiResult(
-      () => repo._api.sendPrivateMessage(
+      () => repo.api.sendPrivateMessage(
         wSenderUid: ownerUid,
         wReceiverId: receiverId,
         wDevId: devId,
@@ -119,7 +105,7 @@ class _NotificationMessageSendService with _NotificationMessageSendHelpersMixin 
 
     await responseResult.when(
       success: (value) async {
-        await _markOutboxAndTempMessage(
+        await markOutboxAndTempMessage(
           ownerUid: ownerUid,
           localMsgSeqno: localMsgSeqno,
           status: 'sent',
@@ -128,11 +114,11 @@ class _NotificationMessageSendService with _NotificationMessageSendHelpersMixin 
         await repo.syncMessagesHead(
           ownerUid: ownerUid,
           talkerId: receiverId,
-          sessionType: repo._sessionTypeFromReceiver(receiverType),
+          sessionType: repo.sessionTypeFromReceiver(receiverType),
         );
       },
       failure: (error) async {
-        await _markOutboxAndTempMessage(
+        await markOutboxAndTempMessage(
           ownerUid: ownerUid,
           localMsgSeqno: localMsgSeqno,
           status: 'failed',
@@ -149,11 +135,11 @@ class _NotificationMessageSendService with _NotificationMessageSendHelpersMixin 
     int? id,
     int? time,
   }) {
-    return _support.fetchReplyLikeAtResponse(type: type, id: id, time: time);
+    return support.fetchReplyLikeAtResponse(type: type, id: id, time: time);
   }
 
   Future<Result<List<SystemNotificationItem>, AppError>> fetchSystemNotifications() {
-    return _support.fetchSystemNotifications();
+    return support.fetchSystemNotifications();
   }
 
   void putEmojiVariants({
@@ -162,10 +148,10 @@ class _NotificationMessageSendService with _NotificationMessageSendHelpersMixin 
     required String url,
     required bool overwrite,
   }) {
-    _support.putEmojiVariants(map: map, rawKey: rawKey, url: url, overwrite: overwrite);
+    support.putEmojiVariants(map: map, rawKey: rawKey, url: url, overwrite: overwrite);
   }
 
   PrivateMessage rowToPrivateMessage(NotificationMessage row) {
-    return _support.rowToPrivateMessage(row);
+    return support.rowToPrivateMessage(row);
   }
 }

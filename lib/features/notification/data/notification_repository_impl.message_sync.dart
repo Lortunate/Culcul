@@ -1,7 +1,13 @@
-part of 'notification_repository_impl.dart';
+import 'dart:convert';
 
-class _NotificationMessageSync {
-  const _NotificationMessageSync(this.repo);
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
+import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
+
+class NotificationMessageSync {
+  const NotificationMessageSync(this.repo);
 
   final NotificationRepositoryImpl repo;
 
@@ -43,15 +49,15 @@ class _NotificationMessageSync {
   }) async {
     final scope =
         'messages:${sessionType.value}:$talkerId:${endSeqno == null ? "head" : "older"}';
-    if (!await repo._cleanupPolicy.shouldSync(ownerUid: ownerUid, scope: scope, force: force)) {
+    if (!await repo.cleanupPolicy.shouldSync(ownerUid: ownerUid, scope: scope, force: force)) {
       return const Success(null);
     }
 
     final responseResult = await repo.requestApiResult(
-      () => repo._api.getPrivateMessages(
+      () => repo.api.getPrivateMessages(
         talkerId: talkerId,
         sessionType: sessionType.value,
-        size: NotificationRepositoryImpl._pageSize,
+        size: NotificationRepositoryImpl.pageSize,
         endSeqno: endSeqno,
       ),
     );
@@ -59,12 +65,12 @@ class _NotificationMessageSync {
       return Failure(error);
     }
     final response = responseResult.dataOrNull!;
-    final now = repo._nowSeconds();
+    final now = repo.nowSeconds();
     final messages = response.messages ?? const <PrivateMessageDetail>[];
 
-    await repo._database.transaction(() async {
+    await repo.database.transaction(() async {
       for (final message in messages) {
-        await repo._messageSendService.upsertMessageDetail(
+        await repo.messageSendService.upsertMessageDetail(
           ownerUid: ownerUid,
           sessionType: sessionType,
           talkerId: talkerId,
@@ -73,21 +79,21 @@ class _NotificationMessageSync {
           syncStatus: 'synced',
         );
       }
-      await repo._messageSendService.upsertMessageEmojis(
+      await repo.messageSendService.upsertMessageEmojis(
         ownerUid: ownerUid,
         talkerId: talkerId,
         sessionType: sessionType,
         emojis: response.emojiInfos ?? const <PrivateMessageEmojiInfo>[],
         now: now,
       );
-      await repo._messageSendService.reconcileTemporaryMessages(
+      await repo.messageSendService.reconcileTemporaryMessages(
         ownerUid: ownerUid,
         talkerId: talkerId,
         sessionType: sessionType,
       );
     });
 
-    await repo._cleanupPolicy.touchCursor(
+    await repo.cleanupPolicy.touchCursor(
       ownerUid: ownerUid,
       scope: scope,
       cursorJson: jsonEncode({
@@ -96,7 +102,7 @@ class _NotificationMessageSync {
       }),
       hasMore: response.hasMore == 1,
     );
-    await repo._cleanupPolicy.maybeCleanup(ownerUid);
+    await repo.cleanupPolicy.maybeCleanup(ownerUid);
     return const Success(null);
   }
 }

@@ -135,10 +135,6 @@ class _FakeNotificationRepository extends Fake implements NotificationRepository
       null;
 
   @override
-  Future<List<SystemNotice>> listSystemNoticesFromLocal({required int ownerUid}) async =>
-      const <SystemNotice>[];
-
-  @override
   Future<List<PrivateSession>> pageSessionsFromLocal({
     required int ownerUid,
     required PrivateSessionType sessionType,
@@ -164,8 +160,7 @@ class _FakeNotificationRepository extends Fake implements NotificationRepository
   Future<List<NotificationEntry>> pageFeedFromLocal({
     required int ownerUid,
     required NotificationFeedType type,
-    int? cursorId,
-    int? cursorTime,
+    NotificationFeedCursor? cursor,
   }) async => const <NotificationEntry>[];
 
   @override
@@ -202,8 +197,7 @@ class _FakeNotificationRepository extends Fake implements NotificationRepository
   Future<Result<void, AppError>> syncFeedOlder({
     required int ownerUid,
     required NotificationFeedType type,
-    required int cursorId,
-    required int cursorTime,
+    required NotificationFeedCursor cursor,
   }) async => const Success(null);
 
   @override

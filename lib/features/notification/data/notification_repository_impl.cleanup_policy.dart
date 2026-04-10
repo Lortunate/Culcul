@@ -1,7 +1,9 @@
-part of 'notification_repository_impl.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.dart';
+import 'package:culcul/features/notification/data/local/notification_local_database.dart';
+import 'package:drift/drift.dart';
 
-class _NotificationCleanupPolicy {
-  const _NotificationCleanupPolicy(this.repo);
+class NotificationCleanupPolicy {
+  const NotificationCleanupPolicy(this.repo);
 
   final NotificationRepositoryImpl repo;
 
@@ -11,14 +13,14 @@ class _NotificationCleanupPolicy {
     required bool force,
   }) async {
     if (force) return true;
-    final now = repo._nowSeconds();
+    final now = repo.nowSeconds();
     final existing =
-        await (repo._database.select(repo._database.notificationSyncCursors)
+        await (repo.database.select(repo.database.notificationSyncCursors)
               ..where((t) => t.ownerUid.equals(ownerUid) & t.scope.equals(scope))
               ..limit(1))
             .getSingleOrNull();
     if (existing == null) return true;
-    return now - existing.lastSyncedAt >= NotificationRepositoryImpl._syncThrottleSeconds;
+    return now - existing.lastSyncedAt >= NotificationRepositoryImpl.syncThrottleSeconds;
   }
 
   Future<void> touchCursor({
@@ -27,9 +29,9 @@ class _NotificationCleanupPolicy {
     required String? cursorJson,
     required bool hasMore,
   }) async {
-    final now = repo._nowSeconds();
-    await repo._database
-        .into(repo._database.notificationSyncCursors)
+    final now = repo.nowSeconds();
+    await repo.database
+        .into(repo.database.notificationSyncCursors)
         .insertOnConflictUpdate(
           NotificationSyncCursorsCompanion.insert(
             ownerUid: ownerUid,
@@ -42,10 +44,14 @@ class _NotificationCleanupPolicy {
   }
 
   Future<void> maybeCleanup(int ownerUid) async {
-    final now = repo._nowSeconds();
+    final now = repo.nowSeconds();
     final cleanupCursor =
-        await (repo._database.select(repo._database.notificationSyncCursors)
-              ..where((t) => t.ownerUid.equals(ownerUid) & t.scope.equals(NotificationRepositoryImpl._cleanupScope))
+        await (repo.database.select(repo.database.notificationSyncCursors)
+              ..where(
+                (t) =>
+                    t.ownerUid.equals(ownerUid) &
+                    t.scope.equals(NotificationRepositoryImpl.cleanupScope),
+              )
               ..limit(1))
             .getSingleOrNull();
 
@@ -53,25 +59,25 @@ class _NotificationCleanupPolicy {
       return;
     }
 
-    final cutoff = now - (NotificationRepositoryImpl._retentionDays * 24 * 60 * 60);
+    final cutoff = now - (NotificationRepositoryImpl.retentionDays * 24 * 60 * 60);
 
-    await repo._database.transaction(() async {
-      await (repo._database.delete(repo._database.notificationMessages)..where(
+    await repo.database.transaction(() async {
+      await (repo.database.delete(repo.database.notificationMessages)..where(
             (t) => t.ownerUid.equals(ownerUid) & t.timestamp.isSmallerThanValue(cutoff),
           ))
           .go();
 
-      await (repo._database.delete(repo._database.notificationMessageEmojis)..where(
+      await (repo.database.delete(repo.database.notificationMessageEmojis)..where(
             (t) => t.ownerUid.equals(ownerUid) & t.updatedAt.isSmallerThanValue(cutoff),
           ))
           .go();
 
-      await (repo._database.delete(repo._database.notificationFeedItems)..where(
+      await (repo.database.delete(repo.database.notificationFeedItems)..where(
             (t) => t.ownerUid.equals(ownerUid) & t.eventTime.isSmallerThanValue(cutoff),
           ))
           .go();
 
-      await (repo._database.delete(repo._database.notificationSessions)..where(
+      await (repo.database.delete(repo.database.notificationSessions)..where(
             (t) =>
                 t.ownerUid.equals(ownerUid) &
                 t.sessionTs.isSmallerThanValue(cutoff) &
@@ -81,7 +87,7 @@ class _NotificationCleanupPolicy {
 
       await touchCursor(
         ownerUid: ownerUid,
-        scope: NotificationRepositoryImpl._cleanupScope,
+        scope: NotificationRepositoryImpl.cleanupScope,
         cursorJson: null,
         hasMore: false,
       );

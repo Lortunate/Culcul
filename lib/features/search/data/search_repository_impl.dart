@@ -13,6 +13,7 @@ import 'package:culcul/features/search/domain/entities/search_default_hint.dart'
 import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/features/search/domain/entities/search_suggestion_entry.dart';
 import 'package:culcul/features/search/domain/entities/search_trending_keyword.dart';
+import 'package:culcul/features/search/domain/entities/search_query.dart';
 import 'package:culcul/features/search/domain/repositories/search_repository.dart'
     as domain;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -37,7 +38,7 @@ class SearchRepositoryImpl
   @override
   RequestExecutor get requestExecutor => _requestExecutor;
 
-  Future<Result<List<SearchSuggestionTag>, AppError>> fetchSearchSuggestions(
+  Future<Result<List<SearchSuggestionTag>, AppError>> _fetchSearchSuggestions(
     String term, {
     RequestCancelToken? cancelToken,
   }) async {
@@ -45,10 +46,10 @@ class SearchRepositoryImpl
     final result = await requestResult(
       () => api.fetchSearchSuggestions(term, cancelToken: cancelToken?.dioToken),
     );
-    return result.map(_parseSuggestions);
+    return result.map(_parseSuggestionsResponse);
   }
 
-  List<SearchSuggestionTag> _parseSuggestions(String responseStr) {
+  List<SearchSuggestionTag> _parseSuggestionsResponse(String responseStr) {
     try {
       final Map<String, dynamic> json = jsonDecode(responseStr);
       final response = SearchSuggestionResponse.fromJson(json);
@@ -58,20 +59,20 @@ class SearchRepositoryImpl
     }
   }
 
-  Future<Result<DefaultSearchData, AppError>> fetchDefaultSearch({
+  Future<Result<DefaultSearchData, AppError>> _fetchDefaultSearch({
     bool forceRefresh = false,
   }) {
     return requestApiResult(
-      () => api.fetchDefaultSearch(forceRefresh: forceRefresh ? true : null),
+      () => api.fetchDefaultSearch(forceRefresh: _forceRefreshQuery(forceRefresh)),
     );
   }
 
-  Future<Result<TrendingRankingData, AppError>> fetchTrendingRanking({
+  Future<Result<TrendingRankingData, AppError>> _fetchTrendingRanking({
     bool forceRefresh = false,
   }) async {
     return requestResult(() async {
       final response = await api.fetchTrendingRanking(
-        forceRefresh: forceRefresh ? true : null,
+        forceRefresh: _forceRefreshQuery(forceRefresh),
       );
       if (response.code != 0) {
         throw ServerException(response.message, code: response.code);
@@ -80,32 +81,28 @@ class SearchRepositoryImpl
     });
   }
 
-  Future<Result<SearchResultData, AppError>> fetchSearchAll({
-    required String keyword,
-    int page = 1,
-    String searchType = 'all',
-    String order = 'totalrank',
-    int duration = 0,
+  Future<Result<SearchResultData, AppError>> _fetchSearchResult({
+    required SearchQuery query,
     RequestCancelToken? cancelToken,
   }) async {
     return requestResult(() async {
-      final response = searchType == 'all'
+      final response = query.type == SearchType.all
           ? await api.fetchSearchAll(
-              keyword: keyword,
-              page: page,
+              keyword: query.keyword,
+              page: query.page,
               pageSize: _defaultSearchPageSize,
-              searchType: searchType,
-              order: order,
-              duration: duration,
+              searchType: query.type.apiValue,
+              order: query.order.apiValue,
+              duration: query.duration.apiValue,
               cancelToken: cancelToken?.dioToken,
             )
           : await api.fetchSearchByType(
-              keyword: keyword,
-              page: page,
+              keyword: query.keyword,
+              page: query.page,
               pageSize: _defaultSearchPageSize,
-              searchType: searchType,
-              order: order,
-              duration: duration,
+              searchType: query.type.apiValue,
+              order: query.order.apiValue,
+              duration: query.duration.apiValue,
               cancelToken: cancelToken?.dioToken,
             );
       if (response.code != 0 || response.data == null) {
@@ -115,12 +112,16 @@ class SearchRepositoryImpl
     });
   }
 
+  bool? _forceRefreshQuery(bool forceRefresh) {
+    return forceRefresh ? true : null;
+  }
+
   @override
   Future<Result<List<SearchSuggestionEntry>, AppError>> getSuggestions(
     String term, {
     RequestCancelToken? cancelToken,
   }) async {
-    final result = await fetchSearchSuggestions(term, cancelToken: cancelToken);
+    final result = await _fetchSearchSuggestions(term, cancelToken: cancelToken);
     return result.map(
       (suggestions) => suggestions
           .map((item) => item.toDomain())
@@ -133,7 +134,7 @@ class SearchRepositoryImpl
   Future<Result<SearchDefaultHint?, AppError>> getDefaultSearch({
     bool forceRefresh = false,
   }) async {
-    final result = await fetchDefaultSearch(forceRefresh: forceRefresh);
+    final result = await _fetchDefaultSearch(forceRefresh: forceRefresh);
     return result.map((data) => data.toDomain());
   }
 
@@ -141,27 +142,16 @@ class SearchRepositoryImpl
   Future<Result<List<SearchTrendingKeyword>, AppError>> getTrendingRanking({
     bool forceRefresh = false,
   }) async {
-    final result = await fetchTrendingRanking(forceRefresh: forceRefresh);
+    final result = await _fetchTrendingRanking(forceRefresh: forceRefresh);
     return result.map((data) => data.list.map((item) => item.toDomain()).toList());
   }
 
   @override
   Future<Result<SearchResultPage, AppError>> search({
-    required String keyword,
-    int page = 1,
-    String searchType = 'all',
-    String order = 'totalrank',
-    int duration = 0,
+    required SearchQuery query,
     RequestCancelToken? cancelToken,
   }) async {
-    final result = await fetchSearchAll(
-      keyword: keyword,
-      page: page,
-      searchType: searchType,
-      order: order,
-      duration: duration,
-      cancelToken: cancelToken,
-    );
+    final result = await _fetchSearchResult(query: query, cancelToken: cancelToken);
     return result.map((data) => data.toDomain());
   }
 }
