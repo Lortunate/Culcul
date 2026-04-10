@@ -1,4 +1,5 @@
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/network/request_cancel_token.dart';
 import 'package:culcul/core/network/network_concurrency_executor.dart';
 import 'package:culcul/core/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/perf/video_perf_logger.dart';
@@ -45,13 +46,19 @@ class LoadVideoDetailWorkflow {
     NetworkConcurrencyExecutor concurrencyExecutor = const NetworkConcurrencyExecutor(),
   }) : _concurrencyExecutor = concurrencyExecutor;
 
-  Future<Result<VideoInitialData, AppError>> call(String bvid) {
-    return loadCritical(bvid);
+  Future<Result<VideoInitialData, AppError>> call(
+    String bvid, {
+    RequestCancelToken? cancelToken,
+  }) {
+    return loadCritical(bvid, cancelToken: cancelToken);
   }
 
-  Future<Result<VideoInitialData, AppError>> loadCritical(String bvid) async {
+  Future<Result<VideoInitialData, AppError>> loadCritical(
+    String bvid, {
+    RequestCancelToken? cancelToken,
+  }) async {
     final stopwatch = Stopwatch()..start();
-    final detailResult = await _repository.fetchVideoView(bvid);
+    final detailResult = await _repository.fetchVideoView(bvid, cancelToken: cancelToken);
     if (detailResult.errorOrNull case final error?) {
       return Failure(error);
     }
@@ -70,6 +77,7 @@ class LoadVideoDetailWorkflow {
       final loadedPlayUrl = await _repository.fetchVideoPlayUrl(
         aid: detail.aid,
         cid: cid,
+        cancelToken: cancelToken,
       );
       if (loadedPlayUrl.dataOrNull != null) {
         VideoPerfLogger.log(
@@ -97,7 +105,10 @@ class LoadVideoDetailWorkflow {
     );
   }
 
-  Future<Result<VideoAuxiliaryData, AppError>> loadAuxiliary(String bvid) async {
+  Future<Result<VideoAuxiliaryData, AppError>> loadAuxiliary(
+    String bvid, {
+    RequestCancelToken? cancelToken,
+  }) async {
     final responses = await _concurrencyExecutor.runConcurrent(
       tasks: <ConcurrentTask<dynamic>>[
         ConcurrentTask<List<RelatedVideo>>(
@@ -105,7 +116,10 @@ class LoadVideoDetailWorkflow {
           critical: false,
           fallback: (_) => const <RelatedVideo>[],
           task: () async {
-            final result = await _repository.fetchRelatedVideos(bvid);
+            final result = await _repository.fetchRelatedVideos(
+              bvid,
+              cancelToken: cancelToken,
+            );
             return result.dataOrNull ?? const <RelatedVideo>[];
           },
         ),
@@ -114,7 +128,10 @@ class LoadVideoDetailWorkflow {
           critical: false,
           fallback: (_) => const <VideoTag>[],
           task: () async {
-            final result = await _repository.fetchVideoTags(bvid);
+            final result = await _repository.fetchVideoTags(
+              bvid,
+              cancelToken: cancelToken,
+            );
             return result.dataOrNull ?? const <VideoTag>[];
           },
         ),

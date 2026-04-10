@@ -30,9 +30,9 @@ class CommentReplyPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final provider = commentReplyControllerProvider(oid, rootId);
-    final state = ref.watch(provider);
+    final paging = ref.watch(provider.select((state) => state.paging));
+    final watchedRootComment = ref.watch(provider.select((state) => state.rootComment));
     final controller = ref.read(provider.notifier);
-    final paging = state.paging;
     final hasMore = paging.hasMore;
     final loadGate = useMemoized(PaginationLoadGate.new, [oid, rootId]);
     final theme = Theme.of(context);
@@ -40,13 +40,13 @@ class CommentReplyPage extends HookConsumerWidget {
     final t = Translations.of(context);
 
     useEffect(() {
-      if (state.rootComment == null) {
+      if (watchedRootComment == null) {
         controller.setRootComment(comment);
       }
       return null;
-    }, [comment]);
+    }, [comment, watchedRootComment]);
 
-    final rootComment = state.rootComment ?? comment;
+    final rootComment = watchedRootComment ?? comment;
 
     void showReplySheet(CommentItem item) {
       CommentReplySheet.show(
@@ -100,10 +100,12 @@ class CommentReplyPage extends HookConsumerWidget {
                       loadMore: controller.loadMore,
                       itemCount: () => ref.read(provider).paging.items.length,
                       source: 'video.comment_reply',
+                      // Replies benefit from prefetching before the user hits the bottom.
                     ),
               header: AppRefreshHeader(),
               footer: hasMore ? AppLoadFooter() : null,
               child: CustomScrollView(
+                cacheExtent: 520,
                 slivers: [
                   SliverToBoxAdapter(
                     child: Column(

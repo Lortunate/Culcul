@@ -6,6 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AppNetworkImage extends ConsumerWidget {
+  static const int _maxCacheDimension = 2048;
+  static const Map<String, String> _defaultHeaders = <String, String>{
+    'Referer': ApiConstants.referer,
+    'User-Agent': ApiConstants.userAgent,
+  };
+
   final String url;
   final double? width;
   final double? height;
@@ -33,14 +39,45 @@ class AppNetworkImage extends ConsumerWidget {
     this.useShimmer = true,
   });
 
+  static String resolveUrl(String url) {
+    return FormatUtils.formatImageUrl(url);
+  }
+
+  static ImageProvider<Object> providerFor({
+    required String url,
+    int? memCacheWidth,
+    int? memCacheHeight,
+    bool cache = true,
+  }) {
+    final resolvedWidth = _normalizeCacheSize(memCacheWidth);
+    final resolvedHeight = _normalizeCacheSize(memCacheHeight);
+    return ExtendedResizeImage.resizeIfNeeded(
+      provider: ExtendedNetworkImageProvider(
+        resolveUrl(url),
+        headers: _defaultHeaders,
+        cache: cache,
+      ),
+      cacheWidth: resolvedWidth,
+      cacheHeight: resolvedHeight,
+    );
+  }
+
   int? _resolveCacheSize(int? explicit, double? logicalSize, double pixelRatio) {
-    if (explicit != null) {
-      return explicit;
+    final explicitSize = _normalizeCacheSize(explicit);
+    if (explicitSize != null) {
+      return explicitSize;
     }
     if (logicalSize != null) {
-      return (logicalSize * pixelRatio).toInt();
+      return _normalizeCacheSize((logicalSize * pixelRatio).round());
     }
     return null;
+  }
+
+  static int? _normalizeCacheSize(int? rawSize) {
+    if (rawSize == null || rawSize <= 0) {
+      return null;
+    }
+    return rawSize.clamp(1, _maxCacheDimension);
   }
 
   BoxDecoration _buildDecoration(ColorScheme colorScheme) {
@@ -73,19 +110,14 @@ class AppNetworkImage extends ConsumerWidget {
       return _buildErrorWidget(colorScheme);
     }
 
-    final rawUrl = FormatUtils.formatImageUrl(url);
-    final finalUrl = rawUrl;
-
-    final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
+    final finalUrl = resolveUrl(url);
+    final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
     final cacheW = _resolveCacheSize(memCacheWidth, width, devicePixelRatio);
     final cacheH = _resolveCacheSize(memCacheHeight, height, devicePixelRatio);
 
     return ExtendedImage.network(
       finalUrl,
-      headers: const {
-        'Referer': ApiConstants.referer,
-        'User-Agent': ApiConstants.userAgent,
-      },
+      headers: _defaultHeaders,
       width: width,
       height: height,
       cacheWidth: cacheW,

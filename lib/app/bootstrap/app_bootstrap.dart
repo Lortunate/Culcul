@@ -5,7 +5,6 @@ import 'package:dio_cache_interceptor_file_store/dio_cache_interceptor_file_stor
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:media_kit/media_kit.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:culcul/app/bootstrap/app_dependencies.dart';
@@ -16,7 +15,6 @@ class AppBootstrap {
 
   static Future<AppDependencies> initialize() async {
     WidgetsFlutterBinding.ensureInitialized();
-    MediaKit.ensureInitialized();
     await Hive.initFlutter();
 
     final openedBoxesFuture = Future.wait<Box<dynamic>>([

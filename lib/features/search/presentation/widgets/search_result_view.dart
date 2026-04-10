@@ -59,17 +59,12 @@ class SearchResultTab extends HookConsumerWidget {
     final order = useState('totalrank');
     final duration = useState(0);
     final showFilter = searchType == 'video' || searchType == 'article';
-
-    final provider = searchResultProvider(
-      searchResultParams(
-        keyword,
-        searchType: searchType,
-        order: order.value,
-        duration: duration.value,
-      ),
+    final params = searchResultParams(
+      keyword,
+      searchType: searchType,
+      order: order.value,
+      duration: duration.value,
     );
-    final searchResultAsync = ref.watch(provider);
-    final notifier = ref.read(provider.notifier);
 
     return Column(
       children: [
@@ -81,30 +76,42 @@ class SearchResultTab extends HookConsumerWidget {
             onDurationChanged: (v) => duration.value = v,
             showDuration: searchType == 'video',
           ),
-        Expanded(
-          child: searchResultAsync.when(
-            data: (data) {
-              final items = data?.items ?? [];
-              final hasMore = data != null && data.page < data.numPages;
-
-              return SearchResultList(
-                items: items,
-                hasMore: hasMore,
-                isLoadingMore:
-                    searchResultAsync.isLoading && !searchResultAsync.isRefreshing,
-                onLoadMore: notifier.fetchMore,
-                onRetry: () => ref.refresh(provider),
-              );
-            },
-            loading: () => const SearchResultSkeleton(),
-            error: (error, stack) => AppErrorWidget(
-              error: error,
-              stackTrace: stack,
-              onRetry: () => ref.refresh(provider),
-            ),
-          ),
-        ),
+        Expanded(child: _SearchResultPane(params: params)),
       ],
+    );
+  }
+}
+
+class _SearchResultPane extends ConsumerWidget {
+  final SearchResultParams params;
+
+  const _SearchResultPane({required this.params});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final provider = searchResultProvider(params);
+    final searchResultAsync = ref.watch(provider);
+    final notifier = ref.read(provider.notifier);
+
+    return searchResultAsync.when(
+      data: (data) {
+        final items = data?.items ?? [];
+        final hasMore = data != null && data.page < data.numPages;
+
+        return SearchResultList(
+          items: items,
+          hasMore: hasMore,
+          isLoadingMore: searchResultAsync.isLoading && !searchResultAsync.isRefreshing,
+          onLoadMore: notifier.fetchMore,
+          onRetry: () => ref.refresh(provider),
+        );
+      },
+      loading: () => const SearchResultSkeleton(),
+      error: (error, stack) => AppErrorWidget(
+        error: error,
+        stackTrace: stack,
+        onRetry: () => ref.refresh(provider),
+      ),
     );
   }
 }

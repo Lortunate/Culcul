@@ -9,6 +9,17 @@ class ScrollLoadTrigger {
   const ScrollLoadTrigger._();
   static int _sessionSeed = 0;
 
+  static double resolveExtentAfterThreshold(
+    ScrollMetrics metrics, {
+    required double minThreshold,
+    double viewportFactor = 1.0,
+    double maxThreshold = 1200,
+  }) {
+    final viewportBased = metrics.viewportDimension * viewportFactor;
+    final threshold = viewportBased > minThreshold ? viewportBased : minThreshold;
+    return threshold > maxThreshold ? maxThreshold : threshold;
+  }
+
   static bool shouldTriggerByExtentAfter(
     ScrollMetrics metrics, {
     required double threshold,
@@ -44,10 +55,20 @@ class ScrollLoadTrigger {
     required String source,
     int Function()? itemCount,
     bool onlyOnScrollEnd = true,
+    double? viewportFactor,
+    double maxThreshold = 1200,
   }) {
+    final effectiveThreshold = viewportFactor == null
+        ? extentAfterThreshold
+        : resolveExtentAfterThreshold(
+            notification.metrics,
+            minThreshold: extentAfterThreshold,
+            viewportFactor: viewportFactor,
+            maxThreshold: maxThreshold,
+          );
     if (!shouldTriggerOnScrollNotification(
       notification,
-      extentAfterThreshold: extentAfterThreshold,
+      extentAfterThreshold: effectiveThreshold,
       onlyOnScrollEnd: onlyOnScrollEnd,
     )) {
       return false;

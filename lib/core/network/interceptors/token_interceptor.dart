@@ -3,7 +3,10 @@ import 'package:culcul/features/auth/auth.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TokenInterceptor extends Interceptor {
+class TokenInterceptor extends QueuedInterceptor {
+  static const String _tokenRefreshedExtra = 'token_refreshed';
+  static const String _disableTokenRefreshExtra = 'disable_token_refresh';
+
   final Ref _ref;
   Future<void>? _refreshCookieFuture;
 
@@ -16,7 +19,8 @@ class TokenInterceptor extends Interceptor {
       final code = data['code'];
 
       if (code == -101) {
-        if (response.requestOptions.extra['token_refreshed'] == true) {
+        if (response.requestOptions.extra[_tokenRefreshedExtra] == true ||
+            response.requestOptions.extra[_disableTokenRefreshExtra] == true) {
           handler.next(response);
           return;
         }
@@ -31,7 +35,7 @@ class TokenInterceptor extends Interceptor {
           await _ensureCookieRefreshed();
 
           final retryExtra = Map<String, dynamic>.from(response.requestOptions.extra)
-            ..['token_refreshed'] = true;
+            ..[_tokenRefreshedExtra] = true;
 
           final dio = _ref.read(dioClientProvider);
           final retryOptions = response.requestOptions.copyWith(extra: retryExtra);

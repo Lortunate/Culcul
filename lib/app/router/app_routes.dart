@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -33,6 +34,6 @@ GoRouter router(Ref ref) {
     navigatorKey: rootNavigatorKey,
     initialLocation: '/home',
     routes: $appRoutes,
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: kDebugMode,
   );
 }

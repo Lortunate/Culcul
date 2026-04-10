@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer' as developer;
 
+import 'package:culcul/core/network/request_cancel_token.dart';
 import 'package:culcul/features/profile/profile.dart';
 import 'package:culcul/features/video/application/video_detail_workflows.dart';
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
@@ -18,6 +19,9 @@ class VideoDetailController extends _$VideoDetailController
   int _loadToken = 0;
   int _playUrlRequestToken = 0;
   final Map<String, PlayUrl> _playUrlSessionCache = <String, PlayUrl>{};
+  RequestCancelToken? _criticalLoadCancelToken;
+  RequestCancelToken? _playUrlLoadCancelToken;
+  RequestCancelToken? _auxiliaryLoadCancelToken;
 
   @override
   int get loadToken => _loadToken;
@@ -29,7 +33,20 @@ class VideoDetailController extends _$VideoDetailController
   Map<String, PlayUrl> get playUrlSessionCache => _playUrlSessionCache;
 
   @override
+  RequestCancelToken? get auxiliaryLoadCancelToken => _auxiliaryLoadCancelToken;
+
+  @override
+  set auxiliaryLoadCancelToken(RequestCancelToken? value) {
+    _auxiliaryLoadCancelToken = value;
+  }
+
+  @override
   VideoDetailState build(String bvid) {
+    ref.onDispose(() {
+      _criticalLoadCancelToken?.cancel('video_detail_disposed');
+      _playUrlLoadCancelToken?.cancel('video_playurl_disposed');
+      _auxiliaryLoadCancelToken?.cancel('video_auxiliary_disposed');
+    });
     unawaited(Future<void>.microtask(load));
     return const VideoDetailState();
   }
@@ -37,9 +54,16 @@ class VideoDetailController extends _$VideoDetailController
   Future<void> load() async {
     final requestToken = ++_loadToken;
     _playUrlRequestToken++;
+    _criticalLoadCancelToken?.cancel('video_detail_reloaded');
+    _auxiliaryLoadCancelToken?.cancel('video_auxiliary_reloaded');
+    _playUrlLoadCancelToken?.cancel('video_playurl_reloaded');
+    final cancelToken = RequestCancelToken();
+    _criticalLoadCancelToken = cancelToken;
     state = state.copyWith(isLoading: true, error: null);
-    final result = await ref.read(loadVideoDetailWorkflowProvider).loadCritical(bvid);
-    if (!_isCurrentLoadRequest(requestToken)) {
+    final result = await ref
+        .read(loadVideoDetailWorkflowProvider)
+        .loadCritical(bvid, cancelToken: cancelToken);
+    if (!ref.mounted || !_isCurrentLoadRequest(requestToken)) {
       return;
     }
 
@@ -167,10 +191,13 @@ class VideoDetailController extends _$VideoDetailController
     }
 
     final requestToken = ++_playUrlRequestToken;
+    _playUrlLoadCancelToken?.cancel('video_playurl_replaced');
+    final cancelToken = RequestCancelToken();
+    _playUrlLoadCancelToken = cancelToken;
     final result = await ref
         .read(videoRepositoryProvider)
-        .fetchVideoPlayUrl(aid: aid, cid: cid, quality: qn);
-    if (!_isCurrentPlayUrlRequest(requestToken)) {
+        .fetchVideoPlayUrl(aid: aid, cid: cid, quality: qn, cancelToken: cancelToken);
+    if (!ref.mounted || !_isCurrentPlayUrlRequest(requestToken)) {
       return;
     }
 

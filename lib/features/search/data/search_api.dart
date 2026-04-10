@@ -1,3 +1,4 @@
+import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/network/models/api_response.dart';
 import 'package:culcul/features/search/data/dtos/search_dtos.dart';
 import 'package:dio/dio.dart' hide Headers;
@@ -13,14 +14,19 @@ abstract class SearchApi {
   Future<String> fetchSearchSuggestions(
     @Query('term') String term, {
     @Query('main_ver') String mainVer = 'v1',
+    @CancelRequest() CancelToken? cancelToken,
   });
 
-  @GET('https://api.bilibili.com/x/web-interface/wbi/search/default')
+  @GET(ApiConstants.searchDefaultUrl)
   @Headers({'x-bili-wbi': 'true'})
-  Future<ApiResponse<DefaultSearchData>> fetchDefaultSearch();
+  Future<ApiResponse<DefaultSearchData>> fetchDefaultSearch({
+    @Query('force_refresh') bool? forceRefresh,
+  });
 
-  @GET('https://app.bilibili.com/x/v2/search/trending/ranking')
-  Future<TrendingRankingResponse> fetchTrendingRanking();
+  @GET(ApiConstants.searchTrendingRanking)
+  Future<TrendingRankingResponse> fetchTrendingRanking({
+    @Query('force_refresh') bool? forceRefresh,
+  });
 
   @GET('https://api.bilibili.com/x/web-interface/wbi/search/all/v2')
   @Headers({'x-bili-wbi': 'true'})
@@ -32,6 +38,7 @@ abstract class SearchApi {
     @Query('order') String order = 'totalrank',
     @Query('duration') int duration = 0,
     @Query('tids') int? tids,
+    @CancelRequest() CancelToken? cancelToken,
   });
 
   @GET('https://api.bilibili.com/x/web-interface/wbi/search/type')
@@ -44,5 +51,6 @@ abstract class SearchApi {
     @Query('order') String order = 'totalrank',
     @Query('duration') int duration = 0,
     @Query('tids') int? tids,
+    @CancelRequest() CancelToken? cancelToken,
   });
 }

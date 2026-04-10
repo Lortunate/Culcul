@@ -1,4 +1,5 @@
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/network/request_cancel_token.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
@@ -13,6 +14,8 @@ abstract class ProfileRepository {
     required int mid,
     int page = 1,
     String order = 'pubdate',
+    bool forceRefresh = false,
+    RequestCancelToken? cancelToken,
   });
 
   Future<Result<ProfileVideo?, AppError>> getStickyVideo(int vmid);

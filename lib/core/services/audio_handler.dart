@@ -3,12 +3,14 @@ import 'dart:developer' as developer;
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
+import 'package:culcul/app/bootstrap/deferred_app_init.dart';
 import 'package:culcul/core/services/audio_playback_state_gate.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
 
 final audioHandlerProvider = Provider<CilixiliAudioHandler>((ref) {
+  DeferredAppInitController.instance.ensureMediaKitInitialized();
   final handler = CilixiliAudioHandler.shared;
   unawaited(handler.initializeAudioServiceIfNeeded());
   return handler;
@@ -71,10 +73,7 @@ class CilixiliAudioHandler extends BaseAudioHandler {
     await session.configure(const AudioSessionConfiguration.music());
   }
 
-  void _broadcastState({
-    required bool isCriticalEvent,
-    required String reason,
-  }) {
+  void _broadcastState({required bool isCriticalEvent, required String reason}) {
     final snapshot = _playbackStateGate.nextSnapshotIfShouldEmit(
       isCriticalEvent: isCriticalEvent,
       playing: player.state.playing,

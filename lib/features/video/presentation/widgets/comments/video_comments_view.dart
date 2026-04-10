@@ -7,6 +7,7 @@ import 'package:culcul/features/video/presentation/view_models/video_detail_view
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/pagination/scroll_load_trigger.dart';
+import 'package:culcul/ui/widgets/app_network_image_prefetcher.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
@@ -20,10 +21,16 @@ class VideoCommentsView extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final detailState = ref.watch(videoDetailControllerProvider(bvid));
-    final state = ref.watch(videoCommentsControllerProvider(bvid));
+    final aid = ref.watch(
+      videoDetailControllerProvider(bvid).select((state) => state.videoDetail?.aid),
+    );
+    final upperMid = ref.watch(
+      videoDetailControllerProvider(bvid).select((state) => state.videoDetail?.owner.mid),
+    );
+    final paging = ref.watch(
+      videoCommentsControllerProvider(bvid).select((state) => state.paging),
+    );
     final notifier = ref.read(videoCommentsControllerProvider(bvid).notifier);
-    final paging = state.paging;
     final hasMore = paging.hasMore;
     final loadGate = useMemoized(PaginationLoadGate.new, [bvid]);
 
@@ -32,6 +39,32 @@ class VideoCommentsView extends HookConsumerWidget {
       return null;
     }, [notifier]);
 
+    useEffect(() {
+      final pixelRatio = MediaQuery.devicePixelRatioOf(context);
+      final specs = <NetworkImagePrefetchSpec>[];
+
+      for (final comment in paging.items.take(6)) {
+        for (final picture in comment.content.pictures.take(3)) {
+          final logicalWidth = picture.imgWidth > 0
+              ? picture.imgWidth.clamp(100, 200).toDouble()
+              : 120.0;
+          final logicalHeight = picture.imgHeight > 0
+              ? picture.imgHeight.clamp(100, 200).toDouble()
+              : 120.0;
+          specs.add(
+            NetworkImagePrefetchSpec(
+              url: picture.imgSrc,
+              memCacheWidth: (logicalWidth * pixelRatio).round(),
+              memCacheHeight: (logicalHeight * pixelRatio).round(),
+            ),
+          );
+        }
+      }
+
+      AppNetworkImagePrefetcher.prefetch(context, specs: specs, limit: 8);
+      return null;
+    }, [paging.items]);
+
     if (paging.isInitialLoading && paging.items.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -39,8 +72,6 @@ class VideoCommentsView extends HookConsumerWidget {
     if (paging.items.isEmpty && !paging.isInitialLoading) {
       return _buildEmptyState(context, notifier);
     }
-
-    final upperMid = detailState.videoDetail?.owner.mid;
 
     return EasyRefresh(
       onRefresh: notifier.refresh,
@@ -61,6 +92,7 @@ class VideoCommentsView extends HookConsumerWidget {
       footer: hasMore ? AppLoadFooter() : null,
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: 4),
+        cacheExtent: 520,
         itemCount: paging.items.length,
         separatorBuilder: (context, index) {
           return Divider(
@@ -103,10 +135,10 @@ class VideoCommentsView extends HookConsumerWidget {
                 );
               },
               onTapReplies: () {
-                if (detailState.videoDetail?.aid != null) {
+                if (aid != null) {
                   CommentReplyRoute(
                     bvid: bvid,
-                    oid: detailState.videoDetail!.aid,
+                    oid: aid,
                     rootId: comment.rpid,
                     $extra: CommentReplyRouteInput(comment: comment, upperMid: upperMid),
                   ).push(context);

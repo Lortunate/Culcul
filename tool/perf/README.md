@@ -5,10 +5,10 @@
   - `flutter run --profile`
   - `adb logcat -c`
   - Reproduce scenario (open video detail, wait first frame, interact controls, scroll comments).
-  - `adb logcat -d | findstr "video_perf" > before.log`
+  - `adb logcat -d | findstr "video_perf startup_perf list_perf audio_perf feature_perf" > before.log`
 - iOS:
   - `flutter run --profile`
-  - Collect device logs from Xcode console and filter `video_perf`, save as `before.log`.
+  - Collect device logs from Xcode console and filter `video_perf` / `startup_perf` / `list_perf` / `audio_perf` / `feature_perf`, save as `before.log`.
 
 ## 2) Collect optimized logs (after)
 - Repeat the same scenario on the same device/network/build mode.
@@ -35,6 +35,9 @@
 - `startup_perf`: `first_frame` / `home_ready` elapsed timings.
 - `list_perf`: `load_trigger`/`load_complete` ratio by `source`, with `session_id` correlation.
 - `audio_perf`: playback state broadcast `rate` and `count`.
+- `feature_perf`: cache-backed first-screen chains such as `home.recommend_feed`, `home.popular_feed`, `search.default_hint`, `search.hot_ranking`, `profile.space_videos`, `dynamic.user_space_feed`.
+  - Watch `initial_data(ms)` to confirm first render latency.
+  - Watch `silent_refresh_apply(ms)` and `silent_refresh_skip(ms)` to confirm whether background refresh actually changed UI data.
 
 ## 5) Gate thresholds (PLAN16)
 - `first_frame_ready_ms` / `critical_loaded_ms` / `playurl_loaded_ms`: no regression over `+5.0%`.

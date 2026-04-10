@@ -124,4 +124,30 @@ void main() {
     expect(desktop.cardHeight, greaterThan(mobile.cardHeight));
     expect(desktop.thumbnailWidth, greaterThan(mobile.thumbnailWidth));
   });
+
+  testWidgets('home list cache budgets stay tighter on mobile layouts', (tester) async {
+    final mobileRecommend = await _readFromContext(
+      tester: tester,
+      size: const Size(390, 844),
+      reader: HomeGridLayoutSpec.recommend,
+    );
+    final desktopRecommend = await _readFromContext(
+      tester: tester,
+      size: const Size(1366, 900),
+      reader: HomeGridLayoutSpec.recommend,
+    );
+    final mobilePopular = await _readFromContext(
+      tester: tester,
+      size: const Size(390, 844),
+      reader: HomePopularLayoutSpec.fromContext,
+    );
+    final desktopPopular = await _readFromContext(
+      tester: tester,
+      size: const Size(1366, 900),
+      reader: HomePopularLayoutSpec.fromContext,
+    );
+
+    expect(mobileRecommend.cacheExtent, lessThan(desktopRecommend.cacheExtent));
+    expect(mobilePopular.cacheExtent, lessThan(desktopPopular.cacheExtent));
+  });
 }

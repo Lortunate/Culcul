@@ -96,6 +96,8 @@ class PerfExtract {
   final List<double> audioBroadcastRate;
   final List<double> audioBroadcastCount;
   final Map<String, ListSourceSummary> listSourceSummaries;
+  final Map<String, List<double>> featureFlowElapsedByMetric;
+  final Map<String, List<double>> featureFlowCountByMetric;
 
   const PerfExtract({
     required this.firstFrameReadyMs,
@@ -108,6 +110,8 @@ class PerfExtract {
     required this.audioBroadcastRate,
     required this.audioBroadcastCount,
     required this.listSourceSummaries,
+    required this.featureFlowElapsedByMetric,
+    required this.featureFlowCountByMetric,
   });
 }
 
@@ -263,6 +267,8 @@ PerfExtract parsePerfLogLines(List<String> lines) {
   final audioBroadcastRate = <double>[];
   final audioBroadcastCount = <double>[];
   final listEventStateBySource = <String, _ListEventState>{};
+  final featureFlowElapsedByMetric = <String, List<double>>{};
+  final featureFlowCountByMetric = <String, List<double>>{};
 
   for (final line in lines) {
     if (line.contains('video_perf')) {
@@ -339,6 +345,23 @@ PerfExtract parsePerfLogLines(List<String> lines) {
       if (count != null) {
         audioBroadcastCount.add(count);
       }
+      continue;
+    }
+
+    if (line.contains('feature_perf')) {
+      final chain = readStringField(line, 'chain');
+      final stage = readStringField(line, 'stage');
+      if (chain == null || stage == null) {
+        continue;
+      }
+      final metricKey = '$chain.$stage';
+      final elapsedMs = readNumericField(line, 'ms');
+      if (elapsedMs != null) {
+        featureFlowElapsedByMetric
+            .putIfAbsent(metricKey, () => <double>[])
+            .add(elapsedMs);
+      }
+      featureFlowCountByMetric.putIfAbsent(metricKey, () => <double>[]).add(1);
     }
   }
 
@@ -366,6 +389,8 @@ PerfExtract parsePerfLogLines(List<String> lines) {
     audioBroadcastRate: audioBroadcastRate,
     audioBroadcastCount: audioBroadcastCount,
     listSourceSummaries: listSourceSummaries,
+    featureFlowElapsedByMetric: featureFlowElapsedByMetric,
+    featureFlowCountByMetric: featureFlowCountByMetric,
   );
 }
 
@@ -427,6 +452,36 @@ PerfComparisonReport comparePerfExtract(PerfExtract before, PerfExtract after) {
       lowerIsBetter: true,
     ),
   ];
+
+  final featureMetricKeys = <String>{
+    ...before.featureFlowElapsedByMetric.keys,
+    ...after.featureFlowElapsedByMetric.keys,
+  }.toList()..sort();
+  for (final key in featureMetricKeys) {
+    metrics.add(
+      _metric(
+        'feature_${key}_ms',
+        before.featureFlowElapsedByMetric[key] ?? const <double>[],
+        after.featureFlowElapsedByMetric[key] ?? const <double>[],
+        lowerIsBetter: true,
+      ),
+    );
+  }
+
+  final featureCountKeys = <String>{
+    ...before.featureFlowCountByMetric.keys,
+    ...after.featureFlowCountByMetric.keys,
+  }.toList()..sort();
+  for (final key in featureCountKeys) {
+    metrics.add(
+      _metric(
+        'feature_${key}_count',
+        before.featureFlowCountByMetric[key] ?? const <double>[],
+        after.featureFlowCountByMetric[key] ?? const <double>[],
+        lowerIsBetter: false,
+      ),
+    );
+  }
 
   final allSources = <String>{
     ...before.listSourceSummaries.keys,
@@ -621,32 +676,13 @@ Map<String, Object?> _buildGate({
 }
 
 double? readNumericField(String line, String key) {
-  final token = '$key=';
-  final index = line.indexOf(token);
-  if (index < 0) {
-    return null;
-  }
-  final start = index + token.length;
-  var end = line.indexOf(' ', start);
-  if (end < 0) {
-    end = line.length;
-  }
-  return double.tryParse(line.substring(start, end));
+  final value = _readFieldValue(line, key);
+  return value == null ? null : double.tryParse(value);
 }
 
 String? readStringField(String line, String key) {
-  final token = '$key=';
-  final index = line.indexOf(token);
-  if (index < 0) {
-    return null;
-  }
-  final start = index + token.length;
-  var end = line.indexOf(' ', start);
-  if (end < 0) {
-    end = line.length;
-  }
-  final value = line.substring(start, end).trim();
-  return value.isEmpty ? null : value;
+  final value = _readFieldValue(line, key)?.trim();
+  return value == null || value.isEmpty ? null : value;
 }
 
 String? readEventName(String line, String prefix) {
@@ -662,6 +698,15 @@ String? readEventName(String line, String prefix) {
   }
   final event = line.substring(eventStart, eventEnd).trim();
   return event.isEmpty ? null : event;
+}
+
+String? _readFieldValue(String line, String key) {
+  final pattern = RegExp('(?:^|\\s)${RegExp.escape(key)}=([^\\s]+)');
+  final match = pattern.firstMatch(line);
+  if (match == null) {
+    return null;
+  }
+  return match.group(1);
 }
 
 double? _avg(List<double> values) {

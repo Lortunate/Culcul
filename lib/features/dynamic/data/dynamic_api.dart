@@ -35,6 +35,8 @@ abstract class DynamicApi {
     @Query('features')
     String features =
         'itemOpusStyle,listOnlyfans,opusBigCover,onlyfansVote,decorationCard,onlyfansAssetsV2,forwardListHidden,ugcDelete',
+    @Query('force_refresh') bool? forceRefresh,
+    @CancelRequest() CancelToken? cancelToken,
   });
 
   @GET('/x/polymer/web-dynamic/v1/feed/topic')

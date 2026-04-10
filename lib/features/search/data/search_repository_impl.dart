@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/errors/exceptions.dart';
+import 'package:culcul/core/network/request_cancel_token.dart';
 import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/network/request_executor_binding.dart';
@@ -23,7 +24,9 @@ domain.SearchRepository searchRepository(Ref ref) {
   return SearchRepositoryImpl(api: SearchApi(ref.watch(dioClientProvider)));
 }
 
-class SearchRepositoryImpl with RequestExecutorBinding implements domain.SearchRepository {
+class SearchRepositoryImpl
+    with RequestExecutorBinding
+    implements domain.SearchRepository {
   static const int _defaultSearchPageSize = 20;
   final SearchApi api;
   final RequestExecutor _requestExecutor;
@@ -35,10 +38,13 @@ class SearchRepositoryImpl with RequestExecutorBinding implements domain.SearchR
   RequestExecutor get requestExecutor => _requestExecutor;
 
   Future<Result<List<SearchSuggestionTag>, AppError>> fetchSearchSuggestions(
-    String term,
-  ) async {
+    String term, {
+    RequestCancelToken? cancelToken,
+  }) async {
     if (term.isEmpty) return const Success(<SearchSuggestionTag>[]);
-    final result = await requestResult(() => api.fetchSearchSuggestions(term));
+    final result = await requestResult(
+      () => api.fetchSearchSuggestions(term, cancelToken: cancelToken?.dioToken),
+    );
     return result.map(_parseSuggestions);
   }
 
@@ -52,13 +58,21 @@ class SearchRepositoryImpl with RequestExecutorBinding implements domain.SearchR
     }
   }
 
-  Future<Result<DefaultSearchData, AppError>> fetchDefaultSearch() {
-    return requestApiResult(() => api.fetchDefaultSearch());
+  Future<Result<DefaultSearchData, AppError>> fetchDefaultSearch({
+    bool forceRefresh = false,
+  }) {
+    return requestApiResult(
+      () => api.fetchDefaultSearch(forceRefresh: forceRefresh ? true : null),
+    );
   }
 
-  Future<Result<TrendingRankingData, AppError>> fetchTrendingRanking() async {
+  Future<Result<TrendingRankingData, AppError>> fetchTrendingRanking({
+    bool forceRefresh = false,
+  }) async {
     return requestResult(() async {
-      final response = await api.fetchTrendingRanking();
+      final response = await api.fetchTrendingRanking(
+        forceRefresh: forceRefresh ? true : null,
+      );
       if (response.code != 0) {
         throw ServerException(response.message, code: response.code);
       }
@@ -72,6 +86,7 @@ class SearchRepositoryImpl with RequestExecutorBinding implements domain.SearchR
     String searchType = 'all',
     String order = 'totalrank',
     int duration = 0,
+    RequestCancelToken? cancelToken,
   }) async {
     return requestResult(() async {
       final response = searchType == 'all'
@@ -82,6 +97,7 @@ class SearchRepositoryImpl with RequestExecutorBinding implements domain.SearchR
               searchType: searchType,
               order: order,
               duration: duration,
+              cancelToken: cancelToken?.dioToken,
             )
           : await api.fetchSearchByType(
               keyword: keyword,
@@ -90,6 +106,7 @@ class SearchRepositoryImpl with RequestExecutorBinding implements domain.SearchR
               searchType: searchType,
               order: order,
               duration: duration,
+              cancelToken: cancelToken?.dioToken,
             );
       if (response.code != 0 || response.data == null) {
         throw ServerException(response.message, code: response.code);
@@ -99,8 +116,11 @@ class SearchRepositoryImpl with RequestExecutorBinding implements domain.SearchR
   }
 
   @override
-  Future<Result<List<SearchSuggestionEntry>, AppError>> getSuggestions(String term) async {
-    final result = await fetchSearchSuggestions(term);
+  Future<Result<List<SearchSuggestionEntry>, AppError>> getSuggestions(
+    String term, {
+    RequestCancelToken? cancelToken,
+  }) async {
+    final result = await fetchSearchSuggestions(term, cancelToken: cancelToken);
     return result.map(
       (suggestions) => suggestions
           .map((item) => item.toDomain())
@@ -110,14 +130,18 @@ class SearchRepositoryImpl with RequestExecutorBinding implements domain.SearchR
   }
 
   @override
-  Future<Result<SearchDefaultHint?, AppError>> getDefaultSearch() async {
-    final result = await fetchDefaultSearch();
+  Future<Result<SearchDefaultHint?, AppError>> getDefaultSearch({
+    bool forceRefresh = false,
+  }) async {
+    final result = await fetchDefaultSearch(forceRefresh: forceRefresh);
     return result.map((data) => data.toDomain());
   }
 
   @override
-  Future<Result<List<SearchTrendingKeyword>, AppError>> getTrendingRanking() async {
-    final result = await fetchTrendingRanking();
+  Future<Result<List<SearchTrendingKeyword>, AppError>> getTrendingRanking({
+    bool forceRefresh = false,
+  }) async {
+    final result = await fetchTrendingRanking(forceRefresh: forceRefresh);
     return result.map((data) => data.list.map((item) => item.toDomain()).toList());
   }
 
@@ -128,6 +152,7 @@ class SearchRepositoryImpl with RequestExecutorBinding implements domain.SearchR
     String searchType = 'all',
     String order = 'totalrank',
     int duration = 0,
+    RequestCancelToken? cancelToken,
   }) async {
     final result = await fetchSearchAll(
       keyword: keyword,
@@ -135,6 +160,7 @@ class SearchRepositoryImpl with RequestExecutorBinding implements domain.SearchR
       searchType: searchType,
       order: order,
       duration: duration,
+      cancelToken: cancelToken,
     );
     return result.map((data) => data.toDomain());
   }

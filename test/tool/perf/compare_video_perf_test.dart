@@ -4,7 +4,7 @@ import '../../../tool/perf/compare_video_perf.dart';
 
 void main() {
   group('parsePerfLogLines', () {
-    test('parses video/startup/list/audio metrics from mixed logs', () {
+    test('parses video/startup/list/audio/feature metrics from mixed logs', () {
       final extract = parsePerfLogLines(<String>[
         'I video_perf critical_loaded ms=120',
         'I video_perf playurl_loaded ms=80',
@@ -16,6 +16,8 @@ void main() {
         'I list_perf load_complete source=search.result session_id=s_1 result=success elapsed_ms=120 count=30 items_delta=10',
         'I list_perf drop_unknown_search_type source=search.result_converter count=2',
         'I audio_perf playback_state_broadcast count=30 window_s=10 rate=3.0 reason=position',
+        'I feature_perf chain=search.default_hint stage=initial_data cache_present=true has_value=true ms=42',
+        'I feature_perf chain=profile.space_videos stage=silent_refresh_apply mid=1 order=pubdate items=30 ms=85',
       ]);
 
       expect(extract.firstFrameReadyMs, <double>[300]);
@@ -28,6 +30,18 @@ void main() {
       expect(extract.listDroppedUnknownTypeCount, <double>[2]);
       expect(extract.audioBroadcastRate, <double>[3]);
       expect(extract.audioBroadcastCount, <double>[30]);
+      expect(
+        extract.featureFlowElapsedByMetric['search.default_hint.initial_data'],
+        <double>[42],
+      );
+      expect(
+        extract.featureFlowElapsedByMetric['profile.space_videos.silent_refresh_apply'],
+        <double>[85],
+      );
+      expect(
+        extract.featureFlowCountByMetric['search.default_hint.initial_data'],
+        <double>[1],
+      );
 
       final sourceSummary = extract.listSourceSummaries['search.result'];
       expect(sourceSummary, isNotNull);
@@ -65,6 +79,7 @@ void main() {
       'I video_perf critical_loaded ms=150',
       'I video_perf playurl_loaded ms=100',
       'I video_perf frame_timing_summary jank_ratio=0.200',
+      'I feature_perf chain=home.recommend_feed stage=initial_data items=20 cache_present=true ms=90',
       'I list_perf load_trigger source=feed session_id=s1',
       'I list_perf load_complete source=feed session_id=s1 elapsed_ms=80 result=success',
     ]);
@@ -73,6 +88,7 @@ void main() {
       'I video_perf critical_loaded ms=140',
       'I video_perf playurl_loaded ms=95',
       'I video_perf frame_timing_summary jank_ratio=0.150',
+      'I feature_perf chain=home.recommend_feed stage=initial_data items=20 cache_present=true ms=60',
       'I list_perf load_trigger source=feed session_id=s1',
       'I list_perf load_trigger source=feed session_id=s2',
       'I list_perf load_complete source=feed session_id=s1 elapsed_ms=90 result=success',
@@ -83,6 +99,11 @@ void main() {
       (metric) => metric.name == 'first_frame_ready_ms',
     );
     expect(firstFrameMetric.deltaPct, closeTo(5, 0.001));
+    final featureMetric = report.metrics.firstWhere(
+      (metric) => metric.name == 'feature_home.recommend_feed.initial_data_ms',
+    );
+    expect(featureMetric.before.avg, 90);
+    expect(featureMetric.after.avg, 60);
 
     final feedComparison = report.listSourceComparisons.firstWhere(
       (comparison) => comparison.source == 'feed',
@@ -219,5 +240,19 @@ void main() {
       (gate) => gate['name'] == 'plan16_two_of_three_key_metrics',
     );
     expect(keyGate['status'], 'fail');
+  });
+
+  test('formatPerfComparisonText includes feature metrics', () {
+    final before = parsePerfLogLines(<String>[
+      'I feature_perf chain=search.hot_ranking stage=initial_data items=10 cache_present=true ms=50',
+    ]);
+    final after = parsePerfLogLines(<String>[
+      'I feature_perf chain=search.hot_ranking stage=initial_data items=10 cache_present=true ms=40',
+    ]);
+
+    final report = comparePerfExtract(before, after);
+    final text = formatPerfComparisonText(report);
+
+    expect(text, contains('feature_search.hot_ranking.initial_data_ms'));
   });
 }

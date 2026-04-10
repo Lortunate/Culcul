@@ -10,6 +10,7 @@ import 'package:culcul/features/video/presentation/widgets/layers/video_layer.da
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:media_kit/media_kit.dart';
 
 class VideoPlayerView extends HookConsumerWidget {
   final String bvid;
@@ -39,28 +40,13 @@ class VideoPlayerView extends HookConsumerWidget {
     final brightness = usePlayerSystemSettings(player);
     useVideoProgressReport(ref, bvid, player, isPlaying);
 
-    final volumeSnapshot = useStream(player.stream.volume);
-    final currentVolume = volumeSnapshot.data ?? player.state.volume;
-
     return AspectRatio(
       aspectRatio: isFullscreen ? MediaQuery.of(context).size.aspectRatio : 16 / 10,
       child: Container(
         color: colorScheme.scrim,
         child: Stack(
           children: [
-            InteractionLayer(
-              bvid: bvid,
-              brightness: brightness,
-              currentVolume: currentVolume,
-              child: Stack(
-                fit: StackFit.passthrough,
-                children: [
-                  const VideoLayer(),
-                  Positioned.fill(child: DanmakuLayer(bvid: bvid)),
-                  Positioned.fill(child: SubtitleLayer(bvid: bvid)),
-                ],
-              ),
-            ),
+            _InteractiveVideoLayers(bvid: bvid, player: player, brightness: brightness),
             ControlsLayer(
               bvid: bvid,
               onToggleFullscreen: onToggleFullscreen,
@@ -68,6 +54,38 @@ class VideoPlayerView extends HookConsumerWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _InteractiveVideoLayers extends HookWidget {
+  final String bvid;
+  final Player player;
+  final ValueNotifier<double> brightness;
+
+  const _InteractiveVideoLayers({
+    required this.bvid,
+    required this.player,
+    required this.brightness,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final volumeSnapshot = useStream(player.stream.volume);
+    final currentVolume = volumeSnapshot.data ?? player.state.volume;
+
+    return InteractionLayer(
+      bvid: bvid,
+      brightness: brightness,
+      currentVolume: currentVolume,
+      child: Stack(
+        fit: StackFit.passthrough,
+        children: [
+          const VideoLayer(),
+          Positioned.fill(child: DanmakuLayer(bvid: bvid)),
+          Positioned.fill(child: SubtitleLayer(bvid: bvid)),
+        ],
       ),
     );
   }

@@ -28,6 +28,37 @@ void main() {
       );
     });
 
+    test('resolveExtentAfterThreshold scales with viewport and respects bounds', () {
+      final metrics = FixedScrollMetrics(
+        minScrollExtent: 0,
+        maxScrollExtent: 2000,
+        pixels: 800,
+        viewportDimension: 640,
+        axisDirection: AxisDirection.down,
+        devicePixelRatio: 1,
+      );
+
+      expect(
+        ScrollLoadTrigger.resolveExtentAfterThreshold(
+          metrics,
+          minThreshold: 360,
+          viewportFactor: 1.25,
+          maxThreshold: 900,
+        ),
+        800,
+      );
+
+      expect(
+        ScrollLoadTrigger.resolveExtentAfterThreshold(
+          metrics,
+          minThreshold: 360,
+          viewportFactor: 2,
+          maxThreshold: 900,
+        ),
+        900,
+      );
+    });
+
     test(
       'runWithGate returns noMore without running task when hasMore is false',
       () async {
@@ -159,5 +190,53 @@ void main() {
       expect(called, isFalse);
       expect(result, IndicatorResult.noMore);
     });
+
+    testWidgets(
+      'triggerOnScrollNotificationWithGate supports viewport-aware thresholds during scroll',
+      (tester) async {
+        final gate = PaginationLoadGate();
+        var called = false;
+
+        await tester.pumpWidget(
+          const Directionality(
+            textDirection: TextDirection.ltr,
+            child: SizedBox(width: 100, height: 100),
+          ),
+        );
+
+        final context = tester.element(find.byType(SizedBox));
+        final notification = ScrollUpdateNotification(
+          metrics: FixedScrollMetrics(
+            minScrollExtent: 0,
+            maxScrollExtent: 2000,
+            pixels: 1200,
+            viewportDimension: 700,
+            axisDirection: AxisDirection.down,
+            devicePixelRatio: 1,
+          ),
+          context: context,
+          scrollDelta: 24,
+        );
+
+        final handled = ScrollLoadTrigger.triggerOnScrollNotificationWithGate(
+          notification: notification,
+          extentAfterThreshold: 400,
+          viewportFactor: 1.2,
+          maxThreshold: 900,
+          gate: gate,
+          hasMore: true,
+          task: () async {
+            called = true;
+          },
+          source: 'test.scroll.viewport_threshold',
+          onlyOnScrollEnd: false,
+        );
+
+        await tester.pump();
+
+        expect(handled, isFalse);
+        expect(called, isTrue);
+      },
+    );
   });
 }

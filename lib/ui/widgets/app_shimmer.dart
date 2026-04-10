@@ -1,3 +1,4 @@
+import 'package:culcul/core/perf/performance_policy.dart';
 import 'package:flutter/material.dart';
 
 class AppShimmer extends StatefulWidget {
@@ -43,25 +44,46 @@ class _AppShimmerState extends State<AppShimmer> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    if (!widget.enabled) return widget.child;
+    return ValueListenableBuilder<PerformancePolicy>(
+      valueListenable: PerformancePolicyController.notifier,
+      builder: (context, policy, child) {
+        final disableAnimations = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+        final shouldAnimate =
+            widget.enabled && !disableAnimations && policy.shimmerEnabled;
 
-    final colorScheme = Theme.of(context).colorScheme;
+        _syncAnimation(shouldAnimate);
+        if (!shouldAnimate) {
+          return widget.child;
+        }
 
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return ShaderMask(
-          blendMode: BlendMode.srcIn,
-          shaderCallback: (bounds) {
-            return _buildGradient(
-              colorScheme,
-              _SlidingGradientTransform(slidePercent: _controller.value),
-            ).createShader(bounds);
+        final colorScheme = Theme.of(context).colorScheme;
+        return AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return ShaderMask(
+              blendMode: BlendMode.srcIn,
+              shaderCallback: (bounds) {
+                return _buildGradient(
+                  colorScheme,
+                  _SlidingGradientTransform(slidePercent: _controller.value),
+                ).createShader(bounds);
+              },
+              child: widget.child,
+            );
           },
-          child: widget.child,
         );
       },
     );
+  }
+
+  void _syncAnimation(bool shouldAnimate) {
+    if (shouldAnimate && !_controller.isAnimating) {
+      _controller.repeat();
+      return;
+    }
+    if (!shouldAnimate && _controller.isAnimating) {
+      _controller.stop();
+    }
   }
 
   LinearGradient _buildGradient(ColorScheme colorScheme, GradientTransform transform) {

@@ -5,6 +5,7 @@ import 'package:culcul/core/pagination/scroll_load_trigger.dart';
 import 'package:culcul/features/profile/presentation/view_models/user_space_videos_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
+import 'package:culcul/ui/widgets/app_network_image_prefetcher.dart';
 import 'package:culcul/ui/widgets/skeletons/video_list_skeleton.dart';
 import 'package:culcul/ui/widgets/video_list_card.dart';
 import 'package:culcul/ui/widgets/icon_text.dart';
@@ -51,16 +52,20 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
         return ScrollLoadTrigger.triggerOnScrollNotificationWithGate(
           notification: notification,
           extentAfterThreshold: 360,
+          viewportFactor: 1.15,
+          maxThreshold: 840,
           gate: _loadGate,
           hasMore: notifier.hasMore,
           task: notifier.loadMore,
           itemCount: () => ref.read(provider).asData?.value.length ?? 0,
           hasMoreAfter: () => notifier.hasMore,
           source: 'profile.user_video_tab',
+          onlyOnScrollEnd: false,
         );
       },
       child: CustomScrollView(
         key: PageStorageKey<String>('user_video_tab_${widget.mid}'),
+        cacheExtent: 560,
         slivers: [
           SliverOverlapInjector(
             handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
@@ -114,6 +119,20 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
                   child: Center(child: Text(t.common.no_content)),
                 );
               }
+              final pixelRatio = MediaQuery.devicePixelRatioOf(context);
+              AppNetworkImagePrefetcher.prefetch(
+                context,
+                specs: videos
+                    .map(
+                      (video) => NetworkImagePrefetchSpec(
+                        url: video.pic,
+                        memCacheWidth: (160 * pixelRatio).round(),
+                        memCacheHeight: (100 * pixelRatio).round(),
+                      ),
+                    )
+                    .toList(growable: false),
+                limit: 8,
+              );
               final showLoadingFooter = videosAsync.isLoading && videos.isNotEmpty;
               return SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {

@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/network/request_cancel_token.dart';
 import 'package:culcul/core/pagination/paged_list_state_transitions.dart';
 import 'package:culcul/features/video/video.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -10,9 +12,15 @@ part 'comment_reply_view_model.g.dart';
 
 @riverpod
 class CommentReplyController extends _$CommentReplyController {
+  int _loadRequestToken = 0;
+  RequestCancelToken? _activeLoadCancelToken;
+
   @override
   CommentReplyState build(int oid, int rootId) {
-    unawaited(refresh());
+    ref.onDispose(() {
+      _activeLoadCancelToken?.cancel('comment_reply_disposed');
+    });
+    unawaited(Future<void>.microtask(refresh));
     return const CommentReplyState();
   }
 
@@ -22,10 +30,17 @@ class CommentReplyController extends _$CommentReplyController {
 
   Future<void> refresh() async {
     state = state.copyWith(paging: PagedListStateTransitions.beginRefresh(state.paging));
+    final requestToken = ++_loadRequestToken;
+    _activeLoadCancelToken?.cancel('comment_reply_refresh_replaced');
+    final cancelToken = RequestCancelToken();
+    _activeLoadCancelToken = cancelToken;
 
     final result = await ref
         .read(videoRepositoryProvider)
-        .fetchReply(oid: oid, root: rootId, page: 1);
+        .fetchReply(oid: oid, root: rootId, page: 1, cancelToken: cancelToken);
+    if (!ref.mounted || requestToken != _loadRequestToken) {
+      return;
+    }
     state = result.when(
       success: (response) => state.copyWith(
         paging: PagedListStateTransitions.completeRefresh(
@@ -35,8 +50,14 @@ class CommentReplyController extends _$CommentReplyController {
           hasMore: response.replies.isNotEmpty,
         ),
       ),
-      failure: (error) =>
-          state.copyWith(paging: PagedListStateTransitions.fail(state.paging, error)),
+      failure: (error) {
+        if (error is CancelAppError) {
+          return state;
+        }
+        return state.copyWith(
+          paging: PagedListStateTransitions.fail(state.paging, error),
+        );
+      },
     );
   }
 
@@ -48,10 +69,22 @@ class CommentReplyController extends _$CommentReplyController {
     }
 
     state = state.copyWith(paging: PagedListStateTransitions.beginLoadMore(state.paging));
+    final requestToken = ++_loadRequestToken;
+    _activeLoadCancelToken?.cancel('comment_reply_load_more_replaced');
+    final cancelToken = RequestCancelToken();
+    _activeLoadCancelToken = cancelToken;
 
     final result = await ref
         .read(videoRepositoryProvider)
-        .fetchReply(oid: oid, root: rootId, page: state.paging.nextPage);
+        .fetchReply(
+          oid: oid,
+          root: rootId,
+          page: state.paging.nextPage,
+          cancelToken: cancelToken,
+        );
+    if (!ref.mounted || requestToken != _loadRequestToken) {
+      return;
+    }
     state = result.when(
       success: (response) => state.copyWith(
         paging: PagedListStateTransitions.completeLoadMore(
@@ -61,8 +94,14 @@ class CommentReplyController extends _$CommentReplyController {
           hasMore: response.replies.isNotEmpty,
         ),
       ),
-      failure: (error) =>
-          state.copyWith(paging: PagedListStateTransitions.fail(state.paging, error)),
+      failure: (error) {
+        if (error is CancelAppError) {
+          return state;
+        }
+        return state.copyWith(
+          paging: PagedListStateTransitions.fail(state.paging, error),
+        );
+      },
     );
   }
 

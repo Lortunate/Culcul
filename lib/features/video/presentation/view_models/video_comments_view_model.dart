@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/network/request_cancel_token.dart';
 import 'package:culcul/core/pagination/paged_list_state.dart';
 import 'package:culcul/core/pagination/paged_list_state_transitions.dart';
 import 'package:culcul/features/video/video.dart';
@@ -12,8 +14,14 @@ part 'video_comments_view_model.g.dart';
 
 @riverpod
 class VideoCommentsController extends _$VideoCommentsController {
+  int _loadRequestToken = 0;
+  RequestCancelToken? _activeLoadCancelToken;
+
   @override
   VideoCommentsState build(String bvid) {
+    ref.onDispose(() {
+      _activeLoadCancelToken?.cancel('video_comments_disposed');
+    });
     return const VideoCommentsState(
       paging: PagedListState<CommentItem>(isInitialLoading: false, hasMore: true),
     );
@@ -98,6 +106,10 @@ class VideoCommentsController extends _$VideoCommentsController {
     if (aid == null) {
       return;
     }
+    final requestToken = ++_loadRequestToken;
+    _activeLoadCancelToken?.cancel('video_comments_replaced');
+    final cancelToken = RequestCancelToken();
+    _activeLoadCancelToken = cancelToken;
 
     if (replace) {
       state = state.copyWith(
@@ -111,7 +123,10 @@ class VideoCommentsController extends _$VideoCommentsController {
 
     final result = await ref
         .read(videoRepositoryProvider)
-        .fetchComments(oid: aid, sort: state.sort, page: page);
+        .fetchComments(oid: aid, sort: state.sort, page: page, cancelToken: cancelToken);
+    if (!ref.mounted || requestToken != _loadRequestToken) {
+      return;
+    }
     result.when(
       success: (response) {
         final comments = replace
@@ -134,6 +149,9 @@ class VideoCommentsController extends _$VideoCommentsController {
         );
       },
       failure: (error) {
+        if (error is CancelAppError) {
+          return;
+        }
         state = state.copyWith(
           paging: PagedListStateTransitions.fail(state.paging, error),
         );

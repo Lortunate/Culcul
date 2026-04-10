@@ -1,5 +1,6 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/core/network/request_cancel_token.dart';
 import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/network/request_executor_binding.dart';
 import 'package:culcul/core/network/resource_api.dart';
@@ -72,8 +73,13 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
   }
 
   @override
-  Future<Result<VideoDetail, AppError>> fetchVideoView(String bvid) {
-    return requestApiResult(() => api.fetchVideoView(bvid));
+  Future<Result<VideoDetail, AppError>> fetchVideoView(
+    String bvid, {
+    RequestCancelToken? cancelToken,
+  }) {
+    return requestApiResult(
+      () => api.fetchVideoView(bvid, cancelToken: cancelToken?.dioToken),
+    );
   }
 
   @override
@@ -89,8 +95,13 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
   }
 
   @override
-  Future<Result<List<VideoTag>, AppError>> fetchVideoTags(String bvid) {
-    return requestApiResult(() => api.fetchVideoTags(bvid));
+  Future<Result<List<VideoTag>, AppError>> fetchVideoTags(
+    String bvid, {
+    RequestCancelToken? cancelToken,
+  }) {
+    return requestApiResult(
+      () => api.fetchVideoTags(bvid, cancelToken: cancelToken?.dioToken),
+    );
   }
 
   @override
@@ -101,6 +112,7 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
     int fnval = 1,
     int fnver = 0,
     int fourk = 1,
+    RequestCancelToken? cancelToken,
   }) {
     return requestApiResult(
       () => api.fetchVideoPlayUrl(
@@ -110,6 +122,7 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
         fnval: fnval,
         fnver: fnver,
         fourk: fourk,
+        cancelToken: cancelToken?.dioToken,
       ),
     );
   }
@@ -123,8 +136,13 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
   }
 
   @override
-  Future<Result<List<RelatedVideo>, AppError>> fetchRelatedVideos(String bvid) {
-    return requestApiResult(() => api.fetchRelatedVideos(bvid));
+  Future<Result<List<RelatedVideo>, AppError>> fetchRelatedVideos(
+    String bvid, {
+    RequestCancelToken? cancelToken,
+  }) {
+    return requestApiResult(
+      () => api.fetchRelatedVideos(bvid, cancelToken: cancelToken?.dioToken),
+    );
   }
 
   @override
@@ -132,6 +150,7 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
     required int oid,
     CommentSort sort = CommentSort.hot,
     int page = 1,
+    RequestCancelToken? cancelToken,
   }) {
     return requestApiResult(
       () => api.fetchComments(
@@ -140,6 +159,7 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
         sort.apiValue,
         _defaultCommentPageSize,
         page,
+        cancelToken: cancelToken?.dioToken,
       ),
     );
   }
@@ -149,9 +169,17 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
     required int oid,
     required int root,
     int page = 1,
+    RequestCancelToken? cancelToken,
   }) {
     return requestApiResult(
-      () => api.fetchReply(oid, root, _videoCommentType, _defaultCommentPageSize, page),
+      () => api.fetchReply(
+        oid,
+        root,
+        _videoCommentType,
+        _defaultCommentPageSize,
+        page,
+        cancelToken: cancelToken?.dioToken,
+      ),
     );
   }
 

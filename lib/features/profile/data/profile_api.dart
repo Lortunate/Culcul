@@ -22,6 +22,8 @@ abstract class ProfileApi {
     @Query('ps') int pageSize = 30,
     @Query('order') String order = 'pubdate',
     @Query('keyword') String? keyword,
+    @Query('force_refresh') bool? forceRefresh,
+    @CancelRequest() CancelToken? cancelToken,
   });
 
   @GET('/x/space/top/arc')

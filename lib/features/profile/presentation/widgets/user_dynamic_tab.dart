@@ -44,16 +44,20 @@ class _UserDynamicTabState extends ConsumerState<UserDynamicTab>
         return ScrollLoadTrigger.triggerOnScrollNotificationWithGate(
           notification: notification,
           extentAfterThreshold: 360,
+          viewportFactor: 1.1,
+          maxThreshold: 820,
           gate: _loadGate,
           hasMore: providerNotifier.hasMore,
           task: providerNotifier.loadMore,
           itemCount: () => ref.read(provider).asData?.value.length ?? 0,
           hasMoreAfter: () => providerNotifier.hasMore,
           source: 'profile.user_dynamic_tab',
+          onlyOnScrollEnd: false,
         );
       },
       child: CustomScrollView(
         key: PageStorageKey<String>('user_dynamic_tab_${widget.mid}'),
+        cacheExtent: 560,
         slivers: [
           SliverOverlapInjector(
             handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
@@ -122,4 +126,3 @@ class _UserDynamicTabState extends ConsumerState<UserDynamicTab>
     );
   }
 }
-

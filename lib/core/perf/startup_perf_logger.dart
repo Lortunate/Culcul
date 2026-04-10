@@ -2,7 +2,15 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/foundation.dart';
 
-enum StartupPerfEvent { bootstrapStart, bootstrapReady, runApp, firstFrame, homeReady }
+enum StartupPerfEvent {
+  bootstrapStart,
+  bootstrapReady,
+  runApp,
+  firstFrame,
+  homeReady,
+  deferredWarmupStart,
+  deferredWarmupReady,
+}
 
 extension on StartupPerfEvent {
   String get value => switch (this) {
@@ -11,6 +19,8 @@ extension on StartupPerfEvent {
     StartupPerfEvent.runApp => 'run_app',
     StartupPerfEvent.firstFrame => 'first_frame',
     StartupPerfEvent.homeReady => 'home_ready',
+    StartupPerfEvent.deferredWarmupStart => 'deferred_warmup_start',
+    StartupPerfEvent.deferredWarmupReady => 'deferred_warmup_ready',
   };
 }
 

@@ -1,3 +1,4 @@
+import 'package:culcul/features/search/domain/entities/search_trending_keyword.dart';
 import 'package:culcul/features/search/search.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
@@ -10,9 +11,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          trendingRankingProvider.overrideWith((ref) async {
-            throw Exception('hot search error');
-          }),
+          trendingRankingProvider.overrideWith(_TestTrendingRankingController.new),
         ],
         child: TranslationProvider(
           child: MaterialApp(
@@ -29,3 +28,9 @@ void main() {
   });
 }
 
+class _TestTrendingRankingController extends TrendingRankingController {
+  @override
+  Future<List<SearchTrendingKeyword>> build() async {
+    throw Exception('hot search error');
+  }
+}

@@ -1,5 +1,6 @@
 import 'package:culcul/app/app.dart';
 import 'package:culcul/app/bootstrap/app_bootstrap.dart';
+import 'package:culcul/app/bootstrap/deferred_app_init.dart';
 import 'package:culcul/core/providers/cache_store_provider.dart';
 import 'package:culcul/core/providers/cookie_jar_provider.dart';
 import 'package:culcul/core/providers/storage_provider.dart';
@@ -35,6 +36,7 @@ void main() async {
     ),
   );
 
+  DeferredAppInitController.instance.scheduleAfterFirstFrame();
   WidgetsBinding.instance.addPostFrameCallback((_) {
     StartupPerfLogger.log(StartupPerfEvent.firstFrame);
   });

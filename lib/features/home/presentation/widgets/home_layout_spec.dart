@@ -6,11 +6,13 @@ class HomeGridLayoutSpec {
     required this.padding,
     required this.gridDelegate,
     required this.skeletonCount,
+    required this.cacheExtent,
   });
 
   final EdgeInsets padding;
   final SliverGridDelegateWithFixedCrossAxisCount gridDelegate;
   final int skeletonCount;
+  final double cacheExtent;
 
   factory HomeGridLayoutSpec.live(BuildContext context) {
     final columns = context.homeGridColumns;
@@ -24,6 +26,7 @@ class HomeGridLayoutSpec {
         childAspectRatio: isDesktop ? 1.12 : 1.1,
       ),
       skeletonCount: columns * 3,
+      cacheExtent: isDesktop ? 1100 : 640,
     );
   }
 
@@ -39,6 +42,7 @@ class HomeGridLayoutSpec {
         childAspectRatio: isDesktop ? 0.98 : 0.94,
       ),
       skeletonCount: columns * 4,
+      cacheExtent: isDesktop ? 1200 : 720,
     );
   }
 }
@@ -50,6 +54,7 @@ class HomePopularLayoutSpec {
     required this.cardHeight,
     required this.thumbnailWidth,
     required this.skeletonItemPadding,
+    required this.cacheExtent,
   });
 
   final EdgeInsets padding;
@@ -57,6 +62,7 @@ class HomePopularLayoutSpec {
   final double cardHeight;
   final double thumbnailWidth;
   final EdgeInsetsGeometry skeletonItemPadding;
+  final double cacheExtent;
 
   factory HomePopularLayoutSpec.fromContext(BuildContext context) {
     final isDesktop = context.isDesktopLayout;
@@ -66,6 +72,7 @@ class HomePopularLayoutSpec {
       cardHeight: isDesktop ? 112 : 100,
       thumbnailWidth: isDesktop ? 188 : 160,
       skeletonItemPadding: EdgeInsets.symmetric(vertical: isDesktop ? 4 : 2),
+      cacheExtent: isDesktop ? 960 : 560,
     );
   }
 }

@@ -9,6 +9,7 @@ import 'package:culcul/features/search/presentation/widgets/items/search_video_i
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_empty_state_widget.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
+import 'package:culcul/ui/widgets/app_network_image_prefetcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
@@ -39,6 +40,63 @@ class SearchResultList extends HookWidget {
       loadGate.reset();
       return null;
     }, [onLoadMore]);
+    useEffect(() {
+      final pixelRatio = MediaQuery.devicePixelRatioOf(context);
+      final specs = <NetworkImagePrefetchSpec>[];
+
+      for (final item in items.take(8)) {
+        switch (item) {
+          case SearchVideoEntry():
+            specs.add(
+              NetworkImagePrefetchSpec(
+                url: item.coverUrl,
+                memCacheWidth: (160 * pixelRatio).round(),
+                memCacheHeight: (90 * pixelRatio).round(),
+              ),
+            );
+          case SearchUserEntry():
+            specs.add(
+              NetworkImagePrefetchSpec(
+                url: item.avatarUrl,
+                memCacheWidth: (60 * pixelRatio).round(),
+                memCacheHeight: (60 * pixelRatio).round(),
+              ),
+            );
+          case SearchBangumiEntry():
+            specs.add(
+              NetworkImagePrefetchSpec(
+                url: item.coverUrl,
+                memCacheWidth: (82.5 * pixelRatio).round(),
+                memCacheHeight: (110 * pixelRatio).round(),
+              ),
+            );
+          case SearchArticleEntry():
+            for (final url in item.imageUrls.take(3)) {
+              specs.add(
+                NetworkImagePrefetchSpec(
+                  url: url,
+                  memCacheWidth: (160 * pixelRatio).round(),
+                  memCacheHeight: (90 * pixelRatio).round(),
+                ),
+              );
+            }
+          case SearchTopicEntry():
+            final coverUrl = item.coverUrl;
+            if (coverUrl != null && coverUrl.isNotEmpty) {
+              specs.add(
+                NetworkImagePrefetchSpec(
+                  url: coverUrl,
+                  memCacheWidth: (80 * pixelRatio).round(),
+                  memCacheHeight: (80 * pixelRatio).round(),
+                ),
+              );
+            }
+        }
+      }
+
+      AppNetworkImagePrefetcher.prefetch(context, specs: specs, limit: 12);
+      return null;
+    }, [items]);
 
     final t = Translations.of(context);
 
@@ -56,7 +114,9 @@ class SearchResultList extends HookWidget {
       onNotification: (notification) =>
           ScrollLoadTrigger.triggerOnScrollNotificationWithGate(
             notification: notification,
-            extentAfterThreshold: 500,
+            extentAfterThreshold: 420,
+            viewportFactor: 1.35,
+            maxThreshold: 960,
             gate: loadGate,
             hasMore: hasMore,
             isLoadingMore: isLoadingMore,
@@ -64,9 +124,11 @@ class SearchResultList extends HookWidget {
             itemCount: () => items.length,
             hasMoreAfter: () => hasMore,
             source: 'search.search_result_list',
+            onlyOnScrollEnd: false,
           ),
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        cacheExtent: 640,
         itemCount: items.length + (hasMore ? 1 : 0),
         separatorBuilder: (context, index) => const SizedBox(height: 12),
         itemBuilder: (context, index) {

@@ -2,9 +2,11 @@ import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/network/interceptors/cache_interceptor.dart';
 import 'package:culcul/core/network/interceptors/csrf_interceptor.dart';
 import 'package:culcul/core/network/interceptors/in_flight_dedup_interceptor.dart';
+import 'package:culcul/core/network/interceptors/network_quality_interceptor.dart';
 import 'package:culcul/core/network/interceptors/retry_interceptor.dart';
 import 'package:culcul/core/network/interceptors/token_interceptor.dart';
 import 'package:culcul/core/network/interceptors/wbi_interceptor.dart';
+import 'package:culcul/core/network/network_quality_policy.dart';
 import 'package:culcul/core/providers/cache_store_provider.dart';
 import 'package:culcul/core/providers/cookie_jar_provider.dart';
 import 'package:culcul/core/utils/json_compute.dart';
@@ -17,13 +19,13 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'dio_client.g.dart';
 
-Dio _createBaseDio(Ref ref) {
+Dio _createBaseDio(Ref ref, NetworkQualityPolicy networkPolicy) {
   final dio = Dio(
     BaseOptions(
       baseUrl: ApiConstants.baseUrl,
-      connectTimeout: const Duration(seconds: 15),
-      receiveTimeout: const Duration(seconds: 15),
-      sendTimeout: const Duration(seconds: 15),
+      connectTimeout: networkPolicy.connectTimeout,
+      receiveTimeout: networkPolicy.receiveTimeout,
+      sendTimeout: networkPolicy.sendTimeout,
       headers: {
         'User-Agent': ApiConstants.userAgent,
         'Referer': ApiConstants.referer,
@@ -35,7 +37,7 @@ Dio _createBaseDio(Ref ref) {
 
   dio.httpClientAdapter = Http2Adapter(
     ConnectionManager(
-      idleTimeout: const Duration(seconds: 60),
+      idleTimeout: networkPolicy.connectionIdleTimeout,
       onClientCreate: (_, config) {
         config.onBadCertificate = (_) => true;
       },
@@ -66,16 +68,19 @@ void _addLogInterceptor(Dio dio) {
 
 @Riverpod(keepAlive: true)
 Dio basicDio(Ref ref) {
-  final dio = _createBaseDio(ref);
+  final networkPolicy = ref.read(networkQualityPolicyProvider);
+  final dio = _createBaseDio(ref, networkPolicy);
   _addLogInterceptor(dio);
   return dio;
 }
 
 @Riverpod(keepAlive: true)
 Dio dioClient(Ref ref) {
-  final dio = _createBaseDio(ref);
+  final networkPolicy = ref.read(networkQualityPolicyProvider);
+  final dio = _createBaseDio(ref, networkPolicy);
   final cacheStore = ref.read(cacheStoreProvider);
 
+  dio.interceptors.add(NetworkQualityInterceptor(ref));
   dio.interceptors.add(CacheInterceptor(cacheStore));
   dio.interceptors.add(
     DioCacheInterceptor(
@@ -90,7 +95,14 @@ Dio dioClient(Ref ref) {
     ),
   );
   dio.interceptors.add(InFlightDedupInterceptor());
-  dio.interceptors.add(RetryInterceptor(dio: dio));
+  dio.interceptors.add(
+    RetryInterceptor(
+      dio: dio,
+      maxRetries: networkPolicy.retryMaxAttempts,
+      baseRetryDelayMs: networkPolicy.retryBaseDelayMs,
+      maxRetryDelayMs: networkPolicy.retryMaxDelayMs,
+    ),
+  );
   dio.interceptors.add(CsrfInterceptor(ref));
   dio.interceptors.add(WbiInterceptor(ref));
 

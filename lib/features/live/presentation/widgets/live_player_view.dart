@@ -1,3 +1,4 @@
+import 'package:culcul/app/bootstrap/deferred_app_init.dart';
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/features/live/presentation/view_models/live_room_view_model.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ class LivePlayerView extends HookConsumerWidget {
     final playUrl = ref.watch(provider.select((state) => state.playUrl));
     final isLoading = ref.watch(provider.select((state) => state.isLoading));
 
+    DeferredAppInitController.instance.ensureMediaKitInitialized();
     final player = useMemoized(() => Player());
     final controller = useMemoized(() => VideoController(player));
 

@@ -1,18 +1,17 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/video/presentation/view_models/video_detail_state.dart';
+import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:flutter/material.dart';
 
 class VideoActionsRow extends StatelessWidget {
-  final VideoDetailState state;
+  final VideoDetail detail;
 
-  const VideoActionsRow({super.key, required this.state});
+  const VideoActionsRow({super.key, required this.detail});
 
   @override
   Widget build(BuildContext context) {
-    final d = state.videoDetail!;
     final t = Translations.of(context);
 
     return Padding(
@@ -22,8 +21,8 @@ class VideoActionsRow extends StatelessWidget {
         children: [
           ActionButton(
             icon: Icons.share_outlined,
-            label: '${t.actions.share} ${d.stat.share.formatNumber}',
-            onTap: () => ShareUtils.shareVideo(d.bvid, d.title, d.pic),
+            label: '${t.actions.share} ${detail.stat.share.formatNumber}',
+            onTap: () => ShareUtils.shareVideo(detail.bvid, detail.title, detail.pic),
           ),
         ],
       ),

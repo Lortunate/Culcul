@@ -1,3 +1,10 @@
+import 'dart:async';
+
+import 'package:culcul/core/constants/api_constants.dart';
+import 'package:culcul/core/network/interceptors/cache_interceptor.dart';
+import 'package:culcul/core/network/request_cancel_token.dart';
+import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
+import 'package:culcul/core/providers/cache_store_provider.dart';
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/features/profile/profile.dart';
@@ -11,19 +18,51 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
   int _mid = 0;
   String _order = 'pubdate';
   static const _pageSize = 30;
+  RequestCancelToken? _activePageCancelToken;
+  RequestCancelToken? _silentRefreshCancelToken;
 
   @override
   Future<List<ProfileVideo>> build(int mid, {String order = 'pubdate'}) async {
     _mid = mid;
     _order = order;
-    return buildFirstPage();
+    ref.onDispose(() {
+      _activePageCancelToken?.cancel('profile_space_videos_disposed');
+      _silentRefreshCancelToken?.cancel('profile_space_videos_silent_refresh_disposed');
+    });
+    final stopwatch = Stopwatch()..start();
+    final items = await buildFirstPage();
+    final cacheKey = CacheInterceptor.buildCacheKey(ApiConstants.profileSpaceVideos, {
+      'mid': mid,
+      'pn': 1,
+      'ps': _pageSize,
+      'order': order,
+    });
+    final hasCachedValue = await ref.read(cacheStoreProvider).exists(cacheKey);
+    FeatureFlowPerfLogger.log(
+      chain: 'profile.space_videos',
+      stage: 'initial_data',
+      fields: <String, Object?>{
+        'mid': mid,
+        'order': order,
+        'items': items.length,
+        'cache_present': hasCachedValue,
+        'ms': stopwatch.elapsedMilliseconds,
+      },
+    );
+    if (hasCachedValue && items.isNotEmpty) {
+      unawaited(Future<void>.microtask(_refreshFirstPageSilently));
+    }
+    return items;
   }
 
   @override
   Future<List<ProfileVideo>> fetchPage(int page) async {
+    _activePageCancelToken?.cancel('profile_space_videos_page_replaced');
+    final cancelToken = RequestCancelToken();
+    _activePageCancelToken = cancelToken;
     final result = await ref
         .read(profileRepositoryProvider)
-        .getSpaceVideos(mid: _mid, page: page, order: _order);
+        .getSpaceVideos(mid: _mid, page: page, order: _order, cancelToken: cancelToken);
     return result.dataOrNull ?? const <ProfileVideo>[];
   }
 
@@ -39,5 +78,79 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
 
   Future<void> refresh() {
     return refreshPage();
+  }
+
+  Future<void> _refreshFirstPageSilently() async {
+    final previousItems = state.asData?.value;
+    if (previousItems == null ||
+        previousItems.isEmpty ||
+        state.isLoading ||
+        currentPage != 1) {
+      return;
+    }
+
+    final stopwatch = Stopwatch()..start();
+    _silentRefreshCancelToken?.cancel('profile_space_videos_silent_refresh_replaced');
+    final cancelToken = RequestCancelToken();
+    _silentRefreshCancelToken = cancelToken;
+    final result = await ref
+        .read(profileRepositoryProvider)
+        .getSpaceVideos(
+          mid: _mid,
+          page: 1,
+          order: _order,
+          forceRefresh: true,
+          cancelToken: cancelToken,
+        );
+    if (!ref.mounted || state.isLoading || currentPage != 1) {
+      return;
+    }
+
+    final nextItems = result.dataOrNull;
+    if (nextItems == null || _sameItems(previousItems, nextItems)) {
+      FeatureFlowPerfLogger.log(
+        chain: 'profile.space_videos',
+        stage: 'silent_refresh_skip',
+        fields: <String, Object?>{
+          'mid': _mid,
+          'order': _order,
+          'items': nextItems?.length,
+          'ms': stopwatch.elapsedMilliseconds,
+        },
+      );
+      return;
+    }
+    FeatureFlowPerfLogger.log(
+      chain: 'profile.space_videos',
+      stage: 'silent_refresh_apply',
+      fields: <String, Object?>{
+        'mid': _mid,
+        'order': _order,
+        'items': nextItems.length,
+        'ms': stopwatch.elapsedMilliseconds,
+      },
+    );
+    state = AsyncData(nextItems);
+  }
+
+  bool _sameItems(List<ProfileVideo> previous, List<ProfileVideo> next) {
+    if (previous.length != next.length) {
+      return false;
+    }
+
+    for (var index = 0; index < previous.length; index++) {
+      final a = previous[index];
+      final b = next[index];
+      if (a.bvid != b.bvid ||
+          a.title != b.title ||
+          a.pic != b.pic ||
+          a.owner.name != b.owner.name ||
+          a.stats.view != b.stats.view ||
+          a.stats.danmaku != b.stats.danmaku ||
+          a.reason != b.reason) {
+        return false;
+      }
+    }
+    return true;
   }
 }

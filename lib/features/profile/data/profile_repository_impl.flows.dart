@@ -9,6 +9,8 @@ mixin _ProfileRepositoryImplFlowsMixin on RequestExecutorBinding
     required int mid,
     int page = 1,
     String order = 'pubdate',
+    bool forceRefresh = false,
+    RequestCancelToken? cancelToken,
   }) async {
     final result = await requestApiResult(
       () => api.getSpaceVideos(
@@ -16,6 +18,8 @@ mixin _ProfileRepositoryImplFlowsMixin on RequestExecutorBinding
         page: page,
         pageSize: ProfileRepositoryImpl._defaultSpaceVideoPageSize,
         order: order,
+        forceRefresh: forceRefresh ? true : null,
+        cancelToken: cancelToken?.dioToken,
       ),
     );
     return result.map((data) => data.list.vlist);
@@ -63,8 +67,16 @@ mixin _ProfileRepositoryImplFlowsMixin on RequestExecutorBinding
     required int mid,
     int page = 1,
     String order = 'pubdate',
+    bool forceRefresh = false,
+    RequestCancelToken? cancelToken,
   }) async {
-    final result = await getSpaceVideosModel(mid: mid, page: page, order: order);
+    final result = await getSpaceVideosModel(
+      mid: mid,
+      page: page,
+      order: order,
+      forceRefresh: forceRefresh,
+      cancelToken: cancelToken,
+    );
     return result.map((data) => data.map((item) => item.toDomain()).toList());
   }
 

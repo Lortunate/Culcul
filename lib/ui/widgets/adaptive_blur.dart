@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:culcul/core/perf/frame_timing_sampler.dart';
+import 'package:culcul/core/perf/performance_policy.dart';
 import 'package:flutter/material.dart';
 
 class AdaptiveBlur extends StatelessWidget {
@@ -21,14 +21,14 @@ class AdaptiveBlur extends StatelessWidget {
   Widget build(BuildContext context) {
     final disableAnimations = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
 
-    return ValueListenableBuilder<FrameTimingSummary?>(
-      valueListenable: FrameTimingSampler.summaryNotifier,
-      builder: (context, summary, child) {
+    return ValueListenableBuilder<PerformancePolicy>(
+      valueListenable: PerformancePolicyController.notifier,
+      builder: (context, policy, child) {
         final shouldDegrade =
             disableAnimations ||
-            (summary != null &&
-                summary.samples >= 60 &&
-                summary.jankRatio >= jankRatioThreshold);
+            !policy.blurEnabled ||
+            (jankRatioThreshold < 0.35 &&
+                policy.level == RenderDegradeLevel.reducedEffects);
         if (shouldDegrade) {
           return child!;
         }

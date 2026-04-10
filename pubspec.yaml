@@ -16,6 +16,7 @@ dependencies:
   animations: ^2.1.1
   audio_session: ^0.2.2
   cookie_jar: ^4.0.9
+  connectivity_plus: ^7.0.0
   crypto: ^3.0.7
   dio: ^5.9.2
   dio_cache_interceptor: ^3.5.1

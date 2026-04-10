@@ -11,7 +11,12 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
     domain.SpaceDynamicFeedQuery query,
   ) {
     return requestApiResult(
-      () => api.getSpaceDynamicFeed(hostMid: query.hostMid, offset: query.offset),
+      () => api.getSpaceDynamicFeed(
+        hostMid: query.hostMid,
+        offset: query.offset,
+        forceRefresh: query.forceRefresh ? true : null,
+        cancelToken: query.cancelToken?.dioToken,
+      ),
     );
   }
 

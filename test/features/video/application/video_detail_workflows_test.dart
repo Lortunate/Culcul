@@ -1,4 +1,5 @@
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/network/request_cancel_token.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/video/application/video_detail_workflows.dart';
 import 'package:culcul/features/video/video.dart';
@@ -80,7 +81,10 @@ class _FakeVideoRepository extends Fake implements VideoRepository {
            tagsResult ?? Success(const <VideoTag>[VideoTag(tagId: 1, tagName: 'tag')]);
 
   @override
-  Future<Result<VideoDetail, AppError>> fetchVideoView(String bvid) async {
+  Future<Result<VideoDetail, AppError>> fetchVideoView(
+    String bvid, {
+    RequestCancelToken? cancelToken,
+  }) async {
     fetchVideoViewCount++;
     return videoViewResult;
   }
@@ -93,13 +97,17 @@ class _FakeVideoRepository extends Fake implements VideoRepository {
     int fnval = 1,
     int fnver = 0,
     int fourk = 1,
+    RequestCancelToken? cancelToken,
   }) async {
     fetchVideoPlayUrlCount++;
     return playUrlResult;
   }
 
   @override
-  Future<Result<List<RelatedVideo>, AppError>> fetchRelatedVideos(String bvid) async {
+  Future<Result<List<RelatedVideo>, AppError>> fetchRelatedVideos(
+    String bvid, {
+    RequestCancelToken? cancelToken,
+  }) async {
     fetchRelatedVideosCount++;
     if (relatedDelay > Duration.zero) {
       await Future<void>.delayed(relatedDelay);
@@ -108,7 +116,10 @@ class _FakeVideoRepository extends Fake implements VideoRepository {
   }
 
   @override
-  Future<Result<List<VideoTag>, AppError>> fetchVideoTags(String bvid) async {
+  Future<Result<List<VideoTag>, AppError>> fetchVideoTags(
+    String bvid, {
+    RequestCancelToken? cancelToken,
+  }) async {
     fetchVideoTagsCount++;
     if (tagsDelay > Duration.zero) {
       await Future<void>.delayed(tagsDelay);
@@ -163,4 +174,3 @@ RelatedVideo _buildRelatedVideo() {
     pubDate: 0,
   );
 }
-

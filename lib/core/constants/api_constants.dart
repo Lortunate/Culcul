@@ -11,7 +11,13 @@ class ApiConstants {
   static const String userInfo = '/x/web-interface/nav';
   static const String feedRcmd = '/x/web-interface/wbi/index/top/feed/rcmd';
   static const String popular = '/x/web-interface/popular';
+  static const String searchDefault = '/x/web-interface/wbi/search/default';
+  static const String searchTrendingRanking =
+      'https://app.bilibili.com/x/v2/search/trending/ranking';
+  static const String searchDefaultUrl = '$baseUrl$searchDefault';
   static const String ranking = '/x/web-interface/ranking/v2';
+  static const String profileSpaceVideos = '/x/space/wbi/arc/search';
+  static const String dynamicSpaceFeed = '/x/polymer/web-dynamic/v1/feed/space';
   static const String videoView = '/x/web-interface/view';
   static const String videoPagelist = '/x/player/pagelist';
   static const String videoPlayUrl = '/x/player/wbi/playurl';
@@ -53,6 +59,12 @@ class ApiConstants {
 
   // Cache Configuration
   static const Map<String, int> cacheConfig = {
+    feedRcmd: 45,
+    popular: 45,
+    searchDefaultUrl: 300,
+    searchTrendingRanking: 180,
+    profileSpaceVideos: 120,
+    dynamicSpaceFeed: 90,
     videoView: 120,
     related: 120,
     videoTags: 180,

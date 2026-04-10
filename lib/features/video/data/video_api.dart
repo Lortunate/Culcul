@@ -13,7 +13,10 @@ abstract class VideoApi {
 
   @GET(ApiConstants.videoView)
   @Headers({'x-bili-wbi': 'true'})
-  Future<ApiResponse<VideoDetail>> fetchVideoView(@Query('bvid') String bvid);
+  Future<ApiResponse<VideoDetail>> fetchVideoView(
+    @Query('bvid') String bvid, {
+    @CancelRequest() CancelToken? cancelToken,
+  });
 
   @GET(ApiConstants.videoPagelist)
   @Headers({'x-bili-wbi': 'true'})
@@ -21,7 +24,10 @@ abstract class VideoApi {
 
   @GET(ApiConstants.videoTags)
   @Headers({'x-bili-wbi': 'true'})
-  Future<ApiResponse<List<VideoTag>>> fetchVideoTags(@Query('bvid') String bvid);
+  Future<ApiResponse<List<VideoTag>>> fetchVideoTags(
+    @Query('bvid') String bvid, {
+    @CancelRequest() CancelToken? cancelToken,
+  });
 
   @GET(ApiConstants.videoPlayUrl)
   @Headers({'x-bili-wbi': 'true'})
@@ -32,6 +38,7 @@ abstract class VideoApi {
     @Query('fnval') int fnval = 1,
     @Query('fnver') int fnver = 0,
     @Query('fourk') int fourk = 1,
+    @CancelRequest() CancelToken? cancelToken,
   });
 
   @GET(ApiConstants.playerInfo)
@@ -43,7 +50,10 @@ abstract class VideoApi {
 
   @GET(ApiConstants.related)
   @Headers({'x-bili-wbi': 'true'})
-  Future<ApiResponse<List<RelatedVideo>>> fetchRelatedVideos(@Query('bvid') String bvid);
+  Future<ApiResponse<List<RelatedVideo>>> fetchRelatedVideos(
+    @Query('bvid') String bvid, {
+    @CancelRequest() CancelToken? cancelToken,
+  });
 
   @GET(ApiConstants.reply)
   @Headers({'x-bili-wbi': 'true'})
@@ -52,8 +62,9 @@ abstract class VideoApi {
     @Query('type') int type,
     @Query('sort') int sort,
     @Query('ps') int ps,
-    @Query('pn') int pn,
-  );
+    @Query('pn') int pn, {
+    @CancelRequest() CancelToken? cancelToken,
+  });
 
   @GET(ApiConstants.replyReply)
   @Headers({'x-bili-wbi': 'true'})
@@ -62,8 +73,9 @@ abstract class VideoApi {
     @Query('root') int root,
     @Query('type') int type,
     @Query('ps') int ps,
-    @Query('pn') int pn,
-  );
+    @Query('pn') int pn, {
+    @CancelRequest() CancelToken? cancelToken,
+  });
 
   @POST(ApiConstants.replyAction)
   @FormUrlEncoded()

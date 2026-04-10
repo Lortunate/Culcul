@@ -1,4 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/core/responsive/responsive.dart';
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/widgets/info/uploader_section.dart';
 import 'package:culcul/features/video/presentation/widgets/info/video_actions.dart';
@@ -7,34 +8,77 @@ import 'package:culcul/features/video/presentation/widgets/info/video_parts.dart
 import 'package:culcul/features/video/presentation/widgets/info/video_recommendation.dart';
 import 'package:culcul/features/video/presentation/widgets/info/video_stats.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
+import 'package:culcul/ui/widgets/app_network_image_prefetcher.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class VideoInfoView extends ConsumerWidget {
+class VideoInfoView extends HookConsumerWidget {
   final String bvid;
 
   const VideoInfoView({super.key, required this.bvid});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(videoDetailControllerProvider(bvid));
+    final provider = videoDetailControllerProvider(bvid);
+    final loadState = ref.watch(
+      provider.select(
+        (state) => (
+          isInitialLoading: state.videoDetail == null && state.isLoading,
+          error: state.videoDetail == null ? state.error : null,
+          detail: state.videoDetail,
+        ),
+      ),
+    );
     final notifier = ref.read(videoDetailControllerProvider(bvid).notifier);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
 
-    if (state.videoDetail == null && state.isLoading) {
+    if (loadState.isInitialLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (state.videoDetail == null) {
+    final detail = loadState.detail;
+    if (detail == null) {
       return AppErrorWidget(
-        error: state.error ?? Exception(t.common.error),
+        error: loadState.error ?? Exception(t.common.error),
         onRetry: notifier.load,
       );
     }
 
-    final d = state.videoDetail!;
+    final isFollowed = ref.watch(
+      provider.select((state) => state.videoDetail?.reqUser?.attention == 1),
+    );
+    final currentCid = ref.watch(provider.select((state) => state.currentCid));
+    final relatedVideos = ref.watch(provider.select((state) => state.relatedVideos));
+
+    useEffect(() {
+      if (relatedVideos.isEmpty) {
+        return null;
+      }
+
+      final screenWidth = MediaQuery.sizeOf(context).width;
+      final containerWidth = screenWidth > AppBreakpoints.pageMaxWidth
+          ? AppBreakpoints.pageMaxWidth
+          : screenWidth;
+      final itemWidth = (containerWidth - 32 - 10) / 2;
+      final pixelRatio = MediaQuery.devicePixelRatioOf(context);
+      AppNetworkImagePrefetcher.prefetch(
+        context,
+        specs: relatedVideos
+            .map(
+              (video) => NetworkImagePrefetchSpec(
+                url: video.pic,
+                memCacheWidth: (itemWidth * pixelRatio).round(),
+                memCacheHeight: (itemWidth / (16 / 10) * pixelRatio).round(),
+              ),
+            )
+            .toList(growable: false),
+        limit: 4,
+      );
+      return null;
+    }, [relatedVideos]);
 
     return CustomScrollView(
       slivers: [
@@ -46,8 +90,8 @@ class VideoInfoView extends ConsumerWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: UploaderSection(
-                  owner: d.owner,
-                  isFollowed: d.reqUser?.attention == 1,
+                  owner: detail.owner,
+                  isFollowed: isFollowed,
                   onToggleFollow: notifier.toggleFollow,
                 ),
               ),
@@ -61,7 +105,7 @@ class VideoInfoView extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      d.title,
+                      detail.title,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         height: 1.3,
@@ -69,10 +113,13 @@ class VideoInfoView extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    VideoStatsRow(detail: d),
+                    VideoStatsRow(detail: detail),
                     const SizedBox(height: 8),
                     // Consolidated Description & Tags
-                    ExpandableDescriptionAndTags(description: d.desc, tags: d.tag),
+                    ExpandableDescriptionAndTags(
+                      description: detail.desc,
+                      tags: detail.tag,
+                    ),
                   ],
                 ),
               ),
@@ -80,15 +127,15 @@ class VideoInfoView extends ConsumerWidget {
               const SizedBox(height: 12),
 
               // Video Interactive Actions
-              VideoActionsRow(state: state),
+              VideoActionsRow(detail: detail),
 
               const SizedBox(height: 8),
 
               // Video Parts Selection (if multiple)
-              if (d.pages.length > 1) ...[
+              if (detail.pages.length > 1) ...[
                 VideoPartsSection(
-                  pages: d.pages,
-                  currentCid: state.currentCid,
+                  pages: detail.pages,
+                  currentCid: currentCid,
                   onPartChanged: (cid) {
                     ref
                         .read(videoDetailControllerProvider(bvid).notifier)
@@ -129,8 +176,8 @@ class VideoInfoView extends ConsumerWidget {
               childAspectRatio: 0.95,
             ),
             delegate: SliverChildBuilderDelegate(
-              (context, index) => RecommendationItem(video: state.relatedVideos[index]),
-              childCount: state.relatedVideos.length,
+              (context, index) => RecommendationItem(video: relatedVideos[index]),
+              childCount: relatedVideos.length,
             ),
           ),
         ),

@@ -4,6 +4,7 @@ import 'package:culcul/features/profile/presentation/view_models/user_space_vide
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
+import 'package:culcul/ui/widgets/app_network_image_prefetcher.dart';
 import 'package:culcul/ui/widgets/video_card.dart';
 import 'package:culcul/ui/widgets/skeletons/video_card_skeleton.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,23 @@ class RecentVideoSection extends ConsumerWidget {
         if (videos.isEmpty) {
           return const _EmptyState();
         }
+        final screenWidth = MediaQuery.sizeOf(context).width;
+        final itemWidth = (screenWidth - (_gridSpacing * 2) - 32) / _crossAxisCount;
+        final pixelRatio = MediaQuery.devicePixelRatioOf(context);
+        AppNetworkImagePrefetcher.prefetch(
+          context,
+          specs: videos
+              .take(_maxDisplayCount)
+              .map(
+                (video) => NetworkImagePrefetchSpec(
+                  url: video.pic,
+                  memCacheWidth: (itemWidth * pixelRatio).round(),
+                  memCacheHeight: (itemWidth / (16 / 10) * pixelRatio).round(),
+                ),
+              )
+              .toList(growable: false),
+          limit: _maxDisplayCount,
+        );
         return SliverMainAxisGroup(
           slivers: [
             _SectionHeader(videoCount: videoCount, onSwitchToTab: onSwitchToTab),

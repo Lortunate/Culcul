@@ -19,10 +19,12 @@ mixin OffsetPagedAsyncNotifier<T> {
   int _currentPage = 1;
   bool _hasMore = true;
   bool _isRefreshing = false;
+  bool _isLoadingMore = false;
 
   bool get hasMore => _hasMore;
   int get currentPage => _currentPage;
   bool get isRefreshing => _isRefreshing;
+  bool get isLoadingMore => _isLoadingMore;
 
   AsyncValue<List<T>> get state;
   set state(AsyncValue<List<T>> value);
@@ -51,6 +53,7 @@ mixin OffsetPagedAsyncNotifier<T> {
 
     try {
       _isRefreshing = true;
+      _isLoadingMore = false;
       _resetPagination();
       final items = await fetchPage(_currentPage);
       _hasMore = hasMoreAfterPage(items);
@@ -65,20 +68,18 @@ mixin OffsetPagedAsyncNotifier<T> {
   @protected
   Future<void> loadNextPage() async {
     final previousState = state;
-    if (previousState is! AsyncData<List<T>> || previousState.isLoading || !_hasMore) {
+    if (previousState is! AsyncData<List<T>> || !_hasMore || _isLoadingMore) {
       return;
     }
 
+    _isLoadingMore = true;
     final previousItems = previousState.value;
-    state = AsyncLoading<List<T>>().copyWithPrevious(previousState);
-
     try {
       final nextPage = _currentPage + 1;
       final newItems = await fetchPage(nextPage);
 
       if (newItems.isEmpty) {
         _hasMore = false;
-        state = AsyncData(previousItems);
         return;
       }
 
@@ -87,12 +88,15 @@ mixin OffsetPagedAsyncNotifier<T> {
       state = AsyncData(ListUtils.mergeUnique(previousItems, newItems, idGetter: itemId));
     } catch (error, stackTrace) {
       state = AsyncError<List<T>>(error, stackTrace).copyWithPrevious(previousState);
+    } finally {
+      _isLoadingMore = false;
     }
   }
 
   void _resetPagination() {
     _currentPage = 1;
     _hasMore = true;
+    _isLoadingMore = false;
   }
 }
 
@@ -100,10 +104,12 @@ mixin CursorPagedAsyncNotifier<T, C> {
   C? _cursor;
   bool _hasMore = true;
   bool _isRefreshing = false;
+  bool _isLoadingMore = false;
 
   bool get hasMore => _hasMore;
   C? get cursor => _cursor;
   bool get isRefreshing => _isRefreshing;
+  bool get isLoadingMore => _isLoadingMore;
 
   AsyncValue<List<T>> get state;
   set state(AsyncValue<List<T>> value);
@@ -130,6 +136,7 @@ mixin CursorPagedAsyncNotifier<T, C> {
 
     try {
       _isRefreshing = true;
+      _isLoadingMore = false;
       _resetPagination();
       final page = await fetchPage(_cursor);
       _cursor = page.nextCursor;
@@ -145,7 +152,7 @@ mixin CursorPagedAsyncNotifier<T, C> {
   @protected
   Future<void> loadNextPage() async {
     final previousState = state;
-    if (previousState.isLoading || !_hasMore) {
+    if (!_hasMore || _isLoadingMore) {
       return;
     }
 
@@ -154,15 +161,13 @@ mixin CursorPagedAsyncNotifier<T, C> {
       return;
     }
 
-    state = AsyncLoading<List<T>>().copyWithPrevious(previousState);
-
+    _isLoadingMore = true;
     try {
       final page = await fetchPage(_cursor);
       _cursor = page.nextCursor;
       _hasMore = page.hasMore;
 
       if (page.items.isEmpty) {
-        state = AsyncData(previousItems);
         return;
       }
 
@@ -171,11 +176,14 @@ mixin CursorPagedAsyncNotifier<T, C> {
       );
     } catch (error, stackTrace) {
       state = AsyncError<List<T>>(error, stackTrace).copyWithPrevious(previousState);
+    } finally {
+      _isLoadingMore = false;
     }
   }
 
   void _resetPagination() {
     _cursor = null;
     _hasMore = true;
+    _isLoadingMore = false;
   }
 }
