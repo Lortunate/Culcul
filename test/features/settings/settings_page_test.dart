@@ -1,4 +1,4 @@
-import 'package:culcul/core/providers/storage_provider.dart';
+import 'package:culcul/shared/providers/storage_provider.dart';
 import 'package:culcul/features/settings/settings.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';

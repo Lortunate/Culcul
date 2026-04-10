@@ -1,4 +1,4 @@
-import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/shared/contracts/video_model_contract.dart';
 import 'package:culcul/features/home/data/dtos/weekly_model_dto.dart';
 import 'package:culcul/features/home/domain/entities/home_video.dart';
 

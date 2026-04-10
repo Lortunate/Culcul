@@ -1,7 +1,7 @@
-import 'package:culcul/core/utils/format_utils.dart';
+import 'package:culcul/shared/utils/format_utils.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
-import 'package:culcul/ui/widgets/icon_text.dart';
-import 'package:culcul/ui/widgets/video_list_card.dart';
+import 'package:culcul/shared/widgets/icon_text.dart';
+import 'package:culcul/shared/widgets/video_list_card.dart';
 import 'package:flutter/material.dart';
 
 class FavResourceItem extends StatelessWidget {

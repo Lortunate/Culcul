@@ -1,11 +1,11 @@
 // ignore_for_file: invalid_use_of_internal_member
 import 'dart:async';
 
-import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/core/network/interceptors/cache_interceptor.dart';
-import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
-import 'package:culcul/core/providers/cache_store_provider.dart';
-import 'package:culcul/core/pagination/paged_async_notifier.dart';
+import 'package:culcul/shared/constants/api_constants.dart';
+import 'package:culcul/shared/network/interceptors/cache_interceptor.dart';
+import 'package:culcul/shared/perf/feature_flow_perf_logger.dart';
+import 'package:culcul/shared/providers/cache_store_provider.dart';
+import 'package:culcul/shared/pagination/paged_async_notifier.dart';
 import 'package:culcul/features/home/home.dart';
 import 'package:culcul/features/home/domain/entities/home_video.dart';
 import 'package:culcul/features/home/presentation/view_models/home_video_paging_view_model.dart';

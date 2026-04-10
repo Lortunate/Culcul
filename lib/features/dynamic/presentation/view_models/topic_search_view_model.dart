@@ -1,4 +1,4 @@
-import 'package:culcul/core/contracts/search_result_contract.dart';
+import 'package:culcul/shared/contracts/search_result_contract.dart';
 import 'package:culcul/features/search/search.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

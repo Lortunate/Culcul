@@ -1,14 +1,14 @@
-import 'package:culcul/core/utils/format_utils.dart';
+import 'package:culcul/shared/utils/format_utils.dart';
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/core/pagination/pagination_load_gate.dart';
-import 'package:culcul/core/pagination/scroll_load_trigger.dart';
+import 'package:culcul/shared/pagination/pagination_load_gate.dart';
+import 'package:culcul/shared/pagination/scroll_load_trigger.dart';
 import 'package:culcul/features/profile/presentation/view_models/user_space_videos_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/app_error_widget.dart';
-import 'package:culcul/ui/widgets/app_network_image_prefetcher.dart';
-import 'package:culcul/ui/widgets/skeletons/video_list_skeleton.dart';
-import 'package:culcul/ui/widgets/video_list_card.dart';
-import 'package:culcul/ui/widgets/icon_text.dart';
+import 'package:culcul/shared/widgets/app_error_widget.dart';
+import 'package:culcul/shared/widgets/app_network_image_prefetcher.dart';
+import 'package:culcul/shared/widgets/skeletons/video_list_skeleton.dart';
+import 'package:culcul/shared/widgets/video_list_card.dart';
+import 'package:culcul/shared/widgets/icon_text.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

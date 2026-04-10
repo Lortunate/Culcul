@@ -1,8 +1,8 @@
-import 'package:culcul/core/network/dtos/video_model_contract_dto.dart';
+import 'package:culcul/shared/network/dtos/video_model_contract_dto.dart';
 import 'package:culcul/features/profile/data/dtos/profile_dtos.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
-import 'package:culcul/core/contracts/relation_user_contract.dart';
+import 'package:culcul/shared/contracts/relation_user_contract.dart';
 
 extension UserProfileMapper on UserProfile {
   ProfileUser toDomain() {

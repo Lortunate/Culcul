@@ -1,5 +1,5 @@
 import 'package:culcul/features/auth/auth.dart';
-import 'package:culcul/core/responsive/responsive.dart';
+import 'package:culcul/shared/responsive/responsive.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_action_grid.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_app_bar.dart';
 import 'package:culcul/features/profile/presentation/widgets/guest_profile_view.dart';

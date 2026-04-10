@@ -1,5 +1,5 @@
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
-import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/shared/errors/app_error.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'video_detail_state.freezed.dart';

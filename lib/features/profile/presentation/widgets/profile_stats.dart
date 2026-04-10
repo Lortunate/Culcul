@@ -1,9 +1,9 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/core/responsive/responsive.dart';
-import 'package:culcul/core/utils/format_utils.dart';
+import 'package:culcul/shared/responsive/responsive.dart';
+import 'package:culcul/shared/utils/format_utils.dart';
 import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/app_clickable.dart';
+import 'package:culcul/shared/widgets/app_clickable.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

@@ -1,9 +1,9 @@
-import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/network/request_cancel_token.dart';
-import 'package:culcul/core/network/network_concurrency_executor.dart';
-import 'package:culcul/core/network/network_concurrency_profiles.dart';
-import 'package:culcul/core/perf/video_perf_logger.dart';
-import 'package:culcul/core/result/result.dart';
+import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/shared/network/request_cancel_token.dart';
+import 'package:culcul/shared/network/network_concurrency_executor.dart';
+import 'package:culcul/shared/network/network_concurrency_profiles.dart';
+import 'package:culcul/shared/perf/video_perf_logger.dart';
+import 'package:culcul/shared/result/result.dart';
 import 'package:culcul/features/video/video.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/network/models/api_response.dart';
-import 'package:culcul/core/network/network_concurrency_executor.dart';
-import 'package:culcul/core/network/network_concurrency_profiles.dart';
+import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/shared/network/models/api_response.dart';
+import 'package:culcul/shared/network/network_concurrency_executor.dart';
+import 'package:culcul/shared/network/network_concurrency_profiles.dart';
 import 'package:culcul/features/profile/data/profile_api.dart';
 import 'package:culcul/features/profile/data/profile_repository_impl.dart';
 import 'package:flutter_test/flutter_test.dart';

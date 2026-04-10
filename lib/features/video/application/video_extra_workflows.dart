@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/result/result.dart';
-import 'package:culcul/core/utils/danmaku_mask_parser.dart';
+import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/shared/result/result.dart';
+import 'package:culcul/shared/utils/danmaku_mask_parser.dart';
 import 'package:culcul/features/video/domain/repositories/danmaku_repository.dart';
 import 'package:culcul/features/video/video.dart';
 import 'package:flutter/foundation.dart';

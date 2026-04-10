@@ -1,6 +1,6 @@
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'package:culcul/features/dynamic/domain/repositories/dynamic_repository.dart';
-import 'package:culcul/core/pagination/paged_async_notifier.dart';
+import 'package:culcul/shared/pagination/paged_async_notifier.dart';
 import 'package:culcul/features/dynamic/dynamic.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_feed_view_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

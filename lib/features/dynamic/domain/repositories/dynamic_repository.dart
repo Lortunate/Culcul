@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/network/request_cancel_token.dart';
-import 'package:culcul/core/result/result.dart';
+import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/shared/network/request_cancel_token.dart';
+import 'package:culcul/shared/result/result.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 

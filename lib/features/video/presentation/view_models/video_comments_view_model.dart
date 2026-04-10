@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/network/request_cancel_token.dart';
-import 'package:culcul/core/pagination/paged_list_state.dart';
-import 'package:culcul/core/pagination/paged_list_state_transitions.dart';
+import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/shared/network/request_cancel_token.dart';
+import 'package:culcul/shared/pagination/paged_list_state.dart';
+import 'package:culcul/shared/pagination/paged_list_state_transitions.dart';
 import 'package:culcul/features/video/video.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

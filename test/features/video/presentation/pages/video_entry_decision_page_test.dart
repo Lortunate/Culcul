@@ -1,6 +1,6 @@
 import 'package:culcul/features/video/application/video_entry_workflows.dart';
-import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/result/result.dart';
+import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/shared/result/result.dart';
 import 'package:culcul/features/video/video.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

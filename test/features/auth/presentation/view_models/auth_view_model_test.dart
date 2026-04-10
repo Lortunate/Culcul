@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/result/result.dart';
+import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/shared/result/result.dart';
 import 'package:culcul/features/auth/auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

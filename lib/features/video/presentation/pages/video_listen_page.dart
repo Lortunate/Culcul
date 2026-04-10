@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:culcul/app/theme/app_theme.dart';
-import 'package:culcul/core/utils/format_extensions.dart';
+import 'package:culcul/shared/theme/app_theme.dart';
+import 'package:culcul/shared/utils/format_extensions.dart';
 import 'package:culcul/features/video/presentation/hooks/use_listen_audio_mode.dart';
 import 'package:culcul/features/video/presentation/view_models/playback_snapshot_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
@@ -9,7 +9,7 @@ import 'package:culcul/features/video/presentation/view_models/video_detail_view
 import 'package:culcul/features/video/presentation/widgets/controls/listen_settings_sheet.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/player_theme.dart';
 import 'package:culcul/i18n/i18n.dart';
-import 'package:culcul/ui/widgets/app_network_image.dart';
+import 'package:culcul/shared/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

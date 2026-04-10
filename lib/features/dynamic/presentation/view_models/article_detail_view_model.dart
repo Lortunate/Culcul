@@ -3,8 +3,8 @@ import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
+import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/shared/perf/feature_flow_perf_logger.dart';
 import 'package:culcul/features/dynamic/dynamic.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

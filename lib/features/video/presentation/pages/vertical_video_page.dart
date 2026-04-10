@@ -1,4 +1,4 @@
-import 'package:culcul/core/utils/format_utils.dart';
+import 'package:culcul/shared/utils/format_utils.dart';
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:culcul/features/video/presentation/hooks/use_player_system_settings.dart';
 import 'package:culcul/features/video/presentation/hooks/use_video_loader.dart';
@@ -13,7 +13,7 @@ import 'package:culcul/features/video/presentation/widgets/layers/subtitle_layer
 import 'package:culcul/features/video/presentation/widgets/layers/video_layer.dart';
 import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/app_avatar.dart';
+import 'package:culcul/shared/widgets/app_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';

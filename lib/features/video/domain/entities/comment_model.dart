@@ -1,1 +1,1 @@
-export 'package:culcul/core/contracts/comment_contract.dart';
+export 'package:culcul/shared/contracts/comment_contract.dart';

@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/network/request_cancel_token.dart';
-import 'package:culcul/core/result/result.dart';
+import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/shared/network/request_cancel_token.dart';
+import 'package:culcul/shared/result/result.dart';
 import 'package:culcul/features/video/presentation/view_models/comment_reply_view_model.dart';
 import 'package:culcul/features/video/video.dart';
 import 'package:flutter_test/flutter_test.dart';

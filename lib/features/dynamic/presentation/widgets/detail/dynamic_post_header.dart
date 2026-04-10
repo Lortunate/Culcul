@@ -1,8 +1,8 @@
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_actions.dart';
-import 'package:culcul/ui/widgets/app_avatar.dart';
-import 'package:culcul/ui/widgets/app_clickable.dart';
+import 'package:culcul/shared/widgets/app_avatar.dart';
+import 'package:culcul/shared/widgets/app_clickable.dart';
 import 'package:flutter/material.dart';
 
 class DynamicPostHeader extends StatelessWidget {

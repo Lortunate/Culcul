@@ -1,4 +1,4 @@
-import 'package:culcul/app/theme/app_theme.dart';
+import 'package:culcul/shared/theme/app_theme.dart';
 import 'package:culcul/features/live/domain/entities/live_entities.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';

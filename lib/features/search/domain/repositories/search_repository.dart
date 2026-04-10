@@ -1,9 +1,9 @@
-import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/network/request_cancel_token.dart';
-import 'package:culcul/core/result/result.dart';
+import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/shared/network/request_cancel_token.dart';
+import 'package:culcul/shared/result/result.dart';
 import 'package:culcul/features/search/domain/entities/search_default_hint.dart';
 import 'package:culcul/features/search/domain/entities/search_query.dart';
-import 'package:culcul/core/contracts/search_result_contract.dart';
+import 'package:culcul/shared/contracts/search_result_contract.dart';
 import 'package:culcul/features/search/domain/entities/search_suggestion_entry.dart';
 import 'package:culcul/features/search/domain/entities/search_trending_keyword.dart';
 

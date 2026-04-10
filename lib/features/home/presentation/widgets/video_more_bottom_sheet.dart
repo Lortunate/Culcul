@@ -1,10 +1,10 @@
-import 'package:culcul/core/services/media_service.dart';
-import 'package:culcul/core/utils/id_utils.dart';
-import 'package:culcul/core/utils/toast_utils.dart';
+import 'package:culcul/shared/services/media_service.dart';
+import 'package:culcul/shared/utils/id_utils.dart';
+import 'package:culcul/shared/utils/toast_utils.dart';
 import 'package:culcul/features/home/domain/entities/home_video.dart';
 import 'package:culcul/features/to_view/to_view.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/adaptive_blur.dart';
+import 'package:culcul/shared/widgets/adaptive_blur.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

@@ -1,8 +1,8 @@
-import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/network/dio_client.dart';
-import 'package:culcul/core/network/request_executor.dart';
-import 'package:culcul/core/network/request_executor_binding.dart';
-import 'package:culcul/core/result/result.dart';
+import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/shared/network/dio_client.dart';
+import 'package:culcul/shared/network/request_executor.dart';
+import 'package:culcul/shared/network/request_executor_binding.dart';
+import 'package:culcul/shared/result/result.dart';
 import 'package:culcul/features/home/data/home_feed_mapper.dart';
 import 'package:culcul/features/home/data/dtos/weekly_model_dto.dart';
 import 'package:culcul/features/home/data/weekly_api.dart';

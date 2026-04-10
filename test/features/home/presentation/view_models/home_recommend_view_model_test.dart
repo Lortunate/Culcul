@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/network/interceptors/cache_interceptor.dart';
-import 'package:culcul/core/providers/cache_store_provider.dart';
-import 'package:culcul/core/result/result.dart';
+import 'package:culcul/shared/constants/api_constants.dart';
+import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/shared/network/interceptors/cache_interceptor.dart';
+import 'package:culcul/shared/providers/cache_store_provider.dart';
+import 'package:culcul/shared/result/result.dart';
 import 'package:culcul/features/home/data/home_repository_impl.dart';
 import 'package:culcul/features/home/domain/entities/home_video.dart';
 import 'package:culcul/features/home/domain/repositories/home_repository.dart';

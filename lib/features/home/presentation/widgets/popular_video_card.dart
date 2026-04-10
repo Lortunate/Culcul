@@ -1,8 +1,8 @@
 import 'package:culcul/features/home/domain/entities/home_video.dart';
 import 'package:culcul/features/home/presentation/widgets/video_more_bottom_sheet.dart';
 
-import 'package:culcul/ui/widgets/app_tag.dart';
-import 'package:culcul/ui/widgets/video_list_card.dart';
+import 'package:culcul/shared/widgets/app_tag.dart';
+import 'package:culcul/shared/widgets/video_list_card.dart';
 import 'package:flutter/material.dart';
 
 class PopularVideoCard extends StatelessWidget {

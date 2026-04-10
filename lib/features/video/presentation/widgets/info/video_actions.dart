@@ -1,8 +1,8 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
-import 'package:culcul/core/utils/share_utils.dart';
-import 'package:culcul/core/utils/format_extensions.dart';
-import 'package:culcul/ui/widgets/app_clickable.dart';
+import 'package:culcul/shared/utils/share_utils.dart';
+import 'package:culcul/shared/utils/format_extensions.dart';
+import 'package:culcul/shared/widgets/app_clickable.dart';
 import 'package:flutter/material.dart';
 
 class VideoActionsRow extends StatelessWidget {

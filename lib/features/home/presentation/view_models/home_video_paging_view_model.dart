@@ -1,4 +1,4 @@
-import 'package:culcul/core/pagination/paged_async_notifier.dart';
+import 'package:culcul/shared/pagination/paged_async_notifier.dart';
 import 'package:culcul/features/home/domain/entities/home_video.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

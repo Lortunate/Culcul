@@ -1,7 +1,7 @@
 import 'package:culcul/features/live/presentation/view_models/live_room_view_model.dart';
 import 'package:culcul/features/live/presentation/view_models/live_danmaku_feed_view_model.dart';
 import 'package:culcul/features/live/presentation/widgets/live_danmaku_view.dart';
-import 'package:culcul/ui/widgets/app_error_widget.dart';
+import 'package:culcul/shared/widgets/app_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

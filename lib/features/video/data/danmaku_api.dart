@@ -1,4 +1,4 @@
-import 'package:culcul/core/constants/api_constants.dart';
+import 'package:culcul/shared/constants/api_constants.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 

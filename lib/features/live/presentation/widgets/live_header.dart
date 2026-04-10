@@ -1,9 +1,9 @@
-import 'package:culcul/core/utils/format_utils.dart';
+import 'package:culcul/shared/utils/format_utils.dart';
 import 'package:culcul/features/live/domain/entities/live_entities.dart';
-import 'package:culcul/core/contracts/user_card_contract.dart';
+import 'package:culcul/shared/contracts/user_card_contract.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/app_avatar.dart';
-import 'package:culcul/ui/widgets/follow_button.dart';
+import 'package:culcul/shared/widgets/app_avatar.dart';
+import 'package:culcul/shared/widgets/follow_button.dart';
 import 'package:flutter/material.dart';
 
 part 'live_header.anchor.dart';

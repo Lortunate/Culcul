@@ -1,6 +1,6 @@
 // ignore_for_file: invalid_use_of_internal_member
-import 'package:culcul/core/pagination/paged_async_notifier.dart';
-import 'package:culcul/core/contracts/relation_user_contract.dart';
+import 'package:culcul/shared/pagination/paged_async_notifier.dart';
+import 'package:culcul/shared/contracts/relation_user_contract.dart';
 import 'package:culcul/features/profile/profile.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

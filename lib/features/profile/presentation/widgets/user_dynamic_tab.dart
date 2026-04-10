@@ -1,9 +1,9 @@
-import 'package:culcul/core/pagination/pagination_load_gate.dart';
-import 'package:culcul/core/pagination/scroll_load_trigger.dart';
+import 'package:culcul/shared/pagination/pagination_load_gate.dart';
+import 'package:culcul/shared/pagination/scroll_load_trigger.dart';
 import 'package:culcul/features/dynamic/dynamic.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/app_error_widget.dart';
-import 'package:culcul/ui/widgets/skeletons/dynamic_skeleton.dart';
+import 'package:culcul/shared/widgets/app_error_widget.dart';
+import 'package:culcul/shared/widgets/skeletons/dynamic_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

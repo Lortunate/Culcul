@@ -1,16 +1,16 @@
 import 'dart:io';
 
 import 'package:cookie_jar/cookie_jar.dart';
-import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/errors/exceptions.dart';
-import 'package:culcul/core/network/dio_client.dart';
-import 'package:culcul/core/network/network_concurrency_executor.dart';
-import 'package:culcul/core/network/network_concurrency_profiles.dart';
-import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
-import 'package:culcul/core/network/request_executor.dart';
-import 'package:culcul/core/network/request_executor_binding.dart';
-import 'package:culcul/core/providers/cookie_jar_provider.dart';
-import 'package:culcul/core/result/result.dart';
+import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/shared/errors/exceptions.dart';
+import 'package:culcul/shared/network/dio_client.dart';
+import 'package:culcul/shared/network/network_concurrency_executor.dart';
+import 'package:culcul/shared/network/network_concurrency_profiles.dart';
+import 'package:culcul/shared/perf/feature_flow_perf_logger.dart';
+import 'package:culcul/shared/network/request_executor.dart';
+import 'package:culcul/shared/network/request_executor_binding.dart';
+import 'package:culcul/shared/providers/cookie_jar_provider.dart';
+import 'package:culcul/shared/result/result.dart';
 import 'package:culcul/features/dynamic/data/article_detail_parser.dart';
 import 'package:culcul/features/dynamic/data/dynamic_api.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';

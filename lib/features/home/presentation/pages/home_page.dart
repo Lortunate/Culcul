@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/core/perf/startup_perf_logger.dart';
+import 'package:culcul/shared/perf/startup_perf_logger.dart';
 import 'package:culcul/features/home/presentation/widgets/home_app_bar.dart';
 import 'package:culcul/features/home/presentation/widgets/live_view.dart';
 import 'package:culcul/features/home/presentation/widgets/popular_view.dart';

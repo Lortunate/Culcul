@@ -1,4 +1,4 @@
-import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/shared/errors/app_error.dart';
 import 'package:culcul/features/favorites/favorites.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

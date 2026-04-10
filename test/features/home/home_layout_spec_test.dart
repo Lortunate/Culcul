@@ -1,4 +1,4 @@
-import 'package:culcul/core/responsive/responsive.dart';
+import 'package:culcul/shared/responsive/responsive.dart';
 import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

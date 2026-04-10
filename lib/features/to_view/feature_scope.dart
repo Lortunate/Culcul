@@ -1,1 +1,1 @@
-export 'data/toview_repository_impl.dart' show toViewRepositoryProvider;
+export 'data/to_view_repository_impl.dart' show toViewRepositoryProvider;

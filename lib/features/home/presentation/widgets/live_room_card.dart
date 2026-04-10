@@ -1,10 +1,10 @@
-import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/core/contracts/live_room_summary_contract.dart';
-import 'package:culcul/ui/widgets/app_avatar.dart';
-import 'package:culcul/ui/widgets/app_card_container.dart';
-import 'package:culcul/ui/widgets/app_min_lines_text.dart';
-import 'package:culcul/ui/widgets/app_network_image.dart';
-import 'package:culcul/ui/widgets/app_overlay_tag.dart';
+import 'package:culcul/shared/utils/format_utils.dart';
+import 'package:culcul/shared/contracts/live_room_summary_contract.dart';
+import 'package:culcul/shared/widgets/app_avatar.dart';
+import 'package:culcul/shared/widgets/app_card_container.dart';
+import 'package:culcul/shared/widgets/app_min_lines_text.dart';
+import 'package:culcul/shared/widgets/app_network_image.dart';
+import 'package:culcul/shared/widgets/app_overlay_tag.dart';
 import 'package:flutter/material.dart';
 
 class LiveRoomCard extends StatelessWidget {

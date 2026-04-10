@@ -1,6 +1,6 @@
-import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
-import 'package:culcul/core/pagination/pagination_load_gate.dart';
-import 'package:culcul/core/pagination/scroll_load_trigger.dart';
+import 'package:culcul/shared/hooks/use_managed_easy_refresh_controller.dart';
+import 'package:culcul/shared/pagination/pagination_load_gate.dart';
+import 'package:culcul/shared/pagination/scroll_load_trigger.dart';
 import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
@@ -8,11 +8,11 @@ import 'package:culcul/features/favorites/presentation/widgets/fav_resource_item
 import 'package:culcul/features/favorites/presentation/view_models/favorite_folder_action_view_model.dart';
 import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/app_empty_state_widget.dart';
-import 'package:culcul/ui/widgets/app_error_widget.dart';
-import 'package:culcul/ui/widgets/app_network_image.dart';
-import 'package:culcul/ui/widgets/app_shimmer.dart';
-import 'package:culcul/ui/widgets/refresh_header_footer.dart';
+import 'package:culcul/shared/widgets/app_empty_state_widget.dart';
+import 'package:culcul/shared/widgets/app_error_widget.dart';
+import 'package:culcul/shared/widgets/app_network_image.dart';
+import 'package:culcul/shared/widgets/app_shimmer.dart';
+import 'package:culcul/shared/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';

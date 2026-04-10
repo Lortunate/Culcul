@@ -5,9 +5,9 @@ import 'package:culcul/features/profile/presentation/widgets/user_profile_banner
 import 'package:culcul/features/profile/presentation/widgets/user_profile_buttons.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_stat_item.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/app_avatar.dart';
-import 'package:culcul/ui/widgets/app_image_preview.dart';
-import 'package:culcul/ui/widgets/user_tags.dart';
+import 'package:culcul/shared/widgets/app_avatar.dart';
+import 'package:culcul/shared/widgets/app_image_preview.dart';
+import 'package:culcul/shared/widgets/user_tags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

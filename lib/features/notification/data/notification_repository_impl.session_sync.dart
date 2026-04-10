@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/result/result.dart';
+import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/shared/result/result.dart';
 import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';

@@ -1,5 +1,5 @@
 import 'package:culcul/features/dynamic/presentation/view_models/recently_followed_view_model.dart';
-import 'package:culcul/core/contracts/relation_user_contract.dart';
+import 'package:culcul/shared/contracts/relation_user_contract.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

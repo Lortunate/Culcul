@@ -3,9 +3,9 @@ import 'package:culcul/features/notification/domain/entities/notification_feed_t
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/presentation/view_models/notification_feed_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_item_widget.dart';
-import 'package:culcul/core/pagination/pagination_load_gate.dart';
-import 'package:culcul/core/pagination/scroll_load_trigger.dart';
-import 'package:culcul/ui/widgets/app_error_widget.dart';
+import 'package:culcul/shared/pagination/pagination_load_gate.dart';
+import 'package:culcul/shared/pagination/scroll_load_trigger.dart';
+import 'package:culcul/shared/widgets/app_error_widget.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

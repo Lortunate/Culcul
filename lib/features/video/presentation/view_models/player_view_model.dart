@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:culcul/core/perf/video_perf_logger.dart';
-import 'package:culcul/core/services/audio_handler.dart';
+import 'package:culcul/shared/perf/video_perf_logger.dart';
+import 'package:culcul/shared/services/audio_handler.dart';
 import 'package:culcul/features/video/presentation/view_models/player_session_coordinator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';

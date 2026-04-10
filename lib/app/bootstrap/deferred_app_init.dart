@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:culcul/core/perf/startup_perf_logger.dart';
+import 'package:culcul/shared/perf/startup_perf_logger.dart';
 import 'package:flutter/widgets.dart';
 import 'package:media_kit/media_kit.dart';
 

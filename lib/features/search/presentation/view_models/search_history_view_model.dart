@@ -1,4 +1,4 @@
-import 'package:culcul/core/providers/storage_provider.dart';
+import 'package:culcul/shared/providers/storage_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_history_view_model.g.dart';

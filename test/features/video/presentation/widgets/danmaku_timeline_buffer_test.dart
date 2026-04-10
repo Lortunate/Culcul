@@ -1,5 +1,5 @@
 import 'package:culcul/features/video/presentation/widgets/layers/danmaku_layer.dart';
-import 'package:culcul/ui/widgets/danmaku/ns_danmaku/models/danmaku_item.dart';
+import 'package:culcul/features/video/presentation/widgets/danmaku/ns_danmaku/models/danmaku_item.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

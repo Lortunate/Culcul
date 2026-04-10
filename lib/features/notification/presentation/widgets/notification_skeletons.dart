@@ -1,5 +1,5 @@
-import 'package:culcul/ui/widgets/app_shimmer.dart';
-import 'package:culcul/ui/widgets/refresh_header_footer.dart';
+import 'package:culcul/shared/widgets/app_shimmer.dart';
+import 'package:culcul/shared/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 
