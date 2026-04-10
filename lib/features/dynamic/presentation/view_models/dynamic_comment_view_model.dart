@@ -12,7 +12,7 @@ part 'dynamic_comment_view_model.g.dart';
 class DynamicCommentController extends _$DynamicCommentController {
   @override
   DynamicCommentState build(DynamicItem post) {
-    unawaited(refresh());
+    unawaited(Future<void>.microtask(refresh));
     return const DynamicCommentState();
   }
 

@@ -74,7 +74,7 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel
   @override
   ArticleDetailUiState build(String url) {
     _url = url;
-    unawaited(refreshAll());
+    unawaited(Future<void>.microtask(refreshAll));
     return const ArticleDetailUiState();
   }
 }

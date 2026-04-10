@@ -25,7 +25,7 @@ class DynamicDetailViewModel extends _$DynamicDetailViewModel {
   @override
   DynamicDetailUiState build(String dynamicId) {
     _dynamicId = dynamicId;
-    unawaited(loadDetail());
+    unawaited(Future<void>.microtask(loadDetail));
     return const DynamicDetailUiState();
   }
 
