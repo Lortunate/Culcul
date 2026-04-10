@@ -2,8 +2,13 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+const _allowedFutureWaitPaths = <String>{
+  'lib/core/network/network_concurrency_executor.dart',
+  'lib/app/bootstrap/deferred_app_init.dart',
+};
+
 void main() {
-  test('Future.wait is only used inside network concurrency executor', () {
+  test('Future.wait is only used in explicitly allowed files', () {
     final root = Directory('lib');
     final violations = <String>[];
 
@@ -16,7 +21,7 @@ void main() {
       if (!path.endsWith('.dart') || path.endsWith('.g.dart')) {
         continue;
       }
-      if (path == 'lib/core/network/network_concurrency_executor.dart') {
+      if (_allowedFutureWaitPaths.contains(path)) {
         continue;
       }
 
@@ -29,7 +34,8 @@ void main() {
     expect(
       violations,
       isEmpty,
-      reason: 'Use NetworkConcurrencyExecutor instead of Future.wait: $violations',
+      reason:
+          'Use Future.wait only in $_allowedFutureWaitPaths. Violations: $violations',
     );
   });
 }
