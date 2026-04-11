@@ -1,7 +1,8 @@
+import 'dart:ui';
+
 import 'package:culcul/app/shell/navigation_items.dart';
 import 'package:culcul/shared/responsive/responsive.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/shared/widgets/adaptive_blur.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -103,44 +104,45 @@ class AdaptiveShellScaffold extends StatelessWidget {
     return Scaffold(
       body: body,
       extendBody: true,
-      bottomNavigationBar: AdaptiveBlur(
-        sigmaX: 20,
-        sigmaY: 20,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: colorScheme.surface.withValues(alpha: 0.8),
-            border: Border(
-              top: BorderSide(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.2),
-                width: 0.5,
+      bottomNavigationBar: ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: colorScheme.surface.withValues(alpha: 0.8),
+              border: Border(
+                top: BorderSide(
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+                  width: 0.5,
+                ),
               ),
             ),
-          ),
-          child: BottomNavigationBar(
-            currentIndex: currentIndex,
-            onTap: onDestinationSelected,
-            items: [
-              for (final (index, item) in items.indexed)
-                BottomNavigationBarItem(
-                  icon: Padding(padding: iconPadding, child: Icon(item.icon, size: 24)),
-                  activeIcon: Padding(
-                    padding: iconPadding,
-                    child: Icon(item.selectedIcon, size: 24),
+            child: BottomNavigationBar(
+              currentIndex: currentIndex,
+              onTap: onDestinationSelected,
+              items: [
+                for (final (index, item) in items.indexed)
+                  BottomNavigationBarItem(
+                    icon: Padding(padding: iconPadding, child: Icon(item.icon, size: 24)),
+                    activeIcon: Padding(
+                      padding: iconPadding,
+                      child: Icon(item.selectedIcon, size: 24),
+                    ),
+                    label: labels[index],
                   ),
-                  label: labels[index],
-                ),
-            ],
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            selectedItemColor: colorScheme.primary,
-            unselectedItemColor: colorScheme.onSurfaceVariant,
-            selectedFontSize: 10,
-            unselectedFontSize: 10,
-            selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
-            unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
-            enableFeedback: true,
-            type: BottomNavigationBarType.fixed,
-            landscapeLayout: BottomNavigationBarLandscapeLayout.spread,
+              ],
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              selectedItemColor: colorScheme.primary,
+              unselectedItemColor: colorScheme.onSurfaceVariant,
+              selectedFontSize: 10,
+              unselectedFontSize: 10,
+              selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
+              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
+              enableFeedback: true,
+              type: BottomNavigationBarType.fixed,
+              landscapeLayout: BottomNavigationBarLandscapeLayout.spread,
+            ),
           ),
         ),
       ),

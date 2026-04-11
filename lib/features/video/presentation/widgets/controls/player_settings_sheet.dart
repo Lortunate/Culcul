@@ -10,6 +10,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 part 'player_settings_sheet.options.dart';
 part 'player_settings_sheet.danmaku.dart';
 
+const double _settingsSectionOutlineAlpha = 0.18;
+const double _settingsSectionCornerRadius = 16;
+
+Color _settingsSectionBackground(ColorScheme colorScheme) =>
+    colorScheme.scrim.withValues(alpha: 0.82);
+
 class PlayerSettingsSheet extends ConsumerWidget {
   final String bvid;
   final bool isBottomSheet;
@@ -21,6 +27,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
     final t = i18n(context);
     final colorScheme = Theme.of(context).colorScheme;
     final bottomPadding = MediaQuery.paddingOf(context).bottom;
+    final settingsSectionBackground = _settingsSectionBackground(colorScheme);
 
     final danmakuSettings = ref.watch(danmakuSettingsControllerProvider);
     final danmakuNotifier = ref.read(danmakuSettingsControllerProvider.notifier);
@@ -66,28 +73,21 @@ class PlayerSettingsSheet extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            PlayerPanelSection(
+            _InlineTextOptionSection<double>(
               title: t.video.player.choose_speed,
-              dense: true,
-              child: _HorizontalTextOptionStrip<double>(
-                items: playbackSpeeds,
-                selectedItem: videoDetailState.playbackSpeed,
-                labelBuilder: formatPlaybackSpeedLabel,
-                onSelected: videoDetailNotifier.setPlaybackSpeed,
-              ),
+              items: playbackSpeeds,
+              selectedItem: videoDetailState.playbackSpeed,
+              labelBuilder: formatPlaybackSpeedLabel,
+              onSelected: videoDetailNotifier.setPlaybackSpeed,
             ),
             const SizedBox(height: 12),
-            PlayerPanelSection(
+            _InlineTextOptionSection<int>(
               title: t.video.player.choose_quality,
-              dense: true,
-              child: availableQualities.isEmpty
-                  ? PlayerPanelEmptyState(label: t.video.player.quality_unavailable)
-                  : _HorizontalTextOptionStrip<int>(
-                      items: availableQualities,
-                      selectedItem: videoDetailState.selectedQuality,
-                      labelBuilder: (q) => qualityLabels[q] ?? getQualityLabel(q, t),
-                      onSelected: videoDetailNotifier.switchQuality,
-                    ),
+              items: availableQualities,
+              selectedItem: videoDetailState.selectedQuality,
+              labelBuilder: (q) => qualityLabels[q] ?? getQualityLabel(q, t),
+              onSelected: videoDetailNotifier.switchQuality,
+              emptyLabel: t.video.player.quality_unavailable,
             ),
             const SizedBox(height: 12),
             PlayerPanelSection(
@@ -95,6 +95,9 @@ class PlayerSettingsSheet extends ConsumerWidget {
               subtitle: t.video.player.danmaku_section_hint,
               dense: true,
               showBody: danmakuSettings.isEnabled,
+              backgroundColor: settingsSectionBackground,
+              outlineAlpha: _settingsSectionOutlineAlpha,
+              cornerRadius: _settingsSectionCornerRadius,
               trailing: Switch.adaptive(
                 value: danmakuSettings.isEnabled,
                 onChanged: danmakuNotifier.setEnabled,

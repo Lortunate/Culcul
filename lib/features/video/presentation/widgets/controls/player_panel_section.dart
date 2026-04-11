@@ -7,6 +7,10 @@ class PlayerPanelSection extends StatelessWidget {
   final Widget? trailing;
   final bool dense;
   final bool showBody;
+  final Color? backgroundColor;
+  final double surfaceAlpha;
+  final double outlineAlpha;
+  final double cornerRadius;
 
   const PlayerPanelSection({
     super.key,
@@ -16,6 +20,10 @@ class PlayerPanelSection extends StatelessWidget {
     this.trailing,
     this.dense = false,
     this.showBody = true,
+    this.backgroundColor,
+    this.surfaceAlpha = 0.58,
+    this.outlineAlpha = 0.12,
+    this.cornerRadius = 22,
   });
 
   @override
@@ -32,9 +40,13 @@ class PlayerPanelSection extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(contentPadding),
       decoration: BoxDecoration(
-        color: VideoOverlayStyles.panelSurface(colorScheme),
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: VideoOverlayStyles.panelOutline(colorScheme)),
+        color:
+            backgroundColor ??
+            VideoOverlayStyles.panelSurface(colorScheme, alpha: surfaceAlpha),
+        borderRadius: BorderRadius.circular(cornerRadius),
+        border: Border.all(
+          color: VideoOverlayStyles.panelOutline(colorScheme, alpha: outlineAlpha),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

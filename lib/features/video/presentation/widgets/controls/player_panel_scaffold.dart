@@ -66,45 +66,6 @@ class PlayerPanelScaffold extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (isBottomSheet) VideoOverlayStyles.dragHandle(colorScheme),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(24, isBottomSheet ? 4 : 24, 24, 18),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                title,
-                                style: VideoOverlayStyles.titleStyle(colorScheme)
-                                    .copyWith(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 0,
-                                    ),
-                              ),
-                              if (subtitle != null) ...[
-                                const SizedBox(height: 6),
-                                Text(
-                                  subtitle!,
-                                  style: VideoOverlayStyles.bodyStyle(
-                                    colorScheme,
-                                  ).copyWith(fontSize: 13),
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                        ?trailing,
-                      ],
-                    ),
-                  ),
-                  Divider(
-                    height: 1,
-                    thickness: 1,
-                    color: VideoOverlayStyles.panelOutline(colorScheme, alpha: 0.08),
-                  ),
                   Flexible(child: child),
                 ],
               ),
