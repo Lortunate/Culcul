@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "server",
+  "dolt_database": "Culcul",
+  "project_id": "4819d284-5034-443d-b8e9-bd83fc1d941e"
+}
