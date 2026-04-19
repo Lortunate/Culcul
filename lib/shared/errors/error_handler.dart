@@ -1,4 +1,4 @@
-import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/core/core.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 

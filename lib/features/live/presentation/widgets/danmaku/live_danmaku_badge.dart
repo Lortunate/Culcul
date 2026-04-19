@@ -1,6 +1,6 @@
-import 'package:culcul/shared/theme/app_theme.dart';
 import 'package:culcul/features/live/domain/entities/live_entities.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/ui.dart';
 import 'package:flutter/material.dart';
 
 class LiveGuardBadge extends StatelessWidget {

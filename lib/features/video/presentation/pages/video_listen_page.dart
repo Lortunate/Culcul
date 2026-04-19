@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:culcul/shared/theme/app_theme.dart';
 import 'package:culcul/shared/utils/format_extensions.dart';
+import 'package:culcul/ui/ui.dart';
 import 'package:culcul/features/video/presentation/hooks/use_listen_audio_mode.dart';
 import 'package:culcul/features/video/presentation/view_models/playback_snapshot_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';

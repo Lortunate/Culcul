@@ -1,4 +1,4 @@
-import 'package:culcul/shared/responsive/app_breakpoints.dart';
+import 'package:culcul/ui/responsive/app_breakpoints.dart';
 import 'package:flutter/material.dart';
 
 extension AppResponsive on BuildContext {

@@ -1,7 +1,6 @@
-import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/core/core.dart';
 import 'package:culcul/shared/network/models/api_response.dart';
 import 'package:culcul/shared/network/request_executor.dart';
-import 'package:culcul/shared/result/result.dart';
 
 mixin RequestExecutorBinding {
   RequestExecutor get requestExecutor;
