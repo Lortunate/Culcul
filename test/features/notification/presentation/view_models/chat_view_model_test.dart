@@ -2,7 +2,19 @@ import 'dart:io';
 
 import 'package:culcul/shared/errors/app_error.dart';
 import 'package:culcul/shared/result/result.dart';
-import 'package:culcul/features/notification/notification.dart';
+import 'package:culcul/features/notification/domain/entities/image_upload_result.dart';
+import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
+import 'package:culcul/features/notification/domain/entities/notification_feed_cursor.dart';
+import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
+import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
+import 'package:culcul/features/notification/domain/entities/private_message.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
+import 'package:culcul/features/notification/domain/entities/system_notice.dart';
+import 'package:culcul/features/notification/domain/repositories/notification_repository.dart';
+import 'package:culcul/features/notification/feature_scope.dart';
+import 'package:culcul/features/notification/presentation/view_models/chat_view_model.dart';
+import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -181,7 +193,9 @@ void main() {
     );
     addTearDown(container.dispose);
 
-    final state = await container.read(chatProvider(2002, PrivateSessionType.user).future);
+    final state = await container.read(
+      chatProvider(2002, PrivateSessionType.user).future,
+    );
     expect(state.emojiMap['[doge]'], 'https://example.com/doge.png');
     expect(state.emojiMap['doge'], 'https://example.com/doge.png');
   });

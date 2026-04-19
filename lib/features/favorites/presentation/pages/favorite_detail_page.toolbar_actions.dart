@@ -17,8 +17,9 @@ List<Widget> _buildFavoriteDetailAppBarActions({
             ? null
             : () async {
                 final error = await ref
-                    .read(favoriteFolderActionViewModelProvider.notifier)
-                    .deleteResources(mediaId: mediaId, resourceIds: selectedItems.value);
+                    .read(favoriteFolderCommandWorkflowProvider)
+                    .deleteResources(mediaId: mediaId, resourceIds: selectedItems.value)
+                    .then((result) => result.errorOrNull);
                 if (error == null) {
                   isSelectionMode.value = false;
                   selectedItems.value = {};
@@ -90,13 +91,14 @@ Future<void> _handleEditFolder({
   if (result == null) return;
 
   final error = await ref
-      .read(favoriteFolderActionViewModelProvider.notifier)
+      .read(favoriteFolderCommandWorkflowProvider)
       .editFolder(
         mediaId: mediaId,
         title: result.title,
         intro: result.intro,
         privacy: result.privacy,
-      );
+      )
+      .then((result) => result.errorOrNull);
   if (error == null) {
     ref.invalidate(favCreatedFoldersProvider);
     return;
@@ -131,8 +133,9 @@ Future<void> _handleDeleteFolder({
   if (confirm != true) return;
 
   final error = await ref
-      .read(favoriteFolderActionViewModelProvider.notifier)
-      .deleteFolder(mediaId: mediaId);
+      .read(favoriteFolderCommandWorkflowProvider)
+      .deleteFolder(mediaId: mediaId)
+      .then((result) => result.errorOrNull);
   if (error == null) {
     ref.invalidate(favCreatedFoldersProvider);
     if (context.mounted) {

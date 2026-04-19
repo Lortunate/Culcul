@@ -1,5 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/features/notification/notification.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/notification/route_entry.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/presentation/view_models/user_space_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
@@ -61,6 +62,11 @@ class UserProfileButtons extends ConsumerWidget {
           child: FollowButton(
             isFollowed: profile.isFollowing,
             onTap: () {
+              final authState = ref.read(authProvider);
+              if (!authState.isLoggedIn) {
+                const LoginRoute().push(context);
+                return;
+              }
               ref.read(userSpaceProvider(profile.id).notifier).toggleFollow();
             },
             height: height,

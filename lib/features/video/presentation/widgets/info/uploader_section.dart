@@ -1,10 +1,12 @@
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/shared/widgets/follow_button.dart';
 import 'package:culcul/shared/widgets/user_list_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class UploaderSection extends StatelessWidget {
+class UploaderSection extends ConsumerWidget {
   final Owner owner;
   final bool isFollowed;
   final VoidCallback onToggleFollow;
@@ -17,7 +19,7 @@ class UploaderSection extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return UserListTile(
       avatarUrl: owner.face,
       name: owner.name,
@@ -25,7 +27,17 @@ class UploaderSection extends StatelessWidget {
       avatarSize: 34,
       padding: EdgeInsets.zero,
       onTap: () => UserProfileRoute(mid: owner.mid).push(context),
-      trailing: FollowButton(isFollowed: isFollowed, onTap: onToggleFollow),
+      trailing: FollowButton(
+        isFollowed: isFollowed,
+        onTap: () {
+          final authState = ref.read(authProvider);
+          if (!authState.isLoggedIn) {
+            const LoginRoute().push(context);
+            return;
+          }
+          onToggleFollow();
+        },
+      ),
     );
   }
 }

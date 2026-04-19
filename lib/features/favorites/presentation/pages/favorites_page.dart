@@ -1,8 +1,8 @@
+import 'package:culcul/features/favorites/application/favorite_folder_commands.dart';
 import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
-import 'package:culcul/features/favorites/presentation/view_models/favorite_folder_action_view_model.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
-import 'package:culcul/features/auth/auth.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/shared/widgets/app_tab_bar.dart';
 import 'package:culcul/shared/widgets/guest_view.dart';
@@ -86,13 +86,13 @@ class _AddFolderAction extends ConsumerWidget {
           return;
         }
 
-        final error = await ref
-            .read(favoriteFolderActionViewModelProvider.notifier)
-            .createFolder(
-              title: result.title,
-              intro: result.intro,
-              privacy: result.privacy,
-            );
+        final command = ref.read(favoriteFolderCommandWorkflowProvider);
+        final workflowResult = await command.createFolder(
+          title: result.title,
+          intro: result.intro,
+          privacy: result.privacy,
+        );
+        final error = workflowResult.errorOrNull;
         if (error == null) {
           ref.invalidate(favCreatedFoldersProvider);
           return;
@@ -107,4 +107,3 @@ class _AddFolderAction extends ConsumerWidget {
     );
   }
 }
-

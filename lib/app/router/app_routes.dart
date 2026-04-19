@@ -4,19 +4,19 @@ import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:culcul/app/shell/main_shell.dart';
-import 'package:culcul/features/auth/auth.dart';
-import 'package:culcul/features/dynamic/dynamic.dart';
-import 'package:culcul/features/favorites/favorites.dart';
-import 'package:culcul/features/history/history.dart';
-import 'package:culcul/features/home/home.dart';
-import 'package:culcul/features/live/live.dart';
-import 'package:culcul/features/notification/notification.dart';
-import 'package:culcul/features/profile/profile.dart';
-import 'package:culcul/features/ranking/ranking.dart';
-import 'package:culcul/features/search/search.dart';
-import 'package:culcul/features/settings/settings.dart';
-import 'package:culcul/features/to_view/to_view.dart';
-import 'package:culcul/features/video/video.dart';
+import 'package:culcul/features/auth/route_entry.dart';
+import 'package:culcul/features/dynamic/route_entry.dart';
+import 'package:culcul/features/favorites/route_entry.dart';
+import 'package:culcul/features/history/route_entry.dart';
+import 'package:culcul/features/home/route_entry.dart';
+import 'package:culcul/features/live/route_entry.dart';
+import 'package:culcul/features/notification/route_entry.dart';
+import 'package:culcul/features/profile/route_entry.dart';
+import 'package:culcul/features/ranking/route_entry.dart';
+import 'package:culcul/features/search/route_entry.dart';
+import 'package:culcul/features/settings/route_entry.dart';
+import 'package:culcul/features/to_view/route_entry.dart';
+import 'package:culcul/features/video/route_entry.dart';
 
 import 'route_transitions.dart';
 

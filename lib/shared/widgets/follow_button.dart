@@ -1,10 +1,7 @@
-import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class FollowButton extends ConsumerWidget {
+class FollowButton extends StatelessWidget {
   final bool isFollowed;
   final VoidCallback onTap;
   final double? width;
@@ -22,27 +19,17 @@ class FollowButton extends ConsumerWidget {
     this.shape,
   });
 
-  void _handlePressed(BuildContext context, WidgetRef ref) {
-    final authState = ref.read(authProvider);
-    if (!authState.isLoggedIn) {
-      context.push('/login');
-      return;
-    }
-    onTap();
-  }
-
   String _resolveLabel(Translations t) {
     return text ?? (isFollowed ? t.actions.followed : '+ ${t.actions.follow}');
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final t = Translations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
-    ref.watch(authProvider);
 
     return FilledButton(
-      onPressed: () => _handlePressed(context, ref),
+      onPressed: onTap,
       style: FilledButton.styleFrom(
         backgroundColor: isFollowed ? colorScheme.primaryContainer : colorScheme.primary,
         foregroundColor: isFollowed
@@ -77,4 +64,3 @@ class FollowButton extends ConsumerWidget {
     );
   }
 }
-

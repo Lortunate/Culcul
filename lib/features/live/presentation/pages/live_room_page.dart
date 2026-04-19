@@ -1,3 +1,5 @@
+import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/features/live/application/live_room_page_commands.dart';
 import 'package:culcul/features/live/presentation/view_models/live_room_view_model.dart';
 import 'package:culcul/features/live/presentation/widgets/live_bottom_bar.dart';
 import 'package:culcul/features/live/presentation/widgets/live_header.dart';
@@ -28,7 +30,7 @@ class LiveRoomPage extends HookConsumerWidget {
         ),
       ),
     );
-    final notifier = ref.read(provider.notifier);
+    final pageCommands = ref.read(liveRoomPageCommandsProvider);
 
     return Scaffold(
       backgroundColor: colorScheme.scrim,
@@ -43,7 +45,13 @@ class LiveRoomPage extends HookConsumerWidget {
                 liveAnchorInfo: headerData.liveAnchorInfo,
                 guardList: headerData.guardList,
                 goldRank: headerData.goldRank,
-                onFollow: notifier.toggleFollow,
+                onFollow: () async {
+                  final result = await pageCommands.handleFollowTap(roomId);
+                  if (!context.mounted) return;
+                  if (result == LiveRoomFollowCommandResult.requiresLogin) {
+                    const LoginRoute().push(context);
+                  }
+                },
               ),
               _LivePlayerSection(roomId: roomId),
               Expanded(child: LiveRoomContent(roomId: roomId)),

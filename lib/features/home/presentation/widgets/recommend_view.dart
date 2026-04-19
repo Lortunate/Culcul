@@ -8,6 +8,7 @@ import 'package:culcul/shared/responsive/responsive.dart';
 import 'package:culcul/features/home/presentation/view_models/home_recommend_view_model.dart';
 import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
 import 'package:culcul/features/home/domain/entities/home_video.dart';
+import 'package:culcul/features/home/presentation/widgets/home_video_actions_sheet.dart';
 import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';
 import 'package:culcul/shared/widgets/app_network_image_prefetcher.dart';
 import 'package:culcul/shared/widgets/skeletons/page_skeletons.dart';
@@ -85,7 +86,7 @@ class RecommendView extends HookConsumerWidget {
   }
 }
 
-class _RecommendVideoGrid extends HookWidget {
+class _RecommendVideoGrid extends HookConsumerWidget {
   const _RecommendVideoGrid({
     required this.items,
     required this.scrollController,
@@ -101,7 +102,7 @@ class _RecommendVideoGrid extends HookWidget {
   final NetworkQualityPolicy networkPolicy;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     useEffect(() {
       final width = _estimateGridItemWidth(context);
       final pixelRatio = MediaQuery.devicePixelRatioOf(context);
@@ -148,6 +149,7 @@ class _RecommendVideoGrid extends HookWidget {
                 danmakuCount: video.stats.danmaku,
                 reason: video.rcmdReason,
                 onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
+                onLongPress: () => showHomeVideoActionsSheet(context, ref, video: video),
               );
             },
           ),

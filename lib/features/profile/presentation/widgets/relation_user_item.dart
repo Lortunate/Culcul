@@ -1,4 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/shared/contracts/relation_user_contract.dart';
 import 'package:culcul/features/profile/presentation/view_models/relation_user_action_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
@@ -70,9 +71,18 @@ class _RelationUserItemState extends ConsumerState<RelationUserItem> {
     return FollowButton(
       isFollowed: isFollowed,
       text: text,
-      onTap: _handleFollow,
+      onTap: _handleFollowPressed,
       height: 32,
     );
+  }
+
+  void _handleFollowPressed() {
+    final authState = ref.read(authProvider);
+    if (!authState.isLoggedIn) {
+      const LoginRoute().push(context);
+      return;
+    }
+    _handleFollow();
   }
 
   Future<void> _handleFollow() async {

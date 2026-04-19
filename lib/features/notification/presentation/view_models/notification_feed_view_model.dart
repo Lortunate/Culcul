@@ -1,7 +1,11 @@
 import 'dart:async';
 
+import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
+import 'package:culcul/features/notification/domain/entities/notification_feed_cursor.dart';
+import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
+import 'package:culcul/features/notification/feature_scope.dart';
+import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
 import 'package:culcul/shared/pagination/paged_async_notifier.dart';
-import 'package:culcul/features/notification/notification.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'notification_feed_view_model.g.dart';
@@ -32,11 +36,7 @@ class NotificationFeedList extends _$NotificationFeedList
     if (isRefreshing || cursor == null) {
       await repository.syncFeedHead(ownerUid: ownerUid, type: type);
     } else {
-      await repository.syncFeedOlder(
-        ownerUid: ownerUid,
-        type: type,
-        cursor: cursor,
-      );
+      await repository.syncFeedOlder(ownerUid: ownerUid, type: type, cursor: cursor);
     }
 
     final data = await repository.pageFeedFromLocal(

@@ -1,5 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/features/auth/auth.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
 import 'package:culcul/shared/widgets/app_avatar.dart';
 import 'package:culcul/shared/widgets/user_tags.dart';

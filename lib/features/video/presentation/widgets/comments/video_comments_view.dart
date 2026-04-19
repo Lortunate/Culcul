@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/features/video/video.dart';
+import 'package:culcul/features/video/route_entry.dart';
 import 'package:culcul/features/video/presentation/view_models/video_comments_view_model.dart';
+import 'package:culcul/features/video/presentation/widgets/comments/comment_item.dart';
+import 'package:culcul/features/video/presentation/widgets/comments/comment_reply_sheet.dart';
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/shared/pagination/pagination_load_gate.dart';

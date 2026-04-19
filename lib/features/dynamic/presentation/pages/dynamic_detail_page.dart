@@ -1,3 +1,4 @@
+import 'package:culcul/features/dynamic/application/dynamic_detail_actions.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_comment_view_model.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_detail_view_model.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_detail_bottom_bar.dart';
@@ -28,26 +29,6 @@ class DynamicDetailPage extends HookConsumerWidget {
     final commentController = useTextEditingController();
     final loadGate = useMemoized(PaginationLoadGate.new, [dynamicId]);
 
-    void submitComment() {
-      final post = state.post;
-      if (post == null) return;
-      final text = commentController.text.trim();
-      if (text.isEmpty) return;
-
-      ref.read(dynamicCommentControllerProvider(post).notifier).addReply(0, 0, text);
-      commentController.clear();
-      FocusScope.of(context).unfocus();
-    }
-
-    Future<void> handleLike() async {
-      final message = await notifier.toggleLike();
-      if (message != null && context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(t.moments.operation_failed(message: message))),
-        );
-      }
-    }
-
     if (state.isLoading && state.post == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -68,6 +49,33 @@ class DynamicDetailPage extends HookConsumerWidget {
     if (post == null) return const SizedBox();
     final commentState = ref.watch(dynamicCommentControllerProvider(post));
     final hasMore = commentState.paging.hasMore;
+    final actions = DynamicDetailActions(
+      toggleLike: notifier.toggleLike,
+      addReply: (root, parent, text) {
+        return ref
+            .read(dynamicCommentControllerProvider(post).notifier)
+            .addReply(root, parent, text);
+      },
+    );
+
+    Future<void> submitComment() async {
+      final submitted = await actions.submitComment(commentController.text);
+      if (!submitted || !context.mounted) {
+        return;
+      }
+
+      commentController.clear();
+      FocusScope.of(context).unfocus();
+    }
+
+    Future<void> handleLike() async {
+      final message = await actions.handleLike();
+      if (message != null && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(t.moments.operation_failed(message: message))),
+        );
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(title: Text(t.moments.detail_title)),

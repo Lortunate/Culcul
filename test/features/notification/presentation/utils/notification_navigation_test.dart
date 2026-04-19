@@ -1,4 +1,4 @@
-import 'package:culcul/features/notification/notification.dart';
+import 'package:culcul/features/notification/presentation/widgets/notification_navigation.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -41,4 +41,3 @@ void main() {
     expect(target.kind, NotificationNavigationKind.none);
   });
 }
-

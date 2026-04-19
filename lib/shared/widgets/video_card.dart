@@ -1,5 +1,6 @@
-import 'package:culcul/features/video/video.dart';
-import 'package:culcul/features/home/home.dart';
+import 'package:culcul/shared/contracts/video_model_contract.dart';
+import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/shared/widgets/video_actions_bottom_sheet.dart';
 import 'package:culcul/shared/widgets/app_card_container.dart';
 import 'package:culcul/shared/widgets/app_overlay_tag.dart';
 import 'package:culcul/shared/widgets/video_thumbnail.dart';
@@ -21,6 +22,9 @@ class VideoCard extends StatelessWidget {
   final int? danmakuCount;
   final String? reason;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+  final VoidCallback? onWatchLaterTap;
+  final VoidCallback? onDownloadCoverTap;
   final bool showAuthor;
   final bool showDescription;
 
@@ -37,6 +41,9 @@ class VideoCard extends StatelessWidget {
     this.danmakuCount,
     this.reason,
     this.onTap,
+    this.onLongPress,
+    this.onWatchLaterTap,
+    this.onDownloadCoverTap,
     this.showAuthor = true,
     this.showDescription = false,
   }) : assert(
@@ -59,14 +66,18 @@ class VideoCard extends StatelessWidget {
   String? get _reason => video?.rcmdReason ?? reason;
 
   Future<void> _showMoreSheet(BuildContext context) {
+    final t = Translations.of(context);
+
     return showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
       barrierColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (context) => VideoMoreBottomSheet(
-        bvid: bvid ?? video?.bvid,
-        coverUrl: coverUrl ?? video?.pic,
+      builder: (sheetContext) => VideoActionsBottomSheet(
+        watchLaterLabel: t.home.video_more.watch_later,
+        downloadCoverLabel: t.home.video_more.download_cover,
+        onWatchLaterTap: onWatchLaterTap ?? () => Navigator.of(sheetContext).pop(),
+        onDownloadCoverTap: onDownloadCoverTap ?? () => Navigator.of(sheetContext).pop(),
       ),
     );
   }
@@ -82,7 +93,7 @@ class VideoCard extends StatelessWidget {
 
     return AppCardContainer(
       onTap: onTap,
-      onLongPress: () => _showMoreSheet(context),
+      onLongPress: onLongPress ?? () => _showMoreSheet(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -127,4 +138,3 @@ class VideoCardContent extends StatelessWidget {
     );
   }
 }
-

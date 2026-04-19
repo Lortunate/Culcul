@@ -1,5 +1,5 @@
 import 'package:culcul/features/history/data/models/history_entry.dart';
-import 'package:culcul/features/history/history.dart';
+import 'package:culcul/features/history/feature_scope.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'history_view_model.g.dart';

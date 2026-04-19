@@ -1,6 +1,7 @@
 import 'package:culcul/shared/errors/app_error.dart';
 import 'package:culcul/shared/result/result.dart';
-import 'package:culcul/features/auth/auth.dart';
+import 'package:culcul/features/auth/domain/entities/user_entity.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';

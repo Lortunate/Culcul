@@ -6,7 +6,7 @@ import 'package:culcul/shared/network/interceptors/cache_interceptor.dart';
 import 'package:culcul/shared/perf/feature_flow_perf_logger.dart';
 import 'package:culcul/shared/providers/cache_store_provider.dart';
 import 'package:culcul/shared/pagination/paged_async_notifier.dart';
-import 'package:culcul/features/home/home.dart';
+import 'package:culcul/features/home/feature_scope.dart';
 import 'package:culcul/features/home/domain/entities/home_video.dart';
 import 'package:culcul/features/home/presentation/view_models/home_video_paging_view_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

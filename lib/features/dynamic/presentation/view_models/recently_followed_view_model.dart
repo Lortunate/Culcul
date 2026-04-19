@@ -1,5 +1,5 @@
-import 'package:culcul/features/auth/auth.dart';
-import 'package:culcul/features/profile/profile.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/profile/feature_scope.dart';
 import 'package:culcul/shared/contracts/relation_user_contract.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -20,4 +20,3 @@ class RecentlyFollowed extends _$RecentlyFollowed {
     return result.when(success: (users) => users.take(20).toList(), failure: (_) => []);
   }
 }
-

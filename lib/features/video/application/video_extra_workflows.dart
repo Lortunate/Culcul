@@ -5,7 +5,8 @@ import 'package:culcul/shared/errors/app_error.dart';
 import 'package:culcul/shared/result/result.dart';
 import 'package:culcul/shared/utils/danmaku_mask_parser.dart';
 import 'package:culcul/features/video/domain/repositories/danmaku_repository.dart';
-import 'package:culcul/features/video/video.dart';
+import 'package:culcul/features/video/domain/repositories/video_repository.dart';
+import 'package:culcul/features/video/feature_scope.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_drawing/path_drawing.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -56,10 +57,7 @@ class VideoExtraWorkflows {
       return Failure(error);
     }
     final bytes = bytesResult.dataOrNull!;
-    final paths = await compute(
-      _parseMaskData,
-      _ParseDanmakuMaskData(bytes, dmMask.fps),
-    );
+    final paths = await compute(_parseMaskData, _ParseDanmakuMaskData(bytes, dmMask.fps));
     return Success(DanmakuMasks(paths, dmMask.fps));
   }
 }

@@ -1,13 +1,15 @@
 import 'package:culcul/features/home/domain/entities/home_video.dart';
-import 'package:culcul/features/home/presentation/widgets/video_more_bottom_sheet.dart';
+import 'package:culcul/features/home/presentation/widgets/home_video_actions_sheet.dart';
 
 import 'package:culcul/shared/widgets/app_tag.dart';
 import 'package:culcul/shared/widgets/video_list_card.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class PopularVideoCard extends StatelessWidget {
+class PopularVideoCard extends ConsumerWidget {
   final HomeVideo video;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
   final double cardHeight;
   final double thumbnailWidth;
 
@@ -15,27 +17,21 @@ class PopularVideoCard extends StatelessWidget {
     super.key,
     required this.video,
     this.onTap,
+    this.onLongPress,
     this.cardHeight = 100,
     this.thumbnailWidth = 160,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     return VideoListCard(
       onTap: onTap,
       padding: const EdgeInsets.all(10),
-      onLongPress: () {
-        showModalBottomSheet(
-          context: context,
-          backgroundColor: Colors.transparent,
-          barrierColor: Colors.transparent,
-          isScrollControlled: true,
-          builder: (context) => VideoMoreBottomSheet.homeVideo(video: video),
-        );
-      },
+      onLongPress:
+          onLongPress ?? () => showHomeVideoActionsSheet(context, ref, video: video),
       height: cardHeight,
       thumbnailWidth: thumbnailWidth,
       coverUrl: video.pic,

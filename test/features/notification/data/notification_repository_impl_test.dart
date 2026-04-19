@@ -5,7 +5,8 @@ import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
 import 'package:culcul/features/notification/data/notification_api.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';
-import 'package:culcul/features/notification/notification.dart';
+import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 

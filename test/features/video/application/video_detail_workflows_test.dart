@@ -2,7 +2,8 @@ import 'package:culcul/shared/errors/app_error.dart';
 import 'package:culcul/shared/network/request_cancel_token.dart';
 import 'package:culcul/shared/result/result.dart';
 import 'package:culcul/features/video/application/video_detail_workflows.dart';
-import 'package:culcul/features/video/video.dart';
+import 'package:culcul/features/video/domain/entities/video_entities.dart';
+import 'package:culcul/features/video/domain/repositories/video_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

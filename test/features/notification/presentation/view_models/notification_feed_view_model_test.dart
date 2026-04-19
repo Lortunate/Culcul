@@ -2,8 +2,20 @@ import 'dart:io';
 
 import 'package:culcul/shared/errors/app_error.dart';
 import 'package:culcul/shared/result/result.dart';
-import 'package:culcul/features/auth/auth.dart';
-import 'package:culcul/features/notification/notification.dart';
+import 'package:culcul/features/auth/domain/entities/user_entity.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/notification/domain/entities/image_upload_result.dart';
+import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
+import 'package:culcul/features/notification/domain/entities/notification_feed_cursor.dart';
+import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
+import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
+import 'package:culcul/features/notification/domain/entities/private_message.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
+import 'package:culcul/features/notification/domain/entities/system_notice.dart';
+import 'package:culcul/features/notification/domain/repositories/notification_repository.dart';
+import 'package:culcul/features/notification/feature_scope.dart';
+import 'package:culcul/features/notification/presentation/view_models/notification_feed_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -199,4 +211,3 @@ void main() {
     },
   );
 }
-

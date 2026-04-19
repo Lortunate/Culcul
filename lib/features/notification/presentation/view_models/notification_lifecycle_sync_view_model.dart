@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
+import 'package:culcul/features/notification/feature_scope.dart';
+import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
 import 'package:culcul/shared/errors/app_error.dart';
-import 'package:culcul/features/notification/notification.dart';
 import 'package:culcul/shared/network/network_concurrency_executor.dart';
 import 'package:culcul/shared/network/network_concurrency_profiles.dart';
 import 'package:culcul/shared/result/result.dart';

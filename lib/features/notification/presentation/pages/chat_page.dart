@@ -1,9 +1,10 @@
 import 'package:culcul/i18n/i18n.dart';
 import 'dart:io';
+import 'package:culcul/features/notification/application/chat_page_commands.dart';
 import 'package:culcul/features/notification/presentation/view_models/chat_view_model.dart';
-import 'package:culcul/features/auth/auth.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
-import 'package:culcul/features/profile/profile.dart';
+import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_input.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_message_list.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_skeletons.dart';
@@ -32,6 +33,7 @@ class ChatPage extends HookConsumerWidget {
     final chatState = ref.watch(provider);
     final currentUser = ref.watch(authProvider).user;
     final notifier = ref.read(provider.notifier);
+    final commands = ref.read(chatPageCommandWorkflowProvider);
     final colorScheme = Theme.of(context).colorScheme;
 
     final displayInfo = _resolveDisplayInfo(ref);
@@ -72,21 +74,35 @@ class ChatPage extends HookConsumerWidget {
           ),
           ChatInput(
             controller: textController,
-            onSendImage: (File image) => _sendImage(
-              context: context,
-              notifier: notifier,
-              scrollController: scrollController,
-              image: image,
-            ),
+            onSendImage: (File image) async {
+              final result = await commands.sendImage(
+                image: image,
+                send: notifier.sendImage,
+                afterSuccess: () => _scrollToBottom(scrollController),
+              );
+              if (!result.isFailure || !context.mounted) {
+                return;
+              }
+              final t = i18n(context);
+              _showSendError(
+                context,
+                t.notification.chat.send_failed(error: result.error.toString()),
+              );
+            },
             onSend: () async {
-              final text = textController.text;
-              if (text.isEmpty) return;
-              await _sendText(
-                context: context,
-                notifier: notifier,
-                scrollController: scrollController,
-                textController: textController,
-                text: text,
+              final result = await commands.sendText(
+                text: textController.text,
+                send: notifier.sendMessage,
+                clearInput: textController.clear,
+                afterSuccess: () => _scrollToBottom(scrollController),
+              );
+              if (!result.isFailure || !context.mounted) {
+                return;
+              }
+              final t = i18n(context);
+              _showSendError(
+                context,
+                t.notification.chat.send_failed(error: result.error.toString()),
               );
             },
           ),
@@ -114,40 +130,6 @@ class ChatPage extends HookConsumerWidget {
     return (avatarUrl: displayAvatarUrl, name: displayName);
   }
 
-  Future<void> _sendImage({
-    required BuildContext context,
-    required Chat notifier,
-    required ScrollController scrollController,
-    required File image,
-  }) async {
-    try {
-      await notifier.sendImage(image);
-      await _scrollToBottom(scrollController);
-    } catch (e) {
-      if (!context.mounted) return;
-      final t = i18n(context);
-      _showSendError(context, t.notification.chat.send_failed(error: e.toString()));
-    }
-  }
-
-  Future<void> _sendText({
-    required BuildContext context,
-    required Chat notifier,
-    required ScrollController scrollController,
-    required TextEditingController textController,
-    required String text,
-  }) async {
-    try {
-      await notifier.sendMessage(text);
-      textController.clear();
-      await _scrollToBottom(scrollController);
-    } catch (e) {
-      if (!context.mounted) return;
-      final t = i18n(context);
-      _showSendError(context, t.notification.chat.send_failed(error: e.toString()));
-    }
-  }
-
   Future<void> _scrollToBottom(ScrollController controller) async {
     if (!controller.hasClients) return;
     await controller.animateTo(
@@ -162,4 +144,3 @@ class ChatPage extends HookConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 }
-

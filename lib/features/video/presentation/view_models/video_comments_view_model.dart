@@ -1,10 +1,11 @@
 import 'dart:async';
 
+import 'package:culcul/features/video/feature_scope.dart';
+import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:culcul/shared/errors/app_error.dart';
 import 'package:culcul/shared/network/request_cancel_token.dart';
 import 'package:culcul/shared/pagination/paged_list_state.dart';
 import 'package:culcul/shared/pagination/paged_list_state_transitions.dart';
-import 'package:culcul/features/video/video.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'video_comments_state.dart';

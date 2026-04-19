@@ -1,30 +1,23 @@
-import 'package:culcul/shared/services/media_service.dart';
-import 'package:culcul/shared/utils/id_utils.dart';
-import 'package:culcul/shared/utils/toast_utils.dart';
-import 'package:culcul/features/home/domain/entities/home_video.dart';
-import 'package:culcul/features/to_view/to_view.dart';
-import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/shared/widgets/adaptive_blur.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class VideoMoreBottomSheet extends ConsumerWidget {
-  final String? bvid;
-  final String? coverUrl;
+class VideoActionsBottomSheet extends StatelessWidget {
+  final String watchLaterLabel;
+  final String downloadCoverLabel;
+  final VoidCallback onWatchLaterTap;
+  final VoidCallback onDownloadCoverTap;
 
-  const VideoMoreBottomSheet({super.key, this.bvid, this.coverUrl});
-
-  VideoMoreBottomSheet.homeVideo({super.key, required HomeVideo video})
-    : bvid = video.bvid,
-      coverUrl = video.pic;
-
-  String get _resolvedBvid => bvid ?? '';
-  String get _resolvedCoverUrl => coverUrl ?? '';
+  const VideoActionsBottomSheet({
+    super.key,
+    required this.watchLaterLabel,
+    required this.downloadCoverLabel,
+    required this.onWatchLaterTap,
+    required this.onDownloadCoverTap,
+  });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final t = Translations.of(context);
 
     const topRadius = BorderRadius.vertical(top: Radius.circular(16));
 
@@ -50,16 +43,16 @@ class VideoMoreBottomSheet extends ConsumerWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildDragHandle(colorScheme),
+                  _DragHandle(colorScheme: colorScheme),
                   _ActionItem(
                     icon: Icons.watch_later_outlined,
-                    text: t.home.video_more.watch_later,
-                    onTap: () => _addToWatchLater(context, ref),
+                    text: watchLaterLabel,
+                    onTap: onWatchLaterTap,
                   ),
                   _ActionItem(
                     icon: Icons.image_outlined,
-                    text: t.home.video_more.download_cover,
-                    onTap: () => _downloadCover(context, ref),
+                    text: downloadCoverLabel,
+                    onTap: onDownloadCoverTap,
                   ),
                   const SizedBox(height: 16),
                 ],
@@ -70,8 +63,15 @@ class VideoMoreBottomSheet extends ConsumerWidget {
       ),
     );
   }
+}
 
-  Widget _buildDragHandle(ColorScheme colorScheme) {
+class _DragHandle extends StatelessWidget {
+  final ColorScheme colorScheme;
+
+  const _DragHandle({required this.colorScheme});
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 16),
       width: 36,
@@ -81,45 +81,6 @@ class VideoMoreBottomSheet extends ConsumerWidget {
         borderRadius: BorderRadius.circular(2),
       ),
     );
-  }
-
-  Future<void> _addToWatchLater(BuildContext context, WidgetRef ref) async {
-    final notifier = ref.read(toViewListProvider.notifier);
-    final t = Translations.of(context);
-    Navigator.pop(context);
-
-    try {
-      if (_resolvedBvid.isEmpty) {
-        ToastUtils.showError(t.home.video_more.invalid_video_id);
-        return;
-      }
-      final aid = IdUtils.bv2av(_resolvedBvid);
-      if (aid == 0) {
-        ToastUtils.showError(t.home.video_more.invalid_video_id);
-        return;
-      }
-      await notifier.add(aid);
-      ToastUtils.show(t.home.video_more.added_to_watch_later);
-    } catch (e) {
-      ToastUtils.showError(t.home.video_more.add_failed(error: e.toString()));
-    }
-  }
-
-  Future<void> _downloadCover(BuildContext context, WidgetRef ref) async {
-    final mediaService = ref.read(mediaServiceProvider);
-    final t = Translations.of(context);
-    Navigator.pop(context);
-
-    try {
-      if (_resolvedCoverUrl.isEmpty) {
-        ToastUtils.showError(t.home.video_more.download_failed(error: 'empty cover'));
-        return;
-      }
-      await mediaService.saveImage(_resolvedCoverUrl);
-      ToastUtils.show(t.common.save_success);
-    } catch (e) {
-      ToastUtils.showError(t.home.video_more.download_failed(error: e.toString()));
-    }
   }
 }
 
@@ -158,4 +119,3 @@ class _ActionItem extends StatelessWidget {
     );
   }
 }
-

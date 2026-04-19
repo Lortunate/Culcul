@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **Culcul** (1947 symbols, 2629 relationships, 19 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **boundary-cleanup-phase1** (1257 symbols, 1329 relationships, 0 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -17,7 +17,7 @@ This project is indexed by GitNexus as **Culcul** (1947 symbols, 2629 relationsh
 
 1. `gitnexus_query({query: "<error or symptom>"})` — find execution flows related to the issue
 2. `gitnexus_context({name: "<suspect function>"})` — see all callers, callees, and process participation
-3. `READ gitnexus://repo/Culcul/process/{processName}` — trace the full execution flow step by step
+3. `READ gitnexus://repo/boundary-cleanup-phase1/process/{processName}` — trace the full execution flow step by step
 4. For regressions: `gitnexus_detect_changes({scope: "compare", base_ref: "main"})` — see what your branch changed
 
 ## When Refactoring
@@ -56,10 +56,10 @@ This project is indexed by GitNexus as **Culcul** (1947 symbols, 2629 relationsh
 
 | Resource | Use for |
 |----------|---------|
-| `gitnexus://repo/Culcul/context` | Codebase overview, check index freshness |
-| `gitnexus://repo/Culcul/clusters` | All functional areas |
-| `gitnexus://repo/Culcul/processes` | All execution flows |
-| `gitnexus://repo/Culcul/process/{name}` | Step-by-step execution trace |
+| `gitnexus://repo/boundary-cleanup-phase1/context` | Codebase overview, check index freshness |
+| `gitnexus://repo/boundary-cleanup-phase1/clusters` | All functional areas |
+| `gitnexus://repo/boundary-cleanup-phase1/processes` | All execution flows |
+| `gitnexus://repo/boundary-cleanup-phase1/process/{name}` | Step-by-step execution trace |
 
 ## Self-Check Before Finishing
 

@@ -7,7 +7,7 @@ import 'package:culcul/features/home/presentation/widgets/live_view.dart';
 import 'package:culcul/features/home/presentation/widgets/popular_view.dart';
 import 'package:culcul/features/home/presentation/widgets/recommend_view.dart';
 import 'package:culcul/features/home/presentation/view_models/home_page_view_model.dart';
-import 'package:culcul/features/search/search.dart';
+import 'package:culcul/features/search/presentation/view_models/search_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -98,4 +98,3 @@ class HomePage extends HookConsumerWidget {
     (title: t.home.tabs.hot, buildView: () => const PopularView()),
   ];
 }
-
