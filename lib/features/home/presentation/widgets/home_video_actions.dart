@@ -1,4 +1,4 @@
-import 'package:culcul/features/to_view/to_view.dart';
+import 'package:culcul/features/to_view/presentation/view_models/to_view_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/shared/services/media_service.dart';
 import 'package:culcul/shared/utils/id_utils.dart';

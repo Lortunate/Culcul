@@ -1,15 +1,20 @@
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/shared/widgets/video_actions_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+Widget _wrap(Widget child) {
+  return TranslationProvider(
+    child: MaterialApp(home: Scaffold(body: child)),
+  );
+}
 
 void main() {
   test('video actions bottom sheet is constructible', () {
     expect(
       VideoActionsBottomSheet(
-        watchLaterLabel: 'Watch later',
-        downloadCoverLabel: 'Download cover',
-        onWatchLaterTap: () {},
-        onDownloadCoverTap: () {},
+        onWatchLater: () {},
+        onDownloadCover: () {},
       ),
       isA<Widget>(),
     );
@@ -17,18 +22,14 @@ void main() {
 
   Future<void> pumpSheet(
     WidgetTester tester, {
-    required VoidCallback onWatchLaterTap,
-    required VoidCallback onDownloadCoverTap,
+    required VoidCallback onWatchLater,
+    required VoidCallback onDownloadCover,
   }) async {
     await tester.pumpWidget(
-      MaterialApp(
-        home: Scaffold(
-          body: VideoActionsBottomSheet(
-            watchLaterLabel: 'Watch later',
-            downloadCoverLabel: 'Download cover',
-            onWatchLaterTap: onWatchLaterTap,
-            onDownloadCoverTap: onDownloadCoverTap,
-          ),
+      _wrap(
+        VideoActionsBottomSheet(
+          onWatchLater: onWatchLater,
+          onDownloadCover: onDownloadCover,
         ),
       ),
     );
@@ -36,10 +37,13 @@ void main() {
   }
 
   testWidgets('renders available actions', (tester) async {
-    await pumpSheet(tester, onWatchLaterTap: () {}, onDownloadCoverTap: () {});
+    await pumpSheet(tester, onWatchLater: () {}, onDownloadCover: () {});
 
-    expect(find.text('Watch later'), findsOneWidget);
-    expect(find.text('Download cover'), findsOneWidget);
+    final context = tester.element(find.byType(VideoActionsBottomSheet));
+    final t = Translations.of(context);
+
+    expect(find.text(t.home.video_more.watch_later), findsOneWidget);
+    expect(find.text(t.home.video_more.download_cover), findsOneWidget);
   });
 
   testWidgets('invokes callbacks when action items are tapped', (tester) async {
@@ -48,13 +52,16 @@ void main() {
 
     await pumpSheet(
       tester,
-      onWatchLaterTap: () => watchLaterTapped++,
-      onDownloadCoverTap: () => downloadCoverTapped++,
+      onWatchLater: () => watchLaterTapped++,
+      onDownloadCover: () => downloadCoverTapped++,
     );
 
-    await tester.tap(find.text('Watch later'));
+    final context = tester.element(find.byType(VideoActionsBottomSheet));
+    final t = Translations.of(context);
+
+    await tester.tap(find.text(t.home.video_more.watch_later));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Download cover'));
+    await tester.tap(find.text(t.home.video_more.download_cover));
     await tester.pumpAndSettle();
 
     expect(watchLaterTapped, 1);

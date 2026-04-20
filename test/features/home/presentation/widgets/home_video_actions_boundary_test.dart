@@ -33,9 +33,9 @@ void main() {
       reason: 'PopularVideoCard should stop depending on the legacy home adapter.',
     );
     expect(
-      popularContent.contains('showHomeVideoActionsSheet'),
+      popularContent.contains('onLongPress'),
       isTrue,
-      reason: 'PopularVideoCard should open the shared UI-only action sheet directly.',
+      reason: 'PopularVideoCard should leave long-press ownership to its caller.',
     );
     expect(
       recommendContent.contains('onLongPress:'),
@@ -43,7 +43,7 @@ void main() {
       reason: 'RecommendView should own the long-press action wiring for home videos.',
     );
     expect(
-      recommendContent.contains('showHomeVideoActionsSheet'),
+      recommendContent.contains('showHomeVideoActionsBottomSheet'),
       isTrue,
       reason:
           'RecommendView should launch the shared video action sheet from the home call site.',

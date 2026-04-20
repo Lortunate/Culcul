@@ -1,5 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/features/auth/auth.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/shared/utils/format_utils.dart';
 import 'package:culcul/features/live/domain/entities/live_entities.dart';
 import 'package:culcul/shared/contracts/user_card_contract.dart';

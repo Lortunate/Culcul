@@ -1,8 +1,8 @@
 import 'package:culcul/features/notification/presentation/pages/chat_page_commands.dart';
 import 'package:culcul/features/notification/presentation/view_models/chat_view_model.dart';
-import 'package:culcul/features/auth/auth.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
-import 'package:culcul/features/profile/profile.dart';
+import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_input.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_message_list.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_skeletons.dart';

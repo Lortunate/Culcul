@@ -3,7 +3,7 @@ import 'package:culcul/features/favorites/presentation/view_models/favorite_fold
 import 'package:culcul/features/favorites/presentation/pages/favorites_page_commands.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
-import 'package:culcul/features/auth/auth.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/shared/widgets/app_tab_bar.dart';
 import 'package:culcul/shared/widgets/guest_view.dart';
