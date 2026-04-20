@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/shared/errors/app_error.dart';
 import 'package:culcul/shared/network/network_concurrency_executor.dart';
 import 'package:culcul/shared/network/network_concurrency_profiles.dart';
@@ -10,6 +11,61 @@ import 'package:culcul/features/dynamic/domain/repositories/dynamic_repository.d
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  group('ArticleDetailCommentWorkflow', () {
+    test('submitComment trims input and posts a top-level reply', () async {
+      final repository = _FakeDynamicRepository();
+      final workflow = ArticleDetailCommentWorkflow(repository);
+
+      final result = await workflow.submitComment(
+        article: _buildArticleDetail(),
+        commentsEnabled: true,
+        rawMessage: '  hello world  ',
+      );
+
+      expect(result.submitted, isTrue);
+      expect(result.errorMessage, isNull);
+      expect(repository.addArticleCommentReplyCalls, 1);
+      expect(repository.lastArticleReplyRoot, 0);
+      expect(repository.lastArticleReplyParent, 0);
+      expect(repository.lastArticleReplyMessage, 'hello world');
+    });
+
+    test('submitComment skips repository when comments are disabled', () async {
+      final repository = _FakeDynamicRepository();
+      final workflow = ArticleDetailCommentWorkflow(repository);
+
+      final result = await workflow.submitComment(
+        article: _buildArticleDetail(),
+        commentsEnabled: false,
+        rawMessage: 'hello world',
+      );
+
+      expect(result.submitted, isFalse);
+      expect(result.commentsDisabled, isTrue);
+      expect(result.errorMessage, isNull);
+      expect(repository.addArticleCommentReplyCalls, 0);
+    });
+
+    test('submitReply targets the current comment thread', () async {
+      final repository = _FakeDynamicRepository();
+      final workflow = ArticleDetailCommentWorkflow(repository);
+
+      final result = await workflow.submitReply(
+        article: _buildArticleDetail(),
+        commentsEnabled: true,
+        item: _buildCommentItem(rpid: 20, root: 10),
+        message: 'reply body',
+      );
+
+      expect(result.submitted, isTrue);
+      expect(result.errorMessage, isNull);
+      expect(repository.addArticleCommentReplyCalls, 1);
+      expect(repository.lastArticleReplyRoot, 10);
+      expect(repository.lastArticleReplyParent, 20);
+      expect(repository.lastArticleReplyMessage, 'reply body');
+    });
+  });
+
   group('PublishDynamicWorkflow', () {
     test('uploads images with bounded concurrency and reuses csrf', () async {
       final repository = _FakeDynamicRepository(
@@ -75,9 +131,13 @@ class _FakeDynamicRepository extends Fake implements DynamicRepository {
   int uploadBatchCalls = 0;
   int uploadCalls = 0;
   int publishCalls = 0;
+  int addArticleCommentReplyCalls = 0;
   int inFlight = 0;
   int maxInFlight = 0;
   final List<String> uploadedCsrfValues = <String>[];
+  int? lastArticleReplyRoot;
+  int? lastArticleReplyParent;
+  String? lastArticleReplyMessage;
 
   @override
   Future<Result<String, AppError>> getPublishCsrf() async {
@@ -140,4 +200,90 @@ class _FakeDynamicRepository extends Fake implements DynamicRepository {
     publishCalls++;
     return const Success(null);
   }
+
+  @override
+  Future<Result<CommentItem, AppError>> addArticleCommentReply({
+    required ArticleDetailData article,
+    required int root,
+    required int parent,
+    required String message,
+  }) async {
+    addArticleCommentReplyCalls++;
+    lastArticleReplyRoot = root;
+    lastArticleReplyParent = parent;
+    lastArticleReplyMessage = message;
+    return Success(
+      _buildCommentItem(rpid: 99, root: root, parent: parent, message: message),
+    );
+  }
+}
+
+ArticleDetailData _buildArticleDetail() {
+  return const ArticleDetailData(
+    url: 'https://www.bilibili.com/read/cv1',
+    commentOid: 'oid-1',
+    commentType: 12,
+    title: 'Article',
+    summary: 'Summary',
+    bannerUrl: null,
+    authorName: 'Author',
+    authorMid: 1,
+    authorAvatar: 'https://example.com/avatar.jpg',
+    publishTime: 0,
+    stats: ArticleStats(
+      view: 0,
+      favorite: 0,
+      like: 0,
+      dislike: 0,
+      reply: 0,
+      share: 0,
+      coin: 0,
+      dynamicCount: 0,
+    ),
+    blocks: <ArticleBlock>[],
+  );
+}
+
+CommentItem _buildCommentItem({
+  required int rpid,
+  required int root,
+  int? parent,
+  String message = 'message',
+}) {
+  return CommentItem(
+    rpid: rpid,
+    oid: 1,
+    type: 12,
+    mid: 2,
+    root: root,
+    parent: parent ?? root,
+    ctime: 0,
+    member: const CommentMember(
+      mid: '2',
+      uname: 'user',
+      sex: 'unknown',
+      sign: '',
+      avatar: 'https://example.com/avatar.jpg',
+      rank: '10000',
+      levelInfo: CommentLevelInfo(
+        currentLevel: 1,
+        currentMin: 0,
+        currentExp: 0,
+        nextExp: 1,
+      ),
+      pendant: CommentPendant(pid: 0, name: '', image: '', expire: 0),
+      nameplate: CommentNameplate(
+        nid: 0,
+        name: '',
+        image: '',
+        imageSmall: '',
+        level: '',
+        condition: '',
+      ),
+      officialVerify: CommentOfficialVerify(),
+      vip: CommentVip(),
+      fansDetail: null,
+    ),
+    content: CommentContent(message: message, plat: 0, device: ''),
+  );
 }

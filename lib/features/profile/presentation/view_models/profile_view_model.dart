@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/profile/application/profile_actions.dart';
 import 'package:culcul/features/profile/feature_scope.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -21,29 +24,28 @@ Future<ProfileUser> myProfile(Ref ref) async {
 class UserProfileNotifier extends _$UserProfileNotifier {
   @override
   Future<ProfileUser> build(String userId) async {
-    final cachedUser = await ref
-        .read(profileCacheRepositoryProvider.notifier)
-        .readProfile(userId);
-
-    if (cachedUser != null) {
-      _refreshInBackground(userId);
-      return cachedUser;
+    final result = await loadUserProfileAction(
+      userId: userId,
+      readCachedProfile: ref.read(profileCacheRepositoryProvider.notifier).readProfile,
+      loadFreshProfile: _loadFreshProfile,
+    );
+    if (result.shouldRefreshInBackground) {
+      unawaited(_refreshInBackground(userId));
     }
-
-    return _loadFresh(userId);
+    return result.profile;
   }
 
   Future<void> _refreshInBackground(String userId) async {
     try {
       await Future.delayed(Duration.zero);
-      final user = await _loadFresh(userId);
+      final user = await _loadFreshProfile(userId);
       state = AsyncData(user);
     } catch (e) {
       // Ignore errors in background refresh
     }
   }
 
-  Future<ProfileUser> _loadFresh(String userId) async {
+  Future<ProfileUser> _loadFreshProfile(String userId) async {
     final result = await ref
         .read(profileRepositoryProvider)
         .getProfile(int.parse(userId));

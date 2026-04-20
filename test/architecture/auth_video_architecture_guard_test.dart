@@ -107,4 +107,34 @@ void main() {
           'Found broad feature barrel imports in app_routes.dart: ${violations.join(', ')}',
     );
   });
+
+  test('App routes uses the home route entry instead of concrete home page imports', () async {
+    final appRoutesFile = File('lib/app/router/app_routes.dart');
+    const homeRouteEntryImport =
+        "import 'package:culcul/features/home/route_entry.dart';";
+    final forbiddenImports = [
+      "import 'package:culcul/features/home/presentation/pages/home_page.dart';",
+      "import 'package:culcul/features/home/presentation/pages/weekly_screen.dart';",
+    ];
+
+    expect(appRoutesFile.existsSync(), isTrue, reason: 'app_routes.dart must exist');
+
+    final content = await appRoutesFile.readAsString();
+    final violations = [
+      for (final forbiddenImport in forbiddenImports)
+        if (content.contains(forbiddenImport)) forbiddenImport,
+    ];
+
+    expect(
+      content.contains(homeRouteEntryImport),
+      isTrue,
+      reason: 'Expected app_routes.dart to import the home route entry.',
+    );
+    expect(
+      violations,
+      isEmpty,
+      reason:
+          'Found concrete home page imports in app_routes.dart: ${violations.join(', ')}',
+    );
+  });
 }

@@ -1,4 +1,5 @@
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/to_view/application/to_view_commands.dart';
 import 'package:culcul/features/to_view/presentation/view_models/to_view_view_model.dart';
 import 'package:culcul/features/to_view/presentation/widgets/to_view_list.dart';
 import 'package:culcul/features/to_view/presentation/widgets/to_view_page_app_bar.dart';
@@ -17,11 +18,16 @@ class ToViewPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
     final isLoggedIn = authState.isLoggedIn;
+    final currentItems = ref.watch(toViewListProvider).asData?.value ?? const [];
+    final clearAllAction = planToViewClearAll(
+      isLoggedIn: isLoggedIn,
+      itemCount: currentItems.length,
+    );
 
     return Scaffold(
       appBar: ToViewPageAppBar(
         isLoggedIn: isLoggedIn,
-        onClearAll: () => _showClearAllDialog(context, ref),
+        onClearAll: () => _handleClearAll(context, ref, clearAllAction),
       ),
       body: isLoggedIn
           ? _ToViewBody(
@@ -33,7 +39,15 @@ class ToViewPage extends ConsumerWidget {
     );
   }
 
-  Future<void> _showClearAllDialog(BuildContext context, WidgetRef ref) async {
+  Future<void> _handleClearAll(
+    BuildContext context,
+    WidgetRef ref,
+    ToViewClearAllAction action,
+  ) async {
+    if (action == ToViewClearAllAction.unavailable) {
+      return;
+    }
+
     await showDialog<void>(
       context: context,
       builder: (dialogContext) {
@@ -46,8 +60,14 @@ class ToViewPage extends ConsumerWidget {
               child: Text(t.common.cancel),
             ),
             TextButton(
-              onPressed: () {
-                ref.read(toViewListProvider.notifier).clear();
+              onPressed: () async {
+                await executeConfirmedToViewClearAll(
+                  action: action,
+                  clearAll: ref.read(toViewListProvider.notifier).clear,
+                );
+                if (!dialogContext.mounted) {
+                  return;
+                }
                 Navigator.of(dialogContext).pop();
               },
               child: Text(t.common.confirm),
@@ -59,11 +79,7 @@ class ToViewPage extends ConsumerWidget {
   }
 
   Future<IndicatorResult> _refreshList(WidgetRef ref) async {
-    final refreshedItems = await ref.refresh(toViewListProvider.future);
-    if (refreshedItems.isNotEmpty) {
-      return IndicatorResult.success;
-    }
-    return IndicatorResult.success;
+    return refreshToViewWorkflow(refresh: () => ref.refresh(toViewListProvider.future));
   }
 }
 

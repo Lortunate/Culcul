@@ -1,3 +1,4 @@
+import 'package:culcul/features/search/application/search_workflows.dart';
 import 'package:culcul/features/search/presentation/hooks/use_search_view_model.dart';
 import 'package:culcul/features/search/presentation/widgets/hot_search_section.dart';
 import 'package:culcul/features/search/presentation/widgets/search_app_bar.dart';
@@ -15,6 +16,7 @@ class SearchPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final search = useSearchViewModel(ref);
+    final onSearch = _buildOnSearch(search);
 
     return Scaffold(
       appBar: SearchAppBar(
@@ -22,23 +24,31 @@ class SearchPage extends HookConsumerWidget {
         focusNode: search.focusNode,
         hintText: search.defaultSearchHint,
         onClear: search.onClear,
-        onSearch: search.onSearch,
+        onSearch: onSearch,
       ),
-      body: _buildSearchBody(search),
+      body: _buildSearchBody(search, onSearch),
     );
   }
 }
 
-Widget _buildSearchBody(
-  SearchPageState search,
-) {
+Widget _buildSearchBody(SearchPageState search, ValueChanged<String> onSearch) {
   return switch (search.mode) {
     SearchPageMode.suggestion => SearchSuggestionView(
       term: search.suggestionTerm,
-      onSuggestionTap: search.onSearch,
+      onSuggestionTap: onSearch,
     ),
     SearchPageMode.result => SearchResultView(keyword: search.confirmedKeyword!),
-    SearchPageMode.landing => _SearchLandingContent(onTap: search.onSearch),
+    SearchPageMode.landing => _SearchLandingContent(onTap: onSearch),
+  };
+}
+
+ValueChanged<String> _buildOnSearch(SearchPageState search) {
+  return (rawTerm) {
+    final submission = prepareSearchSubmission(rawTerm);
+    if (submission == null) {
+      return;
+    }
+    search.onSearch(submission.term);
   };
 }
 

@@ -155,6 +155,19 @@ Expected outcome:
 - directory names reflect actual responsibility
 - future refactors become cheaper
 
+#### Phase 3 readiness note
+
+Phase-2 follow-up on the implementation branch establishes two useful seams
+without forcing a full redesign:
+
+- routing now has an explicit feature-owned `route_entry.dart` pattern across
+  the main user-facing modules
+- page-heavy workflows have started moving into feature-owned helpers under
+  `application/` and page-scoped `*_page_commands.dart`
+
+That means phase 3 can focus on naming and ownership normalization rather than
+re-litigating whether the extraction itself was correct.
+
 ## Constraints
 
 - Do not overwrite or rework the current uncommitted `home` refactor unless a later task explicitly targets it.
