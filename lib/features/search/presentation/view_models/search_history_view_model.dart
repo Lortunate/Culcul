@@ -1,3 +1,4 @@
+import 'package:culcul/features/search/application/search_workflows.dart';
 import 'package:culcul/shared/providers/storage_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -18,24 +19,15 @@ class SearchHistory extends _$SearchHistory {
   }
 
   Future<void> add(String term) async {
-    if (term.isEmpty) return;
-
-    final current = state.toList();
-    current.remove(term);
-    current.insert(0, term);
-
-    if (current.length > _maxHistory) {
-      current.removeLast();
-    }
-
-    state = current;
-    await ref.read(searchStorageBoxProvider).put(StorageKeys.searchHistory, current);
+    final nextHistory = addSearchHistoryEntry(state, term, maxHistory: _maxHistory);
+    state = nextHistory;
+    await ref.read(searchStorageBoxProvider).put(StorageKeys.searchHistory, nextHistory);
   }
 
   Future<void> remove(String term) async {
-    final current = state.where((element) => element != term).toList();
-    state = current;
-    await ref.read(searchStorageBoxProvider).put(StorageKeys.searchHistory, current);
+    final nextHistory = removeSearchHistoryEntry(state, term);
+    state = nextHistory;
+    await ref.read(searchStorageBoxProvider).put(StorageKeys.searchHistory, nextHistory);
   }
 
   Future<void> clear() async {

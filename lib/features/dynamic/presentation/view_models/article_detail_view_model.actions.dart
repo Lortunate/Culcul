@@ -3,6 +3,10 @@ part of 'article_detail_view_model.dart';
 mixin _ArticleDetailViewModelActions on _$ArticleDetailViewModel {
   String get _url;
 
+  ArticleDetailCommentWorkflow get _commentWorkflow {
+    return ArticleDetailCommentWorkflow(ref.read(dynamicRepositoryProvider));
+  }
+
   Future<void> loadDetail() async {
     state = state.copyWith(isLoading: true, clearError: true);
     final result = await ref.read(dynamicRepositoryProvider).getArticleDetail(_url);
@@ -99,47 +103,40 @@ mixin _ArticleDetailViewModelActions on _$ArticleDetailViewModel {
     );
   }
 
-  Future<String?> submitComment(String message) async {
-    final detail = state.detail;
-    if (detail == null) return null;
-    if (!state.commentsEnabled) return 'Comments disabled';
-    if (message.trim().isEmpty || state.isSendingComment) return null;
+  Future<ArticleDetailCommentActionResult> submitComment(String message) async {
+    if (state.isSendingComment) {
+      return const ArticleDetailCommentActionResult.noop();
+    }
 
     state = state.copyWith(isSendingComment: true);
-    final result = await ref
-        .read(dynamicRepositoryProvider)
-        .addArticleCommentReply(
-          article: detail,
-          root: 0,
-          parent: 0,
-          message: message.trim(),
-        );
+    final result = await _commentWorkflow.submitComment(
+      article: state.detail,
+      commentsEnabled: state.commentsEnabled,
+      rawMessage: message,
+    );
     state = state.copyWith(isSendingComment: false);
-    if (result.isFailure) {
-      return result.errorOrNull!.message;
+    if (!result.submitted) {
+      return result;
     }
     await loadComments(refresh: true);
-    return null;
+    return result;
   }
 
-  Future<String?> submitReply(CommentItem item, String message) async {
-    final detail = state.detail;
-    if (detail == null) return null;
-    if (!state.commentsEnabled) return 'Comments disabled';
-
-    final result = await ref
-        .read(dynamicRepositoryProvider)
-        .addArticleCommentReply(
-          article: detail,
-          root: item.root == 0 ? item.rpid : item.root,
-          parent: item.rpid,
-          message: message,
-        );
-    if (result.isFailure) {
-      return result.errorOrNull!.message;
+  Future<ArticleDetailCommentActionResult> submitReply(
+    CommentItem item,
+    String message,
+  ) async {
+    final result = await _commentWorkflow.submitReply(
+      article: state.detail,
+      commentsEnabled: state.commentsEnabled,
+      item: item,
+      message: message,
+    );
+    if (!result.submitted) {
+      return result;
     }
     await loadComments(refresh: true);
-    return null;
+    return result;
   }
 
   Future<void> toggleCommentLike(CommentItem item) async {

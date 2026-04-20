@@ -2,7 +2,9 @@
 
 Phase 1 introduces architecture guards that keep `lib/shared` independent from
 feature packages and force `lib/app/router/app_routes.dart` to avoid broad
-feature barrel imports.
+feature barrel imports. Phase 2 continues that cleanup by routing home pages
+through `lib/features/home/route_entry.dart` instead of importing presentation
+pages directly from `app_routes.dart`.
 
 ## Rules
 
@@ -13,21 +15,25 @@ feature barrel imports.
    as `package:culcul/features/auth/auth.dart`.
 4. Routing code should import only the narrow route entry points or other
    explicitly-scoped APIs it needs.
+5. Home routing must flow through `package:culcul/features/home/route_entry.dart`
+   instead of importing `presentation/pages/home_page.dart` or
+   `presentation/pages/weekly_screen.dart` in `app_routes.dart`.
 
 ## Guard Coverage
 
 - `test/architecture/shared_boundary_guard_test.dart`
   checks for `shared -> features` imports.
 - `test/architecture/auth_video_architecture_guard_test.dart`
-  checks for broad feature barrel imports in `app_routes.dart`.
+  checks for broad feature barrel imports in `app_routes.dart` and verifies the
+  home route entry boundary.
 
 ## Known Violations At Guard Introduction
 
 - `lib/shared/widgets/video_actions_bottom_sheet.dart`
   imports `package:culcul/features/to_view/to_view.dart`.
 - `lib/app/router/app_routes.dart`
-  imports broad feature barrels for multiple features including `auth`, `home`,
-  and `video`.
+  imports broad feature barrels for multiple features including `auth` and
+  `video`.
 
 These violations are intentionally left in place for follow-up cleanup work;
 the new guards make them explicit and prevent the boundary from drifting

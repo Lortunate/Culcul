@@ -6,8 +6,8 @@ final chatPageCommandWorkflowProvider = Provider<ChatPageCommandWorkflow>(
   (ref) => const ChatPageCommandWorkflow(),
 );
 
-typedef ChatTextCommand = Future<void> Function(String text);
-typedef ChatImageCommand = Future<void> Function(File image);
+typedef ChatTextCommand = Future<ChatPageCommandResult> Function(String text);
+typedef ChatImageCommand = Future<ChatPageCommandResult> Function(File image);
 typedef ChatPostSuccessAction = Future<void> Function();
 typedef ChatClearInputAction = void Function();
 
@@ -26,6 +26,7 @@ class ChatPageCommandResult {
   const ChatPageCommandResult.failure(Object error)
     : this._(ChatPageCommandStatus.failure, error);
 
+  bool get isSuccess => status == ChatPageCommandStatus.success;
   bool get isFailure => status == ChatPageCommandStatus.failure;
 }
 
@@ -43,7 +44,10 @@ class ChatPageCommandWorkflow {
     }
 
     try {
-      await send(text);
+      final result = await send(text);
+      if (!result.isSuccess) {
+        return result;
+      }
       clearInput();
       await afterSuccess();
       return const ChatPageCommandResult.success();
@@ -58,7 +62,10 @@ class ChatPageCommandWorkflow {
     required ChatPostSuccessAction afterSuccess,
   }) async {
     try {
-      await send(image);
+      final result = await send(image);
+      if (!result.isSuccess) {
+        return result;
+      }
       await afterSuccess();
       return const ChatPageCommandResult.success();
     } catch (error) {

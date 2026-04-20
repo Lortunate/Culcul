@@ -1,8 +1,9 @@
-import 'package:culcul/features/notification/presentation/pages/chat_page_commands.dart';
-import 'package:culcul/features/notification/presentation/view_models/chat_view_model.dart';
+import 'package:culcul/features/notification/application/chat_page_commands.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/presentation/view_models/chat_view_model.dart';
 import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
+import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_input.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_message_list.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_skeletons.dart';
@@ -37,19 +38,35 @@ class ChatPage extends HookConsumerWidget {
     final displayAvatarUrl = displayInfo.avatarUrl;
     final displayName = displayInfo.name;
 
+    final workflow = ref.read(chatPageCommandWorkflowProvider);
     final textController = useTextEditingController();
     final scrollController = useScrollController();
-    final commands = ChatPageCommands.fromPage(
-      context: context,
-      notifier: notifier,
-      scrollController: scrollController,
-      textController: textController,
-    );
 
     // Current user ID (int)
     final currentUserId = useMemoized(() {
       return int.tryParse(currentUser?.id ?? '0') ?? 0;
     }, [currentUser?.id]);
+
+    Future<void> scrollToBottom() async {
+      if (!scrollController.hasClients) {
+        return;
+      }
+      await scrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+
+    void showSendError(Object error) {
+      if (!context.mounted) {
+        return;
+      }
+      final t = i18n(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(t.notification.chat.send_failed(error: error.toString()))),
+      );
+    }
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -77,11 +94,26 @@ class ChatPage extends HookConsumerWidget {
           ),
           ChatInput(
             controller: textController,
-            onSendImage: commands.sendImageFile,
+            onSendImage: (image) async {
+              final result = await workflow.sendImage(
+                image: image,
+                send: notifier.sendImage,
+                afterSuccess: scrollToBottom,
+              );
+              if (result.isFailure) {
+                showSendError(result.error ?? StateError('Unknown send failure'));
+              }
+            },
             onSend: () async {
-              final text = textController.text;
-              if (text.isEmpty) return;
-              await commands.sendText(text);
+              final result = await workflow.sendText(
+                text: textController.text,
+                send: notifier.sendMessage,
+                clearInput: textController.clear,
+                afterSuccess: scrollToBottom,
+              );
+              if (result.isFailure) {
+                showSendError(result.error ?? StateError('Unknown send failure'));
+              }
             },
           ),
         ],

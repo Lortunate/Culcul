@@ -77,32 +77,29 @@ class ArticleDetailPage extends HookConsumerWidget {
     }
 
     Future<void> submitComment() async {
-      if (!commentsEnabled) {
-        showSnack(t.video.comment.empty);
+      final result = await notifier.submitComment(commentController.text);
+      final errorMessage = result.commentsDisabled
+          ? t.video.comment.empty
+          : result.errorMessage;
+      if (errorMessage != null) {
+        showSnack(errorMessage);
         return;
       }
-      final message = commentController.text.trim();
-      if (message.isEmpty || state.isSendingComment) return;
-
-      final error = await notifier.submitComment(message);
-      if (error != null) {
-        showSnack(error == 'Comments disabled' ? t.video.comment.empty : error);
-        return;
-      }
-      if (context.mounted) {
+      if (result.clearComposer && context.mounted) {
         commentController.clear();
+      }
+      if (result.unfocusComposer && context.mounted) {
         FocusScope.of(context).unfocus();
       }
     }
 
     Future<void> submitReply(CommentItem item, String message) async {
-      if (!commentsEnabled) {
-        showSnack(t.video.comment.empty);
-        return;
-      }
-      final error = await notifier.submitReply(item, message);
-      if (error != null) {
-        showSnack(error == 'Comments disabled' ? t.video.comment.empty : error);
+      final result = await notifier.submitReply(item, message);
+      final errorMessage = result.commentsDisabled
+          ? t.video.comment.empty
+          : result.errorMessage;
+      if (errorMessage != null) {
+        showSnack(errorMessage);
       }
     }
 
