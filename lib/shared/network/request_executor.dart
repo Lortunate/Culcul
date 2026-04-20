@@ -1,5 +1,4 @@
-import 'package:culcul/shared/errors/app_error.dart';
-import 'package:culcul/shared/result/result.dart';
+import 'package:culcul/core/core.dart';
 import 'package:culcul/shared/network/models/api_response.dart';
 
 class RequestExecutor {
@@ -54,9 +53,6 @@ class RequestExecutor {
 
   Future<Result<void, AppError>> runVoid(Future<void> Function() action) async {
     final result = await run(action);
-    return result.when(
-      success: (_) => const Success(null),
-      failure: Failure.new,
-    );
+    return result.when(success: (_) => const Success(null), failure: Failure.new);
   }
 }

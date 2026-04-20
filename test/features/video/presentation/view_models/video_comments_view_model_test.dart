@@ -1,12 +1,14 @@
 import 'dart:async';
 
+import 'package:culcul/features/video/domain/entities/video_entities.dart';
+import 'package:culcul/features/video/domain/repositories/video_repository.dart';
+import 'package:culcul/features/video/feature_scope.dart';
 import 'package:culcul/shared/errors/app_error.dart';
 import 'package:culcul/shared/network/request_cancel_token.dart';
 import 'package:culcul/shared/result/result.dart';
 import 'package:culcul/features/video/presentation/view_models/video_comments_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/video_detail_state.dart';
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
-import 'package:culcul/features/video/video.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

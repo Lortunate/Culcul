@@ -1,8 +1,9 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/shared/responsive/responsive.dart';
-import 'package:culcul/shared/theme/app_theme.dart';
+import 'package:culcul/features/auth/application/auth_session_cookie_refresher.dart';
+import 'package:culcul/features/settings/presentation/view_models/settings_view_model.dart';
+import 'package:culcul/shared/session/session_cookie_refresher.dart';
 import 'package:culcul/shared/utils/toast_utils.dart';
-import 'package:culcul/features/settings/settings.dart';
+import 'package:culcul/ui/ui.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -17,26 +18,33 @@ class CulculApp extends ConsumerWidget {
     final router = ref.watch(routerProvider);
     final themeMode = ref.watch(appThemeModeProvider);
 
-    return MaterialApp.router(
-      title: 'Culcul',
-      scaffoldMessengerKey: globalScaffoldMessengerKey,
-      theme: CulculTheme.light,
-      darkTheme: CulculTheme.dark,
-      themeMode: themeMode,
-      builder: (context, child) {
-        if (child == null) {
-          return const SizedBox.shrink();
-        }
-        return ResponsiveBreakpoints.builder(
-          child: child,
-          breakpoints: AppBreakpoints.frameworkBreakpoints,
-        );
-      },
-      routerConfig: router,
-      debugShowCheckedModeBanner: false,
-      locale: TranslationProvider.of(context).flutterLocale,
-      supportedLocales: AppLocaleUtils.supportedLocales,
-      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+    return ProviderScope(
+      overrides: [
+        sessionCookieRefresherProvider.overrideWith(
+          (ref) => AuthSessionCookieRefresher(ref),
+        ),
+      ],
+      child: MaterialApp.router(
+        title: 'Culcul',
+        scaffoldMessengerKey: globalScaffoldMessengerKey,
+        theme: CulculTheme.light,
+        darkTheme: CulculTheme.dark,
+        themeMode: themeMode,
+        builder: (context, child) {
+          if (child == null) {
+            return const SizedBox.shrink();
+          }
+          return ResponsiveBreakpoints.builder(
+            child: child,
+            breakpoints: AppBreakpoints.frameworkBreakpoints,
+          );
+        },
+        routerConfig: router,
+        debugShowCheckedModeBanner: false,
+        locale: TranslationProvider.of(context).flutterLocale,
+        supportedLocales: AppLocaleUtils.supportedLocales,
+        localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      ),
     );
   }
 }

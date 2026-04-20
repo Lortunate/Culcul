@@ -5,10 +5,11 @@ import 'package:culcul/shared/network/request_cancel_token.dart';
 import 'package:culcul/shared/perf/feature_flow_perf_logger.dart';
 import 'package:culcul/shared/providers/cache_store_provider.dart';
 import 'package:culcul/shared/contracts/search_result_contract.dart';
+import 'package:culcul/features/search/feature_scope.dart';
 import 'package:culcul/features/search/domain/entities/search_default_hint.dart';
+import 'package:culcul/features/search/domain/entities/search_query.dart';
 import 'package:culcul/features/search/domain/entities/search_suggestion_entry.dart';
 import 'package:culcul/features/search/domain/entities/search_trending_keyword.dart';
-import 'package:culcul/features/search/search.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final searchSuggestionsProvider = FutureProvider.autoDispose

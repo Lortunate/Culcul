@@ -1,4 +1,4 @@
-import 'package:culcul/features/auth/auth.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/shared/responsive/responsive.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_action_grid.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_app_bar.dart';

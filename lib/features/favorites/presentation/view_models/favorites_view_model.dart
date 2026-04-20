@@ -5,11 +5,11 @@ import 'package:culcul/shared/network/network_concurrency_profiles.dart';
 import 'package:culcul/shared/errors/app_error.dart';
 import 'package:culcul/shared/perf/feature_flow_perf_logger.dart';
 import 'package:culcul/shared/utils/list_utils.dart';
-import 'package:culcul/features/auth/auth.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:culcul/features/favorites/domain/repositories/favorite_repository.dart';
-import 'package:culcul/features/favorites/favorites.dart';
+import 'package:culcul/features/favorites/feature_scope.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'favorites_view_model.g.dart';

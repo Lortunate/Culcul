@@ -6,7 +6,10 @@ import 'package:culcul/shared/network/network_concurrency_executor.dart';
 import 'package:culcul/shared/network/network_concurrency_profiles.dart';
 import 'package:culcul/shared/pagination/paged_list_state.dart';
 import 'package:culcul/shared/utils/list_utils.dart';
-import 'package:culcul/features/notification/notification.dart';
+import 'package:culcul/features/notification/domain/entities/private_message.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/feature_scope.dart';
+import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'chat_view_model.g.dart';

@@ -3,32 +3,24 @@ import 'package:culcul/shared/widgets/follow_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-void main() {
-  Widget buildTestSubject({
-    required bool isFollowed,
-    required VoidCallback onTap,
-    String? text,
-  }) {
-    return TranslationProvider(
-      child: MaterialApp(
-        home: Scaffold(
-          body: FollowButton(
-            isFollowed: isFollowed,
-            onTap: onTap,
-            text: text,
-          ),
-        ),
-      ),
-    );
-  }
+Widget _wrap(Widget child) {
+  return TranslationProvider(
+    child: MaterialApp(home: Scaffold(body: child)),
+  );
+}
 
-  testWidgets('invokes onTap when pressed', (tester) async {
+void main() {
+  testWidgets('invokes callback without provider scope', (tester) async {
     var tapped = false;
 
     await tester.pumpWidget(
-      buildTestSubject(
-        isFollowed: false,
-        onTap: () => tapped = true,
+      _wrap(
+        FollowButton(
+          isFollowed: false,
+          onTap: () {
+            tapped = true;
+          },
+        ),
       ),
     );
 
@@ -38,15 +30,34 @@ void main() {
     expect(tapped, isTrue);
   });
 
-  testWidgets('renders provided custom text', (tester) async {
+  testWidgets('renders default labels from follow state', (tester) async {
     await tester.pumpWidget(
-      buildTestSubject(
-        isFollowed: true,
-        onTap: () {},
-        text: 'Custom label',
+      _wrap(
+        Column(
+          children: const [
+            FollowButton(isFollowed: false, onTap: _noop),
+            FollowButton(isFollowed: true, onTap: _noop),
+          ],
+        ),
       ),
     );
 
-    expect(find.text('Custom label'), findsOneWidget);
+    final context = tester.element(find.byType(FollowButton).first);
+    final t = Translations.of(context);
+
+    expect(find.text('+ ${t.actions.follow}'), findsOneWidget);
+    expect(find.text(t.actions.followed), findsOneWidget);
+  });
+
+  testWidgets('renders custom text override', (tester) async {
+    const customText = 'Mutual';
+
+    await tester.pumpWidget(
+      _wrap(const FollowButton(isFollowed: true, text: customText, onTap: _noop)),
+    );
+
+    expect(find.text(customText), findsOneWidget);
   });
 }
+
+void _noop() {}

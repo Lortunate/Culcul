@@ -1,5 +1,7 @@
-import 'package:culcul/features/notification/notification.dart';
-import 'package:culcul/features/video/video.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/route_entry.dart';
+import 'package:culcul/features/video/domain/entities/video_entities.dart';
+import 'package:culcul/features/video/route_entry.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

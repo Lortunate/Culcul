@@ -1,4 +1,4 @@
-import 'package:culcul/features/video/video.dart';
+import 'package:culcul/shared/contracts/video_model_contract.dart';
 import 'package:culcul/shared/widgets/app_card_container.dart';
 import 'package:culcul/shared/widgets/app_overlay_tag.dart';
 import 'package:culcul/shared/widgets/video_thumbnail.dart';
@@ -58,7 +58,6 @@ class VideoCard extends StatelessWidget {
   int get _viewCount => video?.stat.view ?? viewCount!;
   int get _danmakuCount => video?.stat.danmaku ?? danmakuCount!;
   String? get _reason => video?.rcmdReason ?? reason;
-
   @override
   Widget build(BuildContext context) {
     final content = _VideoCardContent(

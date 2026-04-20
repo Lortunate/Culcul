@@ -5,7 +5,7 @@ import 'package:culcul/shared/hooks/use_managed_easy_refresh_controller.dart';
 import 'package:culcul/shared/network/network_quality_policy.dart';
 import 'package:culcul/shared/perf/performance_policy.dart';
 import 'package:culcul/shared/responsive/responsive.dart';
-import 'package:culcul/features/live/live.dart';
+import 'package:culcul/features/live/presentation/view_models/live_recommend_view_model.dart';
 import 'package:culcul/shared/contracts/live_room_summary_contract.dart';
 import 'package:culcul/features/home/presentation/widgets/live_card_skeleton.dart';
 import 'package:culcul/features/home/presentation/widgets/home_feed_view_utils.dart';

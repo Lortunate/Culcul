@@ -1,5 +1,5 @@
 import 'package:culcul/shared/network/dio_client.dart';
-import 'package:culcul/shared/providers/session_refresh_provider.dart';
+import 'package:culcul/shared/session/session_cookie_refresher.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -53,21 +53,11 @@ class TokenInterceptor extends QueuedInterceptor {
   }
 
   Future<void> _ensureCookieRefreshed() async {
-    final inFlight = _refreshCookieFuture;
-    if (inFlight != null) {
-      await inFlight;
-      return;
-    }
-
-    final refreshSession = _ref.read(sessionRefreshActionProvider);
-    final refreshFuture = refreshSession();
-    _refreshCookieFuture = refreshFuture;
-    try {
-      await refreshFuture;
-    } finally {
-      if (identical(_refreshCookieFuture, refreshFuture)) {
-        _refreshCookieFuture = null;
-      }
-    }
+    await (_refreshCookieFuture ??= _ref
+        .read(sessionCookieRefresherProvider)
+        .refreshCookies()
+        .whenComplete(() {
+          _refreshCookieFuture = null;
+        }));
   }
 }

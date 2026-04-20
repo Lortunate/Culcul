@@ -1,8 +1,15 @@
 import 'dart:async';
 
+import 'package:culcul/features/auth/domain/entities/auth_captcha_challenge.dart';
+import 'package:culcul/features/auth/domain/entities/auth_qr_code.dart';
+import 'package:culcul/features/auth/domain/entities/auth_qr_poll_result.dart';
+import 'package:culcul/features/auth/domain/entities/country_code.dart';
+import 'package:culcul/features/auth/domain/entities/user_entity.dart';
+import 'package:culcul/features/auth/domain/repositories/auth_repository.dart';
+import 'package:culcul/features/auth/feature_scope.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/shared/errors/app_error.dart';
 import 'package:culcul/shared/result/result.dart';
-import 'package:culcul/features/auth/auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -117,4 +124,3 @@ void main() {
     expect(state.user, cachedUser);
   });
 }
-

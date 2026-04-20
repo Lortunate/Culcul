@@ -4,7 +4,9 @@ import 'package:culcul/shared/network/network_concurrency_executor.dart';
 import 'package:culcul/shared/network/network_concurrency_profiles.dart';
 import 'package:culcul/shared/perf/video_perf_logger.dart';
 import 'package:culcul/shared/result/result.dart';
-import 'package:culcul/features/video/video.dart';
+import 'package:culcul/features/video/domain/entities/video_entities.dart';
+import 'package:culcul/features/video/domain/repositories/video_repository.dart';
+import 'package:culcul/features/video/feature_scope.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'video_detail_workflows.g.dart';

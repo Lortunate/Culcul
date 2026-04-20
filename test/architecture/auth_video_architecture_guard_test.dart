@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+// Phase 1 guardrails: preserve package boundaries while feature cleanup proceeds.
 void main() {
   test('Auth/Video presentation does not import data layer directly', () async {
     final forbiddenImport = RegExp(
@@ -82,6 +83,28 @@ void main() {
       violations,
       isEmpty,
       reason: 'Found forbidden facade imports: ${violations.join(', ')}',
+    );
+  });
+
+  test('App routes does not import Phase 2A broad feature barrels', () async {
+    final appRoutesFile = File('lib/app/router/app_routes.dart');
+    final broadFeatureBarrelImport = RegExp(
+      r'''import\s+['"]package:culcul/features/(auth|dynamic|home|live|notification|profile|search|settings|to_view|video)/\1\.dart['"]''',
+    );
+    final violations = <String>[];
+
+    if (appRoutesFile.existsSync()) {
+      final content = await appRoutesFile.readAsString();
+      for (final match in broadFeatureBarrelImport.allMatches(content)) {
+        violations.add(match.group(0)!);
+      }
+    }
+
+    expect(
+      violations,
+      isEmpty,
+      reason:
+          'Found broad feature barrel imports in app_routes.dart: ${violations.join(', ')}',
     );
   });
 }

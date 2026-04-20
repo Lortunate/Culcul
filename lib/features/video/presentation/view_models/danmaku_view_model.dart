@@ -1,8 +1,8 @@
 import 'dart:async';
 
+import 'package:culcul/features/video/feature_scope.dart';
 import 'package:culcul/shared/errors/app_error.dart';
 import 'package:culcul/shared/result/result.dart';
-import 'package:culcul/features/video/video.dart';
 import 'package:culcul/protos/dm.pb.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

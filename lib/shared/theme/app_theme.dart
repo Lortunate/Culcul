@@ -1,2 +1,1 @@
-export 'culcul_colors.dart';
-export 'culcul_theme.dart';
+export 'package:culcul/ui/theme/app_theme.dart';

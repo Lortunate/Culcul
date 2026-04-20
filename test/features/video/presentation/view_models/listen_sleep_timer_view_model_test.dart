@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:culcul/features/video/video.dart';
+import 'package:culcul/features/video/presentation/view_models/listen_sleep_timer_view_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -54,4 +54,3 @@ void main() {
     );
   });
 }
-

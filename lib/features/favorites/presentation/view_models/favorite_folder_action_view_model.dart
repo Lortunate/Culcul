@@ -1,5 +1,5 @@
 import 'package:culcul/shared/errors/app_error.dart';
-import 'package:culcul/features/favorites/favorites.dart';
+import 'package:culcul/features/favorites/feature_scope.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'favorite_folder_action_view_model.g.dart';

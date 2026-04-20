@@ -7,7 +7,7 @@ import 'package:culcul/shared/perf/feature_flow_perf_logger.dart';
 import 'package:culcul/shared/providers/cache_store_provider.dart';
 import 'package:culcul/shared/pagination/paged_async_notifier.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
-import 'package:culcul/features/profile/profile.dart';
+import 'package:culcul/features/profile/feature_scope.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_space_videos_view_model.g.dart';

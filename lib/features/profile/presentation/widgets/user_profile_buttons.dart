@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/features/auth/auth.dart';
-import 'package:culcul/features/notification/notification.dart';
+import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/notification/route_entry.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/presentation/view_models/user_space_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
@@ -25,7 +25,6 @@ class UserProfileButtons extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authProvider);
     final colorScheme = Theme.of(context).colorScheme;
     final t = Translations.of(context);
 
@@ -62,11 +61,14 @@ class UserProfileButtons extends ConsumerWidget {
         Expanded(
           child: FollowButton(
             isFollowed: profile.isFollowing,
-            onTap: authState.isLoggedIn
-                ? () {
-                    ref.read(userSpaceProvider(profile.id).notifier).toggleFollow();
-                  }
-                : () => const LoginRoute().push(context),
+            onTap: () {
+              final authState = ref.read(authProvider);
+              if (!authState.isLoggedIn) {
+                const LoginRoute().push(context);
+                return;
+              }
+              ref.read(userSpaceProvider(profile.id).notifier).toggleFollow();
+            },
             height: height,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius),

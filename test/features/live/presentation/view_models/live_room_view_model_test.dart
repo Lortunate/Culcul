@@ -2,15 +2,15 @@ import 'package:culcul/shared/contracts/user_card_contract.dart';
 import 'package:culcul/shared/errors/app_error.dart';
 import 'package:culcul/shared/network/request_cancel_token.dart';
 import 'package:culcul/shared/result/result.dart';
+import 'package:culcul/features/live/feature_scope.dart';
 import 'package:culcul/features/live/domain/entities/live_entities.dart';
 import 'package:culcul/features/live/domain/repositories/live_repository.dart';
-import 'package:culcul/features/live/live.dart';
 import 'package:culcul/features/live/presentation/view_models/live_room_state.dart';
 import 'package:culcul/features/live/presentation/view_models/live_room_view_model.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/features/profile/domain/repositories/profile_repository.dart';
-import 'package:culcul/features/profile/profile.dart';
+import 'package:culcul/features/profile/feature_scope.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

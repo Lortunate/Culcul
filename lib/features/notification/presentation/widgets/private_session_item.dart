@@ -1,6 +1,8 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/features/notification/notification.dart';
-import 'package:culcul/features/profile/profile.dart';
+import 'package:culcul/features/notification/domain/entities/private_message.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/route_entry.dart';
+import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
 import 'package:culcul/shared/utils/format_extensions.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/shared/widgets/app_shimmer.dart';
@@ -175,4 +177,3 @@ class PrivateSessionItem extends ConsumerWidget {
     );
   }
 }
-
