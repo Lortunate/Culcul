@@ -4,7 +4,8 @@ Phase 1 introduces architecture guards that keep `lib/shared` independent from
 feature packages and force `lib/app/router/app_routes.dart` to avoid broad
 feature barrel imports. Phase 2 continues that cleanup by routing home pages
 through `lib/features/home/route_entry.dart` instead of importing presentation
-pages directly from `app_routes.dart`.
+pages directly from `app_routes.dart`, and by standardizing feature-level route
+entry seams for the centralized router.
 
 ## Rules
 
@@ -18,6 +19,30 @@ pages directly from `app_routes.dart`.
 5. Home routing must flow through `package:culcul/features/home/route_entry.dart`
    instead of importing `presentation/pages/home_page.dart` or
    `presentation/pages/weekly_screen.dart` in `app_routes.dart`.
+6. New feature routes should expose a `route_entry.dart` seam owned by the
+   feature, with small builder functions and any route-only input objects
+   needed to construct the target page.
+7. Route entry files are routing adapters, not workflow layers. They may map
+   route parameters into page constructor arguments, but they should not own
+   login gating, provider writes, mutation sequencing, or snackbar/toast
+   behavior.
+
+## Phase 2 Follow-up
+
+Current branch conventions are documented in
+`docs/architecture/phase2-route-and-orchestration-rules.md`.
+
+In practice this means:
+
+- `lib/app/router/app_routes.dart` depends on feature route entry seams such as
+  `lib/features/dynamic/route_entry.dart`,
+  `lib/features/notification/route_entry.dart`, and
+  `lib/features/favorites/route_entry.dart`.
+- route input DTOs like `ChatRouteInput` and `CommentReplyRouteInput` are
+  acceptable when a route needs more than primitive parameters.
+- command extraction belongs in feature-owned helpers such as
+  `application/*workflow*.dart`, `application/*commands*.dart`, or narrowly
+  scoped page command adapters like `*_page_commands.dart`.
 
 ## Guard Coverage
 

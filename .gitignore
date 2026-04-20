@@ -5,6 +5,10 @@
 *.pbenum.dart
 *.pbjson.dart
 *.pbserver.dart
+!lib/protos/dm.pb.dart
+!lib/protos/dm.pbenum.dart
+!lib/protos/dm.pbjson.dart
+!lib/protos/dm.pbserver.dart
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/flutter
