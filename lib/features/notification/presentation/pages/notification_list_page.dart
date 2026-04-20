@@ -1,10 +1,10 @@
 import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
+import 'package:culcul/features/notification/presentation/pages/notification_list_page_helpers.dart';
 import 'package:culcul/features/notification/presentation/view_models/notification_feed_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_item_widget.dart';
 import 'package:culcul/shared/pagination/pagination_load_gate.dart';
-import 'package:culcul/shared/pagination/scroll_load_trigger.dart';
 import 'package:culcul/shared/widgets/app_error_widget.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
@@ -37,31 +37,12 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
     super.dispose();
   }
 
-  Future<IndicatorResult> _loadMore() async {
-    if (widget.type == NotificationFeedType.system) {
-      return IndicatorResult.noMore;
-    }
-    return ScrollLoadTrigger.runWithNotifier(
-      gate: _loadMoreGate,
-      hasMore: () => ref.read(notificationFeedListProvider(widget.type).notifier).hasMore,
-      loadMore: ref.read(notificationFeedListProvider(widget.type).notifier).loadMore,
-      itemCount: () =>
-          ref.read(notificationFeedListProvider(widget.type)).asData?.value.length ?? 0,
-      source: 'notification.notification_list',
-    );
-  }
-
-  AsyncValue<List<NotificationEntry>> _providerState(NotificationFeedType type) =>
-      switch (type) {
-        NotificationFeedType.reply => ref.watch(notificationFeedListProvider(type)),
-        NotificationFeedType.at => ref.watch(notificationFeedListProvider(type)),
-        NotificationFeedType.like => ref.watch(notificationFeedListProvider(type)),
-        NotificationFeedType.system => const AsyncValue.data([]),
-      };
-
   @override
   Widget build(BuildContext context) {
-    final state = _providerState(widget.type);
+    final state = resolveNotificationListState(
+      type: widget.type,
+      watchFeedState: () => ref.watch(notificationFeedListProvider(widget.type)),
+    );
     final t = i18n(context);
     final colorScheme = Theme.of(context).colorScheme;
     final title = switch (widget.type) {
@@ -80,7 +61,22 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
           return _NotificationListView(
             items: items,
             refreshController: _erController,
-            onLoadMore: _loadMore,
+            onLoadMore: () => loadMoreNotificationList(
+              type: widget.type,
+              gate: _loadMoreGate,
+              hasMore: () =>
+                  ref.read(notificationFeedListProvider(widget.type).notifier).hasMore,
+              loadMore: ref
+                  .read(notificationFeedListProvider(widget.type).notifier)
+                  .loadMore,
+              itemCount: () =>
+                  ref
+                      .read(notificationFeedListProvider(widget.type))
+                      .asData
+                      ?.value
+                      .length ??
+                  0,
+            ),
             itemBuilder: _buildItem,
           );
         },
@@ -88,21 +84,11 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
           return AppErrorWidget(
             error: e,
             stackTrace: s,
-            onRetry: () {
-              switch (widget.type) {
-                case NotificationFeedType.reply:
-                  ref.invalidate(notificationFeedListProvider(widget.type));
-                  break;
-                case NotificationFeedType.at:
-                  ref.invalidate(notificationFeedListProvider(widget.type));
-                  break;
-                case NotificationFeedType.like:
-                  ref.invalidate(notificationFeedListProvider(widget.type));
-                  break;
-                case NotificationFeedType.system:
-                  break;
-              }
-            },
+            onRetry: () => retryNotificationList(
+              type: widget.type,
+              invalidateFeed: () =>
+                  ref.invalidate(notificationFeedListProvider(widget.type)),
+            ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),

@@ -1,7 +1,7 @@
 part of 'live_header.dart';
 
 extension _LiveHeaderAnchorParts on LiveHeader {
-  Widget _buildAnchorRow(BuildContext context) {
+  Widget _buildAnchorRow(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
@@ -17,7 +17,7 @@ extension _LiveHeaderAnchorParts on LiveHeader {
           _buildAvatar(context),
           const SizedBox(width: 8),
           _buildNameAndOnline(context),
-          _buildFollowButton(context),
+          _buildFollowButton(context, ref),
           _buildViewerStack(context),
           const SizedBox(width: 8),
           _buildMoreButton(context),
@@ -106,15 +106,18 @@ extension _LiveHeaderAnchorParts on LiveHeader {
     );
   }
 
-  Widget _buildFollowButton(BuildContext context) {
+  Widget _buildFollowButton(BuildContext context, WidgetRef ref) {
     if (anchorInfo == null || anchorInfo!.isFollowed) {
       return const SizedBox.shrink();
     }
+    final authState = ref.watch(authProvider);
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: FollowButton(
         isFollowed: false,
-        onTap: onFollow ?? () {},
+        onTap: authState.isLoggedIn
+            ? (onFollow ?? () {})
+            : () => const LoginRoute().push(context),
         height: 32,
         text: '+ ${t.actions.follow}',
       ),

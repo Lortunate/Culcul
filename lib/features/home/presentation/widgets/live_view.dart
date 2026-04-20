@@ -8,6 +8,7 @@ import 'package:culcul/shared/responsive/responsive.dart';
 import 'package:culcul/features/live/live.dart';
 import 'package:culcul/shared/contracts/live_room_summary_contract.dart';
 import 'package:culcul/features/home/presentation/widgets/live_card_skeleton.dart';
+import 'package:culcul/features/home/presentation/widgets/home_feed_view_utils.dart';
 import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';
 import 'package:culcul/features/home/presentation/widgets/live_room_card.dart';
 import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
@@ -30,10 +31,17 @@ class LiveView extends HookConsumerWidget {
     final liveAsync = ref.watch(liveRecommendProvider);
     final scrollController = useScrollController();
     final refreshController = useManagedEasyRefreshController();
-    final cacheExtent = _resolveCacheExtent(
+    final cacheExtent = resolveHomeFeedCacheExtent(
       layout.cacheExtent,
       networkPolicy: networkPolicy,
       perfPolicy: perfPolicy,
+      tuning: const HomeFeedCacheTuning(
+        constrainedNetworkFactor: 0.72,
+        normalNetworkFactor: 0.88,
+        minimalEffectsFactor: 0.78,
+        reducedEffectsFactor: 0.9,
+        minExtent: 360,
+      ),
     );
 
     useHomeScrollSync(ref, scrollController, refreshController, 0);
@@ -60,26 +68,6 @@ class LiveView extends HookConsumerWidget {
         ),
       ),
     );
-  }
-
-  double _resolveCacheExtent(
-    double base, {
-    required NetworkQualityPolicy networkPolicy,
-    required PerformancePolicy perfPolicy,
-  }) {
-    var value = base;
-    if (networkPolicy.profile == NetworkQualityProfile.constrained) {
-      value *= 0.72;
-    } else if (networkPolicy.profile == NetworkQualityProfile.normal) {
-      value *= 0.88;
-    }
-
-    if (perfPolicy.level == RenderDegradeLevel.minimalEffects) {
-      value *= 0.78;
-    } else if (perfPolicy.level == RenderDegradeLevel.reducedEffects) {
-      value *= 0.9;
-    }
-    return value.clamp(360, base).toDouble();
   }
 }
 
@@ -133,7 +121,7 @@ class _LiveGrid extends HookWidget {
     useEffect(() {
       final width = _estimateGridItemWidth(context);
       final pixelRatio = MediaQuery.devicePixelRatioOf(context);
-      AppNetworkImagePrefetcher.prefetch(
+      prefetchHomeFeedImages(
         context,
         specs: items
             .map(
@@ -144,11 +132,8 @@ class _LiveGrid extends HookWidget {
               ),
             )
             .toList(growable: false),
-        limit: networkPolicy.resolvePrefetchLimit(layout.gridDelegate.crossAxisCount * 2),
-        maxConcurrency: networkPolicy.prefetchMaxConcurrency,
-        queueCapacity: networkPolicy.prefetchQueueCapacity,
-        ttl: networkPolicy.prefetchKeyTtl,
-        lruCapacity: networkPolicy.prefetchLruCapacity,
+        networkPolicy: networkPolicy,
+        limit: layout.gridDelegate.crossAxisCount * 2,
       );
       return null;
     }, [items, networkPolicy]);

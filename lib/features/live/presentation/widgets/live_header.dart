@@ -1,3 +1,5 @@
+import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/shared/utils/format_utils.dart';
 import 'package:culcul/features/live/domain/entities/live_entities.dart';
 import 'package:culcul/shared/contracts/user_card_contract.dart';
@@ -5,11 +7,12 @@ import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/shared/widgets/app_avatar.dart';
 import 'package:culcul/shared/widgets/follow_button.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 part 'live_header.anchor.dart';
 part 'live_header.tags.dart';
 
-class LiveHeader extends StatelessWidget {
+class LiveHeader extends ConsumerWidget {
   final LiveRoomDetailModel? roomInfo;
   final UserCardModel? anchorInfo;
   final LiveAnchorInfoModel? liveAnchorInfo;
@@ -30,7 +33,7 @@ class LiveHeader extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.fromLTRB(4, 4, 12, 4),
@@ -40,7 +43,7 @@ class LiveHeader extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Row 1: Anchor Info & Tools
-          _buildAnchorRow(context),
+          _buildAnchorRow(context, ref),
 
           // Row 2: Tags & "More"
           if (roomInfo != null) _buildTagsRow(context),

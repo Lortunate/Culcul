@@ -1,14 +1,16 @@
 import 'dart:math' as math;
 
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
+import 'package:culcul/features/home/presentation/view_models/home_recommend_view_model.dart';
+import 'package:culcul/features/home/presentation/widgets/home_feed_view_utils.dart';
+import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';
+import 'package:culcul/features/home/presentation/widgets/home_video_actions.dart';
 import 'package:culcul/shared/hooks/use_managed_easy_refresh_controller.dart';
+import 'package:culcul/shared/contracts/video_model_contract.dart';
 import 'package:culcul/shared/network/network_quality_policy.dart';
 import 'package:culcul/shared/perf/performance_policy.dart';
 import 'package:culcul/shared/responsive/responsive.dart';
-import 'package:culcul/features/home/presentation/view_models/home_recommend_view_model.dart';
-import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
-import 'package:culcul/features/home/domain/entities/home_video.dart';
-import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';
 import 'package:culcul/shared/widgets/app_network_image_prefetcher.dart';
 import 'package:culcul/shared/widgets/skeletons/page_skeletons.dart';
 import 'package:culcul/shared/widgets/skeletons/video_card_skeleton.dart';
@@ -31,10 +33,17 @@ class RecommendView extends HookConsumerWidget {
     final recommendAsync = ref.watch(homeRecommendProvider);
     final scrollController = useScrollController();
     final refreshController = useManagedEasyRefreshController();
-    final cacheExtent = _resolveCacheExtent(
+    final cacheExtent = resolveHomeFeedCacheExtent(
       layout.cacheExtent,
       networkPolicy: networkPolicy,
       perfPolicy: perfPolicy,
+      tuning: const HomeFeedCacheTuning(
+        constrainedNetworkFactor: 0.72,
+        normalNetworkFactor: 0.88,
+        minimalEffectsFactor: 0.78,
+        reducedEffectsFactor: 0.9,
+        minExtent: 360,
+      ),
     );
 
     useHomeScrollSync(ref, scrollController, refreshController, 1);
@@ -55,6 +64,7 @@ class RecommendView extends HookConsumerWidget {
         ),
         builder: (context, items) => _RecommendVideoGrid(
           items: items,
+          ref: ref,
           scrollController: scrollController,
           layout: layout,
           cacheExtent: cacheExtent,
@@ -63,38 +73,20 @@ class RecommendView extends HookConsumerWidget {
       ),
     );
   }
-
-  double _resolveCacheExtent(
-    double base, {
-    required NetworkQualityPolicy networkPolicy,
-    required PerformancePolicy perfPolicy,
-  }) {
-    var value = base;
-    if (networkPolicy.profile == NetworkQualityProfile.constrained) {
-      value *= 0.72;
-    } else if (networkPolicy.profile == NetworkQualityProfile.normal) {
-      value *= 0.88;
-    }
-
-    if (perfPolicy.level == RenderDegradeLevel.minimalEffects) {
-      value *= 0.78;
-    } else if (perfPolicy.level == RenderDegradeLevel.reducedEffects) {
-      value *= 0.9;
-    }
-    return value.clamp(360, base).toDouble();
-  }
 }
 
 class _RecommendVideoGrid extends HookWidget {
   const _RecommendVideoGrid({
     required this.items,
+    required this.ref,
     required this.scrollController,
     required this.layout,
     required this.cacheExtent,
     required this.networkPolicy,
   });
 
-  final List<HomeVideo> items;
+  final List<VideoModel> items;
+  final WidgetRef ref;
   final ScrollController scrollController;
   final HomeGridLayoutSpec layout;
   final double cacheExtent;
@@ -105,7 +97,7 @@ class _RecommendVideoGrid extends HookWidget {
     useEffect(() {
       final width = _estimateGridItemWidth(context);
       final pixelRatio = MediaQuery.devicePixelRatioOf(context);
-      AppNetworkImagePrefetcher.prefetch(
+      prefetchHomeFeedImages(
         context,
         specs: items
             .map(
@@ -116,11 +108,8 @@ class _RecommendVideoGrid extends HookWidget {
               ),
             )
             .toList(growable: false),
-        limit: networkPolicy.resolvePrefetchLimit(layout.gridDelegate.crossAxisCount * 2),
-        maxConcurrency: networkPolicy.prefetchMaxConcurrency,
-        queueCapacity: networkPolicy.prefetchQueueCapacity,
-        ttl: networkPolicy.prefetchKeyTtl,
-        lruCapacity: networkPolicy.prefetchLruCapacity,
+        networkPolicy: networkPolicy,
+        limit: layout.gridDelegate.crossAxisCount * 2,
       );
       return null;
     }, [items, networkPolicy]);
@@ -144,10 +133,16 @@ class _RecommendVideoGrid extends HookWidget {
                 author: video.owner.name,
                 description: video.desc,
                 duration: video.duration,
-                viewCount: video.stats.view,
-                danmakuCount: video.stats.danmaku,
+                viewCount: video.stat.view,
+                danmakuCount: video.stat.danmaku,
                 reason: video.rcmdReason,
                 onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
+                onLongPress: () => showHomeVideoActionsBottomSheet(
+                  context,
+                  ref,
+                  bvid: video.bvid,
+                  coverUrl: video.pic,
+                ),
               );
             },
           ),

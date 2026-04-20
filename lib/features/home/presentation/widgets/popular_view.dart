@@ -1,11 +1,13 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
+import 'package:culcul/features/home/presentation/view_models/home_popular_view_model.dart';
+import 'package:culcul/features/home/presentation/widgets/home_feed_view_utils.dart';
+import 'package:culcul/features/home/presentation/widgets/home_video_actions.dart';
 import 'package:culcul/shared/hooks/use_managed_easy_refresh_controller.dart';
+import 'package:culcul/shared/contracts/video_model_contract.dart';
 import 'package:culcul/shared/network/network_quality_policy.dart';
 import 'package:culcul/shared/perf/performance_policy.dart';
 import 'package:culcul/shared/responsive/responsive.dart';
-import 'package:culcul/features/home/presentation/view_models/home_popular_view_model.dart';
-import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
-import 'package:culcul/features/home/domain/entities/home_video.dart';
 import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';
 import 'package:culcul/features/home/presentation/widgets/popular_video_card.dart';
 import 'package:culcul/shared/widgets/app_network_image_prefetcher.dart';
@@ -29,10 +31,17 @@ class PopularView extends HookConsumerWidget {
     final popularAsync = ref.watch(homePopularProvider);
     final scrollController = useScrollController();
     final refreshController = useManagedEasyRefreshController();
-    final cacheExtent = _resolveCacheExtent(
+    final cacheExtent = resolveHomeFeedCacheExtent(
       layout.cacheExtent,
       networkPolicy: networkPolicy,
       perfPolicy: perfPolicy,
+      tuning: const HomeFeedCacheTuning(
+        constrainedNetworkFactor: 0.75,
+        normalNetworkFactor: 0.9,
+        minimalEffectsFactor: 0.8,
+        reducedEffectsFactor: 0.92,
+        minExtent: 320,
+      ),
     );
 
     useHomeScrollSync(ref, scrollController, refreshController, 2);
@@ -52,6 +61,7 @@ class PopularView extends HookConsumerWidget {
         ),
         builder: (context, items) => _PopularVideoList(
           items: items,
+          ref: ref,
           scrollController: scrollController,
           layout: layout,
           cacheExtent: cacheExtent,
@@ -60,38 +70,20 @@ class PopularView extends HookConsumerWidget {
       ),
     );
   }
-
-  double _resolveCacheExtent(
-    double base, {
-    required NetworkQualityPolicy networkPolicy,
-    required PerformancePolicy perfPolicy,
-  }) {
-    var value = base;
-    if (networkPolicy.profile == NetworkQualityProfile.constrained) {
-      value *= 0.75;
-    } else if (networkPolicy.profile == NetworkQualityProfile.normal) {
-      value *= 0.9;
-    }
-
-    if (perfPolicy.level == RenderDegradeLevel.minimalEffects) {
-      value *= 0.8;
-    } else if (perfPolicy.level == RenderDegradeLevel.reducedEffects) {
-      value *= 0.92;
-    }
-    return value.clamp(320, base).toDouble();
-  }
 }
 
 class _PopularVideoList extends HookWidget {
   const _PopularVideoList({
     required this.items,
+    required this.ref,
     required this.scrollController,
     required this.layout,
     required this.cacheExtent,
     required this.networkPolicy,
   });
 
-  final List<HomeVideo> items;
+  final List<VideoModel> items;
+  final WidgetRef ref;
   final ScrollController scrollController;
   final HomePopularLayoutSpec layout;
   final double cacheExtent;
@@ -101,7 +93,7 @@ class _PopularVideoList extends HookWidget {
   Widget build(BuildContext context) {
     useEffect(() {
       final pixelRatio = MediaQuery.devicePixelRatioOf(context);
-      AppNetworkImagePrefetcher.prefetch(
+      prefetchHomeFeedImages(
         context,
         specs: items
             .map(
@@ -112,11 +104,8 @@ class _PopularVideoList extends HookWidget {
               ),
             )
             .toList(growable: false),
-        limit: networkPolicy.resolvePrefetchLimit(6),
-        maxConcurrency: networkPolicy.prefetchMaxConcurrency,
-        queueCapacity: networkPolicy.prefetchQueueCapacity,
-        ttl: networkPolicy.prefetchKeyTtl,
-        lruCapacity: networkPolicy.prefetchLruCapacity,
+        networkPolicy: networkPolicy,
+        limit: 6,
       );
       return null;
     }, [items, networkPolicy]);
@@ -137,6 +126,12 @@ class _PopularVideoList extends HookWidget {
                 cardHeight: layout.cardHeight,
                 thumbnailWidth: layout.thumbnailWidth,
                 onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
+                onLongPress: () => showHomeVideoActionsBottomSheet(
+                  context,
+                  ref,
+                  bvid: video.bvid,
+                  coverUrl: video.pic,
+                ),
               );
             },
             separatorBuilder: (_, _) => SizedBox(height: layout.itemGap),

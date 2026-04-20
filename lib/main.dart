@@ -1,8 +1,10 @@
 import 'package:culcul/app/app.dart';
 import 'package:culcul/app/bootstrap/app_bootstrap.dart';
 import 'package:culcul/app/bootstrap/deferred_app_init.dart';
+import 'package:culcul/features/auth/feature_scope.dart';
 import 'package:culcul/shared/providers/cache_store_provider.dart';
 import 'package:culcul/shared/providers/cookie_jar_provider.dart';
+import 'package:culcul/shared/providers/session_refresh_provider.dart';
 import 'package:culcul/shared/providers/storage_provider.dart';
 import 'package:culcul/shared/perf/frame_timing_sampler.dart';
 import 'package:culcul/shared/perf/startup_perf_logger.dart';
@@ -27,6 +29,16 @@ void main() async {
         overrides: [
           cookieJarProvider.overrideWithValue(dependencies.cookieJar),
           cacheStoreProvider.overrideWithValue(dependencies.cacheStore),
+          sessionRefreshActionProvider.overrideWith((ref) {
+            final authRepo = ref.watch(authRepositoryProvider);
+            return () async {
+              final result = await authRepo.checkAndRefreshCookie();
+              final error = result.errorOrNull;
+              if (error != null) {
+                throw StateError('Cookie refresh failed: ${error.message}');
+              }
+            };
+          }),
           sessionStorageBoxProvider.overrideWithValue(dependencies.sessionStorageBox),
           settingsStorageBoxProvider.overrideWithValue(dependencies.settingsStorageBox),
           searchStorageBoxProvider.overrideWithValue(dependencies.searchStorageBox),

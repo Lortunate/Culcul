@@ -1,5 +1,4 @@
 import 'package:culcul/features/video/video.dart';
-import 'package:culcul/features/home/home.dart';
 import 'package:culcul/shared/widgets/app_card_container.dart';
 import 'package:culcul/shared/widgets/app_overlay_tag.dart';
 import 'package:culcul/shared/widgets/video_thumbnail.dart';
@@ -21,6 +20,7 @@ class VideoCard extends StatelessWidget {
   final int? danmakuCount;
   final String? reason;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
   final bool showAuthor;
   final bool showDescription;
 
@@ -37,6 +37,7 @@ class VideoCard extends StatelessWidget {
     this.danmakuCount,
     this.reason,
     this.onTap,
+    this.onLongPress,
     this.showAuthor = true,
     this.showDescription = false,
   }) : assert(
@@ -58,19 +59,6 @@ class VideoCard extends StatelessWidget {
   int get _danmakuCount => video?.stat.danmaku ?? danmakuCount!;
   String? get _reason => video?.rcmdReason ?? reason;
 
-  Future<void> _showMoreSheet(BuildContext context) {
-    return showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      barrierColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) => VideoMoreBottomSheet(
-        bvid: bvid ?? video?.bvid,
-        coverUrl: coverUrl ?? video?.pic,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final content = _VideoCardContent(
@@ -82,7 +70,7 @@ class VideoCard extends StatelessWidget {
 
     return AppCardContainer(
       onTap: onTap,
-      onLongPress: () => _showMoreSheet(context),
+      onLongPress: onLongPress,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -127,4 +115,3 @@ class VideoCardContent extends StatelessWidget {
     );
   }
 }
-

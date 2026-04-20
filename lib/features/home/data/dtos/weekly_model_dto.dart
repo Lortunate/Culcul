@@ -1,7 +1,7 @@
 import 'package:culcul/shared/network/dtos/video_model_contract_dto.dart';
 
 class WeeklyModelDto {
-  final List<VideoModelDto> list;
+  final List<VideoModel> list;
 
   const WeeklyModelDto({required this.list});
 

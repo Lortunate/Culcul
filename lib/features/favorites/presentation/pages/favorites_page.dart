@@ -1,5 +1,6 @@
 import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
 import 'package:culcul/features/favorites/presentation/view_models/favorite_folder_action_view_model.dart';
+import 'package:culcul/features/favorites/presentation/pages/favorites_page_commands.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
 import 'package:culcul/features/auth/auth.dart';
@@ -74,37 +75,33 @@ class _AddFolderAction extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    return IconButton(
-      icon: const Icon(Icons.add),
-      onPressed: () async {
-        final result = await showDialog<FavFolderFormData>(
+    final commands = FavoritesPageCommands(
+      presentCreateDialog: () {
+        return showDialog<FavFolderFormData>(
           context: context,
           builder: (_) => const FavFolderDialog(),
         );
-
-        if (result == null) {
-          return;
-        }
-
+      },
+      createFolder: (data) async {
         final error = await ref
             .read(favoriteFolderActionViewModelProvider.notifier)
-            .createFolder(
-              title: result.title,
-              intro: result.intro,
-              privacy: result.privacy,
-            );
-        if (error == null) {
-          ref.invalidate(favCreatedFoldersProvider);
-          return;
-        }
+            .createFolder(title: data.title, intro: data.intro, privacy: data.privacy);
+        return error?.message;
+      },
+      invalidateCreatedFolders: () => ref.invalidate(favCreatedFoldersProvider),
+      showError: (message) {
         if (!context.mounted) {
           return;
         }
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('Failed to add folder: ${error.message}')));
+        ).showSnackBar(SnackBar(content: Text('Failed to add folder: $message')));
       },
+    );
+
+    return IconButton(
+      icon: const Icon(Icons.add),
+      onPressed: commands.handleCreateFolder,
     );
   }
 }
-

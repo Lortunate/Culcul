@@ -1,5 +1,5 @@
 import 'package:culcul/shared/network/dio_client.dart';
-import 'package:culcul/features/auth/auth.dart';
+import 'package:culcul/shared/providers/session_refresh_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -59,13 +59,8 @@ class TokenInterceptor extends QueuedInterceptor {
       return;
     }
 
-    final authRepo = _ref.read(authRepositoryProvider);
-    final refreshFuture = authRepo.checkAndRefreshCookie().then((result) {
-      final error = result.errorOrNull;
-      if (error != null) {
-        throw StateError('Cookie refresh failed: ${error.message}');
-      }
-    });
+    final refreshSession = _ref.read(sessionRefreshActionProvider);
+    final refreshFuture = refreshSession();
     _refreshCookieFuture = refreshFuture;
     try {
       await refreshFuture;

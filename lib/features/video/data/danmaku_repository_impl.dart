@@ -15,21 +15,20 @@ part 'danmaku_repository_impl.g.dart';
 @riverpod
 domain.DanmakuRepository danmakuRepository(Ref ref) {
   return DanmakuRepositoryImpl(
-    DanmakuApi(ref.watch(dioClientProvider)),
-    ResourceApi(ref.watch(dioClientProvider)),
+    DanmakuApi(ref.watch(basicDioProvider)),
+    ResourceApi(ref.watch(basicDioProvider)),
   );
 }
 
-class DanmakuRepositoryImpl with RequestExecutorBinding implements domain.DanmakuRepository {
+class DanmakuRepositoryImpl
+    with RequestExecutorBinding
+    implements domain.DanmakuRepository {
   final DanmakuApi _api;
   final ResourceApi _resourceApi;
   final RequestExecutor _requestExecutor;
 
-  DanmakuRepositoryImpl(
-    this._api,
-    this._resourceApi, {
-    RequestExecutor? requestExecutor,
-  }) : _requestExecutor = requestExecutor ?? const RequestExecutor();
+  DanmakuRepositoryImpl(this._api, this._resourceApi, {RequestExecutor? requestExecutor})
+    : _requestExecutor = requestExecutor ?? const RequestExecutor();
 
   @override
   RequestExecutor get requestExecutor => _requestExecutor;

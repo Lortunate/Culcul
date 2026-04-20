@@ -1,13 +1,12 @@
-import 'package:culcul/features/home/domain/entities/home_video.dart';
-import 'package:culcul/features/home/presentation/widgets/video_more_bottom_sheet.dart';
-
+import 'package:culcul/shared/contracts/video_model_contract.dart';
 import 'package:culcul/shared/widgets/app_tag.dart';
 import 'package:culcul/shared/widgets/video_list_card.dart';
 import 'package:flutter/material.dart';
 
 class PopularVideoCard extends StatelessWidget {
-  final HomeVideo video;
+  final VideoModel video;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
   final double cardHeight;
   final double thumbnailWidth;
 
@@ -15,6 +14,7 @@ class PopularVideoCard extends StatelessWidget {
     super.key,
     required this.video,
     this.onTap,
+    this.onLongPress,
     this.cardHeight = 100,
     this.thumbnailWidth = 160,
   });
@@ -27,22 +27,14 @@ class PopularVideoCard extends StatelessWidget {
     return VideoListCard(
       onTap: onTap,
       padding: const EdgeInsets.all(10),
-      onLongPress: () {
-        showModalBottomSheet(
-          context: context,
-          backgroundColor: Colors.transparent,
-          barrierColor: Colors.transparent,
-          isScrollControlled: true,
-          builder: (context) => VideoMoreBottomSheet.homeVideo(video: video),
-        );
-      },
+      onLongPress: onLongPress,
       height: cardHeight,
       thumbnailWidth: thumbnailWidth,
       coverUrl: video.pic,
       title: video.title,
       duration: video.duration,
-      viewCount: video.stats.view,
-      danmakuCount: video.stats.danmaku,
+      viewCount: video.stat.view,
+      danmakuCount: video.stat.danmaku,
       badge: video.rcmdReason.isNotEmpty ? _PopularTag(text: video.rcmdReason) : null,
       author: Row(
         children: [

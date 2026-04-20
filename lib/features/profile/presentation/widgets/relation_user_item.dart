@@ -1,4 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/shared/contracts/relation_user_contract.dart';
 import 'package:culcul/features/profile/presentation/view_models/relation_user_action_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
@@ -52,6 +53,7 @@ class _RelationUserItemState extends ConsumerState<RelationUserItem> {
 
   Widget _buildFollowButton(BuildContext context) {
     final t = Translations.of(context);
+    final authState = ref.watch(authProvider);
     // 0: not following, 2: following, 6: mutual, 128: blocked
     String text = t.actions.follow;
     bool isFollowed = false;
@@ -70,7 +72,9 @@ class _RelationUserItemState extends ConsumerState<RelationUserItem> {
     return FollowButton(
       isFollowed: isFollowed,
       text: text,
-      onTap: _handleFollow,
+      onTap: authState.isLoggedIn
+          ? _handleFollow
+          : () => const LoginRoute().push(context),
       height: 32,
     );
   }

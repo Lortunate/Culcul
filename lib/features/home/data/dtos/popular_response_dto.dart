@@ -2,9 +2,8 @@ import 'package:culcul/shared/network/dtos/video_model_contract_dto.dart';
 
 class PopularResponseDto {
   final List<VideoModelDto> list;
-  final bool noMore;
 
-  const PopularResponseDto({this.list = const [], this.noMore = false});
+  const PopularResponseDto({this.list = const []});
 
   factory PopularResponseDto.fromJson(Map<String, dynamic> json) {
     final listJson = (json['list'] as List?) ?? const [];
@@ -12,6 +11,6 @@ class PopularResponseDto {
         .whereType<Map>()
         .map((e) => VideoModelDto.fromJson(Map<String, dynamic>.from(e)))
         .toList();
-    return PopularResponseDto(list: videos, noMore: json['no_more'] == true);
+    return PopularResponseDto(list: videos);
   }
 }

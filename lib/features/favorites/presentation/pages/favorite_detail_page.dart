@@ -4,6 +4,7 @@ import 'package:culcul/shared/pagination/scroll_load_trigger.dart';
 import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
+import 'package:culcul/features/favorites/presentation/pages/favorite_detail_page_commands.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_resource_item.dart';
 import 'package:culcul/features/favorites/presentation/view_models/favorite_folder_action_view_model.dart';
 import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';

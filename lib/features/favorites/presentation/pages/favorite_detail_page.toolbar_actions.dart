@@ -10,23 +10,80 @@ List<Widget> _buildFavoriteDetailAppBarActions({
 }) {
   final t = Translations.of(context);
   final colorScheme = Theme.of(context).colorScheme;
+  final commands = FavoriteDetailPageCommands(
+    presentEditDialog: () async {
+      final createdFolders = ref.read(favCreatedFoldersProvider).asData?.value;
+      final folder = createdFolders?.where((f) => f.id == mediaId).firstOrNull;
+      return showDialog<FavFolderFormData>(
+        context: context,
+        builder: (_) => FavFolderDialog(folder: folder),
+      );
+    },
+    presentDeleteConfirmation: () async {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(t.favorites.delete_folder),
+          content: Text(t.favorites.delete_folder_confirm),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(t.common.cancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(t.common.delete),
+            ),
+          ],
+        ),
+      );
+      return confirmed == true;
+    },
+    editFolder: (data) async {
+      final error = await ref
+          .read(favoriteFolderActionViewModelProvider.notifier)
+          .editFolder(
+            mediaId: mediaId,
+            title: data.title,
+            intro: data.intro,
+            privacy: data.privacy,
+          );
+      return error?.message;
+    },
+    deleteFolder: () async {
+      final error = await ref
+          .read(favoriteFolderActionViewModelProvider.notifier)
+          .deleteFolder(mediaId: mediaId);
+      return error?.message;
+    },
+    deleteResources: (resourceIds) async {
+      final error = await ref
+          .read(favoriteFolderActionViewModelProvider.notifier)
+          .deleteResources(mediaId: mediaId, resourceIds: resourceIds);
+      return error?.message;
+    },
+    invalidateCreatedFolders: () => ref.invalidate(favCreatedFoldersProvider),
+    exitPage: () {
+      if (context.mounted) {
+        context.pop();
+      }
+    },
+    showError: (message) => _showFavoriteActionErrorSnackBar(context, message),
+  );
+
   if (isSelectionMode.value) {
     return [
       TextButton(
         onPressed: selectedItems.value.isEmpty
             ? null
             : () async {
-                final error = await ref
-                    .read(favoriteFolderActionViewModelProvider.notifier)
-                    .deleteResources(mediaId: mediaId, resourceIds: selectedItems.value);
-                if (error == null) {
+                final success = await commands.handleDeleteResources(selectedItems.value);
+                if (success) {
                   isSelectionMode.value = false;
                   selectedItems.value = {};
                   ref.invalidate(favFolderResourcesProvider(mediaId));
                   return;
                 }
-                if (!context.mounted) return;
-                _showFavoriteActionErrorSnackBar(context, error.message);
               },
         child: Text(t.favorites.delete_with_count(count: selectedItems.value.length)),
       ),
@@ -48,7 +105,7 @@ List<Widget> _buildFavoriteDetailAppBarActions({
     PopupMenuButton<String>(
       onSelected: (value) async {
         if (value == 'edit') {
-          await _handleEditFolder(context: context, ref: ref, mediaId: mediaId);
+          await commands.handleEditFolder();
           return;
         }
         if (value == 'manage') {
@@ -56,7 +113,7 @@ List<Widget> _buildFavoriteDetailAppBarActions({
           return;
         }
         if (value == 'delete') {
-          await _handleDeleteFolder(context: context, ref: ref, mediaId: mediaId);
+          await commands.handleDeleteFolder();
         }
       },
       itemBuilder: (context) => [
@@ -72,76 +129,6 @@ List<Widget> _buildFavoriteDetailAppBarActions({
       ],
     ),
   ];
-}
-
-Future<void> _handleEditFolder({
-  required BuildContext context,
-  required WidgetRef ref,
-  required int mediaId,
-}) async {
-  final createdFolders = ref.read(favCreatedFoldersProvider).asData?.value;
-  final folder = createdFolders?.where((f) => f.id == mediaId).firstOrNull;
-
-  final result = await showDialog<FavFolderFormData>(
-    context: context,
-    builder: (_) => FavFolderDialog(folder: folder),
-  );
-
-  if (result == null) return;
-
-  final error = await ref
-      .read(favoriteFolderActionViewModelProvider.notifier)
-      .editFolder(
-        mediaId: mediaId,
-        title: result.title,
-        intro: result.intro,
-        privacy: result.privacy,
-      );
-  if (error == null) {
-    ref.invalidate(favCreatedFoldersProvider);
-    return;
-  }
-  if (!context.mounted) return;
-  _showFavoriteActionErrorSnackBar(context, error.message);
-}
-
-Future<void> _handleDeleteFolder({
-  required BuildContext context,
-  required WidgetRef ref,
-  required int mediaId,
-}) async {
-  final t = Translations.of(context);
-  final confirm = await showDialog<bool>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(t.favorites.delete_folder),
-      content: Text(t.favorites.delete_folder_confirm),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context, false),
-          child: Text(t.common.cancel),
-        ),
-        TextButton(
-          onPressed: () => Navigator.pop(context, true),
-          child: Text(t.common.delete),
-        ),
-      ],
-    ),
-  );
-  if (confirm != true) return;
-
-  final error = await ref
-      .read(favoriteFolderActionViewModelProvider.notifier)
-      .deleteFolder(mediaId: mediaId);
-  if (error == null) {
-    ref.invalidate(favCreatedFoldersProvider);
-    if (context.mounted) {
-      context.pop();
-    }
-    return;
-  }
-  if (!context.mounted) return;
-  _showFavoriteActionErrorSnackBar(context, error.message);
 }
 
 void _showFavoriteActionErrorSnackBar(BuildContext context, String message) {

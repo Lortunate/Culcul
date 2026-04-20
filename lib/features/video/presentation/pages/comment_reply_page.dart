@@ -1,11 +1,10 @@
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
+import 'package:culcul/features/video/presentation/pages/comment_reply_page_commands.dart';
 import 'package:culcul/features/video/presentation/view_models/comment_reply_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/bottom_input_bar.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_item.dart';
-import 'package:culcul/features/video/presentation/widgets/comments/comment_reply_sheet.dart';
 import 'package:culcul/shared/pagination/pagination_load_gate.dart';
-import 'package:culcul/shared/pagination/scroll_load_trigger.dart';
 import 'package:culcul/shared/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +34,13 @@ class CommentReplyPage extends HookConsumerWidget {
     final controller = ref.read(provider.notifier);
     final hasMore = paging.hasMore;
     final loadGate = useMemoized(PaginationLoadGate.new, [oid, rootId]);
+    final commands = CommentReplyPageCommands.fromPage(
+      context: context,
+      ref: ref,
+      oid: oid,
+      rootId: rootId,
+      loadGate: loadGate,
+    );
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
@@ -47,21 +53,6 @@ class CommentReplyPage extends HookConsumerWidget {
     }, [comment, watchedRootComment]);
 
     final rootComment = watchedRootComment ?? comment;
-
-    void showReplySheet(CommentItem item) {
-      CommentReplySheet.show(
-        context,
-        comment: item,
-        onSend: (text) {
-          controller.addReply(
-            item.oid,
-            item.root == 0 ? item.rpid : item.root,
-            item.rpid,
-            text,
-          );
-        },
-      );
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -91,17 +82,7 @@ class CommentReplyPage extends HookConsumerWidget {
           Expanded(
             child: EasyRefresh(
               onRefresh: controller.refresh,
-              onLoad: !hasMore
-                  ? null
-                  : () => ScrollLoadTrigger.runWithNotifier(
-                      gate: loadGate,
-                      hasMore: () => ref.read(provider).paging.hasMore,
-                      isLoadingMore: () => ref.read(provider).paging.isLoadingMore,
-                      loadMore: controller.loadMore,
-                      itemCount: () => ref.read(provider).paging.items.length,
-                      source: 'video.comment_reply',
-                      // Replies benefit from prefetching before the user hits the bottom.
-                    ),
+              onLoad: !hasMore ? null : commands.loadMoreReplies,
               header: AppRefreshHeader(),
               footer: hasMore ? AppLoadFooter() : null,
               child: CustomScrollView(
@@ -123,7 +104,7 @@ class CommentReplyPage extends HookConsumerWidget {
                             rootComment.oid,
                             rootComment.rpid,
                           ),
-                          onReply: () => showReplySheet(rootComment),
+                          onReply: () => commands.showReplySheet(rootComment),
                         ),
                         Divider(
                           height: 1,
@@ -169,7 +150,7 @@ class CommentReplyPage extends HookConsumerWidget {
                           ),
                           onDislike: () =>
                               controller.toggleCommentDislike(reply.oid, reply.rpid),
-                          onReply: () => showReplySheet(reply),
+                          onReply: () => commands.showReplySheet(reply),
                         );
                       }, childCount: paging.items.length),
                     ),

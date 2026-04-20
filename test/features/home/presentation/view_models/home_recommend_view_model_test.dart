@@ -1,14 +1,13 @@
 import 'dart:async';
 
+import 'package:culcul/features/home/data/home_feed_data_source.dart';
+import 'package:culcul/features/home/presentation/view_models/home_recommend_view_model.dart';
 import 'package:culcul/shared/constants/api_constants.dart';
+import 'package:culcul/shared/contracts/video_model_contract.dart';
 import 'package:culcul/shared/errors/app_error.dart';
 import 'package:culcul/shared/network/interceptors/cache_interceptor.dart';
 import 'package:culcul/shared/providers/cache_store_provider.dart';
 import 'package:culcul/shared/result/result.dart';
-import 'package:culcul/features/home/data/home_repository_impl.dart';
-import 'package:culcul/features/home/domain/entities/home_video.dart';
-import 'package:culcul/features/home/domain/repositories/home_repository.dart';
-import 'package:culcul/features/home/presentation/view_models/home_recommend_view_model.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -17,7 +16,7 @@ void main() {
   test(
     'home recommend returns cached first page then silently applies fresh page',
     () async {
-      final repository = _FakeHomeRepository();
+      final dataSource = _FakeHomeFeedDataSource();
       final cacheKey = CacheInterceptor.buildCacheKey(ApiConstants.feedRcmd, {
         'fresh_type': 4,
         'ps': 20,
@@ -26,7 +25,7 @@ void main() {
       });
       final container = ProviderContainer(
         overrides: [
-          homeRepositoryProvider.overrideWithValue(repository),
+          homeFeedDataSourceProvider.overrideWithValue(dataSource),
           cacheStoreProvider.overrideWithValue(_FakeCacheStore(keys: <String>{cacheKey})),
         ],
       );
@@ -35,9 +34,9 @@ void main() {
       final initialItems = await container.read(homeRecommendProvider.future);
       expect(initialItems.first.title, 'cached');
       await Future<void>.delayed(const Duration(milliseconds: 10));
-      expect(repository.recommendForceRefreshCalls, 1);
+      expect(dataSource.recommendForceRefreshCalls, 1);
 
-      repository.completeRecommendRefresh();
+      dataSource.completeRecommendRefresh();
       await Future<void>.delayed(const Duration(milliseconds: 10));
 
       final refreshedItems = container.read(homeRecommendProvider).requireValue;
@@ -46,10 +45,10 @@ void main() {
   );
 
   test('home recommend skips silent refresh when first page cache is absent', () async {
-    final repository = _FakeHomeRepository();
+    final dataSource = _FakeHomeFeedDataSource();
     final container = ProviderContainer(
       overrides: [
-        homeRepositoryProvider.overrideWithValue(repository),
+        homeFeedDataSourceProvider.overrideWithValue(dataSource),
         cacheStoreProvider.overrideWithValue(_FakeCacheStore(keys: const <String>{})),
       ],
     );
@@ -59,40 +58,42 @@ void main() {
     expect(initialItems.first.title, 'cached');
     await Future<void>.delayed(const Duration(milliseconds: 10));
 
-    expect(repository.recommendForceRefreshCalls, 0);
+    expect(dataSource.recommendForceRefreshCalls, 0);
   });
 }
 
-class _FakeHomeRepository extends Fake implements HomeRepository {
+class _FakeHomeFeedDataSource extends HomeFeedDataSource {
+  _FakeHomeFeedDataSource() : super.test();
+
   int recommendForceRefreshCalls = 0;
-  final Completer<Result<List<HomeVideo>, AppError>> _refreshCompleter =
-      Completer<Result<List<HomeVideo>, AppError>>();
+  final Completer<Result<List<VideoModel>, AppError>> _recommendRefreshCompleter =
+      Completer<Result<List<VideoModel>, AppError>>();
 
   @override
-  Future<Result<List<HomeVideo>, AppError>> fetchRecommend({
-    int page = 1,
+  Future<Result<List<VideoModel>, AppError>> fetchRecommendPage({
+    required int page,
     bool forceRefresh = false,
   }) async {
     if (forceRefresh) {
       recommendForceRefreshCalls++;
-      return _refreshCompleter.future;
+      return _recommendRefreshCompleter.future;
     }
-    return Success(<HomeVideo>[_video(title: 'cached')]);
+    return Success(<VideoModel>[_video(title: 'cached')]);
   }
 
   @override
-  Future<Result<List<HomeVideo>, AppError>> fetchPopular({
-    int page = 1,
+  Future<Result<List<VideoModel>, AppError>> fetchPopularPage({
+    required int page,
     bool forceRefresh = false,
   }) async {
-    return Success(<HomeVideo>[_video(title: 'popular')]);
+    return Success(<VideoModel>[_video(title: 'popular')]);
   }
 
   void completeRecommendRefresh() {
-    if (_refreshCompleter.isCompleted) {
+    if (_recommendRefreshCompleter.isCompleted) {
       return;
     }
-    _refreshCompleter.complete(Success(<HomeVideo>[_video(title: 'fresh')]));
+    _recommendRefreshCompleter.complete(Success(<VideoModel>[_video(title: 'fresh')]));
   }
 }
 
@@ -141,13 +142,13 @@ class _FakeCacheStore implements CacheStore {
   Future<void> set(CacheResponse response) async {}
 }
 
-HomeVideo _video({required String title}) {
-  return HomeVideo(
+VideoModel _video({required String title}) {
+  return VideoModel(
     bvid: 'BV1',
     title: title,
     pic: 'https://example.com/pic.jpg',
-    owner: const HomeVideoOwner(mid: 1, name: 'owner', face: ''),
-    stats: const HomeVideoStats(
+    owner: const VideoOwner(mid: 1, name: 'owner', face: ''),
+    stat: const VideoStat(
       view: 1,
       danmaku: 1,
       reply: 1,

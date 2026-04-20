@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/shared/perf/startup_perf_logger.dart';
+import 'package:culcul/features/home/presentation/view_models/home_tab_sync_controller.dart';
 import 'package:culcul/features/home/presentation/widgets/home_app_bar.dart';
 import 'package:culcul/features/home/presentation/widgets/live_view.dart';
 import 'package:culcul/features/home/presentation/widgets/popular_view.dart';
 import 'package:culcul/features/home/presentation/widgets/recommend_view.dart';
-import 'package:culcul/features/home/presentation/view_models/home_page_view_model.dart';
 import 'package:culcul/features/search/search.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/shared/perf/startup_perf_logger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -58,7 +58,7 @@ class HomePage extends HookConsumerWidget {
             visitedTabs.value = <int>{...visitedTabs.value, index};
           }
           ref
-              .read(homePageViewModelProvider.notifier)
+              .read(homeTabSyncControllerProvider.notifier)
               .onTabTapped(index, isChanging: tabController.indexIsChanging);
         },
         onSearchTap: () => const SearchRoute().push(context),
@@ -98,4 +98,3 @@ class HomePage extends HookConsumerWidget {
     (title: t.home.tabs.hot, buildView: () => const PopularView()),
   ];
 }
-

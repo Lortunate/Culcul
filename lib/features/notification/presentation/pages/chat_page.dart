@@ -1,5 +1,4 @@
-import 'package:culcul/i18n/i18n.dart';
-import 'dart:io';
+import 'package:culcul/features/notification/presentation/pages/chat_page_commands.dart';
 import 'package:culcul/features/notification/presentation/view_models/chat_view_model.dart';
 import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
@@ -40,6 +39,12 @@ class ChatPage extends HookConsumerWidget {
 
     final textController = useTextEditingController();
     final scrollController = useScrollController();
+    final commands = ChatPageCommands.fromPage(
+      context: context,
+      notifier: notifier,
+      scrollController: scrollController,
+      textController: textController,
+    );
 
     // Current user ID (int)
     final currentUserId = useMemoized(() {
@@ -72,22 +77,11 @@ class ChatPage extends HookConsumerWidget {
           ),
           ChatInput(
             controller: textController,
-            onSendImage: (File image) => _sendImage(
-              context: context,
-              notifier: notifier,
-              scrollController: scrollController,
-              image: image,
-            ),
+            onSendImage: commands.sendImageFile,
             onSend: () async {
               final text = textController.text;
               if (text.isEmpty) return;
-              await _sendText(
-                context: context,
-                notifier: notifier,
-                scrollController: scrollController,
-                textController: textController,
-                text: text,
-              );
+              await commands.sendText(text);
             },
           ),
         ],
@@ -113,53 +107,4 @@ class ChatPage extends HookConsumerWidget {
     displayName = profile.username;
     return (avatarUrl: displayAvatarUrl, name: displayName);
   }
-
-  Future<void> _sendImage({
-    required BuildContext context,
-    required Chat notifier,
-    required ScrollController scrollController,
-    required File image,
-  }) async {
-    try {
-      await notifier.sendImage(image);
-      await _scrollToBottom(scrollController);
-    } catch (e) {
-      if (!context.mounted) return;
-      final t = i18n(context);
-      _showSendError(context, t.notification.chat.send_failed(error: e.toString()));
-    }
-  }
-
-  Future<void> _sendText({
-    required BuildContext context,
-    required Chat notifier,
-    required ScrollController scrollController,
-    required TextEditingController textController,
-    required String text,
-  }) async {
-    try {
-      await notifier.sendMessage(text);
-      textController.clear();
-      await _scrollToBottom(scrollController);
-    } catch (e) {
-      if (!context.mounted) return;
-      final t = i18n(context);
-      _showSendError(context, t.notification.chat.send_failed(error: e.toString()));
-    }
-  }
-
-  Future<void> _scrollToBottom(ScrollController controller) async {
-    if (!controller.hasClients) return;
-    await controller.animateTo(
-      0,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeOut,
-    );
-  }
-
-  void _showSendError(BuildContext context, String message) {
-    if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-  }
 }
-

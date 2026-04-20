@@ -1,4 +1,6 @@
+import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/home/presentation/view_models/weekly_view_model.dart';
+import 'package:culcul/features/home/presentation/widgets/home_video_actions.dart';
 import 'package:culcul/features/home/presentation/widgets/popular_video_card.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/shared/widgets/app_error_widget.dart';
@@ -16,12 +18,21 @@ class WeeklyScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(t.home.tabs.weekly_must_watch)),
       body: weeklyListAsync.when(
-        data: (weeklyModel) {
+        data: (videos) {
           return ListView.builder(
-            itemCount: weeklyModel.list.length,
+            itemCount: videos.length,
             itemBuilder: (context, index) {
-              final video = weeklyModel.list[index];
-              return PopularVideoCard(video: video);
+              final video = videos[index];
+              return PopularVideoCard(
+                video: video,
+                onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
+                onLongPress: () => showHomeVideoActionsBottomSheet(
+                  context,
+                  ref,
+                  bvid: video.bvid,
+                  coverUrl: video.pic,
+                ),
+              );
             },
           );
         },
