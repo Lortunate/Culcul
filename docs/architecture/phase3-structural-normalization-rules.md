@@ -52,6 +52,10 @@ added to the guard only when the migration is complete enough to enforce.
   session refresh contract used by shared networking and the auth adapter. The
   matching `lib/shared/session/session_cookie_refresher.dart` file remains a
   compatibility export for existing imports.
+- `lib/core/session/session_refresh_provider.dart` owns the app-bootstrap
+  session refresh action provider. The legacy
+  `lib/shared/providers/session_refresh_provider.dart` file remains a
+  compatibility export while imports are tightened.
 - `lib/ui/responsive/app_responsive.dart` and
   `lib/ui/responsive/responsive_container.dart` own the responsive UI helpers.
   The matching `lib/shared/responsive/*` files remain compatibility exports for
