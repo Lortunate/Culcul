@@ -4,6 +4,9 @@ This note captures the practical architecture rules established by the
 phase-2 cleanup work on this branch. It is intentionally narrow: describe the
 current routing and command boundaries, not a future rewrite.
 
+Phase-3 normalization follow-up is tracked in
+`docs/architecture/phase3-structural-normalization-rules.md`.
+
 ## Route ownership
 
 - `lib/app/router/app_routes.dart` remains the top-level route graph.
@@ -26,6 +29,8 @@ current routing and command boundaries, not a future rewrite.
 - This branch currently uses two acceptable shapes:
   - feature-owned workflows/commands under `application/`
   - narrowly scoped page adapters such as `*_page_commands.dart`
+- Phase 3 tightens this rule: page-command adapters are transitional UI seams,
+  while durable workflow ownership belongs in `application/`.
 - Shared or reusable widgets must not absorb feature workflows while this
   extraction happens.
 
@@ -38,14 +43,14 @@ current routing and command boundaries, not a future rewrite.
   - `lib/features/notification/route_entry.dart`
   - `lib/features/video/route_entry.dart`
 - Feature workflows/commands:
+  - `lib/features/dynamic/application/dynamic_detail_actions.dart`
   - `lib/features/dynamic/application/dynamic_workflows.dart`
   - `lib/features/live/application/live_room_page_commands.dart`
   - `lib/features/favorites/application/favorite_folder_commands.dart`
+  - `lib/features/notification/application/chat_page_commands.dart`
 - Page command adapters:
-  - `lib/features/dynamic/presentation/pages/dynamic_detail_page_commands.dart`
   - `lib/features/favorites/presentation/pages/favorites_page_commands.dart`
   - `lib/features/favorites/presentation/pages/favorite_detail_page_commands.dart`
-  - `lib/features/notification/presentation/pages/chat_page_commands.dart`
 
 ## What phase 2 does not require
 
@@ -60,3 +65,5 @@ current routing and command boundaries, not a future rewrite.
 - The remaining cleanup is mostly normalization: choose one long-term home for
   mutable page workflows and reduce duplicate `application/` vs
   `presentation/*_commands.dart` naming.
+- Approved `application/` homes should become the only production import target
+  for workflow helpers once that ownership decision is made for a feature.

@@ -31,6 +31,8 @@ entry seams for the centralized router.
 
 Current branch conventions are documented in
 `docs/architecture/phase2-route-and-orchestration-rules.md`.
+Phase-3 normalization targets are documented in
+`docs/architecture/phase3-structural-normalization-rules.md`.
 
 In practice this means:
 
@@ -41,8 +43,10 @@ In practice this means:
 - route input DTOs like `ChatRouteInput` and `CommentReplyRouteInput` are
   acceptable when a route needs more than primitive parameters.
 - command extraction belongs in feature-owned helpers such as
-  `application/*workflow*.dart`, `application/*commands*.dart`, or narrowly
-  scoped page command adapters like `*_page_commands.dart`.
+  `application/*workflow*.dart` and `application/*commands*.dart`.
+- narrowly scoped page command adapters like `*_page_commands.dart` are
+  transitional only and should stop owning production workflow imports once a
+  feature has an approved `application/` home.
 
 ## Guard Coverage
 
@@ -51,6 +55,10 @@ In practice this means:
 - `test/architecture/auth_video_architecture_guard_test.dart`
   checks for broad feature barrel imports in `app_routes.dart` and verifies the
   home route entry boundary.
+- `test/architecture/phase3_workflow_ownership_guard_test.dart`
+  checks that phase-3 normalization docs stay linked and that explicitly
+  approved workflow migrations replace production imports of legacy
+  page-command locations.
 
 ## Known Violations At Guard Introduction
 

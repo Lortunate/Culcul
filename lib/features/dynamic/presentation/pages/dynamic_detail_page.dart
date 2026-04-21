@@ -1,10 +1,12 @@
+import 'dart:async';
+
+import 'package:culcul/features/dynamic/application/dynamic_detail_actions.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_comment_view_model.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_detail_view_model.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_detail_bottom_bar.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_detail_header.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_comments_view.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_content_widget.dart';
-import 'package:culcul/features/dynamic/presentation/pages/dynamic_detail_page_commands.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/shared/pagination/pagination_load_gate.dart';
 import 'package:culcul/shared/widgets/app_error_widget.dart';
@@ -26,13 +28,67 @@ class DynamicDetailPage extends HookConsumerWidget {
     final state = ref.watch(provider);
     final commentController = useTextEditingController();
     final loadGate = useMemoized(PaginationLoadGate.new, [dynamicId]);
-    final commands = DynamicDetailPageCommands.fromPage(
-      context: context,
-      ref: ref,
-      dynamicId: dynamicId,
-      commentController: commentController,
+    final actions = DynamicDetailActions(
+      toggleLike: ref.read(provider.notifier).toggleLike,
+      addReply: (root, parent, text) async {
+        final latestPost = ref.read(provider).post;
+        if (latestPost == null) {
+          return;
+        }
+        await ref
+            .read(dynamicCommentControllerProvider(latestPost).notifier)
+            .addReply(root, parent, text);
+      },
       loadGate: loadGate,
+      loadDetail: ref.read(provider.notifier).loadDetail,
+      refreshComments: () async {
+        final latestPost = ref.read(provider).post;
+        if (latestPost == null) {
+          return;
+        }
+        await ref.read(dynamicCommentControllerProvider(latestPost).notifier).refresh();
+      },
+      hasMoreComments: () {
+        final latestPost = ref.read(provider).post;
+        if (latestPost == null) {
+          return false;
+        }
+        return ref.read(dynamicCommentControllerProvider(latestPost)).paging.hasMore;
+      },
+      isLoadingMoreComments: () {
+        final latestPost = ref.read(provider).post;
+        if (latestPost == null) {
+          return false;
+        }
+        return ref
+            .read(dynamicCommentControllerProvider(latestPost))
+            .paging
+            .isLoadingMore;
+      },
+      loadMoreCommentsFromSource: () async {
+        final latestPost = ref.read(provider).post;
+        if (latestPost == null) {
+          return;
+        }
+        await ref.read(dynamicCommentControllerProvider(latestPost).notifier).loadMore();
+      },
+      currentCommentCount: () {
+        final latestPost = ref.read(provider).post;
+        if (latestPost == null) {
+          return 0;
+        }
+        return ref.read(dynamicCommentControllerProvider(latestPost)).paging.items.length;
+      },
     );
+
+    void showOperationFailed(String message) {
+      if (!context.mounted) {
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(t.moments.operation_failed(message: message))),
+      );
+    }
 
     if (state.isLoading && state.post == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -44,7 +100,7 @@ class DynamicDetailPage extends HookConsumerWidget {
         body: Center(
           child: AppErrorWidget(
             error: state.error!,
-            onRetry: commands.refreshDetailAndComments,
+            onRetry: actions.refreshDetailAndComments,
           ),
         ),
       );
@@ -58,8 +114,8 @@ class DynamicDetailPage extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(t.moments.detail_title)),
       body: EasyRefresh(
-        onRefresh: commands.refreshDetailAndComments,
-        onLoad: !hasMore ? null : commands.loadMoreComments,
+        onRefresh: actions.refreshDetailAndComments,
+        onLoad: !hasMore ? null : actions.loadMoreComments,
         header: const AppRefreshHeader(),
         footer: hasMore ? AppLoadFooter() : null,
         child: CustomScrollView(
@@ -80,8 +136,32 @@ class DynamicDetailPage extends HookConsumerWidget {
       ),
       bottomNavigationBar: DynamicDetailBottomBar(
         post: post,
-        onLike: commands.handleLike,
-        onSubmitComment: commands.submitComment,
+        onLike: () {
+          unawaited(() async {
+            final message = await actions.handleLike();
+            if (message != null) {
+              showOperationFailed(message);
+            }
+          }());
+        },
+        onSubmitComment: () {
+          unawaited(() async {
+            final latestPost = ref.read(provider).post;
+            if (latestPost == null) {
+              return;
+            }
+
+            final submitted = await actions.submitComment(commentController.text);
+            if (!submitted) {
+              return;
+            }
+
+            commentController.clear();
+            if (context.mounted) {
+              FocusScope.of(context).unfocus();
+            }
+          }());
+        },
         commentController: commentController,
       ),
     );
