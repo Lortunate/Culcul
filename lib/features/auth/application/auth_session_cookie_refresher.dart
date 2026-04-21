@@ -1,5 +1,5 @@
+import 'package:culcul/core/session/session_cookie_refresher.dart';
 import 'package:culcul/features/auth/feature_scope.dart';
-import 'package:culcul/shared/session/session_cookie_refresher.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final class AuthSessionCookieRefresher implements SessionCookieRefresher {

@@ -1,5 +1,5 @@
+import 'package:culcul/core/session/session_cookie_refresher.dart';
 import 'package:culcul/shared/network/dio_client.dart';
-import 'package:culcul/shared/session/session_cookie_refresher.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

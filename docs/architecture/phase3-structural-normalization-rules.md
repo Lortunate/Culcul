@@ -48,6 +48,10 @@ added to the guard only when the migration is complete enough to enforce.
 
 - Dynamic detail and notification chat no longer keep page-command adapters in
   `presentation/pages`; their workflows are owned by `application/`.
+- `lib/core/session/session_cookie_refresher.dart` owns the cross-cutting
+  session refresh contract used by shared networking and the auth adapter. The
+  matching `lib/shared/session/session_cookie_refresher.dart` file remains a
+  compatibility export for existing imports.
 - `lib/ui/responsive/app_responsive.dart` and
   `lib/ui/responsive/responsive_container.dart` own the responsive UI helpers.
   The matching `lib/shared/responsive/*` files remain compatibility exports for

@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:culcul/core/session/session_cookie_refresher.dart';
 import 'package:culcul/shared/network/dio_client.dart';
 import 'package:culcul/shared/network/interceptors/token_interceptor.dart';
-import 'package:culcul/shared/session/session_cookie_refresher.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
