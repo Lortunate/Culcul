@@ -40,27 +40,27 @@ List<Widget> _buildFavoriteDetailAppBarActions({
       return confirmed == true;
     },
     editFolder: (data) async {
-      final error = await ref
-          .read(favoriteFolderActionViewModelProvider.notifier)
+      final result = await ref
+          .read(favoriteFolderCommandWorkflowProvider)
           .editFolder(
             mediaId: mediaId,
             title: data.title,
             intro: data.intro,
             privacy: data.privacy,
           );
-      return error?.message;
+      return result.errorOrNull?.message;
     },
     deleteFolder: () async {
-      final error = await ref
-          .read(favoriteFolderActionViewModelProvider.notifier)
+      final result = await ref
+          .read(favoriteFolderCommandWorkflowProvider)
           .deleteFolder(mediaId: mediaId);
-      return error?.message;
+      return result.errorOrNull?.message;
     },
     deleteResources: (resourceIds) async {
-      final error = await ref
-          .read(favoriteFolderActionViewModelProvider.notifier)
+      final result = await ref
+          .read(favoriteFolderCommandWorkflowProvider)
           .deleteResources(mediaId: mediaId, resourceIds: resourceIds);
-      return error?.message;
+      return result.errorOrNull?.message;
     },
     invalidateCreatedFolders: () => ref.invalidate(favCreatedFoldersProvider),
     exitPage: () {
