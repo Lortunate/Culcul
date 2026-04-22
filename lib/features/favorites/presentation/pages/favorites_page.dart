@@ -1,5 +1,5 @@
 import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
-import 'package:culcul/features/favorites/presentation/view_models/favorite_folder_action_view_model.dart';
+import 'package:culcul/features/favorites/application/favorite_folder_commands.dart';
 import 'package:culcul/features/favorites/presentation/pages/favorites_page_commands.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
@@ -83,10 +83,10 @@ class _AddFolderAction extends ConsumerWidget {
         );
       },
       createFolder: (data) async {
-        final error = await ref
-            .read(favoriteFolderActionViewModelProvider.notifier)
+        final result = await ref
+            .read(favoriteFolderCommandWorkflowProvider)
             .createFolder(title: data.title, intro: data.intro, privacy: data.privacy);
-        return error?.message;
+        return result.errorOrNull?.message;
       },
       invalidateCreatedFolders: () => ref.invalidate(favCreatedFoldersProvider),
       showError: (message) {
