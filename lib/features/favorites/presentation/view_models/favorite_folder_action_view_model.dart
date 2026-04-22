@@ -1,5 +1,5 @@
 import 'package:culcul/shared/errors/app_error.dart';
-import 'package:culcul/features/favorites/feature_scope.dart';
+import 'package:culcul/features/favorites/application/favorite_folder_commands.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'favorite_folder_action_view_model.g.dart';
@@ -16,7 +16,7 @@ class FavoriteFolderActionViewModel extends _$FavoriteFolderActionViewModel {
   }) async {
     state = const AsyncLoading();
     final result = await ref
-        .read(favRepositoryProvider)
+        .read(favoriteFolderCommandWorkflowProvider)
         .createFolder(title: title, intro: intro, privacy: privacy);
     state = const AsyncData(null);
     return result.errorOrNull;
@@ -30,8 +30,13 @@ class FavoriteFolderActionViewModel extends _$FavoriteFolderActionViewModel {
   }) async {
     state = const AsyncLoading();
     final result = await ref
-        .read(favRepositoryProvider)
-        .updateFolder(mediaId: mediaId, title: title, intro: intro, privacy: privacy);
+        .read(favoriteFolderCommandWorkflowProvider)
+        .editFolder(
+          mediaId: mediaId,
+          title: title,
+          intro: intro,
+          privacy: privacy,
+        );
     state = const AsyncData(null);
     return result.errorOrNull;
   }
@@ -39,8 +44,8 @@ class FavoriteFolderActionViewModel extends _$FavoriteFolderActionViewModel {
   Future<AppError?> deleteFolder({required int mediaId}) async {
     state = const AsyncLoading();
     final result = await ref
-        .read(favRepositoryProvider)
-        .deleteFolder(mediaIds: mediaId.toString());
+        .read(favoriteFolderCommandWorkflowProvider)
+        .deleteFolder(mediaId: mediaId);
     state = const AsyncData(null);
     return result.errorOrNull;
   }
@@ -51,8 +56,8 @@ class FavoriteFolderActionViewModel extends _$FavoriteFolderActionViewModel {
   }) async {
     state = const AsyncLoading();
     final result = await ref
-        .read(favRepositoryProvider)
-        .deleteResources(resources: resourceIds.join(','), mediaId: mediaId);
+        .read(favoriteFolderCommandWorkflowProvider)
+        .deleteResources(mediaId: mediaId, resourceIds: resourceIds);
     state = const AsyncData(null);
     return result.errorOrNull;
   }
