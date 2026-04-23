@@ -1,4 +1,4 @@
-import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/shared/network/network_concurrency_executor.dart';
 import 'package:culcul/shared/network/network_concurrency_profiles.dart';
 import 'package:flutter_test/flutter_test.dart';
