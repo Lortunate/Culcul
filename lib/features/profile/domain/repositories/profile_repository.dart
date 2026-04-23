@@ -1,6 +1,6 @@
-import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/shared/network/request_cancel_token.dart';
-import 'package:culcul/shared/result/result.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/shared/contracts/user_card_contract.dart';

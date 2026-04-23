@@ -2,7 +2,7 @@ import 'package:culcul/shared/pagination/paged_async_notifier.dart';
 import 'package:culcul/shared/pagination/paged_list_state.dart';
 import 'package:culcul/shared/network/network_concurrency_executor.dart';
 import 'package:culcul/shared/network/network_concurrency_profiles.dart';
-import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/shared/perf/feature_flow_perf_logger.dart';
 import 'package:culcul/shared/utils/list_utils.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';

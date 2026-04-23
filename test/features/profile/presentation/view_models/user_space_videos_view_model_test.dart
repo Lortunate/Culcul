@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:culcul/shared/constants/api_constants.dart';
-import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/shared/network/interceptors/cache_interceptor.dart';
 import 'package:culcul/shared/network/request_cancel_token.dart';
 import 'package:culcul/shared/providers/cache_store_provider.dart';
-import 'package:culcul/shared/result/result.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/profile/data/profile_repository_impl.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/features/profile/domain/repositories/profile_repository.dart';

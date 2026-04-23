@@ -1,6 +1,6 @@
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:culcul/shared/constants/api_constants.dart';
-import 'package:culcul/shared/errors/exceptions.dart';
+import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/shared/providers/cookie_jar_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

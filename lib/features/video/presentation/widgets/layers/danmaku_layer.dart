@@ -1,4 +1,4 @@
-import 'package:culcul/shared/result/result.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/video/application/video_extra_workflows.dart';
 import 'package:culcul/features/video/presentation/view_models/danmaku_mask_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/danmaku_settings_view_model.dart';

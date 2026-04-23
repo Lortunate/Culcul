@@ -1,8 +1,8 @@
-import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/shared/network/dio_client.dart';
 import 'package:culcul/shared/network/request_executor.dart';
 import 'package:culcul/shared/network/request_executor_binding.dart';
-import 'package:culcul/shared/result/result.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/history/data/history_api.dart';
 import 'package:culcul/features/history/data/dtos/history_model_dto.dart';
 import 'package:culcul/features/history/data/history_mapper.dart';

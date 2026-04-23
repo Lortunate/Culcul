@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:culcul/shared/errors/exceptions.dart';
-import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/core/errors/exceptions.dart';
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/shared/network/dio_client.dart';
 import 'package:culcul/shared/network/models/api_response.dart';
 import 'package:culcul/shared/network/request_executor.dart';
 import 'package:culcul/shared/providers/storage_provider.dart';
-import 'package:culcul/shared/result/result.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/auth/data/auth_api.dart';
 import 'package:culcul/features/auth/data/dtos/auth_dtos.dart';
 import 'package:culcul/features/auth/domain/entities/country_code.dart';

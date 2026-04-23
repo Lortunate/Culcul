@@ -1,5 +1,4 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/shared/responsive/responsive.dart';
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/widgets/info/uploader_section.dart';
 import 'package:culcul/features/video/presentation/widgets/info/video_actions.dart';
@@ -9,6 +8,7 @@ import 'package:culcul/features/video/presentation/widgets/info/video_recommenda
 import 'package:culcul/features/video/presentation/widgets/info/video_stats.dart';
 import 'package:culcul/shared/widgets/app_error_widget.dart';
 import 'package:culcul/shared/widgets/app_network_image_prefetcher.dart';
+import 'package:culcul/ui/responsive/app_breakpoints.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

@@ -1,4 +1,4 @@
-import 'package:culcul/shared/responsive/responsive.dart';
+import 'package:culcul/ui/responsive/app_responsive.dart';
 import 'package:flutter/material.dart';
 
 class HomeGridLayoutSpec {

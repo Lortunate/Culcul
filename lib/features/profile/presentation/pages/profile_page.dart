@@ -1,10 +1,10 @@
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
-import 'package:culcul/shared/responsive/responsive.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_action_grid.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_app_bar.dart';
 import 'package:culcul/features/profile/presentation/widgets/guest_profile_view.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_menu.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_stats.dart';
+import 'package:culcul/ui/responsive/responsive_container.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

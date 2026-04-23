@@ -1,6 +1,6 @@
 import 'package:culcul/features/video/application/video_extra_workflows.dart';
-import 'package:culcul/shared/errors/app_error.dart';
-import 'package:culcul/shared/result/result.dart';
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'danmaku_mask_view_model.g.dart';

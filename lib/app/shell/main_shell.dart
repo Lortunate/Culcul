@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:culcul/app/shell/navigation_items.dart';
-import 'package:culcul/shared/responsive/responsive.dart';
+import 'package:culcul/ui/responsive/app_responsive.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

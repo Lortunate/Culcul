@@ -5,8 +5,8 @@ import 'package:culcul/features/auth/domain/entities/country_code.dart';
 import 'package:culcul/features/auth/domain/entities/user_entity.dart';
 import 'package:culcul/features/auth/domain/repositories/auth_repository.dart';
 import 'package:culcul/features/live/application/live_room_page_commands.dart';
-import 'package:culcul/shared/errors/app_error.dart';
-import 'package:culcul/shared/result/result.dart';
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
