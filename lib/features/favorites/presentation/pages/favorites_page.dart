@@ -1,6 +1,5 @@
 import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
 import 'package:culcul/features/favorites/application/favorite_folder_commands.dart';
-import 'package:culcul/features/favorites/presentation/pages/favorites_page_commands.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
@@ -75,33 +74,38 @@ class _AddFolderAction extends ConsumerWidget {
       return const SizedBox.shrink();
     }
 
-    final commands = FavoritesPageCommands(
-      presentCreateDialog: () {
-        return showDialog<FavFolderFormData>(
-          context: context,
-          builder: (_) => const FavFolderDialog(),
-        );
-      },
-      createFolder: (data) async {
-        final result = await ref
-            .read(favoriteFolderCommandWorkflowProvider)
-            .createFolder(title: data.title, intro: data.intro, privacy: data.privacy);
-        return result.errorOrNull?.message;
-      },
-      invalidateCreatedFolders: () => ref.invalidate(favCreatedFoldersProvider),
-      showError: (message) {
-        if (!context.mounted) {
-          return;
-        }
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Failed to add folder: $message')));
-      },
-    );
-
     return IconButton(
       icon: const Icon(Icons.add),
-      onPressed: commands.handleCreateFolder,
+      onPressed: () => _handleCreateFolder(context: context, ref: ref),
     );
   }
+}
+
+Future<bool> _handleCreateFolder({
+  required BuildContext context,
+  required WidgetRef ref,
+}) async {
+  final data = await showDialog<FavFolderFormData>(
+    context: context,
+    builder: (_) => const FavFolderDialog(),
+  );
+  if (data == null) {
+    return false;
+  }
+
+  final result = await ref
+      .read(favoriteFolderCommandWorkflowProvider)
+      .createFolder(title: data.title, intro: data.intro, privacy: data.privacy);
+  final error = result.errorOrNull;
+  if (error == null) {
+    ref.invalidate(favCreatedFoldersProvider);
+    return true;
+  }
+
+  if (context.mounted) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Failed to add folder: ${error.message}')));
+  }
+  return false;
 }

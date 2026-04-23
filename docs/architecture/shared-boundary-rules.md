@@ -43,10 +43,13 @@ In practice this means:
 - route input DTOs like `ChatRouteInput` and `CommentReplyRouteInput` are
   acceptable when a route needs more than primitive parameters.
 - command extraction belongs in feature-owned helpers such as
-  `application/*workflow*.dart` and `application/*commands*.dart`.
+  `application/*workflow*.dart` and `application/*commands*.dart`, including
+  approved homes such as `favorite_folder_commands.dart`,
+  `comment_reply_commands.dart`, and `live_room_page_commands.dart`.
 - narrowly scoped page command adapters like `*_page_commands.dart` are
-  transitional only and should stop owning production workflow imports once a
-  feature has an approved `application/` home.
+  transitional only where they still exist, and they should stop owning
+  production workflow imports once phase-3 documents an approved
+  `application/` home for that feature.
 
 ## Guard Coverage
 

@@ -45,12 +45,10 @@ Phase-3 normalization follow-up is tracked in
 - Feature workflows/commands:
   - `lib/features/dynamic/application/dynamic_detail_actions.dart`
   - `lib/features/dynamic/application/dynamic_workflows.dart`
-  - `lib/features/live/application/live_room_page_commands.dart`
   - `lib/features/favorites/application/favorite_folder_commands.dart`
+  - `lib/features/live/application/live_room_page_commands.dart`
   - `lib/features/notification/application/chat_page_commands.dart`
-- Page command adapters:
-  - `lib/features/favorites/presentation/pages/favorites_page_commands.dart`
-  - `lib/features/favorites/presentation/pages/favorite_detail_page_commands.dart`
+  - `lib/features/video/application/comment_reply_commands.dart`
 
 ## What phase 2 does not require
 
@@ -62,8 +60,9 @@ Phase-3 normalization follow-up is tracked in
 
 - The routing seam is now explicit enough to reduce `app_routes.dart` page
   coupling without a full navigation redesign.
-- The remaining cleanup is mostly normalization: choose one long-term home for
-  mutable page workflows and reduce duplicate `application/` vs
-  `presentation/*_commands.dart` naming.
-- Approved `application/` homes should become the only production import target
-  for workflow helpers once that ownership decision is made for a feature.
+- Durable workflow ownership already lives in `application/` for dynamic
+  detail, notification chat, favorites folder commands, video comment reply,
+  and the live room page helper used directly by its page.
+- Guard tightening should only happen after production ownership is actually
+  clean; once that is true, the approved `application/` home becomes the only
+  production import target for that workflow.
