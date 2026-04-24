@@ -50,6 +50,15 @@ In practice this means:
   transitional only where they still exist, and they should stop owning
   production workflow imports once phase-3 documents an approved
   `application/` home for that feature.
+- bootstrap-owned provider contracts now live under
+  `lib/core/bootstrap/providers/**`.
+- `lib/shared/providers/cache_store_provider.dart`,
+  `lib/shared/providers/cookie_jar_provider.dart`, and
+  `lib/shared/providers/storage_provider.dart` are compatibility-only during
+  the migration and production imports should prefer the canonical
+  `core/bootstrap/providers/*` path instead.
+- old shared session shims are gone; canonical session contracts remain under
+  `lib/core/session/**`.
 
 ## Guard Coverage
 
@@ -62,6 +71,10 @@ In practice this means:
   checks that phase-3 normalization docs stay linked and that explicitly
   approved workflow migrations replace production imports of legacy
   page-command locations.
+- `test/architecture/provider_bootstrap_ownership_guard_test.dart`
+  checks that production code no longer imports retired
+  `package:culcul/shared/providers/*` bootstrap shims or the deleted
+  shared-session shim paths.
 
 ## Known Violations At Guard Introduction
 

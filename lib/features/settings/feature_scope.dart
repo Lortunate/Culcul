@@ -1,4 +1,4 @@
-import 'package:culcul/shared/providers/storage_provider.dart';
+import 'package:culcul/core/bootstrap/providers/storage_provider.dart';
 import 'package:culcul/features/settings/data/settings_repository.dart';
 import 'package:culcul/features/settings/data/settings_repository_impl.dart' as data;
 import 'package:flutter_riverpod/flutter_riverpod.dart';

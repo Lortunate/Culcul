@@ -4,7 +4,7 @@ import 'package:culcul/shared/constants/api_constants.dart';
 import 'package:culcul/shared/network/interceptors/cache_interceptor.dart';
 import 'package:culcul/shared/network/request_cancel_token.dart';
 import 'package:culcul/shared/perf/feature_flow_perf_logger.dart';
-import 'package:culcul/shared/providers/cache_store_provider.dart';
+import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/features/dynamic/feature_scope.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'package:culcul/features/dynamic/domain/repositories/dynamic_repository.dart';

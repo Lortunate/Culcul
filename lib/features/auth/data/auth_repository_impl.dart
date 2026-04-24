@@ -5,7 +5,7 @@ import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/shared/network/dio_client.dart';
 import 'package:culcul/shared/network/models/api_response.dart';
 import 'package:culcul/shared/network/request_executor.dart';
-import 'package:culcul/shared/providers/storage_provider.dart';
+import 'package:culcul/core/bootstrap/providers/storage_provider.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/auth/data/auth_api.dart';
 import 'package:culcul/features/auth/data/dtos/auth_dtos.dart';
