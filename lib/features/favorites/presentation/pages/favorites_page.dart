@@ -85,6 +85,7 @@ Future<bool> _handleCreateFolder({
   required BuildContext context,
   required WidgetRef ref,
 }) async {
+  final t = Translations.of(context);
   final data = await showDialog<FavFolderFormData>(
     context: context,
     builder: (_) => const FavFolderDialog(),
@@ -105,7 +106,7 @@ Future<bool> _handleCreateFolder({
   if (context.mounted) {
     ScaffoldMessenger.of(
       context,
-    ).showSnackBar(SnackBar(content: Text('Failed to add folder: ${error.message}')));
+    ).showSnackBar(SnackBar(content: Text('${t.common.error}: ${error.message}')));
   }
   return false;
 }
