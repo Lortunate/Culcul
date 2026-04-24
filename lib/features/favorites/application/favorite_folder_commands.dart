@@ -1,7 +1,7 @@
 import 'package:culcul/features/favorites/domain/repositories/favorite_repository.dart';
 import 'package:culcul/features/favorites/feature_scope.dart';
-import 'package:culcul/shared/errors/app_error.dart';
-import 'package:culcul/shared/result/result.dart';
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final favoriteFolderCommandWorkflowProvider = Provider<FavoriteFolderCommandWorkflow>(

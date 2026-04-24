@@ -1,7 +1,7 @@
-import 'package:culcul/shared/errors/app_error.dart';
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/shared/network/models/api_response.dart';
 import 'package:culcul/shared/network/request_executor.dart';
-import 'package:culcul/shared/result/result.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

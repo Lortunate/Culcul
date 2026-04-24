@@ -3,9 +3,9 @@ import 'package:culcul/features/auth/presentation/view_models/auth_view_model.da
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/dynamic/presentation/pages/publish_dynamic_page.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_list_view.dart';
-import 'package:culcul/shared/responsive/responsive.dart';
 import 'package:culcul/shared/widgets/app_tab_bar.dart';
 import 'package:culcul/shared/widgets/guest_view.dart';
+import 'package:culcul/ui/responsive/responsive_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

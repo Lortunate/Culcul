@@ -1,5 +1,5 @@
-import 'package:culcul/shared/errors/app_error.dart';
-import 'package:culcul/shared/result/result.dart';
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/to_view/data/models/to_view_entry.dart';
 
 abstract class ToViewRepository {

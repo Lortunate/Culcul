@@ -8,8 +8,8 @@ import 'package:culcul/features/favorites/feature_scope.dart';
 import 'package:culcul/features/favorites/presentation/pages/favorite_detail_page.dart';
 import 'package:culcul/features/favorites/presentation/pages/favorites_page.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/shared/errors/app_error.dart';
-import 'package:culcul/shared/result/result.dart';
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -100,6 +100,23 @@ void main() {
       },
     );
 
+    testWidgets('FavoriteDetailPage successful delete exits the page', (tester) async {
+      final workflow = _SpyFavoriteFolderWorkflow();
+
+      await _pumpFavoriteDetailPage(tester: tester, workflow: workflow);
+
+      await tester.tap(find.byType(PopupMenuButton<String>));
+      await _pumpUi(tester);
+      await tester.tap(find.text(t.favorites.delete_folder));
+      await _pumpUi(tester);
+      await tester.tap(find.widgetWithText(TextButton, t.common.delete));
+      await _pumpUi(tester);
+
+      expect(workflow.deleteFolderCalls, 1);
+      expect(workflow.lastDeleteMediaId, 42);
+      expect(find.text('root'), findsOneWidget);
+    });
+
     testWidgets('FavoriteDetailPage resource deletion delegates to workflow', (
       tester,
     ) async {
@@ -123,6 +140,35 @@ void main() {
       expect(workflow.lastDeleteResourcesMediaId, 42);
       expect(workflow.lastDeleteResourceIds, <int>{7});
     });
+
+    testWidgets(
+      'FavoriteDetailPage resource deletion failure surfaces an error and keeps selection mode',
+      (tester) async {
+        final workflow = _SpyFavoriteFolderWorkflow()
+          ..deleteResourcesResult = Failure(AppError.server('delete resources failed'));
+
+        await _pumpFavoriteDetailPage(tester: tester, workflow: workflow);
+
+        await tester.tap(find.byType(PopupMenuButton<String>));
+        await _pumpUi(tester);
+        await tester.tap(find.text(t.favorites.manage_resources));
+        await _pumpUi(tester);
+
+        await tester.tap(find.byType(Checkbox));
+        await _pumpUi(tester);
+        await tester.tap(
+          find.widgetWithText(TextButton, t.favorites.delete_with_count(count: 1)),
+        );
+        await _pumpUi(tester);
+
+        expect(workflow.deleteResourcesCalls, 1);
+        expect(find.text('${t.common.error}: delete resources failed'), findsOneWidget);
+        expect(
+          find.widgetWithText(TextButton, t.favorites.delete_with_count(count: 1)),
+          findsOneWidget,
+        );
+      },
+    );
   });
 }
 
@@ -161,14 +207,17 @@ Future<void> _pumpFavoriteDetailPage({
   );
   addTearDown(container.dispose);
   final router = GoRouter(
-    initialLocation: '/favorites/42',
+    initialLocation: '/',
     routes: [
+      GoRoute(
+        path: '/',
+        builder: (_, _) => const Material(child: Text('root')),
+      ),
       GoRoute(
         path: '/favorites/42',
         builder: (_, _) =>
             const FavoriteDetailPage(mediaId: 42, title: 'Folder', mid: 1001),
       ),
-      GoRoute(path: '/', builder: (_, _) => const SizedBox.shrink()),
     ],
   );
   addTearDown(router.dispose);
@@ -179,6 +228,8 @@ Future<void> _pumpFavoriteDetailPage({
       child: TranslationProvider(child: MaterialApp.router(routerConfig: router)),
     ),
   );
+  await _pumpUi(tester);
+  router.push('/favorites/42');
   await _pumpUi(tester);
 }
 

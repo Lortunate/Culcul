@@ -2,12 +2,28 @@ import 'package:culcul/features/favorites/application/favorite_folder_commands.d
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:culcul/features/favorites/domain/repositories/favorite_repository.dart';
-import 'package:culcul/shared/errors/app_error.dart';
-import 'package:culcul/shared/result/result.dart';
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('FavoriteFolderCommandWorkflow', () {
+    test('createFolder propagates repository failure', () async {
+      final repository = _FakeFavoriteRepository()
+        ..createFolderResult = Failure(AppError.server('create failed'));
+      final workflow = FavoriteFolderCommandWorkflow(repository);
+
+      final result = await workflow.createFolder(
+        title: 'Folder',
+        intro: 'Intro',
+        privacy: 1,
+      );
+
+      expect(result.isFailure, isTrue);
+      expect(result.errorOrNull?.message, 'create failed');
+      expect(repository.createFolderCalls, 1);
+    });
+
     test('createFolder delegates to repository and maps success to void', () async {
       final repository = _FakeFavoriteRepository();
       final workflow = FavoriteFolderCommandWorkflow(repository);
@@ -42,6 +58,24 @@ void main() {
       expect(repository.updateFolderCalls, 1);
     });
 
+    test('editFolder delegates to repository and maps success to void', () async {
+      final repository = _FakeFavoriteRepository();
+      final workflow = FavoriteFolderCommandWorkflow(repository);
+
+      final result = await workflow.editFolder(
+        mediaId: 42,
+        title: 'Changed',
+        intro: 'Updated',
+        privacy: 0,
+      );
+
+      expect(result.isSuccess, isTrue);
+      expect(repository.updateFolderCalls, 1);
+      expect(repository.lastTitle, 'Changed');
+      expect(repository.lastIntro, 'Updated');
+      expect(repository.lastPrivacy, 0);
+    });
+
     test('deleteFolder delegates using string mediaIds', () async {
       final repository = _FakeFavoriteRepository();
       final workflow = FavoriteFolderCommandWorkflow(repository);
@@ -53,6 +87,19 @@ void main() {
       expect(repository.lastDeletedMediaIds, '9');
     });
 
+    test('deleteFolder propagates repository failure', () async {
+      final repository = _FakeFavoriteRepository()
+        ..deleteFolderResult = Failure(AppError.server('delete failed'));
+      final workflow = FavoriteFolderCommandWorkflow(repository);
+
+      final result = await workflow.deleteFolder(mediaId: 9);
+
+      expect(result.isFailure, isTrue);
+      expect(result.errorOrNull?.message, 'delete failed');
+      expect(repository.deleteFolderCalls, 1);
+      expect(repository.lastDeletedMediaIds, '9');
+    });
+
     test('deleteResources joins resource ids before delegating', () async {
       final repository = _FakeFavoriteRepository();
       final workflow = FavoriteFolderCommandWorkflow(repository);
@@ -60,6 +107,20 @@ void main() {
       final result = await workflow.deleteResources(mediaId: 7, resourceIds: <int>{3, 5});
 
       expect(result.isSuccess, isTrue);
+      expect(repository.deleteResourcesCalls, 1);
+      expect(repository.lastResourceIds, anyOf('3,5', '5,3'));
+      expect(repository.lastResourceMediaId, 7);
+    });
+
+    test('deleteResources propagates repository failure', () async {
+      final repository = _FakeFavoriteRepository()
+        ..deleteResourcesResult = Failure(AppError.server('resource delete failed'));
+      final workflow = FavoriteFolderCommandWorkflow(repository);
+
+      final result = await workflow.deleteResources(mediaId: 7, resourceIds: <int>{3, 5});
+
+      expect(result.isFailure, isTrue);
+      expect(result.errorOrNull?.message, 'resource delete failed');
       expect(repository.deleteResourcesCalls, 1);
       expect(repository.lastResourceIds, anyOf('3,5', '5,3'));
       expect(repository.lastResourceMediaId, 7);

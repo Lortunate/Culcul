@@ -1,6 +1,9 @@
+import 'dart:async';
+
+import 'package:culcul/features/video/application/comment_reply_commands.dart';
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
-import 'package:culcul/features/video/presentation/pages/comment_reply_page_commands.dart';
 import 'package:culcul/features/video/presentation/view_models/comment_reply_view_model.dart';
+import 'package:culcul/features/video/presentation/widgets/comments/comment_reply_sheet.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/bottom_input_bar.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_item.dart';
@@ -11,6 +14,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+typedef PresentCommentReplySheet =
+    void Function({
+      required CommentItem comment,
+      required Future<void> Function(String text) onSend,
+    });
+
+class CommentReplyPageSheetActions {
+  CommentReplyPageSheetActions({
+    required this.presentReplySheet,
+    required this.createOnSend,
+  });
+
+  final PresentCommentReplySheet presentReplySheet;
+  final Future<void> Function(String text) Function(CommentItem item) createOnSend;
+
+  void showReplySheet(CommentItem item) {
+    presentReplySheet(comment: item, onSend: createOnSend(item));
+  }
+}
 
 class CommentReplyPage extends HookConsumerWidget {
   final int oid;
@@ -34,12 +57,26 @@ class CommentReplyPage extends HookConsumerWidget {
     final controller = ref.read(provider.notifier);
     final hasMore = paging.hasMore;
     final loadGate = useMemoized(PaginationLoadGate.new, [oid, rootId]);
-    final commands = CommentReplyPageCommands.fromPage(
-      context: context,
-      ref: ref,
-      oid: oid,
-      rootId: rootId,
+    final commands = CommentReplyCommands(
       loadGate: loadGate,
+      addReply: controller.addReply,
+      hasMoreReplies: () => ref.read(provider).paging.hasMore,
+      isLoadingMoreReplies: () => ref.read(provider).paging.isLoadingMore,
+      loadMoreRepliesFromController: controller.loadMore,
+      currentReplyCount: () => ref.read(provider).paging.items.length,
+    );
+    final sheetActions = CommentReplyPageSheetActions(
+      createOnSend: (item) =>
+          (text) => commands.submitReply(item, text),
+      presentReplySheet: ({required comment, required onSend}) {
+        CommentReplySheet.show(
+          context,
+          comment: comment,
+          onSend: (text) {
+            unawaited(onSend(text));
+          },
+        );
+      },
     );
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -104,7 +141,7 @@ class CommentReplyPage extends HookConsumerWidget {
                             rootComment.oid,
                             rootComment.rpid,
                           ),
-                          onReply: () => commands.showReplySheet(rootComment),
+                          onReply: () => sheetActions.showReplySheet(rootComment),
                         ),
                         Divider(
                           height: 1,
@@ -150,7 +187,7 @@ class CommentReplyPage extends HookConsumerWidget {
                           ),
                           onDislike: () =>
                               controller.toggleCommentDislike(reply.oid, reply.rpid),
-                          onReply: () => commands.showReplySheet(reply),
+                          onReply: () => sheetActions.showReplySheet(reply),
                         );
                       }, childCount: paging.items.length),
                     ),

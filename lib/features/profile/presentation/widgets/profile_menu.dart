@@ -1,8 +1,10 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
-import 'package:culcul/shared/responsive/responsive.dart';
 import 'package:culcul/shared/widgets/app_clickable.dart';
 import 'package:flutter/material.dart';
+import 'package:culcul/ui/responsive/app_breakpoints.dart';
+import 'package:culcul/ui/responsive/app_responsive.dart';
+import 'package:culcul/ui/responsive/responsive_container.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ProfileMenu extends ConsumerWidget {

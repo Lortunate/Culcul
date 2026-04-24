@@ -2,13 +2,22 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-typedef ApprovedApplicationHomes = Map<String, String>;
+typedef ApprovedApplicationHomes = Map<String, List<String>>;
 
 const ApprovedApplicationHomes approvedApplicationHomes = {
-  'lib/features/dynamic/application/dynamic_detail_actions.dart':
-      'package:culcul/features/dynamic/presentation/pages/dynamic_detail_page_commands.dart',
-  'lib/features/notification/application/chat_page_commands.dart':
-      'package:culcul/features/notification/presentation/pages/chat_page_commands.dart',
+  'lib/features/dynamic/application/dynamic_detail_actions.dart': [
+    'package:culcul/features/dynamic/presentation/pages/dynamic_detail_page_commands.dart',
+  ],
+  'lib/features/favorites/application/favorite_folder_commands.dart': [
+    'package:culcul/features/favorites/presentation/pages/favorites_page_commands.dart',
+    'package:culcul/features/favorites/presentation/pages/favorite_detail_page_commands.dart',
+  ],
+  'lib/features/notification/application/chat_page_commands.dart': [
+    'package:culcul/features/notification/presentation/pages/chat_page_commands.dart',
+  ],
+  'lib/features/video/application/comment_reply_commands.dart': [
+    'package:culcul/features/video/presentation/pages/comment_reply_page_commands.dart',
+  ],
 };
 
 // Phase 3 guardrails: once a workflow has an approved application home,
@@ -92,16 +101,23 @@ void main() {
           final content = _stripComments(await file.readAsString());
 
           for (final entry in approvedApplicationHomes.entries) {
-            final forbiddenFilePath = entry.value
-                .replaceFirst('package:culcul/', 'lib/')
-                .replaceAll('\\', '/');
+            final forbiddenFilePaths = entry.value
+                .map(
+                  (legacyPackagePath) => legacyPackagePath
+                      .replaceFirst('package:culcul/', 'lib/')
+                      .replaceAll('\\', '/'),
+                )
+                .toSet();
 
-            if (normalizedPath == forbiddenFilePath || normalizedPath == entry.key) {
+            if (normalizedPath == entry.key ||
+                forbiddenFilePaths.contains(normalizedPath)) {
               continue;
             }
 
-            if (_referencesLegacyPath(content, entry.value)) {
-              violations.add('$normalizedPath -> ${entry.value}');
+            for (final legacyPackagePath in entry.value) {
+              if (_referencesLegacyPath(content, legacyPackagePath)) {
+                violations.add('$normalizedPath -> $legacyPackagePath');
+              }
             }
           }
         }

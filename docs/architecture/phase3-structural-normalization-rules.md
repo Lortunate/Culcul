@@ -37,7 +37,9 @@ goal is consistency, not a full tree rewrite.
 ## Approved homes
 
 - `lib/features/dynamic/application/dynamic_detail_actions.dart`
+- `lib/features/favorites/application/favorite_folder_commands.dart`
 - `lib/features/notification/application/chat_page_commands.dart`
+- `lib/features/video/application/comment_reply_commands.dart`
 
 For explicitly approved migrations, production imports should now point at the
 `application/` file rather than any legacy
@@ -48,6 +50,11 @@ added to the guard only when the migration is complete enough to enforce.
 
 - Dynamic detail and notification chat no longer keep page-command adapters in
   `presentation/pages`; their workflows are owned by `application/`.
+- `lib/features/favorites/application/favorite_folder_commands.dart` now owns
+  the favorites folder mutations that previously flowed through page-command
+  adapters.
+- `lib/features/video/application/comment_reply_commands.dart` now owns the
+  comment-reply workflow that previously flowed through a page-command adapter.
 - `lib/core/session/session_cookie_refresher.dart` owns the cross-cutting
   session refresh contract used by shared networking and the auth adapter. The
   matching `lib/shared/session/session_cookie_refresher.dart` file remains a
@@ -61,13 +68,14 @@ added to the guard only when the migration is complete enough to enforce.
   The matching `lib/shared/responsive/*` files remain compatibility exports for
   existing imports.
 
-## Intentional transitional adapters
+## Transitional adapters and accepted direct imports
 
-- `lib/features/favorites/presentation/pages/favorites_page_commands.dart` and
-  `lib/features/favorites/presentation/pages/favorite_detail_page_commands.dart`
-  remain thin UI adapters for dialogs, page invalidation, and navigation. The
-  durable folder mutations already live in
-  `lib/features/favorites/application/favorite_folder_commands.dart`.
-- `lib/features/video/presentation/pages/comment_reply_page_commands.dart`
-  remains a thin reply-sheet adapter until a dedicated application home is
-  introduced for that flow.
+- Phase 3 only guards legacy `presentation/pages/*_page_commands.dart` paths
+  when a branch still has a real presentation-era import target worth blocking.
+- Favorites folder commands and video comment reply are no longer transitional
+  adapter examples on this branch; their durable ownership now lives in
+  `application/`.
+- `lib/features/live/application/live_room_page_commands.dart` remains an
+  accepted application-owned helper on this branch because
+  `live_room_page.dart` imports it directly and there is no retained
+  `presentation/pages/*_page_commands.dart` path worth adding to the guard.

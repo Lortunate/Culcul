@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'package:culcul/shared/errors/app_error.dart';
-import 'package:culcul/shared/errors/exceptions.dart';
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/shared/network/request_cancel_token.dart';
 import 'package:culcul/shared/network/dio_client.dart';
 import 'package:culcul/shared/network/request_executor.dart';
 import 'package:culcul/shared/network/request_executor_binding.dart';
-import 'package:culcul/shared/result/result.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/search/data/dtos/search_dtos.dart';
 import 'package:culcul/features/search/data/search_mapper.dart';
 import 'package:culcul/features/search/data/search_api.dart';
