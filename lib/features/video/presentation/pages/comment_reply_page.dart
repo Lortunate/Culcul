@@ -35,6 +35,42 @@ class CommentReplyPageSheetActions {
   }
 }
 
+CommentReplyCommands _buildCommentReplyCommands({
+  required PaginationLoadGate loadGate,
+  required Future<void> Function(int oid, int root, int parent, String text) addReply,
+  required bool Function() hasMoreReplies,
+  required bool Function() isLoadingMoreReplies,
+  required Future<void> Function() loadMoreRepliesFromController,
+  required int Function() currentReplyCount,
+}) {
+  return CommentReplyCommands(
+    loadGate: loadGate,
+    addReply: addReply,
+    hasMoreReplies: hasMoreReplies,
+    isLoadingMoreReplies: isLoadingMoreReplies,
+    loadMoreRepliesFromController: loadMoreRepliesFromController,
+    currentReplyCount: currentReplyCount,
+  );
+}
+
+CommentReplyPageSheetActions _buildCommentReplySheetActions(
+  BuildContext context,
+  CommentReplyCommands commands,
+) {
+  return CommentReplyPageSheetActions(
+    createOnSend: (item) => (text) => commands.submitReply(item, text),
+    presentReplySheet: ({required comment, required onSend}) {
+      CommentReplySheet.show(
+        context,
+        comment: comment,
+        onSend: (text) {
+          unawaited(onSend(text));
+        },
+      );
+    },
+  );
+}
+
 class CommentReplyPage extends HookConsumerWidget {
   final int oid;
   final int rootId;
@@ -57,26 +93,20 @@ class CommentReplyPage extends HookConsumerWidget {
     final controller = ref.read(provider.notifier);
     final hasMore = paging.hasMore;
     final loadGate = useMemoized(PaginationLoadGate.new, [oid, rootId]);
-    final commands = CommentReplyCommands(
-      loadGate: loadGate,
-      addReply: controller.addReply,
-      hasMoreReplies: () => ref.read(provider).paging.hasMore,
-      isLoadingMoreReplies: () => ref.read(provider).paging.isLoadingMore,
-      loadMoreRepliesFromController: controller.loadMore,
-      currentReplyCount: () => ref.read(provider).paging.items.length,
+    final commands = useMemoized(
+      () => _buildCommentReplyCommands(
+        loadGate: loadGate,
+        addReply: controller.addReply,
+        hasMoreReplies: () => ref.read(provider).paging.hasMore,
+        isLoadingMoreReplies: () => ref.read(provider).paging.isLoadingMore,
+        loadMoreRepliesFromController: controller.loadMore,
+        currentReplyCount: () => ref.read(provider).paging.items.length,
+      ),
+      [ref, provider, controller, loadGate],
     );
-    final sheetActions = CommentReplyPageSheetActions(
-      createOnSend: (item) =>
-          (text) => commands.submitReply(item, text),
-      presentReplySheet: ({required comment, required onSend}) {
-        CommentReplySheet.show(
-          context,
-          comment: comment,
-          onSend: (text) {
-            unawaited(onSend(text));
-          },
-        );
-      },
+    final sheetActions = useMemoized(
+      () => _buildCommentReplySheetActions(context, commands),
+      [context, commands],
     );
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;

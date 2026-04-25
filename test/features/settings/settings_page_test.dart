@@ -1,4 +1,4 @@
-import 'package:culcul/shared/providers/storage_provider.dart';
+import 'package:culcul/core/bootstrap/providers/storage_provider.dart';
 import 'package:culcul/features/settings/presentation/pages/about_page.dart';
 import 'package:culcul/features/settings/presentation/pages/settings_page.dart';
 import 'package:culcul/i18n/strings.g.dart';

@@ -7,6 +7,7 @@ import 'package:culcul/features/favorites/domain/repositories/favorite_repositor
 import 'package:culcul/features/favorites/feature_scope.dart';
 import 'package:culcul/features/favorites/presentation/pages/favorite_detail_page.dart';
 import 'package:culcul/features/favorites/presentation/pages/favorites_page.dart';
+import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
@@ -42,6 +43,8 @@ void main() {
       expect(workflow.lastCreateTitle, 'Folder title');
       expect(workflow.lastCreateIntro, 'Folder intro');
       expect(workflow.lastCreatePrivacy, 1);
+      expect(find.byType(FavFolderDialog), findsNothing);
+      expect(find.text('${t.common.error}: create failed'), findsNothing);
 
       workflow.createFolderResult = Failure(AppError.server('create failed'));
 
@@ -52,7 +55,7 @@ void main() {
       await tester.tap(find.widgetWithText(TextButton, t.common.confirm));
       await _pumpUi(tester);
 
-      expect(find.text('Failed to add folder: create failed'), findsOneWidget);
+      expect(find.text('${t.common.error}: create failed'), findsOneWidget);
     });
 
     testWidgets('FavoriteDetailPage edit action delegates to workflow', (tester) async {
