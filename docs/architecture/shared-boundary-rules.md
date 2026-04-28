@@ -57,6 +57,11 @@ In practice this means:
   `lib/shared/providers/cookie_jar_provider.dart`, and
   `lib/shared/providers/storage_provider.dart` are removed.
   Production imports must use `package:culcul/core/bootstrap/providers/*`.
+- `lib/shared/providers/**` is retired.
+- WBI signing ownership now lives under
+  `lib/shared/network/providers/**`.
+- New provider declarations must live next to their owning infrastructure
+  domain instead of being added to a generic shared provider bucket.
 - old shared session shims are gone; canonical session contracts remain under
   `lib/core/session/**`.
 

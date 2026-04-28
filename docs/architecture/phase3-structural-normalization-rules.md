@@ -32,6 +32,11 @@ goal is consistency, not a full tree rewrite.
   `lib/shared/providers/storage_provider.dart` are removed.
   Production imports should use
   `package:culcul/core/bootstrap/providers/...`.
+- the former path `lib/shared/providers/wbi_provider.dart` is retired.
+- `WbiHelper` belongs to network-owned infrastructure under
+  `lib/shared/network/providers/**`.
+- follow-up cleanup should start from the owning domain and must not resurrect
+  `shared/providers/**`.
 - old shared session shims are gone. Canonical session contracts stay under
   `lib/core/session/**`.
 
