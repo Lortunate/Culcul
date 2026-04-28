@@ -52,11 +52,11 @@ In practice this means:
   `application/` home for that feature.
 - bootstrap-owned provider contracts now live under
   `lib/core/bootstrap/providers/**`.
-- `lib/shared/providers/cache_store_provider.dart`,
+- the retired shared provider paths
+  `lib/shared/providers/cache_store_provider.dart`,
   `lib/shared/providers/cookie_jar_provider.dart`, and
-  `lib/shared/providers/storage_provider.dart` are compatibility-only during
-  the migration and production imports should prefer the canonical
-  `core/bootstrap/providers/*` path instead.
+  `lib/shared/providers/storage_provider.dart` are removed.
+  Production imports must use `package:culcul/core/bootstrap/providers/*`.
 - old shared session shims are gone; canonical session contracts remain under
   `lib/core/session/**`.
 

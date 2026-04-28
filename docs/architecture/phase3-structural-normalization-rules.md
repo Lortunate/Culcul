@@ -26,11 +26,12 @@ goal is consistency, not a full tree rewrite.
   widgets with no feature workflow knowledge.
 - `lib/shared/**` remains a compatibility layer while the split proceeds in
   small pilots. New moves should prefer `core` or `ui` when ownership is clear.
-- `lib/shared/providers/cache_store_provider.dart`,
+- the retired shared provider paths
+  `lib/shared/providers/cache_store_provider.dart`,
   `lib/shared/providers/cookie_jar_provider.dart`, and
-  `lib/shared/providers/storage_provider.dart` are compatibility-only during
-  the bootstrap-provider migration. Production imports should use the canonical
-  `package:culcul/core/bootstrap/providers/...` path.
+  `lib/shared/providers/storage_provider.dart` are removed.
+  Production imports should use
+  `package:culcul/core/bootstrap/providers/...`.
 - old shared session shims are gone. Canonical session contracts stay under
   `lib/core/session/**`.
 
@@ -73,8 +74,7 @@ added to the guard only when the migration is complete enough to enforce.
   `lib/core/bootstrap/providers/storage_provider.dart` own the bootstrap
   provider contracts. The matching shared shim files
   `cache_store_provider.dart`, `cookie_jar_provider.dart`, and
-  `storage_provider.dart` remain compatibility exports while imports are
-  tightened.
+  `storage_provider.dart` are retired and removed.
 - `lib/ui/responsive/app_responsive.dart` and
   `lib/ui/responsive/responsive_container.dart` own the responsive UI helpers.
   The matching `lib/shared/responsive/*` files remain compatibility exports for
