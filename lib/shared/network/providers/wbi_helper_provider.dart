@@ -188,9 +188,7 @@ class WbiHelper {
       // Remove specific characters: !'()*
       valStr = valStr.replaceAll(RegExp(r"[!'()*]"), '');
 
-      if (key != 'wts') {
-        newParams[key] = valStr;
-      }
+      newParams[key] = valStr;
       queryList.add('$key=${Uri.encodeComponent(valStr)}');
     }
 

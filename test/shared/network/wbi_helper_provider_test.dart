@@ -41,7 +41,7 @@ void main() {
 
     expect(signed['foo'], 'abcd');
     expect(signed['bar'], '1');
-    expect(signed['wts'], isA<int>());
+    expect(signed['wts'], isA<String>());
     expect((signed['w_rid'] as String).length, 32);
   });
 }
