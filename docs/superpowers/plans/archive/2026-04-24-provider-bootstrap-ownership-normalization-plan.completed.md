@@ -1,6 +1,6 @@
 > Completed on 2026-04-28 after the provider/bootstrap ownership slice landed and the retired shared shim paths were removed.
 > Verification used during closeout: `flutter test test/architecture/provider_bootstrap_ownership_guard_test.dart --reporter compact`, `flutter test test/architecture/phase3_workflow_ownership_guard_test.dart --reporter compact`, and `flutter analyze`.
-> No new active planning surface was opened. If follow-up continues, start a new design/plan for reassessing remaining `shared/providers/**` ownership such as `wbi_provider`.
+> The next planning surface was `docs/superpowers/plans/archive/2026-04-28-shared-provider-infra-ownership-reassessment-plan.completed.md`, and it is now completed and archived.
 
 # Provider And Bootstrap Ownership Normalization Implementation Plan
 

@@ -1,6 +1,6 @@
 > Completed on 2026-04-28 after the provider/bootstrap ownership implementation landed and closeout verification passed.
 > Closeout evidence: `flutter test test/architecture/provider_bootstrap_ownership_guard_test.dart --reporter compact`, `flutter test test/architecture/phase3_workflow_ownership_guard_test.dart --reporter compact`, and `flutter analyze`.
-> No next active design surface was opened. Any remaining `shared/providers/**` ownership cleanup should start with a new bounded design.
+> The next design surface was `docs/superpowers/specs/archive/2026-04-28-shared-provider-infra-ownership-reassessment-design.completed.md`, and it is now completed and archived.
 
 # Culcul Provider And Bootstrap Ownership Normalization Design
 
