@@ -1,16 +1,49 @@
 # culcul
 
-A new Flutter project.
+A 3rd-party BiliBili client built with Flutter.
 
-## Getting Started
+## Bootstrap
 
-This project is a starting point for a Flutter application.
+From a fresh checkout or worktree, install dependencies first:
 
-A few resources to get you started if this is your first Flutter project:
+```bash
+flutter pub get
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Recover Ignored Generated Artifacts
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+This repo does not track generated `*.g.dart` files. A fresh checkout/worktree
+can therefore be missing required artifacts such as:
+
+- `lib/i18n/strings.g.dart`
+- `lib/app/router/app_routes.g.dart`
+
+Use the repo-local recovery helper from Git Bash:
+
+```bash
+bash scripts/bootstrap_codegen.sh
+```
+
+The script runs the repository's required code generation sequence:
+
+```bash
+flutter pub get
+dart run slang
+dart run build_runner build --delete-conflicting-outputs
+```
+
+If `build_runner` reports `InvalidOutputException` for
+`lib/i18n/strings.g.dart`, verify the file exists before treating recovery as
+failed because `dart run slang` may already have restored it.
+
+After recovery, a focused validation command is:
+
+```bash
+flutter test test/app/shell/main_shell_responsive_test.dart --reporter compact
+```
+
+If you need a broader check, run:
+
+```bash
+flutter analyze
+```

@@ -1,6 +1,6 @@
 import 'package:culcul/app/shell/main_shell.dart';
 import 'package:culcul/app/shell/navigation_items.dart';
-import 'package:culcul/shared/perf/frame_timing_sampler.dart';
+import 'package:culcul/core/perf/frame_timing_sampler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

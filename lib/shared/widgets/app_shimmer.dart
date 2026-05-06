@@ -1,4 +1,4 @@
-import 'package:culcul/shared/perf/performance_policy.dart';
+import 'package:culcul/core/perf/performance_policy.dart';
 import 'package:flutter/material.dart';
 
 class AppShimmer extends StatefulWidget {

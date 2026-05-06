@@ -19,6 +19,9 @@ goal is consistency, not a full tree rewrite.
 - `lib/core/**` is the long-term home for infrastructure and cross-cutting
   structural code: network, session, result, errors, services, perf, and stable
   shared contracts.
+- canonical perf helpers now live under `lib/core/perf/**`.
+- the former `lib/shared/perf/**` paths are retired. Production imports should
+  use `package:culcul/core/perf/...`.
 - bootstrap-owned provider contracts now live under
   `lib/core/bootstrap/providers/**`.
 - `lib/ui/**` is the long-term home for design system code and reusable UI
@@ -74,6 +77,9 @@ added to the guard only when the migration is complete enough to enforce.
   session refresh contract used by shared networking and the auth adapter.
 - `lib/core/session/session_refresh_provider.dart` owns the app-bootstrap
   session refresh action provider.
+- `lib/core/perf/**` owns the shared frame sampling, startup tracing, list,
+  network, feature-flow, and video performance helpers that previously lived
+  under `lib/shared/perf/**`.
 - `lib/core/bootstrap/providers/cache_store_provider.dart`,
   `lib/core/bootstrap/providers/cookie_jar_provider.dart`, and
   `lib/core/bootstrap/providers/storage_provider.dart` own the bootstrap

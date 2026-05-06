@@ -6,7 +6,7 @@ import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/shared/network/dio_client.dart';
 import 'package:culcul/shared/network/network_concurrency_executor.dart';
 import 'package:culcul/shared/network/network_concurrency_profiles.dart';
-import 'package:culcul/shared/perf/feature_flow_perf_logger.dart';
+import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
 import 'package:culcul/shared/network/request_executor.dart';
 import 'package:culcul/shared/network/request_executor_binding.dart';
 import 'package:culcul/core/bootstrap/providers/cookie_jar_provider.dart';

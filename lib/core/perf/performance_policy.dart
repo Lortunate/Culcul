@@ -1,4 +1,4 @@
-import 'package:culcul/shared/perf/frame_timing_sampler.dart';
+import 'package:culcul/core/perf/frame_timing_sampler.dart';
 import 'package:flutter/foundation.dart';
 
 enum RenderDegradeLevel { normal, reducedEffects, minimalEffects }

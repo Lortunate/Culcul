@@ -60,6 +60,9 @@ In practice this means:
 - `lib/shared/providers/**` is retired.
 - WBI signing ownership now lives under
   `lib/shared/network/providers/**`.
+- canonical perf helpers now live under `lib/core/perf/**`.
+- the old `lib/shared/perf/**` paths are retired. Production imports must use
+  `package:culcul/core/perf/*`.
 - New provider declarations must live next to their owning infrastructure
   domain instead of being added to a generic shared provider bucket.
 - old shared session shims are gone; canonical session contracts remain under

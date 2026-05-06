@@ -1,4 +1,4 @@
-import 'package:culcul/shared/perf/frame_timing_sampler.dart';
+import 'package:culcul/core/perf/frame_timing_sampler.dart';
 import 'package:culcul/shared/widgets/app_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';

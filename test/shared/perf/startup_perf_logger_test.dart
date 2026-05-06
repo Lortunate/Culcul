@@ -1,4 +1,4 @@
-import 'package:culcul/shared/perf/startup_perf_logger.dart';
+import 'package:culcul/core/perf/startup_perf_logger.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

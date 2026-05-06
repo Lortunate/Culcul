@@ -1,5 +1,5 @@
 import 'package:culcul/shared/network/network_quality_policy.dart';
-import 'package:culcul/shared/perf/performance_policy.dart';
+import 'package:culcul/core/perf/performance_policy.dart';
 import 'package:culcul/shared/widgets/app_network_image_prefetcher.dart';
 import 'package:flutter/material.dart';
 

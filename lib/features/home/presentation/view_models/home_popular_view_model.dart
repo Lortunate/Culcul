@@ -3,7 +3,7 @@ import 'package:culcul/features/home/presentation/view_models/home_feed_paging_m
 import 'package:culcul/shared/constants/api_constants.dart';
 import 'package:culcul/shared/contracts/video_model_contract.dart';
 import 'package:culcul/shared/pagination/paged_async_notifier.dart';
-import 'package:culcul/shared/perf/feature_flow_perf_logger.dart';
+import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_popular_view_model.g.dart';

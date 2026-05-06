@@ -10,6 +10,13 @@ const _legacyImportPaths = [
   'package:culcul/shared/errors/app_error.dart',
   'package:culcul/shared/errors/exceptions.dart',
   'package:culcul/shared/result/result.dart',
+  'package:culcul/shared/perf/feature_flow_perf_logger.dart',
+  'package:culcul/shared/perf/frame_timing_sampler.dart',
+  'package:culcul/shared/perf/list_perf_logger.dart',
+  'package:culcul/shared/perf/network_perf_logger.dart',
+  'package:culcul/shared/perf/performance_policy.dart',
+  'package:culcul/shared/perf/startup_perf_logger.dart',
+  'package:culcul/shared/perf/video_perf_logger.dart',
 ];
 
 void main() {

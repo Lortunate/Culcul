@@ -1,4 +1,4 @@
-import 'package:culcul/shared/perf/list_perf_logger.dart';
+import 'package:culcul/core/perf/list_perf_logger.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'search_result.freezed.dart';
