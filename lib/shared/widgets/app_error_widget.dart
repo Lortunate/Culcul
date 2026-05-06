@@ -1,4 +1,4 @@
-import 'package:culcul/shared/errors/error_handler.dart';
+import 'package:culcul/core/errors/error_handler.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/shared/widgets/app_selectable_text.dart';
 import 'package:flutter/material.dart';

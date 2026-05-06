@@ -45,6 +45,13 @@ goal is consistency, not a full tree rewrite.
 - canonical shared contracts now live under `lib/core/contracts/**`.
 - the former `lib/shared/contracts/**` paths are retired. Production imports
   should use `package:culcul/core/contracts/...`.
+- the former `lib/shared/errors/**` directory is fully retired. Canonical error
+  types live under `lib/core/errors/**`. The `error_handler.dart` helper has
+  moved to `lib/core/errors/error_handler.dart`.
+- the former `lib/shared/responsive/**` directory is fully retired. Canonical
+  responsive helpers live under `lib/ui/responsive/**`.
+- the former `lib/shared/result/**` directory is fully retired. The canonical
+  result type lives under `lib/core/result/**`.
 
 ## Guard direction
 

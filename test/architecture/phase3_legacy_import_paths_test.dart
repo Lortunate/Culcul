@@ -8,6 +8,7 @@ const _legacyImportPaths = [
   'package:culcul/shared/responsive/app_responsive.dart',
   'package:culcul/shared/responsive/responsive_container.dart',
   'package:culcul/shared/errors/app_error.dart',
+  'package:culcul/shared/errors/error_handler.dart',
   'package:culcul/shared/errors/exceptions.dart',
   'package:culcul/shared/result/result.dart',
   'package:culcul/shared/perf/feature_flow_perf_logger.dart',

@@ -70,6 +70,12 @@ In practice this means:
 - canonical shared contracts now live under `lib/core/contracts/**`.
 - the former `lib/shared/contracts/**` paths are retired. Production imports must
   use `package:culcul/core/contracts/*`.
+- the former `lib/shared/errors/**` directory is fully retired. Canonical error
+  types and ErrorHandler live under `lib/core/errors/**`.
+- the former `lib/shared/responsive/**` directory is fully retired. Canonical
+  responsive helpers live under `lib/ui/responsive/**`.
+- the former `lib/shared/result/**` directory is fully retired. The canonical
+  result type lives under `lib/core/result/**`.
 
 ## Guard Coverage
 
