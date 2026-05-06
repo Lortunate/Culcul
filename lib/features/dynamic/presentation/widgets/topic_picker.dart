@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:culcul/shared/utils/format_utils.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/topic_search_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/shared/widgets/app_network_image.dart';

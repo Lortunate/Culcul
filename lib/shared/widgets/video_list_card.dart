@@ -1,4 +1,4 @@
-import 'package:culcul/shared/utils/format_utils.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/shared/widgets/app_card_container.dart';
 import 'package:culcul/shared/widgets/app_clickable.dart';
 import 'package:culcul/shared/widgets/icon_text.dart';

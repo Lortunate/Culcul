@@ -6,7 +6,7 @@ import 'package:culcul/features/notification/presentation/widgets/notification_n
 import 'package:culcul/shared/widgets/app_avatar.dart';
 import 'package:culcul/shared/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:culcul/shared/utils/format_extensions.dart';
+import 'package:culcul/core/utils/format_extensions.dart';
 
 class NotificationItemWidget extends StatelessWidget {
   final NotificationEntry item;

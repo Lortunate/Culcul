@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:culcul/shared/utils/format_extensions.dart';
+import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/player_constants.dart';

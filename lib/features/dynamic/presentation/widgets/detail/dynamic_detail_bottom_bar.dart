@@ -1,5 +1,5 @@
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
-import 'package:culcul/shared/utils/share_utils.dart';
+import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_comment_composer.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';

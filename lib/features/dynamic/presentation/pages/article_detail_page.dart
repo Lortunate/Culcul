@@ -1,6 +1,6 @@
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
-import 'package:culcul/shared/utils/format_utils.dart';
-import 'package:culcul/shared/utils/share_utils.dart';
+import 'package:culcul/core/utils/format_utils.dart';
+import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/article_detail_view_model.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_navigation.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_comment_composer.dart';

@@ -1,4 +1,4 @@
-import 'package:culcul/shared/utils/format_extensions.dart';
+import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/features/settings/data/models/app_theme_preference.dart';
 import 'package:culcul/features/settings/feature_scope.dart';
 import 'package:flutter/material.dart';

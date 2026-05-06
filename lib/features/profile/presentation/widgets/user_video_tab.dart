@@ -1,4 +1,4 @@
-import 'package:culcul/shared/utils/format_utils.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/shared/pagination/pagination_load_gate.dart';
 import 'package:culcul/shared/pagination/scroll_load_trigger.dart';

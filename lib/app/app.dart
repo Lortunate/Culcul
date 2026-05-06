@@ -2,7 +2,7 @@ import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/session/session_cookie_refresher.dart';
 import 'package:culcul/features/auth/application/auth_session_cookie_refresher.dart';
 import 'package:culcul/features/settings/presentation/view_models/settings_view_model.dart';
-import 'package:culcul/shared/utils/toast_utils.dart';
+import 'package:culcul/core/utils/toast_utils.dart';
 import 'package:culcul/ui/ui.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';

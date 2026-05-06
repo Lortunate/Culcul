@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:culcul/shared/utils/format_utils.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/history/data/models/history_entry.dart';
 import 'package:culcul/shared/widgets/icon_text.dart';
 import 'package:culcul/shared/widgets/video_list_card.dart';

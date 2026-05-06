@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:culcul/shared/utils/format_extensions.dart';
+import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/ui/ui.dart';
 import 'package:culcul/features/video/presentation/hooks/use_listen_audio_mode.dart';
 import 'package:culcul/features/video/presentation/view_models/playback_snapshot_view_model.dart';

@@ -1,4 +1,4 @@
-import 'package:culcul/shared/utils/format_extensions.dart';
+import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/features/video/presentation/view_models/listen_sleep_timer_view_model.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/player_panel.dart';
 import 'package:culcul/features/video/presentation/widgets/controls/video_overlay_styles.dart';

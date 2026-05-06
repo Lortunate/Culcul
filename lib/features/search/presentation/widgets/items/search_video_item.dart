@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/shared/utils/format_utils.dart';
-import 'package:culcul/shared/utils/format_extensions.dart';
+import 'package:culcul/core/utils/format_utils.dart';
+import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/shared/widgets/icon_text.dart';

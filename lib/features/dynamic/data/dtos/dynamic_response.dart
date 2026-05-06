@@ -1,4 +1,4 @@
-import 'package:culcul/shared/utils/json_utils.dart';
+import 'package:culcul/core/utils/json_utils.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'dynamic_response.core.dart';

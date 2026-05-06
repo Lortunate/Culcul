@@ -26,6 +26,17 @@ const _legacyImportPaths = [
   'package:culcul/shared/contracts/video_model_contract.dart',
   'package:culcul/shared/constants/api_constants.dart',
   'package:culcul/shared/constants/app_dimens.dart',
+  'package:culcul/shared/utils/crypto_utils.dart',
+  'package:culcul/shared/utils/danmaku_mask_parser.dart',
+  'package:culcul/shared/utils/format_extensions.dart',
+  'package:culcul/shared/utils/format_utils.dart',
+  'package:culcul/shared/utils/id_utils.dart',
+  'package:culcul/shared/utils/json_compute.dart',
+  'package:culcul/shared/utils/json_utils.dart',
+  'package:culcul/shared/utils/list_utils.dart',
+  'package:culcul/shared/utils/share_utils.dart',
+  'package:culcul/shared/utils/toast_utils.dart',
+  'package:culcul/shared/utils/validation_utils.dart',
 ];
 
 void main() {

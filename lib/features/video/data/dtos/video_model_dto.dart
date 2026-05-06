@@ -1,4 +1,4 @@
-import 'package:culcul/shared/utils/format_utils.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'video_model_dto.freezed.dart';

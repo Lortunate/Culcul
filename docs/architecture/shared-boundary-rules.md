@@ -78,6 +78,8 @@ In practice this means:
   result type lives under `lib/core/result/**`.
 - the former `lib/shared/constants/**` directory is fully retired. Canonical
   constants live under `lib/core/constants/**`.
+- the former `lib/shared/utils/**` directory is fully retired. Canonical
+  utilities live under `lib/core/utils/**`.
 
 ## Guard Coverage
 

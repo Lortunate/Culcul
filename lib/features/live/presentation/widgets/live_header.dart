@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
-import 'package:culcul/shared/utils/format_utils.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/live/domain/entities/live_entities.dart';
 import 'package:culcul/core/contracts/user_card_contract.dart';
 import 'package:culcul/i18n/strings.g.dart';

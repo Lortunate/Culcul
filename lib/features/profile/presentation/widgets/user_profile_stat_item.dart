@@ -1,4 +1,4 @@
-import 'package:culcul/shared/utils/format_utils.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:flutter/material.dart';
 
 class UserProfileStatItem extends StatelessWidget {

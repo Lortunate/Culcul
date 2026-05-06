@@ -54,6 +54,10 @@ goal is consistency, not a full tree rewrite.
   result type lives under `lib/core/result/**`.
 - the former `lib/shared/constants/**` directory is fully retired. Canonical
   constants (api_constants, app_dimens) live under `lib/core/constants/**`.
+- the former `lib/shared/utils/**` directory is fully retired. Canonical
+  utilities (format_extensions, format_utils, crypto_utils, id_utils,
+  json_utils, json_compute, list_utils, danmaku_mask_parser, share_utils,
+  toast_utils, validation_utils) live under `lib/core/utils/**`.
 
 ## Guard direction
 

@@ -1,4 +1,4 @@
-import 'package:culcul/shared/utils/format_utils.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:culcul/features/video/presentation/hooks/use_player_system_settings.dart';
 import 'package:culcul/features/video/presentation/hooks/use_video_loader.dart';

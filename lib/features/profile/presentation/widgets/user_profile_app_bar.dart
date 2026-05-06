@@ -1,4 +1,4 @@
-import 'package:culcul/shared/utils/share_utils.dart';
+import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/shared/widgets/app_bottom_sheet.dart';

@@ -1,4 +1,4 @@
-import 'package:culcul/shared/utils/format_utils.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/contracts/live_room_summary_contract.dart';
 import 'package:culcul/shared/widgets/app_avatar.dart';
 import 'package:culcul/shared/widgets/app_card_container.dart';

@@ -1,5 +1,5 @@
 import 'package:culcul/shared/services/media_service.dart';
-import 'package:culcul/shared/utils/format_utils.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:extended_image/extended_image.dart';

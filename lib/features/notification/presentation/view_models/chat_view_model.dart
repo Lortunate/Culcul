@@ -6,7 +6,7 @@ import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/shared/network/network_concurrency_executor.dart';
 import 'package:culcul/shared/network/network_concurrency_profiles.dart';
 import 'package:culcul/shared/pagination/paged_list_state.dart';
-import 'package:culcul/shared/utils/list_utils.dart';
+import 'package:culcul/core/utils/list_utils.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/feature_scope.dart';

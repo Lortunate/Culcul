@@ -1,4 +1,4 @@
-import 'package:culcul/shared/utils/format_extensions.dart';
+import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/features/video/presentation/view_models/danmaku_settings_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/playback_snapshot_view_model.dart';
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';

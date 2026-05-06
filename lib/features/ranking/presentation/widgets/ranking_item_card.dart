@@ -1,5 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/shared/utils/format_utils.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/ranking/data/models/ranking_video.dart';
 import 'package:culcul/features/ranking/presentation/widgets/rank_badge.dart';
 import 'package:culcul/shared/widgets/icon_text.dart';

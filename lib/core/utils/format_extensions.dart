@@ -1,4 +1,4 @@
-import 'package:culcul/shared/utils/format_utils.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 
 extension FormatIntExtension on int {
   String get formatNumber => FormatUtils.formatNumber(this);

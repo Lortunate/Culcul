@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:culcul/shared/utils/format_utils.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/shared/network/resource_api.dart';
 import 'package:culcul/shared/network/resource_api_provider.dart';
 import 'package:gal/gal.dart';
