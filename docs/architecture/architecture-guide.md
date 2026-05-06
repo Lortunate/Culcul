@@ -11,6 +11,8 @@ lib/
 │   ├── router/       # go_router route definitions
 │   └── shell/        # Main app shell (bottom nav, etc.)
 ├── core/             # Infrastructure, cross-cutting concerns
+│   ├── bootstrap/    # Riverpod provider stubs for app dependencies
+│   │   └── providers/ # CookieJar, CacheStore, Storage provider contracts
 │   ├── constants/    # API constants, app dimensions
 │   ├── contracts/    # Shared data contracts (VideoModel, UserCard, etc.)
 │   ├── errors/       # Error types, ErrorHandler
@@ -55,6 +57,14 @@ core/     → (standalone, no feature imports)
 ui/       → core/ (no feature imports)
 ```
 
+### Bootstrap Architecture
+
+Two-phase bootstrap: `app/bootstrap/` creates concrete instances imperatively, `core/bootstrap/providers/` defines Riverpod provider stubs. `main.dart` bridges them via `ProviderScope(overrides: [...])`.
+
+- `app/bootstrap/app_bootstrap.dart` — platform init (Hive, cookies, cache, locale)
+- `app/bootstrap/deferred_app_init.dart` — post-first-frame warmup (MediaKit)
+- `core/bootstrap/providers/` — Riverpod stubs consumed by 17+ feature/core files
+
 ### Feature Structure
 
 Each feature follows this pattern:
@@ -98,13 +108,19 @@ The `lib/shared/` directory was retired across phases 0-3:
 
 Archived docs: `docs/architecture/archive/`
 
-## Phase 4 Focus (Current): CI/CD & Code Quality
+## Phase 4 (Complete): CI/CD & Code Quality
 
-Spec: `docs/superpowers/specs/2026-05-06-phase4-ci-code-quality-design.md`
+Completed 2026-05-06. CI pipeline (GitHub Actions), Makefile, and coverage artifact upload.
 
-1. CI pipeline (GitHub Actions) — analyze + test + build-check
-2. Developer task runner (Makefile)
-3. Coverage reporting
-4. Test quality review (83 test files exist, verify coverage gaps)
-5. Pre-commit hooks (future)
-6. Documentation refresh
+Archived spec: `docs/superpowers/specs/archive/2026-05-06-phase4-ci-code-quality-design.completed.md`
+
+## Phase 5 (Current): Test Coverage & CI Hardening
+
+Spec: `docs/superpowers/specs/2026-05-06-phase5-test-coverage-ci-hardening-design.md`
+Plan: `docs/superpowers/plans/2026-05-06-phase5-test-coverage-ci-hardening-plan.md`
+
+1. Cover zero-coverage features (history, ranking, to_view)
+2. Cover core/utils/, core/errors/, core/session/, core/contracts/
+3. Cover auth data layer
+4. Add CI coverage threshold gate
+5. Architecture guide maintenance
