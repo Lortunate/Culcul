@@ -94,15 +94,17 @@ features/<name>/
 The `lib/shared/` directory was retired across phases 0-3:
 - **Phase 1**: Decoupled shared boundaries (auth, video, network)
 - **Phase 2**: Route seams, orchestration extraction, provider normalization
-- **Phase 3**: Structural moves (constants, utils, hooks, pagination, network, services, theme, widgets)
+- **Phase 3**: Structural moves (constants, utils, hooks, pagination, network, services, theme, widgets) — **COMPLETE** as of 2026-05-06
 
 Archived docs: `docs/architecture/archive/`
 
-## Phase 3 Focus (Current)
+## Phase 4 Focus (Current): CI/CD & Code Quality
 
-1. Testing foundation — architecture guard tests
-2. Unit tests for core services
-3. Widget tests for shared UI
-4. CI pipeline (GitHub Actions)
-5. TODO/FIXME cleanup
+Spec: `docs/superpowers/specs/2026-05-06-phase4-ci-code-quality-design.md`
+
+1. CI pipeline (GitHub Actions) — analyze + test + build-check
+2. Developer task runner (Makefile)
+3. Coverage reporting
+4. Test quality review (83 test files exist, verify coverage gaps)
+5. Pre-commit hooks (future)
 6. Documentation refresh

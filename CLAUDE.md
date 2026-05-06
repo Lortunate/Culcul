@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **Culcul** (2212 symbols, 2889 relationships, 19 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **Culcul** (2211 symbols, 2889 relationships, 19 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -42,13 +42,15 @@ This project is indexed by GitNexus as **Culcul** (2212 symbols, 2889 relationsh
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 3 — Testing & Quality)
+## Architecture (Phase 4 — CI/CD & Code Quality)
 
 `lib/shared/` is **fully retired**. Structure: `app/` (shell/router) → `features/` (domain modules) → `core/` (infrastructure) + `ui/` (design system).
 
 See `docs/architecture/architecture-guide.md` for full layout and rules.
 
-**Current focus**: Testing foundation, CI pipeline, code quality. Zero test files exist — this is the priority.
+**Current focus**: CI pipeline (GitHub Actions), lint automation, coverage reporting. 83 test files exist; CI/CD is the next priority.
+
+Spec: `docs/superpowers/specs/2026-05-06-phase4-ci-code-quality-design.md`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`
