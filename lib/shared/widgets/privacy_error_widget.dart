@@ -1,4 +1,4 @@
-import 'package:culcul/shared/constants/app_dimens.dart';
+import 'package:culcul/core/constants/app_dimens.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 

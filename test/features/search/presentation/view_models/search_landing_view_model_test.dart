@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:culcul/shared/constants/api_constants.dart';
+import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/shared/network/request_cancel_token.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';

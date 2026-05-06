@@ -76,6 +76,8 @@ In practice this means:
   responsive helpers live under `lib/ui/responsive/**`.
 - the former `lib/shared/result/**` directory is fully retired. The canonical
   result type lives under `lib/core/result/**`.
+- the former `lib/shared/constants/**` directory is fully retired. Canonical
+  constants live under `lib/core/constants/**`.
 
 ## Guard Coverage
 

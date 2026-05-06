@@ -1,4 +1,4 @@
-import 'package:culcul/shared/constants/api_constants.dart';
+import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/shared/network/models/api_response.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';

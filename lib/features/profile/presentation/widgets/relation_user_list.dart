@@ -1,4 +1,4 @@
-import 'package:culcul/shared/constants/app_dimens.dart';
+import 'package:culcul/core/constants/app_dimens.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/presentation/widgets/relation_user_item.dart';

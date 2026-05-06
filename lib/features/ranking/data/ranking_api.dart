@@ -1,4 +1,4 @@
-import 'package:culcul/shared/constants/api_constants.dart';
+import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/shared/network/models/api_response.dart';
 import 'package:culcul/features/ranking/data/dtos/ranking_response_dto.dart';
 import 'package:dio/dio.dart' hide Headers;

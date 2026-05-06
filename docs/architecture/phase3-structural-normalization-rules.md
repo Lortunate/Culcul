@@ -52,6 +52,8 @@ goal is consistency, not a full tree rewrite.
   responsive helpers live under `lib/ui/responsive/**`.
 - the former `lib/shared/result/**` directory is fully retired. The canonical
   result type lives under `lib/core/result/**`.
+- the former `lib/shared/constants/**` directory is fully retired. Canonical
+  constants (api_constants, app_dimens) live under `lib/core/constants/**`.
 
 ## Guard direction
 

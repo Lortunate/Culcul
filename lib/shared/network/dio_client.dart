@@ -1,4 +1,4 @@
-import 'package:culcul/shared/constants/api_constants.dart';
+import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/shared/network/interceptors/cache_interceptor.dart';
 import 'package:culcul/shared/network/interceptors/csrf_interceptor.dart';
 import 'package:culcul/shared/network/interceptors/in_flight_dedup_interceptor.dart';

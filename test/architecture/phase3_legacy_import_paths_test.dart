@@ -24,6 +24,8 @@ const _legacyImportPaths = [
   'package:culcul/shared/contracts/search_result_contract.dart',
   'package:culcul/shared/contracts/user_card_contract.dart',
   'package:culcul/shared/contracts/video_model_contract.dart',
+  'package:culcul/shared/constants/api_constants.dart',
+  'package:culcul/shared/constants/app_dimens.dart',
 ];
 
 void main() {

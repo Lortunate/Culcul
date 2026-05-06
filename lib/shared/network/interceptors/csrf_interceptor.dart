@@ -1,5 +1,5 @@
 import 'package:cookie_jar/cookie_jar.dart';
-import 'package:culcul/shared/constants/api_constants.dart';
+import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/bootstrap/providers/cookie_jar_provider.dart';
 import 'package:dio/dio.dart';
