@@ -35,6 +35,17 @@ jobs:
           cache: true
       - run: flutter pub get
       - run: flutter test --coverage
+      - name: Coverage threshold check
+        run: |
+          TOTAL=$(grep -c '^end_of_record' coverage/lcov.info)
+          HIT=$(grep '^DA:' coverage/lcov.info | grep -v ',0$' | wc -l)
+          if [ "$TOTAL" -eq 0 ]; then echo "No coverage data"; exit 1; fi
+          PERCENT=$((HIT * 100 / TOTAL))
+          echo "Line coverage: ${PERCENT}%"
+          if [ "$PERCENT" -lt 18 ]; then
+            echo "::error::Coverage ${PERCENT}% is below 18% threshold"
+            exit 1
+          fi
       - uses: actions/upload-artifact@v4
         if: always()
         with:
