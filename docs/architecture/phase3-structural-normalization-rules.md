@@ -42,6 +42,9 @@ goal is consistency, not a full tree rewrite.
   `shared/providers/**`.
 - old shared session shims are gone. Canonical session contracts stay under
   `lib/core/session/**`.
+- canonical shared contracts now live under `lib/core/contracts/**`.
+- the former `lib/shared/contracts/**` paths are retired. Production imports
+  should use `package:culcul/core/contracts/...`.
 
 ## Guard direction
 
@@ -90,6 +93,9 @@ added to the guard only when the migration is complete enough to enforce.
   `lib/ui/responsive/responsive_container.dart` own the responsive UI helpers.
   The matching `lib/shared/responsive/*` files remain compatibility exports for
   existing imports.
+- `lib/core/contracts/**` owns the canonical shared contract definitions
+  (comment, live_room_summary, relation_user, search_result, user_card,
+  video_model). The former `lib/shared/contracts/**` paths are retired.
 
 ## Transitional adapters and accepted direct imports
 

@@ -1,5 +1,5 @@
 import 'package:culcul/features/live/domain/entities/live_entities.dart';
-import 'package:culcul/shared/contracts/user_card_contract.dart';
+import 'package:culcul/core/contracts/user_card_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 

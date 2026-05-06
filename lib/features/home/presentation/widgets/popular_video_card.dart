@@ -1,4 +1,4 @@
-import 'package:culcul/shared/contracts/video_model_contract.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/shared/widgets/app_tag.dart';
 import 'package:culcul/shared/widgets/video_list_card.dart';
 import 'package:flutter/material.dart';

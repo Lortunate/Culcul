@@ -10,7 +10,7 @@ import 'package:culcul/features/search/data/dtos/search_dtos.dart';
 import 'package:culcul/features/search/data/search_mapper.dart';
 import 'package:culcul/features/search/data/search_api.dart';
 import 'package:culcul/features/search/domain/entities/search_default_hint.dart';
-import 'package:culcul/shared/contracts/search_result_contract.dart';
+import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/features/search/domain/entities/search_suggestion_entry.dart';
 import 'package:culcul/features/search/domain/entities/search_trending_keyword.dart';
 import 'package:culcul/features/search/domain/entities/search_query.dart';

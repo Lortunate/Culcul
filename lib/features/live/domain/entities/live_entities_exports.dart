@@ -8,4 +8,4 @@ export 'live_play_url_model.dart';
 export 'live_recommend_response.dart';
 export 'live_room_detail_model.dart';
 export 'live_room_model.dart';
-export 'package:culcul/shared/contracts/live_room_summary_contract.dart';
+export 'package:culcul/core/contracts/live_room_summary_contract.dart';

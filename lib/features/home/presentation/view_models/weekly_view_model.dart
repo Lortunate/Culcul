@@ -1,5 +1,5 @@
 import 'package:culcul/features/home/data/home_feed_data_source.dart';
-import 'package:culcul/shared/contracts/video_model_contract.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'weekly_view_model.g.dart';

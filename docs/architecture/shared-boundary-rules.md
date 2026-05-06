@@ -67,6 +67,9 @@ In practice this means:
   domain instead of being added to a generic shared provider bucket.
 - old shared session shims are gone; canonical session contracts remain under
   `lib/core/session/**`.
+- canonical shared contracts now live under `lib/core/contracts/**`.
+- the former `lib/shared/contracts/**` paths are retired. Production imports must
+  use `package:culcul/core/contracts/*`.
 
 ## Guard Coverage
 

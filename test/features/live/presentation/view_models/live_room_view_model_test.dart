@@ -1,4 +1,4 @@
-import 'package:culcul/shared/contracts/user_card_contract.dart';
+import 'package:culcul/core/contracts/user_card_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/shared/network/request_cancel_token.dart';
 import 'package:culcul/core/result/result.dart';

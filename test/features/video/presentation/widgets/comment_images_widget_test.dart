@@ -1,4 +1,4 @@
-import 'package:culcul/shared/contracts/comment_contract.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_images.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';

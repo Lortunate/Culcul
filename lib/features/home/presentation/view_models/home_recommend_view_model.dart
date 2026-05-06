@@ -1,7 +1,7 @@
 import 'package:culcul/features/home/data/home_feed_data_source.dart';
 import 'package:culcul/features/home/presentation/view_models/home_feed_paging_mixin.dart';
 import 'package:culcul/shared/constants/api_constants.dart';
-import 'package:culcul/shared/contracts/video_model_contract.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/shared/pagination/paged_async_notifier.dart';
 import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

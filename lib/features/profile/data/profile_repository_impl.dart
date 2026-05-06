@@ -10,7 +10,7 @@ import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/profile/data/dtos/profile_dtos.dart';
 import 'package:culcul/features/profile/data/profile_mapper.dart';
 import 'package:culcul/features/profile/data/profile_api.dart';
-import 'package:culcul/shared/contracts/user_card_contract.dart';
+import 'package:culcul/core/contracts/user_card_contract.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/features/profile/domain/repositories/profile_repository.dart'

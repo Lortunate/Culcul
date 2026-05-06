@@ -1,5 +1,5 @@
-import 'package:culcul/shared/contracts/comment_contract.dart';
-export 'package:culcul/shared/contracts/comment_contract.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
+export 'package:culcul/core/contracts/comment_contract.dart';
 
 typedef CommentResponseDto = CommentResponse;
 typedef CommentPageDto = CommentPage;

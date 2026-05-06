@@ -1,5 +1,5 @@
 import 'package:culcul/shared/utils/format_utils.dart';
-import 'package:culcul/shared/contracts/search_result_contract.dart';
+import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/shared/widgets/app_clickable.dart';
 import 'package:culcul/shared/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';

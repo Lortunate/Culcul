@@ -1,6 +1,6 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/shared/contracts/relation_user_contract.dart';
+import 'package:culcul/core/contracts/relation_user_contract.dart';
 
 abstract class RelationRepository {
   Future<Result<List<ProfileRelationUser>, AppError>> getFollowings(

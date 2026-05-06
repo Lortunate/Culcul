@@ -17,6 +17,12 @@ const _legacyImportPaths = [
   'package:culcul/shared/perf/performance_policy.dart',
   'package:culcul/shared/perf/startup_perf_logger.dart',
   'package:culcul/shared/perf/video_perf_logger.dart',
+  'package:culcul/shared/contracts/comment_contract.dart',
+  'package:culcul/shared/contracts/live_room_summary_contract.dart',
+  'package:culcul/shared/contracts/relation_user_contract.dart',
+  'package:culcul/shared/contracts/search_result_contract.dart',
+  'package:culcul/shared/contracts/user_card_contract.dart',
+  'package:culcul/shared/contracts/video_model_contract.dart',
 ];
 
 void main() {
@@ -30,10 +36,11 @@ void main() {
           continue;
         }
 
-        final content = await file.readAsString();
+        final normalizedPath = file.path.replaceAll('\\', '/');
+        final content = _stripComments(await file.readAsString());
         for (final legacyImport in _legacyImportPaths) {
-          if (content.contains(legacyImport)) {
-            violations.add('${file.path} -> $legacyImport');
+          if (_referencesRetiredPath(content, legacyImport)) {
+            violations.add('$normalizedPath -> $legacyImport');
           }
         }
       }
@@ -47,4 +54,17 @@ void main() {
           '${violations.join(', ')}',
     );
   });
+}
+
+String _stripComments(String content) {
+  final withoutBlockComments = content.replaceAll(RegExp(r'/\*[\s\S]*?\*/'), '');
+  return withoutBlockComments.replaceAll(RegExp(r'//.*$', multiLine: true), '');
+}
+
+bool _referencesRetiredPath(String content, String retiredImportPath) {
+  final directivePattern = RegExp(
+    "^\\s*(?:import|export)\\s+['\"]${RegExp.escape(retiredImportPath)}['\"](?:\\s+as\\s+\\w+)?(?:\\s+(?:show|hide)\\s+[^;]+)?\\s*;",
+    multiLine: true,
+  );
+  return directivePattern.hasMatch(content);
 }

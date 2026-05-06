@@ -6,7 +6,7 @@ import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/profile/data/dtos/profile_dtos.dart';
 import 'package:culcul/features/profile/data/profile_mapper.dart';
 import 'package:culcul/features/profile/data/relation_api.dart';
-import 'package:culcul/shared/contracts/relation_user_contract.dart';
+import 'package:culcul/core/contracts/relation_user_contract.dart';
 import 'package:culcul/features/profile/domain/repositories/relation_repository.dart'
     as domain;
 import 'package:riverpod_annotation/riverpod_annotation.dart';

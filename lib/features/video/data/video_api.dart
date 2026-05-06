@@ -1,5 +1,5 @@
 import 'package:culcul/shared/constants/api_constants.dart';
-import 'package:culcul/shared/contracts/comment_contract.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/shared/network/models/api_response.dart';
 import 'package:culcul/features/video/data/dtos/video_dtos.dart';
 import 'package:dio/dio.dart' hide Headers;
