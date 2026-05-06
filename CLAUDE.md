@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **Culcul** (2187 symbols, 2865 relationships, 19 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **Culcul** (2201 symbols, 2879 relationships, 19 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -41,6 +41,20 @@ This project is indexed by GitNexus as **Culcul** (2187 symbols, 2865 relationsh
 | Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md` |
 
 <!-- gitnexus:end -->
+
+## Architecture (Phase 3 — Testing & Quality)
+
+`lib/shared/` is **fully retired**. Structure: `app/` (shell/router) → `features/` (domain modules) → `core/` (infrastructure) + `ui/` (design system).
+
+See `docs/architecture/architecture-guide.md` for full layout and rules.
+
+**Current focus**: Testing foundation, CI pipeline, code quality. Zero test files exist — this is the priority.
+
+**Key rules**:
+- `core/` and `ui/` must NOT import from `features/`
+- Features must NOT import from other features (use `core/contracts/` for shared types)
+- Route entry seams (`route_entry.dart`) are the only router-facing feature surface
+- Orchestration logic belongs in `application/`, not in presentation widgets
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:ca08a54f -->
 ## Beads Issue Tracker

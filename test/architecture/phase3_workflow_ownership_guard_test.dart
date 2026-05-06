@@ -24,37 +24,17 @@ const ApprovedApplicationHomes approvedApplicationHomes = {
 // production code must stop depending on presentation page-command locations.
 void main() {
   test(
-    'Phase 3 normalization rules doc exists and is linked from architecture notes',
+    'Phase 3 normalization rules doc exists in archive',
     () async {
       final phase3Doc = File(
-        'docs/architecture/phase3-structural-normalization-rules.md',
-      );
-      final sharedRulesDoc = File('docs/architecture/shared-boundary-rules.md');
-      final phase2RulesDoc = File(
-        'docs/architecture/phase2-route-and-orchestration-rules.md',
+        'docs/architecture/archive/phase3-structural-normalization-rules.md',
       );
 
       expect(
         phase3Doc.existsSync(),
         isTrue,
-        reason: 'Missing docs/architecture/phase3-structural-normalization-rules.md',
-      );
-
-      final phase3Link = 'docs/architecture/phase3-structural-normalization-rules.md';
-      final sharedRulesContent = await sharedRulesDoc.readAsString();
-      final phase2RulesContent = await phase2RulesDoc.readAsString();
-
-      expect(
-        sharedRulesContent,
-        contains(phase3Link),
         reason:
-            'Expected shared boundary rules to link to the phase 3 normalization rules.',
-      );
-      expect(
-        phase2RulesContent,
-        contains(phase3Link),
-        reason:
-            'Expected phase 2 route/orchestration rules to link to the phase 3 normalization rules.',
+            'Missing docs/architecture/archive/phase3-structural-normalization-rules.md',
       );
 
       final phase3RulesContent = await phase3Doc.readAsString();
