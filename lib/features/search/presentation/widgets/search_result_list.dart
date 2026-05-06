@@ -1,6 +1,6 @@
 import 'package:culcul/core/contracts/search_result_contract.dart';
-import 'package:culcul/shared/pagination/pagination_load_gate.dart';
-import 'package:culcul/shared/pagination/scroll_load_trigger.dart';
+import 'package:culcul/core/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/pagination/scroll_load_trigger.dart';
 import 'package:culcul/features/search/presentation/widgets/items/search_article_item.dart';
 import 'package:culcul/features/search/presentation/widgets/items/search_bangumi_item.dart';
 import 'package:culcul/features/search/presentation/widgets/items/search_topic_item.dart';

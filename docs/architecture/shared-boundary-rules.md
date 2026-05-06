@@ -80,6 +80,10 @@ In practice this means:
   constants live under `lib/core/constants/**`.
 - the former `lib/shared/utils/**` directory is fully retired. Canonical
   utilities live under `lib/core/utils/**`.
+- the former `lib/shared/hooks/**` directory is fully retired. Canonical hooks
+  live under `lib/core/hooks/**`.
+- the former `lib/shared/pagination/**` directory is fully retired. Canonical
+  pagination helpers live under `lib/core/pagination/**`.
 
 ## Guard Coverage
 

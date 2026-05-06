@@ -37,6 +37,13 @@ const _legacyImportPaths = [
   'package:culcul/shared/utils/share_utils.dart',
   'package:culcul/shared/utils/toast_utils.dart',
   'package:culcul/shared/utils/validation_utils.dart',
+  'package:culcul/shared/hooks/use_managed_easy_refresh_controller.dart',
+  'package:culcul/shared/pagination/page_query.dart',
+  'package:culcul/shared/pagination/paged_async_notifier.dart',
+  'package:culcul/shared/pagination/paged_list_state.dart',
+  'package:culcul/shared/pagination/paged_list_state_transitions.dart',
+  'package:culcul/shared/pagination/pagination_load_gate.dart',
+  'package:culcul/shared/pagination/scroll_load_trigger.dart',
 ];
 
 void main() {

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:culcul/features/video/application/comment_reply_commands.dart';
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
-import 'package:culcul/shared/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/pagination/pagination_load_gate.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 CommentItem _comment({required int oid, required int rpid, required int root}) {

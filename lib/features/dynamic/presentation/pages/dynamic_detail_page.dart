@@ -8,7 +8,7 @@ import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_deta
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_comments_view.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_content_widget.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/shared/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/pagination/pagination_load_gate.dart';
 import 'package:culcul/shared/widgets/app_error_widget.dart';
 import 'package:culcul/shared/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';

@@ -1,5 +1,5 @@
-import 'package:culcul/shared/pagination/pagination_load_gate.dart';
-import 'package:culcul/shared/pagination/scroll_load_trigger.dart';
+import 'package:culcul/core/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/pagination/scroll_load_trigger.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/user_dynamic_view_model.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_card.dart';
 import 'package:culcul/i18n/strings.g.dart';

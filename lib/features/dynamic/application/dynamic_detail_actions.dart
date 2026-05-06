@@ -1,5 +1,5 @@
-import 'package:culcul/shared/pagination/pagination_load_gate.dart';
-import 'package:culcul/shared/pagination/scroll_load_trigger.dart';
+import 'package:culcul/core/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/pagination/scroll_load_trigger.dart';
 
 typedef ToggleDynamicDetailLike = Future<String?> Function();
 typedef AddDynamicDetailReply = Future<void> Function(int root, int parent, String text);

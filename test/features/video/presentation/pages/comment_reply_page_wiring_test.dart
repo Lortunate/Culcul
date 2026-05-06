@@ -3,7 +3,7 @@ import 'package:culcul/features/video/presentation/pages/comment_reply_page.dart
 import 'package:culcul/features/video/presentation/view_models/comment_reply_state.dart';
 import 'package:culcul/features/video/presentation/view_models/comment_reply_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/shared/pagination/paged_list_state.dart';
+import 'package:culcul/core/pagination/paged_list_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

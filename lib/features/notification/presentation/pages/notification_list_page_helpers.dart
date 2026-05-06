@@ -1,7 +1,7 @@
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
-import 'package:culcul/shared/pagination/pagination_load_gate.dart';
-import 'package:culcul/shared/pagination/scroll_load_trigger.dart';
+import 'package:culcul/core/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/pagination/scroll_load_trigger.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

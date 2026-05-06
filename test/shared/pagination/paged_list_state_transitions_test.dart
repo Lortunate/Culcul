@@ -1,5 +1,5 @@
-import 'package:culcul/shared/pagination/paged_list_state.dart';
-import 'package:culcul/shared/pagination/paged_list_state_transitions.dart';
+import 'package:culcul/core/pagination/paged_list_state.dart';
+import 'package:culcul/core/pagination/paged_list_state_transitions.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

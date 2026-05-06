@@ -58,6 +58,11 @@ goal is consistency, not a full tree rewrite.
   utilities (format_extensions, format_utils, crypto_utils, id_utils,
   json_utils, json_compute, list_utils, danmaku_mask_parser, share_utils,
   toast_utils, validation_utils) live under `lib/core/utils/**`.
+- the former `lib/shared/hooks/**` directory is fully retired. The canonical
+  use_managed_easy_refresh_controller hook lives under `lib/core/hooks/**`.
+- the former `lib/shared/pagination/**` directory is fully retired. Canonical
+  pagination helpers (page_query, paged_list_state, paged_async_notifier,
+  pagination_load_gate, scroll_load_trigger) live under `lib/core/pagination/**`.
 
 ## Guard direction
 

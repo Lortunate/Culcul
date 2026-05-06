@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/shared/hooks/use_managed_easy_refresh_controller.dart';
+import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
 import 'package:culcul/shared/network/network_quality_policy.dart';
 import 'package:culcul/core/perf/performance_policy.dart';
 import 'package:culcul/features/live/presentation/view_models/live_recommend_view_model.dart';

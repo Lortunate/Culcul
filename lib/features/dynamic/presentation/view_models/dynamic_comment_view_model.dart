@@ -2,7 +2,7 @@ import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'dart:async';
 
 import 'package:culcul/features/dynamic/feature_scope.dart';
-import 'package:culcul/shared/pagination/paged_list_state_transitions.dart';
+import 'package:culcul/core/pagination/paged_list_state_transitions.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_comment_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

@@ -1,7 +1,7 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/shared/pagination/pagination_load_gate.dart';
-import 'package:culcul/shared/pagination/scroll_load_trigger.dart';
+import 'package:culcul/core/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/pagination/scroll_load_trigger.dart';
 import 'package:culcul/features/profile/presentation/view_models/user_space_videos_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/shared/widgets/app_error_widget.dart';

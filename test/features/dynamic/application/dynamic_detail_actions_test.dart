@@ -1,5 +1,5 @@
 import 'package:culcul/features/dynamic/application/dynamic_detail_actions.dart';
-import 'package:culcul/shared/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/pagination/pagination_load_gate.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

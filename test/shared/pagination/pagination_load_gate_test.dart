@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:culcul/shared/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/pagination/pagination_load_gate.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter_test/flutter_test.dart';
 

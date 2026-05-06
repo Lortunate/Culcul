@@ -1,7 +1,7 @@
 import 'package:culcul/i18n/i18n.dart';
-import 'package:culcul/shared/pagination/pagination_load_gate.dart';
-import 'package:culcul/shared/pagination/paged_list_state.dart';
-import 'package:culcul/shared/pagination/scroll_load_trigger.dart';
+import 'package:culcul/core/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/pagination/paged_list_state.dart';
+import 'package:culcul/core/pagination/scroll_load_trigger.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_message_item.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_time_divider.dart';

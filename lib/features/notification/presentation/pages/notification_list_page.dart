@@ -4,7 +4,7 @@ import 'package:culcul/features/notification/domain/entities/notification_entry.
 import 'package:culcul/features/notification/presentation/pages/notification_list_page_helpers.dart';
 import 'package:culcul/features/notification/presentation/view_models/notification_feed_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_item_widget.dart';
-import 'package:culcul/shared/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/pagination/pagination_load_gate.dart';
 import 'package:culcul/shared/widgets/app_error_widget.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
