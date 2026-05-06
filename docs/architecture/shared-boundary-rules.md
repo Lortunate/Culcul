@@ -86,6 +86,10 @@ In practice this means:
   pagination helpers live under `lib/core/pagination/**`.
 - the former `lib/shared/network/**` directory is fully retired. Canonical
   network infrastructure lives under `lib/core/network/**`.
+- the former `lib/shared/services/**` directory is fully retired. Canonical
+  services live under `lib/core/services/**`.
+- the former `lib/shared/theme/**` directory is fully retired. Canonical
+  theme code lives under `lib/ui/theme/**`.
 
 ## Guard Coverage
 

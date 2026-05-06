@@ -66,6 +66,12 @@ goal is consistency, not a full tree rewrite.
 - the former `lib/shared/network/**` directory is fully retired. Canonical
   network infrastructure (dio_client, resource_api, request_executor,
   interceptors, models, providers, dtos) lives under `lib/core/network/**`.
+- the former `lib/shared/services/**` directory is fully retired. Canonical
+  services (audio_handler, media_service) live under `lib/core/services/**`.
+- the former `lib/shared/theme/**` directory is fully retired. Canonical
+  theme code (culcul_colors, culcul_theme) lives under `lib/ui/theme/**`.
+  The circular barrel chain is resolved; `ui/theme/app_theme.dart` now
+  exports local files directly.
 
 ## Guard direction
 

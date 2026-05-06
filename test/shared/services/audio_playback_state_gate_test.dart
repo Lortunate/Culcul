@@ -1,5 +1,5 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:culcul/shared/services/audio_playback_state_gate.dart';
+import 'package:culcul/core/services/audio_playback_state_gate.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

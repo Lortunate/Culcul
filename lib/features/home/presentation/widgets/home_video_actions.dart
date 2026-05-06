@@ -1,6 +1,6 @@
 import 'package:culcul/features/to_view/presentation/view_models/to_view_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/shared/services/media_service.dart';
+import 'package:culcul/core/services/media_service.dart';
 import 'package:culcul/core/utils/id_utils.dart';
 import 'package:culcul/core/utils/toast_utils.dart';
 import 'package:culcul/shared/widgets/video_actions_bottom_sheet.dart';

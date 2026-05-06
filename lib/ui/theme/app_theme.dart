@@ -1,2 +1,2 @@
-export 'package:culcul/shared/theme/culcul_colors.dart';
-export 'package:culcul/shared/theme/culcul_theme.dart';
+export 'culcul_colors.dart';
+export 'culcul_theme.dart';

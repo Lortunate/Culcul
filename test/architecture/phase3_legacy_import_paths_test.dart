@@ -64,6 +64,10 @@ const _legacyImportPaths = [
   'package:culcul/shared/network/request_executor_binding.dart',
   'package:culcul/shared/network/resource_api.dart',
   'package:culcul/shared/network/resource_api_provider.dart',
+  'package:culcul/shared/services/audio_handler.dart',
+  'package:culcul/shared/services/audio_playback_state_gate.dart',
+  'package:culcul/shared/services/media_service.dart',
+  'package:culcul/shared/theme/app_theme.dart',
 ];
 
 void main() {
