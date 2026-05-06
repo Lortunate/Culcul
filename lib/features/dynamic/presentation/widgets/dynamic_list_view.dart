@@ -3,8 +3,8 @@ import 'package:culcul/features/dynamic/presentation/view_models/dynamic_view_mo
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_card.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/recently_followed_widget.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/shared/widgets/skeletons/video_list_skeleton.dart';
-import 'package:culcul/shared/widgets/smart_paging_view.dart';
+import 'package:culcul/ui/widgets/skeletons/video_list_skeleton.dart';
+import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:culcul/ui/responsive/app_breakpoints.dart';
 import 'package:culcul/ui/responsive/app_responsive.dart';
 import 'package:culcul/ui/responsive/responsive_container.dart';

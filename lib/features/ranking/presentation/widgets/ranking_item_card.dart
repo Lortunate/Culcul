@@ -2,8 +2,8 @@ import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/ranking/data/models/ranking_video.dart';
 import 'package:culcul/features/ranking/presentation/widgets/rank_badge.dart';
-import 'package:culcul/shared/widgets/icon_text.dart';
-import 'package:culcul/shared/widgets/video_list_card.dart';
+import 'package:culcul/ui/widgets/icon_text.dart';
+import 'package:culcul/ui/widgets/video_list_card.dart';
 import 'package:flutter/material.dart';
 
 class RankingItemCard extends StatelessWidget {

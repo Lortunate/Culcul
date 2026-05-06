@@ -72,6 +72,10 @@ goal is consistency, not a full tree rewrite.
   theme code (culcul_colors, culcul_theme) lives under `lib/ui/theme/**`.
   The circular barrel chain is resolved; `ui/theme/app_theme.dart` now
   exports local files directly.
+- the former `lib/shared/widgets/**` directory is fully retired. Canonical
+  widgets live under `lib/ui/widgets/**`.
+- `lib/shared/**` is now fully empty. All infrastructure lives under
+  `lib/core/**` and all UI primitives live under `lib/ui/**`.
 
 ## Guard direction
 

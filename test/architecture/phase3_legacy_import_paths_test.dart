@@ -68,7 +68,61 @@ const _legacyImportPaths = [
   'package:culcul/shared/services/audio_playback_state_gate.dart',
   'package:culcul/shared/services/media_service.dart',
   'package:culcul/shared/theme/app_theme.dart',
+  'package:culcul/shared/widgets/adaptive_blur.dart',
+  'package:culcul/shared/widgets/app_avatar.dart',
+  'package:culcul/shared/widgets/app_bottom_sheet.dart',
+  'package:culcul/shared/widgets/app_card_container.dart',
+  'package:culcul/shared/widgets/app_clickable.dart',
+  'package:culcul/shared/widgets/app_empty_state_widget.dart',
+  'package:culcul/shared/widgets/app_error_widget.dart',
+  'package:culcul/shared/widgets/app_image_preview.dart',
+  'package:culcul/shared/widgets/app_image_preview.widgets.dart',
+  'package:culcul/shared/widgets/app_min_lines_text.dart',
+  'package:culcul/shared/widgets/app_network_image.dart',
+  'package:culcul/shared/widgets/app_network_image_prefetcher.dart',
+  'package:culcul/shared/widgets/app_overlay_tag.dart',
+  'package:culcul/shared/widgets/app_search_bar.dart',
+  'package:culcul/shared/widgets/app_section_header.dart',
+  'package:culcul/shared/widgets/app_selectable_text.dart',
+  'package:culcul/shared/widgets/app_shimmer.dart',
+  'package:culcul/shared/widgets/app_tab_bar.dart',
+  'package:culcul/shared/widgets/app_tag.dart',
+  'package:culcul/shared/widgets/bilibili_emoji_text.dart',
+  'package:culcul/shared/widgets/follow_button.dart',
+  'package:culcul/shared/widgets/guest_view.dart',
+  'package:culcul/shared/widgets/icon_text.dart',
+  'package:culcul/shared/widgets/privacy_error_widget.dart',
+  'package:culcul/shared/widgets/refresh_header_footer.dart',
+  'package:culcul/shared/widgets/sliver_tab_bar_delegate.dart',
+  'package:culcul/shared/widgets/smart_paging_view.dart',
+  'package:culcul/shared/widgets/user_list_tile.dart',
+  'package:culcul/shared/widgets/user_tags.dart',
+  'package:culcul/shared/widgets/video_actions_bottom_sheet.dart',
+  'package:culcul/shared/widgets/video_card.dart',
+  'package:culcul/shared/widgets/video_list_card.dart',
+  'package:culcul/shared/widgets/video_thumbnail.dart',
+  'package:culcul/shared/widgets/guest_view/illustration.dart',
+  'package:culcul/shared/widgets/guest_view/login_button.dart',
+  'package:culcul/shared/widgets/guest_view/message.dart',
+  'package:culcul/shared/widgets/skeletons/dynamic_skeleton.dart',
+  'package:culcul/shared/widgets/skeletons/page_skeletons.dart',
+  'package:culcul/shared/widgets/skeletons/video_card_skeleton.dart',
+  'package:culcul/shared/widgets/skeletons/video_list_skeleton.dart',
+  'package:culcul/shared/widgets/smart_paging_view/content.dart',
+  'package:culcul/shared/widgets/smart_paging_view/load_more.dart',
+  'package:culcul/shared/widgets/video_card/content.dart',
+  'package:culcul/shared/widgets/video_card/footer.dart',
+  'package:culcul/shared/widgets/video_card/thumbnail.dart',
+  'package:culcul/shared/widgets/video_list_card/body.dart',
+  'package:culcul/shared/widgets/video_list_card/content.dart',
+  'package:culcul/shared/widgets/video_list_card/media.dart',
 ];
+
+final _legacySet = _legacyImportPaths.toSet();
+final _importPattern = RegExp(
+  r"""^\s*(?:import|export)\s+['"]([^'"]+)['"]""",
+  multiLine: true,
+);
 
 void main() {
   test('Production code does not import retired shared paths', () async {
@@ -82,10 +136,11 @@ void main() {
         }
 
         final normalizedPath = file.path.replaceAll('\\', '/');
-        final content = _stripComments(await file.readAsString());
-        for (final legacyImport in _legacyImportPaths) {
-          if (_referencesRetiredPath(content, legacyImport)) {
-            violations.add('$normalizedPath -> $legacyImport');
+        final content = await file.readAsString();
+        for (final match in _importPattern.allMatches(content)) {
+          final importPath = match.group(1)!;
+          if (_legacySet.contains(importPath)) {
+            violations.add('$normalizedPath -> $importPath');
           }
         }
       }
@@ -99,17 +154,4 @@ void main() {
           '${violations.join(', ')}',
     );
   });
-}
-
-String _stripComments(String content) {
-  final withoutBlockComments = content.replaceAll(RegExp(r'/\*[\s\S]*?\*/'), '');
-  return withoutBlockComments.replaceAll(RegExp(r'//.*$', multiLine: true), '');
-}
-
-bool _referencesRetiredPath(String content, String retiredImportPath) {
-  final directivePattern = RegExp(
-    "^\\s*(?:import|export)\\s+['\"]${RegExp.escape(retiredImportPath)}['\"](?:\\s+as\\s+\\w+)?(?:\\s+(?:show|hide)\\s+[^;]+)?\\s*;",
-    multiLine: true,
-  );
-  return directivePattern.hasMatch(content);
 }

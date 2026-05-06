@@ -3,7 +3,7 @@ import 'package:culcul/features/auth/presentation/view_models/auth_view_model.da
 import 'package:culcul/features/notification/presentation/view_models/notification_lifecycle_sync_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_category_grid.dart';
 import 'package:culcul/features/notification/presentation/widgets/private_session_list.dart';
-import 'package:culcul/shared/widgets/guest_view.dart';
+import 'package:culcul/ui/widgets/guest_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

@@ -1,8 +1,8 @@
 import 'package:culcul/features/search/presentation/view_models/search_history_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/shared/widgets/app_clickable.dart';
-import 'package:culcul/shared/widgets/app_section_header.dart';
-import 'package:culcul/shared/widgets/app_tag.dart';
+import 'package:culcul/ui/widgets/app_clickable.dart';
+import 'package:culcul/ui/widgets/app_section_header.dart';
+import 'package:culcul/ui/widgets/app_tag.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

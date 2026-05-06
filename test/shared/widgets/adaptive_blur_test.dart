@@ -1,5 +1,5 @@
 import 'package:culcul/core/perf/frame_timing_sampler.dart';
-import 'package:culcul/shared/widgets/adaptive_blur.dart';
+import 'package:culcul/ui/widgets/adaptive_blur.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

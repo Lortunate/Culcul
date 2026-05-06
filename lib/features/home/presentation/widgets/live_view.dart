@@ -11,8 +11,8 @@ import 'package:culcul/features/home/presentation/widgets/home_feed_view_utils.d
 import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';
 import 'package:culcul/features/home/presentation/widgets/live_room_card.dart';
 import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
-import 'package:culcul/shared/widgets/app_network_image_prefetcher.dart';
-import 'package:culcul/shared/widgets/smart_paging_view.dart';
+import 'package:culcul/ui/widgets/app_network_image_prefetcher.dart';
+import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:culcul/ui/responsive/app_breakpoints.dart';
 import 'package:culcul/ui/responsive/responsive_container.dart';
 import 'package:flutter/material.dart';

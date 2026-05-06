@@ -1,6 +1,6 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/utils/toast_utils.dart';
-import 'package:culcul/shared/widgets/app_clickable.dart';
+import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:culcul/ui/responsive/app_breakpoints.dart';
 import 'package:culcul/ui/responsive/app_responsive.dart';
 import 'package:culcul/ui/responsive/responsive_container.dart';

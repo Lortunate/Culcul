@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/shared/widgets/video_actions_bottom_sheet.dart';
+import 'package:culcul/ui/widgets/video_actions_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

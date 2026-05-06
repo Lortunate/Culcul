@@ -1,8 +1,8 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/to_view/data/models/to_view_entry.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/shared/widgets/icon_text.dart';
-import 'package:culcul/shared/widgets/video_list_card.dart';
+import 'package:culcul/ui/widgets/icon_text.dart';
+import 'package:culcul/ui/widgets/video_list_card.dart';
 import 'package:flutter/material.dart';
 
 class ToViewItem extends StatelessWidget {

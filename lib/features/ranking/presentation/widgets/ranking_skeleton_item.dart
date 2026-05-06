@@ -1,4 +1,4 @@
-import 'package:culcul/shared/widgets/app_shimmer.dart';
+import 'package:culcul/ui/widgets/app_shimmer.dart';
 import 'package:flutter/material.dart';
 
 class RankingSkeletonItem extends StatelessWidget {

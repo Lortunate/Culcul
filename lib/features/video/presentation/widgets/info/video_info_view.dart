@@ -6,8 +6,8 @@ import 'package:culcul/features/video/presentation/widgets/info/video_descriptio
 import 'package:culcul/features/video/presentation/widgets/info/video_parts.dart';
 import 'package:culcul/features/video/presentation/widgets/info/video_recommendation.dart';
 import 'package:culcul/features/video/presentation/widgets/info/video_stats.dart';
-import 'package:culcul/shared/widgets/app_error_widget.dart';
-import 'package:culcul/shared/widgets/app_network_image_prefetcher.dart';
+import 'package:culcul/ui/widgets/app_error_widget.dart';
+import 'package:culcul/ui/widgets/app_network_image_prefetcher.dart';
 import 'package:culcul/ui/responsive/app_breakpoints.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';

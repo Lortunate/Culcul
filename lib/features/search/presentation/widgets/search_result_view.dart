@@ -4,8 +4,8 @@ import 'package:culcul/features/search/presentation/widgets/search_result_list.d
 import 'package:culcul/features/search/presentation/widgets/search_result_skeleton.dart';
 import 'package:culcul/features/search/domain/entities/search_query.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/shared/widgets/app_error_widget.dart';
-import 'package:culcul/shared/widgets/app_tab_bar.dart';
+import 'package:culcul/ui/widgets/app_error_widget.dart';
+import 'package:culcul/ui/widgets/app_tab_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

@@ -1,6 +1,6 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
-import 'package:culcul/shared/widgets/app_clickable.dart';
+import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:flutter/material.dart';
 import 'package:culcul/ui/responsive/app_breakpoints.dart';
 import 'package:culcul/ui/responsive/app_responsive.dart';

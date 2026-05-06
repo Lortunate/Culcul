@@ -3,8 +3,8 @@ import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_navigation.dart';
-import 'package:culcul/shared/widgets/app_avatar.dart';
-import 'package:culcul/shared/widgets/app_network_image.dart';
+import 'package:culcul/ui/widgets/app_avatar.dart';
+import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
 

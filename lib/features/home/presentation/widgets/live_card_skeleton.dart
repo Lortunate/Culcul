@@ -1,5 +1,5 @@
-import 'package:culcul/shared/widgets/app_card_container.dart';
-import 'package:culcul/shared/widgets/app_shimmer.dart';
+import 'package:culcul/ui/widgets/app_card_container.dart';
+import 'package:culcul/ui/widgets/app_shimmer.dart';
 import 'package:flutter/material.dart';
 
 class LiveCardSkeleton extends StatelessWidget {

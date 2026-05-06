@@ -1,10 +1,10 @@
 import 'package:culcul/features/search/presentation/view_models/search_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/search/presentation/widgets/hot_search_skeleton.dart';
-import 'package:culcul/shared/widgets/app_clickable.dart';
-import 'package:culcul/shared/widgets/app_empty_state_widget.dart';
-import 'package:culcul/shared/widgets/app_error_widget.dart';
-import 'package:culcul/shared/widgets/app_section_header.dart';
+import 'package:culcul/ui/widgets/app_clickable.dart';
+import 'package:culcul/ui/widgets/app_empty_state_widget.dart';
+import 'package:culcul/ui/widgets/app_error_widget.dart';
+import 'package:culcul/ui/widgets/app_section_header.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

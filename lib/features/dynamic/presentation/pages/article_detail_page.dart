@@ -10,11 +10,11 @@ import 'package:culcul/features/video/presentation/widgets/comments/comment_repl
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/pagination/scroll_load_trigger.dart';
-import 'package:culcul/shared/widgets/app_empty_state_widget.dart';
-import 'package:culcul/shared/widgets/app_error_widget.dart';
-import 'package:culcul/shared/widgets/app_image_preview.dart';
-import 'package:culcul/shared/widgets/app_network_image.dart';
-import 'package:culcul/shared/widgets/refresh_header_footer.dart';
+import 'package:culcul/ui/widgets/app_empty_state_widget.dart';
+import 'package:culcul/ui/widgets/app_error_widget.dart';
+import 'package:culcul/ui/widgets/app_image_preview.dart';
+import 'package:culcul/ui/widgets/app_network_image.dart';
+import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';

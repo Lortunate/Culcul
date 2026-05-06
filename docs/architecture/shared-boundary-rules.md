@@ -90,6 +90,10 @@ In practice this means:
   services live under `lib/core/services/**`.
 - the former `lib/shared/theme/**` directory is fully retired. Canonical
   theme code lives under `lib/ui/theme/**`.
+- the former `lib/shared/widgets/**` directory is fully retired. Canonical
+  widgets live under `lib/ui/widgets/**`.
+- `lib/shared/**` is now fully empty. All infrastructure lives under
+  `lib/core/**` and all UI primitives live under `lib/ui/**`.
 
 ## Guard Coverage
 

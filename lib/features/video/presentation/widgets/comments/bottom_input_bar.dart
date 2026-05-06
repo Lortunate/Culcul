@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/shared/widgets/app_clickable.dart';
+import 'package:culcul/ui/widgets/app_clickable.dart';
 import 'package:flutter/material.dart';
 
 class BottomInputBar extends StatelessWidget {

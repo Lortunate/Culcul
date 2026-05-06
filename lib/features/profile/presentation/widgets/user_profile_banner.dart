@@ -1,4 +1,4 @@
-import 'package:culcul/shared/widgets/app_network_image.dart';
+import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 
 class UserProfileBanner extends StatelessWidget {

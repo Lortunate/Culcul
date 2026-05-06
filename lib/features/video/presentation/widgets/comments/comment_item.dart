@@ -2,11 +2,11 @@ import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:culcul/features/video/presentation/widgets/comments/comment_images.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/shared/widgets/app_avatar.dart';
-import 'package:culcul/shared/widgets/app_clickable.dart';
-import 'package:culcul/shared/widgets/app_selectable_text.dart';
-import 'package:culcul/shared/widgets/bilibili_emoji_text.dart';
-import 'package:culcul/shared/widgets/user_tags.dart';
+import 'package:culcul/ui/widgets/app_avatar.dart';
+import 'package:culcul/ui/widgets/app_clickable.dart';
+import 'package:culcul/ui/widgets/app_selectable_text.dart';
+import 'package:culcul/ui/widgets/bilibili_emoji_text.dart';
+import 'package:culcul/ui/widgets/user_tags.dart';
 import 'package:flutter/material.dart';
 
 part 'comment_item.header.dart';

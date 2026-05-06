@@ -1,6 +1,6 @@
 import 'package:culcul/features/to_view/data/models/to_view_entry.dart';
 import 'package:culcul/features/to_view/presentation/widgets/to_view_item.dart';
-import 'package:culcul/shared/widgets/refresh_header_footer.dart';
+import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 
