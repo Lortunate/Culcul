@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:developer' as developer;
 
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
-import 'package:culcul/shared/network/request_cancel_token.dart';
+import 'package:culcul/core/network/request_cancel_token.dart';
 import 'package:culcul/features/profile/feature_scope.dart';
 import 'package:culcul/features/video/application/video_detail_workflows.dart';
 import 'package:culcul/features/video/feature_scope.dart';

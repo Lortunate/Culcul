@@ -8,7 +8,7 @@ import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart'
 import 'package:culcul/features/home/presentation/widgets/home_video_actions.dart';
 import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
-import 'package:culcul/shared/network/network_quality_policy.dart';
+import 'package:culcul/core/network/network_quality_policy.dart';
 import 'package:culcul/core/perf/performance_policy.dart';
 import 'package:culcul/shared/widgets/app_network_image_prefetcher.dart';
 import 'package:culcul/shared/widgets/skeletons/page_skeletons.dart';

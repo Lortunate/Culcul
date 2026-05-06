@@ -1,4 +1,4 @@
-import 'package:culcul/shared/network/models/api_response.dart';
+import 'package:culcul/core/network/models/api_response.dart';
 import 'package:culcul/features/to_view/data/dtos/to_view_model_dto.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';

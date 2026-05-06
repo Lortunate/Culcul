@@ -1,8 +1,8 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
-import 'package:culcul/shared/network/dio_client.dart';
-import 'package:culcul/shared/network/request_executor.dart';
-import 'package:culcul/shared/network/request_executor_binding.dart';
+import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/core/network/request_executor.dart';
+import 'package:culcul/core/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/ranking/data/dtos/ranking_response_dto.dart';
 import 'package:culcul/features/ranking/data/ranking_video_mapper.dart';

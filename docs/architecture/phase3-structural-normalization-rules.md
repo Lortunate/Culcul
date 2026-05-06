@@ -63,6 +63,9 @@ goal is consistency, not a full tree rewrite.
 - the former `lib/shared/pagination/**` directory is fully retired. Canonical
   pagination helpers (page_query, paged_list_state, paged_async_notifier,
   pagination_load_gate, scroll_load_trigger) live under `lib/core/pagination/**`.
+- the former `lib/shared/network/**` directory is fully retired. Canonical
+  network infrastructure (dio_client, resource_api, request_executor,
+  interceptors, models, providers, dtos) lives under `lib/core/network/**`.
 
 ## Guard direction
 

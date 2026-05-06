@@ -1,4 +1,4 @@
-import 'package:culcul/shared/network/dtos/video_model_contract_dto.dart';
+import 'package:culcul/core/network/dtos/video_model_contract_dto.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'user_space_video_model.freezed.dart';

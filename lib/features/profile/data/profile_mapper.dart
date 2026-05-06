@@ -1,4 +1,4 @@
-import 'package:culcul/shared/network/dtos/video_model_contract_dto.dart';
+import 'package:culcul/core/network/dtos/video_model_contract_dto.dart';
 import 'package:culcul/features/profile/data/dtos/profile_dtos.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';

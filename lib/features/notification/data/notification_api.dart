@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:culcul/shared/network/models/api_response.dart';
+import 'package:culcul/core/network/models/api_response.dart';
 import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';

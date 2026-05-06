@@ -1,6 +1,6 @@
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/shared/network/models/api_response.dart';
-import 'package:culcul/shared/network/request_executor.dart';
+import 'package:culcul/core/network/models/api_response.dart';
+import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:flutter_test/flutter_test.dart';
 

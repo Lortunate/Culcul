@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/shared/network/dio_client.dart';
-import 'package:culcul/shared/network/models/api_response.dart';
-import 'package:culcul/shared/network/request_executor.dart';
+import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/core/network/models/api_response.dart';
+import 'package:culcul/core/network/request_executor.dart';
 import 'package:culcul/core/bootstrap/providers/storage_provider.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/auth/data/auth_api.dart';

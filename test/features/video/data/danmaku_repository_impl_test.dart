@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:culcul/features/video/data/danmaku_repository_impl.dart';
 import 'package:culcul/protos/dm.pb.dart';
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/shared/network/dio_client.dart';
+import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';

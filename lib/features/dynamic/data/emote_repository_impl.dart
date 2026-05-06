@@ -1,7 +1,7 @@
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/shared/network/dio_client.dart';
-import 'package:culcul/shared/network/request_executor.dart';
-import 'package:culcul/shared/network/request_executor_binding.dart';
+import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/core/network/request_executor.dart';
+import 'package:culcul/core/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/dynamic/data/emote_api.dart';
 import 'package:culcul/features/dynamic/domain/entities/emote_response.dart';

@@ -84,6 +84,8 @@ In practice this means:
   live under `lib/core/hooks/**`.
 - the former `lib/shared/pagination/**` directory is fully retired. Canonical
   pagination helpers live under `lib/core/pagination/**`.
+- the former `lib/shared/network/**` directory is fully retired. Canonical
+  network infrastructure lives under `lib/core/network/**`.
 
 ## Guard Coverage
 
