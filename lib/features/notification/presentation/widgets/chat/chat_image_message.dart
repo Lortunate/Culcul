@@ -12,25 +12,22 @@ class ChatImageMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () => AppImagePreview.open(context, imageUrls: [url]),
-      child: ClipRRect(
+      child: ExtendedImage.network(
+        url,
+        fit: BoxFit.cover,
+        cache: true,
         borderRadius: BorderRadius.circular(8),
-        child: ExtendedImage.network(
-          url,
-          fit: BoxFit.cover,
-          cache: true,
-          borderRadius: BorderRadius.circular(8),
-          loadStateChanged: (state) {
-            if (state.extendedImageLoadState == LoadState.loading) {
-              return Container(
-                color: placeholderColor,
-                width: 150,
-                height: 150,
-                child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
-              );
-            }
-            return null;
-          },
-        ),
+        loadStateChanged: (state) {
+          if (state.extendedImageLoadState == LoadState.loading) {
+            return Container(
+              color: placeholderColor,
+              width: 150,
+              height: 150,
+              child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+            );
+          }
+          return null;
+        },
       ),
     );
   }
