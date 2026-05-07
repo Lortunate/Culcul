@@ -1,5 +1,5 @@
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
-import 'package:culcul/features/to_view/data/models/to_view_entry.dart';
+import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
 import 'package:culcul/features/to_view/feature_scope.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

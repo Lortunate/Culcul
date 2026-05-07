@@ -1,7 +1,7 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/ranking/data/models/ranking_video.dart';
-import 'package:culcul/features/ranking/data/ranking_repository.dart';
+import 'package:culcul/features/ranking/domain/entities/ranking_video.dart';
+import 'package:culcul/features/ranking/domain/repositories/ranking_repository.dart';
 import 'package:culcul/features/ranking/data/ranking_repository_impl.dart';
 import 'package:culcul/features/ranking/presentation/view_models/category_ranking_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';

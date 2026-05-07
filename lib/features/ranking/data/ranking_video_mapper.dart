@@ -1,5 +1,5 @@
 import 'package:culcul/core/contracts/video_model_contract.dart';
-import 'package:culcul/features/ranking/data/models/ranking_video.dart';
+import 'package:culcul/features/ranking/domain/entities/ranking_video.dart';
 
 extension RankingVideoMapper on VideoModel {
   RankingVideo toDomain() {

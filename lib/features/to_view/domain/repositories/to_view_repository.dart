@@ -1,6 +1,6 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/to_view/data/models/to_view_entry.dart';
+import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
 
 abstract class ToViewRepository {
   Future<Result<List<ToViewEntry>, AppError>> getList();

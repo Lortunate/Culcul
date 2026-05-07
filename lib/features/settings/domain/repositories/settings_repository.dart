@@ -1,4 +1,4 @@
-import 'package:culcul/features/settings/data/models/app_theme_preference.dart';
+import 'package:culcul/features/settings/domain/entities/app_theme_preference.dart';
 
 abstract class SettingsRepository {
   AppThemePreference readThemePreference();

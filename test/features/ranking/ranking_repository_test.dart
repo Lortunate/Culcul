@@ -2,7 +2,7 @@ import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/network/models/api_response.dart';
 import 'package:culcul/features/ranking/data/dtos/ranking_response_dto.dart';
-import 'package:culcul/features/ranking/data/models/ranking_video.dart';
+import 'package:culcul/features/ranking/domain/entities/ranking_video.dart';
 import 'package:culcul/features/ranking/data/ranking_api.dart';
 import 'package:culcul/features/ranking/data/ranking_repository_impl.dart';
 import 'package:flutter_test/flutter_test.dart';

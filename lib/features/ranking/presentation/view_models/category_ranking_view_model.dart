@@ -1,4 +1,4 @@
-import 'package:culcul/features/ranking/data/models/ranking_video.dart';
+import 'package:culcul/features/ranking/domain/entities/ranking_video.dart';
 import 'package:culcul/features/ranking/feature_scope.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

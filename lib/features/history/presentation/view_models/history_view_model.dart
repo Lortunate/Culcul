@@ -1,4 +1,4 @@
-import 'package:culcul/features/history/data/models/history_entry.dart';
+import 'package:culcul/features/history/domain/entities/history_entry.dart';
 import 'package:culcul/features/history/feature_scope.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
