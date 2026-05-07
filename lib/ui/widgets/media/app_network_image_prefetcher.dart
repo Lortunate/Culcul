@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:math' as math;
 
-import 'package:culcul/ui/widgets/app_network_image.dart';
+import 'package:culcul/ui/widgets/media/app_network_image.dart';
 import 'package:flutter/material.dart';
 
 class NetworkImagePrefetchSpec {

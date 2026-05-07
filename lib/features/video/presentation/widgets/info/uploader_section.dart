@@ -1,8 +1,8 @@
 import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/ui/widgets/follow_button.dart';
-import 'package:culcul/ui/widgets/user_list_tile.dart';
+import 'package:culcul/ui/widgets/buttons/follow_button.dart';
+import 'package:culcul/ui/widgets/users/user_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

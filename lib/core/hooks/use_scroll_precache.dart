@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:culcul/core/perf/performance_policy.dart';
-import 'package:culcul/ui/widgets/app_network_image_prefetcher.dart';
+import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 

@@ -1,7 +1,7 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
-import 'package:culcul/ui/widgets/app_selectable_text.dart';
+import 'package:culcul/ui/widgets/inputs/app_selectable_text.dart';
 
 class BilibiliEmojiText extends StatelessWidget {
   static final _emojiRegex = RegExp(r'(\[.*?\])');

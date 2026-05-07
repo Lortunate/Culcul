@@ -5,7 +5,7 @@ import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_message_item.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_time_divider.dart';
-import 'package:culcul/ui/widgets/refresh_header_footer.dart';
+import 'package:culcul/ui/widgets/layout/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';

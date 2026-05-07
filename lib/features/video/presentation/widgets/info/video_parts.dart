@@ -1,6 +1,6 @@
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/app_clickable.dart';
+import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
 
 class VideoPartsSection extends StatelessWidget {

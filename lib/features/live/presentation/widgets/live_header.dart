@@ -4,8 +4,8 @@ import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/live/domain/entities/live_entities.dart';
 import 'package:culcul/core/contracts/user_card_contract.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/app_avatar.dart';
-import 'package:culcul/ui/widgets/follow_button.dart';
+import 'package:culcul/ui/widgets/users/app_avatar.dart';
+import 'package:culcul/ui/widgets/buttons/follow_button.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

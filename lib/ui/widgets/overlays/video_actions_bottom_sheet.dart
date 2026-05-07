@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/adaptive_blur.dart';
+import 'package:culcul/ui/widgets/media/adaptive_blur.dart';
 import 'package:flutter/material.dart';
 
 class VideoActionsBottomSheet extends StatelessWidget {

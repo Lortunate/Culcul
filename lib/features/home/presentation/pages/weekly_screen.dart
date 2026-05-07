@@ -3,7 +3,7 @@ import 'package:culcul/features/home/presentation/view_models/weekly_view_model.
 import 'package:culcul/features/home/presentation/widgets/home_video_actions.dart';
 import 'package:culcul/features/home/presentation/widgets/popular_video_card.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/app_error_widget.dart';
+import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

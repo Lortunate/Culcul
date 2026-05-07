@@ -1,8 +1,8 @@
 import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/core/session/show_login_dialog_provider.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/app_avatar.dart';
-import 'package:culcul/ui/widgets/app_search_bar.dart';
+import 'package:culcul/ui/widgets/users/app_avatar.dart';
+import 'package:culcul/ui/widgets/inputs/app_search_bar.dart';
 import 'package:culcul/ui/responsive/app_responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

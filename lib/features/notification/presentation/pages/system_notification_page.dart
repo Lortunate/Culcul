@@ -3,7 +3,7 @@ import 'package:culcul/features/notification/presentation/view_models/system_not
 import 'package:culcul/features/notification/domain/entities/system_notice.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_navigation.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
-import 'package:culcul/ui/widgets/app_error_widget.dart';
+import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

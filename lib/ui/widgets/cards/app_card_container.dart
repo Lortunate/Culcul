@@ -1,4 +1,4 @@
-import 'package:culcul/ui/widgets/app_clickable.dart';
+import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:culcul/core/perf/performance_policy.dart';
 import 'package:flutter/material.dart';
 

@@ -3,9 +3,9 @@ import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/presentation/widgets/relation_user_item.dart';
 import 'package:culcul/core/contracts/relation_user_contract.dart';
-import 'package:culcul/ui/widgets/app_error_widget.dart';
+import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
-import 'package:culcul/ui/widgets/privacy_error_widget.dart';
+import 'package:culcul/ui/widgets/feedback/privacy_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

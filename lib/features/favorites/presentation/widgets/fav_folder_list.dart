@@ -2,7 +2,7 @@ import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_item.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
-import 'package:culcul/ui/widgets/app_shimmer.dart';
+import 'package:culcul/ui/widgets/feedback/app_shimmer.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';

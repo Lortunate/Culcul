@@ -1,6 +1,6 @@
 import 'package:culcul/core/constants/app_dimens.dart';
-import 'package:culcul/ui/widgets/app_avatar.dart';
-import 'package:culcul/ui/widgets/app_clickable.dart';
+import 'package:culcul/ui/widgets/users/app_avatar.dart';
+import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
 
 class UserListTile extends StatelessWidget {

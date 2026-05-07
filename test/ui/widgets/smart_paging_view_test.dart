@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/app_empty_state_widget.dart';
+import 'package:culcul/ui/widgets/feedback/app_empty_state_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

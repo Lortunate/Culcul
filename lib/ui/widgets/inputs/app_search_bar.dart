@@ -1,4 +1,4 @@
-import 'package:culcul/ui/widgets/app_clickable.dart';
+import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
 
 class AppSearchBar extends StatelessWidget {

@@ -3,8 +3,8 @@ import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/icon_text.dart';
-import 'package:culcul/ui/widgets/video_list_card.dart';
+import 'package:culcul/ui/widgets/text/icon_text.dart';
+import 'package:culcul/ui/widgets/cards/video_list_card.dart';
 import 'package:flutter/material.dart';
 
 class SearchVideoItem extends StatelessWidget {

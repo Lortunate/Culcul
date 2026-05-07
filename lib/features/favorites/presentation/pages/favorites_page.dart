@@ -4,8 +4,8 @@ import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
 import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/app_tab_bar.dart';
-import 'package:culcul/ui/widgets/guest_view.dart';
+import 'package:culcul/ui/widgets/layout/app_tab_bar.dart';
+import 'package:culcul/ui/widgets/users/guest_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

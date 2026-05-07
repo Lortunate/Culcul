@@ -1,4 +1,4 @@
-import 'package:culcul/ui/widgets/app_shimmer.dart';
+import 'package:culcul/ui/widgets/feedback/app_shimmer.dart';
 import 'package:flutter/material.dart';
 
 class HotSearchSkeleton extends StatelessWidget {

@@ -1,6 +1,6 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/session/logout_action_provider.dart';
-import 'package:culcul/ui/widgets/app_clickable.dart';
+import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
 import 'package:culcul/ui/responsive/app_breakpoints.dart';
 import 'package:culcul/ui/responsive/app_responsive.dart';

@@ -1,4 +1,4 @@
-import 'package:culcul/ui/widgets/app_tab_bar.dart';
+import 'package:culcul/ui/widgets/layout/app_tab_bar.dart';
 import 'package:culcul/features/ranking/presentation/models/ranking_category.dart';
 import 'package:culcul/features/ranking/presentation/widgets/ranking_list_view.dart';
 import 'package:culcul/i18n/strings.g.dart';

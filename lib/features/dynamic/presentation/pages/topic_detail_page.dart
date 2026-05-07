@@ -1,10 +1,10 @@
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/topic_dynamic_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/app_empty_state_widget.dart';
+import 'package:culcul/ui/widgets/feedback/app_empty_state_widget.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_card.dart';
-import 'package:culcul/ui/widgets/app_error_widget.dart';
-import 'package:culcul/ui/widgets/refresh_header_footer.dart';
+import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
+import 'package:culcul/ui/widgets/layout/refresh_header_footer.dart';
 import 'package:culcul/ui/widgets/skeletons/video_list_skeleton.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
