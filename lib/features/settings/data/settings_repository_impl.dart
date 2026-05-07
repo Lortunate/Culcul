@@ -2,9 +2,21 @@ import 'dart:io';
 
 import 'package:culcul/core/bootstrap/providers/storage_provider.dart';
 import 'package:culcul/features/settings/domain/entities/app_theme_preference.dart';
+import 'package:culcul/features/settings/domain/repositories/settings_repository.dart';
 import 'package:culcul/features/settings/domain/repositories/settings_repository.dart' as domain;
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'settings_repository_impl.g.dart';
+
+@riverpod
+SettingsRepository settingsRepository(Ref ref) {
+  return SettingsRepositoryImpl(
+    settingsStorageBox: ref.watch(settingsStorageBoxProvider),
+  );
+}
 
 class SettingsRepositoryImpl implements domain.SettingsRepository {
   const SettingsRepositoryImpl({required Box<dynamic> settingsStorageBox})
