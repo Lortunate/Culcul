@@ -19,6 +19,12 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderSt
   TabController? _tabController;
 
   @override
+  void dispose() {
+    _tabController?.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final emotesAsync = ref.watch(emotePackagesProvider);
     final t = Translations.of(context);
@@ -33,6 +39,7 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderSt
           }
 
           if (_tabController == null || _tabController!.length != packages.length) {
+            _tabController?.dispose();
             _tabController = TabController(length: packages.length, vsync: this);
           }
 
@@ -56,6 +63,8 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderSt
                           width: 24,
                           height: 24,
                           fit: BoxFit.contain,
+                          cacheWidth: 48,
+                          cacheHeight: 48,
                         ),
                       ),
                     )
@@ -89,7 +98,7 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderSt
         final emote = package.emote[index];
         return InkWell(
           onTap: () => widget.onEmojiSelected(emote.text),
-          child: ExtendedImage.network(emote.url, fit: BoxFit.contain),
+          child: ExtendedImage.network(emote.url, fit: BoxFit.contain, cacheWidth: 96, cacheHeight: 96),
         );
       },
     );

@@ -143,12 +143,16 @@ class PrivateSessionItem extends ConsumerWidget {
         child: Icon(Icons.person, color: Theme.of(context).colorScheme.primary),
       );
     }
+    final dpr = MediaQuery.devicePixelRatioOf(context);
+    final cacheSize = (48 * dpr).round().clamp(1, 2048);
     return ExtendedImage.network(
       url,
       width: 48,
       height: 48,
       shape: BoxShape.circle,
       fit: BoxFit.cover,
+      cacheWidth: cacheSize,
+      cacheHeight: cacheSize,
       loadStateChanged: (state) {
         if (state.extendedImageLoadState == LoadState.loading) {
           return Container(color: Theme.of(context).colorScheme.surfaceContainerHighest);

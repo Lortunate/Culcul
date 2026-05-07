@@ -64,6 +64,8 @@ class ChatMessageItem extends StatelessWidget {
 
   Widget _buildAvatar(BuildContext context, String url) {
     final colorScheme = Theme.of(context).colorScheme;
+    final dpr = MediaQuery.devicePixelRatioOf(context);
+    final cacheSize = (40 * dpr).round().clamp(1, 2048);
 
     return GestureDetector(
       onTap: onAvatarTap,
@@ -76,6 +78,8 @@ class ChatMessageItem extends StatelessWidget {
                   url,
                   fit: BoxFit.cover,
                   cache: true,
+                  cacheWidth: cacheSize,
+                  cacheHeight: cacheSize,
                   loadStateChanged: (state) {
                     if (state.extendedImageLoadState == LoadState.failed) {
                       return Icon(Icons.person, color: colorScheme.onSurfaceVariant);
