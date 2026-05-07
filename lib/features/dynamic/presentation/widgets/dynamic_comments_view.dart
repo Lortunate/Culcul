@@ -63,7 +63,6 @@ class DynamicCommentsSliver extends ConsumerWidget {
 
   void _showReplySheet(BuildContext context, WidgetRef ref, CommentItem comment) {
     final theme = Theme.of(context);
-    final controller = TextEditingController();
     final notifier = ref.read(dynamicCommentControllerProvider(post).notifier);
 
     showModalBottomSheet(
@@ -74,60 +73,105 @@ class DynamicCommentsSliver extends ConsumerWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 16,
-            right: 16,
-            top: 16,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  Text(
-                    t.video.reply_to(name: comment.member.uname),
-                    style: theme.textTheme.titleMedium,
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: controller,
-                autofocus: true,
-                decoration: InputDecoration(
-                  hintText: t.moments.comment_hint,
-                  border: const OutlineInputBorder(),
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                ),
-                maxLines: 3,
-                minLines: 1,
-              ),
-              const SizedBox(height: 8),
-              Align(
-                alignment: Alignment.centerRight,
-                child: FilledButton(
-                  onPressed: () {
-                    final text = controller.text.trim();
-                    if (text.isNotEmpty) {
-                      notifier.addReply(comment.rpid, comment.root, text);
-                      Navigator.pop(context);
-                    }
-                  },
-                  child: Text(t.moments.publish),
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
-          ),
+        return _ReplySheetContent(
+          comment: comment,
+          theme: theme,
+          t: t,
+          onSubmit: (text) {
+            notifier.addReply(comment.rpid, comment.root, text);
+          },
         );
       },
+    );
+  }
+}
+
+class _ReplySheetContent extends StatefulWidget {
+  final CommentItem comment;
+  final ThemeData theme;
+  final Translations t;
+  final ValueChanged<String> onSubmit;
+
+  const _ReplySheetContent({
+    required this.comment,
+    required this.theme,
+    required this.t,
+    required this.onSubmit,
+  });
+
+  @override
+  State<_ReplySheetContent> createState() => _ReplySheetContentState();
+}
+
+class _ReplySheetContentState extends State<_ReplySheetContent> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+        left: 16,
+        right: 16,
+        top: 16,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              Text(
+                widget.t.video.reply_to(name: widget.comment.member.uname),
+                style: widget.theme.textTheme.titleMedium,
+              ),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _controller,
+            autofocus: true,
+            decoration: InputDecoration(
+              hintText: widget.t.moments.comment_hint,
+              border: const OutlineInputBorder(),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            ),
+            maxLines: 3,
+            minLines: 1,
+          ),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerRight,
+            child: FilledButton(
+              onPressed: () {
+                final text = _controller.text.trim();
+                if (text.isNotEmpty) {
+                  widget.onSubmit(text);
+                  Navigator.pop(context);
+                }
+              },
+              child: Text(widget.t.moments.publish),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+      ),
     );
   }
 }
