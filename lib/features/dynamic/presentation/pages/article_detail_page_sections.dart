@@ -16,7 +16,7 @@ class _AuthorHeader extends StatelessWidget {
           radius: 20,
           backgroundColor: colorScheme.surfaceContainerHighest,
           backgroundImage: data.authorAvatar.isNotEmpty
-              ? NetworkImage(data.authorAvatar)
+              ? AppNetworkImage.providerFor(url: data.authorAvatar)
               : null,
           child: data.authorAvatar.isEmpty
               ? Icon(Icons.person_rounded, color: colorScheme.onSurfaceVariant)

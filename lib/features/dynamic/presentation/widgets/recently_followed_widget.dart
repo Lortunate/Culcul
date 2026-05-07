@@ -1,6 +1,7 @@
 import 'package:culcul/features/dynamic/presentation/view_models/recently_followed_view_model.dart';
 import 'package:culcul/core/contracts/relation_user_contract.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -76,7 +77,7 @@ class _UserItem extends StatelessWidget {
           ),
           child: CircleAvatar(
             radius: 26,
-            backgroundImage: NetworkImage(user.face),
+            backgroundImage: AppNetworkImage.providerFor(url: user.face),
             backgroundColor: theme.colorScheme.surfaceContainerHighest,
           ),
         ),
