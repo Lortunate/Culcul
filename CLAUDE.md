@@ -48,7 +48,7 @@ This project is indexed by GitNexus as **Culcul** (2461 symbols, 3139 relationsh
 
 See `docs/architecture/architecture-guide.md` for full layout, rules, and feature compliance matrix.
 
-**Current focus**: Core directory reorganization, widget categorization, cross-feature decoupling, domain layer purity, error handling unification, core bug fixes.
+**Phase 7 complete**: Core reorganization, widget categorization, cross-feature decoupling (42→6 imports), error handling unification, accessibility. See architecture guide for details.
 
 Spec: `docs/superpowers/specs/2026-05-07-phase7-architecture-code-quality-design.md`
 Plan: `docs/superpowers/plans/2026-05-07-phase7-architecture-code-quality.md`

@@ -174,18 +174,23 @@ Completed 2026-05-07. All 13 features normalized to FULL compliance, CLAUDE.md/A
 Archived spec: `docs/superpowers/specs/archive/2026-05-07-phase6-architecture-optimization-design.completed.md`
 Archived plan: `docs/superpowers/plans/archive/2026-05-07-phase6-architecture-optimization.completed.md`
 
-## Phase 7 (Current): Architecture Optimization & Code Quality
+## Phase 7 (Complete): Architecture Optimization & Code Quality
+
+Completed 2026-05-07. Directory reorganization, cross-feature decoupling, error handling unification, accessibility.
 
 Spec: `docs/superpowers/specs/2026-05-07-phase7-architecture-code-quality-design.md`
 Plan: `docs/superpowers/plans/2026-05-07-phase7-architecture-code-quality.md`
 
-1. Core directory reorganization (group `core/` into `data/`, `session/`, etc.)
-2. UI widget categorization (33 widgets → logical subdirectories)
-3. Test restructuring (mirror `lib/` structure)
-4. Bootstrap simplification (extract provider overrides from `main.dart`)
-5. Cross-feature decoupling (42 violations → 0 via shared contracts)
-6. Video domain layer purity (DTO re-exports → proper entities)
-7. Error handling unification (eliminate dataOrNull!, consistent patterns)
-8. Core infrastructure fixes (pagination, audio, network security)
-9. Pattern standardization (settings, home)
-10. Accessibility (Semantics wrappers on shared widgets)
+**Completed:**
+1. Core directory reorganization (`core/network/` + `core/pagination/` → `core/data/`)
+2. UI widget categorization (33 widgets → 10 logical subdirectories)
+3. Test restructuring (`test/shared/` → `test/core/` + `test/ui/`)
+4. Bootstrap simplification (extracted provider overrides from `main.dart`)
+5. Cross-feature decoupling (42 → 6 imports via core contracts)
+6. Video domain purity (removed dead presentation getters, moved mapping to data layer)
+7. Error handling unification (15 `dataOrNull ??` → explicit `result.when()`)
+8. Core infrastructure fixes (pagination, audio, network — already done in prior phases)
+9. Pattern standardization (home route_entry → function pattern)
+10. Accessibility (Semantics on AppClickable, FollowButton, AppAvatar)
+
+**Remaining (6 cross-feature imports):** Deeply coupled state providers (liveRecommendProvider, userDynamicProvider, defaultSearchProvider, DynamicPostCard, TopicDetailPage) — legitimate cross-feature UI composition.
