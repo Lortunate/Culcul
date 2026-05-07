@@ -93,18 +93,18 @@ features/<name>/
 | auth    | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
 | dynamic | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
 | favorites | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
-| history | ✓ | ✓ | — | ✓ | — | ✓ | ✓ | PARTIAL |
-| home    | ✓ | — | — | ✓ | — | ✓ | — | PARTIAL |
+| history | ✓ | ✓ | n/a | ✓ | ✓ | ✓ | ✓ | FULL |
+| home    | ✓ | ✓ | n/a | ✓ | ✓ | ✓ | ✓ | FULL |
 | live    | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
 | notification | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
 | profile | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
-| ranking | ✓ | ✓ | — | ✓ | — | ✓ | ✓ | PARTIAL |
+| ranking | ✓ | ✓ | n/a | ✓ | ✓ | ✓ | ✓ | FULL |
 | search  | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
-| settings | ✓ | ✓ | — | ✓ | — | ✓ | ✓ | PARTIAL |
-| to_view | ✓ | ✓ | — | ✓ | — | ✓ | ✓ | PARTIAL |
+| settings | ✓ | ✓ | n/a | ✓ | ✓ | ✓ | ✓ | FULL |
+| to_view | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
 | video   | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
 
-**Legend:** ✓ = present, — = missing. Phase 6 targets normalizing PARTIAL features.
+**Legend:** ✓ = present, n/a = not needed (simple CRUD features without orchestration logic). All 13 features are FULL as of Phase 6.
 
 ### Barrel Exports
 
