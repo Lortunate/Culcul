@@ -1,6 +1,6 @@
-import 'package:culcul/core/session/current_user_provider.dart';
-import 'package:culcul/features/profile/feature_scope.dart';
 import 'package:culcul/core/contracts/relation_user_contract.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
+import 'package:culcul/core/session/follow_list_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'recently_followed_view_model.g.dart';
@@ -15,7 +15,7 @@ class RecentlyFollowed extends _$RecentlyFollowed {
     }
 
     final result = await ref
-        .read(relationRepositoryProvider)
+        .read(followListServiceProvider)
         .getFollowings(int.parse(session.uid), page: 1);
     return result.when(success: (users) => users.take(20).toList(), failure: (_) => []);
   }

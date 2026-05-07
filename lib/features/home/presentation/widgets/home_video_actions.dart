@@ -1,4 +1,4 @@
-import 'package:culcul/features/to_view/presentation/view_models/to_view_view_model.dart';
+import 'package:culcul/core/session/watch_later_provider.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/services/media_service.dart';
 import 'package:culcul/core/utils/id_utils.dart';
@@ -25,7 +25,7 @@ Future<void> showHomeVideoActionsBottomSheet(
         return;
       }
 
-      await ref.read(toViewListProvider.notifier).add(aid);
+      await ref.read(watchLaterActionsProvider).addToWatchLater(aid);
       ToastUtils.show(t.home.video_more.added_to_watch_later);
     } catch (e) {
       ToastUtils.showError(t.home.video_more.add_failed(error: e.toString()));

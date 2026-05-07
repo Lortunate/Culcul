@@ -1,8 +1,8 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/core/session/user_profile_lookup_provider.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/route_entry.dart';
-import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/feedback/app_shimmer.dart';
@@ -33,12 +33,14 @@ class PrivateSessionItem extends ConsumerWidget {
       } else {
         // P2P messages: fetch profile info
         final userProfileAsync = ref.watch(
-          userProfileProvider(session.talkerId.toString()),
+          userProfileInfoProvider(session.talkerId.toString()),
         );
         if (userProfileAsync.hasValue) {
-          final profile = userProfileAsync.value!;
-          title = profile.username;
-          avatarUrl = profile.avatarUrl ?? '';
+          final profile = userProfileAsync.value;
+          if (profile != null) {
+            title = profile.name;
+            avatarUrl = profile.avatarUrl;
+          }
         } else {
           isLoading = true;
         }

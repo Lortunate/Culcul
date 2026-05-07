@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 const _allowedFutureWaitPaths = <String>{
-  'lib/core/network/network_concurrency_executor.dart',
+  'lib/core/data/network/network_concurrency_executor.dart',
   'lib/app/bootstrap/deferred_app_init.dart',
 };
 

@@ -1,8 +1,8 @@
-import 'package:culcul/features/notification/application/chat_page_commands.dart';
 import 'package:culcul/core/session/current_user_provider.dart';
+import 'package:culcul/core/session/user_profile_lookup_provider.dart';
+import 'package:culcul/features/notification/application/chat_page_commands.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/presentation/view_models/chat_view_model.dart';
-import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
 import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_input.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_message_list.dart';
@@ -129,14 +129,15 @@ class ChatPage extends HookConsumerWidget {
       return (avatarUrl: displayAvatarUrl, name: displayName);
     }
 
-    final profileAsync = ref.watch(userProfileProvider(talkerId.toString()));
+    final profileAsync = ref.watch(userProfileInfoProvider(talkerId.toString()));
     if (!profileAsync.hasValue) return (avatarUrl: displayAvatarUrl, name: displayName);
 
-    final profile = profileAsync.value!;
+    final profile = profileAsync.value;
+    if (profile == null) return (avatarUrl: displayAvatarUrl, name: displayName);
     if (displayAvatarUrl.isEmpty) {
-      displayAvatarUrl = profile.avatarUrl ?? '';
+      displayAvatarUrl = profile.avatarUrl;
     }
-    displayName = profile.username;
+    displayName = profile.name;
     return (avatarUrl: displayAvatarUrl, name: displayName);
   }
 }
