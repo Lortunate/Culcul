@@ -122,7 +122,10 @@ class LoadVideoDetailWorkflow {
               bvid,
               cancelToken: cancelToken,
             );
-            return result.dataOrNull ?? const <RelatedVideo>[];
+            return result.when(
+              success: (data) => data,
+              failure: (error) => throw error,
+            );
           },
         ),
         ConcurrentTask<List<VideoTag>>(
@@ -134,7 +137,10 @@ class LoadVideoDetailWorkflow {
               bvid,
               cancelToken: cancelToken,
             );
-            return result.dataOrNull ?? const <VideoTag>[];
+            return result.when(
+              success: (data) => data,
+              failure: (error) => throw error,
+            );
           },
         ),
       ],

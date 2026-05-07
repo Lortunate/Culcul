@@ -17,7 +17,10 @@ Future<ProfileUser> myProfile(Ref ref) async {
   final result = await ref
       .watch(profileRepositoryProvider)
       .getProfile(int.parse(session.uid));
-  return result.dataOrNull ?? _emptyProfileUser(id: session.uid);
+  return result.when(
+    success: (data) => data,
+    failure: (error) => throw error,
+  );
 }
 
 @riverpod
@@ -49,9 +52,13 @@ class UserProfileNotifier extends _$UserProfileNotifier {
     final result = await ref
         .read(profileRepositoryProvider)
         .getProfile(int.parse(userId));
-    final profile = result.dataOrNull ?? _emptyProfileUser(id: userId);
-    await ref.read(profileCacheRepositoryProvider.notifier).writeProfile(profile);
-    return profile;
+    return result.when(
+      success: (data) async {
+        await ref.read(profileCacheRepositoryProvider.notifier).writeProfile(data);
+        return data;
+      },
+      failure: (error) => throw error,
+    );
   }
 }
 

@@ -150,14 +150,13 @@ class PublishDynamicWorkflow {
           files: images,
           csrf: csrfToken,
         );
-        if (uploadedImagesResult.errorOrNull case final error?) {
-          return Failure(error);
-        }
-
-        return _repository.publishDynamic(
-          content: content,
-          csrf: csrfToken,
-          images: uploadedImagesResult.dataOrNull ?? const <DynamicUploadImageData>[],
+        return uploadedImagesResult.when(
+          success: (images) => _repository.publishDynamic(
+            content: content,
+            csrf: csrfToken,
+            images: images,
+          ),
+          failure: (error) async => Failure(error),
         );
       },
       failure: (error) async => Failure(error),

@@ -9,7 +9,10 @@ class UserSpaceNotifier extends _$UserSpaceNotifier {
   @override
   Future<ProfileUser> build(String mid) async {
     final result = await ref.read(profileRepositoryProvider).getProfile(int.parse(mid));
-    return result.dataOrNull ?? _fallbackProfile(mid);
+    return result.when(
+      success: (data) => data,
+      failure: (error) => throw error,
+    );
   }
 
   Future<void> toggleFollow() async {

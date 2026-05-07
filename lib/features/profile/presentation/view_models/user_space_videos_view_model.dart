@@ -63,7 +63,10 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
     final result = await ref
         .read(profileRepositoryProvider)
         .getSpaceVideos(mid: _mid, page: page, order: _order, cancelToken: cancelToken);
-    return result.dataOrNull ?? const <ProfileVideo>[];
+    return result.when(
+      success: (data) => data,
+      failure: (error) => throw error,
+    );
   }
 
   @override

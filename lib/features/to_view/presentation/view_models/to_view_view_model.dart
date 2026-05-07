@@ -15,7 +15,10 @@ class ToViewList extends _$ToViewList {
     }
 
     final result = await ref.read(toViewRepositoryProvider).getList();
-    return result.dataOrNull ?? const <ToViewEntry>[];
+    return result.when(
+      success: (data) => data,
+      failure: (error) => throw error,
+    );
   }
 
   Future<void> add(int aid) async {

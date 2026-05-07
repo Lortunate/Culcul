@@ -13,5 +13,8 @@ Future<ProfileVideo?> userStickyVideo(Ref ref, int vmid) async {
 @Riverpod(keepAlive: true)
 Future<List<ProfileVideo>> userMasterpieces(Ref ref, int vmid) async {
   final result = await ref.read(profileRepositoryProvider).getMasterpiece(vmid);
-  return result.dataOrNull ?? const <ProfileVideo>[];
+  return result.when(
+    success: (data) => data,
+    failure: (error) => throw error,
+  );
 }
