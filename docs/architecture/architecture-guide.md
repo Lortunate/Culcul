@@ -154,12 +154,21 @@ Completed 2026-05-07. Anti-pattern fixes, list rendering optimization, media pip
 Archived spec: `docs/superpowers/specs/archive/2026-05-07-performance-optimization-design.completed.md`
 Archived plan: `docs/superpowers/plans/archive/2026-05-07-performance-optimization.completed.md`
 
-## Phase 6 (Current): Architecture Optimization & Code Quality
+## Phase 6 (Complete): Architecture Optimization & Code Quality
 
-Spec: `docs/superpowers/specs/2026-05-07-phase6-architecture-optimization-design.md`
-Plan: `docs/superpowers/plans/2026-05-07-phase6-architecture-optimization.md`
+Completed 2026-05-07. All 13 features normalized to FULL compliance, CLAUDE.md/AGENTS.md reconciled, lint rules tightened, barrel exports standardized.
 
-1. Feature structure normalization (5 non-compliant features)
-2. Documentation reconciliation (CLAUDE.md/AGENTS.md)
-3. Lint tightening (avoid_print, unawaited_futures)
-4. Barrel export standardization
+Archived spec: `docs/superpowers/specs/archive/2026-05-07-phase6-architecture-optimization-design.completed.md`
+Archived plan: `docs/superpowers/plans/archive/2026-05-07-phase6-architecture-optimization.completed.md`
+
+## Phase 7 (Current): Code Quality & Architectural Integrity
+
+Spec: `docs/superpowers/specs/2026-05-07-phase7-code-quality-refactoring-design.md`
+Plan: `docs/superpowers/plans/2026-05-07-phase7-code-quality-refactoring.md`
+
+1. Cross-feature decoupling (42 violations → 0 via shared contracts)
+2. Video domain layer purity (DTO re-exports → proper entities)
+3. Error handling unification (eliminate dataOrNull!, consistent patterns)
+4. Core infrastructure fixes (pagination, audio, network security)
+5. Pattern standardization (settings, home)
+6. Accessibility (Semantics wrappers on shared widgets)
