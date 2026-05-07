@@ -43,6 +43,7 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
   double _lineHeight = 0;
 
   int _lastFrameTime = 0;
+  int _sweepCounter = 0;
   final ValueNotifier<int> _repaintTick = ValueNotifier<int>(0);
 
   bool get _isReady => _viewWidth > 0 && _viewHeight > 0;
@@ -85,9 +86,7 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
 
   void _updateOption(DanmakuOption option) {
     if (!mounted) return;
-    setState(() {
-      _option = option;
-    });
+    _option = option;
     _requestRepaint();
   }
 
@@ -112,7 +111,6 @@ class _DanmakuViewState extends State<DanmakuView> with SingleTickerProviderStat
     _bottomTracks.clear();
     if (!mounted) return;
     _requestRepaint();
-    setState(() {});
   }
 
   void _requestRepaint() {

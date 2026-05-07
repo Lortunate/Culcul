@@ -38,19 +38,27 @@ extension _DanmakuViewStateTicker on _DanmakuViewState {
   }
 
   void _updateScrollingItems(int delta) {
-    _activeItems.removeWhere((item) {
-      if (item.type != DanmakuItemType.scroll) {
-        return false;
+    for (final item in _activeItems) {
+      if (item.type == DanmakuItemType.scroll) {
+        item.x -= item.velocity * delta;
       }
-
-      item.x -= item.velocity * delta;
-      return item.x + item.width < 0;
-    });
+    }
+    _sweepCounter++;
+    if (_sweepCounter >= 60) {
+      _sweepCounter = 0;
+      _activeItems.removeWhere((item) {
+        if (item.type == DanmakuItemType.scroll) {
+          return item.x + item.width < 0;
+        }
+        return false;
+      });
+    }
   }
 
   void _removeExpiredStaticItems(int currentMs) {
     const staticDuration = 5000;
 
+    if (_sweepCounter != 0) return;
     _activeItems.removeWhere((item) {
       if (item.type == DanmakuItemType.scroll) {
         return false;
