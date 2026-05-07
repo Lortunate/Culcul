@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:culcul/core/contracts/video_model_contract.dart';
-import 'package:culcul/core/network/interceptors/cache_interceptor.dart';
+import 'package:culcul/core/data/network/interceptors/cache_interceptor.dart';
 import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
-import 'package:culcul/core/pagination/paged_async_notifier.dart';
+import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 mixin HomeFeedPagingMixin on OffsetPagedAsyncNotifier<VideoModel> {

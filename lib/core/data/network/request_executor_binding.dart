@@ -1,6 +1,6 @@
 import 'package:culcul/core/core.dart';
-import 'package:culcul/core/network/models/api_response.dart';
-import 'package:culcul/core/network/request_executor.dart';
+import 'package:culcul/core/data/network/models/api_response.dart';
+import 'package:culcul/core/data/network/request_executor.dart';
 
 mixin RequestExecutorBinding {
   RequestExecutor get requestExecutor;

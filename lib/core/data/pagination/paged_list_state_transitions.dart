@@ -1,4 +1,4 @@
-import 'package:culcul/core/pagination/paged_list_state.dart';
+import 'package:culcul/core/data/pagination/paged_list_state.dart';
 
 class PagedListStateTransitions {
   const PagedListStateTransitions._();

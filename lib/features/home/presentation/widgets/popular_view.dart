@@ -6,7 +6,7 @@ import 'package:culcul/features/home/presentation/widgets/home_video_actions.dar
 import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
 import 'package:culcul/core/hooks/use_scroll_precache.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
-import 'package:culcul/core/network/network_quality_policy.dart';
+import 'package:culcul/core/data/network/network_quality_policy.dart';
 import 'package:culcul/core/perf/performance_policy.dart';
 import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';
 import 'package:culcul/features/home/presentation/widgets/popular_video_card.dart';

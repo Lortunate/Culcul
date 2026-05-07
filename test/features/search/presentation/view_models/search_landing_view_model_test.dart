@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/network/request_cancel_token.dart';
+import 'package:culcul/core/data/network/request_cancel_token.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';

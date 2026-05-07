@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/network/network_concurrency_executor.dart';
-import 'package:culcul/core/network/network_concurrency_profiles.dart';
+import 'package:culcul/core/data/network/network_concurrency_executor.dart';
+import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/dynamic/application/dynamic_workflows.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:culcul/core/network/providers/wbi_helper_provider.dart';
+import 'package:culcul/core/data/network/providers/wbi_helper_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

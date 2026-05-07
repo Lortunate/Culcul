@@ -1,5 +1,5 @@
 import 'package:culcul/core/core.dart';
-import 'package:culcul/core/network/network_concurrency_profiles.dart';
+import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/perf/network_perf_logger.dart';
 import 'package:pool/pool.dart';
 

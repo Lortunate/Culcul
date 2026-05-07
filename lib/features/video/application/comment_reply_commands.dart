@@ -1,6 +1,6 @@
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
-import 'package:culcul/core/pagination/pagination_load_gate.dart';
-import 'package:culcul/core/pagination/scroll_load_trigger.dart';
+import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
 
 class CommentReplyCommands {
   CommentReplyCommands({

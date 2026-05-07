@@ -1,5 +1,5 @@
-import 'package:culcul/core/network/resource_api.dart';
-import 'package:culcul/core/network/providers/wbi_helper_provider.dart';
+import 'package:culcul/core/data/network/resource_api.dart';
+import 'package:culcul/core/data/network/providers/wbi_helper_provider.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _FakeResourceApi implements ResourceApi {

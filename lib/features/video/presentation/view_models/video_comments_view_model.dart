@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:culcul/features/video/feature_scope.dart';
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/network/request_cancel_token.dart';
-import 'package:culcul/core/pagination/paged_list_state.dart';
-import 'package:culcul/core/pagination/paged_list_state_transitions.dart';
+import 'package:culcul/core/data/network/request_cancel_token.dart';
+import 'package:culcul/core/data/pagination/paged_list_state.dart';
+import 'package:culcul/core/data/pagination/paged_list_state_transitions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'video_comments_state.dart';

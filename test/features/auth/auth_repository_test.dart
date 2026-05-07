@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
 import 'package:culcul/core/errors/exceptions.dart';
-import 'package:culcul/core/network/models/api_response.dart';
+import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/core/bootstrap/providers/storage_provider.dart';
 import 'package:culcul/features/auth/data/auth_api.dart';
 import 'package:culcul/features/auth/data/auth_repository_impl.dart';

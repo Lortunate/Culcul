@@ -1,6 +1,6 @@
 import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/network/request_cancel_token.dart';
+import 'package:culcul/core/data/network/request_cancel_token.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/topic_search_view_model.dart';
 import 'package:culcul/features/search/data/search_repository_impl.dart';

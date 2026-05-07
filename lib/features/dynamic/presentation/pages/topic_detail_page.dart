@@ -6,8 +6,8 @@ import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_card.d
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';
 import 'package:culcul/ui/widgets/skeletons/video_list_skeleton.dart';
-import 'package:culcul/core/pagination/pagination_load_gate.dart';
-import 'package:culcul/core/pagination/scroll_load_trigger.dart';
+import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';

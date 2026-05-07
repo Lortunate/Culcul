@@ -1,4 +1,4 @@
-import 'package:culcul/core/network/dtos/video_model_contract_dto.dart';
+import 'package:culcul/core/data/network/dtos/video_model_contract_dto.dart';
 
 class WeeklyModelDto {
   final List<VideoModel> list;

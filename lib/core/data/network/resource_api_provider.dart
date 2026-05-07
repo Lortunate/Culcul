@@ -1,5 +1,5 @@
-import 'package:culcul/core/network/dio_client.dart';
-import 'package:culcul/core/network/resource_api.dart';
+import 'package:culcul/core/data/network/dio_client.dart';
+import 'package:culcul/core/data/network/resource_api.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'resource_api_provider.g.dart';

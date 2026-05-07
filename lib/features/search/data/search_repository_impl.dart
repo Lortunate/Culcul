@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/errors/exceptions.dart';
-import 'package:culcul/core/network/request_cancel_token.dart';
-import 'package:culcul/core/network/dio_client.dart';
-import 'package:culcul/core/network/request_executor.dart';
-import 'package:culcul/core/network/request_executor_binding.dart';
+import 'package:culcul/core/data/network/request_cancel_token.dart';
+import 'package:culcul/core/data/network/dio_client.dart';
+import 'package:culcul/core/data/network/request_executor.dart';
+import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/search/data/dtos/search_dtos.dart';
 import 'package:culcul/features/search/data/search_mapper.dart';

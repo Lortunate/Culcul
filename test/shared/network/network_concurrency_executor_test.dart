@@ -1,6 +1,6 @@
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/network/network_concurrency_executor.dart';
-import 'package:culcul/core/network/network_concurrency_profiles.dart';
+import 'package:culcul/core/data/network/network_concurrency_executor.dart';
+import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

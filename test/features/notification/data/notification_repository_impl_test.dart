@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:culcul/core/network/models/api_response.dart';
+import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
 import 'package:culcul/features/notification/data/notification_api.dart';

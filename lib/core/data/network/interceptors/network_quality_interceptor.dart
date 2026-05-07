@@ -1,4 +1,4 @@
-import 'package:culcul/core/network/network_quality_policy.dart';
+import 'package:culcul/core/data/network/network_quality_policy.dart';
 import 'package:dio/dio.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

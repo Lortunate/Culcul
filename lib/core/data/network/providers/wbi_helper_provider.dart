@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:culcul/core/network/resource_api.dart';
-import 'package:culcul/core/network/resource_api_provider.dart';
+import 'package:culcul/core/data/network/resource_api.dart';
+import 'package:culcul/core/data/network/resource_api_provider.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

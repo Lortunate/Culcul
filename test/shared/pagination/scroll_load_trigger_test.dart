@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:culcul/core/pagination/pagination_load_gate.dart';
-import 'package:culcul/core/pagination/scroll_load_trigger.dart';
+import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';

@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/network/network_concurrency_executor.dart';
-import 'package:culcul/core/network/network_concurrency_profiles.dart';
+import 'package:culcul/core/data/network/network_concurrency_executor.dart';
+import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
 import 'package:culcul/features/live/feature_scope.dart';
 import 'package:culcul/features/live/domain/entities/live_entities.dart';

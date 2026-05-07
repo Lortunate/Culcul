@@ -1,5 +1,5 @@
 import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/core/network/models/api_response.dart';
+import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/features/home/data/dtos/weekly_model_dto.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';

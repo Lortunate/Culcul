@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
 import 'package:culcul/core/hooks/use_scroll_precache.dart';
-import 'package:culcul/core/network/network_quality_policy.dart';
+import 'package:culcul/core/data/network/network_quality_policy.dart';
 import 'package:culcul/core/perf/performance_policy.dart';
 import 'package:culcul/features/live/presentation/view_models/live_recommend_view_model.dart';
 import 'package:culcul/core/contracts/live_room_summary_contract.dart';

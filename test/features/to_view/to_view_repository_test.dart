@@ -1,6 +1,6 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/errors/exceptions.dart';
-import 'package:culcul/core/network/models/api_response.dart';
+import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/features/to_view/data/dtos/to_view_model_dto.dart';
 import 'package:culcul/features/to_view/data/to_view_api.dart';
 import 'package:culcul/features/to_view/data/to_view_repository_impl.dart';

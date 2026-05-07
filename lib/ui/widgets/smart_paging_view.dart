@@ -1,7 +1,7 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
-import 'package:culcul/core/pagination/pagination_load_gate.dart';
-import 'package:culcul/core/pagination/scroll_load_trigger.dart';
+import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
+import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
 import 'package:culcul/ui/widgets/app_empty_state_widget.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
 import 'package:culcul/ui/widgets/refresh_header_footer.dart';

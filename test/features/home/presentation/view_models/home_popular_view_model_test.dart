@@ -5,7 +5,7 @@ import 'package:culcul/features/home/presentation/view_models/home_popular_view_
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/network/interceptors/cache_interceptor.dart';
+import 'package:culcul/core/data/network/interceptors/cache_interceptor.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';

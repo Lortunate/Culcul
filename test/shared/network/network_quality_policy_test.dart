@@ -1,4 +1,4 @@
-import 'package:culcul/core/network/network_quality_policy.dart';
+import 'package:culcul/core/data/network/network_quality_policy.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
