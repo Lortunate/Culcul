@@ -42,21 +42,23 @@ This project is indexed by GitNexus as **Culcul** (2337 symbols, 3014 relationsh
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 4 — CI/CD & Code Quality)
+## Architecture (Phase 6 — Architecture Optimization & Code Quality)
 
 `lib/shared/` is **fully retired**. Structure: `app/` (shell/router) → `features/` (domain modules) → `core/` (infrastructure) + `ui/` (design system).
 
-See `docs/architecture/architecture-guide.md` for full layout and rules.
+See `docs/architecture/architecture-guide.md` for full layout, rules, and feature compliance matrix.
 
-**Current focus**: CI pipeline (GitHub Actions), lint automation, coverage reporting. 83 test files exist; CI/CD is the next priority.
+**Current focus**: Feature structure normalization, lint tightening, documentation reconciliation.
 
-Spec: `docs/superpowers/specs/2026-05-06-phase4-ci-code-quality-design.md`
+Spec: `docs/superpowers/specs/2026-05-07-phase6-architecture-optimization-design.md`
+Plan: `docs/superpowers/plans/2026-05-07-phase6-architecture-optimization.md`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`
 - Features must NOT import from other features (use `core/contracts/` for shared types)
 - Route entry seams (`route_entry.dart`) are the only router-facing feature surface
 - Orchestration logic belongs in `application/`, not in presentation widgets
+- Each feature must have a `<feature>.dart` barrel export at its root
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:ca08a54f -->
 ## Beads Issue Tracker

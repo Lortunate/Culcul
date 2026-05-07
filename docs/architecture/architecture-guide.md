@@ -86,6 +86,32 @@ features/<name>/
 └── feature_scope.dart # Feature-level provider scope
 ```
 
+### Feature Structure Compliance
+
+| Feature | route_entry | feature_scope | application/ | data/ | domain/ | presentation/ | barrel | Status |
+|---------|:-----------:|:------------:|:------------:|:-----:|:-------:|:-------------:|:------:|:------:|
+| auth    | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
+| dynamic | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
+| favorites | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
+| history | ✓ | ✓ | — | ✓ | — | ✓ | ✓ | PARTIAL |
+| home    | ✓ | — | — | ✓ | — | ✓ | — | PARTIAL |
+| live    | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
+| notification | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
+| profile | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
+| ranking | ✓ | ✓ | — | ✓ | — | ✓ | ✓ | PARTIAL |
+| search  | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
+| settings | ✓ | ✓ | — | ✓ | — | ✓ | ✓ | PARTIAL |
+| to_view | ✓ | ✓ | — | ✓ | — | ✓ | ✓ | PARTIAL |
+| video   | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
+
+**Legend:** ✓ = present, — = missing. Phase 6 targets normalizing PARTIAL features.
+
+### Barrel Exports
+
+Each feature exposes a `<feature>.dart` barrel file at its root. This is the public API surface for the feature. Other features must NOT import internal files directly — use the barrel export.
+
+Example: `import 'package:culcul/features/auth/auth.dart';`
+
 ### Route Ownership
 
 - `lib/app/router/app_routes.dart` is the top-level route graph
@@ -114,13 +140,26 @@ Completed 2026-05-06. CI pipeline (GitHub Actions), Makefile, and coverage artif
 
 Archived spec: `docs/superpowers/specs/archive/2026-05-06-phase4-ci-code-quality-design.completed.md`
 
-## Phase 5 (Current): Test Coverage & CI Hardening
+## Phase 5 (Complete): Test Coverage & CI Hardening
 
-Spec: `docs/superpowers/specs/2026-05-06-phase5-test-coverage-ci-hardening-design.md`
-Plan: `docs/superpowers/plans/2026-05-06-phase5-test-coverage-ci-hardening-plan.md`
+Completed 2026-05-07. 270+ tests added, coverage at ~20%, CI coverage gate active.
 
-1. Cover zero-coverage features (history, ranking, to_view)
-2. Cover core/utils/, core/errors/, core/session/, core/contracts/
-3. Cover auth data layer
-4. Add CI coverage threshold gate
-5. Architecture guide maintenance
+Archived spec: `docs/superpowers/specs/archive/2026-05-06-phase5-test-coverage-ci-hardening-design.completed.md`
+Archived plan: `docs/superpowers/plans/archive/2026-05-06-phase5-test-coverage-ci-hardening-plan.completed.md`
+
+## Performance Optimization (Complete)
+
+Completed 2026-05-07. Anti-pattern fixes, list rendering optimization, media pipeline optimization.
+
+Archived spec: `docs/superpowers/specs/archive/2026-05-07-performance-optimization-design.completed.md`
+Archived plan: `docs/superpowers/plans/archive/2026-05-07-performance-optimization.completed.md`
+
+## Phase 6 (Current): Architecture Optimization & Code Quality
+
+Spec: `docs/superpowers/specs/2026-05-07-phase6-architecture-optimization-design.md`
+Plan: `docs/superpowers/plans/2026-05-07-phase6-architecture-optimization.md`
+
+1. Feature structure normalization (5 non-compliant features)
+2. Documentation reconciliation (CLAUDE.md/AGENTS.md)
+3. Lint tightening (avoid_print, unawaited_futures)
+4. Barrel export standardization
