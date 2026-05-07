@@ -46,6 +46,10 @@ class PlayerControlsOverlay extends HookConsumerWidget {
       );
     }
 
+    if (!showControls && !isLocked) {
+      return const RepaintBoundary(child: SizedBox.shrink());
+    }
+
     return RepaintBoundary(
       child: AnimatedOpacity(
         opacity: showControls ? 1.0 : 0.0,
