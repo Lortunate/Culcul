@@ -7,11 +7,11 @@ class FavCollectedFolders extends _$FavCollectedFolders
 
   @override
   Future<List<FavoriteFolder>> build() async {
-    final authState = ref.read(authProvider);
-    if (!authState.isLoggedIn || authState.user == null) {
+    final session = ref.read(currentUserProvider);
+    if (session == null || !session.isLoggedIn) {
       return [];
     }
-    _mid = int.parse(authState.user!.id);
+    _mid = int.parse(session.uid);
     return buildFirstPage();
   }
 

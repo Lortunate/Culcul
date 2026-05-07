@@ -2,7 +2,7 @@ import 'package:culcul/features/favorites/presentation/view_models/favorites_vie
 import 'package:culcul/features/favorites/application/favorite_folder_commands.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_tab_bar.dart';
 import 'package:culcul/ui/widgets/guest_view.dart';
@@ -19,7 +19,7 @@ class FavoritesPage extends HookConsumerWidget {
     final tabController = useTabController(initialLength: 2);
     useListenable(tabController); // Rebuild when tab changes
     final colorScheme = Theme.of(context).colorScheme;
-    final isLoggedIn = ref.watch(authProvider.select((s) => s.isLoggedIn));
+    final isLoggedIn = ref.watch(currentUserProvider.select((s) => s?.isLoggedIn ?? false));
 
     return Scaffold(
       backgroundColor: colorScheme.surface,

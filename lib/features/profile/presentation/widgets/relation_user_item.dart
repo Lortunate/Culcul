@@ -1,5 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/core/contracts/relation_user_contract.dart';
 import 'package:culcul/features/profile/presentation/view_models/relation_user_action_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
@@ -77,8 +77,8 @@ class _RelationUserItemState extends ConsumerState<RelationUserItem> {
   }
 
   void _handleFollowPressed() {
-    final authState = ref.read(authProvider);
-    if (!authState.isLoggedIn) {
+    final session = ref.read(currentUserProvider);
+    if (!(session?.isLoggedIn ?? false)) {
       const LoginRoute().push(context);
       return;
     }

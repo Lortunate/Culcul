@@ -1,4 +1,4 @@
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/ui/widgets/follow_button.dart';
@@ -30,8 +30,8 @@ class UploaderSection extends ConsumerWidget {
       trailing: FollowButton(
         isFollowed: isFollowed,
         onTap: () {
-          final authState = ref.read(authProvider);
-          if (!authState.isLoggedIn) {
+          final session = ref.read(currentUserProvider);
+          if (!(session?.isLoggedIn ?? false)) {
             const LoginRoute().push(context);
             return;
           }

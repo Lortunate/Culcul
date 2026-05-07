@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/features/history/domain/entities/history_entry.dart';
 import 'package:culcul/features/history/presentation/view_models/history_view_model.dart';
 import 'package:culcul/ui/widgets/app_error_widget.dart';
@@ -15,7 +15,7 @@ class HistoryPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final historyListAsync = ref.watch(historyListProvider);
-    final isLoggedIn = ref.watch(authProvider.select((s) => s.isLoggedIn));
+    final isLoggedIn = ref.watch(currentUserProvider.select((s) => s?.isLoggedIn ?? false));
     final t = Translations.of(context);
 
     return Scaffold(

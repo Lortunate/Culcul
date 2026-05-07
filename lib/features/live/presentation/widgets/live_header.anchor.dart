@@ -110,12 +110,12 @@ extension _LiveHeaderAnchorParts on LiveHeader {
     if (anchorInfo == null || anchorInfo!.isFollowed) {
       return const SizedBox.shrink();
     }
-    final authState = ref.watch(authProvider);
+    final session = ref.watch(currentUserProvider);
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: FollowButton(
         isFollowed: false,
-        onTap: authState.isLoggedIn
+        onTap: (session?.isLoggedIn ?? false)
             ? (onFollow ?? () {})
             : () => const LoginRoute().push(context),
         height: 32,

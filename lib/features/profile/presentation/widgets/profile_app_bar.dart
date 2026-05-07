@@ -1,5 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/user_tags.dart';
@@ -13,7 +13,7 @@ class ProfileAppBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(authProvider.select((s) => s.user));
+    final session = ref.watch(currentUserProvider);
     final profile = ref.watch(myProfileProvider).value;
 
     final theme = Theme.of(context);
@@ -29,7 +29,7 @@ class ProfileAppBar extends ConsumerWidget {
       actions: _buildActions(context),
       flexibleSpace: FlexibleSpaceBar(
         stretchModes: const [StretchMode.zoomBackground],
-        background: _HeaderBackground(profile: profile, user: user),
+        background: _HeaderBackground(profile: profile, session: session),
       ),
     );
   }
@@ -47,9 +47,9 @@ class ProfileAppBar extends ConsumerWidget {
 
 class _HeaderBackground extends StatelessWidget {
   final dynamic profile;
-  final dynamic user;
+  final dynamic session;
 
-  const _HeaderBackground({required this.profile, required this.user});
+  const _HeaderBackground({required this.profile, required this.session});
 
   @override
   Widget build(BuildContext context) {
@@ -62,10 +62,10 @@ class _HeaderBackground extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _ProfileAvatar(profile: profile, user: user),
+          _ProfileAvatar(profile: profile, session: session),
           const SizedBox(width: 20),
           Expanded(
-            child: _ProfileDetails(profile: profile, user: user),
+            child: _ProfileDetails(profile: profile, session: session),
           ),
         ],
       ),
@@ -75,9 +75,9 @@ class _HeaderBackground extends StatelessWidget {
 
 class _ProfileAvatar extends StatelessWidget {
   final dynamic profile;
-  final dynamic user;
+  final dynamic session;
 
-  const _ProfileAvatar({required this.profile, required this.user});
+  const _ProfileAvatar({required this.profile, required this.session});
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +95,7 @@ class _ProfileAvatar extends StatelessWidget {
             width: 2,
           ),
         ),
-        child: AppAvatar(url: profile?.avatarUrl ?? user?.avatarUrl, size: 80),
+        child: AppAvatar(url: profile?.avatarUrl ?? session?.avatarUrl, size: 80),
       ),
     );
   }
@@ -103,9 +103,9 @@ class _ProfileAvatar extends StatelessWidget {
 
 class _ProfileDetails extends StatelessWidget {
   final dynamic profile;
-  final dynamic user;
+  final dynamic session;
 
-  const _ProfileDetails({required this.profile, required this.user});
+  const _ProfileDetails({required this.profile, required this.session});
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +121,7 @@ class _ProfileDetails extends StatelessWidget {
           children: [
             Flexible(
               child: Text(
-                profile?.username ?? user?.username ?? '',
+                profile?.username ?? session?.nickname ?? '',
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: isVip ? colorScheme.primary : colorScheme.onSurface,

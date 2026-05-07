@@ -1,5 +1,5 @@
 import 'package:culcul/features/notification/application/chat_page_commands.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/presentation/view_models/chat_view_model.dart';
 import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
@@ -30,7 +30,7 @@ class ChatPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final provider = chatProvider(talkerId, sessionType);
     final chatState = ref.watch(provider);
-    final currentUser = ref.watch(authProvider).user;
+    final session = ref.watch(currentUserProvider);
     final notifier = ref.read(provider.notifier);
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -44,8 +44,8 @@ class ChatPage extends HookConsumerWidget {
 
     // Current user ID (int)
     final currentUserId = useMemoized(() {
-      return int.tryParse(currentUser?.id ?? '0') ?? 0;
-    }, [currentUser?.id]);
+      return int.tryParse(session?.uid ?? '0') ?? 0;
+    }, [session?.uid]);
 
     Future<void> scrollToBottom() async {
       if (!scrollController.hasClients) {
@@ -79,7 +79,7 @@ class ChatPage extends HookConsumerWidget {
                 paging: state.paging,
                 emojiMap: state.emojiMap,
                 currentUserId: currentUserId,
-                selfAvatarUrl: currentUser?.avatarUrl ?? '',
+                selfAvatarUrl: session?.avatarUrl ?? '',
                 otherAvatarUrl: displayAvatarUrl,
                 scrollController: scrollController,
                 onLoadMore: notifier.loadMore,

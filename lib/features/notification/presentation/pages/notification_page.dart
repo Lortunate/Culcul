@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/features/notification/presentation/view_models/notification_lifecycle_sync_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_category_grid.dart';
 import 'package:culcul/features/notification/presentation/widgets/private_session_list.dart';
@@ -13,7 +13,7 @@ class NotificationPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.watch(notificationLifecycleSyncProvider);
-    final authState = ref.watch(authProvider);
+    final session = ref.watch(currentUserProvider);
     final t = Translations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -24,7 +24,7 @@ class NotificationPage extends ConsumerWidget {
         centerTitle: true,
         scrolledUnderElevation: 0,
         actions: [
-          if (authState.isLoggedIn)
+          if (session?.isLoggedIn ?? false)
             IconButton(
               icon: const Icon(Icons.settings_outlined),
               onPressed: () {
@@ -33,7 +33,7 @@ class NotificationPage extends ConsumerWidget {
             ),
         ],
       ),
-      body: authState.isLoggedIn
+      body: session?.isLoggedIn ?? false
           ? const Column(
               children: [
                 NotificationCategoryGrid(),

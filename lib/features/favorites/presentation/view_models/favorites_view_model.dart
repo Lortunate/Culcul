@@ -5,7 +5,7 @@ import 'package:culcul/core/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
 import 'package:culcul/core/utils/list_utils.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:culcul/features/favorites/domain/repositories/favorite_repository.dart';
@@ -23,11 +23,11 @@ class FavCreatedFolders extends _$FavCreatedFolders {
 
   @override
   Future<List<FavoriteFolder>> build() async {
-    final authState = ref.watch(authProvider);
-    if (!authState.isLoggedIn || authState.user == null) {
+    final session = ref.watch(currentUserProvider);
+    if (session == null || !session.isLoggedIn) {
       return [];
     }
-    final mid = int.parse(authState.user!.id);
+    final mid = int.parse(session.uid);
     final repository = ref.read(favRepositoryProvider);
     final result = await repository.getCreatedFolders(upMid: mid);
     final response = result.dataOrNull;

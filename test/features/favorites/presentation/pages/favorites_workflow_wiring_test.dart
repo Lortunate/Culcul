@@ -1,5 +1,5 @@
-import 'package:culcul/features/auth/domain/entities/user_entity.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/core/contracts/user_session_contract.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/features/favorites/application/favorite_folder_commands.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
@@ -181,7 +181,7 @@ Future<void> _pumpFavoritesPage({
 }) async {
   final container = ProviderContainer(
     overrides: [
-      authProvider.overrideWithValue(_loggedInAuthState()),
+      currentUserProvider.overrideWith((ref) => _MockUserSession(uid: '1001', nickname: 'tester')),
       favRepositoryProvider.overrideWithValue(_FakeFavoriteRepository()),
       favoriteFolderCommandWorkflowProvider.overrideWithValue(workflow),
     ],
@@ -203,7 +203,7 @@ Future<void> _pumpFavoriteDetailPage({
 }) async {
   final container = ProviderContainer(
     overrides: [
-      authProvider.overrideWithValue(_loggedInAuthState()),
+      currentUserProvider.overrideWith((ref) => _MockUserSession(uid: '1001', nickname: 'tester')),
       favRepositoryProvider.overrideWithValue(_FakeFavoriteRepository()),
       favoriteFolderCommandWorkflowProvider.overrideWithValue(workflow),
     ],
@@ -240,14 +240,6 @@ Future<void> _pumpUi(WidgetTester tester) async {
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 200));
   await tester.pump(const Duration(milliseconds: 200));
-}
-
-AuthState _loggedInAuthState() {
-  return AuthState(
-    isLoggedIn: true,
-    isLoading: false,
-    user: UserEntity(id: '1001', username: 'tester', createdAt: DateTime(2024, 1, 1)),
-  );
 }
 
 class _SpyFavoriteFolderWorkflow extends FavoriteFolderCommandWorkflow {
@@ -443,4 +435,17 @@ FavoriteResource _resource() {
     bvId: 'BV1',
     bvid: 'BV1',
   );
+}
+
+class _MockUserSession implements UserSession {
+  @override
+  final String uid;
+  @override
+  final bool isLoggedIn;
+  @override
+  final String? avatarUrl;
+  @override
+  final String? nickname;
+
+  _MockUserSession({required this.uid, this.isLoggedIn = true, this.avatarUrl, this.nickname});
 }

@@ -1,5 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_banner.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_buttons.dart';
@@ -40,9 +40,9 @@ class UserProfileInfo extends HookConsumerWidget {
 
     final theme = Theme.of(context);
     final isExpanded = useState(false);
-    final authState = ref.watch(authProvider);
+    final session = ref.watch(currentUserProvider);
     final isSelf =
-        authState.isLoggedIn && authState.user?.id.toString() == user.id.toString();
+        (session?.isLoggedIn ?? false) && session?.uid.toString() == user.id.toString();
 
     return Column(
       children: [

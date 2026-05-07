@@ -3,9 +3,12 @@ import 'package:culcul/app/bootstrap/app_bootstrap.dart';
 import 'package:culcul/app/bootstrap/deferred_app_init.dart';
 import 'package:culcul/core/contracts/user_session_contract.dart';
 import 'package:culcul/core/session/current_user_provider.dart';
+import 'package:culcul/core/session/logout_action_provider.dart';
 import 'package:culcul/core/session/session_refresh_provider.dart';
+import 'package:culcul/core/session/show_login_dialog_provider.dart';
 import 'package:culcul/features/auth/feature_scope.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/auth/presentation/widgets/login_dialog.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/core/bootstrap/providers/cookie_jar_provider.dart';
 import 'package:culcul/core/bootstrap/providers/storage_provider.dart';
@@ -65,6 +68,12 @@ void main() async {
               return null;
             }
             return _AuthSessionAdapter(authState);
+          }),
+          logoutActionProvider.overrideWith((ref) {
+            return () => ref.read(authProvider.notifier).logout();
+          }),
+          showLoginDialogProvider.overrideWith((ref) {
+            return (context) => LoginDialog.show(context);
           }),
           sessionStorageBoxProvider.overrideWithValue(dependencies.sessionStorageBox),
           settingsStorageBoxProvider.overrideWithValue(dependencies.settingsStorageBox),

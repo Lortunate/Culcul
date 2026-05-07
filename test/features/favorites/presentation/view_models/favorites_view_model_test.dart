@@ -1,7 +1,7 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/auth/domain/entities/user_entity.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/core/contracts/user_session_contract.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
@@ -292,17 +292,7 @@ void main() {
     final repository = _CreatedFoldersRepository();
     final container = ProviderContainer(
       overrides: [
-        authProvider.overrideWithValue(
-          AuthState(
-            isLoggedIn: true,
-            isLoading: false,
-            user: UserEntity(
-              id: '1001',
-              username: 'tester',
-              createdAt: DateTime(2024, 1, 1),
-            ),
-          ),
-        ),
+        currentUserProvider.overrideWith((ref) => _MockUserSession(uid: '1001', nickname: 'tester')),
         favRepositoryProvider.overrideWithValue(repository),
       ],
     );
@@ -313,4 +303,17 @@ void main() {
     expect(folders.every((item) => (item.cover ?? '').isNotEmpty), isTrue);
     expect(repository.maxInFlight, lessThanOrEqualTo(4));
   });
+}
+
+class _MockUserSession implements UserSession {
+  @override
+  final String uid;
+  @override
+  final bool isLoggedIn;
+  @override
+  final String? avatarUrl;
+  @override
+  final String? nickname;
+
+  _MockUserSession({required this.uid, this.isLoggedIn = true, this.avatarUrl, this.nickname});
 }

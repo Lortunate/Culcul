@@ -2,8 +2,6 @@ import 'dart:io';
 
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/auth/domain/entities/user_entity.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/notification/domain/entities/image_upload_result.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_cursor.dart';
@@ -16,6 +14,7 @@ import 'package:culcul/features/notification/domain/entities/system_notice.dart'
 import 'package:culcul/features/notification/domain/repositories/notification_repository.dart';
 import 'package:culcul/features/notification/feature_scope.dart';
 import 'package:culcul/features/notification/presentation/view_models/notification_feed_view_model.dart';
+import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -175,17 +174,7 @@ void main() {
 
       final container = ProviderContainer(
         overrides: [
-          authProvider.overrideWithValue(
-            AuthState(
-              isLoggedIn: true,
-              isLoading: false,
-              user: UserEntity(
-                id: '1001',
-                username: 'tester',
-                createdAt: DateTime(2024, 1, 1),
-              ),
-            ),
-          ),
+          notificationOwnerUidProvider.overrideWith((ref) => 1001),
           notificationRepositoryProvider.overrideWithValue(fakeRepository),
         ],
       );

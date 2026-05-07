@@ -1,7 +1,7 @@
 import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
 import 'package:culcul/core/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/pagination/scroll_load_trigger.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:culcul/features/favorites/application/favorite_folder_commands.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
@@ -39,8 +39,8 @@ class FavoriteDetailPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
-    final authState = ref.watch(authProvider);
-    final isMine = authState.isLoggedIn && authState.user?.id == mid.toString();
+    final session = ref.watch(currentUserProvider);
+    final isMine = session != null && session.isLoggedIn && session.uid == mid.toString();
 
     final isSelectionMode = useState(false);
     final selectedItems = useState<Set<int>>({});

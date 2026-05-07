@@ -1,7 +1,7 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/auth/domain/entities/user_entity.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/core/contracts/user_session_contract.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
 import 'package:culcul/features/to_view/domain/repositories/to_view_repository.dart';
 import 'package:culcul/features/to_view/data/to_view_repository_impl.dart';
@@ -22,17 +22,6 @@ void main() {
     danmakuCount: 0,
   );
 
-  AuthState _loggedIn() => AuthState(
-    isLoggedIn: true,
-    user: UserEntity(
-      id: '1',
-      username: 'tester',
-      createdAt: DateTime(2024, 1, 1),
-    ),
-  );
-
-  AuthState _loggedOut() => const AuthState(isLoggedIn: false);
-
   group('ToViewList', () {
     test('build returns entries from repository', () async {
       final entries = [_entry(1), _entry(2), _entry(3)];
@@ -41,7 +30,7 @@ void main() {
       );
       final container = ProviderContainer(
         overrides: [
-          authProvider.overrideWithValue(_loggedIn()),
+          currentUserProvider.overrideWith((ref) => _MockUserSession(uid: '1', nickname: 'tester')),
           toViewRepositoryProvider.overrideWithValue(repo),
         ],
       );
@@ -61,7 +50,7 @@ void main() {
       );
       final container = ProviderContainer(
         overrides: [
-          authProvider.overrideWithValue(_loggedOut()),
+          currentUserProvider.overrideWith((ref) => null),
           toViewRepositoryProvider.overrideWithValue(repo),
         ],
       );
@@ -81,7 +70,7 @@ void main() {
       );
       final container = ProviderContainer(
         overrides: [
-          authProvider.overrideWithValue(_loggedIn()),
+          currentUserProvider.overrideWith((ref) => _MockUserSession(uid: '1', nickname: 'tester')),
           toViewRepositoryProvider.overrideWithValue(repo),
         ],
       );
@@ -103,7 +92,7 @@ void main() {
       );
       final container = ProviderContainer(
         overrides: [
-          authProvider.overrideWithValue(_loggedIn()),
+          currentUserProvider.overrideWith((ref) => _MockUserSession(uid: '1', nickname: 'tester')),
           toViewRepositoryProvider.overrideWithValue(repo),
         ],
       );
@@ -124,7 +113,7 @@ void main() {
       );
       final container = ProviderContainer(
         overrides: [
-          authProvider.overrideWithValue(_loggedIn()),
+          currentUserProvider.overrideWith((ref) => _MockUserSession(uid: '1', nickname: 'tester')),
           toViewRepositoryProvider.overrideWithValue(repo),
         ],
       );
@@ -145,7 +134,7 @@ void main() {
       );
       final container = ProviderContainer(
         overrides: [
-          authProvider.overrideWithValue(_loggedIn()),
+          currentUserProvider.overrideWith((ref) => _MockUserSession(uid: '1', nickname: 'tester')),
           toViewRepositoryProvider.overrideWithValue(repo),
         ],
       );
@@ -201,4 +190,17 @@ class _FakeToViewRepository implements ToViewRepository {
     clearCalls++;
     return clearResult;
   }
+}
+
+class _MockUserSession implements UserSession {
+  @override
+  final String uid;
+  @override
+  final bool isLoggedIn;
+  @override
+  final String? avatarUrl;
+  @override
+  final String? nickname;
+
+  _MockUserSession({required this.uid, this.isLoggedIn = true, this.avatarUrl, this.nickname});
 }

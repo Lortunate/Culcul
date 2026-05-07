@@ -1,5 +1,5 @@
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
-import 'package:culcul/features/auth/presentation/widgets/login_dialog.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
+import 'package:culcul/core/session/show_login_dialog_provider.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/app_search_bar.dart';
@@ -36,8 +36,8 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final t = Translations.of(context);
     final isDesktop = context.isDesktopLayout;
     final authState = ref.watch(
-      authProvider.select(
-        (state) => (isLoggedIn: state.isLoggedIn, avatarUrl: state.user?.avatarUrl),
+      currentUserProvider.select(
+        (session) => (isLoggedIn: session?.isLoggedIn ?? false, avatarUrl: session?.avatarUrl),
       ),
     );
 
@@ -56,6 +56,7 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
             size: 32,
             onTap: () => _handleProtectedTap(
               context: context,
+              ref: ref,
               isLoggedIn: authState.isLoggedIn,
               onAuthenticated: onAvatarTap,
             ),
@@ -77,6 +78,7 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
           icon: Icons.mail_outline_rounded,
           onPressed: () => _handleProtectedTap(
             context: context,
+            ref: ref,
             isLoggedIn: authState.isLoggedIn,
             onAuthenticated: onMessageTap,
           ),
@@ -89,6 +91,7 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   void _handleProtectedTap({
     required BuildContext context,
+    required WidgetRef ref,
     required bool isLoggedIn,
     required VoidCallback onAuthenticated,
   }) {
@@ -96,7 +99,7 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
       onAuthenticated();
       return;
     }
-    LoginDialog.show(context);
+    ref.read(showLoginDialogProvider)(context);
   }
 
   @override

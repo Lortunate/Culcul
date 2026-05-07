@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/features/profile/application/profile_actions.dart';
 import 'package:culcul/features/profile/feature_scope.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
@@ -10,14 +10,14 @@ part 'profile_view_model.g.dart';
 
 @riverpod
 Future<ProfileUser> myProfile(Ref ref) async {
-  final authState = ref.watch(authProvider);
-  if (!authState.isLoggedIn || authState.user == null) {
+  final session = ref.watch(currentUserProvider);
+  if (session == null || !session.isLoggedIn) {
     return _emptyProfileUser();
   }
   final result = await ref
       .watch(profileRepositoryProvider)
-      .getProfile(int.parse(authState.user!.id));
-  return result.dataOrNull ?? _emptyProfileUser(id: authState.user!.id);
+      .getProfile(int.parse(session.uid));
+  return result.dataOrNull ?? _emptyProfileUser(id: session.uid);
 }
 
 @riverpod

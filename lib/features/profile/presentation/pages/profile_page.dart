@@ -1,4 +1,4 @@
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_action_grid.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_app_bar.dart';
 import 'package:culcul/features/profile/presentation/widgets/guest_profile_view.dart';
@@ -13,9 +13,9 @@ class ProfilePage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authProvider);
+    final session = ref.watch(currentUserProvider);
 
-    if (!authState.isLoggedIn) {
+    if (!(session?.isLoggedIn ?? false)) {
       return const Scaffold(
         body: ResponsiveContentContainer(maxWidth: 760, child: GuestProfileView()),
       );

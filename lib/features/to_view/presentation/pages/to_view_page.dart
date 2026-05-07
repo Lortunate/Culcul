@@ -1,4 +1,4 @@
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/features/to_view/application/to_view_commands.dart';
 import 'package:culcul/features/to_view/presentation/view_models/to_view_view_model.dart';
 import 'package:culcul/features/to_view/presentation/widgets/to_view_list.dart';
@@ -16,7 +16,7 @@ class ToViewPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isLoggedIn = ref.watch(authProvider.select((s) => s.isLoggedIn));
+    final isLoggedIn = ref.watch(currentUserProvider.select((s) => s?.isLoggedIn ?? false));
     final currentItems = ref.watch(toViewListProvider).asData?.value ?? const [];
     final clearAllAction = planToViewClearAll(
       isLoggedIn: isLoggedIn,

@@ -1,4 +1,4 @@
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
 import 'package:culcul/features/to_view/feature_scope.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -9,8 +9,8 @@ part 'to_view_view_model.g.dart';
 class ToViewList extends _$ToViewList {
   @override
   Future<List<ToViewEntry>> build() async {
-    final authState = ref.watch(authProvider);
-    if (!authState.isLoggedIn || authState.user == null) {
+    final session = ref.watch(currentUserProvider);
+    if (session == null || !session.isLoggedIn) {
       return [];
     }
 

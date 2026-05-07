@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/dynamic/presentation/pages/publish_dynamic_page.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_list_view.dart';
@@ -18,7 +18,7 @@ class DynamicPage extends HookConsumerWidget {
     final t = Translations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final isLoggedIn = ref.watch(authProvider.select((s) => s.isLoggedIn));
+    final isLoggedIn = ref.watch(currentUserProvider.select((s) => s?.isLoggedIn ?? false));
     final tabs = [
       t.moments.tabs.all,
       t.moments.tabs.video,
