@@ -13,6 +13,7 @@ final audioHandlerProvider = Provider<CilixiliAudioHandler>((ref) {
   DeferredAppInitController.instance.ensureMediaKitInitialized();
   final handler = CilixiliAudioHandler.shared;
   unawaited(handler.initializeAudioServiceIfNeeded());
+  ref.onDispose(handler.dispose);
   return handler;
 });
 
@@ -26,6 +27,7 @@ class CilixiliAudioHandler extends BaseAudioHandler {
 
   final Player player = Player();
   final AudioPlaybackStateGate _playbackStateGate = AudioPlaybackStateGate();
+  final List<StreamSubscription> _subscriptions = [];
 
   DateTime _broadcastWindowStart = DateTime.now();
   int _broadcastWindowCount = 0;
@@ -33,40 +35,47 @@ class CilixiliAudioHandler extends BaseAudioHandler {
   CilixiliAudioHandler._() {
     _initSession();
     // Propagate player events to AudioService
-    player.stream.playing.listen((playing) {
+    _subscriptions.add(player.stream.playing.listen((playing) {
       _broadcastState(isCriticalEvent: true, reason: 'playing');
-    });
+    }));
 
-    player.stream.position.listen((position) {
+    _subscriptions.add(player.stream.position.listen((position) {
       _broadcastState(isCriticalEvent: false, reason: 'position');
-    });
+    }));
 
-    player.stream.duration.listen((duration) {
+    _subscriptions.add(player.stream.duration.listen((duration) {
       final item = mediaItem.value;
       if (item != null && item.duration != duration) {
         mediaItem.add(item.copyWith(duration: duration));
       }
       _broadcastState(isCriticalEvent: true, reason: 'duration');
-    });
+    }));
 
-    player.stream.buffering.listen((buffering) {
+    _subscriptions.add(player.stream.buffering.listen((buffering) {
       _broadcastState(isCriticalEvent: true, reason: 'buffering');
-    });
+    }));
 
-    player.stream.buffer.listen((buffer) {
+    _subscriptions.add(player.stream.buffer.listen((buffer) {
       _broadcastState(isCriticalEvent: true, reason: 'buffer');
-    });
+    }));
 
-    player.stream.completed.listen((completed) {
+    _subscriptions.add(player.stream.completed.listen((completed) {
       _broadcastState(isCriticalEvent: true, reason: 'completed');
-    });
+    }));
 
-    player.stream.error.listen((error) {
+    _subscriptions.add(player.stream.error.listen((error) {
       _broadcastState(isCriticalEvent: true, reason: 'error');
-    });
+    }));
   }
 
   static CilixiliAudioHandler get shared => _shared;
+
+  void dispose() {
+    for (final sub in _subscriptions) {
+      sub.cancel();
+    }
+    _subscriptions.clear();
+  }
 
   Future<void> _initSession() async {
     final session = await AudioSession.instance;

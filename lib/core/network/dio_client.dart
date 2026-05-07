@@ -40,7 +40,9 @@ Dio _createBaseDio(Ref ref, NetworkQualityPolicy networkPolicy) {
     ConnectionManager(
       idleTimeout: networkPolicy.connectionIdleTimeout,
       onClientCreate: (_, config) {
-        config.onBadCertificate = (_) => true;
+        if (kDebugMode) {
+          config.onBadCertificate = (_) => true;
+        }
       },
     ),
   );

@@ -80,6 +80,7 @@ mixin OffsetPagedAsyncNotifier<T> {
 
       if (newItems.isEmpty) {
         _hasMore = false;
+        state = AsyncData(previousItems);
         return;
       }
 
@@ -168,6 +169,7 @@ mixin CursorPagedAsyncNotifier<T, C> {
       _hasMore = page.hasMore;
 
       if (page.items.isEmpty) {
+        state = AsyncData(previousItems);
         return;
       }
 

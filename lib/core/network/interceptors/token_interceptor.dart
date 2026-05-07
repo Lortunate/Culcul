@@ -2,6 +2,7 @@ import 'package:culcul/core/session/session_cookie_refresher.dart';
 import 'package:culcul/core/network/dio_client.dart';
 import 'package:culcul/core/network/interceptors/csrf_interceptor.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class TokenInterceptor extends QueuedInterceptor {
@@ -47,7 +48,7 @@ class TokenInterceptor extends QueuedInterceptor {
           handler.resolve(newResponse);
           return;
         } catch (e) {
-          // ignore
+          debugPrint('TokenInterceptor: cookie refresh failed: $e');
         }
       }
     }
