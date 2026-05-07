@@ -24,7 +24,6 @@ class DynamicListView extends HookConsumerWidget {
     final provider = dynamicProvider(type);
     final state = ref.watch(provider);
     final notifier = ref.read(provider.notifier);
-    final contentPadding = EdgeInsets.all(context.isDesktopLayout ? 12 : 8);
 
     return ResponsiveContentContainer(
       maxWidth: AppBreakpoints.pageMaxWidth,
@@ -36,32 +35,26 @@ class DynamicListView extends HookConsumerWidget {
         skeleton: const VideoListSkeleton(),
         emptyText: t.common.no_content,
         builder: (context, items) {
-          return ListView.separated(
-            padding: contentPadding,
-            itemCount: items.length + (type == 'all' ? 1 : 0),
-            itemBuilder: (context, index) {
-              if (type == 'all') {
-                if (index == 0) return const RecentlyFollowedWidget();
-                final post = items[index - 1];
-                return KeyedSubtree(
-                  key: ValueKey(post.id),
-                  child: DynamicPostCard(
-                    post: post,
-                    onLike: (post) => notifier.toggleLike(post.id, post.isLiked),
-                  ),
-                );
-              }
-              final post = items[index];
-              return KeyedSubtree(
-                key: ValueKey(post.id),
-                child: DynamicPostCard(
-                  post: post,
-                  onLike: (post) => notifier.toggleLike(post.id, post.isLiked),
-                ),
-              );
-            },
-            separatorBuilder: (context, index) =>
-                SizedBox(height: context.isDesktopLayout ? 10 : 8),
+          return CustomScrollView(
+            slivers: [
+              if (type == 'all')
+                const SliverToBoxAdapter(child: RecentlyFollowedWidget()),
+              SliverList.separated(
+                itemCount: items.length,
+                separatorBuilder: (context, index) =>
+                    SizedBox(height: context.isDesktopLayout ? 10 : 8),
+                itemBuilder: (context, index) {
+                  final post = items[index];
+                  return KeyedSubtree(
+                    key: ValueKey(post.id),
+                    child: DynamicPostCard(
+                      post: post,
+                      onLike: (post) => notifier.toggleLike(post.id, post.isLiked),
+                    ),
+                  );
+                },
+              ),
+            ],
           );
         },
       ),
