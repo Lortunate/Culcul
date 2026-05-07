@@ -3,7 +3,7 @@ import 'dart:developer' as developer;
 
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:culcul/core/network/request_cancel_token.dart';
-import 'package:culcul/features/profile/feature_scope.dart';
+import 'package:culcul/core/session/modify_relation_provider.dart';
 import 'package:culcul/features/video/application/video_detail_workflows.dart';
 import 'package:culcul/features/video/feature_scope.dart';
 import 'package:culcul/features/video/presentation/view_models/player_view_model.dart';
@@ -170,9 +170,7 @@ class VideoDetailController extends _$VideoDetailController
       ),
     );
 
-    final result = await ref
-        .read(relationRepositoryProvider)
-        .modifyRelation(fid: detail.owner.mid, act: wasFollowed ? 2 : 1);
+    final result = await ref.read(modifyRelationProvider)(mid: detail.owner.mid, isFollow: !wasFollowed);
     if (result.isFailure) {
       state = state.copyWith(videoDetail: previousDetail);
     }

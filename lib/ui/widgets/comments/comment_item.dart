@@ -1,6 +1,6 @@
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/features/video/domain/entities/video_entities.dart';
-import 'package:culcul/features/video/presentation/widgets/comments/comment_images.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
+import 'package:culcul/ui/widgets/comments/comment_images.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/app_avatar.dart';
 import 'package:culcul/ui/widgets/app_clickable.dart';

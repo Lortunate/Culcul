@@ -49,7 +49,7 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
   }
 
   Future<void> _fetchAnchorInfo(int uid) async {
-    final result = await ref.read(profileRepositoryProvider).getUserCard(uid);
+    final result = await ref.read(userCardProvider)(uid);
     if (result.dataOrNull case final card?) {
       state = state.copyWith(anchorInfo: card);
       return;

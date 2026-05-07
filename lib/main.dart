@@ -4,9 +4,12 @@ import 'package:culcul/app/bootstrap/deferred_app_init.dart';
 import 'package:culcul/core/contracts/user_session_contract.dart';
 import 'package:culcul/core/session/current_user_provider.dart';
 import 'package:culcul/core/session/logout_action_provider.dart';
+import 'package:culcul/core/session/modify_relation_provider.dart';
 import 'package:culcul/core/session/session_refresh_provider.dart';
 import 'package:culcul/core/session/show_login_dialog_provider.dart';
+import 'package:culcul/core/session/user_card_provider.dart';
 import 'package:culcul/features/auth/feature_scope.dart';
+import 'package:culcul/features/profile/feature_scope.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/auth/presentation/widgets/login_dialog.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
@@ -74,6 +77,13 @@ void main() async {
           }),
           showLoginDialogProvider.overrideWith((ref) {
             return (context) => LoginDialog.show(context);
+          }),
+          userCardProvider.overrideWith((ref) {
+            return (mid) => ref.read(profileRepositoryProvider).getUserCard(mid);
+          }),
+          modifyRelationProvider.overrideWith((ref) {
+            return ({required mid, required isFollow}) =>
+                ref.read(profileRepositoryProvider).modifyRelation(mid: mid, isFollow: isFollow);
           }),
           sessionStorageBoxProvider.overrideWithValue(dependencies.sessionStorageBox),
           settingsStorageBoxProvider.overrideWithValue(dependencies.settingsStorageBox),
