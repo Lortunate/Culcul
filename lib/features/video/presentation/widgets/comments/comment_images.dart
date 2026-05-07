@@ -65,16 +65,14 @@ class CommentImagesWidget extends StatelessWidget {
           ),
           child: AspectRatio(
             aspectRatio: aspectRatio,
-            child: ClipRRect(
+            child: ExtendedImage.network(
+              FormatUtils.formatImageUrl(picture.imgSrc),
+              fit: BoxFit.cover,
+              cache: true,
+              cacheWidth: _toCacheDimension(displaySize.width, devicePixelRatio),
+              cacheHeight: _toCacheDimension(displaySize.height, devicePixelRatio),
               borderRadius: BorderRadius.circular(8),
-              child: ExtendedImage.network(
-                FormatUtils.formatImageUrl(picture.imgSrc),
-                fit: BoxFit.cover,
-                cache: true,
-                cacheWidth: _toCacheDimension(displaySize.width, devicePixelRatio),
-                cacheHeight: _toCacheDimension(displaySize.height, devicePixelRatio),
-                loadStateChanged: (state) => _buildLoadState(context, state),
-              ),
+              loadStateChanged: (state) => _buildLoadState(context, state),
             ),
           ),
         ),
@@ -111,19 +109,17 @@ class CommentImagesWidget extends StatelessWidget {
               onTap: () => _openPreview(context, imageUrls, index),
               child: Hero(
                 tag: pictures[index].imgSrc,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: SizedBox(
-                    width: itemSize,
-                    height: itemSize,
-                    child: ExtendedImage.network(
-                      FormatUtils.formatImageUrl(pictures[index].imgSrc),
-                      fit: BoxFit.cover,
-                      cache: true,
-                      cacheWidth: decodeSize,
-                      cacheHeight: decodeSize,
-                      loadStateChanged: (state) => _buildLoadState(context, state),
-                    ),
+                child: SizedBox(
+                  width: itemSize,
+                  height: itemSize,
+                  child: ExtendedImage.network(
+                    FormatUtils.formatImageUrl(pictures[index].imgSrc),
+                    fit: BoxFit.cover,
+                    cache: true,
+                    cacheWidth: decodeSize,
+                    cacheHeight: decodeSize,
+                    borderRadius: BorderRadius.circular(8),
+                    loadStateChanged: (state) => _buildLoadState(context, state),
                   ),
                 ),
               ),
