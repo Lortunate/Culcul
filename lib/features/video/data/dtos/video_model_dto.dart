@@ -1,4 +1,3 @@
-import 'package:culcul/core/utils/format_utils.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'video_model_dto.freezed.dart';
@@ -21,9 +20,6 @@ sealed class VideoModel with _$VideoModel {
   }) = _VideoModel;
 
   factory VideoModel.fromJson(Map<String, dynamic> json) => _$VideoModelFromJson(json);
-
-  String get durationString => FormatUtils.formatDuration(duration);
-  String get pubDateString => FormatUtils.formatTimeAgo(pubDate);
 }
 
 @freezed
@@ -52,14 +48,6 @@ sealed class Stat with _$Stat {
   }) = _Stat;
 
   factory Stat.fromJson(Map<String, dynamic> json) => _$StatFromJson(json);
-
-  String get viewString => FormatUtils.formatNumber(view);
-  String get danmakuString => FormatUtils.formatNumber(danmaku);
-  String get replyString => FormatUtils.formatNumber(reply);
-  String get likeString => FormatUtils.formatNumber(like);
-  String get coinString => FormatUtils.formatNumber(coin);
-  String get favoriteString => FormatUtils.formatNumber(favorite);
-  String get shareString => FormatUtils.formatNumber(share);
 }
 
 class RcmdReasonConverter implements JsonConverter<String, dynamic> {

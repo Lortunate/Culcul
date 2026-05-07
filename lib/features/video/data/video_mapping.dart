@@ -1,5 +1,5 @@
-import 'related_video.dart';
-import 'video_model.dart';
+import 'dtos/related_video_dto.dart';
+import 'dtos/video_model_dto.dart';
 
 extension RelatedVideoMapping on RelatedVideo {
   VideoModel toVideoModel() {
