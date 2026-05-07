@@ -18,29 +18,27 @@ class DynamicPostCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         border: Border(
           bottom: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.35)),
         ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            DynamicPostHeader(post: post),
-            const SizedBox(height: 12),
-            _buildContentSection(context),
-            const SizedBox(height: 12),
-            Divider(
-              height: 1,
-              thickness: 0.5,
-              color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-            ),
-            _buildFooter(context),
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          DynamicPostHeader(post: post),
+          const SizedBox(height: 12),
+          _buildContentSection(context),
+          const SizedBox(height: 12),
+          Divider(
+            height: 1,
+            thickness: 0.5,
+            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+          ),
+          _buildFooter(context),
+        ],
       ),
     );
   }
