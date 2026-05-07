@@ -47,10 +47,11 @@ class ActionButton extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return AppClickable(
-      onTap: onTap,
+    return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: Padding(
+      child: AppClickable(
+        onTap: onTap,
+        child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -66,6 +67,7 @@ class ActionButton extends StatelessWidget {
               ),
             ),
           ],
+          ),
         ),
       ),
     );

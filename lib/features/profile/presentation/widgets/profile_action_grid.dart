@@ -139,11 +139,13 @@ class _GridItem extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return AppClickable(
-      onTap: onTap ?? () {},
+    return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: SizedBox(
+      child: AppClickable(
+        onTap: onTap ?? () {},
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: SizedBox(
         width: width,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -158,6 +160,8 @@ class _GridItem extends StatelessWidget {
           ],
         ),
       ),
+      ),
+    ),
     );
   }
 }

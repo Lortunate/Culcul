@@ -35,10 +35,11 @@ class AppAvatar extends StatelessWidget {
     final hasUrl = url?.isNotEmpty == true;
     final fallbackIcon = _buildFallbackIcon(colorScheme);
 
-    return AppClickable(
-      onTap: onTap,
+    return ClipRRect(
       borderRadius: BorderRadius.circular(size / 2),
-      child: Container(
+      child: AppClickable(
+        onTap: onTap,
+        child: Container(
         width: size,
         height: size,
         clipBehavior: Clip.antiAlias,
@@ -58,6 +59,7 @@ class AppAvatar extends StatelessWidget {
                 errorWidget: Center(child: fallbackIcon),
               )
             : Center(child: fallbackIcon),
+        ),
       ),
     );
   }

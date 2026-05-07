@@ -55,12 +55,14 @@ class AppCardContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final interactiveChild = AppClickable(
-      onTap: onTap,
-      onLongPress: onLongPress,
-      haptic: true,
+    final interactiveChild = ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius),
-      child: Padding(padding: padding ?? EdgeInsets.zero, child: child),
+      child: AppClickable(
+        onTap: onTap,
+        onLongPress: onLongPress,
+        haptic: true,
+        child: Padding(padding: padding ?? EdgeInsets.zero, child: child),
+      ),
     );
 
     return RepaintBoundary(

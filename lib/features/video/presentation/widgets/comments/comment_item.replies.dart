@@ -42,11 +42,13 @@ class _Replies extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
 
-    return AppClickable(
-      onTap: onTap,
+    return ClipRRect(
       borderRadius: BorderRadius.circular(8),
-      backgroundColor: theme.scaffoldBackgroundColor,
-      child: SizedBox(
+      child: Material(
+        color: theme.scaffoldBackgroundColor,
+        child: AppClickable(
+          onTap: onTap,
+          child: SizedBox(
         width: double.infinity,
         child: Padding(
           padding: const EdgeInsets.all(8),
@@ -76,6 +78,8 @@ class _Replies extends StatelessWidget {
                   ),
                 ),
             ],
+          ),
+        ),
           ),
         ),
       ),

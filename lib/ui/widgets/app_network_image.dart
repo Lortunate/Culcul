@@ -3,9 +3,8 @@ import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class AppNetworkImage extends ConsumerWidget {
+class AppNetworkImage extends StatelessWidget {
   static const int _maxCacheDimension = 2048;
   static const Map<String, String> _defaultHeaders = <String, String>{
     'Referer': ApiConstants.referer,
@@ -102,7 +101,7 @@ class AppNetworkImage extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 

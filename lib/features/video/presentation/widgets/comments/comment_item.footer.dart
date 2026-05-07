@@ -43,10 +43,11 @@ class _Footer extends StatelessWidget {
         const SizedBox(width: 16),
         _Action(icon: Icons.chat_bubble_outline_rounded, label: '', onTap: onReply),
         const SizedBox(width: 8),
-        AppClickable(
-          onTap: () {},
+        ClipRRect(
           borderRadius: BorderRadius.circular(16),
-          child: Padding(
+          child: AppClickable(
+            onTap: () {},
+            child: Padding(
             padding: const EdgeInsets.all(4),
             child: Icon(
               Icons.more_vert_rounded,
@@ -54,6 +55,7 @@ class _Footer extends StatelessWidget {
               color: colorScheme.onSurfaceVariant,
             ),
           ),
+        ),
         ),
       ],
     );

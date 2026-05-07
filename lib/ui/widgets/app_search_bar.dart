@@ -12,7 +12,7 @@ class AppSearchBar extends StatelessWidget {
   const AppSearchBar({
     super.key,
     this.onTap,
-    this.hintText = 'Search videos...',
+    required this.hintText,
     this.controller,
     this.onChanged,
     this.autofocus = false,
@@ -86,26 +86,28 @@ class AppSearchBar extends StatelessWidget {
   Widget _buildReadonlySearchBar(BuildContext context, ThemeData theme) {
     final colorScheme = theme.colorScheme;
 
-    return AppClickable(
-      onTap: onTap,
+    return ClipRRect(
       borderRadius: BorderRadius.circular(22),
-      child: Container(
-        height: 40,
-        padding: const EdgeInsets.symmetric(horizontal: 14),
-        decoration: _buildDecoration(theme),
-        child: Row(
-          children: [
-            _buildSearchIcon(colorScheme.onSurfaceVariant),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                hintText,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: _buildHintStyle(theme),
+      child: AppClickable(
+        onTap: onTap,
+        child: Container(
+          height: 40,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          decoration: _buildDecoration(theme),
+          child: Row(
+            children: [
+              _buildSearchIcon(colorScheme.onSurfaceVariant),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  hintText,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: _buildHintStyle(theme),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

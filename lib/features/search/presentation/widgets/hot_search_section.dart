@@ -84,10 +84,11 @@ class _HotSearchItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    return AppClickable(
-      onTap: onTap,
+    return ClipRRect(
       borderRadius: BorderRadius.circular(4),
-      child: Row(
+      child: AppClickable(
+        onTap: onTap,
+        child: Row(
         children: [
           SizedBox(
             width: 24,
@@ -117,6 +118,7 @@ class _HotSearchItem extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

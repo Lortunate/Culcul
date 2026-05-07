@@ -50,15 +50,10 @@ class FollowButton extends StatelessWidget {
             child: ScaleTransition(scale: animation, child: child),
           );
         },
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
+        child: Text(
+          _resolveLabel(t),
           key: ValueKey<bool>(isFollowed),
-          children: [
-            Text(
-              _resolveLabel(t),
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
-            ),
-          ],
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
         ),
       ),
     );

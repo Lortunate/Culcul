@@ -21,10 +21,12 @@ class AppSectionHeader extends StatelessWidget {
     }
 
     return [
-      AppClickable(
-        onTap: onTrailingTap,
+      ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: Padding(padding: const EdgeInsets.all(4), child: trailing!),
+        child: AppClickable(
+          onTap: onTrailingTap,
+          child: Padding(padding: const EdgeInsets.all(4), child: trailing!),
+        ),
       ),
     ];
   }

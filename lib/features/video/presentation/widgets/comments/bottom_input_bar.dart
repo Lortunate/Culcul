@@ -43,13 +43,15 @@ class BottomInputBar extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              child: AppClickable(
-                onTap: onTapInput,
+              child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                backgroundColor: colorScheme.surfaceContainerHighest.withValues(
-                  alpha: 0.6,
-                ),
-                child: Container(
+                child: Material(
+                  color: colorScheme.surfaceContainerHighest.withValues(
+                    alpha: 0.6,
+                  ),
+                  child: AppClickable(
+                    onTap: onTapInput,
+                    child: Container(
                   height: 40,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   alignment: Alignment.centerLeft,
@@ -72,6 +74,8 @@ class BottomInputBar extends StatelessWidget {
                 ),
               ),
             ),
+          ),
+        ),
             if (!simpleMode) ...[
               const SizedBox(width: 8),
               _ActionIcon(icon: Icons.thumb_up_outlined, onTap: onTapLike),
@@ -95,16 +99,18 @@ class _ActionIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return AppClickable(
-      onTap: onTap,
+    return ClipRRect(
       borderRadius: BorderRadius.circular(20),
-      child: Padding(
+      child: AppClickable(
+        onTap: onTap,
+        child: Padding(
         padding: const EdgeInsets.all(10),
         child: Icon(
           icon,
           size: 24,
           color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
         ),
+      ),
       ),
     );
   }

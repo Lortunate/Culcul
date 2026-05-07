@@ -52,13 +52,15 @@ class VideoPartsSection extends StatelessWidget {
             itemBuilder: (context, index) {
               final page = pages[index];
               final isSelected = page.cid == currentCid;
-              return AppClickable(
-                onTap: () => onPartChanged(page.cid),
+              return ClipRRect(
                 borderRadius: BorderRadius.circular(6),
-                backgroundColor: isSelected
-                    ? colorScheme.primaryContainer.withValues(alpha: 0.5)
-                    : colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-                child: Container(
+                child: Material(
+                  color: isSelected
+                      ? colorScheme.primaryContainer.withValues(alpha: 0.5)
+                      : colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+                  child: AppClickable(
+                    onTap: () => onPartChanged(page.cid),
+                    child: Container(
                   constraints: const BoxConstraints(minWidth: 80),
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
@@ -75,6 +77,8 @@ class VideoPartsSection extends StatelessWidget {
                       color: isSelected ? colorScheme.primary : colorScheme.onSurface,
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
+                  ),
+                ),
                   ),
                 ),
               );

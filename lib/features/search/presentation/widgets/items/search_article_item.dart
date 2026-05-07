@@ -15,10 +15,11 @@ class SearchArticleItem extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final imageCount = item.imageUrls.length;
 
-    return AppClickable(
-      onTap: () {},
+    return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: Padding(
+      child: AppClickable(
+        onTap: () {},
+        child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,6 +88,7 @@ class SearchArticleItem extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

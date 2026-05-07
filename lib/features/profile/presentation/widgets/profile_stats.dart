@@ -103,10 +103,11 @@ class _StatItem extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return AppClickable(
-      onTap: onTap,
+    return ClipRRect(
       borderRadius: BorderRadius.circular(8),
-      child: Padding(
+      child: AppClickable(
+        onTap: onTap,
+        child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         child: Column(
           children: [
@@ -128,6 +129,7 @@ class _StatItem extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }
