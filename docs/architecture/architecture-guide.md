@@ -7,22 +7,23 @@ Post-refactoring architecture for Culcul (BiliBili 3rd-party client). `lib/share
 ```
 lib/
 ├── app/              # App shell, bootstrap, router
-│   ├── bootstrap/    # App initialization
+│   ├── bootstrap/    # App initialization, provider overrides
 │   ├── router/       # go_router route definitions
 │   └── shell/        # Main app shell (bottom nav, etc.)
 ├── core/             # Infrastructure, cross-cutting concerns
 │   ├── bootstrap/    # Riverpod provider stubs for app dependencies
 │   │   └── providers/ # CookieJar, CacheStore, Storage provider contracts
 │   ├── constants/    # API constants, app dimensions
-│   ├── contracts/    # Shared data contracts (VideoModel, UserCard, etc.)
+│   ├── contracts/    # Shared data contracts (VideoModel, UserCard, UserSession, etc.)
+│   ├── data/         # Data layer infrastructure
+│   │   ├── network/  # Dio client, interceptors, request executor
+│   │   └── pagination/ # Paged list state, scroll triggers
 │   ├── errors/       # Error types, ErrorHandler
 │   ├── hooks/        # Reusable Flutter hooks
-│   ├── network/      # Dio client, interceptors, request executor
-│   ├── pagination/   # Paged list state, scroll triggers
 │   ├── perf/         # Frame sampling, startup tracing
 │   ├── result/       # Result<T> type
 │   ├── services/     # Audio handler, media service
-│   ├── session/      # Token refresh, cookie management
+│   ├── session/      # User session, auth state providers
 │   └── utils/        # Formatters, crypto, validation
 ├── features/         # Feature modules (domain-driven)
 │   ├── auth/
@@ -43,7 +44,19 @@ lib/
 └── ui/               # Design system, reusable UI
     ├── responsive/   # Responsive helpers
     ├── theme/        # Colors, theme definitions
-    └── widgets/      # Generic widgets (VideoCard, etc.)
+    └── widgets/      # Categorized reusable widgets
+        ├── buttons/      # Clickable, follow, tag
+        ├── cards/        # Video card, list card, container
+        ├── feedback/     # Error, empty, shimmer, privacy
+        ├── inputs/       # Search bar
+        ├── layout/       # Section header, tab bar, refresh
+        ├── media/        # Network image, thumbnail, preview, blur
+        ├── overlays/     # Bottom sheet, overlay tag
+        ├── text/         # Emoji, min-lines, icon-text
+        ├── users/        # Avatar, list tile, tags, guest view
+        ├── comments/     # Comment items, reply sheet
+        ├── skeletons/    # Loading skeletons
+        └── smart_paging_view/ # Paginated list
 ```
 
 ## Layer Rules
@@ -161,14 +174,18 @@ Completed 2026-05-07. All 13 features normalized to FULL compliance, CLAUDE.md/A
 Archived spec: `docs/superpowers/specs/archive/2026-05-07-phase6-architecture-optimization-design.completed.md`
 Archived plan: `docs/superpowers/plans/archive/2026-05-07-phase6-architecture-optimization.completed.md`
 
-## Phase 7 (Current): Code Quality & Architectural Integrity
+## Phase 7 (Current): Architecture Optimization & Code Quality
 
-Spec: `docs/superpowers/specs/2026-05-07-phase7-code-quality-refactoring-design.md`
-Plan: `docs/superpowers/plans/2026-05-07-phase7-code-quality-refactoring.md`
+Spec: `docs/superpowers/specs/2026-05-07-phase7-architecture-code-quality-design.md`
+Plan: `docs/superpowers/plans/2026-05-07-phase7-architecture-code-quality.md`
 
-1. Cross-feature decoupling (42 violations → 0 via shared contracts)
-2. Video domain layer purity (DTO re-exports → proper entities)
-3. Error handling unification (eliminate dataOrNull!, consistent patterns)
-4. Core infrastructure fixes (pagination, audio, network security)
-5. Pattern standardization (settings, home)
-6. Accessibility (Semantics wrappers on shared widgets)
+1. Core directory reorganization (group `core/` into `data/`, `session/`, etc.)
+2. UI widget categorization (33 widgets → logical subdirectories)
+3. Test restructuring (mirror `lib/` structure)
+4. Bootstrap simplification (extract provider overrides from `main.dart`)
+5. Cross-feature decoupling (42 violations → 0 via shared contracts)
+6. Video domain layer purity (DTO re-exports → proper entities)
+7. Error handling unification (eliminate dataOrNull!, consistent patterns)
+8. Core infrastructure fixes (pagination, audio, network security)
+9. Pattern standardization (settings, home)
+10. Accessibility (Semantics wrappers on shared widgets)

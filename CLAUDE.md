@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **Culcul** (2397 symbols, 3075 relationships, 19 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **Culcul** (2461 symbols, 3139 relationships, 19 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -42,16 +42,16 @@ This project is indexed by GitNexus as **Culcul** (2397 symbols, 3075 relationsh
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 7 — Code Quality & Architectural Integrity)
+## Architecture (Phase 7 — Architecture Optimization & Code Quality)
 
 `lib/shared/` is **fully retired**. Structure: `app/` (shell/router) → `features/` (domain modules) → `core/` (infrastructure) + `ui/` (design system).
 
 See `docs/architecture/architecture-guide.md` for full layout, rules, and feature compliance matrix.
 
-**Current focus**: Cross-feature decoupling, domain layer purity, error handling unification, core bug fixes.
+**Current focus**: Core directory reorganization, widget categorization, cross-feature decoupling, domain layer purity, error handling unification, core bug fixes.
 
-Spec: `docs/superpowers/specs/2026-05-07-phase7-code-quality-refactoring-design.md`
-Plan: `docs/superpowers/plans/2026-05-07-phase7-code-quality-refactoring.md`
+Spec: `docs/superpowers/specs/2026-05-07-phase7-architecture-code-quality-design.md`
+Plan: `docs/superpowers/plans/2026-05-07-phase7-architecture-code-quality.md`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`
