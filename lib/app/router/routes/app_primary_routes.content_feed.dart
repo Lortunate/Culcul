@@ -5,7 +5,7 @@ class WeeklyRoute extends GoRouteData with $WeeklyRoute {
   const WeeklyRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => const WeeklyScreen();
+  Widget build(BuildContext context, GoRouterState state) => buildWeeklyScreenPage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
