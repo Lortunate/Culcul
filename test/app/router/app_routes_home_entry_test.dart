@@ -26,20 +26,14 @@ void main() {
     );
   });
 
-  test('home route entry re-exports the concrete home pages for router parts', () async {
+  test('home route entry uses function pattern for page construction', () async {
     final routeEntryFile = File('lib/features/home/route_entry.dart');
 
     expect(routeEntryFile.existsSync(), isTrue, reason: 'home route entry must exist');
 
     final content = await routeEntryFile.readAsString();
 
-    expect(
-      content,
-      contains("export 'presentation/pages/home_page.dart';"),
-    );
-    expect(
-      content,
-      contains("export 'presentation/pages/weekly_screen.dart';"),
-    );
+    expect(content, contains('Widget buildHomePage()'));
+    expect(content, contains('Widget buildWeeklyScreenPage()'));
   });
 }
