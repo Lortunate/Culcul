@@ -5,17 +5,20 @@ import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 enum FavFolderType { created, collected }
 
-class FavFolderList extends ConsumerWidget {
+class FavFolderList extends HookConsumerWidget {
   final FavFolderType type;
 
   const FavFolderList({super.key, required this.type});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    useAutomaticKeepAlive();
+
     final isCreated = type == FavFolderType.created;
     final provider = isCreated ? favCreatedFoldersProvider : favCollectedFoldersProvider;
     final asyncValue = ref.watch(provider);
