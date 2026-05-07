@@ -5,6 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DynamicNavigation {
+  static final _bvidRegex = RegExp(r'BV[0-9A-Za-z]+');
+  static final _aidRegex = RegExp(r'av(\d+)', caseSensitive: false);
+  static final _dynamicIdRegex = RegExp(r'/dynamic/(\d+)');
+  static final _opusIdRegex = RegExp(r'/opus/(\d+)');
+  static final _tHostRegex = RegExp(r'^\d+$');
+  static final _articleCvRegex = RegExp(r'^/read/cv\d+');
+  static final _articleOpusRegex = RegExp(r'^/opus/\d+');
+  static final _schemeRegex = RegExp(r'https?://');
   static Future<void> open(
     BuildContext context, {
     String? url,
@@ -43,7 +51,7 @@ class DynamicNavigation {
     final raw = (url ?? '').trim();
     final source = raw.isNotEmpty ? raw : '${fallbackBvid ?? ''} ${fallbackAid ?? ''}';
 
-    final bvidMatch = RegExp(r'BV[0-9A-Za-z]+').firstMatch(source);
+    final bvidMatch = _bvidRegex.firstMatch(source);
     if (bvidMatch != null) {
       VideoDetailRoute(bvid: bvidMatch.group(0)!).push(context);
       return true;
@@ -69,7 +77,7 @@ class DynamicNavigation {
     final aidSource = fallbackAid != null && fallbackAid.isNotEmpty
         ? 'av$fallbackAid'
         : source;
-    final aidMatch = RegExp(r'av(\d+)', caseSensitive: false).firstMatch(aidSource);
+    final aidMatch = _aidRegex.firstMatch(aidSource);
     if (aidMatch != null) {
       VideoDetailRoute(bvid: 'av${aidMatch.group(1)!}').push(context);
       return true;
@@ -87,10 +95,10 @@ class DynamicNavigation {
     }
 
     String? dynamicId;
-    final dynamicMatch = RegExp(r'/dynamic/(\d+)').firstMatch(uri.path);
-    final opusMatch = RegExp(r'/opus/(\d+)').firstMatch(uri.path);
+    final dynamicMatch = _dynamicIdRegex.firstMatch(uri.path);
+    final opusMatch = _opusIdRegex.firstMatch(uri.path);
     final tHostMatch = host.contains('t.bilibili.com') && segments.isNotEmpty
-        ? RegExp(r'^\d+$').firstMatch(segments.first)
+        ? _tHostRegex.firstMatch(segments.first)
         : null;
 
     if (dynamicMatch != null) {
@@ -114,7 +122,7 @@ class DynamicNavigation {
     if (!host.contains('bilibili.com')) return false;
 
     final path = uri.path.toLowerCase();
-    return RegExp(r'^/read/cv\d+').hasMatch(path) || RegExp(r'^/opus/\d+').hasMatch(path);
+    return _articleCvRegex.hasMatch(path) || _articleOpusRegex.hasMatch(path);
   }
 
   static Uri? _normalizeUri(String? raw) {
@@ -124,7 +132,7 @@ class DynamicNavigation {
       normalized = 'https:$normalized';
     } else if (normalized.startsWith('/')) {
       normalized = 'https://www.bilibili.com$normalized';
-    } else if (!normalized.startsWith(RegExp(r'https?://'))) {
+    } else if (!_schemeRegex.hasMatch(normalized)) {
       normalized = 'https://$normalized';
     }
     return Uri.tryParse(normalized);

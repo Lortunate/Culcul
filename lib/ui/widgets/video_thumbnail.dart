@@ -69,7 +69,7 @@ class VideoThumbnail extends StatelessWidget {
                   constraints.maxHeight,
                   pixelRatio,
                 ),
-                borderRadius: borderRadius,
+                borderRadius: BorderRadius.circular(borderRadius),
                 fit: BoxFit.cover,
               ),
               _ThumbnailBottomOverlay(borderRadius: borderRadius),

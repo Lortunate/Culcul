@@ -25,7 +25,7 @@ class PublishDynamicBottomToolbar extends StatelessWidget {
         left: 20,
         right: 20,
         top: 12,
-        bottom: MediaQuery.of(context).padding.bottom + 12,
+        bottom: MediaQuery.paddingOf(context).bottom + 12,
       ),
       decoration: BoxDecoration(
         color: Theme.of(context).scaffoldBackgroundColor,

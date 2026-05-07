@@ -17,8 +17,9 @@ class _VideoCardThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    final cacheWidth = (mediaQuery.size.width / 2 * mediaQuery.devicePixelRatio).toInt();
+    final size = MediaQuery.sizeOf(context);
+    final dpr = MediaQuery.devicePixelRatioOf(context);
+    final cacheWidth = (size.width / 2 * dpr).toInt();
 
     return Stack(
       children: [

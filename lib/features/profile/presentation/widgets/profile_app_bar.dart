@@ -13,9 +13,8 @@ class ProfileAppBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authProvider);
+    final user = ref.watch(authProvider.select((s) => s.user));
     final profile = ref.watch(myProfileProvider).value;
-    final user = authState.user;
 
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;

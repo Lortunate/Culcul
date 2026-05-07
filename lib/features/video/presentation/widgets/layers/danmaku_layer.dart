@@ -41,6 +41,7 @@ class DanmakuLayer extends HookConsumerWidget {
     );
 
     final settings = ref.watch(danmakuSettingsControllerProvider);
+    final isEnabled = settings.isEnabled;
     final maskResultProvider = ref.watch(
       danmakuMaskProvider(oid: currentCid, pid: aid ?? 0),
     );
@@ -71,12 +72,12 @@ class DanmakuLayer extends HookConsumerWidget {
 
     useEffect(() {
       final controller = controllerRef.value;
-      if (controller == null || !settings.isEnabled) return;
+      if (controller == null || !isEnabled) return;
       controller.updateOption(danmakuOption);
       return null;
     }, [settings]);
 
-    if (!settings.isEnabled) {
+    if (!isEnabled) {
       controllerRef.value = null;
       return const SizedBox();
     }

@@ -5,7 +5,7 @@ import 'package:culcul/core/network/resource_api.dart';
 import 'package:culcul/core/network/resource_api_provider.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 // Mixin key encoding table
 const _mixinKeyEncTab = [
@@ -76,6 +76,8 @@ const _mixinKeyEncTab = [
 ];
 
 class WbiHelper {
+  static const _keyTtl = Duration(hours: 1);
+
   final ResourceApi _resourceApi;
   String? _imgKey;
   String? _subKey;
@@ -84,14 +86,14 @@ class WbiHelper {
 
   WbiHelper(this._resourceApi);
 
+  /// Synchronous check — avoids await overhead when keys are fresh.
+  bool get areKeysFresh {
+    if (_imgKey == null || _subKey == null || _lastUpdate == null) return false;
+    return DateTime.now().difference(_lastUpdate!) < _keyTtl;
+  }
+
   Future<void> updateKeys() async {
-    // Check if keys are valid (less than 1 hour old)
-    if (_imgKey != null && _subKey != null && _lastUpdate != null) {
-      final now = DateTime.now();
-      if (now.difference(_lastUpdate!).inHours < 1) {
-        return;
-      }
-    }
+    if (areKeysFresh) return;
 
     if (_updateCompleter != null) {
       return _updateCompleter!.future;
@@ -103,12 +105,10 @@ class WbiHelper {
       final response = await _resourceApi.fetchNav();
       final data = Map<String, dynamic>.from(response as Map);
 
-      // Check for API error code
       if (data['code'] != 0) {
         if (kDebugMode) {
           debugPrint('Nav API error: code=${data['code']}, message=${data['message']}');
         }
-        // If risk control (-352), we might need to handle it or use fallback
         if (data['code'] == -352) {
           throw Exception('Nav API risk control (-352)');
         }
@@ -135,7 +135,7 @@ class WbiHelper {
       _subKey = subUrl.split('/').last.split('.').first;
       _lastUpdate = DateTime.now();
       if (kDebugMode) {
-        debugPrint('Wbi keys updated successfully: $_imgKey, $_subKey');
+        debugPrint('Wbi keys updated: $_imgKey, $_subKey');
       }
       _updateCompleter?.complete();
     } catch (e) {

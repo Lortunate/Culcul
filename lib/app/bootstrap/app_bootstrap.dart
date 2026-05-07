@@ -17,21 +17,19 @@ class AppBootstrap {
     WidgetsFlutterBinding.ensureInitialized();
     await Hive.initFlutter();
 
-    final openedBoxesFuture = Future.wait<Box<dynamic>>([
+    final results = await Future.wait<dynamic>([
       Hive.openBox('culcul_session_box'),
       Hive.openBox('culcul_settings_box'),
       Hive.openBox('culcul_search_box'),
+      _resolveCacheDirectory(),
+      getApplicationDocumentsDirectory(),
     ]);
-    final cacheDirectoryFuture = _resolveCacheDirectory();
-    final documentDirectoryFuture = getApplicationDocumentsDirectory();
 
-    final openedBoxes = await openedBoxesFuture;
-    final cacheDirectory = await cacheDirectoryFuture;
-    final documentDirectory = await documentDirectoryFuture;
-
-    final sessionStorageBox = openedBoxes[0];
-    final settingsStorageBox = openedBoxes[1];
-    final searchStorageBox = openedBoxes[2];
+    final sessionStorageBox = results[0] as Box<dynamic>;
+    final settingsStorageBox = results[1] as Box<dynamic>;
+    final searchStorageBox = results[2] as Box<dynamic>;
+    final cacheDirectory = results[3] as Directory;
+    final documentDirectory = results[4] as Directory;
 
     LocaleSettings.useDeviceLocale();
     SystemChrome.setSystemUIOverlayStyle(_systemUiOverlayStyle);

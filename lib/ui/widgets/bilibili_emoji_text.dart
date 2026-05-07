@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:culcul/ui/widgets/app_selectable_text.dart';
 
 class BilibiliEmojiText extends StatelessWidget {
+  static final _emojiRegex = RegExp(r'(\[.*?\])');
   final String text;
   final Map emojiMap;
   final TextStyle? style;
@@ -92,10 +93,9 @@ class BilibiliEmojiText extends StatelessWidget {
     }
 
     final spans = <InlineSpan>[];
-    final regex = RegExp(r'(\[.*?\])');
 
     text.splitMapJoin(
-      regex,
+      _emojiRegex,
       onMatch: (Match m) {
         final matchText = m[0]!;
         final url = _resolveEmojiUrl(emojiMap[matchText]);

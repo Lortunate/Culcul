@@ -15,14 +15,12 @@ class _FavoriteFolderHeader extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: AppNetworkImage(
+          AppNetworkImage(
               url: info.cover,
               width: 100,
               height: 100,
               fit: BoxFit.cover,
-            ),
+              borderRadius: BorderRadius.circular(8),
           ),
           const SizedBox(width: 16),
           Expanded(

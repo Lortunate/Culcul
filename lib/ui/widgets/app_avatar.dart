@@ -53,7 +53,7 @@ class AppAvatar extends StatelessWidget {
                 url: url!,
                 width: size,
                 height: size,
-                borderRadius: size / 2,
+                borderRadius: BorderRadius.circular(size / 2),
                 placeholder: Center(child: fallbackIcon),
                 errorWidget: Center(child: fallbackIcon),
               )

@@ -14,7 +14,7 @@ class _SeekDoubleTapOverlay extends StatelessWidget {
     return Positioned.fill(
       child: GestureDetector(
         onDoubleTapDown: (details) {
-          final screenWidth = MediaQuery.of(context).size.width;
+          final screenWidth = MediaQuery.sizeOf(context).width;
           if (details.globalPosition.dx < screenWidth * 0.2) {
             onSeekBackward();
           } else if (details.globalPosition.dx > screenWidth * 0.8) {

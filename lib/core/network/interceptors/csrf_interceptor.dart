@@ -3,7 +3,7 @@ import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/bootstrap/providers/cookie_jar_provider.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class CsrfInterceptor extends Interceptor {
   static final String _passportHost = Uri.parse(ApiConstants.passportBaseUrl).host;
@@ -11,7 +11,16 @@ class CsrfInterceptor extends Interceptor {
 
   final Ref _ref;
 
+  /// Cached CSRF token — avoids cookie jar lookups on every request.
+  /// Invalidated when a -101 auth error is detected (handled by TokenInterceptor).
+  String? _cachedCsrf;
+
   CsrfInterceptor(this._ref);
+
+  /// Called by TokenInterceptor after cookie refresh to invalidate stale cache.
+  void invalidateCsrfCache() {
+    _cachedCsrf = null;
+  }
 
   @override
   Future<void> onRequest(
@@ -35,18 +44,27 @@ class CsrfInterceptor extends Interceptor {
   }
 
   Future<String> _resolveCsrf(RequestOptions options) async {
+    // Fast path: use cached token
+    if (_cachedCsrf != null) {
+      return _cachedCsrf!;
+    }
+
+    // Try from request cookie header first (no async needed)
     final fromHeader = _extractCsrfFromCookieHeader(
       options.headers['cookie'] ?? options.headers['Cookie'],
     );
     if (fromHeader != null) {
+      _cachedCsrf = fromHeader;
       return fromHeader;
     }
 
+    // Fallback: query cookie jar
     final cookieJar = _ref.read(cookieJarProvider);
     for (final uri in _csrfLookupUris(options.uri)) {
       final cookies = await cookieJar.loadForRequest(uri);
       final fromCookies = _extractCsrfFromCookies(cookies);
       if (fromCookies != null) {
+        _cachedCsrf = fromCookies;
         return fromCookies;
       }
     }

@@ -19,7 +19,7 @@ class FavoritesPage extends HookConsumerWidget {
     final tabController = useTabController(initialLength: 2);
     useListenable(tabController); // Rebuild when tab changes
     final colorScheme = Theme.of(context).colorScheme;
-    final authState = ref.watch(authProvider);
+    final isLoggedIn = ref.watch(authProvider.select((s) => s.isLoggedIn));
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -30,16 +30,16 @@ class FavoritesPage extends HookConsumerWidget {
         backgroundColor: colorScheme.surface,
         surfaceTintColor: Colors.transparent,
         actions: [
-          _AddFolderAction(isVisible: authState.isLoggedIn && tabController.index == 0),
+          _AddFolderAction(isVisible: isLoggedIn && tabController.index == 0),
         ],
-        bottom: authState.isLoggedIn
+        bottom: isLoggedIn
             ? AppTabBar(
                 controller: tabController,
                 tabs: [t.favorites.created, t.favorites.collected],
               )
             : null,
       ),
-      body: authState.isLoggedIn
+      body: isLoggedIn
           ? _FavoritesTabView(controller: tabController)
           : GuestView(title: t.profile.not_logged_in, message: t.profile.login_hint),
     );

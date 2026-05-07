@@ -93,26 +93,29 @@ class ChatMessageList extends HookWidget {
             }
           }
 
-          return Column(
-            children: [
-              if (showTime) ChatTimeDivider(timestamp: message.timestamp),
-              ChatMessageItem(
-                message: message,
-                isSelf: isSelf,
-                avatarUrl: isSelf ? selfAvatarUrl : otherAvatarUrl,
-                emojiMap: emojiMap,
-                onAvatarTap: () {
-                  if (!isSelf) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(t.notification.chat.page_not_developed),
-                        duration: const Duration(seconds: 1),
-                      ),
-                    );
-                  }
-                },
-              ),
-            ],
+          return KeyedSubtree(
+            key: ValueKey(message.msgKey ?? message.msgSeqno),
+            child: Column(
+              children: [
+                if (showTime) ChatTimeDivider(timestamp: message.timestamp),
+                ChatMessageItem(
+                  message: message,
+                  isSelf: isSelf,
+                  avatarUrl: isSelf ? selfAvatarUrl : otherAvatarUrl,
+                  emojiMap: emojiMap,
+                  onAvatarTap: () {
+                    if (!isSelf) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(t.notification.chat.page_not_developed),
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ],
+            ),
           );
         },
       ),

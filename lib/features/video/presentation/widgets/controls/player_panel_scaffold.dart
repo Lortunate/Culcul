@@ -22,15 +22,15 @@ class PlayerPanelScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
+    final screenHeight = MediaQuery.sizeOf(context).height;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
       width: isBottomSheet ? double.infinity : panelWidth,
       constraints: BoxConstraints(
         maxHeight: isBottomSheet
-            ? mediaQuery.size.height * maxHeightFactor
-            : mediaQuery.size.height,
+            ? screenHeight * maxHeightFactor
+            : screenHeight,
       ),
       child: ClipRRect(
         borderRadius: isBottomSheet

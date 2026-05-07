@@ -19,58 +19,60 @@ class LiveRoomCard extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final textTheme = theme.textTheme;
 
-    return AppCardContainer(
-      onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _LiveRoomCover(room: room, colorScheme: colorScheme),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppMinLinesText(
-                    room.title,
-                    minLines: 2,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w500,
-                      height: 1.2,
-                      fontSize: 12.5,
-                      color: colorScheme.onSurface,
+    return RepaintBoundary(
+      child: AppCardContainer(
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _LiveRoomCover(room: room, colorScheme: colorScheme),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppMinLinesText(
+                      room.title,
+                      minLines: 2,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w500,
+                        height: 1.2,
+                        fontSize: 12.5,
+                        color: colorScheme.onSurface,
+                      ),
                     ),
-                  ),
-                  const Spacer(),
-                  Row(
-                    children: [
-                      AppAvatar(
-                        url: room.face,
-                        size: 16,
-                        border: Border.all(style: BorderStyle.none),
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          room.uname,
-                          style: textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                    const Spacer(),
+                    Row(
+                      children: [
+                        AppAvatar(
+                          url: room.face,
+                          size: 16,
+                          border: Border.all(style: BorderStyle.none),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            room.uname,
+                            style: textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w400,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

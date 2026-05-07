@@ -18,7 +18,7 @@ class LiveInputSheet extends HookConsumerWidget {
 
     return Padding(
       padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
+        bottom: MediaQuery.viewInsetsOf(context).bottom,
         left: 12,
         right: 12,
         top: 12,

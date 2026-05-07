@@ -48,7 +48,7 @@ class PasswordLoginView extends HookConsumerWidget {
       geetest.start();
     }
 
-    final isLoading = geetest.isLoading || ref.watch(authProvider).isLoading;
+    final isLoading = geetest.isLoading || ref.watch(authProvider.select((s) => s.isLoading));
 
     return SingleChildScrollView(
       child: Column(

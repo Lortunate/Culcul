@@ -3,7 +3,7 @@ import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/ui/widgets/app_shimmer.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class AppNetworkImage extends ConsumerWidget {
   static const int _maxCacheDimension = 2048;
@@ -17,7 +17,7 @@ class AppNetworkImage extends ConsumerWidget {
   final double? height;
   final int? memCacheWidth;
   final int? memCacheHeight;
-  final double borderRadius;
+  final BorderRadius? borderRadius;
   final BoxFit fit;
   final bool cache;
   final Widget? placeholder;
@@ -31,7 +31,7 @@ class AppNetworkImage extends ConsumerWidget {
     this.height,
     this.memCacheWidth,
     this.memCacheHeight,
-    this.borderRadius = 0,
+    this.borderRadius,
     this.fit = BoxFit.cover,
     this.cache = true,
     this.placeholder,
@@ -83,7 +83,7 @@ class AppNetworkImage extends ConsumerWidget {
   BoxDecoration _buildDecoration(ColorScheme colorScheme) {
     return BoxDecoration(
       color: colorScheme.surfaceContainerHighest,
-      borderRadius: BorderRadius.circular(borderRadius),
+      borderRadius: borderRadius,
     );
   }
 
@@ -125,7 +125,7 @@ class AppNetworkImage extends ConsumerWidget {
       fit: fit,
       cache: cache,
       shape: BoxShape.rectangle,
-      borderRadius: BorderRadius.circular(borderRadius),
+      borderRadius: borderRadius,
       gaplessPlayback: true,
       loadStateChanged: (state) {
         switch (state.extendedImageLoadState) {

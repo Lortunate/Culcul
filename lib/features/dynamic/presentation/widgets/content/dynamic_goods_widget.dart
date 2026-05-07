@@ -32,38 +32,39 @@ class DynamicGoodsWidget extends StatelessWidget {
                 style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
               ),
             ),
-          ...additional.goodsItems!.map(
-            (item) => ListTile(
-              onTap: () => DynamicNavigation.open(context, url: item.jumpUrl),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              leading: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: AppNetworkImage(
-                  url: item.cover,
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.cover,
+          ...List.generate(additional.goodsItems!.length, (i) {
+            final item = additional.goodsItems![i];
+            return RepaintBoundary(
+              child: ListTile(
+                onTap: () => DynamicNavigation.open(context, url: item.jumpUrl),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                leading: AppNetworkImage(
+                    url: item.cover,
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                    borderRadius: BorderRadius.circular(8),
+                ),
+                title: Text(
+                  item.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodyMedium,
+                ),
+                subtitle: Text(
+                  item.price,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: colorScheme.error,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                trailing: Icon(
+                  Icons.chevron_right_rounded,
+                  color: colorScheme.onSurfaceVariant,
                 ),
               ),
-              title: Text(
-                item.name,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.bodyMedium,
-              ),
-              subtitle: Text(
-                item.price,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: colorScheme.error,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              trailing: Icon(
-                Icons.chevron_right_rounded,
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ),
-          ),
+            );
+          }),
         ],
       ),
     );

@@ -49,7 +49,7 @@ class CommentImagesWidget extends StatelessWidget {
       maxSide: maxSide,
       minSide: minSide,
     );
-    final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
+    final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
 
     // Simple constrained box approach
     return GestureDetector(
@@ -95,7 +95,7 @@ class CommentImagesWidget extends StatelessWidget {
         final double totalWidth = constraints.maxWidth;
         final double itemSize =
             (totalWidth - (spacing * (crossAxisCount - 1))) / crossAxisCount;
-        final devicePixelRatio = MediaQuery.of(context).devicePixelRatio;
+        final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
         final decodeSize = _toCacheDimension(itemSize, devicePixelRatio);
 
         // We might want to cap the item size if it's too big (e.g. on tablet)

@@ -118,7 +118,7 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
 
     final parseStopwatch = Stopwatch()..start();
     final html = response.data ?? '';
-    final initialState = ArticleDetailParser.extractInitialState(html);
+    final initialState = await ArticleDetailParser.extractInitialState(html);
     if (initialState == null) {
       throw const UnknownException('Failed to parse article page');
     }

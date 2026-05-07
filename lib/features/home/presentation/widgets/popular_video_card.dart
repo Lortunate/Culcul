@@ -24,39 +24,41 @@ class PopularVideoCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    return VideoListCard(
-      onTap: onTap,
-      padding: const EdgeInsets.all(10),
-      onLongPress: onLongPress,
-      height: cardHeight,
-      thumbnailWidth: thumbnailWidth,
-      coverUrl: video.pic,
-      title: video.title,
-      duration: video.duration,
-      viewCount: video.stat.view,
-      danmakuCount: video.stat.danmaku,
-      badge: video.rcmdReason.isNotEmpty ? _PopularTag(text: video.rcmdReason) : null,
-      author: Row(
-        children: [
-          Icon(
-            Icons.account_circle_outlined,
-            size: 14,
-            color: colorScheme.onSurfaceVariant,
-          ),
-          const SizedBox(width: 4),
-          Expanded(
-            child: Text(
-              video.owner.name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: colorScheme.onSurfaceVariant,
+    return RepaintBoundary(
+      child: VideoListCard(
+        onTap: onTap,
+        padding: const EdgeInsets.all(10),
+        onLongPress: onLongPress,
+        height: cardHeight,
+        thumbnailWidth: thumbnailWidth,
+        coverUrl: video.pic,
+        title: video.title,
+        duration: video.duration,
+        viewCount: video.stat.view,
+        danmakuCount: video.stat.danmaku,
+        badge: video.rcmdReason.isNotEmpty ? _PopularTag(text: video.rcmdReason) : null,
+        author: Row(
+          children: [
+            Icon(
+              Icons.account_circle_outlined,
+              size: 14,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(width: 4),
+            Expanded(
+              child: Text(
+                video.owner.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
+        showDefaultStats: true,
       ),
-      showDefaultStats: true,
     );
   }
 }

@@ -6,6 +6,8 @@ import 'package:timeago/timeago.dart' as timeago;
 class FormatUtils {
   FormatUtils._();
 
+  static final _htmlTagRegex = RegExp(r'<[^>]*>');
+  static final _camelCaseRegex = RegExp(r'([A-Z])');
   static bool _timeagoInitialized = false;
 
   static void _ensureTimeagoInitialized() {
@@ -18,7 +20,7 @@ class FormatUtils {
 
   // String utilities
   static String stripHtmlTags(String htmlString) {
-    return htmlString.replaceAll(RegExp(r'<[^>]*>'), '');
+    return htmlString.replaceAll(_htmlTagRegex, '');
   }
 
   static String formatImageUrl(String? url) {
@@ -134,7 +136,7 @@ class FormatUtils {
 
   static String camelCaseToTitle(String camelCase) {
     final result = camelCase.replaceAllMapped(
-      RegExp(r'([A-Z])'),
+      _camelCaseRegex,
       (match) => ' ${match.group(0)}',
     );
     return capitalize(result.trim());

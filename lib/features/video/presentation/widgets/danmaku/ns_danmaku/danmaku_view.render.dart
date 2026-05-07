@@ -1,5 +1,7 @@
 part of 'danmaku_view.dart';
 
+int _danmakuIdCounter = 0;
+
 extension _DanmakuViewStateRender on _DanmakuViewState {
   void _addItems(List<DanmakuItem> items) {
     if (_viewWidth == 0) return;
@@ -24,7 +26,7 @@ extension _DanmakuViewStateRender on _DanmakuViewState {
     final velocity = distance / durationMs;
 
     return RenderDanmakuItem(
-        id: UniqueKey().toString(),
+        id: '${_danmakuIdCounter++}',
         text: item.text,
         textPainter: textPainter,
         strokePainter: strokePainter,

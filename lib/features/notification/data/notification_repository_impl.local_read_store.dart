@@ -1,5 +1,4 @@
-import 'dart:convert';
-
+import 'package:culcul/core/utils/json_compute.dart';
 import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
 import 'package:culcul/features/notification/data/notification_mapper.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';
@@ -23,8 +22,9 @@ class NotificationLocalReadStore {
               ..limit(1))
             .getSingleOrNull();
     if (row == null) return null;
+    final decoded = await jsonDecodeCompute(row.summaryJson);
     final dto = UnreadCountModel.fromJson(
-      jsonDecode(row.summaryJson) as Map<String, dynamic>,
+      decoded as Map<String, dynamic>,
     );
     return dto;
   }
@@ -46,13 +46,16 @@ class NotificationLocalReadStore {
       ..orderBy([(t) => OrderingTerm.desc(t.sessionTs)])
       ..limit(NotificationRepositoryImpl.pageSize);
     final rows = await query.get();
-    return rows
-        .map(
-          (row) => PrivateMessageSession.fromJson(
-            jsonDecode(row.sessionJson) as Map<String, dynamic>,
-          ).toDomain(),
-        )
-        .toList();
+    return Future.wait(
+      rows.map(
+        (row) async {
+          final decoded = await jsonDecodeCompute(row.sessionJson);
+          return PrivateMessageSession.fromJson(
+            decoded as Map<String, dynamic>,
+          ).toDomain();
+        },
+      ),
+    );
   }
 
   Future<List<PrivateMessage>> pageMessagesFromLocal({
@@ -131,12 +134,15 @@ class NotificationLocalReadStore {
       ])
       ..limit(NotificationRepositoryImpl.pageSize);
     final rows = await query.get();
-    return rows
-        .map(
-          (row) => ReplyItem.fromJson(
-            jsonDecode(row.itemJson) as Map<String, dynamic>,
-          ).toDomain(),
-        )
-        .toList();
+    return Future.wait(
+      rows.map(
+        (row) async {
+          final decoded = await jsonDecodeCompute(row.itemJson);
+          return ReplyItem.fromJson(
+            decoded as Map<String, dynamic>,
+          ).toDomain();
+        },
+      ),
+    );
   }
 }

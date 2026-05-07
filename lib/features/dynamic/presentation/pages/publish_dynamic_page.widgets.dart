@@ -5,7 +5,7 @@ class _PublishDynamicScaffold extends StatelessWidget {
   final ColorScheme colorScheme;
   final Translations t;
   final bool isPublishing;
-  final bool isPostable;
+  final ValueNotifier<bool> hasDraftNotifier;
   final Future<void> Function() onClose;
   final Future<void> Function() onPublish;
   final TextEditingController controller;
@@ -24,7 +24,7 @@ class _PublishDynamicScaffold extends StatelessWidget {
     required this.colorScheme,
     required this.t,
     required this.isPublishing,
-    required this.isPostable,
+    required this.hasDraftNotifier,
     required this.onClose,
     required this.onPublish,
     required this.controller,
@@ -48,7 +48,7 @@ class _PublishDynamicScaffold extends StatelessWidget {
         colorScheme: colorScheme,
         t: t,
         isPublishing: isPublishing,
-        isPostable: isPostable,
+        hasDraftNotifier: hasDraftNotifier,
         onClose: onClose,
         onPublish: onPublish,
       ),
@@ -85,7 +85,7 @@ class _PublishDynamicAppBar extends StatelessWidget implements PreferredSizeWidg
   final ColorScheme colorScheme;
   final Translations t;
   final bool isPublishing;
-  final bool isPostable;
+  final ValueNotifier<bool> hasDraftNotifier;
   final Future<void> Function() onClose;
   final Future<void> Function() onPublish;
 
@@ -94,7 +94,7 @@ class _PublishDynamicAppBar extends StatelessWidget implements PreferredSizeWidg
     required this.colorScheme,
     required this.t,
     required this.isPublishing,
-    required this.isPostable,
+    required this.hasDraftNotifier,
     required this.onClose,
     required this.onPublish,
   });
@@ -113,31 +113,37 @@ class _PublishDynamicAppBar extends StatelessWidget implements PreferredSizeWidg
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 16),
-          child: TextButton(
-            onPressed: isPublishing || !isPostable ? null : onPublish,
-            style: TextButton.styleFrom(
-              backgroundColor: isPublishing || !isPostable
-                  ? colorScheme.surfaceContainerHighest
-                  : colorScheme.primary,
-              foregroundColor: isPublishing || !isPostable
-                  ? colorScheme.onSurfaceVariant
-                  : colorScheme.onPrimary,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-            ),
-            child: isPublishing
-                ? SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  )
-                : Text(
-                    t.moments.publish_action,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
+          child: ValueListenableBuilder<bool>(
+            valueListenable: hasDraftNotifier,
+            builder: (context, isPostable, _) {
+              final enabled = !isPublishing && isPostable;
+              return TextButton(
+                onPressed: enabled ? onPublish : null,
+                style: TextButton.styleFrom(
+                  backgroundColor: enabled
+                      ? colorScheme.primary
+                      : colorScheme.surfaceContainerHighest,
+                  foregroundColor: enabled
+                      ? colorScheme.onPrimary
+                      : colorScheme.onSurfaceVariant,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                ),
+                child: isPublishing
+                    ? SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      )
+                    : Text(
+                        t.moments.publish_action,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+              );
+            },
           ),
         ),
       ],

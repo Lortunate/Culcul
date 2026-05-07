@@ -62,6 +62,9 @@ sealed class PrivateMessageDetail with _$PrivateMessageDetail {
     if (content is Map) return content as Map<String, dynamic>;
     if (content is String) {
       try {
+        // Intentionally synchronous: message content payloads are small
+        // (<1KB). Making this async would require API-breaking changes
+        // to all callers (UI widgets, summary getters).
         return jsonDecode(content as String) as Map<String, dynamic>;
       } catch (e) {
         return null;
@@ -91,6 +94,7 @@ sealed class PrivateMessageDetail with _$PrivateMessageDetail {
       try {
         final innerContentStr = contentMap?['content'] as String?;
         if (innerContentStr != null) {
+          // Intentionally synchronous: system tip content is small.
           final List<dynamic> list = jsonDecode(innerContentStr);
           return list.map((e) => e as Map<String, dynamic>).toList();
         }

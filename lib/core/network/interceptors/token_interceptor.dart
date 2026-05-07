@@ -1,16 +1,18 @@
 import 'package:culcul/core/session/session_cookie_refresher.dart';
 import 'package:culcul/core/network/dio_client.dart';
+import 'package:culcul/core/network/interceptors/csrf_interceptor.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class TokenInterceptor extends QueuedInterceptor {
   static const String _tokenRefreshedExtra = 'token_refreshed';
   static const String _disableTokenRefreshExtra = 'disable_token_refresh';
 
   final Ref _ref;
+  final CsrfInterceptor? _csrfInterceptor;
   Future<void>? _refreshCookieFuture;
 
-  TokenInterceptor(this._ref);
+  TokenInterceptor(this._ref, [this._csrfInterceptor]);
 
   @override
   Future<void> onResponse(Response response, ResponseInterceptorHandler handler) async {
@@ -58,6 +60,8 @@ class TokenInterceptor extends QueuedInterceptor {
         .refreshCookies()
         .whenComplete(() {
           _refreshCookieFuture = null;
+          // Invalidate CSRF cache since cookies changed
+          _csrfInterceptor?.invalidateCsrfCache();
         }));
   }
 }

@@ -15,12 +15,12 @@ class HistoryPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final historyListAsync = ref.watch(historyListProvider);
-    final authState = ref.watch(authProvider);
+    final isLoggedIn = ref.watch(authProvider.select((s) => s.isLoggedIn));
     final t = Translations.of(context);
 
     return Scaffold(
       appBar: AppBar(title: Text(t.profile.menu.history), centerTitle: true),
-      body: authState.isLoggedIn
+      body: isLoggedIn
           ? _HistoryContent(historyListAsync: historyListAsync)
           : GuestView(title: t.profile.not_logged_in, message: t.profile.login_hint),
     );
@@ -44,14 +44,17 @@ class _HistoryContent extends ConsumerWidget {
           separatorBuilder: (_, _) => const Divider(height: 1, indent: 16, endIndent: 16),
           itemBuilder: (context, index) {
             final item = value[index];
-            return HistoryItemWidget(
-              item: item,
-              onTap: () {
-                final bvid = item.bvid;
-                if (item.business == 'archive' && bvid.isNotEmpty) {
-                  context.push('/video/$bvid');
-                }
-              },
+            return KeyedSubtree(
+              key: ValueKey(item.bvid),
+              child: HistoryItemWidget(
+                item: item,
+                onTap: () {
+                  final bvid = item.bvid;
+                  if (item.business == 'archive' && bvid.isNotEmpty) {
+                    context.push('/video/$bvid');
+                  }
+                },
+              ),
             );
           },
         ),

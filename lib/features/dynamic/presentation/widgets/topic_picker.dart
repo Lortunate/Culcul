@@ -37,7 +37,7 @@ class TopicPicker extends HookConsumerWidget {
     }, const []);
 
     return Container(
-      height: MediaQuery.of(context).size.height * 0.7,
+      height: MediaQuery.sizeOf(context).height * 0.7,
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
@@ -102,14 +102,12 @@ class TopicPicker extends HookConsumerWidget {
                       final topic = topics[index];
                       return ListTile(
                         leading: topic.coverUrl != null
-                            ? ClipRRect(
+                            ? AppNetworkImage(
+                                url: topic.coverUrl!,
+                                width: 40,
+                                height: 40,
+                                fit: BoxFit.cover,
                                 borderRadius: BorderRadius.circular(4),
-                                child: AppNetworkImage(
-                                  url: topic.coverUrl!,
-                                  width: 40,
-                                  height: 40,
-                                  fit: BoxFit.cover,
-                                ),
                               )
                             : Container(
                                 width: 40,

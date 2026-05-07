@@ -18,7 +18,7 @@ class DynamicPage extends HookConsumerWidget {
     final t = Translations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final authState = ref.watch(authProvider);
+    final isLoggedIn = ref.watch(authProvider.select((s) => s.isLoggedIn));
     final tabs = [
       t.moments.tabs.all,
       t.moments.tabs.video,
@@ -37,7 +37,7 @@ class DynamicPage extends HookConsumerWidget {
           style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
         ),
         actions: [
-          if (authState.isLoggedIn)
+          if (isLoggedIn)
             IconButton(
               icon: const Icon(Icons.edit_note_rounded, size: 24),
               onPressed: () {
@@ -55,11 +55,11 @@ class DynamicPage extends HookConsumerWidget {
           ),
           const SizedBox(width: 8),
         ],
-        bottom: authState.isLoggedIn
+        bottom: isLoggedIn
             ? AppTabBar(controller: tabController, tabs: tabs, isScrollable: false)
             : null,
       ),
-      body: authState.isLoggedIn
+      body: isLoggedIn
           ? TabBarView(
               controller: tabController,
               children: const [

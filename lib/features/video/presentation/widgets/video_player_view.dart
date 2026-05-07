@@ -43,7 +43,7 @@ class VideoPlayerView extends HookConsumerWidget {
     final currentVolume = volumeSnapshot.data ?? player.state.volume;
 
     return AspectRatio(
-      aspectRatio: isFullscreen ? MediaQuery.of(context).size.aspectRatio : 16 / 10,
+      aspectRatio: isFullscreen ? MediaQuery.sizeOf(context).aspectRatio : 16 / 10,
       child: Container(
         color: colorScheme.scrim,
         child: Stack(

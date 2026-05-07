@@ -120,7 +120,7 @@ class _InteractionGestureSurface extends HookConsumerWidget {
               dragSession.value.lastVerticalUpdateMs = nowMs;
               dragSession.value.verticalDelta += details.primaryDelta ?? 0;
               final isLeft =
-                  details.globalPosition.dx < MediaQuery.of(context).size.width / 2;
+                  details.globalPosition.dx < MediaQuery.sizeOf(context).width / 2;
               showIndicator.value = true;
               if (isLeft) {
                 final newBrightness =

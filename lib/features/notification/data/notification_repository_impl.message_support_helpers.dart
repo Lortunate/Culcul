@@ -89,6 +89,8 @@ extension NotificationMessageSupportHelpers on NotificationMessageSupport {
     }
     if (raw is String) {
       try {
+        // Intentionally synchronous: notification content strings are small
+        // (<1KB) and this helper is called from synchronous extraction methods.
         final decoded = jsonDecode(raw);
         if (decoded is Map<String, dynamic>) return decoded;
       } catch (_) {}

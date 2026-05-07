@@ -39,14 +39,12 @@ class SearchTopicItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (item.coverUrl != null)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: AppNetworkImage(
+              AppNetworkImage(
                   url: item.coverUrl!,
                   width: 80,
                   height: 80,
                   fit: BoxFit.cover,
-                ),
+                  borderRadius: BorderRadius.circular(8),
               ),
             const SizedBox(width: 12),
             Expanded(

@@ -26,16 +26,14 @@ class DynamicVideoWidget extends StatelessWidget {
         children: [
           Stack(
             children: [
-              ClipRRect(
+              AppNetworkImage(
+                url: video.cover,
+                width: 140,
+                height: 88,
+                fit: BoxFit.cover,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(6),
                   bottomLeft: Radius.circular(6),
-                ),
-                child: AppNetworkImage(
-                  url: video.cover,
-                  width: 140,
-                  height: 88,
-                  fit: BoxFit.cover,
                 ),
               ),
               Positioned(

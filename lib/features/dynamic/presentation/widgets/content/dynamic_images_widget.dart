@@ -27,7 +27,7 @@ class DynamicImagesWidget extends StatelessWidget {
               child: AppNetworkImage(
                   url: validImages.first,
                   fit: BoxFit.cover,
-                  borderRadius: 8,
+                  borderRadius: BorderRadius.circular(8),
                   width: 240,
                   height: 240,
                 ),
@@ -59,7 +59,7 @@ class DynamicImagesWidget extends StatelessWidget {
   }
 
   Widget _buildImageItem(String url, [double? size]) {
-    return AppNetworkImage(url: url, fit: BoxFit.cover, width: size, height: size, borderRadius: 6);
+    return AppNetworkImage(url: url, fit: BoxFit.cover, width: size, height: size, borderRadius: BorderRadius.circular(6));
   }
 
   Future<void> _openImagePreview(

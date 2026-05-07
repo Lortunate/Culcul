@@ -7,6 +7,7 @@ import 'package:culcul/features/home/presentation/widgets/home_feed_view_utils.d
 import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';
 import 'package:culcul/features/home/presentation/widgets/home_video_actions.dart';
 import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
+import 'package:culcul/core/hooks/use_scroll_precache.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/network/network_quality_policy.dart';
 import 'package:culcul/core/perf/performance_policy.dart';
@@ -114,6 +115,28 @@ class _RecommendVideoGrid extends HookWidget {
       );
       return null;
     }, [items, networkPolicy]);
+
+    useScrollPrecache(
+      scrollController: scrollController,
+      prefetchCount: layout.gridDelegate.crossAxisCount * 2,
+      getUpcomingSpecs: (firstIndex, count) {
+        final width = _estimateGridItemWidth(context);
+        final pixelRatio = MediaQuery.devicePixelRatioOf(context);
+        final memW = (width * pixelRatio).round();
+        final memH = (width / (16 / 10) * pixelRatio).round();
+        final start = firstIndex + 1;
+        final end = (start + count).clamp(0, items.length);
+        if (start >= items.length) return <NetworkImagePrefetchSpec>[];
+        return items
+            .sublist(start, end)
+            .map((v) => NetworkImagePrefetchSpec(
+                  url: v.pic,
+                  memCacheWidth: memW,
+                  memCacheHeight: memH,
+                ))
+            .toList(growable: false);
+      },
+    );
 
     return CustomScrollView(
       controller: scrollController,

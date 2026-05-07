@@ -30,6 +30,7 @@ Dio _createBaseDio(Ref ref, NetworkQualityPolicy networkPolicy) {
         'User-Agent': ApiConstants.userAgent,
         'Referer': ApiConstants.referer,
         'Accept': 'application/json, text/plain, */*',
+        'Accept-Encoding': 'gzip, deflate',
         'Connection': 'keep-alive',
       },
     ),
@@ -80,7 +81,22 @@ Dio dioClient(Ref ref) {
   final dio = _createBaseDio(ref, networkPolicy);
   final cacheStore = ref.read(cacheStoreProvider);
 
-  dio.interceptors.add(NetworkQualityInterceptor(ref));
+  final networkQualityInterceptor = NetworkQualityInterceptor(ref);
+
+  // Invalidate cached policy when connectivity changes
+  ref.listen(networkQualityPolicyProvider, (prev, next) {
+    networkQualityInterceptor.invalidateCache();
+  });
+
+  // Interceptor chain order optimized for minimal overhead:
+  // 1. Dedup first — cheapest check, avoids all downstream work for duplicates
+  // 2. Network quality — applies timeouts (cached policy read)
+  // 3. Cache — checks cache before expensive signing/retry setup
+  // 4. Retry — wraps the signing interceptors so retries get fresh signatures
+  // 5. CSRF + WBI — signing (only runs for marked requests)
+  // 6. Token — last, handles auth refresh after all else fails
+  dio.interceptors.add(InFlightDedupInterceptor());
+  dio.interceptors.add(networkQualityInterceptor);
   dio.interceptors.add(CacheInterceptor(cacheStore));
   dio.interceptors.add(
     DioCacheInterceptor(
@@ -94,7 +110,6 @@ Dio dioClient(Ref ref) {
       ),
     ),
   );
-  dio.interceptors.add(InFlightDedupInterceptor());
   dio.interceptors.add(
     RetryInterceptor(
       dio: dio,
@@ -103,12 +118,13 @@ Dio dioClient(Ref ref) {
       maxRetryDelayMs: networkPolicy.retryMaxDelayMs,
     ),
   );
-  dio.interceptors.add(CsrfInterceptor(ref));
+  final csrfInterceptor = CsrfInterceptor(ref);
+  dio.interceptors.add(csrfInterceptor);
   dio.interceptors.add(WbiInterceptor(ref));
 
   _addLogInterceptor(dio);
 
-  dio.interceptors.add(TokenInterceptor(ref));
+  dio.interceptors.add(TokenInterceptor(ref, csrfInterceptor));
 
   return dio;
 }

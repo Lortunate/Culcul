@@ -27,17 +27,14 @@ class RetryInterceptor extends Interceptor {
     final retries = requestOptions.extra[retriesExtra] as int? ?? 0;
 
     if (retries < maxRetries && _shouldRetry(err)) {
-      final delayMs = _calculateDelayMs(retries);
+      final delayMs = _resolveDelayMs(err, retries);
       if (delayMs > 0) {
         await Future.delayed(Duration(milliseconds: delayMs));
       }
 
       try {
-        final response = await _retry(
-          err,
-          Map<String, dynamic>.from(requestOptions.extra)..[retriesExtra] = retries + 1,
-        );
-
+        requestOptions.extra[retriesExtra] = retries + 1;
+        final response = await dio.fetch(requestOptions);
         return handler.resolve(response);
       } catch (_) {
         return super.onError(err, handler);
@@ -81,20 +78,29 @@ class RetryInterceptor extends Interceptor {
   }
 
   bool _isIdempotentRequest(RequestOptions requestOptions) {
-    final method = requestOptions.method.toUpperCase();
     if (requestOptions.extra['force_retryable'] == true) {
       return true;
     }
+    final method = requestOptions.method.toUpperCase();
     return method == 'GET' || method == 'HEAD' || method == 'OPTIONS';
   }
 
-  Future<Response<dynamic>> _retry(DioException err, Map<String, dynamic> extra) async {
-    final requestOptions = err.requestOptions;
-    final retryOptions = requestOptions.copyWith(extra: extra);
-    return dio.fetch(retryOptions);
+  /// Resolve retry delay: prefer Retry-After header for 429, else exponential backoff.
+  int _resolveDelayMs(DioException err, int retries) {
+    // Honor Retry-After header for 429 Too Many Requests
+    if (err.response?.statusCode == 429) {
+      final retryAfter = err.response?.headers.value('retry-after');
+      if (retryAfter != null) {
+        final seconds = int.tryParse(retryAfter);
+        if (seconds != null && seconds > 0) {
+          return math.min(seconds * 1000, maxRetryDelayMs);
+        }
+      }
+    }
+    return _calculateBackoffMs(retries);
   }
 
-  int _calculateDelayMs(int retries) {
+  int _calculateBackoffMs(int retries) {
     final exponent = retries.clamp(0, 6);
     final delayMs = baseRetryDelayMs * (1 << exponent);
     final boundedDelayMs = math.min(maxRetryDelayMs, delayMs);

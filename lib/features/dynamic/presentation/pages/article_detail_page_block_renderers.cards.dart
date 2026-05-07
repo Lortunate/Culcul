@@ -15,11 +15,13 @@ class _ImageBlockView extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (int i = 0; i < urls.length; i++) ...[
-          GestureDetector(
-            onTap: () => onTap(i),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: AppNetworkImage(url: urls[i], fit: BoxFit.cover, borderRadius: 14),
+          RepaintBoundary(
+            child: GestureDetector(
+              onTap: () => onTap(i),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: AppNetworkImage(url: urls[i], fit: BoxFit.cover, borderRadius: BorderRadius.circular(14)),
+              ),
             ),
           ),
           if (i < urls.length - 1) const SizedBox(height: 10),

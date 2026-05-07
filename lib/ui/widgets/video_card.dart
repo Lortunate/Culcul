@@ -67,21 +67,23 @@ class VideoCard extends StatelessWidget {
       showAuthor: showAuthor,
     );
 
-    return AppCardContainer(
-      onTap: onTap,
-      onLongPress: onLongPress,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _VideoCardThumbnail(
-            coverUrl: _coverUrl,
-            duration: _duration,
-            viewCount: _viewCount,
-            danmakuCount: _danmakuCount,
-            reason: _reason,
-          ),
-          Expanded(child: content),
-        ],
+    return RepaintBoundary(
+      child: AppCardContainer(
+        onTap: onTap,
+        onLongPress: onLongPress,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _VideoCardThumbnail(
+              coverUrl: _coverUrl,
+              duration: _duration,
+              viewCount: _viewCount,
+              danmakuCount: _danmakuCount,
+              reason: _reason,
+            ),
+            Expanded(child: content),
+          ],
+        ),
       ),
     );
   }

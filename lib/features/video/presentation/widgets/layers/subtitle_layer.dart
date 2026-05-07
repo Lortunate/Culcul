@@ -14,7 +14,9 @@ class SubtitleLayer extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
-    final subtitleState = ref.watch(subtitleControllerProvider(bvid));
+    final subtitleState = ref.watch(
+      subtitleControllerProvider(bvid).select((s) => (isEnabled: s.isEnabled, content: s.content)),
+    );
     final player = ref.read(playerControllerProvider.notifier).player;
     final subtitleCursorRef = useRef<int>(0);
     final activeSubtitle = useState<SubtitleItem?>(null);

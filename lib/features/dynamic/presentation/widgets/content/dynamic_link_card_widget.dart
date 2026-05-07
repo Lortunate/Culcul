@@ -19,16 +19,14 @@ class DynamicLinkCardWidget extends StatelessWidget {
       onTap: () => DynamicNavigation.open(context, url: card.url, title: card.title),
       child: Row(
         children: [
-          ClipRRect(
+          AppNetworkImage(
+            url: card.cover,
+            width: 88,
+            height: 88,
+            fit: BoxFit.cover,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(6),
               bottomLeft: Radius.circular(6),
-            ),
-            child: AppNetworkImage(
-              url: card.cover,
-              width: 88,
-              height: 88,
-              fit: BoxFit.cover,
             ),
           ),
           Expanded(

@@ -122,7 +122,7 @@ class _ReplySheetContentState extends State<_ReplySheetContent> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
+        bottom: MediaQuery.viewInsetsOf(context).bottom,
         left: 16,
         right: 16,
         top: 16,

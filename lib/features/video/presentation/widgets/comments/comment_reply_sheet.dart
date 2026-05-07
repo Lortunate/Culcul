@@ -18,7 +18,7 @@ class CommentReplySheet extends HookWidget {
       context: context,
       isScrollControlled: true,
       builder: (context) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
         child: CommentReplySheet(comment: comment, onSend: onSend),
       ),
     );

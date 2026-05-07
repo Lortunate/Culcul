@@ -175,7 +175,7 @@ class SmsLoginView extends HookConsumerWidget {
           AuthButton(
             onPressed: onLogin,
             text: t.auth.login,
-            isLoading: ref.watch(authProvider).isLoading,
+            isLoading: ref.watch(authProvider.select((s) => s.isLoading)),
           ),
           const SizedBox(height: 24),
         ],

@@ -19,16 +19,14 @@ class DynamicUgcWidget extends StatelessWidget {
       onTap: () => DynamicNavigation.open(context, url: additional.jumpUrl),
       child: Row(
         children: [
-          ClipRRect(
+          AppNetworkImage(
+            url: additional.cover ?? '',
+            width: 140,
+            height: 88,
+            fit: BoxFit.cover,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(6),
               bottomLeft: Radius.circular(6),
-            ),
-            child: AppNetworkImage(
-              url: additional.cover ?? '',
-              width: 140,
-              height: 88,
-              fit: BoxFit.cover,
             ),
           ),
           Expanded(

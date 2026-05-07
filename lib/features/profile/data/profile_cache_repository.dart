@@ -18,7 +18,7 @@ class ProfileCacheRepository extends _$ProfileCacheRepository
 
   Future<UserProfile?> read(String userId) async {
     final cache = await future;
-    return cache.getUser(userId);
+    return await cache.getUser(userId);
   }
 
   Future<void> write(UserProfile profile) async {

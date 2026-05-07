@@ -1,5 +1,4 @@
-import 'dart:convert';
-
+import 'package:culcul/core/utils/json_compute.dart';
 import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
@@ -17,11 +16,12 @@ class NotificationStreamWatchers {
           ..where((t) => t.ownerUid.equals(ownerUid))
           ..limit(1))
         .watchSingleOrNull()
-        .map((row) {
+        .asyncMap((row) async {
           if (row == null) return NotificationRepositoryImpl.emptySummary;
           try {
+            final decoded = await jsonDecodeCompute(row.summaryJson);
             final dto = UnreadCountModel.fromJson(
-              jsonDecode(row.summaryJson) as Map<String, dynamic>,
+              decoded as Map<String, dynamic>,
             );
             return dto;
           } catch (_) {
@@ -42,14 +42,14 @@ class NotificationStreamWatchers {
             (t) => OrderingTerm.desc(t.eventId),
           ]))
         .watch()
-        .map(
-          (rows) => rows
-              .map(
-                (row) => SystemNotificationItem.fromJson(
-                  jsonDecode(row.itemJson) as Map<String, dynamic>,
-                ),
-              )
-              .toList(),
+        .asyncMap(
+          (rows) async => Future.wait(
+            rows.map(
+              (row) async => SystemNotificationItem.fromJson(
+                (await jsonDecodeCompute(row.itemJson)) as Map<String, dynamic>,
+              ),
+            ),
+          ),
         );
   }
 }

@@ -4,6 +4,7 @@ import 'package:culcul/features/home/presentation/view_models/home_popular_view_
 import 'package:culcul/features/home/presentation/widgets/home_feed_view_utils.dart';
 import 'package:culcul/features/home/presentation/widgets/home_video_actions.dart';
 import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
+import 'package:culcul/core/hooks/use_scroll_precache.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/network/network_quality_policy.dart';
 import 'package:culcul/core/perf/performance_policy.dart';
@@ -110,6 +111,27 @@ class _PopularVideoList extends HookWidget {
       );
       return null;
     }, [items, networkPolicy]);
+
+    useScrollPrecache(
+      scrollController: scrollController,
+      prefetchCount: 5,
+      getUpcomingSpecs: (firstIndex, count) {
+        final pixelRatio = MediaQuery.devicePixelRatioOf(context);
+        final memW = (layout.thumbnailWidth * pixelRatio).round();
+        final memH = (layout.thumbnailWidth / (16 / 10) * pixelRatio).round();
+        final start = firstIndex + 1;
+        final end = (start + count).clamp(0, items.length);
+        if (start >= items.length) return <NetworkImagePrefetchSpec>[];
+        return items
+            .sublist(start, end)
+            .map((v) => NetworkImagePrefetchSpec(
+                  url: v.pic,
+                  memCacheWidth: memW,
+                  memCacheHeight: memH,
+                ))
+            .toList(growable: false);
+      },
+    );
 
     return CustomScrollView(
       controller: scrollController,

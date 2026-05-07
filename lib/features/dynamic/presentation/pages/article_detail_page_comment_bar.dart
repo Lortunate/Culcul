@@ -156,7 +156,7 @@ class _ArticleCommentBar extends StatelessWidget {
         left: 16,
         right: 16,
         top: 8,
-        bottom: 8 + MediaQuery.of(context).padding.bottom,
+        bottom: 8 + MediaQuery.paddingOf(context).bottom,
       ),
       child: DynamicCommentComposer(
         controller: controller,

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:culcul/core/network/providers/wbi_helper_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class WbiInterceptor extends Interceptor {
   final Ref _ref;
@@ -20,51 +20,56 @@ class WbiInterceptor extends Interceptor {
     final markedAsWbi = options.extra['requires_wbi'] == true;
     final requiresWbi = hasWbiHeader || isWbiPath || markedAsWbi;
 
-    if (requiresWbi) {
-      options.extra['requires_wbi'] = true;
-      options.headers.removeWhere((key, value) => key.toLowerCase() == 'x-bili-wbi');
-
-      _ensureCookieCount(options);
-
-      try {
-        final wbiHelper = _ref.read(wbiHelperProvider);
-        await wbiHelper.updateKeys();
-
-        final params = options.queryParameters;
-        final signedParams = wbiHelper.sign(params);
-
-        if (kDebugMode) {
-          debugPrint('WbiInterceptor: Signed params for ${options.uri.path}');
-        }
-
-        options.queryParameters = signedParams;
-      } catch (e, stack) {
-        if (kDebugMode) {
-          debugPrint('WbiInterceptor signing failed: $e\n$stack');
-        }
-        return handler.reject(
-          DioException(
-            requestOptions: options,
-            error: 'Wbi signing failed: $e',
-            type: DioExceptionType.unknown,
-          ),
-        );
-      }
+    if (!requiresWbi) {
+      handler.next(options);
+      return;
     }
+
+    options.extra['requires_wbi'] = true;
+    options.headers.removeWhere((key, value) => key.toLowerCase() == 'x-bili-wbi');
+
+    _ensureCookieCount(options);
+
+    try {
+      final wbiHelper = _ref.read(wbiHelperProvider);
+      // Skip await when keys are already fresh — avoids microtask overhead
+      if (!wbiHelper.areKeysFresh) {
+        await wbiHelper.updateKeys();
+      }
+
+      options.queryParameters = wbiHelper.sign(options.queryParameters);
+    } catch (e, stack) {
+      if (kDebugMode) {
+        debugPrint('WbiInterceptor signing failed: $e\n$stack');
+      }
+      return handler.reject(
+        DioException(
+          requestOptions: options,
+          error: 'Wbi signing failed: $e',
+          type: DioExceptionType.unknown,
+        ),
+      );
+    }
+
     handler.next(options);
   }
 
   void _ensureCookieCount(RequestOptions options) {
     final cookieHeader = options.headers[HttpHeaders.cookieHeader];
-    if (cookieHeader is String) {
-      final count = cookieHeader.split(';').where((e) => e.trim().isNotEmpty).length;
-      if (count < 3) {
-        final sb = StringBuffer(cookieHeader);
-        for (var i = 0; i < 3 - count; i++) {
-          sb.write('; dummy$i=0');
-        }
-        options.headers[HttpHeaders.cookieHeader] = sb.toString();
+    if (cookieHeader is! String) return;
+
+    var count = 0;
+    for (var i = 0; i < cookieHeader.length; i++) {
+      if (cookieHeader[i] == ';') count++;
+    }
+    count++; // last segment
+
+    if (count < 3) {
+      final sb = StringBuffer(cookieHeader);
+      for (var i = 0; i < 3 - count; i++) {
+        sb.write('; dummy$i=0');
       }
+      options.headers[HttpHeaders.cookieHeader] = sb.toString();
     }
   }
 }

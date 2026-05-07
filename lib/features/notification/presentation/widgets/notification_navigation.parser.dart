@@ -6,6 +6,9 @@ class NotificationNavigationParser {
   static final RegExp _bvRegex = RegExp(r'BV[0-9A-Za-z]+', caseSensitive: false);
   static final RegExp _avRegex = RegExp(r'(?<![A-Za-z0-9])av(\d+)', caseSensitive: false);
   static final RegExp _digitRegex = RegExp(r'^\d+$');
+  static final RegExp _opusPathRegex = RegExp(r'/opus/(\d+)');
+  static final RegExp _dynamicPathRegex = RegExp(r'/dynamic/(\d+)');
+  static final RegExp _tHostPathRegex = RegExp(r't\.bilibili\.com/(\d+)');
 
   NotificationNavigationTarget fromNotificationDetail(NotificationEntryDetail detail) {
     return parse(
@@ -140,13 +143,13 @@ class NotificationNavigationParser {
       }
     }
 
-    final opusMatch = RegExp(r'/opus/(\d+)').firstMatch(raw);
+    final opusMatch = _opusPathRegex.firstMatch(raw);
     if (opusMatch != null) return opusMatch.group(1);
 
-    final dynamicMatch = RegExp(r'/dynamic/(\d+)').firstMatch(raw);
+    final dynamicMatch = _dynamicPathRegex.firstMatch(raw);
     if (dynamicMatch != null) return dynamicMatch.group(1);
 
-    final tMatch = RegExp(r't\.bilibili\.com/(\d+)').firstMatch(raw);
+    final tMatch = _tHostPathRegex.firstMatch(raw);
     if (tMatch != null) return tMatch.group(1);
 
     return null;

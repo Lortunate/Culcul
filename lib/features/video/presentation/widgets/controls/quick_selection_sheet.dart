@@ -27,7 +27,7 @@ class QuickSelectionSheet<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
+    final bottomPadding = isBottomSheet ? MediaQuery.paddingOf(context).bottom + 20 : 20.0;
 
     return PlayerPanelScaffold(
       title: title,
@@ -37,22 +37,12 @@ class QuickSelectionSheet<T> extends StatelessWidget {
       maxHeightFactor: 0.68,
       child: items.isEmpty
           ? Padding(
-              padding: EdgeInsets.fromLTRB(
-                20,
-                20,
-                20,
-                isBottomSheet ? mediaQuery.padding.bottom + 20 : 20,
-              ),
+              padding: EdgeInsets.fromLTRB(20, 20, 20, bottomPadding),
               child: PlayerPanelEmptyState(label: emptyText ?? ''),
             )
           : ListView.separated(
               physics: const BouncingScrollPhysics(),
-              padding: EdgeInsets.fromLTRB(
-                20,
-                20,
-                20,
-                isBottomSheet ? mediaQuery.padding.bottom + 20 : 20,
-              ),
+              padding: EdgeInsets.fromLTRB(20, 20, 20, bottomPadding),
               itemCount: items.length,
               separatorBuilder: (_, index) => const SizedBox(height: 10),
               itemBuilder: (context, index) {

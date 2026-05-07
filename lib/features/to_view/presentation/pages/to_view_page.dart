@@ -16,8 +16,7 @@ class ToViewPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authProvider);
-    final isLoggedIn = authState.isLoggedIn;
+    final isLoggedIn = ref.watch(authProvider.select((s) => s.isLoggedIn));
     final currentItems = ref.watch(toViewListProvider).asData?.value ?? const [];
     final clearAllAction = planToViewClearAll(
       isLoggedIn: isLoggedIn,

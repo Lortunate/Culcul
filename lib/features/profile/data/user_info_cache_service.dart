@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:culcul/core/utils/json_compute.dart';
 import 'package:culcul/features/profile/data/dtos/profile_dtos.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -12,12 +13,13 @@ class UserInfoCacheService {
 
   UserInfoCacheService(this.box);
 
-  UserProfile? getUser(String uid) {
+  Future<UserProfile?> getUser(String uid) async {
     final jsonString = box.get(uid);
     if (jsonString == null) return null;
     try {
-      final jsonMap = jsonDecode(jsonString) as Map<String, dynamic>;
-      return UserProfile.fromJson(jsonMap);
+      final jsonMap = await jsonDecodeCompute(jsonString);
+      if (jsonMap is! Map) return null;
+      return UserProfile.fromJson(jsonMap.cast<String, dynamic>());
     } catch (e) {
       return null;
     }

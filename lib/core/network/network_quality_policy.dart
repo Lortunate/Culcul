@@ -3,7 +3,7 @@ import 'dart:math' as math;
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 enum NetworkQualityProfile { fast, normal, constrained }
 
@@ -52,28 +52,28 @@ class NetworkQualityPolicy {
     return switch (profile) {
       NetworkQualityProfile.fast => const NetworkQualityPolicy(
         profile: NetworkQualityProfile.fast,
-        connectTimeout: Duration(seconds: 8),
-        receiveTimeout: Duration(seconds: 10),
-        sendTimeout: Duration(seconds: 8),
-        connectionIdleTimeout: Duration(seconds: 90),
+        connectTimeout: Duration(seconds: 5),
+        receiveTimeout: Duration(seconds: 8),
+        sendTimeout: Duration(seconds: 5),
+        connectionIdleTimeout: Duration(seconds: 120),
         retryMaxAttempts: 2,
-        retryBaseDelayMs: 180,
-        retryMaxDelayMs: 1800,
+        retryBaseDelayMs: 150,
+        retryMaxDelayMs: 1500,
         prefetchLimitFactor: 1.0,
-        prefetchMaxConcurrency: 2,
-        prefetchQueueCapacity: 80,
-        prefetchKeyTtl: Duration(minutes: 15),
-        prefetchLruCapacity: 500,
+        prefetchMaxConcurrency: 3,
+        prefetchQueueCapacity: 100,
+        prefetchKeyTtl: Duration(minutes: 20),
+        prefetchLruCapacity: 600,
       ),
       NetworkQualityProfile.normal => const NetworkQualityPolicy(
         profile: NetworkQualityProfile.normal,
-        connectTimeout: Duration(seconds: 12),
-        receiveTimeout: Duration(seconds: 14),
-        sendTimeout: Duration(seconds: 12),
-        connectionIdleTimeout: Duration(seconds: 75),
+        connectTimeout: Duration(seconds: 10),
+        receiveTimeout: Duration(seconds: 12),
+        sendTimeout: Duration(seconds: 10),
+        connectionIdleTimeout: Duration(seconds: 90),
         retryMaxAttempts: 3,
-        retryBaseDelayMs: 250,
-        retryMaxDelayMs: 2500,
+        retryBaseDelayMs: 200,
+        retryMaxDelayMs: 2000,
         prefetchLimitFactor: 1.0,
         prefetchMaxConcurrency: 2,
         prefetchQueueCapacity: 60,
@@ -82,13 +82,13 @@ class NetworkQualityPolicy {
       ),
       NetworkQualityProfile.constrained => const NetworkQualityPolicy(
         profile: NetworkQualityProfile.constrained,
-        connectTimeout: Duration(seconds: 18),
-        receiveTimeout: Duration(seconds: 20),
-        sendTimeout: Duration(seconds: 18),
+        connectTimeout: Duration(seconds: 15),
+        receiveTimeout: Duration(seconds: 18),
+        sendTimeout: Duration(seconds: 15),
         connectionIdleTimeout: Duration(seconds: 45),
-        retryMaxAttempts: 4,
-        retryBaseDelayMs: 320,
-        retryMaxDelayMs: 3200,
+        retryMaxAttempts: 3,
+        retryBaseDelayMs: 300,
+        retryMaxDelayMs: 3000,
         prefetchLimitFactor: 0.5,
         prefetchMaxConcurrency: 1,
         prefetchQueueCapacity: 30,

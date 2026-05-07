@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 
 class CacheInterceptor extends Interceptor {
+  static final _stripKeys = {'w_rid', 'wts', '_', 'force_refresh'};
+
   final CacheStore _store;
 
   CacheInterceptor(this._store);
@@ -24,12 +26,12 @@ class CacheInterceptor extends Interceptor {
       return handler.next(options);
     }
 
-    if (ApiConstants.cacheConfig.containsKey(options.path)) {
-      final duration = ApiConstants.cacheConfig[options.path]!;
+    final ttlSeconds = ApiConstants.cacheConfig[options.path];
+    if (ttlSeconds != null) {
       final cacheOptions = CacheOptions(
         store: _store,
         policy: CachePolicy.forceCache,
-        maxStale: Duration(seconds: duration),
+        maxStale: Duration(seconds: ttlSeconds),
         keyBuilder: _generateKey,
       );
       options.extra.addAll(cacheOptions.toExtra());
@@ -47,26 +49,63 @@ class CacheInterceptor extends Interceptor {
       return 'api_cache_$path';
     }
 
-    final params = Map<String, dynamic>.from(queryParameters)
-      ..remove('w_rid')
-      ..remove('wts')
-      ..remove('_')
-      ..remove('force_refresh');
+    // Check if any strip-eligible keys exist before copying the map
+    final hasStrippable = queryParameters.keys.any(_stripKeys.contains);
+
+    if (!hasStrippable) {
+      // No keys to strip — build key directly without map copy
+      if (queryParameters.length == 1) {
+        final entry = queryParameters.entries.first;
+        return 'api_cache_$path|${entry.key}=${entry.value}';
+      }
+      final sortedKeys = queryParameters.keys.toList()..sort();
+      final buffer = StringBuffer('api_cache_$path|');
+      for (var i = 0; i < sortedKeys.length; i++) {
+        if (i > 0) buffer.write('&');
+        final key = sortedKeys[i];
+        final value = queryParameters[key];
+        buffer.write(key);
+        buffer.write('=');
+        if (value is List) {
+          buffer.write(value.join(','));
+        } else {
+          buffer.write(value);
+        }
+      }
+      return buffer.toString();
+    }
+
+    // Has strippable keys — filter and build
+    final params = <String, dynamic>{};
+    queryParameters.forEach((key, value) {
+      if (!_stripKeys.contains(key)) {
+        params[key] = value;
+      }
+    });
+
     if (params.isEmpty) {
       return 'api_cache_$path';
     }
 
-    final sortedKeys = params.keys.toList()..sort();
-    final sortedParams = sortedKeys
-        .map((key) {
-          final value = params[key];
-          if (value is List) {
-            return '$key=${value.join(',')}';
-          }
-          return '$key=$value';
-        })
-        .join('&');
+    if (params.length == 1) {
+      final entry = params.entries.first;
+      return 'api_cache_$path|${entry.key}=${entry.value}';
+    }
 
-    return 'api_cache_${path}_$sortedParams';
+    final sortedKeys = params.keys.toList()..sort();
+    final buffer = StringBuffer('api_cache_$path|');
+    for (var i = 0; i < sortedKeys.length; i++) {
+      if (i > 0) buffer.write('&');
+      final key = sortedKeys[i];
+      final value = params[key];
+      buffer.write(key);
+      buffer.write('=');
+      if (value is List) {
+        buffer.write(value.join(','));
+      } else {
+        buffer.write(value);
+      }
+    }
+    return buffer.toString();
   }
 }

@@ -22,7 +22,7 @@ class SearchBangumiItem extends StatelessWidget {
       title: FormatUtils.stripHtmlTags(item.title),
       leading: AspectRatio(
         aspectRatio: 3 / 4,
-        child: AppNetworkImage(url: item.coverUrl, borderRadius: 8),
+        child: AppNetworkImage(url: item.coverUrl, borderRadius: BorderRadius.circular(8)),
       ),
       middleContent: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

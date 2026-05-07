@@ -6,6 +6,13 @@ part 'article_detail_parser.mapper.dart';
 part 'article_detail_parser.parser.dart';
 part 'article_detail_parser.tokenizer.dart';
 
+final _colorStyleRegex = RegExp(r'color:\s*([^;]+)', caseSensitive: false);
+final _whitespaceRegex = RegExp(r'\s+');
+final _fontSizeStyleRegex = RegExp(
+  r'font-size:\s*(\d+(?:\.\d+)?)px',
+  caseSensitive: false,
+);
+
 class ArticleDetailParser {
   static ArticleDetailData fromArticleView({
     required Uri sourceUri,

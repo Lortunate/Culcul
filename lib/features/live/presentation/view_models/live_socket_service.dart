@@ -129,6 +129,9 @@ class LiveSocketService {
             // JSON
             try {
               final jsonStr = utf8.decode(body);
+              // Intentionally synchronous: live danmaku messages arrive at
+              // high throughput. Using compute() per-message would add
+              // isolate spawn overhead exceeding the decode cost itself.
               final json = jsonDecode(jsonStr);
               _parseNotification(json);
             } catch (e) {

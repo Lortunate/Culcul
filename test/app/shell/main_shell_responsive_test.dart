@@ -39,7 +39,7 @@ void main() {
     expect(find.byType(NavigationRail), findsNothing);
   });
 
-  testWidgets('keeps bottom navigation blur on mobile width during high jank', (
+  testWidgets('degrades bottom navigation blur on mobile width during high jank', (
     tester,
   ) async {
     FrameTimingSampler.summaryNotifier.value = const FrameTimingSummary(
@@ -54,7 +54,7 @@ void main() {
     await tester.pumpWidget(_buildShellForWidth(390));
 
     expect(find.byType(BottomNavigationBar), findsOneWidget);
-    expect(find.byType(BackdropFilter), findsOneWidget);
+    expect(find.byType(BackdropFilter), findsNothing);
   });
 
   testWidgets('shows compact NavigationRail on desktop width >= 1024', (tester) async {

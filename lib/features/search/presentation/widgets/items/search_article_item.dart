@@ -45,7 +45,7 @@ class SearchArticleItem extends StatelessWidget {
                           aspectRatio: 3 / 2,
                           child: AppNetworkImage(
                             url: item.imageUrls[i],
-                            borderRadius: 6,
+                            borderRadius: BorderRadius.circular(6),
                           ),
                         ),
                       ),
@@ -55,7 +55,7 @@ class SearchArticleItem extends StatelessWidget {
             else if (imageCount > 0)
               AspectRatio(
                 aspectRatio: 16 / 9,
-                child: AppNetworkImage(url: item.imageUrls[0], borderRadius: 8),
+                child: AppNetworkImage(url: item.imageUrls[0], borderRadius: BorderRadius.circular(8)),
               ),
             const SizedBox(height: 10),
             Row(

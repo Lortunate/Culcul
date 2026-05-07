@@ -5,7 +5,7 @@ import 'package:culcul/features/notification/presentation/widgets/notification_c
 import 'package:culcul/features/notification/presentation/widgets/private_session_list.dart';
 import 'package:culcul/ui/widgets/guest_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class NotificationPage extends ConsumerWidget {
   const NotificationPage({super.key});

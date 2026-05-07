@@ -61,14 +61,36 @@ class InFlightDedupInterceptor extends Interceptor {
   }
 
   String _buildDedupKey(RequestOptions options) {
-    final sortedQueryEntries = options.queryParameters.entries.toList()
+    final queryParams = options.queryParameters;
+    final path = options.uri.path;
+
+    // Fast path: no query params — most common for simple GET endpoints
+    if (queryParams.isEmpty) {
+      return '${options.uri.host}$path';
+    }
+
+    // Fast path: single query param — avoid sort overhead
+    if (queryParams.length == 1) {
+      final entry = queryParams.entries.first;
+      return '${options.uri.host}$path|${entry.key}=${entry.value}';
+    }
+
+    // General case: sort params for consistent key
+    final sortedEntries = queryParams.entries.toList()
       ..sort((a, b) => a.key.compareTo(b.key));
-    final query = sortedQueryEntries
-        .map((entry) => '${entry.key}=${entry.value}')
-        .join('&');
-    final cookieHeader = options.headers['cookie'];
-    return '${options.method}|${options.uri.scheme}|${options.uri.host}|'
-        '${options.uri.port}|${options.uri.path}|$query|cookie=$cookieHeader';
+    final sb = StringBuffer()
+      ..write(options.uri.host)
+      ..write(path)
+      ..write('|');
+    for (var i = 0; i < sortedEntries.length; i++) {
+      if (i > 0) sb.write('&');
+      final e = sortedEntries[i];
+      sb
+        ..write(e.key)
+        ..write('=')
+        ..write(e.value);
+    }
+    return sb.toString();
   }
 
   void _completePendingSuccess(RequestOptions requestOptions, Response response) {

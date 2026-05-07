@@ -28,11 +28,27 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
   final ImagePicker _imagePicker = ImagePicker();
   final List<File> _images = [];
   final FocusNode _focusNode = FocusNode();
+  final ValueNotifier<bool> _hasDraftNotifier = ValueNotifier(false);
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(_onTextChanged);
+  }
+
+  void _onTextChanged() {
+    final hasDraft = _controller.text.trim().isNotEmpty || _images.isNotEmpty;
+    if (_hasDraftNotifier.value != hasDraft) {
+      _hasDraftNotifier.value = hasDraft;
+    }
+  }
 
   @override
   void dispose() {
+    _controller.removeListener(_onTextChanged);
     _controller.dispose();
     _focusNode.dispose();
+    _hasDraftNotifier.dispose();
     super.dispose();
   }
 
@@ -43,6 +59,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
 
     if (picked.isNotEmpty) {
       setState(() => _images.addAll(picked.map((item) => File(item.path))));
+      _onTextChanged();
     }
   }
 
@@ -116,7 +133,6 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
     final isPublishing = ref.watch(
       publishDynamicViewModelProvider.select((state) => state.isPublishing),
     );
-    final isPostable = _hasDraft;
 
     return PopScope(
       canPop: false,
@@ -132,7 +148,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
         colorScheme: colorScheme,
         t: t,
         isPublishing: isPublishing,
-        isPostable: isPostable,
+        hasDraftNotifier: _hasDraftNotifier,
         onClose: () async {
           if (await _onWillPop() && context.mounted) {
             Navigator.pop(context);
@@ -143,9 +159,12 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
         focusNode: _focusNode,
         images: _images,
         maxImages: _maxImages,
-        onEditorChanged: () => setState(() {}),
+        onEditorChanged: () {},
         onPickImage: _pickImage,
-        onRemoveImageAt: (index) => setState(() => _images.removeAt(index)),
+        onRemoveImageAt: (index) {
+          setState(() => _images.removeAt(index));
+          _onTextChanged();
+        },
         onInsertMention: () => _insertText('@'),
         onPickTopic: _showTopicPicker,
         onPickEmoji: _showEmojiPicker,

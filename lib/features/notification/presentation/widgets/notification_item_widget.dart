@@ -114,14 +114,12 @@ class NotificationItemWidget extends StatelessWidget {
                       ),
                       if (detail.image.isNotEmpty) ...[
                         const SizedBox(width: 8),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: AppNetworkImage(
+                        AppNetworkImage(
                             url: detail.image,
                             width: 40,
                             height: 40,
                             fit: BoxFit.cover,
-                          ),
+                            borderRadius: BorderRadius.circular(4),
                         ),
                       ],
                     ],

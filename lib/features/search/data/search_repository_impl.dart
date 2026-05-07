@@ -51,6 +51,8 @@ class SearchRepositoryImpl
 
   List<SearchSuggestionTag> _parseSuggestionsResponse(String responseStr) {
     try {
+      // Intentionally synchronous: suggestion responses are small (<1KB)
+      // and this runs inside result.map() which requires a sync callback.
       final Map<String, dynamic> json = jsonDecode(responseStr);
       final response = SearchSuggestionResponse.fromJson(json);
       return response.result?.tags ?? [];

@@ -70,7 +70,7 @@ class PrivateSessionList extends HookConsumerWidget {
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.7,
+            height: MediaQuery.sizeOf(context).height * 0.7,
             child: AppErrorWidget(
               error: e,
               stackTrace: s,

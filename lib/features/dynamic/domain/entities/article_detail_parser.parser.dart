@@ -114,11 +114,11 @@ ArticleTextAlign? _parseTextAlign(String? styleValue) {
 String? _extractHtmlColor(html_dom.Element node) {
   final style = node.attributes['style'];
   if (style != null) {
-    final match = RegExp(r'color:\s*([^;]+)', caseSensitive: false).firstMatch(style);
+    final match = _colorStyleRegex.firstMatch(style);
     if (match != null) return match.group(1)?.trim();
   }
 
-  final classes = node.attributes['class']?.split(RegExp(r'\s+')) ?? const [];
+  final classes = node.attributes['class']?.split(_whitespaceRegex) ?? const [];
   for (final cls in classes) {
     if (cls == 'color-pink-03') return '#FB7299';
     if (cls == 'color-default') return null;
@@ -129,14 +129,11 @@ String? _extractHtmlColor(html_dom.Element node) {
 double? _extractFontSize(html_dom.Element node) {
   final style = node.attributes['style'];
   if (style != null) {
-    final match = RegExp(
-      r'font-size:\s*(\d+(?:\.\d+)?)px',
-      caseSensitive: false,
-    ).firstMatch(style);
+    final match = _fontSizeStyleRegex.firstMatch(style);
     if (match != null) return double.tryParse(match.group(1)!);
   }
 
-  final classes = node.attributes['class']?.split(RegExp(r'\s+')) ?? const [];
+  final classes = node.attributes['class']?.split(_whitespaceRegex) ?? const [];
   for (final cls in classes) {
     if (cls.startsWith('font-size-')) {
       final value = cls.substring('font-size-'.length);
