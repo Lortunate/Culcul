@@ -1,6 +1,7 @@
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
 import 'package:culcul/core/contracts/live_room_summary_contract.dart';
 import 'package:culcul/features/live/feature_scope.dart';
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'live_recommend_view_model.g.dart';
@@ -18,7 +19,13 @@ class LiveRecommend extends _$LiveRecommend
   @override
   Future<List<LiveRoomSummary>> fetchPage(int page) async {
     final result = await ref.read(liveRepositoryProvider).getRecommendList(page: page);
-    return result.dataOrNull ?? const <LiveRoomSummary>[];
+    return result.when(
+      success: (data) => data,
+      failure: (error) {
+        debugPrint('Error loading live recommendations: $error');
+        return const <LiveRoomSummary>[];
+      },
+    );
   }
 
   @override

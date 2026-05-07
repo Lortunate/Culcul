@@ -53,56 +53,56 @@ class NotificationMessageSync {
       return const Success(null);
     }
 
-    final responseResult = await repo.requestApiResult(
+    return (await repo.requestApiResult(
       () => repo.api.getPrivateMessages(
         talkerId: talkerId,
         sessionType: sessionType.value,
         size: NotificationRepositoryImpl.pageSize,
         endSeqno: endSeqno,
       ),
-    );
-    if (responseResult.errorOrNull case final error?) {
-      return Failure(error);
-    }
-    final response = responseResult.dataOrNull!;
-    final now = repo.nowSeconds();
-    final messages = response.messages ?? const <PrivateMessageDetail>[];
+    )).when(
+      success: (response) async {
+        final now = repo.nowSeconds();
+        final messages = response.messages ?? const <PrivateMessageDetail>[];
 
-    await repo.database.transaction(() async {
-      for (final message in messages) {
-        await repo.messageSendService.upsertMessageDetail(
+        await repo.database.transaction(() async {
+          for (final message in messages) {
+            await repo.messageSendService.upsertMessageDetail(
+              ownerUid: ownerUid,
+              sessionType: sessionType,
+              talkerId: talkerId,
+              message: message,
+              now: now,
+              syncStatus: 'synced',
+            );
+          }
+          await repo.messageSendService.upsertMessageEmojis(
+            ownerUid: ownerUid,
+            talkerId: talkerId,
+            sessionType: sessionType,
+            emojis: response.emojiInfos ?? const <PrivateMessageEmojiInfo>[],
+            now: now,
+          );
+          await repo.messageSendService.reconcileTemporaryMessages(
+            ownerUid: ownerUid,
+            talkerId: talkerId,
+            sessionType: sessionType,
+          );
+        });
+
+        await repo.cleanupPolicy.touchCursor(
           ownerUid: ownerUid,
-          sessionType: sessionType,
-          talkerId: talkerId,
-          message: message,
-          now: now,
-          syncStatus: 'synced',
+          scope: scope,
+          cursorJson: jsonEncode({
+            'minSeqno': response.minSeqno,
+            'maxSeqno': response.maxSeqno,
+          }),
+          hasMore: response.hasMore == 1,
         );
-      }
-      await repo.messageSendService.upsertMessageEmojis(
-        ownerUid: ownerUid,
-        talkerId: talkerId,
-        sessionType: sessionType,
-        emojis: response.emojiInfos ?? const <PrivateMessageEmojiInfo>[],
-        now: now,
-      );
-      await repo.messageSendService.reconcileTemporaryMessages(
-        ownerUid: ownerUid,
-        talkerId: talkerId,
-        sessionType: sessionType,
-      );
-    });
-
-    await repo.cleanupPolicy.touchCursor(
-      ownerUid: ownerUid,
-      scope: scope,
-      cursorJson: jsonEncode({
-        'minSeqno': response.minSeqno,
-        'maxSeqno': response.maxSeqno,
-      }),
-      hasMore: response.hasMore == 1,
+        await repo.cleanupPolicy.maybeCleanup(ownerUid);
+        return const Success(null);
+      },
+      failure: (error) async => Failure(error),
     );
-    await repo.cleanupPolicy.maybeCleanup(ownerUid);
-    return const Success(null);
   }
 }

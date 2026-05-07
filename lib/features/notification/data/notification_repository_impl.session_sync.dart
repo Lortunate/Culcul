@@ -20,30 +20,30 @@ class NotificationSessionSync {
     if (!await repo.cleanupPolicy.shouldSync(ownerUid: ownerUid, scope: 'unread', force: force)) {
       return const Success(null);
     }
-    final responseResult = await repo.requestApiResult(() => repo.api.getUnreadCount());
-    if (responseResult.errorOrNull case final error?) {
-      return Failure(error);
-    }
-    final response = responseResult.dataOrNull!;
-    final now = repo.nowSeconds();
+    return (await repo.requestApiResult(() => repo.api.getUnreadCount())).when(
+      success: (response) async {
+        final now = repo.nowSeconds();
 
-    await repo.database
-        .into(repo.database.notificationUnreadSummaries)
-        .insertOnConflictUpdate(
-          NotificationUnreadSummariesCompanion.insert(
-            ownerUid: Value(ownerUid),
-            summaryJson: jsonEncode(response.toJson()),
-            updatedAt: now,
-          ),
+        await repo.database
+            .into(repo.database.notificationUnreadSummaries)
+            .insertOnConflictUpdate(
+              NotificationUnreadSummariesCompanion.insert(
+                ownerUid: Value(ownerUid),
+                summaryJson: jsonEncode(response.toJson()),
+                updatedAt: now,
+              ),
+            );
+        await repo.cleanupPolicy.touchCursor(
+          ownerUid: ownerUid,
+          scope: 'unread',
+          cursorJson: null,
+          hasMore: true,
         );
-    await repo.cleanupPolicy.touchCursor(
-      ownerUid: ownerUid,
-      scope: 'unread',
-      cursorJson: null,
-      hasMore: true,
+        await repo.cleanupPolicy.maybeCleanup(ownerUid);
+        return const Success(null);
+      },
+      failure: (error) async => Failure(error),
     );
-    await repo.cleanupPolicy.maybeCleanup(ownerUid);
-    return const Success(null);
   }
 
   Future<Result<void, AppError>> syncSessions({
@@ -81,57 +81,57 @@ class NotificationSessionSync {
       return const Success(null);
     }
 
-    final responseResult = await repo.requestApiResult(
+    return (await repo.requestApiResult(
       () => repo.api.getPrivateSessions(
         sessionType: sessionType.value,
         size: NotificationRepositoryImpl.pageSize,
         endTs: endTs,
       ),
-    );
-    if (responseResult.errorOrNull case final error?) {
-      return Failure(error);
-    }
-    final response = responseResult.dataOrNull!;
-    final now = repo.nowSeconds();
-    final sessions = response.sessionList ?? const <PrivateMessageSession>[];
+    )).when(
+      success: (response) async {
+        final now = repo.nowSeconds();
+        final sessions = response.sessionList ?? const <PrivateMessageSession>[];
 
-    await repo.database.transaction(() async {
-      for (final session in sessions) {
-        await repo.database
-            .into(repo.database.notificationSessions)
-            .insertOnConflictUpdate(
-              NotificationSessionsCompanion.insert(
+        await repo.database.transaction(() async {
+          for (final session in sessions) {
+            await repo.database
+                .into(repo.database.notificationSessions)
+                .insertOnConflictUpdate(
+                  NotificationSessionsCompanion.insert(
+                    ownerUid: ownerUid,
+                    sessionType: session.sessionType,
+                    talkerId: session.talkerId,
+                    unreadCount: Value(session.unreadCount),
+                    sessionTs: session.sessionTs,
+                    sessionJson: jsonEncode(session.toJson()),
+                    updatedAt: now,
+                  ),
+                );
+
+            if (session.lastMsg != null) {
+              await repo.messageSendService.upsertMessageDetail(
                 ownerUid: ownerUid,
-                sessionType: session.sessionType,
+                sessionType: PrivateSessionType.fromValue(session.sessionType),
                 talkerId: session.talkerId,
-                unreadCount: Value(session.unreadCount),
-                sessionTs: session.sessionTs,
-                sessionJson: jsonEncode(session.toJson()),
-                updatedAt: now,
-              ),
-            );
+                message: session.lastMsg!,
+                now: now,
+                syncStatus: 'synced',
+              );
+            }
+          }
+        });
 
-        if (session.lastMsg != null) {
-          await repo.messageSendService.upsertMessageDetail(
-            ownerUid: ownerUid,
-            sessionType: PrivateSessionType.fromValue(session.sessionType),
-            talkerId: session.talkerId,
-            message: session.lastMsg!,
-            now: now,
-            syncStatus: 'synced',
-          );
-        }
-      }
-    });
-
-    final nextCursor = sessions.isEmpty ? null : sessions.last.sessionTs;
-    await repo.cleanupPolicy.touchCursor(
-      ownerUid: ownerUid,
-      scope: scope,
-      cursorJson: nextCursor == null ? null : jsonEncode({'endTs': nextCursor}),
-      hasMore: response.hasMore == 1,
+        final nextCursor = sessions.isEmpty ? null : sessions.last.sessionTs;
+        await repo.cleanupPolicy.touchCursor(
+          ownerUid: ownerUid,
+          scope: scope,
+          cursorJson: nextCursor == null ? null : jsonEncode({'endTs': nextCursor}),
+          hasMore: response.hasMore == 1,
+        );
+        await repo.cleanupPolicy.maybeCleanup(ownerUid);
+        return const Success(null);
+      },
+      failure: (error) async => Failure(error),
     );
-    await repo.cleanupPolicy.maybeCleanup(ownerUid);
-    return const Success(null);
   }
 }

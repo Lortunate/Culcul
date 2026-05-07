@@ -144,24 +144,23 @@ class PublishDynamicWorkflow {
     required List<File> images,
     String? csrf,
   }) async {
-    final resolvedCsrf = await _resolveCsrf(csrf);
-    if (resolvedCsrf.errorOrNull case final error?) {
-      return Failure(error);
-    }
-    final csrfToken = resolvedCsrf.dataOrNull!;
+    return (await _resolveCsrf(csrf)).when(
+      success: (csrfToken) async {
+        final uploadedImagesResult = await _repository.uploadImagesWithCsrf(
+          files: images,
+          csrf: csrfToken,
+        );
+        if (uploadedImagesResult.errorOrNull case final error?) {
+          return Failure(error);
+        }
 
-    final uploadedImagesResult = await _repository.uploadImagesWithCsrf(
-      files: images,
-      csrf: csrfToken,
-    );
-    if (uploadedImagesResult.errorOrNull case final error?) {
-      return Failure(error);
-    }
-
-    return _repository.publishDynamic(
-      content: content,
-      csrf: csrfToken,
-      images: uploadedImagesResult.dataOrNull ?? const <DynamicUploadImageData>[],
+        return _repository.publishDynamic(
+          content: content,
+          csrf: csrfToken,
+          images: uploadedImagesResult.dataOrNull ?? const <DynamicUploadImageData>[],
+        );
+      },
+      failure: (error) async => Failure(error),
     );
   }
 

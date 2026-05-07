@@ -4,6 +4,7 @@ import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/pagination/paged_async_notifier.dart';
 import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_popular_view_model.g.dart';
@@ -36,6 +37,12 @@ class HomePopular extends _$HomePopular
         fields: <String, Object?>{'success': result.isSuccess},
       );
     }
-    return result.dataOrNull ?? const <VideoModel>[];
+    return result.when(
+      success: (data) => data,
+      failure: (error) {
+        debugPrint('Error loading popular feed: $error');
+        return const <VideoModel>[];
+      },
+    );
   }
 }

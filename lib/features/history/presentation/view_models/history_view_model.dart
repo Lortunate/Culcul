@@ -1,5 +1,6 @@
 import 'package:culcul/features/history/domain/entities/history_entry.dart';
 import 'package:culcul/features/history/feature_scope.dart';
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'history_view_model.g.dart';
@@ -13,6 +14,12 @@ class HistoryList extends _$HistoryList {
 
   Future<List<HistoryEntry>> _fetchHistory() async {
     final result = await ref.read(historyRepositoryProvider).getHistory();
-    return result.dataOrNull ?? const <HistoryEntry>[];
+    return result.when(
+      success: (data) => data,
+      failure: (error) {
+        debugPrint('Error loading history: $error');
+        return const <HistoryEntry>[];
+      },
+    );
   }
 }

@@ -60,50 +60,50 @@ class LoadVideoDetailWorkflow {
     RequestCancelToken? cancelToken,
   }) async {
     final stopwatch = Stopwatch()..start();
-    final detailResult = await _repository.fetchVideoView(bvid, cancelToken: cancelToken);
-    if (detailResult.errorOrNull case final error?) {
-      return Failure(error);
-    }
-    final detail = detailResult.dataOrNull!;
-    VideoPerfLogger.log(
-      VideoPerfEvent.criticalLoaded,
-      fields: <String, Object?>{'bvid': bvid, 'ms': stopwatch.elapsedMilliseconds},
-    );
-    final cid = detail.pages.isNotEmpty ? detail.pages.first.cid : 0;
-
-    final Result<PlayUrl?, AppError> playResult;
-    if (cid == 0) {
-      playResult = const Success(null);
-    } else {
-      final playUrlStopwatch = Stopwatch()..start();
-      final loadedPlayUrl = await _repository.fetchVideoPlayUrl(
-        aid: detail.aid,
-        cid: cid,
-        cancelToken: cancelToken,
-      );
-      if (loadedPlayUrl.dataOrNull != null) {
+    return (await _repository.fetchVideoView(bvid, cancelToken: cancelToken)).when(
+      success: (detail) async {
         VideoPerfLogger.log(
-          VideoPerfEvent.playurlLoaded,
-          fields: <String, Object?>{
-            'bvid': bvid,
-            'cid': cid,
-            'ms': playUrlStopwatch.elapsedMilliseconds,
-          },
+          VideoPerfEvent.criticalLoaded,
+          fields: <String, Object?>{'bvid': bvid, 'ms': stopwatch.elapsedMilliseconds},
         );
-      }
-      playResult = loadedPlayUrl.map<PlayUrl?>((value) => value);
-    }
+        final cid = detail.pages.isNotEmpty ? detail.pages.first.cid : 0;
 
-    final playUrl = playResult.dataOrNull;
+        final Result<PlayUrl?, AppError> playResult;
+        if (cid == 0) {
+          playResult = const Success(null);
+        } else {
+          final playUrlStopwatch = Stopwatch()..start();
+          final loadedPlayUrl = await _repository.fetchVideoPlayUrl(
+            aid: detail.aid,
+            cid: cid,
+            cancelToken: cancelToken,
+          );
+          if (loadedPlayUrl.dataOrNull != null) {
+            VideoPerfLogger.log(
+              VideoPerfEvent.playurlLoaded,
+              fields: <String, Object?>{
+                'bvid': bvid,
+                'cid': cid,
+                'ms': playUrlStopwatch.elapsedMilliseconds,
+              },
+            );
+          }
+          playResult = loadedPlayUrl.map<PlayUrl?>((value) => value);
+        }
 
-    return Success(
-      VideoInitialData(
-        detail: detail,
-        currentCid: cid,
-        playUrl: playUrl,
-        availableQualities: playUrl?.acceptQuality.toList() ?? const [],
-        selectedQuality: playUrl?.quality ?? 80,
-      ),
+        final playUrl = playResult.dataOrNull;
+
+        return Success(
+          VideoInitialData(
+            detail: detail,
+            currentCid: cid,
+            playUrl: playUrl,
+            availableQualities: playUrl?.acceptQuality.toList() ?? const [],
+            selectedQuality: playUrl?.quality ?? 80,
+          ),
+        );
+      },
+      failure: (error) async => Failure(error),
     );
   }
 

@@ -52,13 +52,13 @@ class VideoExtraWorkflows {
       return const Success(null);
     }
 
-    final bytesResult = await danmakuRepository.fetchMaskData(dmMask.maskUrl);
-    if (bytesResult.errorOrNull case final error?) {
-      return Failure(error);
-    }
-    final bytes = bytesResult.dataOrNull!;
-    final paths = await compute(_parseMaskData, _ParseDanmakuMaskData(bytes, dmMask.fps));
-    return Success(DanmakuMasks(paths, dmMask.fps));
+    return (await danmakuRepository.fetchMaskData(dmMask.maskUrl)).when(
+      success: (bytes) async {
+        final paths = await compute(_parseMaskData, _ParseDanmakuMaskData(bytes, dmMask.fps));
+        return Success(DanmakuMasks(paths, dmMask.fps));
+      },
+      failure: (error) async => Failure(error),
+    );
   }
 }
 

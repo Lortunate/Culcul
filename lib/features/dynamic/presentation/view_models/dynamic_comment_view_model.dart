@@ -47,20 +47,22 @@ class DynamicCommentController extends _$DynamicCommentController {
     final result = await ref
         .read(dynamicRepositoryProvider)
         .getComments(post, sort: state.sort, page: nextPage);
-    if (result.isFailure) {
-      state = state.copyWith(
-        paging: PagedListStateTransitions.fail(state.paging, result.errorOrNull),
-      );
-      return;
-    }
-    final data = result.dataOrNull!;
-    state = state.copyWith(
-      paging: PagedListStateTransitions.completeLoadMore(
-        state.paging,
-        items: [...state.paging.items, ...data.replies],
-        hasMore: _resolveHasMore(data, currentPage: nextPage),
-        nextPage: nextPage + 1,
-      ),
+    result.when(
+      success: (data) {
+        state = state.copyWith(
+          paging: PagedListStateTransitions.completeLoadMore(
+            state.paging,
+            items: [...state.paging.items, ...data.replies],
+            hasMore: _resolveHasMore(data, currentPage: nextPage),
+            nextPage: nextPage + 1,
+          ),
+        );
+      },
+      failure: (error) {
+        state = state.copyWith(
+          paging: PagedListStateTransitions.fail(state.paging, error),
+        );
+      },
     );
   }
 

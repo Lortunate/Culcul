@@ -52,45 +52,46 @@ class NotificationMessageSupport {
         size: NotificationRepositoryImpl.pageSize,
       ),
     );
-    if (sessionResult.errorOrNull case final error?) {
-      return Failure(error);
-    }
-    final sessionRes = sessionResult.dataOrNull!;
-    final talkerId = resolveSystemTalkerId(sessionRes);
-    if (talkerId == null) {
-      return const Success(<SystemNotificationItem>[]);
-    }
+    return sessionResult.when(
+      success: (sessionRes) async {
+        final talkerId = resolveSystemTalkerId(sessionRes);
+        if (talkerId == null) {
+          return const Success(<SystemNotificationItem>[]);
+        }
 
-    final msgsResult = await repo.requestApiResult(
-      () => repo.api.getPrivateMessages(
-        talkerId: talkerId,
-        sessionType: PrivateSessionType.user.value,
-        size: NotificationRepositoryImpl.pageSize,
-      ),
-    );
-    return msgsResult.map(
-      (msgsRes) =>
-          msgsRes.messages?.map((msg) {
-            final contentMap = msg.contentMap;
-            final nestedContentMap = toJsonMap(contentMap?['content']);
-            return SystemNotificationItem(
-              id: msg.msgSeqno,
-              title: firstNonEmptyString([
-                contentMap?['title'],
-                nestedContentMap?['title'],
-              ]),
-              text: extractSystemNoticeText(contentMap, nestedContentMap),
-              time: msg.timestamp,
-              uri: extractSystemNoticeUri(contentMap, nestedContentMap),
-              jumpText: firstNonEmptyString([
-                contentMap?['jump_text'],
-                contentMap?['jumpText'],
-                nestedContentMap?['jump_text'],
-                nestedContentMap?['jumpText'],
-              ]),
-            );
-          }).toList() ??
-          const <SystemNotificationItem>[],
+        final msgsResult = await repo.requestApiResult(
+          () => repo.api.getPrivateMessages(
+            talkerId: talkerId,
+            sessionType: PrivateSessionType.user.value,
+            size: NotificationRepositoryImpl.pageSize,
+          ),
+        );
+        return msgsResult.map(
+          (msgsRes) =>
+              msgsRes.messages?.map((msg) {
+                final contentMap = msg.contentMap;
+                final nestedContentMap = toJsonMap(contentMap?['content']);
+                return SystemNotificationItem(
+                  id: msg.msgSeqno,
+                  title: firstNonEmptyString([
+                    contentMap?['title'],
+                    nestedContentMap?['title'],
+                  ]),
+                  text: extractSystemNoticeText(contentMap, nestedContentMap),
+                  time: msg.timestamp,
+                  uri: extractSystemNoticeUri(contentMap, nestedContentMap),
+                  jumpText: firstNonEmptyString([
+                    contentMap?['jump_text'],
+                    contentMap?['jumpText'],
+                    nestedContentMap?['jump_text'],
+                    nestedContentMap?['jumpText'],
+                  ]),
+                );
+              }).toList() ??
+              const <SystemNotificationItem>[],
+        );
+      },
+      failure: (error) async => Failure(error),
     );
   }
 

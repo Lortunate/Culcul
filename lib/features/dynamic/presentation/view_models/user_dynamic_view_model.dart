@@ -67,11 +67,10 @@ class UserDynamicNotifier extends _$UserDynamicNotifier
             cancelToken: cancelToken,
           ),
         );
-    if (result.errorOrNull != null) {
-      return const CursorPage(items: [], nextCursor: null, hasMore: false);
-    }
-    final feed = result.dataOrNull!;
-    return CursorPage(items: feed.items, nextCursor: feed.offset, hasMore: feed.hasMore);
+    return result.when(
+      success: (feed) => CursorPage(items: feed.items, nextCursor: feed.offset, hasMore: feed.hasMore),
+      failure: (_) => const CursorPage(items: [], nextCursor: null, hasMore: false),
+    );
   }
 
   @override

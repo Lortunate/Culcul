@@ -45,77 +45,76 @@ class NotificationFeedSync {
 
     final now = repo.nowSeconds();
     if (type == NotificationFeedType.system) {
-      final itemsResult = await repo.messageSendService.fetchSystemNotifications();
-      if (itemsResult.errorOrNull case final error?) {
-        return Failure(error);
-      }
-      final items = itemsResult.dataOrNull!;
-      await repo.database.transaction(() async {
-        for (final item in items) {
-          await repo.database
-              .into(repo.database.notificationFeedItems)
-              .insertOnConflictUpdate(
-                NotificationFeedItemsCompanion.insert(
-                  ownerUid: ownerUid,
-                  feedType: type.value,
-                  eventId: item.id,
-                  eventTime: item.time,
-                  itemJson: jsonEncode(item.toJson()),
-                  updatedAt: now,
-                ),
-              );
-        }
-      });
-      await repo.cleanupPolicy.touchCursor(
-        ownerUid: ownerUid,
-        scope: scope,
-        cursorJson: null,
-        hasMore: false,
+      return (await repo.messageSendService.fetchSystemNotifications()).when(
+        success: (items) async {
+          await repo.database.transaction(() async {
+            for (final item in items) {
+              await repo.database
+                  .into(repo.database.notificationFeedItems)
+                  .insertOnConflictUpdate(
+                    NotificationFeedItemsCompanion.insert(
+                      ownerUid: ownerUid,
+                      feedType: type.value,
+                      eventId: item.id,
+                      eventTime: item.time,
+                      itemJson: jsonEncode(item.toJson()),
+                      updatedAt: now,
+                    ),
+                  );
+            }
+          });
+          await repo.cleanupPolicy.touchCursor(
+            ownerUid: ownerUid,
+            scope: scope,
+            cursorJson: null,
+            hasMore: false,
+          );
+          await repo.cleanupPolicy.maybeCleanup(ownerUid);
+          return const Success(null);
+        },
+        failure: (error) async => Failure(error),
       );
-      await repo.cleanupPolicy.maybeCleanup(ownerUid);
-      return const Success(null);
     }
 
-    final responseResult = await repo.messageSendService.fetchReplyLikeAtResponse(
+    return (await repo.messageSendService.fetchReplyLikeAtResponse(
       type: type,
       id: cursor?.id,
       time: cursor?.time,
-    );
-    if (responseResult.errorOrNull case final error?) {
-      return Failure(error);
-    }
-    final response = responseResult.dataOrNull!;
+    )).when(
+      success: (response) async {
+        await repo.database.transaction(() async {
+          for (final item in response.items) {
+            await repo.database
+                .into(repo.database.notificationFeedItems)
+                .insertOnConflictUpdate(
+                  NotificationFeedItemsCompanion.insert(
+                    ownerUid: ownerUid,
+                    feedType: type.value,
+                    eventId: item.id,
+                    eventTime: item.replyTime ?? item.likeTime ?? 0,
+                    itemJson: jsonEncode(item.toJson()),
+                    updatedAt: now,
+                  ),
+                );
+          }
+        });
 
-    await repo.database.transaction(() async {
-      for (final item in response.items) {
-        await repo.database
-            .into(repo.database.notificationFeedItems)
-            .insertOnConflictUpdate(
-              NotificationFeedItemsCompanion.insert(
-                ownerUid: ownerUid,
-                feedType: type.value,
-                eventId: item.id,
-                eventTime: item.replyTime ?? item.likeTime ?? 0,
-                itemJson: jsonEncode(item.toJson()),
-                updatedAt: now,
-              ),
-            );
-      }
-    });
-
-    final next = response.items.isEmpty
-        ? null
-        : NotificationFeedCursor(
-            id: response.items.last.id,
-            time: response.items.last.replyTime ?? response.items.last.likeTime ?? 0,
-          );
-    await repo.cleanupPolicy.touchCursor(
-      ownerUid: ownerUid,
-      scope: scope,
-      cursorJson: next == null ? null : jsonEncode({'id': next.id, 'time': next.time}),
-      hasMore: !response.cursor.isEnd,
+        final next = response.items.isEmpty
+            ? null
+            : NotificationFeedCursor(
+                id: response.items.last.id,
+                time: response.items.last.replyTime ?? response.items.last.likeTime ?? 0,
+              );
+        await repo.cleanupPolicy.touchCursor(
+          ownerUid: ownerUid,
+          scope: scope,
+          cursorJson: next == null ? null : jsonEncode({'id': next.id, 'time': next.time}),
+          hasMore: !response.cursor.isEnd,
+        );
+        await repo.cleanupPolicy.maybeCleanup(ownerUid);
+        return const Success(null);
+      },
+      failure: (error) async => Failure(error),
     );
-    await repo.cleanupPolicy.maybeCleanup(ownerUid);
-    return const Success(null);
   }
 }

@@ -53,10 +53,10 @@ mixin _DynamicRepositoryPublishApis on _DynamicRepositoryAccess {
           final uploadResult = await requestApiResult(
             () => api.uploadImage(file: file, csrf: csrf),
           );
-          if (uploadResult.errorOrNull case final error?) {
-            throw error;
-          }
-          return uploadResult.dataOrNull!;
+          return uploadResult.when(
+            success: (data) => data,
+            failure: (error) => throw error,
+          );
         },
       );
     });

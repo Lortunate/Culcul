@@ -24,11 +24,10 @@ class DynamicNotifier extends _$DynamicNotifier
     final result = await ref
         .read(dynamicRepositoryProvider)
         .getFeed(DynamicFeedQuery(type: apiType, offset: currentCursor));
-    if (result.errorOrNull != null) {
-      return const CursorPage(items: [], nextCursor: null, hasMore: false);
-    }
-    final data = result.dataOrNull!;
-    return CursorPage(items: data.items, nextCursor: data.offset, hasMore: data.hasMore);
+    return result.when(
+      success: (data) => CursorPage(items: data.items, nextCursor: data.offset, hasMore: data.hasMore),
+      failure: (_) => const CursorPage(items: [], nextCursor: null, hasMore: false),
+    );
   }
 
   @override
