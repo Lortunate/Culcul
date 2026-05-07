@@ -35,7 +35,10 @@ class AppAvatar extends StatelessWidget {
     final hasUrl = url?.isNotEmpty == true;
     final fallbackIcon = _buildFallbackIcon(colorScheme);
 
-    return ClipRRect(
+    return Semantics(
+      label: 'Avatar',
+      image: hasUrl,
+      child: ClipRRect(
       borderRadius: BorderRadius.circular(size / 2),
       child: AppClickable(
         onTap: onTap,
@@ -61,6 +64,7 @@ class AppAvatar extends StatelessWidget {
             : Center(child: fallbackIcon),
         ),
       ),
+    ),
     );
   }
 }

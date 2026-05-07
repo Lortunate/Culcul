@@ -6,6 +6,7 @@ class AppClickable extends StatelessWidget {
   final VoidCallback? onTap;
   final VoidCallback? onLongPress;
   final bool haptic;
+  final String? semanticsLabel;
 
   const AppClickable({
     super.key,
@@ -13,6 +14,7 @@ class AppClickable extends StatelessWidget {
     this.onTap,
     this.onLongPress,
     this.haptic = false,
+    this.semanticsLabel,
   });
 
   VoidCallback? _buildTapHandler() {
@@ -43,10 +45,20 @@ class AppClickable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
+    final widget = InkWell(
       onTap: _buildTapHandler(),
       onLongPress: _buildLongPressHandler(),
       child: child,
     );
+
+    if (semanticsLabel != null) {
+      return Semantics(
+        label: semanticsLabel,
+        button: true,
+        enabled: onTap != null,
+        child: widget,
+      );
+    }
+    return widget;
   }
 }

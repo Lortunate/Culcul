@@ -28,7 +28,10 @@ class FollowButton extends StatelessWidget {
     final t = Translations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
 
-    return FilledButton(
+    return Semantics(
+      label: _resolveLabel(t),
+      button: true,
+      child: FilledButton(
       onPressed: onTap,
       style: FilledButton.styleFrom(
         backgroundColor: isFollowed ? colorScheme.primaryContainer : colorScheme.primary,
@@ -56,6 +59,7 @@ class FollowButton extends StatelessWidget {
           style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
         ),
       ),
+    ),
     );
   }
 }
