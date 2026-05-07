@@ -77,17 +77,14 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Opacity(
-                    opacity: opacity,
-                    child: Text(
-                      profile?.username ?? '',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: contentColor,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                  child: Text(
+                    profile?.username ?? '',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: contentColor.withValues(alpha: opacity),
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 _buildIconButton(

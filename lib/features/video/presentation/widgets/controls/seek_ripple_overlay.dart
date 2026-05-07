@@ -25,37 +25,32 @@ class SeekRippleOverlay extends HookWidget {
 
     return ClipPath(
       clipper: _RippleClipper(isForward: isForward),
-      child: AnimatedBuilder(
-        animation: controller,
-        builder: (context, child) {
-          return Opacity(
-            opacity: 1.0 - controller.value,
-            child: Container(
-              color: colorScheme.onPrimary.withValues(alpha: 0.2),
-              alignment: isForward ? Alignment.centerRight : Alignment.centerLeft,
-              padding: const EdgeInsets.symmetric(horizontal: 40),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    isForward ? Icons.fast_forward_rounded : Icons.fast_rewind_rounded,
-                    color: colorScheme.onPrimary,
-                    size: 40,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '10s',
-                    style: TextStyle(
-                      color: colorScheme.onPrimary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
+      child: FadeTransition(
+        opacity: Tween<double>(begin: 1.0, end: 0.0).animate(controller),
+        child: Container(
+          color: colorScheme.onPrimary.withValues(alpha: 0.2),
+          alignment: isForward ? Alignment.centerRight : Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                isForward ? Icons.fast_forward_rounded : Icons.fast_rewind_rounded,
+                color: colorScheme.onPrimary,
+                size: 40,
               ),
-            ),
-          );
-        },
+              const SizedBox(height: 8),
+              Text(
+                '10s',
+                style: TextStyle(
+                  color: colorScheme.onPrimary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
