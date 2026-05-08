@@ -31,11 +31,7 @@ void main() {
         'face': 'https://example.com/avatar.png',
         'email': 'test@example.com',
         'created_at': '2025-01-01T00:00:00.000',
-        'level_info': {
-          'current_level': 5,
-          'current_exp': 1000,
-          'next_exp': 2000,
-        },
+        'level_info': {'current_level': 5, 'current_exp': 1000, 'next_exp': 2000},
       });
       fakeBox.data[StorageKeys.authUserCache] = cachedJson;
 
@@ -60,11 +56,7 @@ void main() {
             'face': 'https://example.com/api_avatar.png',
             'email': 'api@example.com',
             'isLogin': true,
-            'level_info': {
-              'current_level': 3,
-              'current_exp': 500,
-              'next_exp': 1000,
-            },
+            'level_info': {'current_level': 3, 'current_exp': 500, 'next_exp': 1000},
           },
         );
       };
@@ -127,8 +119,7 @@ class _FakeAuthApi implements AuthApi {
   Future<ApiResponse<dynamic>> getCaptcha() async => throw UnimplementedError();
 
   @override
-  Future<ApiResponse<dynamic>> getCountryList() async =>
-      throw UnimplementedError();
+  Future<ApiResponse<dynamic>> getCountryList() async => throw UnimplementedError();
 
   @override
   Future<ApiResponse<dynamic>> getKey() async => throw UnimplementedError();
@@ -146,8 +137,7 @@ class _FakeAuthApi implements AuthApi {
     String validate,
     String seccode,
     String source,
-  ) async =>
-      throw UnimplementedError();
+  ) async => throw UnimplementedError();
 
   @override
   Future<ApiResponse<dynamic>> loginWithSms(
@@ -156,8 +146,7 @@ class _FakeAuthApi implements AuthApi {
     String code,
     String source,
     String? captchaKey,
-  ) async =>
-      throw UnimplementedError();
+  ) async => throw UnimplementedError();
 
   @override
   Future<ApiResponse<dynamic>> pollQrCode(String authCode) async =>
@@ -172,8 +161,7 @@ class _FakeAuthApi implements AuthApi {
     String challenge,
     String validate,
     String seccode,
-  ) async =>
-      throw UnimplementedError();
+  ) async => throw UnimplementedError();
 }
 
 class _FakeBox implements Box<dynamic> {
@@ -272,8 +260,7 @@ class _FakeBox implements Box<dynamic> {
   Iterable<dynamic> get values => data.values;
 
   @override
-  Iterable<dynamic> valuesBetween({dynamic startKey, dynamic endKey}) =>
-      data.values;
+  Iterable<dynamic> valuesBetween({dynamic startKey, dynamic endKey}) => data.values;
 
   @override
   Map<dynamic, dynamic> toMap() => Map.from(data);

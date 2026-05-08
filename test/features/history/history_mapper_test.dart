@@ -79,10 +79,7 @@ HistoryItemDto _makeItem({
 void main() {
   group('HistoryItemMapper.toDomain', () {
     test('maps all fields correctly with known values', () {
-      final detail = _makeDetail(
-        bvid: 'BV1xyz999',
-        business: 'pgc',
-      );
+      final detail = _makeDetail(bvid: 'BV1xyz999', business: 'pgc');
       final dto = _makeItem(
         title: 'My Video',
         cover: 'https://img.example.com/my-cover.jpg',
@@ -108,12 +105,7 @@ void main() {
     });
 
     test('maps empty string values correctly', () {
-      final dto = _makeItem(
-        title: '',
-        cover: '',
-        authorName: '',
-        badge: '',
-      );
+      final dto = _makeItem(title: '', cover: '', authorName: '', badge: '');
 
       final entry = dto.toDomain();
 
@@ -124,11 +116,7 @@ void main() {
     });
 
     test('maps zero numeric values correctly', () {
-      final dto = _makeItem(
-        viewAt: 0,
-        progress: 0,
-        duration: 0,
-      );
+      final dto = _makeItem(viewAt: 0, progress: 0, duration: 0);
 
       final entry = dto.toDomain();
 
@@ -138,11 +126,7 @@ void main() {
     });
 
     test('maps large numeric values correctly', () {
-      final dto = _makeItem(
-        viewAt: 9999999999,
-        progress: 86400,
-        duration: 86400,
-      );
+      final dto = _makeItem(viewAt: 9999999999, progress: 86400, duration: 86400);
 
       final entry = dto.toDomain();
 
@@ -152,10 +136,7 @@ void main() {
     });
 
     test('maps bvid and business from nested history detail', () {
-      final detail = _makeDetail(
-        bvid: 'BV999special',
-        business: 'live',
-      );
+      final detail = _makeDetail(bvid: 'BV999special', business: 'live');
       final dto = _makeItem(history: detail);
 
       final entry = dto.toDomain();

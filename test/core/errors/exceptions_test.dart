@@ -1,3 +1,4 @@
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -76,183 +77,204 @@ void main() {
     });
   });
 
-  group('dioExceptionToAppException', () {
-    RequestOptions _opts() => RequestOptions(path: '/api');
+  group('AppError.fromObject with DioException', () {
+    RequestOptions opts() => RequestOptions(path: '/api');
 
-    test('connectionTimeout returns NetworkException', () {
-      final result = dioExceptionToAppException(
+    test('connectionTimeout returns NetworkAppError', () {
+      final result = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: opts(),
           type: DioExceptionType.connectionTimeout,
           message: 'timed out',
         ),
       );
 
-      expect(result, isA<NetworkException>());
+      expect(result, isA<NetworkAppError>());
       expect(result.message, contains('timed out'));
     });
 
-    test('sendTimeout returns NetworkException', () {
-      final result = dioExceptionToAppException(
+    test('sendTimeout returns NetworkAppError', () {
+      final result = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: opts(),
           type: DioExceptionType.sendTimeout,
           message: 'send timeout',
         ),
       );
 
-      expect(result, isA<NetworkException>());
+      expect(result, isA<NetworkAppError>());
     });
 
-    test('receiveTimeout returns NetworkException', () {
-      final result = dioExceptionToAppException(
+    test('receiveTimeout returns NetworkAppError', () {
+      final result = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: opts(),
           type: DioExceptionType.receiveTimeout,
           message: 'receive timeout',
         ),
       );
 
-      expect(result, isA<NetworkException>());
+      expect(result, isA<NetworkAppError>());
     });
 
-    test('connectionError returns NetworkException', () {
-      final result = dioExceptionToAppException(
+    test('connectionError returns NetworkAppError', () {
+      final result = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: opts(),
           type: DioExceptionType.connectionError,
           message: 'connection failed',
         ),
       );
 
-      expect(result, isA<NetworkException>());
+      expect(result, isA<NetworkAppError>());
     });
 
-    test('badResponse 401 returns AuthException', () {
-      final result = dioExceptionToAppException(
+    test('badResponse 401 returns AuthAppError', () {
+      final result = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: opts(),
           type: DioExceptionType.badResponse,
           response: Response(
-            requestOptions: _opts(),
+            requestOptions: opts(),
             statusCode: 401,
             statusMessage: 'Unauthorized',
           ),
         ),
       );
 
-      expect(result, isA<AuthException>());
+      expect(result, isA<AuthAppError>());
       expect(result.code, 401);
       expect(result.message, 'Unauthorized');
     });
 
-    test('badResponse 403 returns AuthException', () {
-      final result = dioExceptionToAppException(
+    test('badResponse 403 returns AuthAppError', () {
+      final result = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: opts(),
           type: DioExceptionType.badResponse,
           response: Response(
-            requestOptions: _opts(),
+            requestOptions: opts(),
             statusCode: 403,
             statusMessage: 'Forbidden',
           ),
         ),
       );
 
-      expect(result, isA<AuthException>());
+      expect(result, isA<AuthAppError>());
       expect(result.code, 403);
     });
 
-    test('badResponse 500 returns ServerException', () {
-      final result = dioExceptionToAppException(
+    test('badResponse 500 returns ServerAppError', () {
+      final result = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: opts(),
           type: DioExceptionType.badResponse,
           response: Response(
-            requestOptions: _opts(),
+            requestOptions: opts(),
             statusCode: 500,
             statusMessage: 'Internal Server Error',
           ),
         ),
       );
 
-      expect(result, isA<ServerException>());
+      expect(result, isA<ServerAppError>());
       expect(result.code, 500);
       expect(result.message, 'Internal Server Error');
     });
 
     test('badResponse with null statusMessage defaults to Server error', () {
-      final result = dioExceptionToAppException(
+      final result = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: opts(),
           type: DioExceptionType.badResponse,
-          response: Response(requestOptions: _opts(), statusCode: 502),
+          response: Response(requestOptions: opts(), statusCode: 502),
         ),
       );
 
-      expect(result, isA<ServerException>());
+      expect(result, isA<ServerAppError>());
       expect(result.message, 'Server error');
     });
 
     test('badResponse with null statusCode passes null code', () {
-      final result = dioExceptionToAppException(
+      final result = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: opts(),
           type: DioExceptionType.badResponse,
-          response: Response(requestOptions: _opts()),
+          response: Response(requestOptions: opts()),
         ),
       );
 
-      expect(result, isA<ServerException>());
+      expect(result, isA<ServerAppError>());
       expect(result.code, isNull);
     });
 
-    test('cancel returns CancelException', () {
-      final result = dioExceptionToAppException(
-        DioException(
-          requestOptions: _opts(),
-          type: DioExceptionType.cancel,
-        ),
+    test('cancel returns CancelAppError', () {
+      final result = AppError.fromObject(
+        DioException(requestOptions: opts(), type: DioExceptionType.cancel),
       );
 
-      expect(result, isA<CancelException>());
+      expect(result, isA<CancelAppError>());
       expect(result.message, 'Request cancelled');
     });
 
-    test('badCertificate returns NetworkException', () {
-      final result = dioExceptionToAppException(
-        DioException(
-          requestOptions: _opts(),
-          type: DioExceptionType.badCertificate,
-        ),
+    test('badCertificate returns NetworkAppError', () {
+      final result = AppError.fromObject(
+        DioException(requestOptions: opts(), type: DioExceptionType.badCertificate),
       );
 
-      expect(result, isA<NetworkException>());
+      expect(result, isA<NetworkAppError>());
       expect(result.message, 'Bad certificate');
     });
 
-    test('unknown returns UnknownException', () {
-      final result = dioExceptionToAppException(
+    test('unknown returns UnknownAppError', () {
+      final result = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: opts(),
           type: DioExceptionType.unknown,
           message: 'weird failure',
         ),
       );
 
-      expect(result, isA<UnknownException>());
+      expect(result, isA<UnknownAppError>());
       expect(result.message, contains('weird failure'));
     });
 
     test('original DioException is stored as cause', () {
       final dioError = DioException(
-        requestOptions: _opts(),
+        requestOptions: opts(),
         type: DioExceptionType.connectionTimeout,
       );
 
-      final result = dioExceptionToAppException(dioError);
+      final result = AppError.fromObject(dioError);
 
       expect(result.cause, same(dioError));
+    });
+  });
+
+  group('AppError.fromObject with AppException', () {
+    test('NetworkException returns NetworkAppError', () {
+      final result = AppError.fromObject(
+        const NetworkException('no internet', code: 503),
+      );
+
+      expect(result, isA<NetworkAppError>());
+      expect(result.message, 'no internet');
+      expect(result.code, 503);
+    });
+
+    test('AuthException returns AuthAppError', () {
+      final result = AppError.fromObject(const AuthException('unauthorized', code: 401));
+
+      expect(result, isA<AuthAppError>());
+      expect(result.message, 'unauthorized');
+      expect(result.code, 401);
+    });
+
+    test('UnknownException returns UnknownAppError', () {
+      final result = AppError.fromObject(const UnknownException('something broke'));
+
+      expect(result, isA<UnknownAppError>());
+      expect(result.message, 'something broke');
     });
   });
 }

@@ -103,17 +103,15 @@ void main() {
       });
 
       test('parses List<String> directly', () {
-        expect(
-          JsonUtils.parseStringListWithDefault(['a', 'b', 'c']),
-          ['a', 'b', 'c'],
-        );
+        expect(JsonUtils.parseStringListWithDefault(['a', 'b', 'c']), ['a', 'b', 'c']);
       });
 
       test('converts mixed list to List<String>', () {
-        expect(
-          JsonUtils.parseStringListWithDefault(['hello', 42, true]),
-          ['hello', '42', 'true'],
-        );
+        expect(JsonUtils.parseStringListWithDefault(['hello', 42, true]), [
+          'hello',
+          '42',
+          'true',
+        ]);
       });
 
       test('handles empty list input', () {

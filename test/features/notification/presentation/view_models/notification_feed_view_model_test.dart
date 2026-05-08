@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
@@ -125,7 +125,10 @@ class _FeedFakeRepository implements NotificationRepository {
   }
 
   @override
-  Future<Result<ImageUploadResult, AppError>> uploadImage(File file) async {
+  Future<Result<ImageUploadResult, AppError>> uploadImage(
+    Uint8List bytes,
+    String filename,
+  ) async {
     return Failure(AppError.data('not supported'));
   }
 

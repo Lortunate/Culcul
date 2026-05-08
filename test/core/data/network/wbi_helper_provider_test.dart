@@ -9,10 +9,8 @@ class _FakeResourceApi implements ResourceApi {
       'code': 0,
       'data': {
         'wbi_img': {
-          'img_url':
-              'https://i0.hdslb.com/bfs/wbi/abcdefghijklmnopqrstuvwxyz123456.png',
-          'sub_url':
-              'https://i0.hdslb.com/bfs/wbi/0123456789abcdef0123456789abcdef.png',
+          'img_url': 'https://i0.hdslb.com/bfs/wbi/abcdefghijklmnopqrstuvwxyz123456.png',
+          'sub_url': 'https://i0.hdslb.com/bfs/wbi/0123456789abcdef0123456789abcdef.png',
         },
       },
     };
@@ -34,10 +32,7 @@ void main() {
     final helper = WbiHelper(_FakeResourceApi());
 
     await helper.updateKeys();
-    final signed = helper.sign({
-      'foo': "a!b'c(d)*",
-      'bar': 1,
-    });
+    final signed = helper.sign({'foo': "a!b'c(d)*", 'bar': 1});
 
     expect(signed['foo'], 'abcd');
     expect(signed['bar'], '1');

@@ -6,9 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('AppError.fromObject', () {
     test('NetworkException maps to NetworkAppError', () {
-      final error = AppError.fromObject(
-        const NetworkException('no internet', code: 503),
-      );
+      final error = AppError.fromObject(const NetworkException('no internet', code: 503));
 
       expect(error, isA<NetworkAppError>());
       expect(error.message, 'no internet');
@@ -26,9 +24,7 @@ void main() {
     });
 
     test('AuthException maps to AuthAppError', () {
-      final error = AppError.fromObject(
-        const AuthException('unauthorized', code: 401),
-      );
+      final error = AppError.fromObject(const AuthException('unauthorized', code: 401));
 
       expect(error, isA<AuthAppError>());
       expect(error.message, 'unauthorized');
@@ -36,9 +32,7 @@ void main() {
     });
 
     test('DataException maps to DataAppError', () {
-      final error = AppError.fromObject(
-        const DataException('parse failed', code: 422),
-      );
+      final error = AppError.fromObject(const DataException('parse failed', code: 422));
 
       expect(error, isA<DataAppError>());
       expect(error.message, 'parse failed');
@@ -46,18 +40,14 @@ void main() {
     });
 
     test('CancelException maps to CancelAppError', () {
-      final error = AppError.fromObject(
-        const CancelException('cancelled'),
-      );
+      final error = AppError.fromObject(const CancelException('cancelled'));
 
       expect(error, isA<CancelAppError>());
       expect(error.message, 'cancelled');
     });
 
     test('UnknownException maps to UnknownAppError', () {
-      final error = AppError.fromObject(
-        const UnknownException('something broke'),
-      );
+      final error = AppError.fromObject(const UnknownException('something broke'));
 
       expect(error, isA<UnknownAppError>());
       expect(error.message, 'something broke');
@@ -73,12 +63,12 @@ void main() {
   });
 
   group('AppError.fromObject with DioException', () {
-    RequestOptions _opts() => RequestOptions(path: '/test');
+    RequestOptions requestOptions() => RequestOptions(path: '/test');
 
     test('connectionTimeout maps to NetworkAppError', () {
       final error = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: requestOptions(),
           type: DioExceptionType.connectionTimeout,
           message: 'timed out',
         ),
@@ -91,7 +81,7 @@ void main() {
     test('sendTimeout maps to NetworkAppError', () {
       final error = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: requestOptions(),
           type: DioExceptionType.sendTimeout,
         ),
       );
@@ -102,7 +92,7 @@ void main() {
     test('receiveTimeout maps to NetworkAppError', () {
       final error = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: requestOptions(),
           type: DioExceptionType.receiveTimeout,
         ),
       );
@@ -113,7 +103,7 @@ void main() {
     test('connectionError maps to NetworkAppError', () {
       final error = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: requestOptions(),
           type: DioExceptionType.connectionError,
         ),
       );
@@ -124,10 +114,10 @@ void main() {
     test('badResponse 401 maps to AuthAppError', () {
       final error = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: requestOptions(),
           type: DioExceptionType.badResponse,
           response: Response(
-            requestOptions: _opts(),
+            requestOptions: requestOptions(),
             statusCode: 401,
             statusMessage: 'Unauthorized',
           ),
@@ -142,10 +132,10 @@ void main() {
     test('badResponse 403 maps to AuthAppError', () {
       final error = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: requestOptions(),
           type: DioExceptionType.badResponse,
           response: Response(
-            requestOptions: _opts(),
+            requestOptions: requestOptions(),
             statusCode: 403,
             statusMessage: 'Forbidden',
           ),
@@ -159,10 +149,10 @@ void main() {
     test('badResponse 500 maps to ServerAppError', () {
       final error = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: requestOptions(),
           type: DioExceptionType.badResponse,
           response: Response(
-            requestOptions: _opts(),
+            requestOptions: requestOptions(),
             statusCode: 500,
             statusMessage: 'Internal Server Error',
           ),
@@ -177,9 +167,9 @@ void main() {
     test('badResponse with null statusMessage defaults to Server error', () {
       final error = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: requestOptions(),
           type: DioExceptionType.badResponse,
-          response: Response(requestOptions: _opts(), statusCode: 502),
+          response: Response(requestOptions: requestOptions(), statusCode: 502),
         ),
       );
 
@@ -189,10 +179,7 @@ void main() {
 
     test('cancel maps to CancelAppError', () {
       final error = AppError.fromObject(
-        DioException(
-          requestOptions: _opts(),
-          type: DioExceptionType.cancel,
-        ),
+        DioException(requestOptions: requestOptions(), type: DioExceptionType.cancel),
       );
 
       expect(error, isA<CancelAppError>());
@@ -202,7 +189,7 @@ void main() {
     test('badCertificate maps to NetworkAppError', () {
       final error = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: requestOptions(),
           type: DioExceptionType.badCertificate,
         ),
       );
@@ -214,7 +201,7 @@ void main() {
     test('unknown maps to UnknownAppError', () {
       final error = AppError.fromObject(
         DioException(
-          requestOptions: _opts(),
+          requestOptions: requestOptions(),
           type: DioExceptionType.unknown,
           message: 'weird failure',
         ),
@@ -269,26 +256,20 @@ void main() {
     });
 
     test('code is preserved through fromObject', () {
-      final error = AppError.fromObject(
-        const AuthException('forbidden', code: 403),
-      );
+      final error = AppError.fromObject(const AuthException('forbidden', code: 403));
 
       expect(error.code, 403);
     });
 
     test('null code is preserved', () {
-      final error = AppError.fromObject(
-        const NetworkException('no code'),
-      );
+      final error = AppError.fromObject(const NetworkException('no code'));
 
       expect(error.code, isNull);
     });
 
     test('cause is preserved through fromObject', () {
       final cause = Exception('root cause');
-      final error = AppError.fromObject(
-        NetworkException('wrapper', cause: cause),
-      );
+      final error = AppError.fromObject(NetworkException('wrapper', cause: cause));
 
       expect(error.cause, same(cause));
     });

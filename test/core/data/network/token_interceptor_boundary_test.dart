@@ -9,6 +9,6 @@ void main() {
     ).readAsStringSync();
 
     expect(source, isNot(contains('features/auth')));
-    expect(source, contains('session_cookie_refresher.dart'));
+    expect(source, contains('session_lifecycle_providers.dart'));
   });
 }

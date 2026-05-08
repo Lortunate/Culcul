@@ -10,8 +10,8 @@ import 'package:culcul/features/live/presentation/view_models/live_room_view_mod
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/features/profile/domain/repositories/profile_repository.dart';
-import 'package:culcul/core/session/modify_relation_provider.dart';
-import 'package:culcul/core/session/user_card_provider.dart';
+import 'package:culcul/core/session/relation_providers.dart';
+import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/profile/feature_scope.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

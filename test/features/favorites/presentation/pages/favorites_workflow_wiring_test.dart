@@ -1,5 +1,5 @@
 import 'package:culcul/core/contracts/user_session_contract.dart';
-import 'package:culcul/core/session/current_user_provider.dart';
+import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/favorites/application/favorite_folder_commands.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
@@ -181,7 +181,9 @@ Future<void> _pumpFavoritesPage({
 }) async {
   final container = ProviderContainer(
     overrides: [
-      currentUserProvider.overrideWith((ref) => _MockUserSession(uid: '1001', nickname: 'tester')),
+      currentUserProvider.overrideWith(
+        (ref) => _MockUserSession(uid: '1001', nickname: 'tester'),
+      ),
       favRepositoryProvider.overrideWithValue(_FakeFavoriteRepository()),
       favoriteFolderCommandWorkflowProvider.overrideWithValue(workflow),
     ],
@@ -203,7 +205,9 @@ Future<void> _pumpFavoriteDetailPage({
 }) async {
   final container = ProviderContainer(
     overrides: [
-      currentUserProvider.overrideWith((ref) => _MockUserSession(uid: '1001', nickname: 'tester')),
+      currentUserProvider.overrideWith(
+        (ref) => _MockUserSession(uid: '1001', nickname: 'tester'),
+      ),
       favRepositoryProvider.overrideWithValue(_FakeFavoriteRepository()),
       favoriteFolderCommandWorkflowProvider.overrideWithValue(workflow),
     ],
@@ -447,5 +451,7 @@ class _MockUserSession implements UserSession {
   @override
   final String? nickname;
 
-  _MockUserSession({required this.uid, this.isLoggedIn = true, this.avatarUrl, this.nickname});
+  _MockUserSession({required this.uid, this.nickname})
+    : isLoggedIn = true,
+      avatarUrl = null;
 }

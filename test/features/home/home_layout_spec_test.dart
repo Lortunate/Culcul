@@ -1,5 +1,5 @@
 import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';
-import 'package:culcul/ui/responsive/app_breakpoints.dart';
+import 'package:culcul/features/home/presentation/home_breakpoints.dart';
 import 'package:culcul/ui/responsive/responsive_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -94,7 +94,7 @@ void main() {
       const MaterialApp(
         home: Scaffold(
           body: ResponsiveContentContainer(
-            maxWidth: AppBreakpoints.homePopularMaxWidth,
+            maxWidth: HomeBreakpoints.popularMaxWidth,
             horizontalPadding: 0,
             child: SizedBox(width: double.infinity, height: 20),
           ),
@@ -105,7 +105,7 @@ void main() {
     final constrainedBox = find.byWidgetPredicate(
       (widget) =>
           widget is ConstrainedBox &&
-          widget.constraints.maxWidth == AppBreakpoints.homePopularMaxWidth,
+          widget.constraints.maxWidth == HomeBreakpoints.popularMaxWidth,
     );
     expect(constrainedBox, findsOneWidget);
   });

@@ -5,10 +5,7 @@ void main() {
   group('FormatUtils', () {
     group('stripHtmlTags', () {
       test('removes HTML tags from string', () {
-        expect(
-          FormatUtils.stripHtmlTags('<p>Hello <b>world</b></p>'),
-          'Hello world',
-        );
+        expect(FormatUtils.stripHtmlTags('<p>Hello <b>world</b></p>'), 'Hello world');
       });
 
       test('returns string unchanged when no tags present', () {
@@ -173,10 +170,7 @@ void main() {
 
       test('converts multi-word camelCase', () {
         // capitalize lowercases all chars after the first
-        expect(
-          FormatUtils.camelCaseToTitle('someHTTPResponse'),
-          'Some h t t p response',
-        );
+        expect(FormatUtils.camelCaseToTitle('someHTTPResponse'), 'Some h t t p response');
       });
 
       test('handles already-capitalized first letter', () {

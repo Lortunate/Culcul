@@ -34,8 +34,7 @@ void main() {
     expect(
       violations,
       isEmpty,
-      reason:
-          'Use Future.wait only in $_allowedFutureWaitPaths. Violations: $violations',
+      reason: 'Use Future.wait only in $_allowedFutureWaitPaths. Violations: $violations',
     );
   });
 }

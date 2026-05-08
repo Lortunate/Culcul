@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:culcul/core/session/session_cookie_refresher.dart';
+import 'package:culcul/core/session/session_lifecycle_providers.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/interceptors/token_interceptor.dart';
 import 'package:dio/dio.dart';

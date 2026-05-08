@@ -40,8 +40,16 @@ void main() {
   test('searchResultProvider fetchMore advances query page and merges items', () async {
     final repository = _FakeSearchRepository(
       searchPages: <int, SearchResultPage>{
-        1: SearchResultPage(page: 1, numPages: 2, items: <SearchResultEntry>[_video('BV1')]),
-        2: SearchResultPage(page: 2, numPages: 2, items: <SearchResultEntry>[_video('BV2')]),
+        1: SearchResultPage(
+          page: 1,
+          numPages: 2,
+          items: <SearchResultEntry>[_video('BV1')],
+        ),
+        2: SearchResultPage(
+          page: 2,
+          numPages: 2,
+          items: <SearchResultEntry>[_video('BV2')],
+        ),
       },
     );
     final container = ProviderContainer(

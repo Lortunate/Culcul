@@ -1,4 +1,3 @@
-import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/features/to_view/data/dtos/to_view_model_dto.dart';
@@ -16,10 +15,7 @@ void main() {
             message: 'ok',
             data: ToViewListResponseDto(
               count: 2,
-              list: [
-                _dto(1, 'First Video', 'Owner1'),
-                _dto(2, 'Second Video', 'Owner2'),
-              ],
+              list: [_dto(1, 'First Video', 'Owner1'), _dto(2, 'Second Video', 'Owner2')],
             ),
           );
         final repo = ToViewRepositoryImpl(api);
@@ -50,10 +46,7 @@ void main() {
 
       test('returns failure for other server errors', () async {
         final api = _FakeToViewApi()
-          ..getToViewListResponse = const ApiResponse(
-            code: -400,
-            message: 'Bad Request',
-          );
+          ..getToViewListResponse = const ApiResponse(code: -400, message: 'Bad Request');
         final repo = ToViewRepositoryImpl(api);
 
         final result = await repo.getList();
@@ -74,8 +67,7 @@ void main() {
       });
 
       test('returns failure when API throws', () async {
-        final api = _FakeToViewApi()
-          ..addToViewException = Exception('network error');
+        final api = _FakeToViewApi()..addToViewException = Exception('network error');
         final repo = ToViewRepositoryImpl(api);
 
         final result = await repo.add(aid: 1);
@@ -96,8 +88,7 @@ void main() {
       });
 
       test('returns failure when API throws', () async {
-        final api = _FakeToViewApi()
-          ..deleteToViewException = Exception('network error');
+        final api = _FakeToViewApi()..deleteToViewException = Exception('network error');
         final repo = ToViewRepositoryImpl(api);
 
         final result = await repo.delete(aid: 1);
@@ -118,8 +109,7 @@ void main() {
       });
 
       test('returns failure when API throws', () async {
-        final api = _FakeToViewApi()
-          ..clearToViewException = Exception('network error');
+        final api = _FakeToViewApi()..clearToViewException = Exception('network error');
         final repo = ToViewRepositoryImpl(api);
 
         final result = await repo.clear();

@@ -1,6 +1,5 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
-import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/history/data/dtos/history_model_dto.dart';
 import 'package:culcul/features/history/data/history_api.dart';
 import 'package:culcul/features/history/data/history_repository_impl.dart';
@@ -84,12 +83,7 @@ HistoryItemDto _item({
 
 HistoryResponseDataDto _responseData(List<HistoryItemDto> items) {
   return HistoryResponseDataDto(
-    cursor: const HistoryCursorDto(
-      max: 0,
-      viewAt: 0,
-      business: 'archive',
-      ps: 20,
-    ),
+    cursor: const HistoryCursorDto(max: 0, viewAt: 0, business: 'archive', ps: 20),
     tab: const [],
     list: items,
   );
@@ -103,11 +97,7 @@ void main() {
         _item(title: 'Video B', authorName: 'Author B', progress: 200, duration: 600),
       ];
       final api = _FakeHistoryApi(
-        response: ApiResponse(
-          code: 0,
-          message: 'ok',
-          data: _responseData(items),
-        ),
+        response: ApiResponse(code: 0, message: 'ok', data: _responseData(items)),
       );
       final repository = HistoryRepositoryImpl(api);
 
@@ -126,11 +116,7 @@ void main() {
 
     test('returns empty list when API data list is empty', () async {
       final api = _FakeHistoryApi(
-        response: ApiResponse(
-          code: 0,
-          message: 'ok',
-          data: _responseData(const []),
-        ),
+        response: ApiResponse(code: 0, message: 'ok', data: _responseData(const [])),
       );
       final repository = HistoryRepositoryImpl(api);
 
@@ -142,10 +128,7 @@ void main() {
 
     test('returns failure when API returns error code', () async {
       final api = _FakeHistoryApi(
-        response: const ApiResponse(
-          code: -101,
-          message: 'not logged in',
-        ),
+        response: const ApiResponse(code: -101, message: 'not logged in'),
       );
       final repository = HistoryRepositoryImpl(api);
 
@@ -203,11 +186,7 @@ void main() {
         liveStatus: 0,
       );
       final api = _FakeHistoryApi(
-        response: ApiResponse(
-          code: 0,
-          message: 'ok',
-          data: _responseData([item]),
-        ),
+        response: ApiResponse(code: 0, message: 'ok', data: _responseData([item])),
       );
       final repository = HistoryRepositoryImpl(api);
 
@@ -224,15 +203,13 @@ void main() {
       int capturedViewAt = -1;
 
       final api = _SpyHistoryApi(
-        onCall: (max, viewAt, _, __) {
+        onCall: (max, viewAt, business, ps) {
           capturedMax = max;
           capturedViewAt = viewAt;
+          expect(business, isA<String>());
+          expect(ps, isA<int>());
         },
-        response: ApiResponse(
-          code: 0,
-          message: 'ok',
-          data: _responseData(const []),
-        ),
+        response: ApiResponse(code: 0, message: 'ok', data: _responseData(const [])),
       );
       final repository = HistoryRepositoryImpl(api);
 

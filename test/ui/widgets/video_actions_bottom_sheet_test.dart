@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/overlays/video_actions_bottom_sheet.dart';
+import 'package:culcul/features/video/presentation/widgets/video_actions_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -12,10 +12,7 @@ Widget _wrap(Widget child) {
 void main() {
   test('video actions bottom sheet is constructible', () {
     expect(
-      VideoActionsBottomSheet(
-        onWatchLater: () {},
-        onDownloadCover: () {},
-      ),
+      VideoActionsBottomSheet(onWatchLater: () {}, onDownloadCover: () {}),
       isA<Widget>(),
     );
   });

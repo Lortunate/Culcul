@@ -8,9 +8,7 @@ const _providerFiles = [
   'lib/core/bootstrap/providers/storage_provider.dart',
 ];
 
-final _riverpodKeepAlivePattern = RegExp(
-  r'@Riverpod\(keepAlive:\s*true\)',
-);
+final _riverpodKeepAlivePattern = RegExp(r'@Riverpod\(keepAlive:\s*true\)');
 
 final _providerFunctionPattern = RegExp(
   r'@Riverpod\(keepAlive:\s*true\)\s*\n\S+\s+\w+\(Ref\s+\w+\)\s*\{[^}]*throw\s+UnimplementedError',
@@ -30,8 +28,7 @@ void main() {
         });
 
         test('contains only @Riverpod(keepAlive: true) annotated functions', () {
-          final riverpodCount =
-              _riverpodKeepAlivePattern.allMatches(source).length;
+          final riverpodCount = _riverpodKeepAlivePattern.allMatches(source).length;
           expect(
             riverpodCount,
             greaterThanOrEqualTo(1),
@@ -40,10 +37,10 @@ void main() {
         });
 
         test('all provider functions throw UnimplementedError', () {
-          final providerFunctionCount =
-              _providerFunctionPattern.allMatches(source).length;
-          final riverpodCount =
-              _riverpodKeepAlivePattern.allMatches(source).length;
+          final providerFunctionCount = _providerFunctionPattern
+              .allMatches(source)
+              .length;
+          final riverpodCount = _riverpodKeepAlivePattern.allMatches(source).length;
 
           expect(
             providerFunctionCount,
@@ -59,8 +56,7 @@ void main() {
           final classMatches = _concreteClassPattern.allMatches(source);
 
           for (final match in classMatches) {
-            final className =
-                match.group(0)!.replaceFirst('class ', '').trim();
+            final className = match.group(0)!.replaceFirst('class ', '').trim();
 
             // StorageKeys is a constants container -- not a provider impl.
             if (className == 'StorageKeys') continue;

@@ -1,7 +1,7 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/contracts/user_session_contract.dart';
-import 'package:culcul/core/session/current_user_provider.dart';
+import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
 import 'package:culcul/features/to_view/domain/repositories/to_view_repository.dart';
 import 'package:culcul/features/to_view/data/to_view_repository_impl.dart';
@@ -10,7 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  ToViewEntry _entry(int aid, {String title = 'Video'}) => ToViewEntry(
+  ToViewEntry entry(int aid, {String title = 'Video'}) => ToViewEntry(
     aid: aid,
     bvid: 'BV$aid',
     title: title,
@@ -24,13 +24,13 @@ void main() {
 
   group('ToViewList', () {
     test('build returns entries from repository', () async {
-      final entries = [_entry(1), _entry(2), _entry(3)];
-      final repo = _FakeToViewRepository(
-        getListResult: Success(entries),
-      );
+      final entries = [entry(1), entry(2), entry(3)];
+      final repo = _FakeToViewRepository(getListResult: Success(entries));
       final container = ProviderContainer(
         overrides: [
-          currentUserProvider.overrideWith((ref) => _MockUserSession(uid: '1', nickname: 'tester')),
+          currentUserProvider.overrideWith(
+            (ref) => _MockUserSession(uid: '1', nickname: 'tester'),
+          ),
           toViewRepositoryProvider.overrideWithValue(repo),
         ],
       );
@@ -45,9 +45,7 @@ void main() {
     });
 
     test('build returns empty list when not logged in', () async {
-      final repo = _FakeToViewRepository(
-        getListResult: const Success(<ToViewEntry>[]),
-      );
+      final repo = _FakeToViewRepository(getListResult: const Success(<ToViewEntry>[]));
       final container = ProviderContainer(
         overrides: [
           currentUserProvider.overrideWith((ref) => null),
@@ -63,14 +61,16 @@ void main() {
     });
 
     test('delete optimistically removes entry from state', () async {
-      final entries = [_entry(1), _entry(2), _entry(3)];
+      final entries = [entry(1), entry(2), entry(3)];
       final repo = _FakeToViewRepository(
         getListResult: Success(entries),
         deleteResult: const Success(null),
       );
       final container = ProviderContainer(
         overrides: [
-          currentUserProvider.overrideWith((ref) => _MockUserSession(uid: '1', nickname: 'tester')),
+          currentUserProvider.overrideWith(
+            (ref) => _MockUserSession(uid: '1', nickname: 'tester'),
+          ),
           toViewRepositoryProvider.overrideWithValue(repo),
         ],
       );
@@ -85,14 +85,16 @@ void main() {
     });
 
     test('delete does not remove entry when repository fails', () async {
-      final entries = [_entry(1), _entry(2)];
+      final entries = [entry(1), entry(2)];
       final repo = _FakeToViewRepository(
         getListResult: Success(entries),
         deleteResult: Failure(AppError.server('delete failed')),
       );
       final container = ProviderContainer(
         overrides: [
-          currentUserProvider.overrideWith((ref) => _MockUserSession(uid: '1', nickname: 'tester')),
+          currentUserProvider.overrideWith(
+            (ref) => _MockUserSession(uid: '1', nickname: 'tester'),
+          ),
           toViewRepositoryProvider.overrideWithValue(repo),
         ],
       );
@@ -106,14 +108,16 @@ void main() {
     });
 
     test('clear empties state on success', () async {
-      final entries = [_entry(1), _entry(2)];
+      final entries = [entry(1), entry(2)];
       final repo = _FakeToViewRepository(
         getListResult: Success(entries),
         clearResult: const Success(null),
       );
       final container = ProviderContainer(
         overrides: [
-          currentUserProvider.overrideWith((ref) => _MockUserSession(uid: '1', nickname: 'tester')),
+          currentUserProvider.overrideWith(
+            (ref) => _MockUserSession(uid: '1', nickname: 'tester'),
+          ),
           toViewRepositoryProvider.overrideWithValue(repo),
         ],
       );
@@ -127,14 +131,16 @@ void main() {
     });
 
     test('clear does not empty state when repository fails', () async {
-      final entries = [_entry(1), _entry(2)];
+      final entries = [entry(1), entry(2)];
       final repo = _FakeToViewRepository(
         getListResult: Success(entries),
         clearResult: Failure(AppError.server('clear failed')),
       );
       final container = ProviderContainer(
         overrides: [
-          currentUserProvider.overrideWith((ref) => _MockUserSession(uid: '1', nickname: 'tester')),
+          currentUserProvider.overrideWith(
+            (ref) => _MockUserSession(uid: '1', nickname: 'tester'),
+          ),
           toViewRepositoryProvider.overrideWithValue(repo),
         ],
       );
@@ -152,13 +158,12 @@ void main() {
 class _FakeToViewRepository implements ToViewRepository {
   _FakeToViewRepository({
     required this.getListResult,
-    this.addResult = const Success(null),
     this.deleteResult = const Success(null),
     this.clearResult = const Success(null),
   });
 
   final Result<List<ToViewEntry>, AppError> getListResult;
-  final Result<void, AppError> addResult;
+  final Result<void, AppError> addResult = const Success(null);
   final Result<void, AppError> deleteResult;
   final Result<void, AppError> clearResult;
 
@@ -202,5 +207,7 @@ class _MockUserSession implements UserSession {
   @override
   final String? nickname;
 
-  _MockUserSession({required this.uid, this.isLoggedIn = true, this.avatarUrl, this.nickname});
+  _MockUserSession({required this.uid, this.nickname})
+    : isLoggedIn = true,
+      avatarUrl = null;
 }

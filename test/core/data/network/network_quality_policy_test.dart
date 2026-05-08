@@ -23,7 +23,7 @@ void main() {
 
       expect(policy.resolvePrefetchLimit(8), 8);
       expect(policy.retryMaxAttempts, 3);
-      expect(policy.connectionIdleTimeout, const Duration(seconds: 75));
+      expect(policy.connectionIdleTimeout, const Duration(seconds: 90));
     });
   });
 }

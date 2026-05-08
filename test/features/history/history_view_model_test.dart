@@ -42,14 +42,10 @@ void main() {
   group('HistoryList', () {
     test('build() returns entries from repository', () async {
       final entries = _entries(3);
-      final fakeRepo = _FakeHistoryRepository(
-        result: Success(entries),
-      );
+      final fakeRepo = _FakeHistoryRepository(result: Success(entries));
 
       final container = ProviderContainer(
-        overrides: [
-          historyRepositoryProvider.overrideWithValue(fakeRepo),
-        ],
+        overrides: [historyRepositoryProvider.overrideWithValue(fakeRepo)],
       );
       addTearDown(container.dispose);
 
@@ -65,14 +61,10 @@ void main() {
     });
 
     test('build() returns empty list when repository returns empty', () async {
-      final fakeRepo = _FakeHistoryRepository(
-        result: const Success(<HistoryEntry>[]),
-      );
+      final fakeRepo = _FakeHistoryRepository(result: const Success(<HistoryEntry>[]));
 
       final container = ProviderContainer(
-        overrides: [
-          historyRepositoryProvider.overrideWithValue(fakeRepo),
-        ],
+        overrides: [historyRepositoryProvider.overrideWithValue(fakeRepo)],
       );
       addTearDown(container.dispose);
 
@@ -87,9 +79,7 @@ void main() {
       );
 
       final container = ProviderContainer(
-        overrides: [
-          historyRepositoryProvider.overrideWithValue(fakeRepo),
-        ],
+        overrides: [historyRepositoryProvider.overrideWithValue(fakeRepo)],
       );
       addTearDown(container.dispose);
 
@@ -111,14 +101,10 @@ void main() {
         duration: 3600,
         badge: 'vip',
       );
-      final fakeRepo = _FakeHistoryRepository(
-        result: Success([entry]),
-      );
+      final fakeRepo = _FakeHistoryRepository(result: Success([entry]));
 
       final container = ProviderContainer(
-        overrides: [
-          historyRepositoryProvider.overrideWithValue(fakeRepo),
-        ],
+        overrides: [historyRepositoryProvider.overrideWithValue(fakeRepo)],
       );
       addTearDown(container.dispose);
 

@@ -40,9 +40,7 @@ void main() {
       );
       addTearDown(container.dispose);
 
-      final videos = await container.read(
-        categoryRankingListProvider(rid: 0).future,
-      );
+      final videos = await container.read(categoryRankingListProvider(rid: 0).future);
 
       expect(videos, hasLength(2));
       expect(videos[0].bvid, 'BV1aaa');
@@ -57,18 +55,14 @@ void main() {
         overrides: [
           rankingRepositoryProvider.overrideWithValue(
             _FakeRankingRepository(
-              result: const Failure(
-                NetworkAppError('connection timeout'),
-              ),
+              result: const Failure(NetworkAppError('connection timeout')),
             ),
           ),
         ],
       );
       addTearDown(container.dispose);
 
-      final videos = await container.read(
-        categoryRankingListProvider(rid: 0).future,
-      );
+      final videos = await container.read(categoryRankingListProvider(rid: 0).future);
 
       expect(videos, isEmpty);
     });
@@ -77,35 +71,25 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           rankingRepositoryProvider.overrideWithValue(
-            _FakeRankingRepository(
-              result: const Success(<RankingVideo>[]),
-            ),
+            _FakeRankingRepository(result: const Success(<RankingVideo>[])),
           ),
         ],
       );
       addTearDown(container.dispose);
 
-      final videos = await container.read(
-        categoryRankingListProvider(rid: 0).future,
-      );
+      final videos = await container.read(categoryRankingListProvider(rid: 0).future);
 
       expect(videos, isEmpty);
     });
 
     test('passes rid to repository', () async {
-      final fakeRepo = _FakeRankingRepository(
-        result: const Success(<RankingVideo>[]),
-      );
+      final fakeRepo = _FakeRankingRepository(result: const Success(<RankingVideo>[]));
       final container = ProviderContainer(
-        overrides: [
-          rankingRepositoryProvider.overrideWithValue(fakeRepo),
-        ],
+        overrides: [rankingRepositoryProvider.overrideWithValue(fakeRepo)],
       );
       addTearDown(container.dispose);
 
-      await container.read(
-        categoryRankingListProvider(rid: 42).future,
-      );
+      await container.read(categoryRankingListProvider(rid: 42).future);
 
       expect(fakeRepo.lastRid, 42);
     });

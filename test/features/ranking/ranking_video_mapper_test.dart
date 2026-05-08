@@ -1,5 +1,4 @@
 import 'package:culcul/core/contracts/video_model_contract.dart';
-import 'package:culcul/features/ranking/domain/entities/ranking_video.dart';
 import 'package:culcul/features/ranking/data/ranking_video_mapper.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -52,25 +51,19 @@ void main() {
     });
 
     test('maps stat.view to viewCount', () {
-      final video = _makeVideo(
-        stat: const VideoStat(view: 42, danmaku: 0),
-      );
+      final video = _makeVideo(stat: const VideoStat(view: 42, danmaku: 0));
       final result = video.toDomain();
       expect(result.viewCount, 42);
     });
 
     test('maps stat.danmaku to danmakuCount', () {
-      final video = _makeVideo(
-        stat: const VideoStat(view: 0, danmaku: 777),
-      );
+      final video = _makeVideo(stat: const VideoStat(view: 0, danmaku: 777));
       final result = video.toDomain();
       expect(result.danmakuCount, 777);
     });
 
     test('preserves zero values', () {
-      final video = _makeVideo(
-        stat: const VideoStat(view: 0, danmaku: 0),
-      );
+      final video = _makeVideo(stat: const VideoStat(view: 0, danmaku: 0));
       final result = video.toDomain();
       expect(result.viewCount, 0);
       expect(result.danmakuCount, 0);

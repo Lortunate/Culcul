@@ -7,6 +7,7 @@ import 'package:culcul/features/notification/data/notification_api.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:dio/dio.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -197,7 +198,7 @@ void main() {
     );
 
     db = NotificationLocalDatabase(executor: NativeDatabase.memory());
-    repository = NotificationRepositoryImpl(fakeApi, db);
+    repository = NotificationRepositoryImpl(fakeApi, db, Dio());
   });
 
   tearDown(() async {

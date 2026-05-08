@@ -12,9 +12,6 @@ const ApprovedApplicationHomes approvedApplicationHomes = {
     'package:culcul/features/favorites/presentation/pages/favorites_page_commands.dart',
     'package:culcul/features/favorites/presentation/pages/favorite_detail_page_commands.dart',
   ],
-  'lib/features/notification/application/chat_page_commands.dart': [
-    'package:culcul/features/notification/presentation/pages/chat_page_commands.dart',
-  ],
   'lib/features/video/application/comment_reply_commands.dart': [
     'package:culcul/features/video/presentation/pages/comment_reply_page_commands.dart',
   ],
@@ -23,39 +20,36 @@ const ApprovedApplicationHomes approvedApplicationHomes = {
 // Phase 3 guardrails: once a workflow has an approved application home,
 // production code must stop depending on presentation page-command locations.
 void main() {
-  test(
-    'Phase 3 normalization rules doc exists in archive',
-    () async {
-      final phase3Doc = File(
-        'docs/architecture/archive/phase3-structural-normalization-rules.md',
-      );
+  test('Phase 3 normalization rules doc exists in archive', () async {
+    final phase3Doc = File(
+      'docs/architecture/archive/phase3-structural-normalization-rules.md',
+    );
 
-      expect(
-        phase3Doc.existsSync(),
-        isTrue,
-        reason:
-            'Missing docs/architecture/archive/phase3-structural-normalization-rules.md',
-      );
+    expect(
+      phase3Doc.existsSync(),
+      isTrue,
+      reason:
+          'Missing docs/architecture/archive/phase3-structural-normalization-rules.md',
+    );
 
-      final phase3RulesContent = await phase3Doc.readAsString();
+    final phase3RulesContent = await phase3Doc.readAsString();
+    expect(
+      phase3RulesContent,
+      contains('presentation/pages/*_page_commands.dart'),
+      reason:
+          'Expected phase 3 rules to describe application ownership and transitional '
+          'presentation page-command adapters.',
+    );
+    for (final applicationHome in approvedApplicationHomes.keys) {
       expect(
         phase3RulesContent,
-        contains('presentation/pages/*_page_commands.dart'),
+        contains(applicationHome),
         reason:
-            'Expected phase 3 rules to describe application ownership and transitional '
-            'presentation page-command adapters.',
+            'Expected phase 3 rules to list approved application homes enforced by '
+            'the guard: $applicationHome',
       );
-      for (final applicationHome in approvedApplicationHomes.keys) {
-        expect(
-          phase3RulesContent,
-          contains(applicationHome),
-          reason:
-              'Expected phase 3 rules to list approved application homes enforced by '
-              'the guard: $applicationHome',
-        );
-      }
-    },
-  );
+    }
+  });
 
   test(
     'Approved application homes own production import and export directives',

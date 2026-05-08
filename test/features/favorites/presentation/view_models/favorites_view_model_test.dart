@@ -1,7 +1,7 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/contracts/user_session_contract.dart';
-import 'package:culcul/core/session/current_user_provider.dart';
+import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
@@ -292,7 +292,9 @@ void main() {
     final repository = _CreatedFoldersRepository();
     final container = ProviderContainer(
       overrides: [
-        currentUserProvider.overrideWith((ref) => _MockUserSession(uid: '1001', nickname: 'tester')),
+        currentUserProvider.overrideWith(
+          (ref) => _MockUserSession(uid: '1001', nickname: 'tester'),
+        ),
         favRepositoryProvider.overrideWithValue(repository),
       ],
     );
@@ -315,5 +317,7 @@ class _MockUserSession implements UserSession {
   @override
   final String? nickname;
 
-  _MockUserSession({required this.uid, this.isLoggedIn = true, this.avatarUrl, this.nickname});
+  _MockUserSession({required this.uid, this.nickname})
+    : isLoggedIn = true,
+      avatarUrl = null;
 }

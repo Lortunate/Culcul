@@ -3,7 +3,7 @@ import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/core/contracts/search_service_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/core/session/search_service_provider.dart';
+import 'package:culcul/core/session/search_providers.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/topic_search_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -16,7 +16,9 @@ void main() {
     );
     addTearDown(container.dispose);
 
-    final result = await container.read(topicSearchViewModelProvider('  keyword  ').future);
+    final result = await container.read(
+      topicSearchViewModelProvider('  keyword  ').future,
+    );
 
     expect(service.lastQuery, isNotNull);
     expect(service.lastQuery!.keyword, 'keyword');
@@ -43,9 +45,7 @@ class _FakeSearchService implements SearchService {
   SearchQuery? lastQuery;
 
   @override
-  Future<Result<SearchResultPage, AppError>> search({
-    required SearchQuery query,
-  }) async {
+  Future<Result<SearchResultPage, AppError>> search({required SearchQuery query}) async {
     lastQuery = query;
     return const Success(
       SearchResultPage(
