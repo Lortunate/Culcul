@@ -1,4 +1,4 @@
-import 'package:culcul/core/session/current_user_provider.dart';
+import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/live/presentation/view_models/live_room_view_model.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

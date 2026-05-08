@@ -24,12 +24,7 @@ class NotificationFeedSync {
     required NotificationFeedType type,
     required NotificationFeedCursor cursor,
   }) {
-    return _syncFeedRemote(
-      ownerUid: ownerUid,
-      type: type,
-      cursor: cursor,
-      force: true,
-    );
+    return _syncFeedRemote(ownerUid: ownerUid, type: type, cursor: cursor, force: true);
   }
 
   Future<Result<void, AppError>> _syncFeedRemote({
@@ -39,7 +34,11 @@ class NotificationFeedSync {
     bool force = false,
   }) async {
     final scope = 'feed:${type.value}:${cursor == null ? "head" : "older"}';
-    if (!await repo.cleanupPolicy.shouldSync(ownerUid: ownerUid, scope: scope, force: force)) {
+    if (!await repo.cleanupPolicy.shouldSync(
+      ownerUid: ownerUid,
+      scope: scope,
+      force: force,
+    )) {
       return const Success(null);
     }
 
@@ -108,7 +107,9 @@ class NotificationFeedSync {
         await repo.cleanupPolicy.touchCursor(
           ownerUid: ownerUid,
           scope: scope,
-          cursorJson: next == null ? null : jsonEncode({'id': next.id, 'time': next.time}),
+          cursorJson: next == null
+              ? null
+              : jsonEncode({'id': next.id, 'time': next.time}),
           hasMore: !response.cursor.isEnd,
         );
         await repo.cleanupPolicy.maybeCleanup(ownerUid);

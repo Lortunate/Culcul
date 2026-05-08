@@ -13,10 +13,10 @@ import 'package:culcul/core/data/network/network_quality_policy.dart';
 import 'package:culcul/core/perf/performance_policy.dart';
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
 import 'package:culcul/ui/widgets/skeletons/page_skeletons.dart';
-import 'package:culcul/ui/widgets/skeletons/video_card_skeleton.dart';
+import 'package:culcul/features/video/presentation/widgets/video_card_skeleton.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
-import 'package:culcul/ui/widgets/cards/video_card.dart';
-import 'package:culcul/ui/responsive/app_breakpoints.dart';
+import 'package:culcul/features/video/presentation/widgets/video_card.dart';
+import 'package:culcul/features/home/presentation/home_breakpoints.dart';
 import 'package:culcul/ui/responsive/responsive_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -51,7 +51,7 @@ class RecommendView extends HookConsumerWidget {
     useHomeScrollSync(ref, scrollController, refreshController, 1);
 
     return ResponsiveContentContainer(
-      maxWidth: AppBreakpoints.homeFeedMaxWidth,
+      maxWidth: HomeBreakpoints.feedMaxWidth,
       child: SmartPagingView(
         asyncValue: recommendAsync,
         controller: refreshController,
@@ -129,11 +129,13 @@ class _RecommendVideoGrid extends HookWidget {
         if (start >= items.length) return <NetworkImagePrefetchSpec>[];
         return items
             .sublist(start, end)
-            .map((v) => NetworkImagePrefetchSpec(
-                  url: v.pic,
-                  memCacheWidth: memW,
-                  memCacheHeight: memH,
-                ))
+            .map(
+              (v) => NetworkImagePrefetchSpec(
+                url: v.pic,
+                memCacheWidth: memW,
+                memCacheHeight: memH,
+              ),
+            )
             .toList(growable: false);
       },
     );
@@ -177,7 +179,7 @@ class _RecommendVideoGrid extends HookWidget {
 
   double _estimateGridItemWidth(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
-    final containerWidth = math.min(screenWidth, AppBreakpoints.homeFeedMaxWidth);
+    final containerWidth = math.min(screenWidth, HomeBreakpoints.feedMaxWidth);
     final columns = layout.gridDelegate.crossAxisCount;
     final spacing = layout.gridDelegate.crossAxisSpacing * (columns - 1);
     return (containerWidth - layout.padding.horizontal - spacing) / columns;

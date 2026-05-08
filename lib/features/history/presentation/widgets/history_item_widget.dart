@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/history/domain/entities/history_entry.dart';
 import 'package:culcul/ui/widgets/text/icon_text.dart';
-import 'package:culcul/ui/widgets/cards/video_list_card.dart';
+import 'package:culcul/features/video/presentation/widgets/video_list_card.dart';
 
 class HistoryItemWidget extends StatelessWidget {
   final HistoryEntry item;

@@ -1,5 +1,5 @@
-import 'package:culcul/core/session/current_user_provider.dart';
-import 'package:culcul/core/session/show_login_dialog_provider.dart';
+import 'package:culcul/core/session/user_providers.dart';
+import 'package:culcul/core/session/session_lifecycle_providers.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/users/app_avatar.dart';
 import 'package:culcul/ui/widgets/inputs/app_search_bar.dart';
@@ -37,7 +37,8 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
     final isDesktop = context.isDesktopLayout;
     final authState = ref.watch(
       currentUserProvider.select(
-        (session) => (isLoggedIn: session?.isLoggedIn ?? false, avatarUrl: session?.avatarUrl),
+        (session) =>
+            (isLoggedIn: session?.isLoggedIn ?? false, avatarUrl: session?.avatarUrl),
       ),
     );
 

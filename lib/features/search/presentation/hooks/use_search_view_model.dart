@@ -29,8 +29,7 @@ class SearchPageState {
   final String? defaultSearchHint;
 }
 
-SearchPageState
-useSearchViewModel(WidgetRef ref) {
+SearchPageState useSearchViewModel(WidgetRef ref) {
   final defaultSearchAsync = ref.watch(defaultSearchProvider);
   final searchController = useTextEditingController();
   final focusNode = useFocusNode();
@@ -95,7 +94,11 @@ useSearchViewModel(WidgetRef ref) {
     };
   }, [searchController]);
 
-  final mode = switch ((focusNode.hasFocus, searchController.text.isNotEmpty, confirmedKeyword.value)) {
+  final mode = switch ((
+    focusNode.hasFocus,
+    searchController.text.isNotEmpty,
+    confirmedKeyword.value,
+  )) {
     (true, true, _) => SearchPageMode.suggestion,
     (false, _, final keyword?) when keyword.isNotEmpty => SearchPageMode.result,
     _ => SearchPageMode.landing,

@@ -9,10 +9,7 @@ class UserSpaceNotifier extends _$UserSpaceNotifier {
   @override
   Future<ProfileUser> build(String mid) async {
     final result = await ref.read(profileRepositoryProvider).getProfile(int.parse(mid));
-    return result.when(
-      success: (data) => data,
-      failure: (error) => throw error,
-    );
+    return result.when(success: (data) => data, failure: (error) => throw error);
   }
 
   Future<void> toggleFollow() async {
@@ -31,31 +28,4 @@ class UserSpaceNotifier extends _$UserSpaceNotifier {
       state = AsyncData(currentProfile);
     }
   }
-}
-
-ProfileUser _fallbackProfile(String id) {
-  return ProfileUser(
-    id: id,
-    username: '',
-    avatarUrl: null,
-    bannerUrl: null,
-    bio: null,
-    location: null,
-    followersCount: 0,
-    followingCount: 0,
-    videosCount: 0,
-    dynamicCount: 0,
-    likesCount: 0,
-    level: 0,
-    vipType: 0,
-    vipStatus: 0,
-    coins: null,
-    bCoins: null,
-    currentExp: null,
-    nextExp: null,
-    currentMinExp: null,
-    isFollowing: false,
-    isVerified: false,
-    createdAt: null,
-  );
 }

@@ -73,4 +73,3 @@ Future<void> handleArticleMenuAction(
       break;
   }
 }
-

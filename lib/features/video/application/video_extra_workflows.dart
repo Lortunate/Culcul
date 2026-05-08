@@ -54,7 +54,10 @@ class VideoExtraWorkflows {
 
     return (await danmakuRepository.fetchMaskData(dmMask.maskUrl)).when(
       success: (bytes) async {
-        final paths = await compute(_parseMaskData, _ParseDanmakuMaskData(bytes, dmMask.fps));
+        final paths = await compute(
+          _parseMaskData,
+          _ParseDanmakuMaskData(bytes, dmMask.fps),
+        );
         return Success(DanmakuMasks(paths, dmMask.fps));
       },
       failure: (error) async => Failure(error),

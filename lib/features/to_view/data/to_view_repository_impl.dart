@@ -7,7 +7,8 @@ import 'package:culcul/features/to_view/data/dtos/to_view_model_dto.dart';
 import 'package:culcul/features/to_view/data/to_view_mapper.dart';
 import 'package:culcul/features/to_view/data/to_view_api.dart';
 import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
-import 'package:culcul/features/to_view/domain/repositories/to_view_repository.dart' as domain;
+import 'package:culcul/features/to_view/domain/repositories/to_view_repository.dart'
+    as domain;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'to_view_repository_impl.g.dart';

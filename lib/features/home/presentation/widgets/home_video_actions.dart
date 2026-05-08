@@ -1,9 +1,9 @@
-import 'package:culcul/core/session/watch_later_provider.dart';
+import 'package:culcul/core/session/feature_action_providers.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/services/media_service.dart';
 import 'package:culcul/core/utils/id_utils.dart';
 import 'package:culcul/core/utils/toast_utils.dart';
-import 'package:culcul/ui/widgets/overlays/video_actions_bottom_sheet.dart';
+import 'package:culcul/features/video/presentation/widgets/video_actions_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

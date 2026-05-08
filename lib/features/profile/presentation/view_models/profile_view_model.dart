@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:culcul/core/session/current_user_provider.dart';
+import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/profile/application/profile_actions.dart';
 import 'package:culcul/features/profile/feature_scope.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
@@ -17,10 +17,7 @@ Future<ProfileUser> myProfile(Ref ref) async {
   final result = await ref
       .watch(profileRepositoryProvider)
       .getProfile(int.parse(session.uid));
-  return result.when(
-    success: (data) => data,
-    failure: (error) => throw error,
-  );
+  return result.when(success: (data) => data, failure: (error) => throw error);
 }
 
 @riverpod

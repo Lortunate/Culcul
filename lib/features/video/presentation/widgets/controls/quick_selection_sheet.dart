@@ -27,7 +27,9 @@ class QuickSelectionSheet<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bottomPadding = isBottomSheet ? MediaQuery.paddingOf(context).bottom + 20 : 20.0;
+    final bottomPadding = isBottomSheet
+        ? MediaQuery.paddingOf(context).bottom + 20
+        : 20.0;
 
     return PlayerPanelScaffold(
       title: title,

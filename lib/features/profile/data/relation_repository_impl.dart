@@ -18,7 +18,9 @@ domain.RelationRepository relationRepository(Ref ref) {
   return RelationRepositoryImpl(RelationApi(ref.watch(dioClientProvider)));
 }
 
-class RelationRepositoryImpl with RequestExecutorBinding implements domain.RelationRepository {
+class RelationRepositoryImpl
+    with RequestExecutorBinding
+    implements domain.RelationRepository {
   static const int _defaultPageSize = 50;
   final RelationApi _api;
   final RequestExecutor _requestExecutor;

@@ -51,9 +51,7 @@ class ListenSettingsSheet extends HookConsumerWidget {
     String timerStatus;
     final remaining = timerState.remaining;
     if (timerState.isActive && remaining != null) {
-      timerStatus = t.video.listen_settings.remaining(
-        time: remaining.formatDuration,
-      );
+      timerStatus = t.video.listen_settings.remaining(time: remaining.formatDuration);
     } else {
       timerStatus = t.video.listen_settings.timer_off;
     }

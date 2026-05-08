@@ -47,10 +47,7 @@ mixin _ChatHelpersMixin on _$Chat {
   }
 
   Future<({List<PrivateMessage> messages, Map<String, String> emojiMap})>
-  _loadLocalSnapshot({
-    required int ownerUid,
-    int? endSeqno,
-  }) async {
+  _loadLocalSnapshot({required int ownerUid, int? endSeqno}) async {
     final repository = ref.read(notificationRepositoryProvider);
     final results = await _concurrencyExecutor.runConcurrent(
       tasks: <ConcurrentTask<dynamic>>[

@@ -14,7 +14,7 @@ import 'package:culcul/features/home/presentation/widgets/live_room_card.dart';
 import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
-import 'package:culcul/ui/responsive/app_breakpoints.dart';
+import 'package:culcul/features/home/presentation/home_breakpoints.dart';
 import 'package:culcul/ui/responsive/responsive_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -49,7 +49,7 @@ class LiveView extends HookConsumerWidget {
     useHomeScrollSync(ref, scrollController, refreshController, 0);
 
     return ResponsiveContentContainer(
-      maxWidth: AppBreakpoints.homeFeedMaxWidth,
+      maxWidth: HomeBreakpoints.feedMaxWidth,
       child: SmartPagingView(
         asyncValue: liveAsync,
         controller: refreshController,
@@ -153,11 +153,13 @@ class _LiveGrid extends HookWidget {
         if (start >= items.length) return <NetworkImagePrefetchSpec>[];
         return items
             .sublist(start, end)
-            .map((v) => NetworkImagePrefetchSpec(
-                  url: v.cover,
-                  memCacheWidth: memW,
-                  memCacheHeight: memH,
-                ))
+            .map(
+              (v) => NetworkImagePrefetchSpec(
+                url: v.cover,
+                memCacheWidth: memW,
+                memCacheHeight: memH,
+              ),
+            )
             .toList(growable: false);
       },
     );
@@ -186,7 +188,7 @@ class _LiveGrid extends HookWidget {
 
   double _estimateGridItemWidth(BuildContext context) {
     final screenWidth = MediaQuery.sizeOf(context).width;
-    final containerWidth = math.min(screenWidth, AppBreakpoints.homeFeedMaxWidth);
+    final containerWidth = math.min(screenWidth, HomeBreakpoints.feedMaxWidth);
     final columns = layout.gridDelegate.crossAxisCount;
     final spacing = layout.gridDelegate.crossAxisSpacing * (columns - 1);
     return (containerWidth - layout.padding.horizontal - spacing) / columns;

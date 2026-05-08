@@ -25,9 +25,7 @@ class LoginDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
-      child: LoginPanel(
-        onClose: () => Navigator.of(context).pop(),
-      ),
+      child: LoginPanel(onClose: () => Navigator.of(context).pop()),
     );
   }
 }

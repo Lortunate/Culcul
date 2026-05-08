@@ -46,36 +46,34 @@ class BottomInputBar extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Material(
-                  color: colorScheme.surfaceContainerHighest.withValues(
-                    alpha: 0.6,
-                  ),
+                  color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
                   child: AppClickable(
                     onTap: onTapInput,
                     child: Container(
-                  height: 40,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  alignment: Alignment.centerLeft,
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.edit_outlined,
-                        size: 16,
-                        color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                      height: 40,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.edit_outlined,
+                            size: 16,
+                            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            t.video.comment.hint,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 10),
-                      Text(
-                        t.video.comment.hint,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ),
             if (!simpleMode) ...[
               const SizedBox(width: 8),
               _ActionIcon(icon: Icons.thumb_up_outlined, onTap: onTapLike),
@@ -104,13 +102,13 @@ class _ActionIcon extends StatelessWidget {
       child: AppClickable(
         onTap: onTap,
         child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Icon(
-          icon,
-          size: 24,
-          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+          padding: const EdgeInsets.all(10),
+          child: Icon(
+            icon,
+            size: 24,
+            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+          ),
         ),
-      ),
       ),
     );
   }

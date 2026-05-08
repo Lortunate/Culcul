@@ -49,7 +49,11 @@ class NotificationMessageSync {
   }) async {
     final scope =
         'messages:${sessionType.value}:$talkerId:${endSeqno == null ? "head" : "older"}';
-    if (!await repo.cleanupPolicy.shouldSync(ownerUid: ownerUid, scope: scope, force: force)) {
+    if (!await repo.cleanupPolicy.shouldSync(
+      ownerUid: ownerUid,
+      scope: scope,
+      force: force,
+    )) {
       return const Success(null);
     }
 

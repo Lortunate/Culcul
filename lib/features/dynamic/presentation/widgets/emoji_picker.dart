@@ -98,7 +98,12 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderSt
         final emote = package.emote[index];
         return InkWell(
           onTap: () => widget.onEmojiSelected(emote.text),
-          child: ExtendedImage.network(emote.url, fit: BoxFit.contain, cacheWidth: 96, cacheHeight: 96),
+          child: ExtendedImage.network(
+            emote.url,
+            fit: BoxFit.contain,
+            cacheWidth: 96,
+            cacheHeight: 96,
+          ),
         );
       },
     );

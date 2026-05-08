@@ -1,4 +1,4 @@
-import 'package:culcul/core/session/current_user_provider.dart';
+import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
 import 'package:culcul/features/to_view/feature_scope.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -15,10 +15,7 @@ class ToViewList extends _$ToViewList {
     }
 
     final result = await ref.read(toViewRepositoryProvider).getList();
-    return result.when(
-      success: (data) => data,
-      failure: (error) => throw error,
-    );
+    return result.when(success: (data) => data, failure: (error) => throw error);
   }
 
   Future<void> add(int aid) async {

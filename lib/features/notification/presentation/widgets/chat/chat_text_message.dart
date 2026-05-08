@@ -1,4 +1,4 @@
-import 'package:culcul/ui/widgets/text/bilibili_emoji_text.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/bilibili_emoji_text.dart';
 import 'package:flutter/material.dart';
 
 class ChatTextMessage extends StatelessWidget {

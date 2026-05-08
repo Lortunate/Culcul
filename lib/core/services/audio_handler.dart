@@ -35,37 +35,51 @@ class CilixiliAudioHandler extends BaseAudioHandler {
   CilixiliAudioHandler._() {
     _initSession();
     // Propagate player events to AudioService
-    _subscriptions.add(player.stream.playing.listen((playing) {
-      _broadcastState(isCriticalEvent: true, reason: 'playing');
-    }));
+    _subscriptions.add(
+      player.stream.playing.listen((playing) {
+        _broadcastState(isCriticalEvent: true, reason: 'playing');
+      }),
+    );
 
-    _subscriptions.add(player.stream.position.listen((position) {
-      _broadcastState(isCriticalEvent: false, reason: 'position');
-    }));
+    _subscriptions.add(
+      player.stream.position.listen((position) {
+        _broadcastState(isCriticalEvent: false, reason: 'position');
+      }),
+    );
 
-    _subscriptions.add(player.stream.duration.listen((duration) {
-      final item = mediaItem.value;
-      if (item != null && item.duration != duration) {
-        mediaItem.add(item.copyWith(duration: duration));
-      }
-      _broadcastState(isCriticalEvent: true, reason: 'duration');
-    }));
+    _subscriptions.add(
+      player.stream.duration.listen((duration) {
+        final item = mediaItem.value;
+        if (item != null && item.duration != duration) {
+          mediaItem.add(item.copyWith(duration: duration));
+        }
+        _broadcastState(isCriticalEvent: true, reason: 'duration');
+      }),
+    );
 
-    _subscriptions.add(player.stream.buffering.listen((buffering) {
-      _broadcastState(isCriticalEvent: true, reason: 'buffering');
-    }));
+    _subscriptions.add(
+      player.stream.buffering.listen((buffering) {
+        _broadcastState(isCriticalEvent: true, reason: 'buffering');
+      }),
+    );
 
-    _subscriptions.add(player.stream.buffer.listen((buffer) {
-      _broadcastState(isCriticalEvent: true, reason: 'buffer');
-    }));
+    _subscriptions.add(
+      player.stream.buffer.listen((buffer) {
+        _broadcastState(isCriticalEvent: true, reason: 'buffer');
+      }),
+    );
 
-    _subscriptions.add(player.stream.completed.listen((completed) {
-      _broadcastState(isCriticalEvent: true, reason: 'completed');
-    }));
+    _subscriptions.add(
+      player.stream.completed.listen((completed) {
+        _broadcastState(isCriticalEvent: true, reason: 'completed');
+      }),
+    );
 
-    _subscriptions.add(player.stream.error.listen((error) {
-      _broadcastState(isCriticalEvent: true, reason: 'error');
-    }));
+    _subscriptions.add(
+      player.stream.error.listen((error) {
+        _broadcastState(isCriticalEvent: true, reason: 'error');
+      }),
+    );
   }
 
   static CilixiliAudioHandler get shared => _shared;

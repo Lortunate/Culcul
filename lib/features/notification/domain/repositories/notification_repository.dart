@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
@@ -44,9 +44,15 @@ abstract class NotificationRepository {
 
   Stream<List<SystemNotice>> watchSystemNotices({required int ownerUid});
 
-  Future<Result<void, AppError>> syncUnreadCount({required int ownerUid, bool force = false});
+  Future<Result<void, AppError>> syncUnreadCount({
+    required int ownerUid,
+    bool force = false,
+  });
 
-  Future<Result<void, AppError>> syncSessions({required int ownerUid, bool force = false});
+  Future<Result<void, AppError>> syncSessions({
+    required int ownerUid,
+    bool force = false,
+  });
 
   Future<Result<void, AppError>> syncSessionsOlder({
     required int ownerUid,
@@ -78,7 +84,10 @@ abstract class NotificationRepository {
     required NotificationFeedCursor cursor,
   });
 
-  Future<Result<ImageUploadResult, AppError>> uploadImage(File file);
+  Future<Result<ImageUploadResult, AppError>> uploadImage(
+    Uint8List bytes,
+    String filename,
+  );
 
   Future<Result<SendMessageResult, AppError>> sendPrivateMessage({
     required int ownerUid,

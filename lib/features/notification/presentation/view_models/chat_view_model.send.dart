@@ -12,9 +12,11 @@ mixin _ChatSendMixin on _$Chat, _ChatHelpersMixin {
   }
 
   Future<ChatPageCommandResult> sendImage(File imageFile) async {
+    final bytes = await imageFile.readAsBytes();
+    final filename = imageFile.path.split('/').last.split('\\').last;
     final uploadResult = await ref
         .read(notificationRepositoryProvider)
-        .uploadImage(imageFile);
+        .uploadImage(bytes, filename);
     final uploadRes = uploadResult.dataOrNull;
     if (uploadRes == null) {
       return _setPagingError(
@@ -26,8 +28,8 @@ mixin _ChatSendMixin on _$Chat, _ChatHelpersMixin {
       url: uploadRes.imageUrl,
       height: uploadRes.imageHeight,
       width: uploadRes.imageWidth,
-      imageType: imageFile.path.split('.').last,
-      size: await imageFile.length() / 1024,
+      imageType: filename.split('.').last,
+      size: bytes.length / 1024,
     );
     return _send(messageType: PrivateMessageType.image, content: content);
   }

@@ -20,9 +20,7 @@ class NotificationStreamWatchers {
           if (row == null) return NotificationRepositoryImpl.emptySummary;
           try {
             final decoded = await jsonDecodeCompute(row.summaryJson);
-            final dto = UnreadCountModel.fromJson(
-              decoded as Map<String, dynamic>,
-            );
+            final dto = UnreadCountModel.fromJson(decoded as Map<String, dynamic>);
             return dto;
           } catch (_) {
             return NotificationRepositoryImpl.emptySummary;
@@ -42,14 +40,16 @@ class NotificationStreamWatchers {
             (t) => OrderingTerm.desc(t.eventId),
           ]))
         .watch()
-        .asyncMap(
-          (rows) async => Future.wait(
-            rows.map(
-              (row) async => SystemNotificationItem.fromJson(
+        .asyncMap((rows) async {
+          final notices = <SystemNotice>[];
+          for (final row in rows) {
+            notices.add(
+              SystemNotificationItem.fromJson(
                 (await jsonDecodeCompute(row.itemJson)) as Map<String, dynamic>,
               ),
-            ),
-          ),
-        );
+            );
+          }
+          return notices;
+        });
   }
 }

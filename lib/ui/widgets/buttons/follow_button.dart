@@ -32,34 +32,36 @@ class FollowButton extends StatelessWidget {
       label: _resolveLabel(t),
       button: true,
       child: FilledButton(
-      onPressed: onTap,
-      style: FilledButton.styleFrom(
-        backgroundColor: isFollowed ? colorScheme.primaryContainer : colorScheme.primary,
-        foregroundColor: isFollowed
-            ? colorScheme.onPrimaryContainer
-            : colorScheme.onPrimary,
-        elevation: 0,
-        minimumSize: Size(width ?? 56, height ?? 32),
-        fixedSize: height != null ? Size.fromHeight(height!) : null,
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        shape: shape ?? const StadiumBorder(),
-        visualDensity: VisualDensity.compact,
-      ),
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        transitionBuilder: (Widget child, Animation<double> animation) {
-          return FadeTransition(
-            opacity: animation,
-            child: ScaleTransition(scale: animation, child: child),
-          );
-        },
-        child: Text(
-          _resolveLabel(t),
-          key: ValueKey<bool>(isFollowed),
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+        onPressed: onTap,
+        style: FilledButton.styleFrom(
+          backgroundColor: isFollowed
+              ? colorScheme.primaryContainer
+              : colorScheme.primary,
+          foregroundColor: isFollowed
+              ? colorScheme.onPrimaryContainer
+              : colorScheme.onPrimary,
+          elevation: 0,
+          minimumSize: Size(width ?? 56, height ?? 32),
+          fixedSize: height != null ? Size.fromHeight(height!) : null,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          shape: shape ?? const StadiumBorder(),
+          visualDensity: VisualDensity.compact,
+        ),
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            return FadeTransition(
+              opacity: animation,
+              child: ScaleTransition(scale: animation, child: child),
+            );
+          },
+          child: Text(
+            _resolveLabel(t),
+            key: ValueKey<bool>(isFollowed),
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+          ),
         ),
       ),
-    ),
     );
   }
 }

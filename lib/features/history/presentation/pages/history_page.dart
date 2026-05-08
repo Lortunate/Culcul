@@ -1,5 +1,6 @@
+import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/core/session/current_user_provider.dart';
+import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/history/domain/entities/history_entry.dart';
 import 'package:culcul/features/history/presentation/view_models/history_view_model.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
@@ -15,14 +16,20 @@ class HistoryPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final historyListAsync = ref.watch(historyListProvider);
-    final isLoggedIn = ref.watch(currentUserProvider.select((s) => s?.isLoggedIn ?? false));
+    final isLoggedIn = ref.watch(
+      currentUserProvider.select((s) => s?.isLoggedIn ?? false),
+    );
     final t = Translations.of(context);
 
     return Scaffold(
       appBar: AppBar(title: Text(t.profile.menu.history), centerTitle: true),
       body: isLoggedIn
           ? _HistoryContent(historyListAsync: historyListAsync)
-          : GuestView(title: t.profile.not_logged_in, message: t.profile.login_hint),
+          : GuestView(
+              title: t.profile.not_logged_in,
+              message: t.profile.login_hint,
+              onLogin: () => const LoginRoute().push(context),
+            ),
     );
   }
 }

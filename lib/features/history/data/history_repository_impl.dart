@@ -18,7 +18,9 @@ domain.HistoryRepository historyRepository(Ref ref) {
   return HistoryRepositoryImpl(HistoryApi(ref.watch(dioClientProvider)));
 }
 
-class HistoryRepositoryImpl with RequestExecutorBinding implements domain.HistoryRepository {
+class HistoryRepositoryImpl
+    with RequestExecutorBinding
+    implements domain.HistoryRepository {
   static const int _defaultPageSize = 20;
   final HistoryApi _api;
   final RequestExecutor _requestExecutor;

@@ -1,7 +1,7 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/ui/widgets/media/app_network_image.dart';
-import 'package:culcul/ui/widgets/cards/video_list_card.dart';
+import 'package:culcul/features/video/presentation/widgets/video_list_card.dart';
 import 'package:flutter/material.dart';
 
 class SearchBangumiItem extends StatelessWidget {
@@ -22,7 +22,10 @@ class SearchBangumiItem extends StatelessWidget {
       title: FormatUtils.stripHtmlTags(item.title),
       leading: AspectRatio(
         aspectRatio: 3 / 4,
-        child: AppNetworkImage(url: item.coverUrl, borderRadius: BorderRadius.circular(8)),
+        child: AppNetworkImage(
+          url: item.coverUrl,
+          borderRadius: BorderRadius.circular(8),
+        ),
       ),
       middleContent: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

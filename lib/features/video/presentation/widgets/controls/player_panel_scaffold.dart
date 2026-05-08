@@ -28,9 +28,7 @@ class PlayerPanelScaffold extends StatelessWidget {
     return Container(
       width: isBottomSheet ? double.infinity : panelWidth,
       constraints: BoxConstraints(
-        maxHeight: isBottomSheet
-            ? screenHeight * maxHeightFactor
-            : screenHeight,
+        maxHeight: isBottomSheet ? screenHeight * maxHeightFactor : screenHeight,
       ),
       child: ClipRRect(
         borderRadius: isBottomSheet

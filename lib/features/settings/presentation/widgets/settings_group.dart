@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 
 class SettingsGroup extends StatelessWidget {
-  const SettingsGroup({
-    super.key,
-    this.title,
-    required this.children,
-  });
+  const SettingsGroup({super.key, this.title, required this.children});
 
   final String? title;
   final List<Widget> children;

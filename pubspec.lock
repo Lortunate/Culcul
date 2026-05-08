@@ -540,7 +540,7 @@ packages:
     source: hosted
     version: "2.0.33"
   flutter_riverpod:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: flutter_riverpod
       sha256: "4e166be88e1dbbaa34a280bdb744aeae73b7ef25fdf8db7a3bb776760a3648e2"
@@ -646,7 +646,7 @@ packages:
     source: hosted
     version: "0.1.1"
   hive:
-    dependency: transitive
+    dependency: "direct dev"
     description:
       name: hive
       sha256: "8dcf6db979d7933da8217edcec84e9df1bdb4e4edc7fc77dbd5aa74356d6d941"
@@ -1246,7 +1246,7 @@ packages:
     source: hosted
     version: "10.2.1"
   riverpod:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: riverpod
       sha256: "8c22216be8ad3ef2b44af3a329693558c98eca7b8bd4ef495c92db0bba279f83"

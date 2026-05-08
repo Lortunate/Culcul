@@ -1,3 +1,4 @@
+import 'package:culcul/features/home/presentation/home_breakpoints.dart';
 import 'package:culcul/ui/responsive/app_responsive.dart';
 import 'package:flutter/material.dart';
 

@@ -6,7 +6,5 @@ import 'package:culcul/core/result/result.dart';
 /// Cross-feature contract for search functionality.
 /// Used by dynamic feature to search topics.
 abstract interface class SearchService {
-  Future<Result<SearchResultPage, AppError>> search({
-    required SearchQuery query,
-  });
+  Future<Result<SearchResultPage, AppError>> search({required SearchQuery query});
 }

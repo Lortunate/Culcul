@@ -11,10 +11,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 /// prefetches the next [prefetchCount] images using [AppNetworkImagePrefetcher].
 void useScrollPrecache({
   required ScrollController scrollController,
-  required List<NetworkImagePrefetchSpec> Function(
-    int firstVisibleIndex,
-    int count,
-  ) getUpcomingSpecs,
+  required List<NetworkImagePrefetchSpec> Function(int firstVisibleIndex, int count)
+  getUpcomingSpecs,
   int prefetchCount = 5,
   Duration debounce = const Duration(milliseconds: 300),
 }) {

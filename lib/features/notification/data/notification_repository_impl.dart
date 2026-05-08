@@ -1,10 +1,11 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
+import 'package:dio/dio.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
 import 'package:culcul/features/notification/data/notification_api.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.cleanup_policy.dart';
@@ -31,9 +32,11 @@ part 'notification_repository_impl.g.dart';
 
 @riverpod
 domain.NotificationRepository notificationRepository(Ref ref) {
+  final dio = ref.watch(dioClientProvider);
   return NotificationRepositoryImpl(
-    NotificationApi(ref.watch(dioClientProvider)),
+    NotificationApi(dio),
     ref.watch(notificationLocalDatabaseProvider),
+    dio,
   );
 }
 
@@ -42,7 +45,8 @@ class NotificationRepositoryImpl
     implements domain.NotificationRepository {
   NotificationRepositoryImpl(
     this.api,
-    this.database, {
+    this.database,
+    this.dio, {
     RequestExecutor? requestExecutor,
   }) : requestExecutor = requestExecutor ?? const RequestExecutor() {
     localReadStore = NotificationLocalReadStore(this);
@@ -56,6 +60,7 @@ class NotificationRepositoryImpl
 
   final NotificationApi api;
   final NotificationLocalDatabase database;
+  final Dio dio;
   @override
   final RequestExecutor requestExecutor;
   late final NotificationLocalReadStore localReadStore;
@@ -232,16 +237,15 @@ class NotificationRepositoryImpl
     required NotificationFeedType type,
     required NotificationFeedCursor cursor,
   }) {
-    return feedSync.syncFeedOlder(
-      ownerUid: ownerUid,
-      type: type,
-      cursor: cursor,
-    );
+    return feedSync.syncFeedOlder(ownerUid: ownerUid, type: type, cursor: cursor);
   }
 
   @override
-  Future<Result<ImageUploadResult, AppError>> uploadImage(File file) {
-    return messageSendService.uploadImage(file);
+  Future<Result<ImageUploadResult, AppError>> uploadImage(
+    Uint8List bytes,
+    String filename,
+  ) {
+    return messageSendService.uploadImage(bytes, filename);
   }
 
   @override

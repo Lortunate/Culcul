@@ -23,9 +23,7 @@ class NotificationLocalReadStore {
             .getSingleOrNull();
     if (row == null) return null;
     final decoded = await jsonDecodeCompute(row.summaryJson);
-    final dto = UnreadCountModel.fromJson(
-      decoded as Map<String, dynamic>,
-    );
+    final dto = UnreadCountModel.fromJson(decoded as Map<String, dynamic>);
     return dto;
   }
 
@@ -46,16 +44,14 @@ class NotificationLocalReadStore {
       ..orderBy([(t) => OrderingTerm.desc(t.sessionTs)])
       ..limit(NotificationRepositoryImpl.pageSize);
     final rows = await query.get();
-    return Future.wait(
-      rows.map(
-        (row) async {
-          final decoded = await jsonDecodeCompute(row.sessionJson);
-          return PrivateMessageSession.fromJson(
-            decoded as Map<String, dynamic>,
-          ).toDomain();
-        },
-      ),
-    );
+    final sessions = <PrivateSession>[];
+    for (final row in rows) {
+      final decoded = await jsonDecodeCompute(row.sessionJson);
+      sessions.add(
+        PrivateMessageSession.fromJson(decoded as Map<String, dynamic>).toDomain(),
+      );
+    }
+    return sessions;
   }
 
   Future<List<PrivateMessage>> pageMessagesFromLocal({
@@ -134,15 +130,11 @@ class NotificationLocalReadStore {
       ])
       ..limit(NotificationRepositoryImpl.pageSize);
     final rows = await query.get();
-    return Future.wait(
-      rows.map(
-        (row) async {
-          final decoded = await jsonDecodeCompute(row.itemJson);
-          return ReplyItem.fromJson(
-            decoded as Map<String, dynamic>,
-          ).toDomain();
-        },
-      ),
-    );
+    final items = <NotificationEntry>[];
+    for (final row in rows) {
+      final decoded = await jsonDecodeCompute(row.itemJson);
+      items.add(ReplyItem.fromJson(decoded as Map<String, dynamic>).toDomain());
+    }
+    return items;
   }
 }

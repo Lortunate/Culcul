@@ -1,13 +1,12 @@
-import 'package:culcul/core/session/current_user_provider.dart';
-import 'package:culcul/core/session/user_profile_lookup_provider.dart';
-import 'package:culcul/features/notification/application/chat_page_commands.dart';
+import 'package:culcul/core/session/user_providers.dart';
+import 'package:culcul/features/notification/presentation/chat_page_commands.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/presentation/view_models/chat_view_model.dart';
 import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_input.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_message_list.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_skeletons.dart';
-import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
+import 'package:culcul/ui/ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

@@ -20,17 +20,4 @@ extension AppResponsive on BuildContext {
     }
     return 8;
   }
-
-  int get homeGridColumns {
-    if (screenWidth >= AppBreakpoints.xlStart) {
-      return 5;
-    }
-    if (screenWidth >= AppBreakpoints.desktopStart) {
-      return 4;
-    }
-    if (screenWidth >= AppBreakpoints.tabletStart) {
-      return 3;
-    }
-    return 2;
-  }
 }

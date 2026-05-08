@@ -1,4 +1,4 @@
-import 'package:culcul/core/session/session_cookie_refresher.dart';
+import 'package:culcul/core/session/session_lifecycle_providers.dart';
 import 'package:culcul/features/auth/feature_scope.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

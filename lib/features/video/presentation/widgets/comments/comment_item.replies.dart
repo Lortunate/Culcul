@@ -49,37 +49,39 @@ class _Replies extends StatelessWidget {
         child: AppClickable(
           onTap: onTap,
           child: SizedBox(
-        width: double.infinity,
-        child: Padding(
-          padding: const EdgeInsets.all(8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ...replies.take(2).map((reply) => _buildReplyItem(context, reply, theme)),
-              if (rcount > 2)
-                Padding(
-                  padding: const EdgeInsets.only(top: 2),
-                  child: Row(
-                    children: [
-                      Text(
-                        t.video.comment.replies(count: rcount),
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
+            width: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ...replies
+                      .take(2)
+                      .map((reply) => _buildReplyItem(context, reply, theme)),
+                  if (rcount > 2)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Row(
+                        children: [
+                          Text(
+                            t.video.comment.replies(count: rcount),
+                            style: theme.textTheme.labelSmall?.copyWith(
+                              color: colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width: 2),
+                          Icon(
+                            Icons.chevron_right_rounded,
+                            size: 14,
+                            color: colorScheme.primary,
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 2),
-                      Icon(
-                        Icons.chevron_right_rounded,
-                        size: 14,
-                        color: colorScheme.primary,
-                      ),
-                    ],
-                  ),
-                ),
-            ],
-          ),
-        ),
+                    ),
+                ],
+              ),
+            ),
           ),
         ),
       ),

@@ -12,9 +12,5 @@ class UserProfileInfo {
   final String name;
   final String avatarUrl;
 
-  const UserProfileInfo({
-    required this.mid,
-    required this.name,
-    required this.avatarUrl,
-  });
+  const UserProfileInfo({required this.mid, required this.name, required this.avatarUrl});
 }

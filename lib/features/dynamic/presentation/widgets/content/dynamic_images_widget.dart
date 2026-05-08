@@ -23,15 +23,15 @@ class DynamicImagesWidget extends StatelessWidget {
           behavior: HitTestBehavior.opaque,
           onTap: () => _openImagePreview(context, validImages, 0),
           child: ConstrainedBox(
-              constraints: const BoxConstraints(maxHeight: 240, maxWidth: 240),
-              child: AppNetworkImage(
-                  url: validImages.first,
-                  fit: BoxFit.cover,
-                  borderRadius: BorderRadius.circular(8),
-                  width: 240,
-                  height: 240,
-                ),
+            constraints: const BoxConstraints(maxHeight: 240, maxWidth: 240),
+            child: AppNetworkImage(
+              url: validImages.first,
+              fit: BoxFit.cover,
+              borderRadius: BorderRadius.circular(8),
+              width: 240,
+              height: 240,
             ),
+          ),
         ),
       );
     }
@@ -59,7 +59,13 @@ class DynamicImagesWidget extends StatelessWidget {
   }
 
   Widget _buildImageItem(String url, [double? size]) {
-    return AppNetworkImage(url: url, fit: BoxFit.cover, width: size, height: size, borderRadius: BorderRadius.circular(6));
+    return AppNetworkImage(
+      url: url,
+      fit: BoxFit.cover,
+      width: size,
+      height: size,
+      borderRadius: BorderRadius.circular(6),
+    );
   }
 
   Future<void> _openImagePreview(

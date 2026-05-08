@@ -2,7 +2,7 @@ import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/presentation/view_models/user_space_extras_view_model.dart';
 import 'package:culcul/features/profile/presentation/widgets/home_tab/section_header.dart';
-import 'package:culcul/ui/widgets/media/video_thumbnail.dart';
+import 'package:culcul/features/video/presentation/widgets/video_thumbnail.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

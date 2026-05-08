@@ -40,12 +40,7 @@ class SettingsTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  title,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    fontSize: 16,
-                  ),
-                ),
+                Text(title, style: theme.textTheme.bodyLarge?.copyWith(fontSize: 16)),
                 if (subtitle != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 2),
@@ -72,10 +67,7 @@ class SettingsTile extends StatelessWidget {
               ),
             ),
           if (trailing != null)
-            Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: trailing!,
-            )
+            Padding(padding: const EdgeInsets.only(left: 16), child: trailing!)
           else if (showArrow && onTap != null) ...[
             const SizedBox(width: 8),
             Icon(
@@ -89,10 +81,7 @@ class SettingsTile extends StatelessWidget {
     );
 
     if (onTap != null) {
-      child = AppClickable(
-        onTap: onTap,
-        child: child,
-      );
+      child = AppClickable(onTap: onTap, child: child);
     }
 
     return child;

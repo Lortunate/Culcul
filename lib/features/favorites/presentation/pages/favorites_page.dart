@@ -1,8 +1,9 @@
+import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
 import 'package:culcul/features/favorites/application/favorite_folder_commands.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
-import 'package:culcul/core/session/current_user_provider.dart';
+import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/layout/app_tab_bar.dart';
 import 'package:culcul/ui/widgets/users/guest_view.dart';
@@ -19,7 +20,9 @@ class FavoritesPage extends HookConsumerWidget {
     final tabController = useTabController(initialLength: 2);
     useListenable(tabController); // Rebuild when tab changes
     final colorScheme = Theme.of(context).colorScheme;
-    final isLoggedIn = ref.watch(currentUserProvider.select((s) => s?.isLoggedIn ?? false));
+    final isLoggedIn = ref.watch(
+      currentUserProvider.select((s) => s?.isLoggedIn ?? false),
+    );
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -29,9 +32,7 @@ class FavoritesPage extends HookConsumerWidget {
         elevation: 0,
         backgroundColor: colorScheme.surface,
         surfaceTintColor: Colors.transparent,
-        actions: [
-          _AddFolderAction(isVisible: isLoggedIn && tabController.index == 0),
-        ],
+        actions: [_AddFolderAction(isVisible: isLoggedIn && tabController.index == 0)],
         bottom: isLoggedIn
             ? AppTabBar(
                 controller: tabController,
@@ -41,7 +42,11 @@ class FavoritesPage extends HookConsumerWidget {
       ),
       body: isLoggedIn
           ? _FavoritesTabView(controller: tabController)
-          : GuestView(title: t.profile.not_logged_in, message: t.profile.login_hint),
+          : GuestView(
+              title: t.profile.not_logged_in,
+              message: t.profile.login_hint,
+              onLogin: () => const LoginRoute().push(context),
+            ),
     );
   }
 }

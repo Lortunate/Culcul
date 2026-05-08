@@ -47,6 +47,7 @@ class ArticleDetailData {
     return ArticleDetailParser.fromOpusState(sourceUri: sourceUri, state: state);
   }
 }
+
 class ArticleStats {
   final int view;
   final int favorite;

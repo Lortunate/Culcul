@@ -1,6 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 part 'guest_view/illustration.dart';
 part 'guest_view/login_button.dart';
@@ -18,11 +17,7 @@ class GuestView extends StatelessWidget {
     this.message,
     this.onLogin,
     this.showLoginButton = true,
-  });
-
-  VoidCallback _resolveLoginAction(BuildContext context) {
-    return onLogin ?? () => context.push('/login');
-  }
+  }) : assert(!showLoginButton || onLogin != null);
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +36,7 @@ class GuestView extends StatelessWidget {
               _GuestMessage(title: title, message: message),
               if (showLoginButton) ...[
                 const SizedBox(height: 40),
-                _GuestLoginButton(
-                  label: t.auth.login,
-                  onPressed: _resolveLoginAction(context),
-                ),
+                _GuestLoginButton(label: t.auth.login, onPressed: onLogin!),
               ],
             ],
           ),

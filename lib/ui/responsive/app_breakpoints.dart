@@ -16,8 +16,6 @@ class AppBreakpoints {
   static const double shellExtendedRailStart = 1280;
 
   static const double pageMaxWidth = 1280;
-  static const double homeFeedMaxWidth = 1280;
-  static const double homePopularMaxWidth = 980;
 
   static const List<Breakpoint> frameworkBreakpoints = <Breakpoint>[
     Breakpoint(start: mobileStart, end: mobileEnd, name: MOBILE),

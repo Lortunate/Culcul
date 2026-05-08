@@ -20,10 +20,7 @@ final searchSuggestionsProvider = FutureProvider.autoDispose
       final result = await ref
           .watch(searchRepositoryProvider)
           .getSuggestions(term, cancelToken: cancelToken);
-      return result.when(
-        success: (data) => data,
-        failure: (error) => throw error,
-      );
+      return result.when(success: (data) => data, failure: (error) => throw error);
     });
 
 final defaultSearchProvider =
@@ -78,7 +75,8 @@ class SearchResultController extends AsyncNotifier<SearchResultPage?> {
           .read(searchRepositoryProvider)
           .search(query: nextQuery, cancelToken: cancelToken);
       return result.when(
-        success: (newData) => newData.copyWith(items: [...oldState.items, ...newData.items]),
+        success: (newData) =>
+            newData.copyWith(items: [...oldState.items, ...newData.items]),
         failure: (_) => oldState,
       );
     });
@@ -152,10 +150,7 @@ class TrendingRankingController extends AsyncNotifier<List<SearchTrendingKeyword
     final stopwatch = Stopwatch()..start();
     final hasCachedValue = await _hasCachedValue(ApiConstants.searchTrendingRanking);
     final result = await ref.watch(searchRepositoryProvider).getTrendingRanking();
-    final value = result.when(
-      success: (data) => data,
-      failure: (error) => throw error,
-    );
+    final value = result.when(success: (data) => data, failure: (error) => throw error);
     FeatureFlowPerfLogger.log(
       chain: 'search.hot_ranking',
       stage: 'initial_data',
@@ -185,10 +180,7 @@ class TrendingRankingController extends AsyncNotifier<List<SearchTrendingKeyword
       return;
     }
 
-    final next = result.when(
-      success: (data) => data,
-      failure: (_) => previous,
-    );
+    final next = result.when(success: (data) => data, failure: (_) => previous);
     if (_sameTrendingItems(previous, next)) {
       FeatureFlowPerfLogger.log(
         chain: 'search.hot_ranking',

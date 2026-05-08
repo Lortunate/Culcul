@@ -17,7 +17,11 @@ class NotificationSessionSync {
     required int ownerUid,
     bool force = false,
   }) async {
-    if (!await repo.cleanupPolicy.shouldSync(ownerUid: ownerUid, scope: 'unread', force: force)) {
+    if (!await repo.cleanupPolicy.shouldSync(
+      ownerUid: ownerUid,
+      scope: 'unread',
+      force: force,
+    )) {
       return const Success(null);
     }
     return (await repo.requestApiResult(() => repo.api.getUnreadCount())).when(
@@ -77,7 +81,11 @@ class NotificationSessionSync {
     bool force = false,
   }) async {
     final scope = 'sessions:${sessionType.value}:${endTs == null ? "head" : "older"}';
-    if (!await repo.cleanupPolicy.shouldSync(ownerUid: ownerUid, scope: scope, force: force)) {
+    if (!await repo.cleanupPolicy.shouldSync(
+      ownerUid: ownerUid,
+      scope: scope,
+      force: force,
+    )) {
       return const Success(null);
     }
 

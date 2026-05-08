@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
@@ -12,7 +13,8 @@ import 'package:culcul/features/notification/domain/entities/image_upload_result
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
-import 'package:drift/drift.dart';
+import 'package:dio/dio.dart';
+import 'package:drift/drift.dart' show Value;
 import 'package:uuid/uuid.dart';
 
 class NotificationMessageSendService with NotificationMessageSendHelpersMixin {
@@ -23,9 +25,28 @@ class NotificationMessageSendService with NotificationMessageSendHelpersMixin {
   @override
   late final NotificationMessageSupport support = NotificationMessageSupport(repo);
 
-  Future<Result<ImageUploadResult, AppError>> uploadImage(File file) async {
-    final result = await repo.requestApiResult(() => repo.api.uploadImage(file: file));
-    return result;
+  Future<Result<ImageUploadResult, AppError>> uploadImage(
+    Uint8List bytes,
+    String filename,
+  ) async {
+    return repo.requestApiResult(() async {
+      final formData = FormData.fromMap({
+        'file_up': MultipartFile.fromBytes(bytes, filename: filename),
+        'biz': 'draw',
+        'category': 'daily',
+        'build': '0',
+        'mobi_app': 'web',
+      });
+      final response = await repo.dio.post<Map<String, dynamic>>(
+        'https://api.vc.bilibili.com/api/v1/drawImage/upload',
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+      return ApiResponse<ImageUploadResponse>.fromJson(
+        response.data!,
+        (json) => ImageUploadResponse.fromJson(json as Map<String, dynamic>),
+      );
+    });
   }
 
   Future<Result<SendMessageResult, AppError>> sendPrivateMessage({

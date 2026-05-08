@@ -14,6 +14,10 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_dynamic_view_model.g.dart';
 
+// Architecture note: This view model reads the domain repository directly
+// instead of routing through dynamic_workflows.dart. The dynamic application
+// layer is reserved for multi-step orchestration, while this is a simple
+// single-call feed query kept local for readability.
 @Riverpod(keepAlive: true)
 class UserDynamicNotifier extends _$UserDynamicNotifier
     with CursorPagedAsyncNotifier<DynamicItem, String>, DynamicFeedController {
@@ -68,7 +72,8 @@ class UserDynamicNotifier extends _$UserDynamicNotifier
           ),
         );
     return result.when(
-      success: (feed) => CursorPage(items: feed.items, nextCursor: feed.offset, hasMore: feed.hasMore),
+      success: (feed) =>
+          CursorPage(items: feed.items, nextCursor: feed.offset, hasMore: feed.hasMore),
       failure: (_) => const CursorPage(items: [], nextCursor: null, hasMore: false),
     );
   }
