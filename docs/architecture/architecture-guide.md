@@ -194,3 +194,23 @@ Plan: `docs/superpowers/plans/2026-05-07-phase7-architecture-code-quality.md`
 10. Accessibility (Semantics on AppClickable, FollowButton, AppAvatar)
 
 **Remaining (6 cross-feature imports):** Deeply coupled state providers (liveRecommendProvider, userDynamicProvider, defaultSearchProvider, DynamicPostCard, TopicDetailPage) — legitimate cross-feature UI composition.
+
+## Phase 8 (Active): Architecture Optimization & Code Readability
+
+Started 2026-05-08. Deep audit revealed structural debts in core, app, UI, and feature layers.
+
+Spec: `docs/superpowers/specs/2026-05-08-phase8-architecture-optimization-design.md`
+Plan: `docs/superpowers/plans/2026-05-08-phase8-architecture-optimization.md`
+
+**Planned:**
+1. Core session consolidation (13 → 5 files, fix 2 dynamic-typed providers)
+2. Error handling consolidation (remove duplicate DioException mapping)
+3. Core barrel expansion (export useful public API surface)
+4. Provider overrides refactoring (extract 5 adapters to features, fix UnimplementedError)
+5. ProviderScope fix (move override from build() to main())
+6. Route sub-file rename (primary/secondary → content/social/notification)
+7. UI boundary enforcement (move ~15 domain widgets to features)
+8. UI barrel expansion (export all generic widgets)
+9. Feature-specific constants cleanup (move home constants from ui/responsive/)
+10. Notification architecture fixes (dart:io leak, misplaced application code)
+11. Pagination documentation (document dual strategy)
