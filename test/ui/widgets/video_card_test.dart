@@ -1,4 +1,4 @@
-import 'package:culcul/features/video/presentation/widgets/video_card.dart';
+import 'package:culcul/ui/widgets/cards/video_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

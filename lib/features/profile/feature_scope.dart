@@ -4,7 +4,6 @@ import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/profile/application/follow_list_adapter.dart';
 import 'package:culcul/features/profile/application/profile_lookup_adapter.dart';
 import 'package:culcul/features/profile/data/profile_repository_impl.dart';
-import 'package:culcul/features/profile/data/relation_repository_impl.dart';
 import 'package:riverpod/misc.dart' show Override;
 
 export 'data/profile_cache_repository.dart' show profileCacheRepositoryProvider;
@@ -21,9 +20,6 @@ class ProfileFeatureScope {
       }),
       userProfileLookupProvider.overrideWith((ref) {
         return ProfileLookupAdapter(ref);
-      }),
-      crossRelationRepositoryProvider.overrideWith((ref) {
-        return ref.read(relationRepositoryProvider);
       }),
       modifyRelationProvider.overrideWith((ref) {
         return ({required mid, required isFollow}) => ref

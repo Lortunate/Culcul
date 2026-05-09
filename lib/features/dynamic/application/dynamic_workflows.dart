@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:culcul/features/dynamic/feature_scope.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/core/errors/app_error.dart';
@@ -141,13 +139,13 @@ class PublishDynamicWorkflow {
 
   Future<Result<void, AppError>> call({
     required String content,
-    required List<File> images,
+    required List<DynamicUploadImageAsset> images,
     String? csrf,
   }) async {
     return (await _resolveCsrf(csrf)).when(
       success: (csrfToken) async {
         final uploadedImagesResult = await _repository.uploadImagesWithCsrf(
-          files: images,
+          assets: images,
           csrf: csrfToken,
         );
         return uploadedImagesResult.when(

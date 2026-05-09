@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:culcul/features/notification/presentation/chat_page_commands.dart';
+import 'package:culcul/features/notification/application/chat_command_workflow.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

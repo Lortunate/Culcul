@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:culcul/features/notification/presentation/chat_page_commands.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/data/pagination/paged_list_state.dart';
 import 'package:culcul/core/utils/list_utils.dart';
+import 'package:culcul/features/notification/application/chat_command_workflow.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/feature_scope.dart';

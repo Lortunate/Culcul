@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/core/errors/app_error.dart';
@@ -76,7 +76,11 @@ void main() {
       final stopwatch = Stopwatch()..start();
       final result = await workflow.call(
         content: 'hello',
-        images: <File>[File('1.png'), File('2.png'), File('3.png')],
+        images: <DynamicUploadImageAsset>[
+          _asset('1.png'),
+          _asset('2.png'),
+          _asset('3.png'),
+        ],
       );
       stopwatch.stop();
 
@@ -96,7 +100,11 @@ void main() {
 
       final result = await workflow.call(
         content: 'hello',
-        images: <File>[File('1.png'), File('2.png'), File('3.png')],
+        images: <DynamicUploadImageAsset>[
+          _asset('1.png'),
+          _asset('2.png'),
+          _asset('3.png'),
+        ],
       );
 
       expect(result.isFailure, isTrue);
@@ -109,7 +117,7 @@ void main() {
 
       final result = await workflow.call(
         content: 'hello',
-        images: <File>[File('1.png')],
+        images: <DynamicUploadImageAsset>[_asset('1.png')],
         csrf: 'injected-csrf',
       );
 
@@ -147,20 +155,21 @@ class _FakeDynamicRepository extends Fake implements DynamicRepository {
 
   @override
   Future<Result<List<DynamicUploadImageData>, AppError>> uploadImagesWithCsrf({
-    required List<File> files,
+    required List<DynamicUploadImageAsset> assets,
     required String csrf,
   }) async {
     uploadBatchCalls++;
-    if (files.isEmpty) {
+    if (assets.isEmpty) {
       return const Success(<DynamicUploadImageData>[]);
     }
 
     try {
-      final uploaded = await executor.mapConcurrent<File, DynamicUploadImageData>(
-        items: files,
+      final uploaded = await executor
+          .mapConcurrent<DynamicUploadImageAsset, DynamicUploadImageData>(
+        items: assets,
         profile: NetworkConcurrencyProfile.upload,
         scope: 'test_dynamic_upload_batch',
-        mapper: (file) async {
+        mapper: (asset) async {
           final callIndex = uploadCalls;
           uploadCalls++;
           uploadedCsrfValues.add(csrf);
@@ -241,6 +250,13 @@ ArticleDetailData _buildArticleDetail() {
       dynamicCount: 0,
     ),
     blocks: <ArticleBlock>[],
+  );
+}
+
+DynamicUploadImageAsset _asset(String filename) {
+  return DynamicUploadImageAsset(
+    filename: filename,
+    bytes: Uint8List.fromList(<int>[1, 2, 3]),
   );
 }
 

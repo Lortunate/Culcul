@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/features/dynamic/data/dtos/dynamic_dtos.dart';
@@ -126,7 +124,7 @@ abstract class DynamicApi {
   @POST('/x/dynamic/feed/draw/upload_bfs')
   @MultiPart()
   Future<ApiResponse<DynamicUploadImageData>> uploadImage({
-    @Part(name: 'file_up') required File file,
+    @Part(name: 'file_up') required MultipartFile file,
     @Part(name: 'category') String category = 'daily',
     @Part(name: 'csrf') required String csrf,
   });

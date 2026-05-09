@@ -1,18 +1,18 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
-import 'package:culcul/features/video/presentation/widgets/comments/comment_images.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/users/app_avatar.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
+import 'package:culcul/ui/widgets/comments/comment_images.dart';
 import 'package:culcul/ui/widgets/inputs/app_selectable_text.dart';
-import 'package:culcul/features/dynamic/presentation/widgets/bilibili_emoji_text.dart';
-import 'package:culcul/features/profile/presentation/widgets/user_tags.dart';
 import 'package:flutter/material.dart';
+import 'package:culcul/ui/widgets/text/bilibili_emoji_text.dart';
+import 'package:culcul/ui/widgets/users/user_tags.dart';
 
-part 'comment_item.header.dart';
-part 'comment_item.content.dart';
-part 'comment_item.footer.dart';
-part 'comment_item.replies.dart';
+part 'comment_item/comment_item.header.dart';
+part 'comment_item/comment_item.content.dart';
+part 'comment_item/comment_item.footer.dart';
+part 'comment_item/comment_item.replies.dart';
 
 class CommentItemWidget extends StatelessWidget {
   final CommentItem item;

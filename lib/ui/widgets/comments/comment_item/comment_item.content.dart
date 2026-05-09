@@ -1,4 +1,4 @@
-part of 'comment_item.dart';
+part of '../comment_item.dart';
 
 class _Content extends StatelessWidget {
   final CommentContent content;

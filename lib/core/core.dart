@@ -1,6 +1,5 @@
 export 'errors/app_error.dart';
 export 'errors/error_handler.dart';
-export 'errors/exceptions.dart';
 export 'data/data.dart';
 export 'constants/api_constants.dart';
 export 'constants/app_dimens.dart';

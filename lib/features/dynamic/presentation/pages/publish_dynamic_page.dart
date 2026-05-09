@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/publish_dynamic_view_model.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/emoji_picker.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/publish_dynamic_bottom_toolbar.dart';
@@ -107,8 +108,19 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
     if (_controller.text.trim().isEmpty && _images.isEmpty) return;
     final t = Translations.of(context);
     final notifier = ref.read(publishDynamicViewModelProvider.notifier);
+    final assets = <DynamicUploadImageAsset>[];
+    for (final image in _images) {
+      assets.add(
+        DynamicUploadImageAsset(
+          filename: image.uri.pathSegments.isNotEmpty
+              ? image.uri.pathSegments.last
+              : 'upload.jpg',
+          bytes: await image.readAsBytes(),
+        ),
+      );
+    }
 
-    final error = await notifier.publish(content: _controller.text, images: _images);
+    final error = await notifier.publish(content: _controller.text, images: assets);
     if (error == null) {
       if (mounted) {
         Navigator.pop(context);

@@ -3,7 +3,7 @@ import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/core/contracts/search_service_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/core/session/search_providers.dart';
+import 'package:culcul/features/search/data/search_repository_impl.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// Bridges core's SearchService contract with search's repository.
@@ -13,6 +13,6 @@ class SearchServiceAdapter implements SearchService {
 
   @override
   Future<Result<SearchResultPage, AppError>> search({required SearchQuery query}) {
-    return _ref.read(crossSearchRepositoryProvider).search(query: query);
+    return _ref.read(searchRepositoryProvider).search(query: query);
   }
 }

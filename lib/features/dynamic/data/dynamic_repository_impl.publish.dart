@@ -37,21 +37,27 @@ mixin _DynamicRepositoryPublishApis on _DynamicRepositoryAccess {
   }
 
   Future<Result<List<DynamicUploadImageData>, AppError>> uploadImagesWithCsrf({
-    required List<File> files,
+    required List<DynamicUploadImageAsset> assets,
     required String csrf,
   }) async {
-    if (files.isEmpty) {
+    if (assets.isEmpty) {
       return const Success(<DynamicUploadImageData>[]);
     }
 
     return requestResult(() async {
-      return concurrencyExecutor.mapConcurrent<File, DynamicUploadImageData>(
-        items: files,
+      return concurrencyExecutor.mapConcurrent<DynamicUploadImageAsset, DynamicUploadImageData>(
+        items: assets,
         profile: NetworkConcurrencyProfile.upload,
         scope: 'dynamic_publish_upload',
-        mapper: (file) async {
+        mapper: (asset) async {
           final uploadResult = await requestApiResult(
-            () => api.uploadImage(file: file, csrf: csrf),
+            () => api.uploadImage(
+              file: MultipartFile.fromBytes(
+                asset.bytes,
+                filename: asset.filename,
+              ),
+              csrf: csrf,
+            ),
           );
           return uploadResult.when(
             success: (data) => data,

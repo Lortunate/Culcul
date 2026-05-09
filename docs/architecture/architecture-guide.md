@@ -109,7 +109,7 @@ features/<name>/
 | history | ✓ | ✓ | n/a | ✓ | ✓ | ✓ | ✓ | FULL |
 | home    | ✓ | ✓ | n/a | ✓ | ✓ | ✓ | ✓ | FULL |
 | live    | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
-| notification | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
+| notification | ✓ | ✓ | no | ✓ | ✓ | ✓ | ✓ | PARTIAL |
 | profile | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
 | ranking | ✓ | ✓ | n/a | ✓ | ✓ | ✓ | ✓ | FULL |
 | search  | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
@@ -117,7 +117,7 @@ features/<name>/
 | to_view | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
 | video   | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
 
-**Legend:** ✓ = present, n/a = not needed (simple CRUD features without orchestration logic). All 13 features are FULL as of Phase 6.
+**Legend:** ✓ = present, `n/a` = not needed (simple CRUD features without orchestration logic), `no` = currently missing and tracked by the active phase. Notification still needs an explicit `application/` seam.
 
 ### Barrel Exports
 
@@ -178,8 +178,8 @@ Archived plan: `docs/superpowers/plans/archive/2026-05-07-phase6-architecture-op
 
 Completed 2026-05-07. Directory reorganization, cross-feature decoupling, error handling unification, accessibility.
 
-Spec: `docs/superpowers/specs/2026-05-07-phase7-architecture-code-quality-design.md`
-Plan: `docs/superpowers/plans/2026-05-07-phase7-architecture-code-quality.md`
+Archived spec: `docs/superpowers/specs/archive/2026-05-07-phase7-architecture-code-quality-design.completed.md`
+Archived plan: `docs/superpowers/plans/archive/2026-05-07-phase7-architecture-code-quality.completed.md`
 
 **Completed:**
 1. Core directory reorganization (`core/network/` + `core/pagination/` → `core/data/`)
@@ -193,24 +193,25 @@ Plan: `docs/superpowers/plans/2026-05-07-phase7-architecture-code-quality.md`
 9. Pattern standardization (home route_entry → function pattern)
 10. Accessibility (Semantics on AppClickable, FollowButton, AppAvatar)
 
-**Remaining (6 cross-feature imports):** Deeply coupled state providers (liveRecommendProvider, userDynamicProvider, defaultSearchProvider, DynamicPostCard, TopicDetailPage) — legitimate cross-feature UI composition.
+**Note:** A later 2026-05-08 audit found the residual cross-feature coupling was still materially larger than this closeout estimate. See Phase 8 for the refreshed current-state snapshot.
 
-## Phase 8 (Active): Architecture Optimization & Code Readability
+## Phase 8 (Complete): Architecture Rebaseline & Boundary Cleanup
 
-Started 2026-05-08. Deep audit revealed structural debts in core, app, UI, and feature layers.
+Completed 2026-05-09. The refreshed Phase 8 pass closed the remaining direct presentation-boundary leaks, tightened app/core public seams, and finished the documentation rebaseline.
 
-Spec: `docs/superpowers/specs/2026-05-08-phase8-architecture-optimization-design.md`
-Plan: `docs/superpowers/plans/2026-05-08-phase8-architecture-optimization.md`
+Archived spec: `docs/superpowers/specs/archive/2026-05-08-phase8-architecture-optimization-design.completed.md`
+Archived plan: `docs/superpowers/plans/archive/2026-05-08-phase8-architecture-optimization.completed.md`
 
-**Planned:**
-1. Core session consolidation (13 → 5 files, fix 2 dynamic-typed providers)
-2. Error handling consolidation (remove duplicate DioException mapping)
-3. Core barrel expansion (export useful public API surface)
-4. Provider overrides refactoring (extract 5 adapters to features, fix UnimplementedError)
-5. ProviderScope fix (move override from build() to main())
-6. Route sub-file rename (primary/secondary → content/social/notification)
-7. UI boundary enforcement (move ~15 domain widgets to features)
-8. UI barrel expansion (export all generic widgets)
-9. Feature-specific constants cleanup (move home constants from ui/responsive/)
-10. Notification architecture fixes (dart:io leak, misplaced application code)
-11. Pagination documentation (document dual strategy)
+**Completed:**
+1. Added explicit architecture guards for `core -> features` imports and cross-feature presentation internals
+2. Removed the unnecessary relation/search repository seams from `core/session/**`
+3. Tightened `core/core.dart` so `errors/exceptions.dart` is no longer part of the public barrel
+4. Removed `app/app.dart -> features/settings/presentation/**` coupling by routing theme state through the settings public seam
+5. Moved reusable video cards, thumbnails, skeletons, action sheets, comment widgets, emoji text, and user tags into `ui/widgets/**`
+6. Replaced the last direct cross-feature presentation imports with public feature seams (`search.dart`, `live.dart`, `dynamic.dart`, `dynamic/route_entry.dart`)
+7. Added a real `application/` seam for notification chat command workflow
+8. Removed `dart:io` / `File` from the dynamic domain repository contract via `DynamicUploadImageAsset`
+
+**Current snapshot:**
+1. Direct `features/** -> features/**/presentation/(widgets|pages|view_models)` imports: `0`
+2. Remaining feature-to-feature imports are public seam imports only (`search.dart`, `live.dart`, `dynamic.dart`)

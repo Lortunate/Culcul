@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/request_cancel_token.dart';
 import 'package:culcul/core/result/result.dart';
@@ -87,7 +85,7 @@ abstract class DynamicRepository {
   Future<Result<String, AppError>> getPublishCsrf();
 
   Future<Result<List<DynamicUploadImageData>, AppError>> uploadImagesWithCsrf({
-    required List<File> files,
+    required List<DynamicUploadImageAsset> assets,
     required String csrf,
   });
 

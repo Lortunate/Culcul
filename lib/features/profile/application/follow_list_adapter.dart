@@ -2,7 +2,7 @@ import 'package:culcul/core/contracts/follow_list_contract.dart';
 import 'package:culcul/core/contracts/relation_user_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/core/session/relation_providers.dart';
+import 'package:culcul/features/profile/data/relation_repository_impl.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 /// Bridges core's FollowListService contract with profile's relation repository.
@@ -15,6 +15,6 @@ class FollowListAdapter implements FollowListService {
     int vmid, {
     int page = 1,
   }) {
-    return _ref.read(crossRelationRepositoryProvider).getFollowings(vmid, page: page);
+    return _ref.read(relationRepositoryProvider).getFollowings(vmid, page: page);
   }
 }
