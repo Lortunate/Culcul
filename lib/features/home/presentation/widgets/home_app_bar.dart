@@ -1,5 +1,5 @@
+import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/core/session/user_providers.dart';
-import 'package:culcul/core/session/session_lifecycle_providers.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/users/app_avatar.dart';
 import 'package:culcul/ui/widgets/inputs/app_search_bar.dart';

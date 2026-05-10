@@ -1,6 +1,10 @@
 # Phase 8: Architecture Optimization & Code Readability
 
-**Status:** ACTIVE
+> **Superseded on 2026-05-09:** This archive is preserved as historical analysis only. Do not treat it as the active planning baseline. Phase 9 replaced it because the remaining work changed shape after several Phase 8 moves had already landed.
+
+**Status:** SUPERSEDED
+**Replaced by spec:** `docs/superpowers/specs/2026-05-09-phase9-architecture-rebaseline-design.md`
+**Replaced by plan:** `docs/superpowers/plans/2026-05-09-phase9-architecture-rebaseline.md`
 **Date:** 2026-05-08
 **Goal:** Eliminate remaining architectural violations, consolidate over-fragmented modules, enforce domain boundaries, and improve code readability and maintainability.
 

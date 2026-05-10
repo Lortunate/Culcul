@@ -30,7 +30,7 @@ class UnreadCount extends _$UnreadCount {
       );
     }
 
-    final repository = ref.read(notificationRepositoryProvider);
+    final repository = ref.read(notificationRepositoryFacadeProvider);
     final stream = repository.watchUnreadCount(ownerUid: ownerUid);
     _subscription = stream.listen((summary) {
       state = AsyncData(summary);
@@ -45,7 +45,7 @@ class UnreadCount extends _$UnreadCount {
     final ownerUid = ref.read(notificationOwnerUidProvider);
     if (ownerUid == null) return;
     await ref
-        .read(notificationRepositoryProvider)
+        .read(notificationRepositoryFacadeProvider)
         .syncUnreadCount(ownerUid: ownerUid, force: true);
   }
 }

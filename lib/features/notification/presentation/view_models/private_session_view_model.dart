@@ -28,7 +28,7 @@ class PrivateSessionList extends _$PrivateSessionList
       return const CursorPage(items: [], nextCursor: null, hasMore: false);
     }
 
-    final repository = ref.read(notificationRepositoryProvider);
+    final repository = ref.read(notificationRepositoryFacadeProvider);
     if (isRefreshing || currentCursor == null) {
       await repository.syncSessions(ownerUid: ownerUid, force: true);
     } else {
@@ -61,7 +61,9 @@ class PrivateSessionList extends _$PrivateSessionList
 
   Future<void> _syncHeadAndRefresh(int ownerUid) async {
     try {
-      await ref.read(notificationRepositoryProvider).syncSessions(ownerUid: ownerUid);
+      await ref
+          .read(notificationRepositoryFacadeProvider)
+          .syncSessions(ownerUid: ownerUid);
       await refreshPage();
     } catch (_) {}
   }

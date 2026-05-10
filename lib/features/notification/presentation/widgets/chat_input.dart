@@ -1,13 +1,12 @@
 import 'package:culcul/i18n/i18n.dart';
-import 'dart:io';
-
+import 'package:culcul/features/notification/application/chat_page_commands.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ChatInput extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
-  final Function(File) onSendImage;
+  final ValueChanged<ChatImageAttachment> onSendImage;
 
   const ChatInput({
     super.key,
@@ -50,7 +49,11 @@ class ChatInput extends StatelessWidget {
                   final picker = ImagePicker();
                   final pickedFile = await picker.pickImage(source: ImageSource.gallery);
                   if (pickedFile != null) {
-                    onSendImage(File(pickedFile.path));
+                    final bytes = await pickedFile.readAsBytes();
+                    final filename = pickedFile.name.isNotEmpty
+                        ? pickedFile.name
+                        : pickedFile.path.split('/').last.split('\\').last;
+                    onSendImage(ChatImageAttachment(bytes: bytes, filename: filename));
                   }
                 },
                 style: IconButton.styleFrom(

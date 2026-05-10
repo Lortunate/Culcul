@@ -11,12 +11,10 @@ mixin _ChatSendMixin on _$Chat, _ChatHelpersMixin {
     );
   }
 
-  Future<ChatPageCommandResult> sendImage(File imageFile) async {
-    final bytes = await imageFile.readAsBytes();
-    final filename = imageFile.path.split('/').last.split('\\').last;
+  Future<ChatPageCommandResult> sendImage(ChatImageAttachment image) async {
     final uploadResult = await ref
-        .read(notificationRepositoryProvider)
-        .uploadImage(bytes, filename);
+        .read(notificationRepositoryFacadeProvider)
+        .uploadImage(image.bytes, image.filename);
     final uploadRes = uploadResult.dataOrNull;
     if (uploadRes == null) {
       return _setPagingError(
@@ -28,8 +26,8 @@ mixin _ChatSendMixin on _$Chat, _ChatHelpersMixin {
       url: uploadRes.imageUrl,
       height: uploadRes.imageHeight,
       width: uploadRes.imageWidth,
-      imageType: filename.split('.').last,
-      size: bytes.length / 1024,
+      imageType: image.filename.split('.').last,
+      size: image.bytes.length / 1024,
     );
     return _send(messageType: PrivateMessageType.image, content: content);
   }
@@ -43,7 +41,7 @@ mixin _ChatSendMixin on _$Chat, _ChatHelpersMixin {
       return _setPagingError(AppError.auth('Not logged in'));
     }
 
-    final repository = ref.read(notificationRepositoryProvider);
+    final repository = ref.read(notificationRepositoryFacadeProvider);
     final result = await repository.sendPrivateMessage(
       ownerUid: ownerUid,
       receiverId: talkerId,

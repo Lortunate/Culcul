@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
 import 'package:dio/dio.dart' hide Headers;
@@ -10,16 +8,6 @@ part 'notification_api.g.dart';
 @RestApi()
 abstract class NotificationApi {
   factory NotificationApi(Dio dio) = _NotificationApi;
-
-  @POST('https://api.vc.bilibili.com/api/v1/drawImage/upload')
-  @MultiPart()
-  Future<ApiResponse<ImageUploadResponse>> uploadImage({
-    @Part(name: 'file_up') required File file,
-    @Part(name: 'biz') String biz = 'draw',
-    @Part(name: 'category') String category = 'daily',
-    @Part(name: 'build') int build = 0,
-    @Part(name: 'mobi_app') String mobiApp = 'web',
-  });
 
   @GET('https://api.bilibili.com/x/msgfeed/unread')
   Future<ApiResponse<UnreadCountModel>> getUnreadCount();

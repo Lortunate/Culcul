@@ -5,8 +5,7 @@ import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
-import 'package:culcul/features/video/presentation/widgets/video_card.dart';
-import 'package:culcul/features/video/presentation/widgets/video_card_skeleton.dart';
+import 'package:culcul/ui/compositions/feed_cards/feed_cards.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

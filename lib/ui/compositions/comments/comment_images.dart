@@ -14,7 +14,6 @@ class CommentImagesWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (pictures.isEmpty) return const SizedBox.shrink();
 
-    // Extract URLs for preview
     final imageUrls = pictures.map((p) => p.imgSrc).toList();
 
     if (pictures.length == 1) {
@@ -29,19 +28,14 @@ class CommentImagesWidget extends StatelessWidget {
     CommentPicture picture,
     List<String> imageUrls,
   ) {
-    // Single image logic
-    // Limit max size to avoid taking too much space
-    // Aspect ratio can be respected but with limits
     final double? w = picture.imgWidth > 0 ? picture.imgWidth.toDouble() : null;
     final double? h = picture.imgHeight > 0 ? picture.imgHeight.toDouble() : null;
 
-    // Calculate aspect ratio
     double aspectRatio = 1.0;
     if (w != null && h != null && h > 0) {
       aspectRatio = w / h;
     }
 
-    // Constraints
     const double maxSide = 200.0;
     const double minSide = 100.0;
     final displaySize = _resolveSingleImageDisplaySize(
@@ -51,7 +45,6 @@ class CommentImagesWidget extends StatelessWidget {
     );
     final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
 
-    // Simple constrained box approach
     return GestureDetector(
       onTap: () => _openPreview(context, imageUrls, 0),
       child: Hero(
@@ -85,11 +78,8 @@ class CommentImagesWidget extends StatelessWidget {
     List<CommentPicture> pictures,
     List<String> imageUrls,
   ) {
-    // 3 columns grid
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Calculate item size
-        // spacing = 8
         const int crossAxisCount = 3;
         const double spacing = 8.0;
         final double totalWidth = constraints.maxWidth;
@@ -97,9 +87,6 @@ class CommentImagesWidget extends StatelessWidget {
             (totalWidth - (spacing * (crossAxisCount - 1))) / crossAxisCount;
         final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
         final decodeSize = _toCacheDimension(itemSize, devicePixelRatio);
-
-        // We might want to cap the item size if it's too big (e.g. on tablet)
-        // But usually in comments column it's fine.
 
         return Wrap(
           spacing: spacing,

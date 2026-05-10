@@ -40,7 +40,7 @@ class NotificationLifecycleSync extends _$NotificationLifecycleSync
   }
 
   Future<void> _syncOnResume(int ownerUid) async {
-    final repository = ref.read(notificationRepositoryProvider);
+    final repository = ref.read(notificationRepositoryFacadeProvider);
     await _concurrencyExecutor.runConcurrent(
       tasks: <ConcurrentTask<dynamic>>[
         ConcurrentTask<Object?>(

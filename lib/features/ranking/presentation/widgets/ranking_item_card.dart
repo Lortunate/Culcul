@@ -3,7 +3,7 @@ import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/ranking/domain/entities/ranking_video.dart';
 import 'package:culcul/features/ranking/presentation/widgets/rank_badge.dart';
 import 'package:culcul/ui/widgets/text/icon_text.dart';
-import 'package:culcul/features/video/presentation/widgets/video_list_card.dart';
+import 'package:culcul/ui/compositions/feed_cards/feed_cards.dart';
 import 'package:flutter/material.dart';
 
 class RankingItemCard extends StatelessWidget {

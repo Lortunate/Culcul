@@ -6,6 +6,7 @@ import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
+import 'package:culcul/features/notification/data/notification_mapper.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.message_send_helpers.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.message_support.dart';
@@ -13,6 +14,7 @@ import 'package:culcul/features/notification/domain/entities/image_upload_result
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
+import 'package:culcul/features/notification/domain/entities/system_notice.dart';
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:uuid/uuid.dart';
@@ -29,7 +31,7 @@ class NotificationMessageSendService with NotificationMessageSendHelpersMixin {
     Uint8List bytes,
     String filename,
   ) async {
-    return repo.requestApiResult(() async {
+    final result = await repo.requestApiResult(() async {
       final formData = FormData.fromMap({
         'file_up': MultipartFile.fromBytes(bytes, filename: filename),
         'biz': 'draw',
@@ -47,6 +49,7 @@ class NotificationMessageSendService with NotificationMessageSendHelpersMixin {
         (json) => ImageUploadResponse.fromJson(json as Map<String, dynamic>),
       );
     });
+    return result.map((response) => response.toDomain());
   }
 
   Future<Result<SendMessageResult, AppError>> sendPrivateMessage({
@@ -148,7 +151,7 @@ class NotificationMessageSendService with NotificationMessageSendHelpersMixin {
       },
     );
 
-    return responseResult;
+    return responseResult.map((response) => response.toDomain());
   }
 
   Future<Result<ReplyResponse, AppError>> fetchReplyLikeAtResponse({
@@ -159,7 +162,7 @@ class NotificationMessageSendService with NotificationMessageSendHelpersMixin {
     return support.fetchReplyLikeAtResponse(type: type, id: id, time: time);
   }
 
-  Future<Result<List<SystemNotificationItem>, AppError>> fetchSystemNotifications() {
+  Future<Result<List<SystemNotice>, AppError>> fetchSystemNotifications() {
     return support.fetchSystemNotifications();
   }
 

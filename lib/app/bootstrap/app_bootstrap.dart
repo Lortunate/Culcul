@@ -1,19 +1,21 @@
 import 'dart:io';
 
+import 'package:culcul/app/runtime/app_runtime.dart';
+import 'package:culcul/app/runtime/stores/search_history_store.dart';
+import 'package:culcul/app/runtime/stores/session_store.dart';
+import 'package:culcul/app/runtime/stores/settings_store.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio_cache_interceptor_file_store/dio_cache_interceptor_file_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
-
-import 'package:culcul/app/bootstrap/app_dependencies.dart';
 import 'package:culcul/i18n/strings.g.dart';
 
 class AppBootstrap {
   const AppBootstrap._();
 
-  static Future<AppDependencies> initialize() async {
+  static Future<AppRuntime> initialize() async {
     WidgetsFlutterBinding.ensureInitialized();
     await Hive.initFlutter();
 
@@ -34,14 +36,14 @@ class AppBootstrap {
     LocaleSettings.useDeviceLocale();
     SystemChrome.setSystemUIOverlayStyle(_systemUiOverlayStyle);
 
-    return AppDependencies(
+    return AppRuntime(
       cookieJar: PersistCookieJar(
         storage: FileStorage('${documentDirectory.path}/.cookies/'),
       ),
       cacheStore: FileCacheStore('${cacheDirectory.path}/http_cache'),
-      sessionStorageBox: sessionStorageBox,
-      settingsStorageBox: settingsStorageBox,
-      searchStorageBox: searchStorageBox,
+      sessionStore: SessionStore(sessionStorageBox),
+      settingsStore: SettingsStore(settingsStorageBox),
+      searchHistoryStore: SearchHistoryStore(searchStorageBox),
     );
   }
 

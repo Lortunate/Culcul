@@ -17,7 +17,7 @@ class SystemNotificationList extends _$SystemNotificationList {
     final ownerUid = ref.watch(notificationOwnerUidProvider);
     if (ownerUid == null) return const <SystemNotice>[];
 
-    final repository = ref.read(notificationRepositoryProvider);
+    final repository = ref.read(notificationRepositoryFacadeProvider);
     final stream = repository.watchSystemNotices(ownerUid: ownerUid);
     _subscription = stream.listen((items) {
       state = AsyncData(items);
@@ -34,7 +34,7 @@ class SystemNotificationList extends _$SystemNotificationList {
     final ownerUid = ref.read(notificationOwnerUidProvider);
     if (ownerUid == null) return;
     await ref
-        .read(notificationRepositoryProvider)
+        .read(notificationRepositoryFacadeProvider)
         .syncFeedHead(ownerUid: ownerUid, type: NotificationFeedType.system);
   }
 }

@@ -1,6 +1,6 @@
 import 'package:culcul/core/utils/format_utils.dart';
+import 'package:culcul/features/dynamic/dynamic.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/dynamic/presentation/pages/topic_detail_page.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/ui/widgets/media/app_network_image.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +21,7 @@ class SearchTopicItem extends StatelessWidget {
         if (item.topicId != 0) {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => TopicDetailPage(
+              builder: (context) => buildTopicDetailRoutePage(
                 topicId: item.topicId,
                 topicName: FormatUtils.stripHtmlTags(item.title),
               ),

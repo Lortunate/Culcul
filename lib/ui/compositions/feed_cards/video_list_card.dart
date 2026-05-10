@@ -1,8 +1,8 @@
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/ui/widgets/cards/app_card_container.dart';
+import 'package:culcul/ui/compositions/feed_cards/video_thumbnail.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
+import 'package:culcul/ui/widgets/cards/app_card_container.dart';
 import 'package:culcul/ui/widgets/text/icon_text.dart';
-import 'package:culcul/features/video/presentation/widgets/video_thumbnail.dart';
 import 'package:flutter/material.dart';
 
 part 'video_list_card/body.dart';

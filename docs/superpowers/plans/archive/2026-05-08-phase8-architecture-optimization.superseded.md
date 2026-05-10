@@ -1,8 +1,12 @@
 # Phase 8: Architecture Optimization & Code Readability — Implementation Plan
 
+> **Superseded on 2026-05-09:** This archive is preserved as historical planning context only. Do not execute it as the active baseline. Use `docs/superpowers/specs/2026-05-09-phase9-architecture-rebaseline-design.md` and `docs/superpowers/plans/2026-05-09-phase9-architecture-rebaseline.md` instead.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Spec:** `docs/superpowers/specs/2026-05-08-phase8-architecture-optimization-design.md`
+**Status:** SUPERSEDED
+**Archived spec:** `docs/superpowers/specs/archive/2026-05-08-phase8-architecture-optimization-design.superseded.md`
+**Replaced by:** `docs/superpowers/specs/2026-05-09-phase9-architecture-rebaseline-design.md`
 **Date:** 2026-05-08
 
 ## Execution Order

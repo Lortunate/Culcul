@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
+import 'package:culcul/features/notification/data/notification_mapper.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';
+import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 
 class NotificationMessageSync {
@@ -84,7 +86,10 @@ class NotificationMessageSync {
             ownerUid: ownerUid,
             talkerId: talkerId,
             sessionType: sessionType,
-            emojis: response.emojiInfos ?? const <PrivateMessageEmojiInfo>[],
+            emojis: response.emojiInfos
+                    ?.map((emoji) => emoji.toDomain())
+                    .toList(growable: false) ??
+                const <PrivateMessageEmoji>[],
             now: now,
           );
           await repo.messageSendService.reconcileTemporaryMessages(

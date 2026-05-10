@@ -1,7 +1,7 @@
 import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/ui/compositions/feed_cards/video_thumbnail.dart';
 import 'package:culcul/ui/widgets/cards/app_card_container.dart';
 import 'package:culcul/ui/widgets/overlays/app_overlay_tag.dart';
-import 'package:culcul/features/video/presentation/widgets/video_thumbnail.dart';
 import 'package:flutter/material.dart';
 
 part 'video_card/content.dart';
@@ -58,6 +58,7 @@ class VideoCard extends StatelessWidget {
   int get _viewCount => video?.stat.view ?? viewCount!;
   int get _danmakuCount => video?.stat.danmaku ?? danmakuCount!;
   String? get _reason => video?.rcmdReason ?? reason;
+
   @override
   Widget build(BuildContext context) {
     final content = _VideoCardContent(

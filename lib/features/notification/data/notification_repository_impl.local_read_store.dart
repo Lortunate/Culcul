@@ -24,7 +24,7 @@ class NotificationLocalReadStore {
     if (row == null) return null;
     final decoded = await jsonDecodeCompute(row.summaryJson);
     final dto = UnreadCountModel.fromJson(decoded as Map<String, dynamic>);
-    return dto;
+    return dto.toDomain();
   }
 
   Future<List<PrivateSession>> pageSessionsFromLocal({

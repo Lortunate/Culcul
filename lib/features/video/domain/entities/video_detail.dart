@@ -1,1 +1,1 @@
-export '../../data/dtos/video_detail_dto.dart';
+export 'video_detail_dto.dart';

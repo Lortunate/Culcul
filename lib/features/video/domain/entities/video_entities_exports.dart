@@ -1,4 +1,5 @@
 export 'comment_model.dart';
+export 'danmaku_model.dart';
 export 'player_info.dart';
 export 'play_url.dart';
 export 'related_video.dart';

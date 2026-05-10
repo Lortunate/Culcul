@@ -1,12 +1,10 @@
+import 'package:culcul/core/contracts/search_port.dart';
 import 'package:culcul/core/contracts/search_service_contract.dart';
-import 'package:culcul/features/search/domain/repositories/search_repository.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-/// Provides search repository access for cross-feature use.
-final crossSearchRepositoryProvider = Provider<SearchRepository>((ref) {
-  throw UnimplementedError(
-    'crossSearchRepositoryProvider must be overridden at bootstrap',
-  );
+/// Provides feature-neutral search access for cross-feature use.
+final searchPortProvider = Provider<SearchPort>((ref) {
+  throw UnimplementedError('searchPortProvider must be overridden at bootstrap');
 });
 
 /// Provides search service. Must be overridden at bootstrap.

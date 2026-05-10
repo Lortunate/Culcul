@@ -5,7 +5,7 @@ import 'package:culcul/ui/widgets/feedback/app_empty_state_widget.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_card.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/layout/refresh_header_footer.dart';
-import 'package:culcul/features/video/presentation/widgets/video_list_skeleton.dart';
+import 'package:culcul/ui/compositions/feed_cards/feed_cards.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
 import 'package:easy_refresh/easy_refresh.dart';

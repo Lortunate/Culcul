@@ -1,5 +1,6 @@
 import 'package:culcul/core/utils/json_compute.dart';
 import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
+import 'package:culcul/features/notification/data/notification_mapper.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
@@ -21,7 +22,7 @@ class NotificationStreamWatchers {
           try {
             final decoded = await jsonDecodeCompute(row.summaryJson);
             final dto = UnreadCountModel.fromJson(decoded as Map<String, dynamic>);
-            return dto;
+            return dto.toDomain();
           } catch (_) {
             return NotificationRepositoryImpl.emptySummary;
           }
@@ -46,7 +47,7 @@ class NotificationStreamWatchers {
             notices.add(
               SystemNotificationItem.fromJson(
                 (await jsonDecodeCompute(row.itemJson)) as Map<String, dynamic>,
-              ),
+              ).toDomain(),
             );
           }
           return notices;

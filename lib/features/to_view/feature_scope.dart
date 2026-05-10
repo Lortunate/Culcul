@@ -9,7 +9,7 @@ class ToViewFeatureScope {
 
   static List<Override> overrides() {
     return [
-      watchLaterActionsProvider.overrideWith((ref) {
+      watchLaterPortProvider.overrideWith((ref) {
         return WatchLaterAdapter(ref);
       }),
     ];

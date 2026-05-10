@@ -1,9 +1,9 @@
 import 'dart:async';
 
-import 'package:culcul/features/video/feature_scope.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/protos/dm.pb.dart';
+import 'package:culcul/features/video/domain/entities/danmaku_model.dart';
+import 'package:culcul/features/video/feature_scope.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'danmaku_view_model.g.dart';
@@ -13,7 +13,7 @@ class DanmakuProvider extends _$DanmakuProvider {
   @override
   FutureOr<void> build() {}
 
-  Future<Result<List<DanmakuElem>, AppError>> loadSegment({
+  Future<Result<List<DanmakuEntry>, AppError>> loadSegment({
     required int oid,
     required int pid,
     required int segmentIndex,
@@ -21,6 +21,6 @@ class DanmakuProvider extends _$DanmakuProvider {
     final result = await ref
         .read(danmakuRepositoryProvider)
         .fetchDanmakuSegment(oid: oid, pid: pid, segmentIndex: segmentIndex);
-    return result.map((value) => value.elems);
+    return result.map((value) => value.entries);
   }
 }

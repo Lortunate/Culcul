@@ -1,3 +1,4 @@
+import 'package:culcul/core/contracts/search_port.dart';
 import 'package:culcul/core/session/search_providers.dart';
 import 'package:culcul/features/search/application/search_service_adapter.dart';
 import 'package:culcul/features/search/data/search_repository_impl.dart';
@@ -10,8 +11,8 @@ class SearchFeatureScope {
 
   static List<Override> overrides() {
     return [
-      crossSearchRepositoryProvider.overrideWith((ref) {
-        return ref.read(searchRepositoryProvider);
+      searchPortProvider.overrideWith((ref) {
+        return ref.read(searchRepositoryProvider) as SearchPort;
       }),
       searchServiceProvider.overrideWith((ref) {
         return SearchServiceAdapter(ref);

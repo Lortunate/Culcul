@@ -10,6 +10,7 @@ import 'package:culcul/features/notification/data/notification_repository_impl.m
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/domain/entities/system_notice.dart';
 
 class NotificationMessageSupport {
   const NotificationMessageSupport(this.repo);
@@ -44,8 +45,7 @@ class NotificationMessageSupport {
     }
   }
 
-  Future<Result<List<SystemNotificationItem>, AppError>>
-  fetchSystemNotifications() async {
+  Future<Result<List<SystemNotice>, AppError>> fetchSystemNotifications() async {
     final sessionResult = await repo.requestApiResult(
       () => repo.api.getPrivateSessions(
         sessionType: PrivateSessionType.system.value,
@@ -56,7 +56,7 @@ class NotificationMessageSupport {
       success: (sessionRes) async {
         final talkerId = resolveSystemTalkerId(sessionRes);
         if (talkerId == null) {
-          return const Success(<SystemNotificationItem>[]);
+          return const Success(<SystemNotice>[]);
         }
 
         final msgsResult = await repo.requestApiResult(
@@ -71,7 +71,7 @@ class NotificationMessageSupport {
               msgsRes.messages?.map((msg) {
                 final contentMap = msg.contentMap;
                 final nestedContentMap = toJsonMap(contentMap?['content']);
-                return SystemNotificationItem(
+                return SystemNotice(
                   id: msg.msgSeqno,
                   title: firstNonEmptyString([
                     contentMap?['title'],
@@ -88,7 +88,7 @@ class NotificationMessageSupport {
                   ]),
                 );
               }).toList() ??
-              const <SystemNotificationItem>[],
+              const <SystemNotice>[],
         );
       },
       failure: (error) async => Failure(error),

@@ -1,4 +1,4 @@
-import 'package:culcul/features/video/presentation/widgets/video_list_skeleton.dart';
+import 'package:culcul/ui/compositions/feed_cards/feed_cards.dart';
 import 'package:flutter/material.dart';
 
 class SearchResultSkeleton extends StatelessWidget {

@@ -1,2 +1,4 @@
 export 'feature_scope.dart';
+export 'presentation/view_models/live_recommend_view_model.dart'
+    show liveRecommendProvider;
 export 'route_entry.dart';

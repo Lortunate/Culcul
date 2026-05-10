@@ -1,6 +1,6 @@
 # Architecture Guide
 
-Post-refactoring architecture for Culcul (BiliBili 3rd-party client). `lib/shared/` is fully retired.
+Current implemented baseline and active rebaseline target for Culcul (BiliBili 3rd-party client). `lib/shared/` is fully retired, but the repo is still in Phase 9 ownership cleanup rather than a fully settled end state.
 
 ## Directory Structure
 
@@ -99,25 +99,25 @@ features/<name>/
 └── feature_scope.dart # Feature-level provider scope
 ```
 
-### Feature Structure Compliance
+### Feature Structure Presence Snapshot
 
-| Feature | route_entry | feature_scope | application/ | data/ | domain/ | presentation/ | barrel | Status |
-|---------|:-----------:|:------------:|:------------:|:-----:|:-------:|:-------------:|:------:|:------:|
-| auth    | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
-| dynamic | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
-| favorites | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
-| history | ✓ | ✓ | n/a | ✓ | ✓ | ✓ | ✓ | FULL |
-| home    | ✓ | ✓ | n/a | ✓ | ✓ | ✓ | ✓ | FULL |
-| live    | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
-| notification | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
-| profile | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
-| ranking | ✓ | ✓ | n/a | ✓ | ✓ | ✓ | ✓ | FULL |
-| search  | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
-| settings | ✓ | ✓ | n/a | ✓ | ✓ | ✓ | ✓ | FULL |
-| to_view | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
-| video   | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | FULL |
+| Feature | route_entry | feature_scope | application/ | data/ | domain/ | presentation/ | barrel | Shape |
+|---------|:-----------:|:------------:|:------------:|:-----:|:-------:|:-------------:|:------:|:-----:|
+| auth    | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | PRESENT |
+| dynamic | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | PRESENT |
+| favorites | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | PRESENT |
+| history | ✓ | ✓ | n/a | ✓ | ✓ | ✓ | ✓ | PRESENT |
+| home    | ✓ | ✓ | n/a | ✓ | ✓ | ✓ | ✓ | PRESENT |
+| live    | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | PRESENT |
+| notification | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | PRESENT |
+| profile | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | PRESENT |
+| ranking | ✓ | ✓ | n/a | ✓ | ✓ | ✓ | ✓ | PRESENT |
+| search  | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | PRESENT |
+| settings | ✓ | ✓ | n/a | ✓ | ✓ | ✓ | ✓ | PRESENT |
+| to_view | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | PRESENT |
+| video   | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | PRESENT |
 
-**Legend:** ✓ = present, n/a = not needed (simple CRUD features without orchestration logic). All 13 features are FULL as of Phase 6.
+**Legend:** ✓ = present, n/a = not needed (simple CRUD features without orchestration logic). This table records directory/surface presence only. It does not mean the repo is currently boundary-clean or that Phase 9 is complete.
 
 ### Barrel Exports
 
@@ -178,8 +178,8 @@ Archived plan: `docs/superpowers/plans/archive/2026-05-07-phase6-architecture-op
 
 Completed 2026-05-07. Directory reorganization, cross-feature decoupling, error handling unification, accessibility.
 
-Spec: `docs/superpowers/specs/2026-05-07-phase7-architecture-code-quality-design.md`
-Plan: `docs/superpowers/plans/2026-05-07-phase7-architecture-code-quality.md`
+Archived spec: `docs/superpowers/specs/archive/2026-05-07-phase7-architecture-code-quality-design.completed.md`
+Archived plan: `docs/superpowers/plans/archive/2026-05-07-phase7-architecture-code-quality.completed.md`
 
 **Completed:**
 1. Core directory reorganization (`core/network/` + `core/pagination/` → `core/data/`)
@@ -193,24 +193,41 @@ Plan: `docs/superpowers/plans/2026-05-07-phase7-architecture-code-quality.md`
 9. Pattern standardization (home route_entry → function pattern)
 10. Accessibility (Semantics on AppClickable, FollowButton, AppAvatar)
 
-**Remaining (6 cross-feature imports):** Deeply coupled state providers (liveRecommendProvider, userDynamicProvider, defaultSearchProvider, DynamicPostCard, TopicDetailPage) — legitimate cross-feature UI composition.
+**Historical note:** This was the Phase 7 closeout snapshot, not the current repo truth. Later cleanup exposed additional ownership drift, which is why Phase 9 now treats cross-feature presentation imports and weak feature seams as active work again.
 
-## Phase 8 (Active): Architecture Optimization & Code Readability
+## Phase 8 (Superseded): Architecture Optimization & Code Readability
 
 Started 2026-05-08. Deep audit revealed structural debts in core, app, UI, and feature layers.
 
-Spec: `docs/superpowers/specs/2026-05-08-phase8-architecture-optimization-design.md`
-Plan: `docs/superpowers/plans/2026-05-08-phase8-architecture-optimization.md`
+Archived spec: `docs/superpowers/specs/archive/2026-05-08-phase8-architecture-optimization-design.superseded.md`
+Archived plan: `docs/superpowers/plans/archive/2026-05-08-phase8-architecture-optimization.superseded.md`
 
-**Planned:**
-1. Core session consolidation (13 → 5 files, fix 2 dynamic-typed providers)
-2. Error handling consolidation (remove duplicate DioException mapping)
-3. Core barrel expansion (export useful public API surface)
-4. Provider overrides refactoring (extract 5 adapters to features, fix UnimplementedError)
-5. ProviderScope fix (move override from build() to main())
-6. Route sub-file rename (primary/secondary → content/social/notification)
-7. UI boundary enforcement (move ~15 domain widgets to features)
-8. UI barrel expansion (export all generic widgets)
-9. Feature-specific constants cleanup (move home constants from ui/responsive/)
-10. Notification architecture fixes (dart:io leak, misplaced application code)
-11. Pagination documentation (document dual strategy)
+This phase is no longer the active baseline. Several planned items were already absorbed into the codebase, but the remaining work changed shape enough that a new planning baseline was required.
+
+## Phase 9 (Active): Architecture Rebaseline & Ownership Realignment
+
+Started 2026-05-09. The new focus is runtime ownership, shared presentation extraction, stronger feature public seams, and vertical-slice cleanup in the highest-debt features.
+
+Active spec: `docs/superpowers/specs/2026-05-09-phase9-architecture-rebaseline-design.md`
+Active plan: `docs/superpowers/plans/2026-05-09-phase9-architecture-rebaseline.md`
+
+**Verified current state:**
+1. `lib/core/**` no longer imports `features/**`; runtime/session contracts are rooted in `core/contracts/**` and boot wiring is verified from `app/runtime/root_overrides.dart`.
+2. Cross-feature presentation reuse now flows through explicit shared surfaces (`lib/ui/compositions/**`) or feature barrels/route seams rather than another feature's `presentation/**` internals.
+3. `notification` no longer leaks DTO imports into `domain/**`, chat command orchestration lives under `application/`, and image-send flow no longer pushes `File` objects through presentation/view-model seams.
+4. `video` danmaku protobuf types are isolated to `data/`; `video`, `live`, and `dynamic` domain entity entrypoints no longer re-export `data/dtos/**`.
+
+**Guardrails now checked in-repo:**
+1. `test/architecture/phase9_runtime_ownership_guard_test.dart`
+2. `test/architecture/phase9_core_session_feature_boundary_guard_test.dart`
+3. `test/architecture/phase9_shared_feed_cards_guard_test.dart`
+4. `test/architecture/phase9_shared_comment_text_user_guard_test.dart`
+5. `test/architecture/phase9_feature_public_seams_guard_test.dart`
+6. `test/architecture/phase9_video_danmaku_boundary_guard_test.dart`
+7. `test/architecture/phase9_video_domain_dto_reexport_guard_test.dart`
+8. `test/architecture/phase9_dynamic_domain_dto_reexport_guard_test.dart`
+9. `test/architecture/phase9_live_domain_dto_reexport_guard_test.dart`
+
+**Ongoing focus:**
+1. Keep new feature work inside the verified seams above instead of reintroducing direct `presentation/**`, DTO, or protobuf leaks.
+2. Continue slice-local cleanup where files are still structurally noisy, but treat the Phase 9 boundary rules as enforced, not aspirational.

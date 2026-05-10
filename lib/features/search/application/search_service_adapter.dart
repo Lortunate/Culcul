@@ -13,6 +13,7 @@ class SearchServiceAdapter implements SearchService {
 
   @override
   Future<Result<SearchResultPage, AppError>> search({required SearchQuery query}) {
-    return _ref.read(crossSearchRepositoryProvider).search(query: query);
+    final searchPort = _ref.read(searchPortProvider);
+    return searchPort.search(query: query);
   }
 }

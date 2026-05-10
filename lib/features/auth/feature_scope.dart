@@ -3,7 +3,6 @@ import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/auth/data/auth_repository_impl.dart';
 import 'package:culcul/features/auth/application/auth_session_adapter.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
-import 'package:culcul/features/auth/presentation/widgets/login_dialog.dart';
 import 'package:riverpod/misc.dart' show Override;
 
 export 'data/auth_repository_impl.dart' show authRepositoryProvider;
@@ -32,9 +31,6 @@ class AuthFeatureScope {
       }),
       logoutActionProvider.overrideWith((ref) {
         return () => ref.read(authProvider.notifier).logout();
-      }),
-      showLoginDialogProvider.overrideWith((ref) {
-        return (context) => LoginDialog.show(context);
       }),
     ];
   }

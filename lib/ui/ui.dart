@@ -1,3 +1,7 @@
+export 'compositions/comments/comments.dart';
+export 'compositions/feed_cards/feed_cards.dart';
+export 'compositions/text/text.dart';
+export 'compositions/users/users.dart';
 export 'responsive/app_breakpoints.dart';
 export 'responsive/app_responsive.dart';
 export 'responsive/responsive_container.dart';

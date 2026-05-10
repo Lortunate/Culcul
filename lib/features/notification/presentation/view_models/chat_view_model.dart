@@ -1,7 +1,6 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:culcul/features/notification/presentation/chat_page_commands.dart';
+import 'package:culcul/features/notification/application/chat_page_commands.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
@@ -87,7 +86,7 @@ class Chat extends _$Chat with _ChatHelpersMixin, _ChatSendMixin {
     );
 
     try {
-      final repository = ref.read(notificationRepositoryProvider);
+      final repository = ref.read(notificationRepositoryFacadeProvider);
       await repository.syncMessagesOlder(
         ownerUid: ownerUid,
         talkerId: talkerId,

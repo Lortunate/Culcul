@@ -1,3 +1,4 @@
+import 'package:culcul/core/contracts/relation_port.dart';
 import 'package:culcul/core/session/feature_action_providers.dart';
 import 'package:culcul/core/session/relation_providers.dart';
 import 'package:culcul/core/session/user_providers.dart';
@@ -22,8 +23,8 @@ class ProfileFeatureScope {
       userProfileLookupProvider.overrideWith((ref) {
         return ProfileLookupAdapter(ref);
       }),
-      crossRelationRepositoryProvider.overrideWith((ref) {
-        return ref.read(relationRepositoryProvider);
+      relationPortProvider.overrideWith((ref) {
+        return ref.read(relationRepositoryProvider) as RelationPort;
       }),
       modifyRelationProvider.overrideWith((ref) {
         return ({required mid, required isFollow}) => ref

@@ -15,6 +15,6 @@ class FollowListAdapter implements FollowListService {
     int vmid, {
     int page = 1,
   }) {
-    return _ref.read(crossRelationRepositoryProvider).getFollowings(vmid, page: page);
+    return _ref.read(relationPortProvider).getFollowings(vmid, page: page);
   }
 }

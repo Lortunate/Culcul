@@ -3,7 +3,7 @@ import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/services/media_service.dart';
 import 'package:culcul/core/utils/id_utils.dart';
 import 'package:culcul/core/utils/toast_utils.dart';
-import 'package:culcul/features/video/presentation/widgets/video_actions_bottom_sheet.dart';
+import 'package:culcul/features/video/video.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -25,7 +25,7 @@ Future<void> showHomeVideoActionsBottomSheet(
         return;
       }
 
-      await ref.read(watchLaterActionsProvider).addToWatchLater(aid);
+      await ref.read(watchLaterPortProvider).addToWatchLater(aid);
       ToastUtils.show(t.home.video_more.added_to_watch_later);
     } catch (e) {
       ToastUtils.showError(t.home.video_more.add_failed(error: e.toString()));

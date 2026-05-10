@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -7,9 +7,18 @@ final chatPageCommandWorkflowProvider = Provider<ChatPageCommandWorkflow>(
 );
 
 typedef ChatTextCommand = Future<ChatPageCommandResult> Function(String text);
-typedef ChatImageCommand = Future<ChatPageCommandResult> Function(File image);
+typedef ChatImageCommand = Future<ChatPageCommandResult> Function(
+  ChatImageAttachment image,
+);
 typedef ChatPostSuccessAction = Future<void> Function();
 typedef ChatClearInputAction = void Function();
+
+class ChatImageAttachment {
+  final Uint8List bytes;
+  final String filename;
+
+  const ChatImageAttachment({required this.bytes, required this.filename});
+}
 
 enum ChatPageCommandStatus { skipped, success, failure }
 
@@ -57,7 +66,7 @@ class ChatPageCommandWorkflow {
   }
 
   Future<ChatPageCommandResult> sendImage({
-    required File image,
+    required ChatImageAttachment image,
     required ChatImageCommand send,
     required ChatPostSuccessAction afterSuccess,
   }) async {

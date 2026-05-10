@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 abstract interface class SessionCookieRefresher {
@@ -22,11 +21,4 @@ typedef LogoutAction = Future<void> Function();
 /// Provides the logout action. Must be overridden at bootstrap.
 final logoutActionProvider = Provider<LogoutAction>((ref) {
   throw UnimplementedError('logoutActionProvider must be overridden at bootstrap');
-});
-
-typedef ShowLoginDialog = void Function(BuildContext context);
-
-/// Provides the login dialog action. Must be overridden at bootstrap.
-final showLoginDialogProvider = Provider<ShowLoginDialog>((ref) {
-  throw UnimplementedError('showLoginDialogProvider must be overridden at bootstrap');
 });

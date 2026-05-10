@@ -140,4 +140,16 @@ class PrivateMessageContent {
   String? _readString(String key) => _data[key]?.toString();
 }
 
-typedef PrivateMessageEmoji = PrivateMessageEmojiInfo;
+class PrivateMessageEmoji {
+  final String text;
+  final String url;
+  final int size;
+  final String? gifUrl;
+
+  const PrivateMessageEmoji({
+    required this.text,
+    required this.url,
+    this.size = 1,
+    this.gifUrl,
+  });
+}

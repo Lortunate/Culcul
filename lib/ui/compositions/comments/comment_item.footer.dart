@@ -48,14 +48,14 @@ class _Footer extends StatelessWidget {
           child: AppClickable(
             onTap: () {},
             child: Padding(
-            padding: const EdgeInsets.all(4),
-            child: Icon(
-              Icons.more_vert_rounded,
-              size: 16,
-              color: colorScheme.onSurfaceVariant,
+              padding: const EdgeInsets.all(4),
+              child: Icon(
+                Icons.more_vert_rounded,
+                size: 16,
+                color: colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
-        ),
         ),
       ],
     );

@@ -6,6 +6,7 @@ import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/video/domain/repositories/danmaku_repository.dart'
     as domain;
+import 'package:culcul/features/video/domain/entities/danmaku_model.dart';
 import 'package:culcul/features/video/data/danmaku_api.dart';
 import 'package:culcul/protos/dm.pb.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -34,7 +35,7 @@ class DanmakuRepositoryImpl
   RequestExecutor get requestExecutor => _requestExecutor;
 
   @override
-  Future<Result<DmSegMobileReply, AppError>> fetchDanmakuSegment({
+  Future<Result<DanmakuSegment, AppError>> fetchDanmakuSegment({
     required int oid,
     required int pid,
     required int segmentIndex,
@@ -45,18 +46,39 @@ class DanmakuRepositoryImpl
         pid: pid,
         segmentIndex: segmentIndex,
       );
-      return DmSegMobileReply.fromBuffer(response);
+      final payload = DmSegMobileReply.fromBuffer(response);
+      return DanmakuSegment(
+        entries: payload.elems
+            .map(
+              (item) => DanmakuEntry(
+                content: item.content,
+                progress: item.progress,
+                color: item.color,
+                mode: item.mode,
+              ),
+            )
+            .toList(growable: false),
+        state: payload.state,
+      );
     });
   }
 
   @override
-  Future<Result<DmViewReply, AppError>> fetchDanmakuView({
+  Future<Result<DanmakuView, AppError>> fetchDanmakuView({
     required int oid,
     required int pid,
   }) {
     return requestResult(() async {
-      final response = await _api.fetchDanmakuView(oid: oid, pid: pid);
-      return DmViewReply.fromBuffer(response);
+      final response = DmViewReply.fromBuffer(
+        await _api.fetchDanmakuView(oid: oid, pid: pid),
+      );
+      return DanmakuView(
+        closed: response.closed,
+        allow: response.allow,
+        sendBoxStyle: response.sendBoxStyle,
+        textPlaceholder: response.textPlaceholder,
+        inputPlaceholder: response.inputPlaceholder,
+      );
     });
   }
 

@@ -1,1 +1,1 @@
-export '../../data/dtos/subtitle_dto.dart';
+export 'subtitle_dto.dart';

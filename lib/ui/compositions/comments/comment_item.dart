@@ -1,12 +1,12 @@
-import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
-import 'package:culcul/features/video/presentation/widgets/comments/comment_images.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/users/app_avatar.dart';
+import 'package:culcul/ui/compositions/comments/comment_images.dart';
+import 'package:culcul/ui/compositions/text/text.dart';
+import 'package:culcul/ui/compositions/users/users.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:culcul/ui/widgets/inputs/app_selectable_text.dart';
-import 'package:culcul/features/dynamic/presentation/widgets/bilibili_emoji_text.dart';
-import 'package:culcul/features/profile/presentation/widgets/user_tags.dart';
+import 'package:culcul/ui/widgets/users/app_avatar.dart';
 import 'package:flutter/material.dart';
 
 part 'comment_item.header.dart';

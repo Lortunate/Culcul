@@ -6,6 +6,7 @@ import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.message_support.dart';
+import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:drift/drift.dart';
 
@@ -138,7 +139,7 @@ mixin NotificationMessageSendHelpersMixin on Object {
     required int ownerUid,
     required int talkerId,
     required PrivateSessionType sessionType,
-    required List<PrivateMessageEmojiInfo> emojis,
+    required List<PrivateMessageEmoji> emojis,
     required int now,
   }) async {
     for (final emoji in emojis) {

@@ -32,7 +32,7 @@ class NotificationFeedList extends _$NotificationFeedList
       return const CursorPage(items: [], nextCursor: null, hasMore: false);
     }
 
-    final repository = ref.read(notificationRepositoryProvider);
+    final repository = ref.read(notificationRepositoryFacadeProvider);
     if (isRefreshing || cursor == null) {
       await repository.syncFeedHead(ownerUid: ownerUid, type: type);
     } else {
@@ -65,7 +65,7 @@ class NotificationFeedList extends _$NotificationFeedList
     if (type == NotificationFeedType.system) return;
     try {
       await ref
-          .read(notificationRepositoryProvider)
+          .read(notificationRepositoryFacadeProvider)
           .syncFeedHead(ownerUid: ownerUid, type: type);
       await refreshPage();
     } catch (_) {}

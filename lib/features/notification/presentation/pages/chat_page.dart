@@ -1,5 +1,5 @@
 import 'package:culcul/core/session/user_providers.dart';
-import 'package:culcul/features/notification/presentation/chat_page_commands.dart';
+import 'package:culcul/features/notification/application/chat_page_commands.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/presentation/view_models/chat_view_model.dart';
 import 'package:culcul/i18n/i18n.dart';

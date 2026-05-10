@@ -1,6 +1,4 @@
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
-import 'package:culcul/features/notification/data/dtos/private_message_model.dart'
-    show PrivateMessageAccountInfo;
 
 enum PrivateSessionType {
   unknown(0),
@@ -27,7 +25,12 @@ enum PrivateSessionType {
   }
 }
 
-typedef PrivateSessionAccountInfo = PrivateMessageAccountInfo;
+class PrivateSessionAccountInfo {
+  final String name;
+  final String picUrl;
+
+  const PrivateSessionAccountInfo({required this.name, required this.picUrl});
+}
 
 class PrivateSession {
   final int talkerId;
