@@ -1,8 +1,23 @@
 # Phase 9: Architecture Rebaseline & Ownership Realignment
 
-**Status:** ACTIVE
+> **Archived on 2026-05-11 as substantially complete:** This archive is preserved as historical transition context. Treat Phase 9 as the repo-wide boundary rebaseline that largely landed. Use `docs/superpowers/specs/2026-05-11-phase10-slice-normalization-and-public-seam-hardening-design.md` and `docs/superpowers/plans/2026-05-11-phase10-slice-normalization-and-public-seam-hardening.md` for the active localized cleanup baseline.
+
+**Status:** SUPERSEDED
+**Replaced by spec:** `docs/superpowers/specs/2026-05-11-phase10-slice-normalization-and-public-seam-hardening-design.md`
+**Replaced by plan:** `docs/superpowers/plans/2026-05-11-phase10-slice-normalization-and-public-seam-hardening.md`
 **Date:** 2026-05-09
 **Goal:** Rebuild Culcul's app/runtime ownership, shared presentation surface, and feature public seams so the current codebase becomes easier to read, safer to refactor, and less dependent on hidden cross-feature internals.
+
+## Archive Note
+
+Phase 9 is archived as substantially complete rather than literally complete. The repo-wide boundary goals that justified the rebaseline are now enforced in code and architecture tests:
+
+- `core/**` no longer imports `features/**`
+- cross-feature `presentation/**` imports are removed
+- shared feed cards / comment / text / user compositions have explicit shared homes
+- runtime ownership and DTO / protobuf leak guards are checked in `test/architecture/phase9_*`
+
+What remained after verification was no longer broad boundary repair. The remaining debt had narrowed to slice-local readability and public-seam hardening work in `notification`, `dynamic`, `video`, and `home`, so that follow-up work moved into the narrower active Phase 10 baseline.
 
 ## Why a New Phase
 

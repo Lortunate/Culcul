@@ -1,13 +1,23 @@
 # Phase 9 Architecture Rebaseline Implementation Plan
 
+> **Superseded on 2026-05-11 after substantial completion:** This archive is preserved as historical execution context. The repo-wide boundary work it described largely landed. Do not execute it as the active baseline; use `docs/superpowers/specs/2026-05-11-phase10-slice-normalization-and-public-seam-hardening-design.md` and `docs/superpowers/plans/2026-05-11-phase10-slice-normalization-and-public-seam-hardening.md` instead.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Status:** ACTIVE
+**Status:** SUPERSEDED
+**Archived spec:** `docs/superpowers/specs/archive/2026-05-09-phase9-architecture-rebaseline-design.superseded.md`
+**Replaced by:** `docs/superpowers/specs/2026-05-11-phase10-slice-normalization-and-public-seam-hardening-design.md`
 **Goal:** Rebuild Culcul's runtime ownership, shared presentation surface, and feature public seams so future refactors stop depending on hidden cross-feature internals.
 
 **Architecture:** Phase 9 is a structural rebaseline, not a cosmetic cleanup. The implementation order is: document baseline, runtime/port ownership, shared presentation extraction, feature seam hardening, then slice-specific purity work. The main rule is that shared UI must get a legitimate shared home and `core/` must stop depending on `features/`.
 
 **Tech Stack:** Flutter, Riverpod, Hooks Riverpod, Freezed, Hive, Dio
+
+## Archive Note
+
+Phase 9 is no longer the active execution baseline because the broad boundary goals it targeted now have passing in-repo guards. The remaining debt changed shape: it is now slice-local readability, decomposition, and public-seam cleanup rather than repo-wide rebaseline work. That narrower follow-up is tracked in active Phase 10.
+
+---
 
 ---
 
