@@ -28,7 +28,7 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         notificationOwnerUidProvider.overrideWith((ref) => 1001),
-        notificationRepositoryProvider.overrideWithValue(repository),
+        notificationRepositoryFacadeProvider.overrideWithValue(repository),
       ],
     );
     addTearDown(container.dispose);
@@ -51,7 +51,7 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         notificationOwnerUidProvider.overrideWith((ref) => 1001),
-        notificationRepositoryProvider.overrideWithValue(repository),
+        notificationRepositoryFacadeProvider.overrideWithValue(repository),
       ],
     );
     addTearDown(container.dispose);

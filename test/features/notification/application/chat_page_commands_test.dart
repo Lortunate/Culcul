@@ -1,6 +1,6 @@
-import 'dart:io';
+import 'dart:typed_data';
 
-import 'package:culcul/features/notification/presentation/chat_page_commands.dart';
+import 'package:culcul/features/notification/application/chat_page_commands.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -83,9 +83,9 @@ void main() {
       final calls = <String>[];
 
       final result = await workflow.sendImage(
-        image: File('demo.png'),
+        image: ChatImageAttachment(bytes: Uint8List(0), filename: 'demo.png'),
         send: (image) async {
-          calls.add(image.path);
+          calls.add(image.filename);
           return const ChatPageCommandResult.success();
         },
         afterSuccess: () async => calls.add('after'),
@@ -99,7 +99,7 @@ void main() {
       var followedUp = false;
 
       final result = await workflow.sendImage(
-        image: File('demo.png'),
+        image: ChatImageAttachment(bytes: Uint8List(0), filename: 'demo.png'),
         send: (_) async => ChatPageCommandResult.failure(StateError('upload failed')),
         afterSuccess: () async => followedUp = true,
       );

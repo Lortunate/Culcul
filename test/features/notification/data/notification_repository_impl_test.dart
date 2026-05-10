@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
@@ -71,17 +69,6 @@ class _FakeNotificationApi implements NotificationApi {
     lastMessageTalkerId = talkerId;
     lastMessageSessionType = sessionType;
     return ApiResponse(code: 0, message: 'ok', data: systemMessageResponse);
-  }
-
-  @override
-  Future<ApiResponse<ImageUploadResponse>> uploadImage({
-    required File file,
-    String biz = 'draw',
-    String category = 'daily',
-    int build = 0,
-    String mobiApp = 'web',
-  }) async {
-    throw UnimplementedError();
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:culcul/features/video/data/danmaku_repository_impl.dart';
+import 'package:culcul/features/video/domain/entities/danmaku_model.dart';
 import 'package:culcul/protos/dm.pb.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
@@ -32,9 +33,9 @@ void main() {
           .read(danmakuRepositoryProvider)
           .fetchDanmakuSegment(oid: 1, pid: 2, segmentIndex: 1);
 
-      expect(result, isA<Success<DmSegMobileReply, AppError>>());
+      expect(result, isA<Success<DanmakuSegment, AppError>>());
       expect(result.dataOrNull, isNotNull);
-      expect(result.dataOrNull!.elems, isEmpty);
+      expect(result.dataOrNull!.entries, isEmpty);
     },
   );
 }
