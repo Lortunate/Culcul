@@ -1,6 +1,6 @@
 # Architecture Guide
 
-Current implemented baseline and active rebaseline target for Culcul (BiliBili 3rd-party client). `lib/shared/` is fully retired, but the repo is still in Phase 9 ownership cleanup rather than a fully settled end state.
+Current implemented baseline and active rebaseline target for Culcul (BiliBili 3rd-party client). `lib/shared/` is fully retired, but the repo is still in Phase 10 slice normalization and public seam hardening rather than a fully settled end state.
 
 ## Directory Structure
 
@@ -204,20 +204,19 @@ Archived plan: `docs/superpowers/plans/archive/2026-05-08-phase8-architecture-op
 
 This phase is no longer the active baseline. Several planned items were already absorbed into the codebase, but the remaining work changed shape enough that a new planning baseline was required.
 
-## Phase 9 (Active): Architecture Rebaseline & Ownership Realignment
+## Phase 9 (Archived as Substantially Complete): Architecture Rebaseline & Ownership Realignment
 
-Started 2026-05-09. The new focus is runtime ownership, shared presentation extraction, stronger feature public seams, and vertical-slice cleanup in the highest-debt features.
+Started 2026-05-09 and archived on 2026-05-11 after the repo-wide boundary rebaseline largely landed.
 
-Active spec: `docs/superpowers/specs/2026-05-09-phase9-architecture-rebaseline-design.md`
-Active plan: `docs/superpowers/plans/2026-05-09-phase9-architecture-rebaseline.md`
+Archived spec: `docs/superpowers/specs/archive/2026-05-09-phase9-architecture-rebaseline-design.superseded.md`
+Archived plan: `docs/superpowers/plans/archive/2026-05-09-phase9-architecture-rebaseline.superseded.md`
 
-**Verified current state:**
+**Verified carried-forward state:**
 1. `lib/core/**` no longer imports `features/**`; runtime/session contracts are rooted in `core/contracts/**` and boot wiring is verified from `app/runtime/root_overrides.dart`.
 2. Cross-feature presentation reuse now flows through explicit shared surfaces (`lib/ui/compositions/**`) or feature barrels/route seams rather than another feature's `presentation/**` internals.
-3. `notification` no longer leaks DTO imports into `domain/**`, chat command orchestration lives under `application/`, and image-send flow no longer pushes `File` objects through presentation/view-model seams.
-4. `video` danmaku protobuf types are isolated to `data/`; `video`, `live`, and `dynamic` domain entity entrypoints no longer re-export `data/dtos/**`.
+3. Runtime ownership, shared composition extraction, feature-public-seam legality, DTO re-export cleanup, and video danmaku boundary rules all have checked-in architecture tests.
 
-**Guardrails now checked in-repo:**
+**Guardrails inherited from Phase 9:**
 1. `test/architecture/phase9_runtime_ownership_guard_test.dart`
 2. `test/architecture/phase9_core_session_feature_boundary_guard_test.dart`
 3. `test/architecture/phase9_shared_feed_cards_guard_test.dart`
@@ -228,6 +227,25 @@ Active plan: `docs/superpowers/plans/2026-05-09-phase9-architecture-rebaseline.m
 8. `test/architecture/phase9_dynamic_domain_dto_reexport_guard_test.dart`
 9. `test/architecture/phase9_live_domain_dto_reexport_guard_test.dart`
 
-**Ongoing focus:**
-1. Keep new feature work inside the verified seams above instead of reintroducing direct `presentation/**`, DTO, or protobuf leaks.
-2. Continue slice-local cleanup where files are still structurally noisy, but treat the Phase 9 boundary rules as enforced, not aspirational.
+Phase 9 is no longer the active baseline because the remaining debt changed shape from repo-wide legality problems to localized readability and public-seam problems.
+
+## Phase 10 (Active): Slice Normalization & Public Seam Hardening
+
+Started 2026-05-11. The active focus is no longer broad boundary repair. It is the narrower follow-on work of normalizing the highest-debt slices and shrinking implementation-shaped feature APIs.
+
+Active spec: `docs/superpowers/specs/2026-05-11-phase10-slice-normalization-and-public-seam-hardening-design.md`
+Active plan: `docs/superpowers/plans/2026-05-11-phase10-slice-normalization-and-public-seam-hardening.md`
+
+**Current active hotspots:**
+1. `notification` still reads like a collaborator cluster hidden behind a thin facade.
+2. `dynamic` still mixes domain-facing contracts with parsing and publish/upload support concerns.
+3. `video/presentation/` still concentrates several sub-features under one dense surface.
+4. `home` still composes other features through APIs that are legal but too implementation-shaped.
+5. Existing architecture guards do not yet protect against broad barrel re-exports or `feature_scope.dart` facade leakage.
+
+**Phase 10 target state:**
+1. `notification`, `dynamic`, and `video` read as explicit capability slices instead of large blended surfaces.
+2. `feature_scope.dart` acts as a facade seam rather than a raw provider dump.
+3. `<feature>.dart` barrels expose deliberate public APIs rather than broad presentation exports.
+4. `home` composes narrower feature contracts instead of implementation-shaped exports.
+5. New architecture guards enforce the narrower public-seam rules introduced in this phase.

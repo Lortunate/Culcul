@@ -42,21 +42,22 @@ This project is indexed by GitNexus as **Culcul** (2571 symbols, 3248 relationsh
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 9 — Architecture Rebaseline & Ownership Realignment)
+## Architecture (Phase 10 — Slice Normalization & Public Seam Hardening)
 
-`lib/shared/` is **fully retired**. The current implemented shape is still `app/` + `features/` + `core/` + `ui/`, but the active baseline now treats runtime ownership, shared product UI, and feature public seams as unfinished work rather than solved structure.
+`lib/shared/` is **fully retired**. The current implemented shape is `app/` + `features/` + `core/` + `ui/`. Phase 9's repo-wide boundary rebaseline is now treated as substantially complete; the active baseline is the narrower follow-on work of cleaning up slice-local readability and shrinking implementation-shaped public seams.
 
 See `docs/architecture/architecture-guide.md` for the current implemented baseline, known drift, and active target state.
 
-Active spec: `docs/superpowers/specs/2026-05-09-phase9-architecture-rebaseline-design.md`
-Active plan: `docs/superpowers/plans/2026-05-09-phase9-architecture-rebaseline.md`
+Active spec: `docs/superpowers/specs/2026-05-11-phase10-slice-normalization-and-public-seam-hardening-design.md`
+Active plan: `docs/superpowers/plans/2026-05-11-phase10-slice-normalization-and-public-seam-hardening.md`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`
 - Features must NOT import another feature's `presentation/**` or `data/**` internals
 - `route_entry.dart` is the router-facing seam; `feature_scope.dart` and `<feature>.dart` are the approved runtime/composition seams
 - Orchestration logic belongs in `application/`, not in presentation widgets
-- If architecture docs disagree, the active Phase 9 spec/plan override older phase text
+- Feature barrels and `feature_scope.dart` should stay deliberate and narrow; do not expose raw data-provider internals as default public API
+- If architecture docs disagree, the active Phase 10 spec/plan override older phase text
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:full hash:f65d5d33 -->
 ## Issue Tracking with bd (beads)
