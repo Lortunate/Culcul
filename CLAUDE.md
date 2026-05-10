@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **Culcul** (2461 symbols, 3139 relationships, 19 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **Culcul** (2571 symbols, 3248 relationships, 19 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -42,23 +42,21 @@ This project is indexed by GitNexus as **Culcul** (2461 symbols, 3139 relationsh
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 7 — Architecture Optimization & Code Quality)
+## Architecture (Phase 9 — Architecture Rebaseline & Ownership Realignment)
 
-`lib/shared/` is **fully retired**. Structure: `app/` (shell/router) → `features/` (domain modules) → `core/` (infrastructure) + `ui/` (design system).
+`lib/shared/` is **fully retired**. The current implemented shape is still `app/` + `features/` + `core/` + `ui/`, but the active baseline now treats runtime ownership, shared product UI, and feature public seams as unfinished work rather than solved structure.
 
-See `docs/architecture/architecture-guide.md` for full layout, rules, and feature compliance matrix.
+See `docs/architecture/architecture-guide.md` for the current implemented baseline, known drift, and active target state.
 
-**Phase 7 complete**: Core reorganization, widget categorization, cross-feature decoupling (42→6 imports), error handling unification, accessibility. See architecture guide for details.
-
-Spec: `docs/superpowers/specs/2026-05-07-phase7-architecture-code-quality-design.md`
-Plan: `docs/superpowers/plans/2026-05-07-phase7-architecture-code-quality.md`
+Active spec: `docs/superpowers/specs/2026-05-09-phase9-architecture-rebaseline-design.md`
+Active plan: `docs/superpowers/plans/2026-05-09-phase9-architecture-rebaseline.md`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`
-- Features must NOT import from other features (use `core/contracts/` for shared types)
-- Route entry seams (`route_entry.dart`) are the only router-facing feature surface
+- Features must NOT import another feature's `presentation/**` or `data/**` internals
+- `route_entry.dart` is the router-facing seam; `feature_scope.dart` and `<feature>.dart` are the approved runtime/composition seams
 - Orchestration logic belongs in `application/`, not in presentation widgets
-- Each feature must have a `<feature>.dart` barrel export at its root
+- If architecture docs disagree, the active Phase 9 spec/plan override older phase text
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:full hash:f65d5d33 -->
 ## Issue Tracking with bd (beads)
