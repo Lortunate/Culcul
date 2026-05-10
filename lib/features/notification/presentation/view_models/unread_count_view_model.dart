@@ -30,14 +30,14 @@ class UnreadCount extends _$UnreadCount {
       );
     }
 
-    final repository = ref.read(notificationRepositoryFacadeProvider);
-    final stream = repository.watchUnreadCount(ownerUid: ownerUid);
+    final facade = ref.read(notificationFacadeEntryProvider);
+    final stream = facade.watchUnreadCount(ownerUid: ownerUid);
     _subscription = stream.listen((summary) {
       state = AsyncData(summary);
     });
     ref.onDispose(() => _subscription?.cancel());
 
-    unawaited(repository.syncUnreadCount(ownerUid: ownerUid));
+    unawaited(facade.syncUnreadCount(ownerUid: ownerUid));
     return stream.first;
   }
 
@@ -45,7 +45,7 @@ class UnreadCount extends _$UnreadCount {
     final ownerUid = ref.read(notificationOwnerUidProvider);
     if (ownerUid == null) return;
     await ref
-        .read(notificationRepositoryFacadeProvider)
+        .read(notificationFacadeEntryProvider)
         .syncUnreadCount(ownerUid: ownerUid, force: true);
   }
 }

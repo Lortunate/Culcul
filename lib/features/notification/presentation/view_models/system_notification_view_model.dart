@@ -17,15 +17,15 @@ class SystemNotificationList extends _$SystemNotificationList {
     final ownerUid = ref.watch(notificationOwnerUidProvider);
     if (ownerUid == null) return const <SystemNotice>[];
 
-    final repository = ref.read(notificationRepositoryFacadeProvider);
-    final stream = repository.watchSystemNotices(ownerUid: ownerUid);
+    final facade = ref.read(notificationFacadeEntryProvider);
+    final stream = facade.watchSystemNotices(ownerUid: ownerUid);
     _subscription = stream.listen((items) {
       state = AsyncData(items);
     });
     ref.onDispose(() => _subscription?.cancel());
 
     unawaited(
-      repository.syncFeedHead(ownerUid: ownerUid, type: NotificationFeedType.system),
+      facade.syncFeedHead(ownerUid: ownerUid, type: NotificationFeedType.system),
     );
     return stream.first;
   }
@@ -34,7 +34,7 @@ class SystemNotificationList extends _$SystemNotificationList {
     final ownerUid = ref.read(notificationOwnerUidProvider);
     if (ownerUid == null) return;
     await ref
-        .read(notificationRepositoryFacadeProvider)
+        .read(notificationFacadeEntryProvider)
         .syncFeedHead(ownerUid: ownerUid, type: NotificationFeedType.system);
   }
 }
