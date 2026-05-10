@@ -37,7 +37,7 @@ mixin _DynamicRepositoryPublishApis on _DynamicRepositoryAccess {
   }
 
   Future<Result<List<DynamicUploadImageData>, AppError>> uploadImagesWithCsrf({
-    required List<File> files,
+    required List<PublishMediaAsset> files,
     required String csrf,
   }) async {
     if (files.isEmpty) {
@@ -45,11 +45,12 @@ mixin _DynamicRepositoryPublishApis on _DynamicRepositoryAccess {
     }
 
     return requestResult(() async {
-      return concurrencyExecutor.mapConcurrent<File, DynamicUploadImageData>(
+      return concurrencyExecutor.mapConcurrent<PublishMediaAsset, DynamicUploadImageData>(
         items: files,
         profile: NetworkConcurrencyProfile.upload,
         scope: 'dynamic_publish_upload',
-        mapper: (file) async {
+        mapper: (asset) async {
+          final file = File(asset.path);
           final uploadResult = await requestApiResult(
             () => api.uploadImage(file: file, csrf: csrf),
           );

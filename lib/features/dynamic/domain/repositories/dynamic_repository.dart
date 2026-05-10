@@ -1,10 +1,9 @@
-import 'dart:io';
-
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/request_cancel_token.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_publish_command.dart';
 
 class DynamicFeedQuery {
   final String? type;
@@ -87,7 +86,7 @@ abstract class DynamicRepository {
   Future<Result<String, AppError>> getPublishCsrf();
 
   Future<Result<List<DynamicUploadImageData>, AppError>> uploadImagesWithCsrf({
-    required List<File> files,
+    required List<PublishMediaAsset> files,
     required String csrf,
   });
 

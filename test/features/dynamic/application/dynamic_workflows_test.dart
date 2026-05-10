@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/network_concurrency_executor.dart';
@@ -7,6 +5,7 @@ import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/dynamic/application/dynamic_workflows.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_publish_command.dart';
 import 'package:culcul/features/dynamic/domain/repositories/dynamic_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -76,7 +75,11 @@ void main() {
       final stopwatch = Stopwatch()..start();
       final result = await workflow.call(
         content: 'hello',
-        images: <File>[File('1.png'), File('2.png'), File('3.png')],
+        images: <PublishMediaAsset>[
+          const PublishMediaAsset(path: '1.png', width: 100, height: 100),
+          const PublishMediaAsset(path: '2.png', width: 100, height: 100),
+          const PublishMediaAsset(path: '3.png', width: 100, height: 100),
+        ],
       );
       stopwatch.stop();
 
@@ -96,7 +99,11 @@ void main() {
 
       final result = await workflow.call(
         content: 'hello',
-        images: <File>[File('1.png'), File('2.png'), File('3.png')],
+        images: <PublishMediaAsset>[
+          const PublishMediaAsset(path: '1.png', width: 100, height: 100),
+          const PublishMediaAsset(path: '2.png', width: 100, height: 100),
+          const PublishMediaAsset(path: '3.png', width: 100, height: 100),
+        ],
       );
 
       expect(result.isFailure, isTrue);
@@ -109,7 +116,9 @@ void main() {
 
       final result = await workflow.call(
         content: 'hello',
-        images: <File>[File('1.png')],
+        images: <PublishMediaAsset>[
+          const PublishMediaAsset(path: '1.png', width: 100, height: 100),
+        ],
         csrf: 'injected-csrf',
       );
 
@@ -147,7 +156,7 @@ class _FakeDynamicRepository extends Fake implements DynamicRepository {
 
   @override
   Future<Result<List<DynamicUploadImageData>, AppError>> uploadImagesWithCsrf({
-    required List<File> files,
+    required List<PublishMediaAsset> files,
     required String csrf,
   }) async {
     uploadBatchCalls++;
@@ -156,11 +165,11 @@ class _FakeDynamicRepository extends Fake implements DynamicRepository {
     }
 
     try {
-      final uploaded = await executor.mapConcurrent<File, DynamicUploadImageData>(
+      final uploaded = await executor.mapConcurrent<PublishMediaAsset, DynamicUploadImageData>(
         items: files,
         profile: NetworkConcurrencyProfile.upload,
         scope: 'test_dynamic_upload_batch',
-        mapper: (file) async {
+        mapper: (asset) async {
           final callIndex = uploadCalls;
           uploadCalls++;
           uploadedCsrfValues.add(csrf);

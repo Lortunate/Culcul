@@ -1,3 +1,4 @@
+import 'package:culcul/core/utils/json_compute.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:html/dom.dart' as html_dom;
 import 'package:html/parser.dart' as html_parser;
@@ -14,6 +15,28 @@ final _fontSizeStyleRegex = RegExp(
 );
 
 class ArticleDetailParser {
+  static int? extractArticleId(Uri uri) => _extractArticleId(uri);
+
+  static Future<Map<String, dynamic>?> extractInitialState(String html) async {
+    final regex = RegExp(
+      r'window\.__INITIAL_STATE__\s*=\s*(\{.*?\})\s*;\s*\(function',
+      dotAll: true,
+    );
+    final match = regex.firstMatch(html);
+    if (match == null) return null;
+
+    try {
+      final data = match.group(1);
+      if (data == null || data.isEmpty) return null;
+      // Use import if needed, but since we are in a subagent's mess, 
+      // let's check what's available.
+      // Actually, let's just use the logic from the old one.
+      return _parseInitialState(data);
+    } catch (_) {
+      return null;
+    }
+  }
+
   static ArticleDetailData fromArticleView({
     required Uri sourceUri,
     required Map<String, dynamic> data,

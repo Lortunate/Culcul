@@ -1,5 +1,3 @@
-import 'package:culcul/features/dynamic/domain/entities/article_detail_parser.dart';
-
 enum ArticleBlockType { paragraph, image, linkCard, quote, divider }
 
 enum ArticleTextAlign { start, center, end }
@@ -32,20 +30,6 @@ class ArticleDetailData {
     required this.stats,
     required this.blocks,
   });
-
-  factory ArticleDetailData.fromArticleView({
-    required Uri sourceUri,
-    required Map<String, dynamic> data,
-  }) {
-    return ArticleDetailParser.fromArticleView(sourceUri: sourceUri, data: data);
-  }
-
-  factory ArticleDetailData.fromOpusState({
-    required Uri sourceUri,
-    required Map<String, dynamic> state,
-  }) {
-    return ArticleDetailParser.fromOpusState(sourceUri: sourceUri, state: state);
-  }
 }
 
 class ArticleStats {

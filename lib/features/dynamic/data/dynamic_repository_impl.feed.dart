@@ -80,7 +80,7 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
     if (data is! Map<String, dynamic>) {
       throw const UnknownException('Invalid article payload');
     }
-    final detail = ArticleDetailData.fromArticleView(sourceUri: uri, data: data);
+    final detail = ArticleDetailParser.fromArticleView(sourceUri: uri, data: data);
     FeatureFlowPerfLogger.log(
       chain: 'dynamic.article_detail',
       stage: 'parse',
@@ -122,7 +122,7 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
     if (initialState == null) {
       throw const UnknownException('Failed to parse article page');
     }
-    final detail = ArticleDetailData.fromOpusState(sourceUri: uri, state: initialState);
+    final detail = ArticleDetailParser.fromOpusState(sourceUri: uri, state: initialState);
     FeatureFlowPerfLogger.log(
       chain: 'dynamic.article_detail',
       stage: 'parse',
