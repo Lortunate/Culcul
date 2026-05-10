@@ -1,6 +1,6 @@
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
-import 'package:culcul/features/video/presentation/pages/comment_reply_page.dart';
-import 'package:culcul/features/video/presentation/pages/video_entry_decision_page.dart';
+import 'package:culcul/features/video/presentation/comments/comment_reply_page.dart';
+import 'package:culcul/features/video/presentation/detail/video_entry_decision_page.dart';
 import 'package:flutter/widgets.dart';
 
 class CommentReplyRouteInput {

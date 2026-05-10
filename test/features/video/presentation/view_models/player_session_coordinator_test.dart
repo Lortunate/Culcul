@@ -1,4 +1,4 @@
-import 'package:culcul/features/video/presentation/view_models/player_session_coordinator.dart';
+import 'package:culcul/features/video/presentation/player/player_session_coordinator.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

@@ -1,5 +1,5 @@
-import 'package:culcul/features/video/presentation/view_models/listen_sleep_timer_view_model.dart';
-import 'package:culcul/features/video/presentation/widgets/controls/listen_settings_sheet.dart';
+import 'package:culcul/features/video/presentation/player/listen_sleep_timer_view_model.dart';
+import 'package:culcul/features/video/presentation/player/controls/listen_settings_sheet.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
