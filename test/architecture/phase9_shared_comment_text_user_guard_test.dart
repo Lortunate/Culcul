@@ -7,8 +7,8 @@ void main() {
     'features do not import shared comment, text, or user widgets from feature internals',
     () async {
       const blockedImports = [
-        'package:culcul/features/video/presentation/widgets/comments/comment_item.dart',
-        'package:culcul/features/video/presentation/widgets/comments/comment_reply_sheet.dart',
+        'package:culcul/features/video/presentation/comments/comments/comment_item.dart',
+        'package:culcul/features/video/presentation/comments/comments/comment_reply_sheet.dart',
         'package:culcul/features/dynamic/presentation/widgets/bilibili_emoji_text.dart',
         'package:culcul/features/profile/presentation/widgets/user_tags.dart',
       ];

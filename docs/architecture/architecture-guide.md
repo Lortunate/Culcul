@@ -1,6 +1,6 @@
 # Architecture Guide
 
-Current implemented baseline and active rebaseline target for Culcul (BiliBili 3rd-party client). `lib/shared/` is fully retired, but the repo is still in Phase 10 slice normalization and public seam hardening rather than a fully settled end state.
+Current implemented baseline for Culcul (BiliBili 3rd-party client). `lib/shared/` is fully retired, and all features now follow a standardized slice architecture with hardened public facades.
 
 ## Directory Structure
 
@@ -229,23 +229,24 @@ Archived plan: `docs/superpowers/plans/archive/2026-05-09-phase9-architecture-re
 
 Phase 9 is no longer the active baseline because the remaining debt changed shape from repo-wide legality problems to localized readability and public-seam problems.
 
-## Phase 10 (Active): Slice Normalization & Public Seam Hardening
+## Phase 10 (Archived as Substantially Complete): Slice Normalization & Public Seam Hardening
 
-Started 2026-05-11. The active focus is no longer broad boundary repair. It is the narrower follow-on work of normalizing the highest-debt slices and shrinking implementation-shaped feature APIs.
+Started 2026-05-11 and archived on 2026-05-11. The focus was normalizing high-debt slices and shrinking implementation-shaped feature APIs.
 
-Active spec: `docs/superpowers/specs/2026-05-11-phase10-slice-normalization-and-public-seam-hardening-design.md`
-Active plan: `docs/superpowers/plans/2026-05-11-phase10-slice-normalization-and-public-seam-hardening.md`
+Archived spec: `docs/superpowers/specs/2026-05-11-phase10-slice-normalization-and-public-seam-hardening-design.md`
+Archived plan: `docs/superpowers/plans/2026-05-11-phase10-slice-normalization-and-public-seam-hardening.md`
 
-**Current active hotspots:**
-1. `notification` still reads like a collaborator cluster hidden behind a thin facade.
-2. `dynamic` still mixes domain-facing contracts with parsing and publish/upload support concerns.
-3. `video/presentation/` still concentrates several sub-features under one dense surface.
-4. `home` still composes other features through APIs that are legal but too implementation-shaped.
-5. Existing architecture guards do not yet protect against broad barrel re-exports or `feature_scope.dart` facade leakage.
+**Completed:**
+1. `notification`, `dynamic`, and `video` refactored into explicit capability slices with real facades.
+2. `feature_scope.dart` hardened in all 13 features to act as a pure facade seam.
+3. `<feature>.dart` barrels audited to ensure they only expose deliberate public APIs.
+4. `home` thinned and rewired to use the new hardened feature facades.
+5. New architecture guards added to prevent regression on broad barrel re-exports and feature scope leaks.
 
-**Phase 10 target state:**
-1. `notification`, `dynamic`, and `video` read as explicit capability slices instead of large blended surfaces.
-2. `feature_scope.dart` acts as a facade seam rather than a raw provider dump.
-3. `<feature>.dart` barrels expose deliberate public APIs rather than broad presentation exports.
-4. `home` composes narrower feature contracts instead of implementation-shaped exports.
-5. New architecture guards enforce the narrower public-seam rules introduced in this phase.
+**Guardrails inherited from Phase 10:**
+1. `test/architecture/phase10_barrel_public_api_guard_test.dart`
+2. `test/architecture/phase10_feature_scope_facade_guard_test.dart`
+3. `test/architecture/phase10_dynamic_domain_purity_test.dart`
+4. `test/architecture/phase10_video_presentation_decomposition_test.dart`
+
+Phase 10 successfully normalized the remaining high-debt areas, moving the repo from "legal but messy" to "cleanly bounded" at the feature level.
