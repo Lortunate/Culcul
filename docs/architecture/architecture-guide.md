@@ -276,3 +276,18 @@ Active plan: `docs/superpowers/plans/2026-05-12-phase12-capability-facade-simpli
 3. Empty facades are removed or merged into clearer providers or capability services.
 4. `home` and `notification` are the reference slices for simplification-first seam design.
 5. Generator-first patterns replace repetitive custom glue inside the slices touched by this phase, especially provider entry wrappers.
+
+### When a Facade Is Warranted vs. When a Provider Is Enough
+
+| Scenario | Preferred Pattern |
+|----------|-------------------|
+| Feature needs orchestration across multiple repos/services | Facade class with named capability methods |
+| Feature exposes a single async operation per concern | `@riverpod` function provider (generator-first) |
+| Feature only wraps a repository with no added behavior | No facade — expose the repository provider directly via `data/*_repository_entry.dart` |
+| Cross-feature reuse of a domain concept | Narrow barrel export (`<feature>_<concept>.dart`) at feature root |
+
+**Rules of thumb:**
+- A facade earns its existence by adding behavior: validation, composition, caching policy, or error mapping that the raw repository does not provide.
+- If a facade method is `return _repository.doThing(args)` with no transformation, delete the facade and let consumers depend on the repository provider.
+- Generator-first (`@riverpod`) is preferred for new capability providers. Hand-written `Provider`/`FutureProvider` is acceptable only when the generator cannot express the needed lifecycle (e.g., manual `ref.onDispose` with complex teardown).
+- `data/*_repository_entry.dart` is the single wiring point that imports the concrete `_impl.dart` — `feature_scope.dart` and `application/` must not import `_impl` files directly.
