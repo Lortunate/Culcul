@@ -1,4 +1,4 @@
-import 'package:culcul/core/data/network/dtos/video_model_contract_dto.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/features/profile/data/dtos/profile_dtos.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
@@ -65,13 +65,13 @@ extension RelationUserMapper on RelationUser {
   }
 }
 
-extension UserSpaceVideoOwnerMapper on VideoOwnerDto {
+extension UserSpaceVideoOwnerMapper on VideoOwner {
   ProfileVideoOwner toDomain() {
     return ProfileVideoOwner(mid: mid, name: name, face: face);
   }
 }
 
-extension UserSpaceVideoStatsMapper on VideoStatDto {
+extension UserSpaceVideoStatsMapper on VideoStat {
   ProfileVideoStats toDomain() {
     return ProfileVideoStats(
       view: view,

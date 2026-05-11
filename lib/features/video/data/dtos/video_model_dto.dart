@@ -1,1 +1,1 @@
-export '../../domain/entities/video_model_dto.dart';
+export 'package:culcul/core/contracts/video_model_contract.dart';
