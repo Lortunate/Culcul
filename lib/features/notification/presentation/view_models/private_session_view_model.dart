@@ -28,7 +28,7 @@ class PrivateSessionList extends _$PrivateSessionList
       return const CursorPage(items: [], nextCursor: null, hasMore: false);
     }
 
-    final facade = ref.read(notificationFacadeEntryProvider);
+    final facade = ref.read(notificationInboxFacadeProvider);
     if (isRefreshing || currentCursor == null) {
       await facade.syncSessions(ownerUid: ownerUid, force: true);
     } else {
@@ -62,7 +62,7 @@ class PrivateSessionList extends _$PrivateSessionList
   Future<void> _syncHeadAndRefresh(int ownerUid) async {
     try {
       await ref
-          .read(notificationFacadeEntryProvider)
+          .read(notificationInboxFacadeProvider)
           .syncSessions(ownerUid: ownerUid);
       await refreshPage();
     } catch (_) {}

@@ -8,7 +8,7 @@ mixin _ChatHelpersMixin on _$Chat {
   Future<void> _syncHeadAndRefresh(int ownerUid) async {
     try {
       await ref
-          .read(notificationFacadeEntryProvider)
+          .read(notificationChatFacadeProvider)
           .syncMessagesHead(
             ownerUid: ownerUid,
             talkerId: talkerId,
@@ -48,7 +48,7 @@ mixin _ChatHelpersMixin on _$Chat {
 
   Future<({List<PrivateMessage> messages, Map<String, String> emojiMap})>
   _loadLocalSnapshot({required int ownerUid, int? endSeqno}) async {
-    final facade = ref.read(notificationFacadeEntryProvider);
+    final facade = ref.read(notificationChatFacadeProvider);
     final results = await _concurrencyExecutor.runConcurrent(
       tasks: <ConcurrentTask<dynamic>>[
         ConcurrentTask<List<PrivateMessage>>(

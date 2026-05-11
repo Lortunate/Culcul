@@ -30,7 +30,7 @@ class UnreadCount extends _$UnreadCount {
       );
     }
 
-    final facade = ref.read(notificationFacadeEntryProvider);
+    final facade = ref.read(notificationInboxFacadeProvider);
     final stream = facade.watchUnreadCount(ownerUid: ownerUid);
     _subscription = stream.listen((summary) {
       state = AsyncData(summary);
@@ -45,7 +45,7 @@ class UnreadCount extends _$UnreadCount {
     final ownerUid = ref.read(notificationOwnerUidProvider);
     if (ownerUid == null) return;
     await ref
-        .read(notificationFacadeEntryProvider)
+        .read(notificationInboxFacadeProvider)
         .syncUnreadCount(ownerUid: ownerUid, force: true);
   }
 }

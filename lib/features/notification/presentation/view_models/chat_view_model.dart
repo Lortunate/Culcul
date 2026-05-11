@@ -86,7 +86,7 @@ class Chat extends _$Chat with _ChatHelpersMixin, _ChatSendMixin {
     );
 
     try {
-      final facade = ref.read(notificationFacadeEntryProvider);
+      final facade = ref.read(notificationChatFacadeProvider);
       await facade.syncMessagesOlder(
         ownerUid: ownerUid,
         talkerId: talkerId,

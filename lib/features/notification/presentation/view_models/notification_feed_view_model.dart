@@ -32,7 +32,7 @@ class NotificationFeedList extends _$NotificationFeedList
       return const CursorPage(items: [], nextCursor: null, hasMore: false);
     }
 
-    final facade = ref.read(notificationFacadeEntryProvider);
+    final facade = ref.read(notificationInboxFacadeProvider);
     if (isRefreshing || cursor == null) {
       await facade.syncFeedHead(ownerUid: ownerUid, type: type);
     } else {
@@ -65,7 +65,7 @@ class NotificationFeedList extends _$NotificationFeedList
     if (type == NotificationFeedType.system) return;
     try {
       await ref
-          .read(notificationFacadeEntryProvider)
+          .read(notificationInboxFacadeProvider)
           .syncFeedHead(ownerUid: ownerUid, type: type);
       await refreshPage();
     } catch (_) {}

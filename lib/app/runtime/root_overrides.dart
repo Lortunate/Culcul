@@ -8,10 +8,6 @@ import 'package:culcul/core/session/search_providers.dart';
 import 'package:culcul/core/session/session_lifecycle_providers.dart';
 import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/auth/application/auth_session_cookie_refresher.dart';
-import 'package:culcul/features/auth/feature_scope.dart';
-import 'package:culcul/features/profile/feature_scope.dart';
-import 'package:culcul/features/search/feature_scope.dart';
-import 'package:culcul/features/to_view/feature_scope.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod/misc.dart' show Override;
 
@@ -23,10 +19,6 @@ List<Override> createRootOverrides(AppRuntime runtime) {
     settingsStorageBoxProvider.overrideWithValue(runtime.settingsStore.box),
     searchStorageBoxProvider.overrideWithValue(runtime.searchHistoryStore.box),
     sessionCookieRefresherProvider.overrideWith((ref) => AuthSessionCookieRefresher(ref)),
-    ...AuthFeatureScope.overrides(),
-    ...ProfileFeatureScope.overrides(),
-    ...SearchFeatureScope.overrides(),
-    ...ToViewFeatureScope.overrides(),
   ];
 }
 

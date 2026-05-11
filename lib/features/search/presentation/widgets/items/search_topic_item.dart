@@ -1,5 +1,5 @@
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/features/dynamic/dynamic.dart';
+import 'package:culcul/features/dynamic/route_entry.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/ui/widgets/media/app_network_image.dart';
