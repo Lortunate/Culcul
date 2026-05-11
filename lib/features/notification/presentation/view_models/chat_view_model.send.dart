@@ -13,7 +13,7 @@ mixin _ChatSendMixin on _$Chat, _ChatHelpersMixin {
 
   Future<ChatPageCommandResult> sendImage(ChatImageAttachment image) async {
     final uploadResult = await ref
-        .read(notificationChatFacadeProvider)
+        .read(notificationRepositoryProvider)
         .uploadImage(image.bytes, image.filename);
     final uploadRes = uploadResult.dataOrNull;
     if (uploadRes == null) {
@@ -41,8 +41,8 @@ mixin _ChatSendMixin on _$Chat, _ChatHelpersMixin {
       return _setPagingError(AppError.auth('Not logged in'));
     }
 
-    final facade = ref.read(notificationChatFacadeProvider);
-    final result = await facade.sendPrivateMessage(
+    final repository = ref.read(notificationRepositoryProvider);
+    final result = await repository.sendPrivateMessage(
       ownerUid: ownerUid,
       receiverId: talkerId,
       receiverType: sessionType.receiverType,

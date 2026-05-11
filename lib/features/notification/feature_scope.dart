@@ -1,2 +1,2 @@
-export 'package:culcul/features/notification/application/notification_facade.dart'
-    show notificationChatFacadeProvider, notificationInboxFacadeProvider;
+export 'package:culcul/features/notification/data/notification_repository_impl.dart'
+    show notificationRepositoryProvider;

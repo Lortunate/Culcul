@@ -1,5 +1,2 @@
-export 'package:culcul/features/home/application/home_facade.dart'
-    show
-        homePopularFeedCapabilityProvider,
-        homeRecommendFeedCapabilityProvider,
-        homeWeeklyFeedCapabilityProvider;
+export 'package:culcul/features/home/data/home_feed_data_source.dart'
+    show homeFeedDataSourceProvider;

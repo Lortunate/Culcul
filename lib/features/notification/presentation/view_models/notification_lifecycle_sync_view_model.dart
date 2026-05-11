@@ -40,7 +40,7 @@ class NotificationLifecycleSync extends _$NotificationLifecycleSync
   }
 
   Future<void> _syncOnResume(int ownerUid) async {
-    final facade = ref.read(notificationInboxFacadeProvider);
+    final repository = ref.read(notificationRepositoryProvider);
     await _concurrencyExecutor.runConcurrent(
       tasks: <ConcurrentTask<dynamic>>[
         ConcurrentTask<Object?>(
@@ -48,7 +48,7 @@ class NotificationLifecycleSync extends _$NotificationLifecycleSync
           critical: false,
           fallback: (_) => null,
           task: () async {
-            await _runSyncTask(facade.syncUnreadCount(ownerUid: ownerUid));
+            await _runSyncTask(repository.syncUnreadCount(ownerUid: ownerUid));
             return null;
           },
         ),
@@ -57,7 +57,7 @@ class NotificationLifecycleSync extends _$NotificationLifecycleSync
           critical: false,
           fallback: (_) => null,
           task: () async {
-            await _runSyncTask(facade.syncSessions(ownerUid: ownerUid));
+            await _runSyncTask(repository.syncSessions(ownerUid: ownerUid));
             return null;
           },
         ),
@@ -67,7 +67,7 @@ class NotificationLifecycleSync extends _$NotificationLifecycleSync
           fallback: (_) => null,
           task: () async {
             await _runSyncTask(
-              facade.syncFeedHead(
+              repository.syncFeedHead(
                 ownerUid: ownerUid,
                 type: NotificationFeedType.reply,
               ),
@@ -81,7 +81,7 @@ class NotificationLifecycleSync extends _$NotificationLifecycleSync
           fallback: (_) => null,
           task: () async {
             await _runSyncTask(
-              facade.syncFeedHead(ownerUid: ownerUid, type: NotificationFeedType.at),
+              repository.syncFeedHead(ownerUid: ownerUid, type: NotificationFeedType.at),
             );
             return null;
           },
@@ -92,7 +92,7 @@ class NotificationLifecycleSync extends _$NotificationLifecycleSync
           fallback: (_) => null,
           task: () async {
             await _runSyncTask(
-              facade.syncFeedHead(ownerUid: ownerUid, type: NotificationFeedType.like),
+              repository.syncFeedHead(ownerUid: ownerUid, type: NotificationFeedType.like),
             );
             return null;
           },

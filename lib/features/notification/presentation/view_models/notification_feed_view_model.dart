@@ -32,14 +32,14 @@ class NotificationFeedList extends _$NotificationFeedList
       return const CursorPage(items: [], nextCursor: null, hasMore: false);
     }
 
-    final facade = ref.read(notificationInboxFacadeProvider);
+    final repository = ref.read(notificationRepositoryProvider);
     if (isRefreshing || cursor == null) {
-      await facade.syncFeedHead(ownerUid: ownerUid, type: type);
+      await repository.syncFeedHead(ownerUid: ownerUid, type: type);
     } else {
-      await facade.syncFeedOlder(ownerUid: ownerUid, type: type, cursor: cursor);
+      await repository.syncFeedOlder(ownerUid: ownerUid, type: type, cursor: cursor);
     }
 
-    final data = await facade.pageFeedFromLocal(
+    final data = await repository.pageFeedFromLocal(
       ownerUid: ownerUid,
       type: type,
       cursor: cursor,
@@ -65,7 +65,7 @@ class NotificationFeedList extends _$NotificationFeedList
     if (type == NotificationFeedType.system) return;
     try {
       await ref
-          .read(notificationInboxFacadeProvider)
+          .read(notificationRepositoryProvider)
           .syncFeedHead(ownerUid: ownerUid, type: type);
       await refreshPage();
     } catch (_) {}

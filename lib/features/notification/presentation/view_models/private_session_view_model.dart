@@ -28,18 +28,18 @@ class PrivateSessionList extends _$PrivateSessionList
       return const CursorPage(items: [], nextCursor: null, hasMore: false);
     }
 
-    final facade = ref.read(notificationInboxFacadeProvider);
+    final repository = ref.read(notificationRepositoryProvider);
     if (isRefreshing || currentCursor == null) {
-      await facade.syncSessions(ownerUid: ownerUid, force: true);
+      await repository.syncSessions(ownerUid: ownerUid, force: true);
     } else {
-      await facade.syncSessionsOlder(
+      await repository.syncSessionsOlder(
         ownerUid: ownerUid,
         sessionType: PrivateSessionType.user,
         endTs: currentCursor,
       );
     }
 
-    final sessions = await facade.pageSessionsFromLocal(
+    final sessions = await repository.pageSessionsFromLocal(
       ownerUid: ownerUid,
       sessionType: PrivateSessionType.user,
       endTs: currentCursor,
@@ -62,7 +62,7 @@ class PrivateSessionList extends _$PrivateSessionList
   Future<void> _syncHeadAndRefresh(int ownerUid) async {
     try {
       await ref
-          .read(notificationInboxFacadeProvider)
+          .read(notificationRepositoryProvider)
           .syncSessions(ownerUid: ownerUid);
       await refreshPage();
     } catch (_) {}
