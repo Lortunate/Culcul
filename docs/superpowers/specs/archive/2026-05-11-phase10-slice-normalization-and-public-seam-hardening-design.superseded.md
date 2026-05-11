@@ -1,3 +1,8 @@
+> **Superseded on 2026-05-11 after partial landing:** This archive is preserved as transitional planning context. Phase 10 did land important structural moves such as `feature_scope.dart` facade entrypoints, `phase10_*` architecture guards, and major `dynamic` / `video` directory normalization. It is archived as superseded rather than completed because the repo truth drifted: the docs disagreed about status, some facades remained placeholder or repository-shaped, and the guard semantics were too narrow to prove the claimed public-seam hardening.
+>
+> **Replaced by spec:** `docs/superpowers/specs/2026-05-11-phase11-architecture-truth-reconciliation-and-semantic-seams-design.md`
+> **Replaced by plan:** `docs/superpowers/plans/2026-05-11-phase11-architecture-truth-reconciliation-and-semantic-seams.md`
+
 # Phase 10: Slice Normalization & Public Seam Hardening
 
 **Status:** ACTIVE

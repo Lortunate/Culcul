@@ -1,3 +1,8 @@
+> **Superseded on 2026-05-11 after partial landing:** Keep this plan as historical execution context only. Several structural moves from Phase 10 landed in code, but the repo did not end the phase with a truthful, unified baseline. The follow-up work is no longer "finish the same narrow slice cleanup" but "reconcile repo truth and converge semantic seams."
+>
+> **Replaced by spec:** `docs/superpowers/specs/2026-05-11-phase11-architecture-truth-reconciliation-and-semantic-seams-design.md`
+> **Replaced by plan:** `docs/superpowers/plans/2026-05-11-phase11-architecture-truth-reconciliation-and-semantic-seams.md`
+
 # Phase 10 Slice Normalization & Public Seam Hardening Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

@@ -1,6 +1,6 @@
 # Architecture Guide
 
-Current implemented baseline for Culcul (BiliBili 3rd-party client). `lib/shared/` is fully retired, and all features now follow a standardized slice architecture with hardened public facades.
+Current implemented baseline for Culcul (BiliBili 3rd-party client). `lib/shared/` is fully retired, and all features now follow a standardized slice architecture. The remaining active architecture work is semantic rather than structural: the repo already has the right top-level buckets, but some feature facades, barrels, and docs still need convergence before the public seams are truly clean.
 
 ## Directory Structure
 
@@ -229,19 +229,25 @@ Archived plan: `docs/superpowers/plans/archive/2026-05-09-phase9-architecture-re
 
 Phase 9 is no longer the active baseline because the remaining debt changed shape from repo-wide legality problems to localized readability and public-seam problems.
 
-## Phase 10 (Archived as Substantially Complete): Slice Normalization & Public Seam Hardening
+## Phase 10 (Superseded After Partial Landing): Slice Normalization & Public Seam Hardening
 
-Started 2026-05-11 and archived on 2026-05-11. The focus was normalizing high-debt slices and shrinking implementation-shaped feature APIs.
+Started 2026-05-11 and superseded on 2026-05-11. The focus was normalizing high-debt slices and shrinking implementation-shaped feature APIs.
 
-Archived spec: `docs/superpowers/specs/2026-05-11-phase10-slice-normalization-and-public-seam-hardening-design.md`
-Archived plan: `docs/superpowers/plans/2026-05-11-phase10-slice-normalization-and-public-seam-hardening.md`
+Archived spec: `docs/superpowers/specs/archive/2026-05-11-phase10-slice-normalization-and-public-seam-hardening-design.superseded.md`
+Archived plan: `docs/superpowers/plans/archive/2026-05-11-phase10-slice-normalization-and-public-seam-hardening.superseded.md`
 
-**Completed:**
-1. `notification`, `dynamic`, and `video` refactored into explicit capability slices with real facades.
-2. `feature_scope.dart` hardened in all 13 features to act as a pure facade seam.
-3. `<feature>.dart` barrels audited to ensure they only expose deliberate public APIs.
-4. `home` thinned and rewired to use the new hardened feature facades.
-5. New architecture guards added to prevent regression on broad barrel re-exports and feature scope leaks.
+**Verified landed state from Phase 10:**
+1. `feature_scope.dart` facade entrypoints exist across the repo and no longer default to exporting raw data providers.
+2. `dynamic` already has `application/` and `data/article_parsing/` slices, and `video/presentation/` is already split into `detail/`, `player/`, `comments/`, and `overlays/`.
+3. `phase10_*` architecture tests exist and pass, which proves a first pass of seam hardening landed.
+
+**Why Phase 10 was superseded instead of marked complete:**
+1. The docs diverged: `CLAUDE.md` still treated Phase 10 as active while this guide had already started speaking as if it were completed and archived.
+2. Some public seams were only shape-correct, not semantically converged:
+   - `home` still lets presentation depend on `data/home_feed_data_source.dart`
+   - `notification` still exposes a repository-shaped facade
+   - `dynamic.dart` and `video.dart` still selectively re-export `presentation/**` symbols
+3. The first-generation Phase 10 guards were too syntactic to prove the stronger claim that all feature public APIs were deliberate and minimal.
 
 **Guardrails inherited from Phase 10:**
 1. `test/architecture/phase10_barrel_public_api_guard_test.dart`
@@ -249,4 +255,25 @@ Archived plan: `docs/superpowers/plans/2026-05-11-phase10-slice-normalization-an
 3. `test/architecture/phase10_dynamic_domain_purity_test.dart`
 4. `test/architecture/phase10_video_presentation_decomposition_test.dart`
 
-Phase 10 successfully normalized the remaining high-debt areas, moving the repo from "legal but messy" to "cleanly bounded" at the feature level.
+Phase 10 therefore remains important historical context, but it is no longer the truthful active baseline.
+
+## Phase 11 (Active): Architecture Truth Reconciliation & Semantic Seam Convergence
+
+Started 2026-05-11. The focus is aligning the docs with the real repo state, finishing the semantic public-seam cleanup left half-done by Phase 10, and converging large feature slices around capability-oriented facades instead of implementation-shaped wrappers.
+
+Active spec: `docs/superpowers/specs/2026-05-11-phase11-architecture-truth-reconciliation-and-semantic-seams-design.md`
+Active plan: `docs/superpowers/plans/2026-05-11-phase11-architecture-truth-reconciliation-and-semantic-seams.md`
+
+**Current verified debt carried into Phase 11:**
+1. Source-of-truth drift across `CLAUDE.md`, this guide, and the planning docs.
+2. `home` facade is effectively a placeholder while presentation still depends on data providers directly.
+3. `notification` facade exists, but it still behaves mostly like a repository pass-through and application wiring still reaches into concrete data implementation paths.
+4. `dynamic.dart` and `video.dart` still export selected `presentation/**` symbols, which keeps the public API implementation-shaped even though the broad boundary rules pass.
+5. The next-generation architecture guards must check semantic intent, not only coarse string patterns.
+
+**Phase 11 target state:**
+1. One truthful active baseline across `CLAUDE.md`, `architecture-guide.md`, spec, and plan.
+2. Feature barrels export only route seams, facade seams, and intentionally public contracts.
+3. `feature_scope.dart` exposes capability-oriented providers only.
+4. `home`, `notification`, `dynamic`, and `video` converge on real application facades and clearer capability subtrees.
+5. Architecture tests enforce these semantic seam rules so future refactors do not drift back into implementation-shaped public APIs.

@@ -1,10 +1,11 @@
 # Phase 9: Architecture Rebaseline & Ownership Realignment
 
-> **Archived on 2026-05-11 as substantially complete:** This archive is preserved as historical transition context. Treat Phase 9 as the repo-wide boundary rebaseline that largely landed. Use `docs/superpowers/specs/2026-05-11-phase10-slice-normalization-and-public-seam-hardening-design.md` and `docs/superpowers/plans/2026-05-11-phase10-slice-normalization-and-public-seam-hardening.md` for the active localized cleanup baseline.
+> **Archived on 2026-05-11 as substantially complete:** This archive is preserved as historical transition context. Treat Phase 9 as the repo-wide boundary rebaseline that largely landed. For the current active baseline, use `docs/superpowers/specs/2026-05-11-phase11-architecture-truth-reconciliation-and-semantic-seams-design.md` and `docs/superpowers/plans/2026-05-11-phase11-architecture-truth-reconciliation-and-semantic-seams.md`. Phase 10 remains archived as the partial-landing bridge between those two phases.
 
 **Status:** SUPERSEDED
-**Replaced by spec:** `docs/superpowers/specs/2026-05-11-phase10-slice-normalization-and-public-seam-hardening-design.md`
-**Replaced by plan:** `docs/superpowers/plans/2026-05-11-phase10-slice-normalization-and-public-seam-hardening.md`
+**Historical bridge archive:** `docs/superpowers/specs/archive/2026-05-11-phase10-slice-normalization-and-public-seam-hardening-design.superseded.md`
+**Current active spec:** `docs/superpowers/specs/2026-05-11-phase11-architecture-truth-reconciliation-and-semantic-seams-design.md`
+**Current active plan:** `docs/superpowers/plans/2026-05-11-phase11-architecture-truth-reconciliation-and-semantic-seams.md`
 **Date:** 2026-05-09
 **Goal:** Rebuild Culcul's app/runtime ownership, shared presentation surface, and feature public seams so the current codebase becomes easier to read, safer to refactor, and less dependent on hidden cross-feature internals.
 

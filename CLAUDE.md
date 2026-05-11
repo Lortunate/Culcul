@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **Culcul** (2571 symbols, 3248 relationships, 19 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **Culcul** (2648 symbols, 3325 relationships, 19 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -42,22 +42,23 @@ This project is indexed by GitNexus as **Culcul** (2571 symbols, 3248 relationsh
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 10 — Slice Normalization & Public Seam Hardening)
+## Architecture (Phase 11 — Truth Reconciliation & Semantic Seam Convergence)
 
-`lib/shared/` is **fully retired**. The current implemented shape is `app/` + `features/` + `core/` + `ui/`. Phase 9's repo-wide boundary rebaseline is now treated as substantially complete; the active baseline is the narrower follow-on work of cleaning up slice-local readability and shrinking implementation-shaped public seams.
+`lib/shared/` is **fully retired**. The current implemented shape is still `app/` + `features/` + `core/` + `ui/`, and the repo-wide Phase 9 boundary rebaseline remains substantially complete. The active problem is no longer broad legality. It is semantic convergence: aligning docs with real code, turning placeholder facades into real capability seams, and tightening public APIs so "legal" surfaces are also readable and deliberate.
 
 See `docs/architecture/architecture-guide.md` for the current implemented baseline, known drift, and active target state.
 
-Active spec: `docs/superpowers/specs/2026-05-11-phase10-slice-normalization-and-public-seam-hardening-design.md`
-Active plan: `docs/superpowers/plans/2026-05-11-phase10-slice-normalization-and-public-seam-hardening.md`
+Active spec: `docs/superpowers/specs/2026-05-11-phase11-architecture-truth-reconciliation-and-semantic-seams-design.md`
+Active plan: `docs/superpowers/plans/2026-05-11-phase11-architecture-truth-reconciliation-and-semantic-seams.md`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`
 - Features must NOT import another feature's `presentation/**` or `data/**` internals
 - `route_entry.dart` is the router-facing seam; `feature_scope.dart` and `<feature>.dart` are the approved runtime/composition seams
 - Orchestration logic belongs in `application/`, not in presentation widgets
-- Feature barrels and `feature_scope.dart` should stay deliberate and narrow; do not expose raw data-provider internals as default public API
-- If architecture docs disagree, the active Phase 10 spec/plan override older phase text
+- Feature barrels and `feature_scope.dart` must stay deliberate and narrow: no `presentation/**` re-exports from feature barrels, even selective `show` exports, unless the symbol is promoted to a clearly public shared surface
+- Facades should expose capabilities, not repositories; application wiring should prefer domain/provider ports over importing `data/*_impl.dart` into public seam files
+- If architecture docs disagree, the active Phase 11 spec/plan override older phase text
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:full hash:f65d5d33 -->
 ## Issue Tracking with bd (beads)
