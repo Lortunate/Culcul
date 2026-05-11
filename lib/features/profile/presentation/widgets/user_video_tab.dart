@@ -6,7 +6,7 @@ import 'package:culcul/features/profile/presentation/view_models/user_space_vide
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
-import 'package:culcul/ui/compositions/feed_cards/feed_cards.dart';
+import 'package:culcul/ui/assemblies/feed_cards/feed_cards.dart';
 import 'package:culcul/ui/widgets/text/icon_text.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

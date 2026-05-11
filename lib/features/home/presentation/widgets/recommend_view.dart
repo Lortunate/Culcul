@@ -13,7 +13,7 @@ import 'package:culcul/core/data/network/network_quality_policy.dart';
 import 'package:culcul/core/perf/performance_policy.dart';
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
 import 'package:culcul/ui/widgets/skeletons/page_skeletons.dart';
-import 'package:culcul/ui/compositions/feed_cards/feed_cards.dart';
+import 'package:culcul/ui/assemblies/feed_cards/feed_cards.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:culcul/features/home/presentation/home_breakpoints.dart';
 import 'package:culcul/ui/responsive/responsive_container.dart';

@@ -1,7 +1,7 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/ui/widgets/media/app_network_image.dart';
-import 'package:culcul/ui/compositions/feed_cards/feed_cards.dart';
+import 'package:culcul/ui/assemblies/feed_cards/feed_cards.dart';
 import 'package:flutter/material.dart';
 
 class SearchBangumiItem extends StatelessWidget {

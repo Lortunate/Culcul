@@ -1,7 +1,7 @@
-export 'compositions/comments/comments.dart';
-export 'compositions/feed_cards/feed_cards.dart';
-export 'compositions/text/text.dart';
-export 'compositions/users/users.dart';
+export 'assemblies/comments/comments.dart';
+export 'assemblies/feed_cards/feed_cards.dart';
+export 'assemblies/text/text.dart';
+export 'assemblies/users/users.dart';
 export 'responsive/app_breakpoints.dart';
 export 'responsive/app_responsive.dart';
 export 'responsive/responsive_container.dart';

@@ -1,9 +1,9 @@
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/compositions/comments/comment_images.dart';
-import 'package:culcul/ui/compositions/text/text.dart';
-import 'package:culcul/ui/compositions/users/users.dart';
+import 'package:culcul/ui/assemblies/comments/comment_images.dart';
+import 'package:culcul/ui/assemblies/text/text.dart';
+import 'package:culcul/ui/assemblies/users/users.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:culcul/ui/widgets/inputs/app_selectable_text.dart';
 import 'package:culcul/ui/widgets/users/app_avatar.dart';

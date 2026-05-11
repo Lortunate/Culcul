@@ -1,5 +1,5 @@
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/ui/compositions/feed_cards/video_thumbnail.dart';
+import 'package:culcul/ui/assemblies/feed_cards/video_thumbnail.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:culcul/ui/widgets/cards/app_card_container.dart';
 import 'package:culcul/ui/widgets/text/icon_text.dart';

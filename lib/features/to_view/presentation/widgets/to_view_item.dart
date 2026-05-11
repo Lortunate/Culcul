@@ -2,7 +2,7 @@ import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/text/icon_text.dart';
-import 'package:culcul/ui/compositions/feed_cards/feed_cards.dart';
+import 'package:culcul/ui/assemblies/feed_cards/feed_cards.dart';
 import 'package:flutter/material.dart';
 
 class ToViewItem extends StatelessWidget {

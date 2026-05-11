@@ -1,6 +1,6 @@
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/ui/compositions/feed_cards/feed_cards.dart';
+import 'package:culcul/ui/assemblies/feed_cards/feed_cards.dart';
 import 'package:flutter/material.dart';
 
 class RecommendationItem extends StatelessWidget {

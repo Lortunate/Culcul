@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/video/route_entry.dart';
 import 'package:culcul/features/video/presentation/comments/video_comments_view_model.dart';
-import 'package:culcul/ui/compositions/comments/comments.dart';
+import 'package:culcul/ui/assemblies/comments/comments.dart';
 import 'package:culcul/features/video/presentation/detail/video_detail_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';

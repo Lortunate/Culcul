@@ -5,7 +5,7 @@ import 'package:culcul/features/dynamic/presentation/view_models/article_detail_
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_navigation.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_comment_composer.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
-import 'package:culcul/ui/compositions/comments/comments.dart';
+import 'package:culcul/ui/assemblies/comments/comments.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
