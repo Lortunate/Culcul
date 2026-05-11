@@ -15,9 +15,9 @@ List<Override> createRootOverrides(AppRuntime runtime) {
   return [
     cookieJarProvider.overrideWithValue(runtime.cookieJar),
     cacheStoreProvider.overrideWithValue(runtime.cacheStore),
-    sessionStorageBoxProvider.overrideWithValue(runtime.sessionStore.box),
-    settingsStorageBoxProvider.overrideWithValue(runtime.settingsStore.box),
-    searchStorageBoxProvider.overrideWithValue(runtime.searchHistoryStore.box),
+    sessionStorageBoxProvider.overrideWithValue(runtime.sessionBox),
+    settingsStorageBoxProvider.overrideWithValue(runtime.settingsBox),
+    searchStorageBoxProvider.overrideWithValue(runtime.searchHistoryBox),
     sessionCookieRefresherProvider.overrideWith((ref) => AuthSessionCookieRefresher(ref)),
   ];
 }

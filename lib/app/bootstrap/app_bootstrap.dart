@@ -1,9 +1,6 @@
 import 'dart:io';
 
 import 'package:culcul/app/runtime/app_runtime.dart';
-import 'package:culcul/app/runtime/stores/search_history_store.dart';
-import 'package:culcul/app/runtime/stores/session_store.dart';
-import 'package:culcul/app/runtime/stores/settings_store.dart';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio_cache_interceptor_file_store/dio_cache_interceptor_file_store.dart';
 import 'package:flutter/material.dart';
@@ -41,9 +38,9 @@ class AppBootstrap {
         storage: FileStorage('${documentDirectory.path}/.cookies/'),
       ),
       cacheStore: FileCacheStore('${cacheDirectory.path}/http_cache'),
-      sessionStore: SessionStore(sessionStorageBox),
-      settingsStore: SettingsStore(settingsStorageBox),
-      searchHistoryStore: SearchHistoryStore(searchStorageBox),
+      sessionBox: sessionStorageBox,
+      settingsBox: settingsStorageBox,
+      searchHistoryBox: searchStorageBox,
     );
   }
 
