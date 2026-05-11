@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/notification/application/use_cases/send_private_message_use_case.dart';
-import 'package:culcul/features/notification/data/notification_repository_entry.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/domain/entities/image_upload_result.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_cursor.dart';

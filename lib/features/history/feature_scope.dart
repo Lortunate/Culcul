@@ -1,2 +1,2 @@
-export 'package:culcul/features/history/application/history_repository_provider.dart'
+export 'package:culcul/features/history/data/history_repository_impl.dart'
     show historyRepositoryProvider;

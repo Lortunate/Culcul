@@ -1,4 +1,4 @@
-export 'package:culcul/features/dynamic/application/dynamic_repository_provider.dart'
+export 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart'
     show dynamicRepositoryProvider;
-export 'package:culcul/features/dynamic/application/emote_repository_provider.dart'
+export 'package:culcul/features/dynamic/data/emote_repository_impl.dart'
     show emoteRepositoryProvider;

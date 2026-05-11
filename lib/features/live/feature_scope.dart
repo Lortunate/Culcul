@@ -1,2 +1,2 @@
-export 'package:culcul/features/live/application/live_repository_provider.dart'
+export 'package:culcul/features/live/data/live_repository_impl.dart'
     show liveRepositoryProvider;

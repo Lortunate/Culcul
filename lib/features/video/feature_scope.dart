@@ -1,2 +1,4 @@
-export 'package:culcul/features/video/application/video_repository_provider.dart'
-    show videoRepositoryProvider, danmakuRepositoryProvider;
+export 'package:culcul/features/video/data/video_repository_impl.dart'
+    show videoRepositoryProvider;
+export 'package:culcul/features/video/data/danmaku_repository_impl.dart'
+    show danmakuRepositoryProvider;

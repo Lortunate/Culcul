@@ -1,2 +1,2 @@
-export 'package:culcul/features/favorites/application/fav_repository_provider.dart'
+export 'package:culcul/features/favorites/data/fav_repository_impl.dart'
     show favRepositoryProvider;

@@ -1,2 +1,2 @@
-export 'package:culcul/features/ranking/application/ranking_repository_provider.dart'
+export 'package:culcul/features/ranking/data/ranking_repository_impl.dart'
     show rankingRepositoryProvider;

@@ -1,4 +1,4 @@
-import 'package:culcul/features/notification/data/notification_repository_entry.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/repositories/notification_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

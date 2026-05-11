@@ -1,2 +1,2 @@
-export 'package:culcul/features/search/application/search_repository_provider.dart'
+export 'package:culcul/features/search/data/search_repository_impl.dart'
     show searchRepositoryProvider;

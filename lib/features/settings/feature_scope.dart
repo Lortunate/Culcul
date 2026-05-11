@@ -1,2 +1,2 @@
-export 'package:culcul/features/settings/application/settings_repository_provider.dart'
+export 'package:culcul/features/settings/data/settings_repository_impl.dart'
     show settingsRepositoryProvider;
