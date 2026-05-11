@@ -1,116 +1,103 @@
 part of '../app_routes.dart';
 
-@TypedGoRoute<FollowingsRoute>(path: '/followings/:vmid')
-class FollowingsRoute extends GoRouteData with $FollowingsRoute {
-  final int vmid;
+@TypedGoRoute<WeeklyRoute>(path: '/weekly')
+class WeeklyRoute extends AppRouteData with $WeeklyRoute {
+  const WeeklyRoute();
 
-  const FollowingsRoute({required this.vmid});
+  @override
+  Widget build(BuildContext context, GoRouterState state) => buildWeeklyScreenPage();
+}
+
+@TypedGoRoute<VideoDetailRoute>(path: '/video/:bvid')
+class VideoDetailRoute extends AppRouteData with $VideoDetailRoute {
+  final String bvid;
+
+  const VideoDetailRoute({required this.bvid});
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      buildFollowingsRoutePage(vmid);
+      buildVideoDetailRoutePage(bvid);
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
+    return SlideFromBottomTransitionPage(
+      key: state.pageKey,
+      child: build(context, state),
+    );
   }
 }
 
-@TypedGoRoute<FollowersRoute>(path: '/followers/:vmid')
-class FollowersRoute extends GoRouteData with $FollowersRoute {
-  final int vmid;
+@TypedGoRoute<LiveRoomRoute>(path: '/live/:roomId')
+class LiveRoomRoute extends AppRouteData with $LiveRoomRoute {
+  final int roomId;
 
-  const FollowersRoute({required this.vmid});
+  const LiveRoomRoute({required this.roomId});
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
-      buildFollowersRoutePage(vmid);
+      buildLiveRoomRoutePage(roomId);
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
+    return SlideFromBottomTransitionPage(
+      key: state.pageKey,
+      child: build(context, state),
+    );
   }
 }
 
-@TypedGoRoute<UserProfileRoute>(path: '/user/:mid')
-class UserProfileRoute extends GoRouteData with $UserProfileRoute {
+@TypedGoRoute<CommentReplyRoute>(path: '/video/:bvid/comment/:oid/:rootId')
+class CommentReplyRoute extends AppRouteData with $CommentReplyRoute {
+  final String bvid;
+  final int oid;
+  final int rootId;
+  final CommentReplyRouteInput $extra;
+
+  const CommentReplyRoute({
+    required this.bvid,
+    required this.oid,
+    required this.rootId,
+    required this.$extra,
+  });
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) {
+    return buildCommentReplyRoutePage(oid: oid, rootId: rootId, input: $extra);
+  }
+}
+
+@TypedGoRoute<SearchRoute>(path: '/search')
+class SearchRoute extends AppRouteData with $SearchRoute {
+  const SearchRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => buildSearchRoutePage();
+}
+
+@TypedGoRoute<FavoritesRoute>(
+  path: '/favorites',
+  routes: [TypedGoRoute<FavoriteDetailRoute>(path: 'detail/:mediaId')],
+)
+class FavoritesRoute extends AppRouteData with $FavoritesRoute {
+  const FavoritesRoute();
+
+  @override
+  Widget build(BuildContext context, GoRouterState state) => buildFavoritesRoutePage();
+}
+
+class FavoriteDetailRoute extends AppRouteData with $FavoriteDetailRoute {
+  final int mediaId;
+  final String title;
   final int mid;
 
-  const UserProfileRoute({required this.mid});
+  const FavoriteDetailRoute({
+    required this.mediaId,
+    required this.title,
+    required this.mid,
+  });
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      buildUserProfileRoutePage(mid);
-
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
-  }
-}
-
-@TypedGoRoute<LoginRoute>(path: '/login')
-class LoginRoute extends GoRouteData with $LoginRoute {
-  const LoginRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) => buildLoginRoutePage();
-
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return FadeTransitionPage(key: state.pageKey, child: build(context, state));
-  }
-}
-
-@TypedGoRoute<SettingsRoute>(
-  path: '/settings',
-  routes: [TypedGoRoute<AboutRoute>(path: 'about')],
-)
-class SettingsRoute extends GoRouteData with $SettingsRoute {
-  const SettingsRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) => buildSettingsRoutePage();
-
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
-  }
-}
-
-class AboutRoute extends GoRouteData with $AboutRoute {
-  const AboutRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) => buildAboutRoutePage();
-
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
-  }
-}
-
-@TypedGoRoute<ToViewRoute>(path: '/to-view')
-class ToViewRoute extends GoRouteData with $ToViewRoute {
-  const ToViewRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) => buildToViewRoutePage();
-
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
-  }
-}
-
-@TypedGoRoute<HistoryRoute>(path: '/history')
-class HistoryRoute extends GoRouteData with $HistoryRoute {
-  const HistoryRoute();
-
-  @override
-  Widget build(BuildContext context, GoRouterState state) => buildHistoryRoutePage();
-
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
+  Widget build(BuildContext context, GoRouterState state) {
+    return buildFavoriteDetailRoutePage(mediaId: mediaId, title: title, mid: mid);
   }
 }

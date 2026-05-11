@@ -10,74 +10,49 @@ part of '../app_routes.dart';
     TypedGoRoute<ChatRoute>(path: 'chat/:talkerId'),
   ],
 )
-class NotificationRoute extends GoRouteData with $NotificationRoute {
+class NotificationRoute extends AppRouteData with $NotificationRoute {
   const NotificationRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) => buildNotificationRoutePage();
-
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
-  }
 }
 
-class ReplyNotificationRoute extends GoRouteData with $ReplyNotificationRoute {
+class ReplyNotificationRoute extends AppRouteData with $ReplyNotificationRoute {
   const ReplyNotificationRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return buildReplyNotificationRoutePage();
   }
-
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
-  }
 }
 
-class AtNotificationRoute extends GoRouteData with $AtNotificationRoute {
+class AtNotificationRoute extends AppRouteData with $AtNotificationRoute {
   const AtNotificationRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return buildAtNotificationRoutePage();
   }
-
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
-  }
 }
 
-class LikeNotificationRoute extends GoRouteData with $LikeNotificationRoute {
+class LikeNotificationRoute extends AppRouteData with $LikeNotificationRoute {
   const LikeNotificationRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
     return buildLikeNotificationRoutePage();
   }
-
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
-  }
 }
 
-class SystemNotificationRoute extends GoRouteData with $SystemNotificationRoute {
+class SystemNotificationRoute extends AppRouteData with $SystemNotificationRoute {
   const SystemNotificationRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       buildSystemNotificationRoutePage();
-
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
-  }
 }
 
-class ChatRoute extends GoRouteData with $ChatRoute {
+class ChatRoute extends AppRouteData with $ChatRoute {
   final int talkerId;
   final ChatRouteInput $extra;
 
@@ -98,7 +73,7 @@ class ChatRoute extends GoRouteData with $ChatRoute {
 }
 
 @TypedGoRoute<DynamicDetailRoute>(path: '/dynamic/detail/:id')
-class DynamicDetailRoute extends GoRouteData with $DynamicDetailRoute {
+class DynamicDetailRoute extends AppRouteData with $DynamicDetailRoute {
   final String id;
 
   const DynamicDetailRoute({required this.id});
@@ -106,15 +81,10 @@ class DynamicDetailRoute extends GoRouteData with $DynamicDetailRoute {
   @override
   Widget build(BuildContext context, GoRouterState state) =>
       buildDynamicDetailRoutePage(id);
-
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
-  }
 }
 
 @TypedGoRoute<PublishDynamicRoute>(path: '/dynamic/publish')
-class PublishDynamicRoute extends GoRouteData with $PublishDynamicRoute {
+class PublishDynamicRoute extends AppRouteData with $PublishDynamicRoute {
   const PublishDynamicRoute();
 
   @override

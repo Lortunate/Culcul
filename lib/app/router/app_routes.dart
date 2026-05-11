@@ -19,6 +19,7 @@ import 'package:culcul/features/settings/route_entry.dart';
 import 'package:culcul/features/to_view/route_entry.dart';
 import 'package:culcul/features/video/route_entry.dart';
 
+import 'app_route_data.dart';
 import 'route_transitions.dart';
 
 part 'app_routes.g.dart';

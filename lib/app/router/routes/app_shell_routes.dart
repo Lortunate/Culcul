@@ -21,50 +21,30 @@ class MainShellRoute extends StatefulShellRouteData {
   }
 }
 
-class HomeRoute extends GoRouteData with $HomeRoute {
+class HomeRoute extends AppRouteData with $HomeRoute {
   const HomeRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) => buildHomePage();
-
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
-  }
 }
 
-class DynamicRoute extends GoRouteData with $DynamicRoute {
+class DynamicRoute extends AppRouteData with $DynamicRoute {
   const DynamicRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) => buildDynamicRoutePage();
-
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
-  }
 }
 
-class RankingRoute extends GoRouteData with $RankingRoute {
+class RankingRoute extends AppRouteData with $RankingRoute {
   const RankingRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) => buildRankingRoutePage();
-
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
-  }
 }
 
-class ProfileRoute extends GoRouteData with $ProfileRoute {
+class ProfileRoute extends AppRouteData with $ProfileRoute {
   const ProfileRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) => buildProfileRoutePage();
-
-  @override
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
-  }
 }
