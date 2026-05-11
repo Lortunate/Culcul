@@ -42,23 +42,24 @@ This project is indexed by GitNexus as **Culcul** (2701 symbols, 3378 relationsh
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 11 — Truth Reconciliation & Semantic Seam Convergence)
+## Architecture (Phase 13 — Structural Simplification & Single Source of Truth)
 
-`lib/shared/` is **fully retired**. The current implemented shape is still `app/` + `features/` + `core/` + `ui/`, and the repo-wide Phase 9 boundary rebaseline remains substantially complete. The active problem is no longer broad legality. It is simplification: removing thin wrapper seams, tightening public APIs, and replacing repetitive custom glue with clearer capability seams and generator-first patterns.
+`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–12 established correct boundaries; Phase 13 eliminates remaining structural ceremony: redundant indirection layers, duplicate definitions, dead code, and over-sharded implementations.
 
-See `docs/architecture/architecture-guide.md` for the current implemented baseline, known drift, and active target state.
+See `docs/architecture/architecture-guide.md` for the current implemented baseline.
 
-Active spec: `docs/superpowers/specs/2026-05-12-phase12-capability-facade-simplification-and-generator-first-design.md`
-Active plan: `docs/superpowers/plans/2026-05-12-phase12-capability-facade-simplification-and-generator-first.md`
+Active spec: `docs/superpowers/specs/2026-05-12-phase13-structural-simplification-and-single-source-of-truth.md`
+Active plan: `docs/superpowers/plans/2026-05-12-phase13-structural-simplification-and-single-source-of-truth.md`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`
 - Features must NOT import another feature's `presentation/**` or `data/**` internals
 - `route_entry.dart` is the router-facing seam; `feature_scope.dart` and `<feature>.dart` are the approved runtime/composition seams
-- Orchestration logic belongs in `application/`, not in presentation widgets
-- Feature barrels and `feature_scope.dart` must stay deliberate and narrow: no `presentation/**` re-exports from feature barrels, even selective `show` exports, unless the symbol is promoted to a clearly public shared surface
-- Facades should expose capabilities, not repositories; application wiring should prefer domain/provider ports over importing `data/*_impl.dart` into public seam files
-- If architecture docs disagree, the active Phase 11 spec/plan override older phase text
+- `feature_scope.dart` exports directly from `data/*_repository_impl.dart` — no intermediate entry/provider files
+- DTOs belong in `data/dtos/`, never in `domain/`
+- Every shared model has exactly ONE definition in `core/contracts/`
+- Prefer `dio_smart_retry` over custom retry logic; prefer generated providers over hand-written wiring
+- If architecture docs disagree, the active Phase 13 spec/plan override older phase text
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:full hash:f65d5d33 -->
 ## Issue Tracking with bd (beads)
