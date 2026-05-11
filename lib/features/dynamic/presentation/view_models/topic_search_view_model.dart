@@ -9,7 +9,7 @@ final topicSearchViewModelProvider = FutureProvider.autoDispose
       if (trimmed.isEmpty) return const [];
 
       final data = await ref
-          .read(searchServiceProvider)
+          .read(searchPortProvider)
           .search(
             query: SearchQuery(keyword: trimmed, type: SearchType.topic),
           );
