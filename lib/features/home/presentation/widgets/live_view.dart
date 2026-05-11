@@ -6,7 +6,7 @@ import 'package:culcul/core/hooks/use_scroll_precache.dart';
 import 'package:culcul/core/data/network/network_quality_policy.dart';
 import 'package:culcul/core/perf/performance_policy.dart';
 import 'package:culcul/core/contracts/live_room_summary_contract.dart';
-import 'package:culcul/features/live/live.dart';
+import 'package:culcul/features/live/live_recommend.dart';
 import 'package:culcul/features/home/presentation/widgets/live_card_skeleton.dart';
 import 'package:culcul/features/home/presentation/widgets/home_feed_view_utils.dart';
 import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';

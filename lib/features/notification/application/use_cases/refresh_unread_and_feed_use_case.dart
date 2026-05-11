@@ -1,4 +1,4 @@
-import 'package:culcul/features/notification/application/notification_repository_provider.dart';
+import 'package:culcul/features/notification/data/notification_repository_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/repositories/notification_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -7,7 +7,7 @@ part 'refresh_unread_and_feed_use_case.g.dart';
 
 @riverpod
 RefreshUnreadAndFeedUseCase refreshUnreadAndFeedUseCase(Ref ref) {
-  return RefreshUnreadAndFeedUseCase(ref.watch(notificationRepositoryEntryProvider));
+  return RefreshUnreadAndFeedUseCase(ref.watch(notificationRepositoryProvider));
 }
 
 class RefreshUnreadAndFeedCommand {

@@ -1,6 +1,6 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/notification/application/notification_repository_provider.dart';
+import 'package:culcul/features/notification/data/notification_repository_entry.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
 import 'package:culcul/features/notification/domain/repositories/notification_repository.dart';
@@ -10,9 +10,7 @@ part 'send_private_message_use_case.g.dart';
 
 @riverpod
 SendPrivateMessageUseCase sendPrivateMessageUseCase(Ref ref) {
-  return SendPrivateMessageUseCase(
-    ref.watch(notificationRepositoryEntryProvider),
-  );
+  return SendPrivateMessageUseCase(ref.watch(notificationRepositoryProvider));
 }
 
 class SendPrivateMessageCommand {

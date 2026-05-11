@@ -28,8 +28,10 @@ class HomePopular extends _$HomePopular
 
   Future<List<VideoModel>> _loadPage(int page, {required bool forceRefresh}) async {
     final result = await ref
-        .read(homeFacadeEntryProvider)
-        .loadPopularFeed(page: page, forceRefresh: forceRefresh);
+        .read(homePopularFeedCapabilityProvider)(
+          page: page,
+          forceRefresh: forceRefresh,
+        );
     if (forceRefresh) {
       FeatureFlowPerfLogger.log(
         chain: 'home.popular_feed',

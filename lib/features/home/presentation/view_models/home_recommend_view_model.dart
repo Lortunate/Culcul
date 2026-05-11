@@ -33,8 +33,10 @@ class HomeRecommend extends _$HomeRecommend
 
   Future<List<VideoModel>> _loadPage(int page, {required bool forceRefresh}) async {
     final result = await ref
-        .read(homeFacadeEntryProvider)
-        .loadRecommendFeed(page: page, forceRefresh: forceRefresh);
+        .read(homeRecommendFeedCapabilityProvider)(
+          page: page,
+          forceRefresh: forceRefresh,
+        );
     if (forceRefresh) {
       FeatureFlowPerfLogger.log(
         chain: 'home.recommend_feed',

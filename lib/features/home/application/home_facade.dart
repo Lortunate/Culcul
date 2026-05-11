@@ -6,37 +6,38 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_facade.g.dart';
 
+typedef HomePageLoader =
+    Future<Result<List<VideoModel>, AppError>> Function({
+      required int page,
+      bool forceRefresh,
+    });
+
+typedef HomeWeeklyLoader = Future<Result<List<VideoModel>, AppError>> Function();
+
 @riverpod
-HomeFacade homeFacade(Ref ref) {
-  return HomeFacade(ref.watch(homeFeedDataSourceProvider));
+HomePageLoader homeRecommendFeedCapability(Ref ref) {
+  final dataSource = ref.watch(homeFeedDataSourceProvider);
+  return ({required int page, bool forceRefresh = false}) {
+    return dataSource.fetchRecommendPage(
+      page: page,
+      forceRefresh: forceRefresh,
+    );
+  };
 }
 
-class HomeFacade {
-  HomeFacade(this._dataSource);
-
-  final HomeFeedDataSource _dataSource;
-
-  Future<Result<List<VideoModel>, AppError>> loadRecommendFeed({
-    required int page,
-    bool forceRefresh = false,
-  }) {
-    return _dataSource.fetchRecommendPage(
+@riverpod
+HomePageLoader homePopularFeedCapability(Ref ref) {
+  final dataSource = ref.watch(homeFeedDataSourceProvider);
+  return ({required int page, bool forceRefresh = false}) {
+    return dataSource.fetchPopularPage(
       page: page,
       forceRefresh: forceRefresh,
     );
-  }
+  };
+}
 
-  Future<Result<List<VideoModel>, AppError>> loadPopularFeed({
-    required int page,
-    bool forceRefresh = false,
-  }) {
-    return _dataSource.fetchPopularPage(
-      page: page,
-      forceRefresh: forceRefresh,
-    );
-  }
-
-  Future<Result<List<VideoModel>, AppError>> loadWeeklyFeed() {
-    return _dataSource.fetchWeeklyList();
-  }
+@riverpod
+HomeWeeklyLoader homeWeeklyFeedCapability(Ref ref) {
+  final dataSource = ref.watch(homeFeedDataSourceProvider);
+  return dataSource.fetchWeeklyList;
 }

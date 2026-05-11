@@ -13,13 +13,12 @@ import 'package:culcul/features/notification/domain/entities/send_message_result
 import 'package:culcul/features/notification/domain/entities/system_notice.dart';
 import 'package:culcul/features/notification/domain/repositories/notification_repository.dart';
 import 'package:culcul/features/notification/application/notification_facade.dart';
-import 'package:culcul/features/notification/application/use_cases/refresh_unread_and_feed_use_case.dart';
 import 'package:culcul/features/notification/application/use_cases/send_private_message_use_case.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _FakeRepository implements NotificationRepository {
   int sentMessages = 0;
-  List<String> refreshCalls = [];
+  List<String> syncCalls = [];
 
   @override
   Future<Result<SendMessageResult, AppError>> sendPrivateMessage({
@@ -38,7 +37,7 @@ class _FakeRepository implements NotificationRepository {
     required int ownerUid,
     bool force = false,
   }) async {
-    refreshCalls.add('unread');
+    syncCalls.add('unread');
     return const Success(null);
   }
 
@@ -47,7 +46,7 @@ class _FakeRepository implements NotificationRepository {
     required int ownerUid,
     required NotificationFeedType type,
   }) async {
-    refreshCalls.add('feed');
+    syncCalls.add('feed');
     return const Success(null);
   }
 
@@ -134,21 +133,24 @@ class _FakeRepository implements NotificationRepository {
 }
 
 void main() {
-  group('NotificationFacade', () {
-    late NotificationFacade facade;
+  group('notification capability facades', () {
+    late NotificationInboxFacade inboxFacade;
+    late NotificationChatFacade chatFacade;
     late _FakeRepository fakeRepository;
 
     setUp(() {
       fakeRepository = _FakeRepository();
-      facade = NotificationFacade(
+      inboxFacade = NotificationInboxFacade(
+        repository: fakeRepository,
+      );
+      chatFacade = NotificationChatFacade(
         repository: fakeRepository,
         sendPrivateMessageUseCase: SendPrivateMessageUseCase(fakeRepository),
-        refreshUnreadAndFeedUseCase: RefreshUnreadAndFeedUseCase(fakeRepository),
       );
     });
 
-    test('notification facade sends chat messages through an application service', () async {
-      final result = await facade.sendPrivateMessage(
+    test('chat facade sends chat messages through an application service', () async {
+      final result = await chatFacade.sendPrivateMessage(
         ownerUid: 1,
         receiverId: 2,
         receiverType: PrivateMessageReceiverType.user,
@@ -160,12 +162,12 @@ void main() {
       expect(fakeRepository.sentMessages, 1);
     });
 
-    test('notification facade refreshes unread and feed state through explicit workflows', () async {
-      await facade.refreshUnreadAndFeed(ownerUid: 1, feedType: NotificationFeedType.reply);
-      
-      // Since it's a Future.wait, order could be either way but both should be present
-      expect(fakeRepository.refreshCalls, containsAll(['unread', 'feed']));
-      expect(fakeRepository.refreshCalls.length, 2);
+    test('inbox facade exposes explicit sync operations instead of one broad refresh workflow', () async {
+      await inboxFacade.syncUnreadCount(ownerUid: 1);
+      await inboxFacade.syncFeedHead(ownerUid: 1, type: NotificationFeedType.reply);
+
+      expect(fakeRepository.syncCalls, containsAll(['unread', 'feed']));
+      expect(fakeRepository.syncCalls.length, 2);
     });
   });
 }

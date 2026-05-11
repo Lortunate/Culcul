@@ -12,12 +12,9 @@ import 'package:culcul/features/notification/domain/entities/private_session.dar
 import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
 import 'package:culcul/features/notification/domain/entities/system_notice.dart';
 import 'package:culcul/features/notification/domain/repositories/notification_repository.dart';
-import 'package:culcul/features/notification/feature_scope.dart';
 import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
 import 'package:culcul/features/notification/presentation/view_models/notification_lifecycle_sync_view_model.dart';
 import 'package:culcul/features/notification/application/notification_facade.dart';
-import 'package:culcul/features/notification/application/use_cases/send_private_message_use_case.dart';
-import 'package:culcul/features/notification/application/use_cases/refresh_unread_and_feed_use_case.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -31,11 +28,9 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         notificationOwnerUidProvider.overrideWith((ref) => 1001),
-        notificationFacadeEntryProvider.overrideWithValue(
-          NotificationFacade(
+        notificationInboxFacadeProvider.overrideWithValue(
+          NotificationInboxFacade(
             repository: repository,
-            sendPrivateMessageUseCase: SendPrivateMessageUseCase(repository),
-            refreshUnreadAndFeedUseCase: RefreshUnreadAndFeedUseCase(repository),
           ),
         ),
       ],
@@ -60,11 +55,9 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         notificationOwnerUidProvider.overrideWith((ref) => 1001),
-        notificationFacadeEntryProvider.overrideWithValue(
-          NotificationFacade(
+        notificationInboxFacadeProvider.overrideWithValue(
+          NotificationInboxFacade(
             repository: repository,
-            sendPrivateMessageUseCase: SendPrivateMessageUseCase(repository),
-            refreshUnreadAndFeedUseCase: RefreshUnreadAndFeedUseCase(repository),
           ),
         ),
       ],

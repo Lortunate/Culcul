@@ -7,7 +7,7 @@ part 'weekly_view_model.g.dart';
 
 @riverpod
 Future<List<VideoModel>> weeklyList(Ref ref) async {
-  final result = await ref.watch(homeFacadeEntryProvider).loadWeeklyFeed();
+  final result = await ref.watch(homeWeeklyFeedCapabilityProvider)();
   return result.when(
     success: (data) => data,
     failure: (error) {
