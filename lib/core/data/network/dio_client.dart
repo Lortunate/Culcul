@@ -3,7 +3,7 @@ import 'package:culcul/core/data/network/interceptors/cache_interceptor.dart';
 import 'package:culcul/core/data/network/interceptors/csrf_interceptor.dart';
 import 'package:culcul/core/data/network/interceptors/in_flight_dedup_interceptor.dart';
 import 'package:culcul/core/data/network/interceptors/network_quality_interceptor.dart';
-import 'package:culcul/core/data/network/interceptors/retry_interceptor.dart';
+import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:culcul/core/data/network/interceptors/token_interceptor.dart';
 import 'package:culcul/core/data/network/interceptors/wbi_interceptor.dart';
 import 'package:culcul/core/data/network/network_quality_policy.dart';
@@ -115,9 +115,32 @@ Dio dioClient(Ref ref) {
   dio.interceptors.add(
     RetryInterceptor(
       dio: dio,
-      maxRetries: networkPolicy.retryMaxAttempts,
-      baseRetryDelayMs: networkPolicy.retryBaseDelayMs,
-      maxRetryDelayMs: networkPolicy.retryMaxDelayMs,
+      retries: networkPolicy.retryMaxAttempts,
+      retryDelays: List.generate(
+        networkPolicy.retryMaxAttempts,
+        (i) => Duration(
+          milliseconds: (networkPolicy.retryBaseDelayMs * (1 << i))
+              .clamp(0, networkPolicy.retryMaxDelayMs),
+        ),
+      ),
+      retryableExtraStatuses: {408, 429},
+      retryEvaluator: (error, attempt) {
+        if (error.requestOptions.extra['disable_retry'] == true) {
+          return false;
+        }
+        if (error.requestOptions.cancelToken?.isCancelled == true) {
+          return false;
+        }
+        final method = error.requestOptions.method.toUpperCase();
+        final isIdempotent = method == 'GET' ||
+            method == 'HEAD' ||
+            method == 'OPTIONS' ||
+            error.requestOptions.extra['force_retryable'] == true;
+        if (!isIdempotent) return false;
+        return DefaultRetryEvaluator(
+          {408, 429, 500, 502, 503, 504},
+        ).evaluate(error, attempt);
+      },
     ),
   );
   final csrfInterceptor = CsrfInterceptor(ref);
