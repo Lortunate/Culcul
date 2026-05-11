@@ -1,1 +1,1 @@
-export 'subtitle_dto.dart';
+export 'package:culcul/features/video/data/dtos/subtitle_dto.dart';

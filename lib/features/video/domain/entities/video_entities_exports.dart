@@ -1,3 +1,4 @@
+export 'package:culcul/core/contracts/video_model_contract.dart';
 export 'comment_model.dart';
 export 'danmaku_model.dart';
 export 'player_info.dart';

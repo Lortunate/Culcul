@@ -1,1 +1,1 @@
-export 'related_video_dto.dart';
+export 'package:culcul/features/video/data/dtos/related_video_dto.dart';
