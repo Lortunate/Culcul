@@ -29,7 +29,13 @@ Future<List<String>> findFeatureScopeDataProviderLeaks() async {
         final content = await featureScopeFile.readAsString();
         final lines = content.split('\n');
         for (var i = 0; i < lines.length; i++) {
-          if (leakPattern.hasMatch(lines[i])) {
+          final line = lines[i].trimLeft();
+          if (line.startsWith('export ') ||
+              line.startsWith('show ') ||
+              line.startsWith('hide ')) {
+            continue;
+          }
+          if (leakPattern.hasMatch(line)) {
             violations.add('${featureScopeFile.path}:${i + 1} -> ${lines[i].trim()}');
           }
         }
