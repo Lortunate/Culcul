@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **Culcul** (2648 symbols, 3325 relationships, 19 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **Culcul** (2701 symbols, 3378 relationships, 19 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -44,12 +44,12 @@ This project is indexed by GitNexus as **Culcul** (2648 symbols, 3325 relationsh
 
 ## Architecture (Phase 11 — Truth Reconciliation & Semantic Seam Convergence)
 
-`lib/shared/` is **fully retired**. The current implemented shape is still `app/` + `features/` + `core/` + `ui/`, and the repo-wide Phase 9 boundary rebaseline remains substantially complete. The active problem is no longer broad legality. It is semantic convergence: aligning docs with real code, turning placeholder facades into real capability seams, and tightening public APIs so "legal" surfaces are also readable and deliberate.
+`lib/shared/` is **fully retired**. The current implemented shape is still `app/` + `features/` + `core/` + `ui/`, and the repo-wide Phase 9 boundary rebaseline remains substantially complete. The active problem is no longer broad legality. It is simplification: removing thin wrapper seams, tightening public APIs, and replacing repetitive custom glue with clearer capability seams and generator-first patterns.
 
 See `docs/architecture/architecture-guide.md` for the current implemented baseline, known drift, and active target state.
 
-Active spec: `docs/superpowers/specs/2026-05-11-phase11-architecture-truth-reconciliation-and-semantic-seams-design.md`
-Active plan: `docs/superpowers/plans/2026-05-11-phase11-architecture-truth-reconciliation-and-semantic-seams.md`
+Active spec: `docs/superpowers/specs/2026-05-12-phase12-capability-facade-simplification-and-generator-first-design.md`
+Active plan: `docs/superpowers/plans/2026-05-12-phase12-capability-facade-simplification-and-generator-first.md`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`

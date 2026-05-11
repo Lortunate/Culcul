@@ -257,23 +257,22 @@ Archived plan: `docs/superpowers/plans/archive/2026-05-11-phase10-slice-normaliz
 
 Phase 10 therefore remains important historical context, but it is no longer the truthful active baseline.
 
-## Phase 11 (Active): Architecture Truth Reconciliation & Semantic Seam Convergence
+## Phase 12 (Active): Capability Facade Simplification & Generator-First Convergence
 
-Started 2026-05-11. The focus is aligning the docs with the real repo state, finishing the semantic public-seam cleanup left half-done by Phase 10, and converging large feature slices around capability-oriented facades instead of implementation-shaped wrappers.
+Started 2026-05-12. The focus is simplifying the active feature seams themselves: remove thin wrapper layers, stop exporting implementation-shaped public contracts, and lean more consistently on the repo's existing mainstream generator stack instead of adding more hand-written glue.
 
-Active spec: `docs/superpowers/specs/2026-05-11-phase11-architecture-truth-reconciliation-and-semantic-seams-design.md`
-Active plan: `docs/superpowers/plans/2026-05-11-phase11-architecture-truth-reconciliation-and-semantic-seams.md`
+Active spec: `docs/superpowers/specs/2026-05-12-phase12-capability-facade-simplification-and-generator-first-design.md`
+Active plan: `docs/superpowers/plans/2026-05-12-phase12-capability-facade-simplification-and-generator-first.md`
 
-**Current verified debt carried into Phase 11:**
-1. Source-of-truth drift across `CLAUDE.md`, this guide, and the planning docs.
-2. `home` facade is effectively a placeholder while presentation still depends on data providers directly.
-3. `notification` facade exists, but it still behaves mostly like a repository pass-through and application wiring still reaches into concrete data implementation paths.
-4. `dynamic.dart` and `video.dart` still export selected `presentation/**` symbols, which keeps the public API implementation-shaped even though the broad boundary rules pass.
-5. The next-generation architecture guards must check semantic intent, not only coarse string patterns.
+**Current verified debt carried into Phase 12:**
+1. Several non-core facades are still thin wrappers or repository-entry aliases in `auth`, `favorites`, `history`, `profile`, `ranking`, `settings`, and `to_view`.
+2. `notification` was split into inbox/chat capability facades, but the broader repo still has repository-entry aliases in other features.
+3. `dynamic`, `video`, `live`, and `search` no longer publish `presentation/**` internals through `*_public_contracts.dart`, but the remaining feature roots still need the same cleanup pattern.
+4. The repo already includes Riverpod Generator, Freezed, Json Serializable, Retrofit, and Drift, and the active slices now use generator-driven capability providers more consistently.
 
-**Phase 11 target state:**
+**Phase 12 target state:**
 1. One truthful active baseline across `CLAUDE.md`, `architecture-guide.md`, spec, and plan.
-2. Feature barrels export only route seams, facade seams, and intentionally public contracts.
-3. `feature_scope.dart` exposes capability-oriented providers only.
-4. `home`, `notification`, `dynamic`, and `video` converge on real application facades and clearer capability subtrees.
-5. Architecture tests enforce these semantic seam rules so future refactors do not drift back into implementation-shaped public APIs.
+2. Public feature seams expose capabilities, not implementation placement, and root public files carry the cross-feature contracts that were previously hidden in `*_public_contracts.dart`.
+3. Empty facades are removed or merged into clearer providers or capability services.
+4. `home` and `notification` are the reference slices for simplification-first seam design.
+5. Generator-first patterns replace repetitive custom glue inside the slices touched by this phase, especially provider entry wrappers.

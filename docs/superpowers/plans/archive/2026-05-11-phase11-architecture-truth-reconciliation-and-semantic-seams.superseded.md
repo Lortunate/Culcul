@@ -1,5 +1,9 @@
 # Phase 11 Architecture Truth Reconciliation & Semantic Seam Convergence Implementation Plan
 
+**Status:** SUPERSEDED (historical archive)
+**Superseded by:** `docs/superpowers/plans/2026-05-12-phase12-capability-facade-simplification-and-generator-first.md`
+**Why archived:** This plan focused on semantic seam correctness, but the active direction moved to simplification-first execution: collapse thin facades and repository-provider wrappers, reduce public-contract drift, and use the existing popular codegen stack more aggressively.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Reconcile Culcul's architecture truth, then converge feature public seams so the repo's root contracts are deliberate, capability-oriented, and guarded against regression.

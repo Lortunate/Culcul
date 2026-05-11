@@ -1,8 +1,10 @@
 # Phase 11: Architecture Truth Reconciliation & Semantic Seam Convergence
 
-**Status:** ACTIVE
+**Status:** SUPERSEDED (historical archive)
 **Date:** 2026-05-11
-**Goal:** Re-establish one truthful architecture baseline for Culcul, then finish the semantic seam cleanup that Phase 10 only landed structurally so the repo becomes easier to read, easier to evolve, and harder to regress.
+**Superseded by:** `docs/superpowers/specs/2026-05-12-phase12-capability-facade-simplification-and-generator-first-design.md`
+**Why archived:** Phase 11 correctly isolated public-seam drift, but the next approved direction widened the objective to wrapper reduction and generator-first simplification before more seam-policing-only work.
+**Original goal:** Re-establish one truthful architecture baseline for Culcul, then finish the semantic seam cleanup that Phase 10 only landed structurally so the repo becomes easier to read, easier to evolve, and harder to regress.
 
 ## Why a New Phase
 

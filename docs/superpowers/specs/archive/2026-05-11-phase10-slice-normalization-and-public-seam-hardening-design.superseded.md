@@ -5,7 +5,7 @@
 
 # Phase 10: Slice Normalization & Public Seam Hardening
 
-**Status:** ACTIVE
+**Status:** SUPERSEDED (historical archive)
 **Date:** 2026-05-11
 **Goal:** Finish the post-Phase-9 architecture cleanup by normalizing the highest-debt feature slices and tightening feature public seams so Culcul becomes easier to read, easier to change, and less likely to leak implementation details across modules.
 
@@ -161,7 +161,7 @@ These guards should stay focused and cheap to understand. They are there to prot
 4. `home` consumes narrower public contracts instead of implementation-shaped exports.
 5. Feature barrels and `feature_scope.dart` surfaces are intentionally small and no longer default to exporting presentation or raw data-provider details.
 6. New architecture guards exist for barrel leakage / facade leakage where the repo now depends on those rules.
-7. `CLAUDE.md`, `docs/architecture/architecture-guide.md`, and the active spec/plan all point to the same Phase 10 baseline.
+7. Before this spec was superseded, the intended baseline convergence target was that `CLAUDE.md`, `docs/architecture/architecture-guide.md`, and the active spec/plan would all point to the same Phase 10 baseline.
 8. Phase 9 is archived as substantially complete, with the remaining localized debt explicitly carried into Phase 10.
 
 ---
