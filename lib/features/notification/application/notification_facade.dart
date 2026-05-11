@@ -11,8 +11,9 @@ import 'package:culcul/features/notification/domain/entities/notification_entry.
 import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/domain/entities/system_notice.dart';
-
-import 'package:culcul/features/notification/data/notification_repository_impl.dart';
+import 'package:culcul/features/notification/domain/entities/image_upload_result.dart';
+import 'dart:typed_data';
+import 'package:culcul/features/notification/application/notification_repository_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'notification_facade.g.dart';
@@ -20,7 +21,7 @@ part 'notification_facade.g.dart';
 @riverpod
 NotificationFacade notificationFacade(Ref ref) {
   return NotificationFacade(
-    repository: ref.watch(notificationRepositoryProvider),
+    repository: ref.watch(notificationRepositoryEntryProvider),
     sendPrivateMessageUseCase: ref.watch(sendPrivateMessageUseCaseProvider),
     refreshUnreadAndFeedUseCase: ref.watch(refreshUnreadAndFeedUseCaseProvider),
   );
@@ -28,13 +29,14 @@ NotificationFacade notificationFacade(Ref ref) {
 
 class NotificationFacade {
   NotificationFacade({
-    required this.repository,
+    required NotificationRepository repository,
     required SendPrivateMessageUseCase sendPrivateMessageUseCase,
     required RefreshUnreadAndFeedUseCase refreshUnreadAndFeedUseCase,
-  })  : _sendPrivateMessage = sendPrivateMessageUseCase,
+  })  : _repository = repository,
+        _sendPrivateMessage = sendPrivateMessageUseCase,
         _refreshUnreadAndFeed = refreshUnreadAndFeedUseCase;
 
-  final NotificationRepository repository;
+  final NotificationRepository _repository;
   final SendPrivateMessageUseCase _sendPrivateMessage;
   final RefreshUnreadAndFeedUseCase _refreshUnreadAndFeed;
 
@@ -65,7 +67,7 @@ class NotificationFacade {
   }
 
   Future<NotificationSummary?> getUnreadCountFromLocal({required int ownerUid}) {
-    return repository.getUnreadCountFromLocal(ownerUid: ownerUid);
+    return _repository.getUnreadCountFromLocal(ownerUid: ownerUid);
   }
 
   Future<List<PrivateSession>> pageSessionsFromLocal({
@@ -73,7 +75,7 @@ class NotificationFacade {
     required PrivateSessionType sessionType,
     int? endTs,
   }) {
-    return repository.pageSessionsFromLocal(
+    return _repository.pageSessionsFromLocal(
       ownerUid: ownerUid,
       sessionType: sessionType,
       endTs: endTs,
@@ -86,7 +88,7 @@ class NotificationFacade {
     required PrivateSessionType sessionType,
     int? endSeqno,
   }) {
-    return repository.pageMessagesFromLocal(
+    return _repository.pageMessagesFromLocal(
       ownerUid: ownerUid,
       talkerId: talkerId,
       sessionType: sessionType,
@@ -99,7 +101,7 @@ class NotificationFacade {
     required int talkerId,
     required PrivateSessionType sessionType,
   }) {
-    return repository.getMessageEmojiMapFromLocal(
+    return _repository.getMessageEmojiMapFromLocal(
       ownerUid: ownerUid,
       talkerId: talkerId,
       sessionType: sessionType,
@@ -111,7 +113,7 @@ class NotificationFacade {
     required NotificationFeedType type,
     NotificationFeedCursor? cursor,
   }) {
-    return repository.pageFeedFromLocal(
+    return _repository.pageFeedFromLocal(
       ownerUid: ownerUid,
       type: type,
       cursor: cursor,
@@ -119,25 +121,32 @@ class NotificationFacade {
   }
 
   Stream<NotificationSummary> watchUnreadCount({required int ownerUid}) {
-    return repository.watchUnreadCount(ownerUid: ownerUid);
+    return _repository.watchUnreadCount(ownerUid: ownerUid);
   }
 
   Stream<List<SystemNotice>> watchSystemNotices({required int ownerUid}) {
-    return repository.watchSystemNotices(ownerUid: ownerUid);
+    return _repository.watchSystemNotices(ownerUid: ownerUid);
+  }
+
+  Future<Result<ImageUploadResult, AppError>> uploadImage(
+    Uint8List bytes,
+    String filename,
+  ) {
+    return _repository.uploadImage(bytes, filename);
   }
 
   Future<Result<void, AppError>> syncUnreadCount({
     required int ownerUid,
     bool force = false,
   }) {
-    return repository.syncUnreadCount(ownerUid: ownerUid, force: force);
+    return _repository.syncUnreadCount(ownerUid: ownerUid, force: force);
   }
 
   Future<Result<void, AppError>> syncSessions({
     required int ownerUid,
     bool force = false,
   }) {
-    return repository.syncSessions(ownerUid: ownerUid, force: force);
+    return _repository.syncSessions(ownerUid: ownerUid, force: force);
   }
 
   Future<Result<void, AppError>> syncSessionsOlder({
@@ -145,7 +154,7 @@ class NotificationFacade {
     required PrivateSessionType sessionType,
     required int endTs,
   }) {
-    return repository.syncSessionsOlder(
+    return _repository.syncSessionsOlder(
       ownerUid: ownerUid,
       sessionType: sessionType,
       endTs: endTs,
@@ -157,7 +166,7 @@ class NotificationFacade {
     required int talkerId,
     required PrivateSessionType sessionType,
   }) {
-    return repository.syncMessagesHead(
+    return _repository.syncMessagesHead(
       ownerUid: ownerUid,
       talkerId: talkerId,
       sessionType: sessionType,
@@ -170,7 +179,7 @@ class NotificationFacade {
     required PrivateSessionType sessionType,
     required int endSeqno,
   }) {
-    return repository.syncMessagesOlder(
+    return _repository.syncMessagesOlder(
       ownerUid: ownerUid,
       talkerId: talkerId,
       sessionType: sessionType,
@@ -182,7 +191,7 @@ class NotificationFacade {
     required int ownerUid,
     required NotificationFeedType type,
   }) {
-    return repository.syncFeedHead(ownerUid: ownerUid, type: type);
+    return _repository.syncFeedHead(ownerUid: ownerUid, type: type);
   }
 
   Future<Result<void, AppError>> syncFeedOlder({
@@ -190,6 +199,6 @@ class NotificationFacade {
     required NotificationFeedType type,
     required NotificationFeedCursor cursor,
   }) {
-    return repository.syncFeedOlder(ownerUid: ownerUid, type: type, cursor: cursor);
+    return _repository.syncFeedOlder(ownerUid: ownerUid, type: type, cursor: cursor);
   }
 }

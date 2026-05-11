@@ -1,8 +1,6 @@
 import 'package:culcul/features/video/domain/repositories/danmaku_repository.dart';
 import 'package:culcul/features/video/domain/repositories/video_repository.dart';
-import 'package:culcul/features/video/data/danmaku_repository_impl.dart';
-import 'package:culcul/features/video/data/video_repository_impl.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:culcul/features/video/application/video_repository_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'video_facade.g.dart';
@@ -10,14 +8,18 @@ part 'video_facade.g.dart';
 @riverpod
 VideoFacade videoFacade(Ref ref) {
   return VideoFacade(
-    ref.watch(videoRepositoryProvider),
-    ref.watch(danmakuRepositoryProvider),
+    ref.watch(videoRepositoryEntryProvider),
+    ref.watch(danmakuRepositoryEntryProvider),
   );
 }
 
 class VideoFacade {
-  VideoFacade(this.videoRepository, this.danmakuRepository);
+  VideoFacade(VideoRepository videoRepository, DanmakuRepository danmakuRepository)
+    : _videoRepository = videoRepository,
+      _danmakuRepository = danmakuRepository;
 
-  final VideoRepository videoRepository;
-  final DanmakuRepository danmakuRepository;
+  // ignore: unused_field
+  final VideoRepository _videoRepository;
+  // ignore: unused_field
+  final DanmakuRepository _danmakuRepository;
 }

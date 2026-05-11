@@ -1,4 +1,3 @@
 export 'feature_scope.dart';
-export 'presentation/overlays/video_actions_bottom_sheet.dart'
-    show VideoActionsBottomSheet;
+export 'video_public_contracts.dart';
 export 'route_entry.dart';

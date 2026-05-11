@@ -14,7 +14,6 @@ mixin _ChatSendMixin on _$Chat, _ChatHelpersMixin {
   Future<ChatPageCommandResult> sendImage(ChatImageAttachment image) async {
     final uploadResult = await ref
         .read(notificationFacadeEntryProvider)
-        .repository
         .uploadImage(image.bytes, image.filename);
     final uploadRes = uploadResult.dataOrNull;
     if (uploadRes == null) {

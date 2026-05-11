@@ -1,3 +1,3 @@
 export 'feature_scope.dart';
-export 'presentation/view_models/search_view_model.dart' show defaultSearchProvider;
+export 'search_public_contracts.dart';
 export 'route_entry.dart';

@@ -1,4 +1,4 @@
-import 'package:culcul/features/home/data/home_feed_data_source.dart';
+import 'package:culcul/features/home/feature_scope.dart';
 import 'package:culcul/features/home/presentation/view_models/home_feed_paging_mixin.dart';
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
@@ -33,8 +33,8 @@ class HomeRecommend extends _$HomeRecommend
 
   Future<List<VideoModel>> _loadPage(int page, {required bool forceRefresh}) async {
     final result = await ref
-        .read(homeFeedDataSourceProvider)
-        .fetchRecommendPage(page: page, forceRefresh: forceRefresh);
+        .read(homeFacadeEntryProvider)
+        .loadRecommendFeed(page: page, forceRefresh: forceRefresh);
     if (forceRefresh) {
       FeatureFlowPerfLogger.log(
         chain: 'home.recommend_feed',

@@ -1,17 +1,17 @@
 import 'package:culcul/features/history/domain/repositories/history_repository.dart';
-import 'package:culcul/features/history/data/history_repository_impl.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:culcul/features/history/application/history_repository_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'history_facade.g.dart';
 
 @riverpod
 HistoryFacade historyFacade(Ref ref) {
-  return HistoryFacade(ref.watch(historyRepositoryProvider));
+  return HistoryFacade(ref.watch(historyRepositoryEntryProvider));
 }
 
 class HistoryFacade {
-  HistoryFacade(this.repository);
+  HistoryFacade(HistoryRepository repository) : _repository = repository;
 
-  final HistoryRepository repository;
+  // ignore: unused_field
+  final HistoryRepository _repository;
 }

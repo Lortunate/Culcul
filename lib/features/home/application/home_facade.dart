@@ -1,5 +1,7 @@
 import 'package:culcul/features/home/data/home_feed_data_source.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_facade.g.dart';
@@ -14,6 +16,27 @@ class HomeFacade {
 
   final HomeFeedDataSource _dataSource;
 
-  // Re-expose needed methods or providers if any.
-  // For now it might just be a holder.
+  Future<Result<List<VideoModel>, AppError>> loadRecommendFeed({
+    required int page,
+    bool forceRefresh = false,
+  }) {
+    return _dataSource.fetchRecommendPage(
+      page: page,
+      forceRefresh: forceRefresh,
+    );
+  }
+
+  Future<Result<List<VideoModel>, AppError>> loadPopularFeed({
+    required int page,
+    bool forceRefresh = false,
+  }) {
+    return _dataSource.fetchPopularPage(
+      page: page,
+      forceRefresh: forceRefresh,
+    );
+  }
+
+  Future<Result<List<VideoModel>, AppError>> loadWeeklyFeed() {
+    return _dataSource.fetchWeeklyList();
+  }
 }
