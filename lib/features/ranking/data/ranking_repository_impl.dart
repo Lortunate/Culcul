@@ -5,9 +5,7 @@ import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/ranking/data/dtos/ranking_response_dto.dart';
-import 'package:culcul/features/ranking/data/ranking_video_mapper.dart';
 import 'package:culcul/features/ranking/data/ranking_api.dart';
-import 'package:culcul/features/ranking/domain/entities/ranking_video.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'ranking_repository_impl.g.dart';
@@ -31,13 +29,8 @@ class RankingRepositoryImpl with RequestExecutorBinding {
     return requestApiResult(() => _api.fetchRanking(rid: rid));
   }
 
-  Future<Result<List<VideoModel>, AppError>> getRankingModels({int? rid}) async {
+  Future<Result<List<VideoModel>, AppError>> getRanking({int? rid}) async {
     final result = await getRankingResponseDto(rid: rid);
     return result.map((data) => data.list);
-  }
-
-  Future<Result<List<RankingVideo>, AppError>> getRanking({int? rid}) async {
-    final result = await getRankingModels(rid: rid);
-    return result.map((videos) => videos.map((video) => video.toDomain()).toList());
   }
 }

@@ -1,3 +1,4 @@
+import 'package:culcul/core/contracts/relation_port.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
@@ -7,20 +8,18 @@ import 'package:culcul/features/profile/data/dtos/relation_model.dart';
 import 'package:culcul/features/profile/data/profile_mapper.dart';
 import 'package:culcul/features/profile/data/relation_api.dart';
 import 'package:culcul/core/contracts/relation_user_contract.dart';
-import 'package:culcul/features/profile/domain/repositories/relation_repository.dart'
-    as domain;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'relation_repository_impl.g.dart';
 
 @riverpod
-domain.RelationRepository relationRepository(Ref ref) {
+RelationRepositoryImpl relationRepository(Ref ref) {
   return RelationRepositoryImpl(RelationApi(ref.watch(dioClientProvider)));
 }
 
 class RelationRepositoryImpl
     with RequestExecutorBinding
-    implements domain.RelationRepository {
+    implements RelationPort {
   static const int _defaultPageSize = 50;
   final RelationApi _api;
   final RequestExecutor _requestExecutor;
@@ -50,7 +49,6 @@ class RelationRepositoryImpl
     return requestApiResult(() => _api.getFollowers(vmid, pn: pn, ps: ps));
   }
 
-  @override
   Future<Result<void, AppError>> modifyRelation({required int fid, required int act}) {
     return requestVoidResult(() => _api.modifyRelation(fid, act));
   }
@@ -65,7 +63,6 @@ class RelationRepositoryImpl
     return result.map((data) => data.list.map((item) => item.toDomain()).toList());
   }
 
-  @override
   Future<Result<List<ProfileRelationUser>, AppError>> getFollowers(
     int vmid, {
     int page = 1,

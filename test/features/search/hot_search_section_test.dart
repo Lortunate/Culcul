@@ -29,7 +29,7 @@ void main() {
   });
 }
 
-class _TestTrendingRankingController extends TrendingRankingController {
+class _TestTrendingRankingController extends TrendingRanking {
   @override
   Future<List<SearchTrendingKeyword>> build() async {
     throw Exception('hot search error');

@@ -2,7 +2,6 @@ import 'package:culcul/app/runtime/app_runtime.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/core/bootstrap/providers/cookie_jar_provider.dart';
 import 'package:culcul/core/bootstrap/providers/storage_provider.dart';
-import 'package:culcul/core/contracts/relation_port.dart';
 import 'package:culcul/core/contracts/search_port.dart';
 import 'package:culcul/core/session/feature_action_providers.dart';
 import 'package:culcul/core/session/relation_providers.dart';
@@ -55,7 +54,7 @@ List<Override> createRootOverrides(AppRuntime runtime) {
     }),
     userProfileLookupProvider.overrideWith((ref) => ProfileLookupAdapter(ref)),
     relationPortProvider.overrideWith((ref) {
-      return ref.read(relationRepositoryProvider) as RelationPort;
+      return ref.read(relationRepositoryProvider);
     }),
     modifyRelationProvider.overrideWith((ref) {
       return ({required mid, required isFollow}) =>

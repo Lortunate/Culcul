@@ -1,6 +1,6 @@
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/ranking/domain/entities/ranking_video.dart';
 import 'package:culcul/features/ranking/data/ranking_repository_impl.dart';
 import 'package:culcul/features/ranking/presentation/view_models/category_ranking_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -9,24 +9,24 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 void main() {
   group('categoryRankingListProvider', () {
     test('returns ranking entries for given rid', () async {
-      const expected = <RankingVideo>[
-        RankingVideo(
+      const expected = <VideoModel>[
+        VideoModel(
           bvid: 'BV1aaa',
           title: 'Top Video',
-          coverUrl: 'https://example.com/cover.jpg',
+          pic: 'https://example.com/cover.jpg',
+          owner: VideoOwner(mid: 0, name: 'Creator', face: ''),
+          stat: VideoStat(view: 5000, danmaku: 200),
           duration: 180,
-          ownerName: 'Creator',
-          viewCount: 5000,
-          danmakuCount: 200,
+          pubDate: 0,
         ),
-        RankingVideo(
+        VideoModel(
           bvid: 'BV2bbb',
           title: 'Second Video',
-          coverUrl: 'https://example.com/cover2.jpg',
+          pic: 'https://example.com/cover2.jpg',
+          owner: VideoOwner(mid: 0, name: 'OtherCreator', face: ''),
+          stat: VideoStat(view: 3000, danmaku: 100),
           duration: 300,
-          ownerName: 'OtherCreator',
-          viewCount: 3000,
-          danmakuCount: 100,
+          pubDate: 0,
         ),
       ];
 
@@ -44,8 +44,8 @@ void main() {
       expect(videos, hasLength(2));
       expect(videos[0].bvid, 'BV1aaa');
       expect(videos[0].title, 'Top Video');
-      expect(videos[0].ownerName, 'Creator');
-      expect(videos[0].viewCount, 5000);
+      expect(videos[0].owner.name, 'Creator');
+      expect(videos[0].stat.view, 5000);
       expect(videos[1].bvid, 'BV2bbb');
     });
 
@@ -70,7 +70,7 @@ void main() {
       final container = ProviderContainer(
         overrides: [
           rankingRepositoryProvider.overrideWithValue(
-            _FakeRankingRepository(result: const Success(<RankingVideo>[])),
+            _FakeRankingRepository(result: const Success(<VideoModel>[])),
           ),
         ],
       );
@@ -82,7 +82,7 @@ void main() {
     });
 
     test('passes rid to repository', () async {
-      final fakeRepo = _FakeRankingRepository(result: const Success(<RankingVideo>[]));
+      final fakeRepo = _FakeRankingRepository(result: const Success(<VideoModel>[]));
       final container = ProviderContainer(
         overrides: [rankingRepositoryProvider.overrideWithValue(fakeRepo)],
       );
@@ -98,11 +98,11 @@ void main() {
 class _FakeRankingRepository implements RankingRepositoryImpl {
   _FakeRankingRepository({required this.result});
 
-  final Result<List<RankingVideo>, AppError> result;
+  final Result<List<VideoModel>, AppError> result;
   int? lastRid;
 
   @override
-  Future<Result<List<RankingVideo>, AppError>> getRanking({int? rid}) async {
+  Future<Result<List<VideoModel>, AppError>> getRanking({int? rid}) async {
     lastRid = rid;
     return result;
   }

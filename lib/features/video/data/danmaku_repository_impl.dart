@@ -4,8 +4,6 @@ import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/data/network/resource_api.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/video/domain/repositories/danmaku_repository.dart'
-    as domain;
 import 'package:culcul/features/video/domain/entities/danmaku_model.dart';
 import 'package:culcul/features/video/data/danmaku_api.dart';
 import 'package:culcul/protos/dm.pb.dart';
@@ -14,7 +12,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'danmaku_repository_impl.g.dart';
 
 @riverpod
-domain.DanmakuRepository danmakuRepository(Ref ref) {
+DanmakuRepositoryImpl danmakuRepository(Ref ref) {
   return DanmakuRepositoryImpl(
     DanmakuApi(ref.watch(basicDioProvider)),
     ResourceApi(ref.watch(basicDioProvider)),
@@ -22,8 +20,7 @@ domain.DanmakuRepository danmakuRepository(Ref ref) {
 }
 
 class DanmakuRepositoryImpl
-    with RequestExecutorBinding
-    implements domain.DanmakuRepository {
+    with RequestExecutorBinding {
   final DanmakuApi _api;
   final ResourceApi _resourceApi;
   final RequestExecutor _requestExecutor;
@@ -34,7 +31,6 @@ class DanmakuRepositoryImpl
   @override
   RequestExecutor get requestExecutor => _requestExecutor;
 
-  @override
   Future<Result<DanmakuSegment, AppError>> fetchDanmakuSegment({
     required int oid,
     required int pid,
@@ -63,7 +59,6 @@ class DanmakuRepositoryImpl
     });
   }
 
-  @override
   Future<Result<DanmakuView, AppError>> fetchDanmakuView({
     required int oid,
     required int pid,
@@ -82,7 +77,6 @@ class DanmakuRepositoryImpl
     });
   }
 
-  @override
   Future<Result<List<int>, AppError>> fetchMaskData(String url) async {
     return requestResult(() async {
       return _resourceApi.fetchBytes(url);

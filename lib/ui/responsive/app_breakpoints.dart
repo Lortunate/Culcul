@@ -1,5 +1,3 @@
-import 'package:responsive_framework/responsive_framework.dart';
-
 class AppBreakpoints {
   AppBreakpoints._();
 
@@ -16,11 +14,4 @@ class AppBreakpoints {
   static const double shellExtendedRailStart = 1280;
 
   static const double pageMaxWidth = 1280;
-
-  static const List<Breakpoint> frameworkBreakpoints = <Breakpoint>[
-    Breakpoint(start: mobileStart, end: mobileEnd, name: MOBILE),
-    Breakpoint(start: tabletStart, end: tabletEnd, name: TABLET),
-    Breakpoint(start: desktopStart, end: desktopEnd, name: DESKTOP),
-    Breakpoint(start: xlStart, end: double.infinity, name: xl),
-  ];
 }

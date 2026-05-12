@@ -6,6 +6,7 @@ import 'package:culcul/core/data/network/interceptors/cache_interceptor.dart';
 import 'package:culcul/core/data/network/request_cancel_token.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/core/result/result.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/features/profile/data/profile_repository_impl.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/features/profile/domain/repositories/profile_repository.dart';
@@ -161,8 +162,8 @@ ProfileVideo _video({required String title}) {
     state: 0,
     attribute: 0,
     tid: 1,
-    owner: const ProfileVideoOwner(mid: 1, name: 'owner', face: ''),
-    stats: const ProfileVideoStats(
+    owner: const VideoOwner(mid: 1, name: 'owner', face: ''),
+    stats: const VideoStat(
       view: 1,
       danmaku: 1,
       reply: 1,

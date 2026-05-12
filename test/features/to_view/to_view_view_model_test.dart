@@ -3,7 +3,6 @@ import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/contracts/user_session_contract.dart';
 import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
-import 'package:culcul/features/to_view/domain/repositories/to_view_repository.dart';
 import 'package:culcul/features/to_view/data/to_view_repository_impl.dart';
 import 'package:culcul/features/to_view/presentation/view_models/to_view_view_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -155,12 +154,12 @@ void main() {
   });
 }
 
-class _FakeToViewRepository implements ToViewRepository {
+class _FakeToViewRepository extends ToViewRepositoryImpl {
   _FakeToViewRepository({
     required this.getListResult,
     this.deleteResult = const Success(null),
     this.clearResult = const Success(null),
-  });
+  }) : super.test();
 
   final Result<List<ToViewEntry>, AppError> getListResult;
   final Result<void, AppError> addResult = const Success(null);

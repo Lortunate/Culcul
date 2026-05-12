@@ -28,7 +28,7 @@ class HomePopular extends _$HomePopular
 
   Future<List<VideoModel>> _loadPage(int page, {required bool forceRefresh}) async {
     final result = await ref
-        .read(homeFeedDataSourceProvider)
+        .read(homeRepositoryImplProvider)
         .fetchPopularPage(page: page, forceRefresh: forceRefresh);
     if (forceRefresh) {
       DevLogger.log(

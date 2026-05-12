@@ -42,14 +42,15 @@ This project is indexed by GitNexus as **Culcul** (2702 symbols, 3378 relationsh
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 18 — Architecture Simplification & Single Source of Truth)
+## Architecture (Phase 19 — Pragmatic Simplification & Dead Weight Removal)
 
-`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–17 established structural cleanup, guard-green baseline, and partial model consolidation. Phase 18 focuses on eliminating ALL barrel files, completing model deduplication, finishing freezed/@riverpod migrations, and removing thin abstractions that add no value.
+`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–18 completed structural cleanup, barrel elimination, freezed/@riverpod migration, and model deduplication. Phase 19 removes remaining dead weight: unused dependencies, thin ceremony-only abstractions, redundant domain entities, and dead code.
 
 See `docs/architecture/architecture-guide.md` for the current implemented baseline.
 
-Active spec: `docs/superpowers/specs/2026-05-13-phase18-architecture-simplification-and-single-source-of-truth.md`
-Active plan: `docs/superpowers/plans/2026-05-13-phase18-architecture-simplification-and-single-source-of-truth.md`
+Active spec: `docs/superpowers/specs/2026-05-13-phase19-pragmatic-simplification.md`
+Active plan: `docs/superpowers/plans/2026-05-13-phase19-pragmatic-simplification.md`
+Archived: `docs/superpowers/archive/phase18-spec.md`, `docs/superpowers/archive/phase18-plan.md`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`
@@ -68,7 +69,9 @@ Active plan: `docs/superpowers/plans/2026-05-13-phase18-architecture-simplificat
 - go_router is already typed/generated through `go_router_builder`; do not rewrite routing unless a route seam is actually broken
 - Prefer `pointycastle` + `crypto` for cryptography; do not use `encrypt` wrapper
 - Features must reuse `VideoOwner`/`VideoStat` from core contracts — no feature-local duplicates
-- If architecture docs disagree, the active Phase 18 spec/plan override older phase text
+- Repository interfaces only where they enable mocking or polymorphism — simple features use impl directly
+- Simple features (ranking, history) may omit `domain/` layer if no business logic exists
+- If architecture docs disagree, the active Phase 19 spec/plan override older phase text
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:full hash:f65d5d33 -->
 ## Issue Tracking with bd (beads)

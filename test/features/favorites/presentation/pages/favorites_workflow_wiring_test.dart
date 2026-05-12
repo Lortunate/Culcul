@@ -1,4 +1,5 @@
 import 'package:culcul/core/contracts/user_session_contract.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/favorites/application/favorite_folder_commands.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
@@ -399,7 +400,7 @@ FavoriteFolder _folder() {
     favState: 0,
     mediaCount: 1,
     cover: 'https://example.com/cover.jpg',
-    upper: FavoriteOwner(mid: 1001, name: 'tester', face: 'https://example.com/face.jpg'),
+    upper: VideoOwner(mid: 1001, name: 'tester', face: 'https://example.com/face.jpg'),
     intro: 'Existing intro',
     ctime: 0,
     mtime: 0,
@@ -415,7 +416,7 @@ FavoriteFolderInfo _folderInfo() {
     attr: 0,
     title: 'Folder',
     cover: 'https://example.com/cover.jpg',
-    upper: FavoriteOwner(mid: 1001, name: 'tester', face: 'https://example.com/face.jpg'),
+    upper: VideoOwner(mid: 1001, name: 'tester', face: 'https://example.com/face.jpg'),
     mediaCount: 1,
   );
 }
@@ -429,7 +430,7 @@ FavoriteResource _resource() {
     intro: 'Resource intro',
     page: 1,
     duration: 120,
-    upper: FavoriteOwner(mid: 1001, name: 'tester', face: 'https://example.com/face.jpg'),
+    upper: VideoOwner(mid: 1001, name: 'tester', face: 'https://example.com/face.jpg'),
     attr: 0,
     stats: FavoriteResourceStats(collect: 1, play: 2, danmaku: 3),
     link: 'https://example.com/video',

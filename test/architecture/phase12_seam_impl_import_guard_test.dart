@@ -21,6 +21,15 @@ Future<List<String>> findActiveSeamImplementationImports() async {
     multiLine: true,
   );
 
+  // Phase 19: these impls no longer have interfaces — direct import is expected
+  const allowedImplImports = {
+    'home_repository_impl.dart',
+    'settings_repository_impl.dart',
+    'to_view_repository_impl.dart',
+    'danmaku_repository_impl.dart',
+    'relation_repository_impl.dart',
+  };
+
   await for (final entity in Directory('lib/features').list(recursive: true)) {
     if (entity is! File || !entity.path.endsWith('.dart')) {
       continue;
@@ -40,6 +49,8 @@ Future<List<String>> findActiveSeamImplementationImports() async {
 
     final content = await entity.readAsString();
     for (final match in importPattern.allMatches(content)) {
+      final importedFile = match.group(0)!.split('/').last.replaceAll("'", '');
+      if (allowedImplImports.contains(importedFile)) continue;
       violations.add('$normalizedPath -> ${match.group(0)}');
     }
   }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:culcul/features/video/domain/entities/video_entities.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
+import 'package:culcul/core/contracts/relation_user_contract.dart';
 import 'package:culcul/features/video/domain/repositories/video_repository.dart';
 import 'package:culcul/features/video/feature_scope.dart';
 import 'package:culcul/core/errors/app_error.dart';
@@ -85,7 +86,7 @@ CommentItem _comment() {
         level: '',
         condition: '',
       ),
-      officialVerify: CommentOfficialVerify(),
+      officialVerify: OfficialVerify(),
       vip: CommentVip(),
     ),
     content: const CommentContent(message: 'hello'),

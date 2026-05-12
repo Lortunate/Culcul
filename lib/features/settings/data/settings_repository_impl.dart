@@ -3,9 +3,6 @@ import 'dart:io';
 import 'package:culcul/core/bootstrap/providers/storage_provider.dart';
 import 'package:culcul/core/storage/storage_keys.dart';
 import 'package:culcul/features/settings/domain/entities/app_theme_preference.dart';
-import 'package:culcul/features/settings/domain/repositories/settings_repository.dart';
-import 'package:culcul/features/settings/domain/repositories/settings_repository.dart'
-    as domain;
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,27 +10,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'settings_repository_impl.g.dart';
 
 @riverpod
-SettingsRepository settingsRepository(Ref ref) {
+SettingsRepositoryImpl settingsRepository(Ref ref) {
   return SettingsRepositoryImpl(prefs: ref.watch(sharedPreferencesProvider));
 }
 
-class SettingsRepositoryImpl implements domain.SettingsRepository {
+class SettingsRepositoryImpl {
   const SettingsRepositoryImpl({required SharedPreferences prefs}) : _prefs = prefs;
 
   final SharedPreferences _prefs;
 
-  @override
   AppThemePreference readThemePreference() {
     final storedValue = _prefs.getString(StorageKeys.themeMode);
     return AppThemePreference.fromStorage(storedValue);
   }
 
-  @override
   Future<void> saveThemePreference(AppThemePreference preference) {
     return _prefs.setString(StorageKeys.themeMode, preference.storageValue);
   }
 
-  @override
   Future<int> getCacheSizeInBytes() async {
     try {
       final tempDir = await getTemporaryDirectory();
@@ -44,7 +38,6 @@ class SettingsRepositoryImpl implements domain.SettingsRepository {
     }
   }
 
-  @override
   Future<void> clearCache() async {
     final tempDir = await getTemporaryDirectory();
     if (tempDir.existsSync()) {

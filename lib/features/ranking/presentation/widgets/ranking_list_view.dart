@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/features/ranking/presentation/models/ranking_category.dart';
-import 'package:culcul/features/ranking/domain/entities/ranking_video.dart';
 import 'package:culcul/features/ranking/presentation/view_models/category_ranking_view_model.dart';
 import 'package:culcul/features/ranking/presentation/widgets/ranking_item_card.dart';
 import 'package:culcul/features/ranking/presentation/widgets/ranking_skeleton_item.dart';
@@ -63,7 +63,7 @@ class _RankingListViewState extends ConsumerState<RankingListView>
 }
 
 class _RankingItemsList extends StatelessWidget {
-  final List<RankingVideo> items;
+  final List<VideoModel> items;
 
   const _RankingItemsList({required this.items});
 

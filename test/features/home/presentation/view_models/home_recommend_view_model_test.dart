@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:culcul/features/home/data/home_feed_data_source.dart';
+import 'package:culcul/features/home/data/home_repository_impl.dart';
 import 'package:culcul/features/home/presentation/view_models/home_recommend_view_model.dart';
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
@@ -16,7 +16,7 @@ void main() {
   test(
     'home recommend returns cached first page then silently applies fresh page',
     () async {
-      final dataSource = _FakeHomeFeedDataSource();
+      final dataSource = _FakeHomeRepositoryImpl();
       final cacheKey = CacheInterceptor.buildCacheKey(ApiConstants.feedRcmd, {
         'fresh_type': 4,
         'ps': 20,
@@ -25,7 +25,7 @@ void main() {
       });
       final container = ProviderContainer(
         overrides: [
-          homeFeedDataSourceProvider.overrideWithValue(dataSource),
+          homeRepositoryImplProvider.overrideWithValue(dataSource),
           cacheStoreProvider.overrideWithValue(_FakeCacheStore(keys: <String>{cacheKey})),
         ],
       );
@@ -45,10 +45,10 @@ void main() {
   );
 
   test('home recommend skips silent refresh when first page cache is absent', () async {
-    final dataSource = _FakeHomeFeedDataSource();
+    final dataSource = _FakeHomeRepositoryImpl();
     final container = ProviderContainer(
       overrides: [
-        homeFeedDataSourceProvider.overrideWithValue(dataSource),
+        homeRepositoryImplProvider.overrideWithValue(dataSource),
         cacheStoreProvider.overrideWithValue(_FakeCacheStore(keys: const <String>{})),
       ],
     );
@@ -62,8 +62,8 @@ void main() {
   });
 }
 
-class _FakeHomeFeedDataSource extends HomeFeedDataSource {
-  _FakeHomeFeedDataSource() : super.test();
+class _FakeHomeRepositoryImpl extends HomeRepositoryImpl {
+  _FakeHomeRepositoryImpl() : super.test();
 
   int recommendForceRefreshCalls = 0;
   final Completer<Result<List<VideoModel>, AppError>> _recommendRefreshCompleter =

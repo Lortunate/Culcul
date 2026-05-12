@@ -2,7 +2,10 @@ import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/request_cancel_token.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/video/application/video_detail_workflows.dart';
-import 'package:culcul/features/video/domain/entities/video_entities.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
+import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
+import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
 import 'package:culcul/features/video/domain/repositories/video_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -142,8 +145,8 @@ VideoDetail _buildVideoDetail() {
     pubDate: 0,
     ctime: 0,
     desc: 'desc',
-    owner: const Owner(mid: 1, name: 'owner'),
-    stat: const Stat(),
+    owner: const VideoOwner(mid: 1, name: 'owner'),
+    stat: const VideoStat(),
     pages: const <VideoPage>[VideoPage(cid: 1001)],
   );
 }
@@ -169,8 +172,8 @@ RelatedVideo _buildRelatedVideo() {
     bvid: 'BV2',
     title: 'related',
     pic: 'https://example.com/related.jpg',
-    owner: const Owner(mid: 2, name: 'owner2'),
-    stat: const Stat(),
+    owner: const VideoOwner(mid: 2, name: 'owner2'),
+    stat: const VideoStat(),
     duration: 120,
     pubDate: 0,
   );

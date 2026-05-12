@@ -1,4 +1,3 @@
-import 'package:culcul/core/constants/app_dimens.dart';
 import 'package:culcul/ui/widgets/users/app_avatar.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
@@ -22,10 +21,10 @@ class UserListTile extends StatelessWidget {
     this.stats,
     this.trailing,
     this.onTap,
-    this.avatarSize = AppDimens.iconXLarge, // 48
+    this.avatarSize = 48.0,
     this.padding = const EdgeInsets.symmetric(
-      horizontal: AppDimens.p16,
-      vertical: AppDimens.p12,
+      horizontal: 16.0,
+      vertical: 12.0,
     ),
     this.titleBadge,
   });
@@ -48,7 +47,7 @@ class UserListTile extends StatelessWidget {
     return Row(
       children: [
         Flexible(child: _buildTitle(context)),
-        if (titleBadge != null) ...[const SizedBox(width: AppDimens.p4), titleBadge!],
+        if (titleBadge != null) ...[const SizedBox(width: 4.0), titleBadge!],
       ],
     );
   }
@@ -61,7 +60,7 @@ class UserListTile extends StatelessWidget {
     return Row(
       children: [
         for (int index = 0; index < stats!.length; index++) ...[
-          if (index > 0) const SizedBox(width: AppDimens.p12),
+          if (index > 0) const SizedBox(width: 12.0),
           stats![index],
         ],
       ],
@@ -95,7 +94,7 @@ class UserListTile extends StatelessWidget {
         child: Row(
           children: [
             AppAvatar(url: avatarUrl, size: avatarSize),
-            const SizedBox(width: AppDimens.p12),
+            const SizedBox(width: 12.0),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,17 +102,17 @@ class UserListTile extends StatelessWidget {
                 children: [
                   _buildTitleRow(context),
                   if (statsRow != null) ...[
-                    const SizedBox(height: AppDimens.p4),
+                    const SizedBox(height: 4.0),
                     statsRow,
                   ],
                   if (subtitleView != null) ...[
-                    const SizedBox(height: AppDimens.p4),
+                    const SizedBox(height: 4.0),
                     subtitleView,
                   ],
                 ],
               ),
             ),
-            if (trailing != null) ...[const SizedBox(width: AppDimens.p12), trailing!],
+            if (trailing != null) ...[const SizedBox(width: 12.0), trailing!],
           ],
         ),
       ),

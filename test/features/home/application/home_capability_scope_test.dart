@@ -21,7 +21,7 @@ void main() {
       final removedFacadeFile = File('lib/features/home/application/home_facade.dart');
 
       expect(featureScope, isNot(contains('homeFacadeEntryProvider')));
-      expect(featureScope, contains('homeFeedDataSourceProvider'));
+      expect(featureScope, contains('homeRepositoryImplProvider'));
       expect(
         recommendViewModel,
         contains("import 'package:culcul/features/home/feature_scope.dart';"),

@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:culcul/features/video/application/comment_reply_commands.dart';
-import 'package:culcul/features/video/domain/entities/video_entities.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
+import 'package:culcul/core/contracts/relation_user_contract.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -36,7 +37,7 @@ CommentItem _comment({required int oid, required int rpid, required int root}) {
         level: '',
         condition: '',
       ),
-      officialVerify: CommentOfficialVerify(),
+      officialVerify: OfficialVerify(),
       vip: CommentVip(),
     ),
     content: const CommentContent(message: 'hello'),

@@ -7,31 +7,35 @@ import 'package:culcul/features/to_view/data/dtos/to_view_model_dto.dart';
 import 'package:culcul/features/to_view/data/to_view_mapper.dart';
 import 'package:culcul/features/to_view/data/to_view_api.dart';
 import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
-import 'package:culcul/features/to_view/domain/repositories/to_view_repository.dart'
-    as domain;
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'to_view_repository_impl.g.dart';
 
 @riverpod
-domain.ToViewRepository toViewRepository(Ref ref) {
+ToViewRepositoryImpl toViewRepository(Ref ref) {
   return ToViewRepositoryImpl(ToViewApi(ref.watch(dioClientProvider)));
 }
 
 class ToViewRepositoryImpl
-    with RequestExecutorBinding
-    implements domain.ToViewRepository {
-  final ToViewApi _api;
+    with RequestExecutorBinding {
+  final ToViewApi? _api;
   final RequestExecutor _requestExecutor;
 
-  ToViewRepositoryImpl(this._api, {RequestExecutor? requestExecutor})
-    : _requestExecutor = requestExecutor ?? const RequestExecutor();
+  ToViewRepositoryImpl(ToViewApi api, {RequestExecutor? requestExecutor})
+    : _api = api,
+      _requestExecutor = requestExecutor ?? const RequestExecutor();
+
+  @visibleForTesting
+  ToViewRepositoryImpl.test({RequestExecutor? requestExecutor})
+    : _api = null,
+      _requestExecutor = requestExecutor ?? const RequestExecutor();
 
   @override
   RequestExecutor get requestExecutor => _requestExecutor;
 
   Future<Result<ToViewListResponseDto, AppError>> getToViewList() async {
-    final result = await requestApiResult(() => _api.getToViewList());
+    final result = await requestApiResult(() => _api!.getToViewList());
     return result.when(
       success: Success.new,
       failure: (error) {
@@ -44,34 +48,30 @@ class ToViewRepositoryImpl
   }
 
   Future<Result<void, AppError>> addToView({required int aid}) {
-    return requestResult(() => _api.addToView(aid));
+    return requestResult(() => _api!.addToView(aid));
   }
 
   Future<Result<void, AppError>> deleteToView({required int aid}) {
-    return requestResult(() => _api.deleteToView(aid));
+    return requestResult(() => _api!.deleteToView(aid));
   }
 
   Future<Result<void, AppError>> clearToView() {
-    return requestResult(() => _api.clearToView());
+    return requestResult(() => _api!.clearToView());
   }
 
-  @override
   Future<Result<List<ToViewEntry>, AppError>> getList() async {
     final result = await getToViewList();
     return result.map((data) => data.list.map((item) => item.toDomain()).toList());
   }
 
-  @override
   Future<Result<void, AppError>> add({required int aid}) {
     return addToView(aid: aid);
   }
 
-  @override
   Future<Result<void, AppError>> delete({required int aid}) {
     return deleteToView(aid: aid);
   }
 
-  @override
   Future<Result<void, AppError>> clear() {
     return clearToView();
   }

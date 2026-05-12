@@ -1,13 +1,13 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/features/ranking/domain/entities/ranking_video.dart';
 import 'package:culcul/features/ranking/presentation/widgets/rank_badge.dart';
 import 'package:culcul/ui/widgets/text/icon_text.dart';
 import 'package:culcul/ui/assemblies/feed_cards/feed_cards.dart';
 import 'package:flutter/material.dart';
 
 class RankingItemCard extends StatelessWidget {
-  final RankingVideo video;
+  final VideoModel video;
   final int rank;
 
   const RankingItemCard({required this.video, required this.rank, super.key});
@@ -21,7 +21,7 @@ class RankingItemCard extends StatelessWidget {
       // Standard list item padding
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
-      coverUrl: video.coverUrl,
+      coverUrl: video.pic,
       title: video.title,
       duration: video.duration,
       thumbnailWidth: 140,
@@ -40,7 +40,7 @@ class RankingItemCard extends StatelessWidget {
           const SizedBox(width: 4),
           Expanded(
             child: Text(
-              video.ownerName,
+              video.owner.name,
               style: theme.textTheme.labelSmall?.copyWith(
                 color: colorScheme.onSurfaceVariant,
               ),
@@ -54,11 +54,11 @@ class RankingItemCard extends StatelessWidget {
       stats: [
         IconText(
           icon: Icons.play_circle_outline_rounded,
-          text: FormatUtils.formatNumber(video.viewCount),
+          text: FormatUtils.formatNumber(video.stat.view),
         ),
         IconText(
           icon: Icons.list_alt_rounded,
-          text: FormatUtils.formatNumber(video.danmakuCount),
+          text: FormatUtils.formatNumber(video.stat.danmaku),
         ),
       ],
     );

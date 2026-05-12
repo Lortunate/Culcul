@@ -1,6 +1,9 @@
 import 'dart:async';
 
-import 'package:culcul/features/video/domain/entities/video_entities.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
+import 'package:culcul/core/contracts/relation_user_contract.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
 import 'package:culcul/features/video/domain/repositories/video_repository.dart';
 import 'package:culcul/features/video/feature_scope.dart';
 import 'package:culcul/core/errors/app_error.dart';
@@ -114,8 +117,8 @@ VideoDetail _buildVideoDetail() {
     pubDate: 0,
     ctime: 0,
     desc: 'desc',
-    owner: const Owner(mid: 1, name: 'owner'),
-    stat: const Stat(),
+    owner: const VideoOwner(mid: 1, name: 'owner'),
+    stat: const VideoStat(),
     pages: const <VideoPage>[VideoPage(cid: 1001)],
   );
 }
@@ -151,7 +154,7 @@ CommentItem _buildCommentItem() {
         level: '',
         condition: '',
       ),
-      officialVerify: CommentOfficialVerify(),
+      officialVerify: OfficialVerify(),
       vip: CommentVip(),
     ),
     content: const CommentContent(message: 'hello'),

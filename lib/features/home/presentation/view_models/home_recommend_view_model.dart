@@ -33,7 +33,7 @@ class HomeRecommend extends _$HomeRecommend
 
   Future<List<VideoModel>> _loadPage(int page, {required bool forceRefresh}) async {
     final result = await ref
-        .read(homeFeedDataSourceProvider)
+        .read(homeRepositoryImplProvider)
         .fetchRecommendPage(page: page, forceRefresh: forceRefresh);
     if (forceRefresh) {
       DevLogger.log(

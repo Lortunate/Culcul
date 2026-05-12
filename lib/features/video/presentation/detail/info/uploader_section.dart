@@ -23,7 +23,7 @@ class UploaderSection extends ConsumerWidget {
     return UserListTile(
       avatarUrl: owner.face,
       name: owner.name,
-      subtitle: '12.5W followers · 168 videos', // TODO: Fetch real stats if available
+      subtitle: null,
       avatarSize: 34,
       padding: EdgeInsets.zero,
       onTap: () => UserProfileRoute(mid: owner.mid).push(context),

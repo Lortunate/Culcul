@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 
 const _activeSpec =
-    'docs/superpowers/specs/2026-05-13-phase18-architecture-simplification-and-single-source-of-truth.md';
+    'docs/superpowers/specs/2026-05-13-phase19-pragmatic-simplification.md';
 const _activePlan =
-    'docs/superpowers/plans/2026-05-13-phase18-architecture-simplification-and-single-source-of-truth.md';
+    'docs/superpowers/plans/2026-05-13-phase19-pragmatic-simplification.md';
 
 void main() {
   test('Active phase baseline pointers stay singular and truthful', () async {
@@ -14,7 +14,7 @@ void main() {
 
     expect(claude, contains('Active spec: `$_activeSpec`'));
     expect(claude, contains('Active plan: `$_activePlan`'));
-    expect(guide, contains('## Phase 18 (Active): Architecture Simplification & Single Source of Truth'));
+    expect(guide, contains('## Phase 19 (Active): Pragmatic Simplification & Dead Weight Removal'));
 
     final specRoots = await _rootMarkdownFiles('docs/superpowers/specs');
     final planRoots = await _rootMarkdownFiles('docs/superpowers/plans');

@@ -1,2 +1,2 @@
-export 'package:culcul/features/home/data/home_feed_data_source.dart'
-    show homeFeedDataSourceProvider;
+export 'package:culcul/features/home/data/home_repository_impl.dart'
+    show homeRepositoryImplProvider;

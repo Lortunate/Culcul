@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_response.dart';
-import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 

@@ -1,6 +1,7 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/contracts/user_session_contract.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
@@ -15,7 +16,7 @@ class _FavFakeRepository implements FavoriteRepository {
 
   final List<Result<FavoriteResourcePage, AppError>> _pages;
 
-  static const FavoriteOwner _owner = FavoriteOwner(mid: 1, name: 'u', face: 'f');
+  static const VideoOwner _owner = VideoOwner(mid: 1, name: 'u', face: 'f');
   static const FavoriteFolderInfo _info = FavoriteFolderInfo(
     id: 1,
     fid: 1,
@@ -86,7 +87,7 @@ class _CreatedFoldersRepository implements FavoriteRepository {
   int inFlight = 0;
   int maxInFlight = 0;
 
-  static const FavoriteOwner _owner = FavoriteOwner(mid: 1, name: 'u', face: 'f');
+  static const VideoOwner _owner = VideoOwner(mid: 1, name: 'u', face: 'f');
 
   @override
   Future<Result<FavoriteFolderPage, AppError>> getCreatedFolders({
@@ -187,7 +188,7 @@ class _CreatedFoldersRepository implements FavoriteRepository {
 }
 
 FavoriteResource _resource(int id) {
-  const owner = FavoriteOwner(mid: 1, name: 'u', face: 'f');
+  const owner = VideoOwner(mid: 1, name: 'u', face: 'f');
   return FavoriteResource(
     id: id,
     type: 2,

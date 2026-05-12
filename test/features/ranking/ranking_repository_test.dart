@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('RankingRepositoryImpl.getRanking', () {
-    test('returns mapped RankingVideo entries on success', () async {
+    test('returns VideoModel entries on success', () async {
       final api = _FakeRankingApi(
         response: ApiResponse<RankingResponseDto>(
           code: 0,
@@ -47,15 +47,15 @@ void main() {
 
       expect(videos[0].bvid, 'BV1aaa');
       expect(videos[0].title, 'First Video');
-      expect(videos[0].coverUrl, 'https://example.com/1.jpg');
-      expect(videos[0].ownerName, 'Alice');
-      expect(videos[0].viewCount, 1000);
-      expect(videos[0].danmakuCount, 50);
+      expect(videos[0].pic, 'https://example.com/1.jpg');
+      expect(videos[0].owner.name, 'Alice');
+      expect(videos[0].stat.view, 1000);
+      expect(videos[0].stat.danmaku, 50);
       expect(videos[0].duration, 120);
 
       expect(videos[1].bvid, 'BV2bbb');
-      expect(videos[1].ownerName, 'Bob');
-      expect(videos[1].viewCount, 2000);
+      expect(videos[1].owner.name, 'Bob');
+      expect(videos[1].stat.view, 2000);
     });
 
     test('returns empty list when response data list is empty', () async {

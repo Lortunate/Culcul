@@ -1,3 +1,4 @@
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/features/to_view/data/dtos/to_view_model_dto.dart';
 import 'package:culcul/features/to_view/data/to_view_mapper.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,8 +13,8 @@ void main() {
         pic: 'https://example.com/cover.jpg',
         duration: 300,
         progress: 150,
-        owner: ToViewOwnerModelDto(mid: 1, name: 'Uploader', face: ''),
-        stat: ToViewStatModelDto(view: 1000, danmaku: 50),
+        owner: VideoOwner(mid: 1, name: 'Uploader', face: ''),
+        stat: VideoStat(view: 1000, danmaku: 50),
       );
 
       final entry = dto.toDomain();
@@ -55,8 +56,8 @@ void main() {
         pic: '',
         duration: 0,
         progress: 0,
-        owner: ToViewOwnerModelDto(),
-        stat: ToViewStatModelDto(),
+        owner: VideoOwner(mid: 0, name: ''),
+        stat: VideoStat(),
       );
 
       final entry = dto.toDomain();
@@ -68,8 +69,8 @@ void main() {
       const dto = ToViewModelDto(
         duration: 60,
         progress: 30,
-        owner: ToViewOwnerModelDto(name: 'User'),
-        stat: ToViewStatModelDto(view: 5, danmaku: 1),
+        owner: VideoOwner(mid: 0, name: 'User'),
+        stat: VideoStat(view: 5, danmaku: 1),
       );
 
       final entry = dto.toDomain();

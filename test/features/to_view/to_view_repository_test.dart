@@ -1,4 +1,5 @@
 import 'package:culcul/core/errors/exceptions.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/features/to_view/data/dtos/to_view_model_dto.dart';
 import 'package:culcul/features/to_view/data/to_view_api.dart';
@@ -128,8 +129,8 @@ ToViewModelDto _dto(int aid, String title, String ownerName) {
     pic: '',
     duration: 100,
     progress: 0,
-    owner: ToViewOwnerModelDto(mid: aid, name: ownerName, face: ''),
-    stat: ToViewStatModelDto(view: 0, danmaku: 0),
+    owner: VideoOwner(mid: aid, name: ownerName, face: ''),
+    stat: VideoStat(view: 0, danmaku: 0),
   );
 }
 

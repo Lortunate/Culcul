@@ -7,7 +7,7 @@ import 'package:culcul/core/data/network/request_cancel_token.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
-import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_response.dart';
 import 'package:culcul/features/dynamic/domain/repositories/dynamic_repository.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/user_dynamic_view_model.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';

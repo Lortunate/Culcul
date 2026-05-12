@@ -1,6 +1,7 @@
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/route_entry.dart';
-import 'package:culcul/features/video/domain/entities/video_entities.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
+import 'package:culcul/core/contracts/relation_user_contract.dart';
 import 'package:culcul/features/video/route_entry.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -56,7 +57,7 @@ CommentItem _buildComment() {
         level: '',
         condition: '',
       ),
-      officialVerify: CommentOfficialVerify(),
+      officialVerify: OfficialVerify(),
       vip: CommentVip(),
     ),
     content: const CommentContent(message: 'hello'),

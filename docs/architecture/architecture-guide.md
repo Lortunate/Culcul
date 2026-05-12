@@ -1,6 +1,6 @@
 # Architecture Guide
 
-Current implemented baseline for Culcul (BiliBili 3rd-party client). `lib/shared/` is fully retired, and all features now follow a standardized slice architecture. Phase 18 eliminates barrel files, completes model deduplication, finishes freezed/@riverpod migration, and removes thin abstractions.
+Current implemented baseline for Culcul (BiliBili 3rd-party client). `lib/shared/` is fully retired, and all features now follow a standardized slice architecture. Phase 19 removes dead weight: unused dependencies, thin ceremony-only abstractions, redundant domain entities, and dead code.
 
 ## Directory Structure
 
@@ -345,12 +345,9 @@ Started 2026-05-13, partially landed. Remaining work absorbed into Phase 18.
 5. Removed dead indirection — 5 re-export files deleted, `runtime_dependencies.dart` double-layer eliminated.
 6. Bootstrap providers now imported directly by features (no intermediate seam).
 
-## Phase 18 (Active): Architecture Simplification & Single Source of Truth
+## Phase 18 (Completed): Architecture Simplification & Single Source of Truth
 
-Started 2026-05-13. Phase 18 eliminates all barrel files, completes model deduplication, finishes freezed/@riverpod migration, and removes thin abstractions.
-
-Active spec: `docs/superpowers/specs/2026-05-13-phase18-architecture-simplification-and-single-source-of-truth.md`
-Active plan: `docs/superpowers/plans/2026-05-13-phase18-architecture-simplification-and-single-source-of-truth.md`
+Started 2026-05-13. Eliminated all barrel files, completed model deduplication, finished freezed/@riverpod migration, and removed thin abstractions.
 
 **Changes landed:**
 1. Eliminated typedef aliases (`Owner`/`Stat`) and dead code (`NotificationImageUploader`).
@@ -358,3 +355,19 @@ Active plan: `docs/superpowers/plans/2026-05-13-phase18-architecture-simplificat
 3. Unified OfficialVerify/VipInfo to single definitions in core contracts.
 4. Merged `UserProfile` DTO into `ProfileUser` domain model (eliminated no-op mapper).
 5. Eliminated 19 barrel/re-export files — all imports now point to defining files.
+
+## Phase 19 (Active): Pragmatic Simplification & Dead Weight Removal
+
+Started 2026-05-13. Removes unused dependencies, thin ceremony-only abstractions, redundant domain entities, and dead code.
+
+Active spec: `docs/superpowers/specs/2026-05-13-phase19-pragmatic-simplification.md`
+Active plan: `docs/superpowers/plans/2026-05-13-phase19-pragmatic-simplification.md`
+
+**Changes landed:**
+1. Removed `responsive_framework` dependency — never queried at runtime, all responsive logic uses custom `AppResponsive` extension.
+2. Deleted dead proto files (`dm.pbserver.dart`, `dm.pbjson.dart`) and removed explicit `fixnum` dependency.
+3. Inlined `app_dimens.dart` (3 consumers) and deleted the file.
+4. Eliminated `RankingVideo` domain entity — ranking feature now consumes `VideoModel` directly from core contracts.
+5. Removed 5 thin repository interfaces (Home, Settings, ToView, Danmaku, Relation) — consumers depend on impl directly.
+6. Renamed `HomeFeedDataSource` → `HomeRepositoryImpl` for naming consistency.
+7. Fixed hardcoded placeholder string in `uploader_section.dart`.
