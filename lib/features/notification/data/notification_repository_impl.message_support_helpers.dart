@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
+import 'package:culcul/features/notification/data/dtos/private_message_model.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.message_support.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 

@@ -1,5 +1,8 @@
 import 'package:culcul/core/data/network/models/api_response.dart';
-import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
+import 'package:culcul/features/notification/data/dtos/like_model.dart';
+import 'package:culcul/features/notification/data/dtos/private_message_model.dart';
+import 'package:culcul/features/notification/data/dtos/reply_model.dart';
+import 'package:culcul/features/notification/data/dtos/unread_count_model.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 

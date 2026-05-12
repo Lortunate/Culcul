@@ -9,7 +9,7 @@ class FeedResponseDto {
     if (rawItem is List<dynamic>) {
       items = rawItem
           .whereType<Map<dynamic, dynamic>>()
-          .map((e) => Map<String, dynamic>.from(e))
+          .map(Map<String, dynamic>.from)
           .toList();
     } else {
       items = const <Map<String, dynamic>>[];

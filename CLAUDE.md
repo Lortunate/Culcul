@@ -42,14 +42,14 @@ This project is indexed by GitNexus as **Culcul** (2702 symbols, 3378 relationsh
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 17 — Model Consolidation & Code Modernization)
+## Architecture (Phase 18 — Architecture Simplification & Single Source of Truth)
 
-`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–16 established structural cleanup and guard-green baseline. Phase 17 focuses on eliminating model duplication, completing freezed/riverpod code generation adoption, and removing dead indirection.
+`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–17 established structural cleanup, guard-green baseline, and partial model consolidation. Phase 18 focuses on eliminating ALL barrel files, completing model deduplication, finishing freezed/@riverpod migrations, and removing thin abstractions that add no value.
 
 See `docs/architecture/architecture-guide.md` for the current implemented baseline.
 
-Active spec: `docs/superpowers/specs/2026-05-13-phase17-model-consolidation-and-code-modernization.md`
-Active plan: `docs/superpowers/plans/2026-05-13-phase17-model-consolidation-and-code-modernization.md`
+Active spec: `docs/superpowers/specs/2026-05-13-phase18-architecture-simplification-and-single-source-of-truth.md`
+Active plan: `docs/superpowers/plans/2026-05-13-phase18-architecture-simplification-and-single-source-of-truth.md`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`
@@ -68,7 +68,7 @@ Active plan: `docs/superpowers/plans/2026-05-13-phase17-model-consolidation-and-
 - go_router is already typed/generated through `go_router_builder`; do not rewrite routing unless a route seam is actually broken
 - Prefer `pointycastle` + `crypto` for cryptography; do not use `encrypt` wrapper
 - Features must reuse `VideoOwner`/`VideoStat` from core contracts — no feature-local duplicates
-- If architecture docs disagree, the active Phase 17 spec/plan override older phase text
+- If architecture docs disagree, the active Phase 18 spec/plan override older phase text
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:full hash:f65d5d33 -->
 ## Issue Tracking with bd (beads)

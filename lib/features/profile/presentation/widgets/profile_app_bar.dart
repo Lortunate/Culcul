@@ -4,7 +4,7 @@ import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
 import 'package:culcul/ui/widgets/users/app_avatar.dart';
-import 'package:culcul/ui/assemblies/users/users.dart';
+import 'package:culcul/ui/assemblies/users/user_tags.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

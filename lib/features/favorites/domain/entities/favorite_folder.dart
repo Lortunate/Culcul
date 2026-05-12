@@ -1,15 +1,7 @@
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'favorite_folder.freezed.dart';
-
-@freezed
-sealed class FavoriteOwner with _$FavoriteOwner {
-  const factory FavoriteOwner({
-    required int mid,
-    required String name,
-    required String face,
-  }) = _FavoriteOwner;
-}
 
 @freezed
 sealed class FavoriteFolder with _$FavoriteFolder {
@@ -24,7 +16,7 @@ sealed class FavoriteFolder with _$FavoriteFolder {
     required int favState,
     required int mediaCount,
     required String? cover,
-    required FavoriteOwner? upper,
+    required VideoOwner? upper,
     required String? intro,
     required int? ctime,
     required int? mtime,

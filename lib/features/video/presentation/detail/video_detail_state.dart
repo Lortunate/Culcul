@@ -1,4 +1,6 @@
-import 'package:culcul/features/video/domain/entities/video_entities.dart';
+import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
+import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
+import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 

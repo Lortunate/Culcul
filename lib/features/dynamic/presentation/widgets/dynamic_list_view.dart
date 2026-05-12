@@ -1,4 +1,5 @@
-import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_response.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_extension.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_view_model.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_card.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/recently_followed_widget.dart';

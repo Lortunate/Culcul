@@ -1,4 +1,7 @@
-import 'package:culcul/features/search/data/dtos/search_dtos.dart';
+import 'package:culcul/features/search/data/dtos/default_search.dart';
+import 'package:culcul/features/search/data/dtos/search_result.dart';
+import 'package:culcul/features/search/data/dtos/search_suggestion.dart';
+import 'package:culcul/features/search/data/dtos/trending_ranking.dart';
 import 'package:culcul/features/search/domain/entities/search_default_hint.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/features/search/domain/entities/search_suggestion_entry.dart';

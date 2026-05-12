@@ -1,5 +1,5 @@
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
-import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/features/dynamic/application/dynamic_workflows.dart';
 import 'dart:async';
 import 'dart:math' as math;

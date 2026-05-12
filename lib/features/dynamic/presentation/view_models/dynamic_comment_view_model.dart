@@ -1,4 +1,5 @@
-import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_response.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
 import 'dart:async';
 
 import 'package:culcul/features/dynamic/feature_scope.dart';

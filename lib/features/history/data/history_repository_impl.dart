@@ -7,20 +7,16 @@ import 'package:culcul/features/history/data/history_api.dart';
 import 'package:culcul/features/history/data/dtos/history_model_dto.dart';
 import 'package:culcul/features/history/data/history_mapper.dart';
 import 'package:culcul/features/history/domain/entities/history_entry.dart';
-import 'package:culcul/features/history/domain/repositories/history_repository.dart'
-    as domain;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'history_repository_impl.g.dart';
 
 @riverpod
-domain.HistoryRepository historyRepository(Ref ref) {
+HistoryRepositoryImpl historyRepository(Ref ref) {
   return HistoryRepositoryImpl(HistoryApi(ref.watch(dioClientProvider)));
 }
 
-class HistoryRepositoryImpl
-    with RequestExecutorBinding
-    implements domain.HistoryRepository {
+class HistoryRepositoryImpl with RequestExecutorBinding {
   static const int _defaultPageSize = 20;
   final HistoryApi _api;
   final RequestExecutor _requestExecutor;
@@ -39,7 +35,6 @@ class HistoryRepositoryImpl
     return requestApiResult(() => _api.getHistoryCursor(max, viewAt, '', ps));
   }
 
-  @override
   Future<Result<List<HistoryEntry>, AppError>> getHistory({
     int max = 0,
     int viewAt = 0,

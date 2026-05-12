@@ -1,6 +1,6 @@
 # Phase 17: Model Consolidation & Code Modernization — Plan
 
-**Status:** Active  
+**Status:** Superseded  
 **Date:** 2026-05-13  
 **Spec:** `docs/superpowers/specs/2026-05-13-phase17-model-consolidation-and-code-modernization.md`
 

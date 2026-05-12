@@ -1,13 +1,13 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/history/domain/repositories/history_repository.dart';
+import 'package:culcul/features/history/data/history_repository_impl.dart';
 import 'package:culcul/features/history/domain/entities/history_entry.dart';
 import 'package:culcul/features/history/feature_scope.dart';
 import 'package:culcul/features/history/presentation/view_models/history_view_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-class _FakeHistoryRepository implements HistoryRepository {
+class _FakeHistoryRepository implements HistoryRepositoryImpl {
   _FakeHistoryRepository({required this.result});
 
   final Result<List<HistoryEntry>, AppError> result;
@@ -19,6 +19,9 @@ class _FakeHistoryRepository implements HistoryRepository {
   }) async {
     return result;
   }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 List<HistoryEntry> _entries(int count) {

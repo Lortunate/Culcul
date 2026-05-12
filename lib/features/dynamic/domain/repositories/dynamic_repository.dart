@@ -2,7 +2,8 @@ import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/request_cancel_token.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
-import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_response.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_publish_command.dart';
 
 class DynamicFeedQuery {

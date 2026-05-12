@@ -1,4 +1,4 @@
-import 'package:culcul/features/video/domain/entities/video_entities.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
 

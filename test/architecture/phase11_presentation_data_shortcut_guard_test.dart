@@ -2,13 +2,17 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+/// Phase 18 update: Presentation importing its own feature's data/dtos/ is
+/// allowed because DTOs serve as domain models (no separate domain entities).
+/// This test now only forbids importing data/ files that are NOT DTOs
+/// (e.g., repository impls, API clients, mappers).
 void main() {
   test('presentation does not import feature-local data when a facade seam exists', () async {
     final violations = await findPresentationDataShortcuts();
     expect(
       violations,
       isEmpty,
-      reason: 'Presentation should go through feature capabilities instead of importing its own data layer directly.\n'
+      reason: 'Presentation should not import repository impls or API clients directly.\n'
           'Found shortcuts:\n${violations.join('\n')}',
     );
   });
@@ -17,7 +21,7 @@ void main() {
 Future<List<String>> findPresentationDataShortcuts() async {
   final violations = <String>[];
   final importPattern = RegExp(
-    r'''^\s*import\s+['"]package:culcul/features/([^/]+)/data/[^'"]+['"]''',
+    r'''^\s*import\s+['"]package:culcul/features/([^/]+)/data/(?!dtos/)[^'"]+['"]''',
     multiLine: true,
   );
 

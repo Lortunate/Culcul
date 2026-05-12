@@ -1,11 +1,12 @@
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/features/favorites/data/dtos/fav_folder_model.dart';
 import 'package:culcul/features/favorites/data/dtos/fav_resource_model.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 
 extension FavUpperMapper on FavUpperModel {
-  FavoriteOwner toDomain() {
-    return FavoriteOwner(mid: mid, name: name, face: face);
+  VideoOwner toDomain() {
+    return VideoOwner(mid: mid, name: name, face: face);
   }
 }
 

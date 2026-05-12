@@ -1,87 +1,59 @@
-class DynamicVideoContent {
-  final String cover;
-  final String title;
-  final String playCount;
-  final String danmakuCount;
-  final String duration;
-  final String? aid;
-  final String? bvid;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  DynamicVideoContent({
-    required this.cover,
-    required this.title,
-    required this.playCount,
-    required this.danmakuCount,
-    required this.duration,
-    this.aid,
-    this.bvid,
-  });
+part 'dynamic_content_entities.freezed.dart';
+
+@freezed
+sealed class DynamicVideoContent with _$DynamicVideoContent {
+  const factory DynamicVideoContent({
+    required String cover,
+    required String title,
+    required String playCount,
+    required String danmakuCount,
+    required String duration,
+    String? aid,
+    String? bvid,
+  }) = _DynamicVideoContent;
 }
 
-class DynamicLinkCard {
-  final String title;
-  final String cover;
-  final String? desc;
-  final String url;
-
-  DynamicLinkCard({
-    required this.title,
-    required this.cover,
-    this.desc,
-    required this.url,
-  });
+@freezed
+sealed class DynamicLinkCard with _$DynamicLinkCard {
+  const factory DynamicLinkCard({
+    required String title,
+    required String cover,
+    String? desc,
+    required String url,
+  }) = _DynamicLinkCard;
 }
 
-class DynamicAdditional {
-  final String type;
-  final String? title;
-  final String? cover;
-  final String? desc1;
-  final String? desc2;
-  final String? jumpUrl;
-
-  // Vote specific
-  final int? voteId;
-  final int? voteJoinNum;
-  final int? voteChoiceCnt;
-  final int? voteStatus;
-
-  // Reserve specific
-  final int? reserveTotal;
-  final int? state;
-
-  // Goods specific
-  final String? headText;
-  final List<DynamicGoodsItem>? goodsItems;
-
-  DynamicAdditional({
-    required this.type,
-    this.title,
-    this.cover,
-    this.desc1,
-    this.desc2,
-    this.jumpUrl,
-    this.voteId,
-    this.voteJoinNum,
-    this.voteChoiceCnt,
-    this.voteStatus,
-    this.reserveTotal,
-    this.state,
-    this.headText,
-    this.goodsItems,
-  });
+@freezed
+sealed class DynamicAdditional with _$DynamicAdditional {
+  const factory DynamicAdditional({
+    required String type,
+    String? title,
+    String? cover,
+    String? desc1,
+    String? desc2,
+    String? jumpUrl,
+    // Vote specific
+    int? voteId,
+    int? voteJoinNum,
+    int? voteChoiceCnt,
+    int? voteStatus,
+    // Reserve specific
+    int? reserveTotal,
+    int? state,
+    // Goods specific
+    String? headText,
+    List<DynamicGoodsItem>? goodsItems,
+  }) = _DynamicAdditional;
 }
 
-class DynamicGoodsItem {
-  final String name;
-  final String price;
-  final String cover;
-  final String jumpUrl;
-
-  DynamicGoodsItem({
-    required this.name,
-    required this.price,
-    required this.cover,
-    required this.jumpUrl,
-  });
+@freezed
+sealed class DynamicGoodsItem with _$DynamicGoodsItem {
+  const factory DynamicGoodsItem({
+    required String name,
+    required String price,
+    required String cover,
+    required String jumpUrl,
+  }) = _DynamicGoodsItem;
 }

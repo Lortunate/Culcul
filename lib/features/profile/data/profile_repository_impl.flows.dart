@@ -3,7 +3,7 @@ part of 'profile_repository_impl.dart';
 mixin _ProfileRepositoryImplFlowsMixin on RequestExecutorBinding
     implements domain.ProfileRepository {
   ProfileApi get api;
-  Future<Result<UserProfile, AppError>> getProfileModel(int userId);
+  Future<Result<ProfileUser, AppError>> getProfileModel(int userId);
 
   Future<Result<List<UserSpaceVideoModel>, AppError>> getSpaceVideosModel({
     required int mid,
@@ -58,8 +58,7 @@ mixin _ProfileRepositoryImplFlowsMixin on RequestExecutorBinding
 
   @override
   Future<Result<ProfileUser, AppError>> getProfile(int userId) async {
-    final result = await getProfileModel(userId);
-    return result.map((data) => data.toDomain());
+    return getProfileModel(userId);
   }
 
   @override

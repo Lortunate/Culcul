@@ -1,3 +1,4 @@
+import 'package:culcul/core/contracts/relation_user_contract.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'relation_model.freezed.dart';
@@ -30,24 +31,4 @@ sealed class RelationUser with _$RelationUser {
 
   factory RelationUser.fromJson(Map<String, dynamic> json) =>
       _$RelationUserFromJson(json);
-}
-
-@freezed
-sealed class OfficialVerify with _$OfficialVerify {
-  const factory OfficialVerify({@Default(-1) int type, @Default('') String desc}) =
-      _OfficialVerify;
-
-  factory OfficialVerify.fromJson(Map<String, dynamic> json) =>
-      _$OfficialVerifyFromJson(json);
-}
-
-@freezed
-sealed class VipInfo with _$VipInfo {
-  const factory VipInfo({
-    @Default(0) int vipType,
-    @Default(0) int vipStatus,
-    @Default('') String nicknameColor,
-  }) = _VipInfo;
-
-  factory VipInfo.fromJson(Map<String, dynamic> json) => _$VipInfoFromJson(json);
 }

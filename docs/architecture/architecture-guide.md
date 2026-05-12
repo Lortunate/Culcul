@@ -1,6 +1,6 @@
 # Architecture Guide
 
-Current implemented baseline for Culcul (BiliBili 3rd-party client). `lib/shared/` is fully retired, and all features now follow a standardized slice architecture. Phase 17 consolidates duplicate models, completes freezed/@riverpod code generation adoption, and removes dead indirection layers.
+Current implemented baseline for Culcul (BiliBili 3rd-party client). `lib/shared/` is fully retired, and all features now follow a standardized slice architecture. Phase 18 eliminates barrel files, completes model deduplication, finishes freezed/@riverpod migration, and removes thin abstractions.
 
 ## Directory Structure
 
@@ -333,12 +333,9 @@ Archived plan: `docs/superpowers/plans/archive/2026-05-12-phase15-architecture-s
 
 Started 2026-05-12, completed 2026-05-13. Phase 16 achieved guard-green baseline: all architecture tests pass, docs are honest, runtime/bootstrap provider ownership is enforced.
 
-## Phase 17 (Active): Model Consolidation & Code Modernization
+## Phase 17 (Completed): Model Consolidation & Code Modernization
 
-Started 2026-05-13. Phase 17 eliminates model duplication, completes freezed and @riverpod code generation adoption, and removes dead indirection layers.
-
-Active spec: `docs/superpowers/specs/2026-05-13-phase17-model-consolidation-and-code-modernization.md`
-Active plan: `docs/superpowers/plans/2026-05-13-phase17-model-consolidation-and-code-modernization.md`
+Started 2026-05-13, partially landed. Remaining work absorbed into Phase 18.
 
 **Changes landed:**
 1. Consolidated video models — `ProfileVideoOwner`/`ProfileVideoStats` removed, features reuse core `VideoOwner`/`VideoStat`.
@@ -347,3 +344,17 @@ Active plan: `docs/superpowers/plans/2026-05-13-phase17-model-consolidation-and-
 4. @riverpod migration — 12 hand-written providers converted to `@riverpod` code generation.
 5. Removed dead indirection — 5 re-export files deleted, `runtime_dependencies.dart` double-layer eliminated.
 6. Bootstrap providers now imported directly by features (no intermediate seam).
+
+## Phase 18 (Active): Architecture Simplification & Single Source of Truth
+
+Started 2026-05-13. Phase 18 eliminates all barrel files, completes model deduplication, finishes freezed/@riverpod migration, and removes thin abstractions.
+
+Active spec: `docs/superpowers/specs/2026-05-13-phase18-architecture-simplification-and-single-source-of-truth.md`
+Active plan: `docs/superpowers/plans/2026-05-13-phase18-architecture-simplification-and-single-source-of-truth.md`
+
+**Changes landed:**
+1. Eliminated typedef aliases (`Owner`/`Stat`) and dead code (`NotificationImageUploader`).
+2. Deduplicated VideoOwner/VideoStat — removed `ToViewOwnerModelDto`, `ToViewStatModelDto`, `FavoriteOwner`.
+3. Unified OfficialVerify/VipInfo to single definitions in core contracts.
+4. Merged `UserProfile` DTO into `ProfileUser` domain model (eliminated no-op mapper).
+5. Eliminated 19 barrel/re-export files — all imports now point to defining files.

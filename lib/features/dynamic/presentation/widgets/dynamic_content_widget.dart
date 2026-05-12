@@ -1,4 +1,6 @@
-import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_response.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_extension.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_content_entities.dart';
 import 'package:culcul/features/dynamic/presentation/pages/topic_detail_page.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_common_widget.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_goods_widget.dart';
@@ -9,7 +11,7 @@ import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_ugc
 import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_video_widget.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_vote_widget.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_forward_widget.dart';
-import 'package:culcul/ui/assemblies/text/text.dart';
+import 'package:culcul/ui/assemblies/text/bilibili_emoji_text.dart';
 import 'package:flutter/material.dart';
 
 class DynamicContentWidget extends StatelessWidget {

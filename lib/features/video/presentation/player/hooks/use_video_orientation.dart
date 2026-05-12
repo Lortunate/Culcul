@@ -1,5 +1,5 @@
 import 'package:culcul/features/video/application/video_entry_layout.dart';
-import 'package:culcul/features/video/domain/entities/video_entities.dart';
+import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';

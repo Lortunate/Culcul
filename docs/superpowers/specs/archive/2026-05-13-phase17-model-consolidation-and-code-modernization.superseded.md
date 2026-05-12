@@ -1,6 +1,6 @@
 # Phase 17: Model Consolidation & Code Modernization
 
-**Status:** Active  
+**Status:** Superseded  
 **Date:** 2026-05-13  
 **Supersedes:** Phase 16 (completed — guard-green baseline achieved)
 

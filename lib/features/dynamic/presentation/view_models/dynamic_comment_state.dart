@@ -1,6 +1,6 @@
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/data/pagination/paged_list_state.dart';
-import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'dynamic_comment_state.freezed.dart';

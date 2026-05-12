@@ -1,5 +1,6 @@
 import 'package:culcul/core/utils/json_compute.dart';
-import 'package:culcul/features/notification/data/dtos/notification_dtos.dart';
+import 'package:culcul/features/notification/data/dtos/system_notification_model.dart';
+import 'package:culcul/features/notification/data/dtos/unread_count_model.dart';
 import 'package:culcul/features/notification/data/notification_mapper.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';

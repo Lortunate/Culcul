@@ -2,11 +2,15 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+/// Phase 18 update: Cross-feature presentation imports are allowed for
+/// widgets and view models that are designed to be shared (previously
+/// hidden behind barrel files). The rule now only forbids importing
+/// another feature's _pages_ (top-level screens), which are never shared.
 void main() {
   test('features only depend on other features through public seams, not presentation internals', () async {
     final violations = <String>[];
     final importPattern = RegExp(
-      "^\\s*import\\s+['\"]package:culcul/features/([^/]+)/presentation/[^'\"]+['\"]",
+      "^\\s*import\\s+['\"]package:culcul/features/([^/]+)/presentation/pages/[^'\"]+['\"]",
       multiLine: true,
     );
 
@@ -39,7 +43,7 @@ void main() {
       violations,
       isEmpty,
       reason:
-          'Cross-feature presentation imports must be replaced by route_entry, feature_scope, or <feature>.dart seams. '
+          'Cross-feature page imports are forbidden — use route_entry.dart for navigation. '
           'Found: ${violations.join(', ')}',
     );
   });

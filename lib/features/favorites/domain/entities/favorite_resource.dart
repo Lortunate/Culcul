@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
 
 part 'favorite_resource.freezed.dart';
 
@@ -25,7 +25,7 @@ sealed class FavoriteResource with _$FavoriteResource {
     required String intro,
     required int page,
     required int duration,
-    required FavoriteOwner upper,
+    required VideoOwner upper,
     required int attr,
     required FavoriteResourceStats stats,
     required String link,
@@ -48,7 +48,7 @@ sealed class FavoriteFolderInfo with _$FavoriteFolderInfo {
     required int attr,
     required String title,
     required String cover,
-    required FavoriteOwner upper,
+    required VideoOwner upper,
     required int mediaCount,
   }) = _FavoriteFolderInfo;
 }

@@ -1,3 +1,4 @@
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'to_view_model_dto.freezed.dart';
@@ -21,8 +22,8 @@ sealed class ToViewModelDto with _$ToViewModelDto {
     @JsonKey(name: 'state') @Default(0) int? state,
     @JsonKey(name: 'duration') @Default(0) int? duration,
     @JsonKey(name: 'rights') Map<String, dynamic>? rights,
-    @JsonKey(name: 'owner') ToViewOwnerModelDto? owner,
-    @JsonKey(name: 'stat') ToViewStatModelDto? stat,
+    @JsonKey(name: 'owner') VideoOwner? owner,
+    @JsonKey(name: 'stat') VideoStat? stat,
     @JsonKey(name: 'dynamic') String? dynamicText,
     @JsonKey(name: 'cid') @Default(0) int? cid,
     @JsonKey(name: 'progress') @Default(0) int? progress,
@@ -39,36 +40,6 @@ sealed class ToViewModelDto with _$ToViewModelDto {
 
   factory ToViewModelDto.fromJson(Map<String, dynamic> json) =>
       _$ToViewModelDtoFromJson(json);
-}
-
-@freezed
-sealed class ToViewOwnerModelDto with _$ToViewOwnerModelDto {
-  const factory ToViewOwnerModelDto({
-    @Default(0) int mid,
-    @Default('') String name,
-    @Default('') String face,
-  }) = _ToViewOwnerModelDto;
-
-  factory ToViewOwnerModelDto.fromJson(Map<String, dynamic> json) =>
-      _$ToViewOwnerModelDtoFromJson(json);
-}
-
-@freezed
-sealed class ToViewStatModelDto with _$ToViewStatModelDto {
-  const factory ToViewStatModelDto({
-    @JsonKey(name: 'aid') int? aid,
-    @JsonKey(name: 'view') @Default(0) int? view,
-    @JsonKey(name: 'danmaku') @Default(0) int? danmaku,
-    @JsonKey(name: 'reply') @Default(0) int? reply,
-    @JsonKey(name: 'favorite') @Default(0) int? favorite,
-    @JsonKey(name: 'coin') @Default(0) int? coin,
-    @JsonKey(name: 'share') @Default(0) int? share,
-    @JsonKey(name: 'like') @Default(0) int? like,
-    @JsonKey(name: 'dislike') @Default(0) int? dislike,
-  }) = _ToViewStatModelDto;
-
-  factory ToViewStatModelDto.fromJson(Map<String, dynamic> json) =>
-      _$ToViewStatModelDtoFromJson(json);
 }
 
 @freezed

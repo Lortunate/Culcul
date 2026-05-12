@@ -1,4 +1,5 @@
-import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_response.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_extension.dart';
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_actions.dart';
 import 'package:culcul/ui/widgets/users/app_avatar.dart';

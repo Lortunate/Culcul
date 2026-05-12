@@ -4,26 +4,24 @@ part 'relation_user_contract.freezed.dart';
 part 'relation_user_contract.g.dart';
 
 @freezed
-sealed class RelationOfficialVerify with _$RelationOfficialVerify {
-  const factory RelationOfficialVerify({
-    required int type,
-    required String desc,
-  }) = _RelationOfficialVerify;
+sealed class OfficialVerify with _$OfficialVerify {
+  const factory OfficialVerify({@Default(-1) int type, @Default('') String desc}) =
+      _OfficialVerify;
 
-  factory RelationOfficialVerify.fromJson(Map<String, dynamic> json) =>
-      _$RelationOfficialVerifyFromJson(json);
+  factory OfficialVerify.fromJson(Map<String, dynamic> json) =>
+      _$OfficialVerifyFromJson(json);
 }
 
 @freezed
-sealed class RelationVipInfo with _$RelationVipInfo {
-  const factory RelationVipInfo({
-    required int vipType,
-    required int vipStatus,
-    required String nicknameColor,
-  }) = _RelationVipInfo;
+sealed class VipInfo with _$VipInfo {
+  const factory VipInfo({
+    @Default(0) int vipType,
+    @Default(0) int vipStatus,
+    @Default('') String nicknameColor,
+  }) = _VipInfo;
 
-  factory RelationVipInfo.fromJson(Map<String, dynamic> json) =>
-      _$RelationVipInfoFromJson(json);
+  factory VipInfo.fromJson(Map<String, dynamic> json) =>
+      _$VipInfoFromJson(json);
 }
 
 @freezed
@@ -34,8 +32,8 @@ sealed class ProfileRelationUser with _$ProfileRelationUser {
     required String face,
     required String sign,
     required int attribute,
-    RelationOfficialVerify? officialVerify,
-    RelationVipInfo? vip,
+    @JsonKey(name: 'official_verify') OfficialVerify? officialVerify,
+    VipInfo? vip,
     required int mtime,
     required int special,
   }) = _ProfileRelationUser;

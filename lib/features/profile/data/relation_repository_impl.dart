@@ -3,7 +3,7 @@ import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/profile/data/dtos/profile_dtos.dart';
+import 'package:culcul/features/profile/data/dtos/relation_model.dart';
 import 'package:culcul/features/profile/data/profile_mapper.dart';
 import 'package:culcul/features/profile/data/relation_api.dart';
 import 'package:culcul/core/contracts/relation_user_contract.dart';

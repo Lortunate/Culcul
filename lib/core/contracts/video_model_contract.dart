@@ -3,9 +3,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'video_model_contract.freezed.dart';
 part 'video_model_contract.g.dart';
 
-typedef Owner = VideoOwner;
-typedef Stat = VideoStat;
-
 @freezed
 sealed class VideoModel with _$VideoModel {
   const factory VideoModel({

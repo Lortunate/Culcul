@@ -1,4 +1,4 @@
-import 'package:culcul/features/video/domain/entities/video_entities.dart';
+import 'package:culcul/features/video/data/dtos/subtitle_dto.dart';
 import 'package:culcul/features/video/feature_scope.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

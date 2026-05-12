@@ -2,11 +2,12 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
-// Phase 1 guardrails: preserve package boundaries while feature cleanup proceeds.
+// Phase 18 update: presentation importing data/dtos/ is allowed (DTOs serve as models).
+// This test now only forbids importing repository impls, API clients, and mappers.
 void main() {
   test('Auth/Video presentation does not import data layer directly', () async {
     final forbiddenImport = RegExp(
-      r'''import\s+['"]package:culcul/features/(auth|video)/data/''',
+      r'''import\s+['"]package:culcul/features/(auth|video)/data/(?!dtos/)''',
     );
     final violations = <String>[];
 

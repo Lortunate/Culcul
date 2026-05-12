@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/features/video/domain/entities/video_entities.dart' as domain;
+import 'package:culcul/features/video/data/dtos/play_url_dto.dart' as domain;
 import 'package:culcul/features/video/presentation/player/playable_urls.dart';
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
 import 'package:culcul/features/video/presentation/detail/video_detail_view_model.dart';

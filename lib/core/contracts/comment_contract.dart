@@ -1,3 +1,4 @@
+import 'package:culcul/core/contracts/relation_user_contract.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'comment_contract.freezed.dart';
@@ -98,7 +99,7 @@ sealed class CommentMember with _$CommentMember {
     @JsonKey(name: 'level_info') required CommentLevelInfo levelInfo,
     required CommentPendant pendant,
     required CommentNameplate nameplate,
-    @JsonKey(name: 'official_verify') required CommentOfficialVerify officialVerify,
+    @JsonKey(name: 'official_verify') required OfficialVerify officialVerify,
     required CommentVip vip,
     @JsonKey(name: 'fans_detail') dynamic fansDetail,
     @Default(0) int following,
@@ -150,15 +151,6 @@ sealed class CommentNameplate with _$CommentNameplate {
 
   factory CommentNameplate.fromJson(Map<String, dynamic> json) =>
       _$CommentNameplateFromJson(json);
-}
-
-@freezed
-sealed class CommentOfficialVerify with _$CommentOfficialVerify {
-  const factory CommentOfficialVerify({@Default(-1) int type, @Default('') String desc}) =
-      _CommentOfficialVerify;
-
-  factory CommentOfficialVerify.fromJson(Map<String, dynamic> json) =>
-      _$CommentOfficialVerifyFromJson(json);
 }
 
 @freezed

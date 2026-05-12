@@ -1,5 +1,5 @@
 import 'package:culcul/core/data/pagination/paged_list_state.dart';
-import 'package:culcul/features/video/domain/entities/video_entities.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 

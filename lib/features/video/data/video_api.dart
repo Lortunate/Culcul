@@ -1,7 +1,10 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
-import 'package:culcul/features/video/data/dtos/video_dtos.dart';
+import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
+import 'package:culcul/features/video/data/dtos/player_info_dto.dart';
+import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
+import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 

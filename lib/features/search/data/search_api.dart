@@ -1,6 +1,8 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
-import 'package:culcul/features/search/data/dtos/search_dtos.dart';
+import 'package:culcul/features/search/data/dtos/default_search.dart';
+import 'package:culcul/features/search/data/dtos/search_result.dart';
+import 'package:culcul/features/search/data/dtos/trending_ranking.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 

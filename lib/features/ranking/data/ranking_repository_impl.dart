@@ -8,20 +8,16 @@ import 'package:culcul/features/ranking/data/dtos/ranking_response_dto.dart';
 import 'package:culcul/features/ranking/data/ranking_video_mapper.dart';
 import 'package:culcul/features/ranking/data/ranking_api.dart';
 import 'package:culcul/features/ranking/domain/entities/ranking_video.dart';
-import 'package:culcul/features/ranking/domain/repositories/ranking_repository.dart'
-    as domain;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'ranking_repository_impl.g.dart';
 
 @riverpod
-domain.RankingRepository rankingRepository(Ref ref) {
+RankingRepositoryImpl rankingRepository(Ref ref) {
   return RankingRepositoryImpl(RankingApi(ref.watch(dioClientProvider)));
 }
 
-class RankingRepositoryImpl
-    with RequestExecutorBinding
-    implements domain.RankingRepository {
+class RankingRepositoryImpl with RequestExecutorBinding {
   final RankingApi _api;
   final RequestExecutor _requestExecutor;
 
@@ -40,7 +36,6 @@ class RankingRepositoryImpl
     return result.map((data) => data.list);
   }
 
-  @override
   Future<Result<List<RankingVideo>, AppError>> getRanking({int? rid}) async {
     final result = await getRankingModels(rid: rid);
     return result.map((videos) => videos.map((video) => video.toDomain()).toList());

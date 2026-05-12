@@ -1,4 +1,4 @@
-import 'package:culcul/features/video/domain/entities/video_entities.dart';
+import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
 import 'package:culcul/i18n/strings.g.dart';
 
 String getQualityLabel(int? quality, Translations t) {

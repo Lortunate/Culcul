@@ -8,7 +8,7 @@ import 'package:culcul/core/data/network/request_cancel_token.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/profile/data/dtos/profile_dtos.dart';
+import 'package:culcul/features/profile/data/dtos/user_space_video_model.dart';
 import 'package:culcul/features/profile/data/profile_mapper.dart';
 import 'package:culcul/features/profile/data/profile_api.dart';
 import 'package:culcul/core/contracts/user_card_contract.dart';
@@ -65,7 +65,7 @@ class ProfileRepositoryImpl
   }
 
   @override
-  Future<Result<UserProfile, AppError>> getProfileModel(int userId) async {
+  Future<Result<ProfileUser, AppError>> getProfileModel(int userId) async {
     return requestResult(() async {
       final responses = await _concurrencyExecutor.runConcurrent(
         tasks: <ConcurrentTask<dynamic>>[
@@ -119,7 +119,7 @@ class ProfileRepositoryImpl
       final videoCount = _parseVideoCount(navNumResponse);
       final topPhoto = _resolveBanner(infoData, cardResponse);
 
-      return UserProfile(
+      return ProfileUser(
         id: userId.toString(),
         username: infoData['name'] as String? ?? '',
         avatarUrl: infoData['face'] as String? ?? '',
