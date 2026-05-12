@@ -41,7 +41,7 @@ SearchPageState useSearchViewModel(WidgetRef ref) {
   useListenable(searchController);
 
   void performSearch(String value) {
-    final query = value.isEmpty ? (defaultSearchAsync.asData?.value?.text ?? '') : value;
+    final query = value.isEmpty ? (defaultSearchAsync.asData?.value ?? '') : value;
 
     if (query.isNotEmpty) {
       confirmedKeyword.value = query;
@@ -112,6 +112,6 @@ SearchPageState useSearchViewModel(WidgetRef ref) {
     mode: mode,
     onClear: onClear,
     onSearch: performSearch,
-    defaultSearchHint: defaultSearchAsync.asData?.value?.text,
+    defaultSearchHint: defaultSearchAsync.asData?.value,
   );
 }

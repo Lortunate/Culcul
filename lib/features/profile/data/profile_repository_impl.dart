@@ -4,7 +4,7 @@ import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
-import 'package:culcul/core/data/network/request_cancel_token.dart';
+import 'package:dio/dio.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
@@ -14,8 +14,6 @@ import 'package:culcul/features/profile/data/profile_api.dart';
 import 'package:culcul/core/contracts/user_card_contract.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
-import 'package:culcul/features/profile/domain/repositories/profile_repository.dart'
-    as domain;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'profile_repository_impl.g.dart';
@@ -23,7 +21,7 @@ part 'profile_repository_impl.flows.dart';
 part 'profile_repository_impl.parsers.dart';
 
 @riverpod
-domain.ProfileRepository profileRepository(Ref ref) {
+ProfileRepositoryImpl profileRepository(Ref ref) {
   return ProfileRepositoryImpl(
     api: ProfileApi(ref.watch(dioClientProvider)),
     concurrencyExecutor: const NetworkConcurrencyExecutor(),
@@ -31,8 +29,7 @@ domain.ProfileRepository profileRepository(Ref ref) {
 }
 
 class ProfileRepositoryImpl
-    with RequestExecutorBinding, _ProfileRepositoryImplFlowsMixin
-    implements domain.ProfileRepository {
+    with RequestExecutorBinding, _ProfileRepositoryImplFlowsMixin {
   static const int _defaultSpaceVideoPageSize = 30;
   @override
   final ProfileApi api;
@@ -49,7 +46,6 @@ class ProfileRepositoryImpl
   @override
   RequestExecutor get requestExecutor => _requestExecutor;
 
-  @override
   Future<Result<UserCardModel, AppError>> getUserCard(int mid) async {
     final result = await requestApiResult(() => api.getCard(mid));
     return result.when(

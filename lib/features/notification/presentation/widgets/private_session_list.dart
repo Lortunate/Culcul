@@ -1,4 +1,4 @@
-import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/notification/presentation/view_models/private_session_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_skeletons.dart';
 import 'package:culcul/features/notification/presentation/widgets/private_session_item.dart';
@@ -17,7 +17,7 @@ class PrivateSessionList extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final sessionListAsync = ref.watch(privateSessionListProvider);
     final loadGate = useMemoized(PaginationLoadGate.new, const []);
-    final t = i18n(context);
+    final t = context.t;
 
     return sessionListAsync.when(
       data: (sessions) {

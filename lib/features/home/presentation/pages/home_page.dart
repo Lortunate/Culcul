@@ -86,7 +86,7 @@ class HomePage extends HookConsumerWidget {
       if (!context.mounted) {
         return;
       }
-      hintText.value = hint?.text;
+      hintText.value = hint;
     } catch (_) {
       // Keep default fallback hint when preload fails.
     }

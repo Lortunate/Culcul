@@ -4,7 +4,7 @@ import 'dart:async';
 
 import 'package:culcul/features/dynamic/feature_scope.dart';
 import 'package:culcul/core/data/pagination/paged_list_state_transitions.dart';
-import 'package:culcul/features/dynamic/presentation/view_models/dynamic_comment_state.dart';
+import 'package:culcul/ui/assemblies/comments/comment_list_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'dynamic_comment_view_model.g.dart';
@@ -12,9 +12,9 @@ part 'dynamic_comment_view_model.g.dart';
 @riverpod
 class DynamicCommentController extends _$DynamicCommentController {
   @override
-  DynamicCommentState build(DynamicItem post) {
+  CommentListState build(DynamicItem post) {
     unawaited(Future<void>.microtask(refresh));
-    return const DynamicCommentState();
+    return const CommentListState();
   }
 
   Future<void> refresh() async {

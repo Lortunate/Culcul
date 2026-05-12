@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/data/network/interceptors/cache_interceptor.dart';
-import 'package:culcul/core/data/network/request_cancel_token.dart';
+import 'package:dio/dio.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
@@ -18,8 +18,8 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
   int _mid = 0;
   String _order = 'pubdate';
   static const _pageSize = 30;
-  RequestCancelToken? _activePageCancelToken;
-  RequestCancelToken? _silentRefreshCancelToken;
+  CancelToken? _activePageCancelToken;
+  CancelToken? _silentRefreshCancelToken;
 
   @override
   Future<List<ProfileVideo>> build(int mid, {String order = 'pubdate'}) async {
@@ -54,7 +54,7 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
   @override
   Future<List<ProfileVideo>> fetchPage(int page) async {
     _activePageCancelToken?.cancel('profile_space_videos_page_replaced');
-    final cancelToken = RequestCancelToken();
+    final cancelToken = CancelToken();
     _activePageCancelToken = cancelToken;
     final result = await ref
         .read(profileRepositoryProvider)
@@ -87,7 +87,7 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
 
     final stopwatch = Stopwatch()..start();
     _silentRefreshCancelToken?.cancel('profile_space_videos_silent_refresh_replaced');
-    final cancelToken = RequestCancelToken();
+    final cancelToken = CancelToken();
     _silentRefreshCancelToken = cancelToken;
     final result = await ref
         .read(profileRepositoryProvider)

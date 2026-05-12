@@ -1,5 +1,5 @@
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
-import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:culcul/ui/widgets/media/app_network_image.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,7 @@ class FavFolderItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final t = i18n(context);
+    final t = context.t;
 
     return AppClickable(
       onTap: onTap,

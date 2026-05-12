@@ -1,5 +1,5 @@
 import 'package:culcul/features/auth/domain/entities/country_code.dart';
-import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/ui/widgets/inputs/app_search_bar.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +53,7 @@ class CountryCodeSelectionPage extends HookConsumerWidget {
       }).toList();
     }, [countryCodes.value, searchQuery.value]);
 
-    final t = i18n(context);
+    final t = context.t;
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,

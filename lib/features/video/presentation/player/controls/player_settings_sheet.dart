@@ -3,7 +3,7 @@ import 'package:culcul/features/video/presentation/detail/video_detail_view_mode
 import 'package:culcul/features/video/presentation/player/controls/player_constants.dart';
 import 'package:culcul/features/video/presentation/player/controls/player_panel.dart';
 import 'package:culcul/features/video/presentation/player/controls/video_overlay_styles.dart';
-import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -24,7 +24,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final t = i18n(context);
+    final t = context.t;
     final colorScheme = Theme.of(context).colorScheme;
     final bottomPadding = MediaQuery.paddingOf(context).bottom;
     final settingsSectionBackground = _settingsSectionBackground(colorScheme);

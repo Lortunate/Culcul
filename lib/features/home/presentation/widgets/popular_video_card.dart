@@ -1,6 +1,6 @@
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/ui/widgets/buttons/app_tag.dart';
-import 'package:culcul/ui/assemblies/feed_cards/feed_cards.dart';
+import 'package:culcul/ui/assemblies/feed_cards/video_list_card.dart';
 import 'package:flutter/material.dart';
 
 class PopularVideoCard extends StatelessWidget {

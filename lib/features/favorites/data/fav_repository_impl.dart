@@ -8,19 +8,18 @@ import 'package:culcul/features/favorites/data/dtos/fav_folder_model.dart';
 import 'package:culcul/features/favorites/data/dtos/fav_resource_model.dart';
 import 'package:culcul/features/favorites/data/favorite_mapper.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
+import 'package:culcul/features/favorites/domain/entities/favorite_queries.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
-import 'package:culcul/features/favorites/domain/repositories/favorite_repository.dart'
-    as domain;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'fav_repository_impl.g.dart';
 
 @riverpod
-domain.FavoriteRepository favRepository(Ref ref) {
+FavRepositoryImpl favRepository(Ref ref) {
   return FavRepositoryImpl(FavApi(ref.watch(dioClientProvider)));
 }
 
-class FavRepositoryImpl with RequestExecutorBinding implements domain.FavoriteRepository {
+class FavRepositoryImpl with RequestExecutorBinding {
   static const int _defaultPageSize = 20;
   final FavApi _api;
   final RequestExecutor _requestExecutor;
@@ -104,12 +103,10 @@ class FavRepositoryImpl with RequestExecutorBinding implements domain.FavoriteRe
     );
   }
 
-  @override
   Future<Result<void, AppError>> cleanInvalidResources({required int mediaId}) async {
     return requestVoidResult(() => _api.cleanInvalidResources(mediaId));
   }
 
-  @override
   Future<Result<FavoriteFolderPage, AppError>> getCreatedFolders({
     required int upMid,
   }) async {
@@ -117,17 +114,15 @@ class FavRepositoryImpl with RequestExecutorBinding implements domain.FavoriteRe
     return result.map((data) => data.toDomain());
   }
 
-  @override
   Future<Result<FavoriteFolderPage, AppError>> getCollectedFolders(
-    domain.FavoriteFolderListQuery query,
+    FavoriteFolderListQuery query,
   ) async {
     final result = await getCollectedFoldersModel(upMid: query.upMid, pn: query.page);
     return result.map((data) => data.toDomain());
   }
 
-  @override
   Future<Result<FavoriteResourcePage, AppError>> getFolderResources(
-    domain.FavoriteFolderResourcesQuery query,
+    FavoriteFolderResourcesQuery query,
   ) async {
     final result = await getFolderResourcesModel(
       mediaId: query.mediaId,
@@ -140,7 +135,6 @@ class FavRepositoryImpl with RequestExecutorBinding implements domain.FavoriteRe
     return result.map((data) => data.toDomain());
   }
 
-  @override
   Future<Result<FavoriteFolder, AppError>> createFolder({
     required String title,
     String? intro,
@@ -156,7 +150,6 @@ class FavRepositoryImpl with RequestExecutorBinding implements domain.FavoriteRe
     return result.map((data) => data.toDomain());
   }
 
-  @override
   Future<Result<FavoriteFolder, AppError>> updateFolder({
     required int mediaId,
     required String title,
@@ -174,12 +167,10 @@ class FavRepositoryImpl with RequestExecutorBinding implements domain.FavoriteRe
     return result.map((data) => data.toDomain());
   }
 
-  @override
   Future<Result<void, AppError>> deleteFolder({required String mediaIds}) {
     return delFolder(mediaIds: mediaIds);
   }
 
-  @override
   Future<Result<void, AppError>> deleteResources({
     required String resources,
     required int mediaId,

@@ -6,7 +6,7 @@ import 'package:culcul/features/video/presentation/detail/video_detail_view_mode
 import 'package:culcul/features/video/presentation/player/controls/player_constants.dart';
 import 'package:culcul/features/video/presentation/player/controls/seek_ripple_overlay.dart';
 import 'package:culcul/features/video/presentation/overlays/layers/gesture_feedback_overlay.dart';
-import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

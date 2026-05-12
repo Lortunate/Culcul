@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:culcul/features/video/feature_scope.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/data/network/request_cancel_token.dart';
+import 'package:dio/dio.dart';
 import 'package:culcul/core/data/pagination/paged_list_state.dart';
 import 'package:culcul/core/data/pagination/paged_list_state_transitions.dart';
+import 'package:culcul/ui/assemblies/comments/comment_list_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'video_comments_state.dart';
 import '../detail/video_detail_view_model.dart';
 
 part 'video_comments_view_model.g.dart';
@@ -16,14 +16,14 @@ part 'video_comments_view_model.g.dart';
 @riverpod
 class VideoCommentsController extends _$VideoCommentsController {
   int _loadRequestToken = 0;
-  RequestCancelToken? _activeLoadCancelToken;
+  CancelToken? _activeLoadCancelToken;
 
   @override
-  VideoCommentsState build(String bvid) {
+  CommentListState build(String bvid) {
     ref.onDispose(() {
       _activeLoadCancelToken?.cancel('video_comments_disposed');
     });
-    return const VideoCommentsState(
+    return const CommentListState(
       paging: PagedListState<CommentItem>(isInitialLoading: false, hasMore: true),
     );
   }
@@ -109,7 +109,7 @@ class VideoCommentsController extends _$VideoCommentsController {
     }
     final requestToken = ++_loadRequestToken;
     _activeLoadCancelToken?.cancel('video_comments_replaced');
-    final cancelToken = RequestCancelToken();
+    final cancelToken = CancelToken();
     _activeLoadCancelToken = cancelToken;
 
     if (replace) {

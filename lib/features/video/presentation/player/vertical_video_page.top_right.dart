@@ -6,7 +6,7 @@ class _TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final t = i18n(context);
+    final t = context.t;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -41,7 +41,7 @@ class _RightBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = i18n(context);
+    final t = context.t;
     final actions = <_VideoAction>[
       (icon: Icons.thumb_up_rounded, count: videoDetail.stat.like, label: t.actions.like),
       (

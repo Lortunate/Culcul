@@ -1,4 +1,4 @@
-import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/paged_list_state.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
@@ -40,7 +40,7 @@ class ChatMessageList extends HookWidget {
       return null;
     }, [onLoadMore]);
 
-    final t = i18n(context);
+    final t = context.t;
     final messages = paging.items;
     if (messages.isEmpty) {
       return EasyRefresh(

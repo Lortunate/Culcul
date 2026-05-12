@@ -12,7 +12,7 @@ class _BottomBar extends ConsumerWidget {
     final duration = ref.watch(playbackDurationProvider);
     final maxValue = duration.inSeconds > 0 ? duration.inSeconds.toDouble() : 1.0;
     final colorScheme = Theme.of(context).colorScheme;
-    final t = i18n(context);
+    final t = context.t;
 
     return Container(
       decoration: BoxDecoration(

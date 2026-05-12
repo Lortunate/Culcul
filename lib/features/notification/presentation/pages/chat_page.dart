@@ -2,7 +2,7 @@ import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/notification/application/chat_page_commands.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/presentation/view_models/chat_view_model.dart';
-import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_input.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_message_list.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_skeletons.dart';
@@ -61,7 +61,7 @@ class ChatPage extends HookConsumerWidget {
       if (!context.mounted) {
         return;
       }
-      final t = i18n(context);
+      final t = context.t;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(t.notification.chat.send_failed(error: error.toString()))),
       );

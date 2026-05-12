@@ -18,8 +18,7 @@ import 'package:culcul/features/dynamic/domain/entities/dynamic_response.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_extension.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_publish_command.dart';
-import 'package:culcul/features/dynamic/domain/repositories/dynamic_repository.dart'
-    as domain;
+import 'package:culcul/features/dynamic/domain/entities/dynamic_queries.dart';
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -30,7 +29,7 @@ part 'dynamic_repository_impl.publish.dart';
 part 'dynamic_repository_impl.g.dart';
 
 @riverpod
-domain.DynamicRepository dynamicRepository(Ref ref) {
+DynamicRepositoryImpl dynamicRepository(Ref ref) {
   return DynamicRepositoryImpl(
     DynamicApi(ref.watch(dioClientProvider)),
     ref.watch(dioClientProvider),
@@ -44,8 +43,7 @@ class DynamicRepositoryImpl
         _DynamicRepositoryAccess,
         _DynamicRepositoryCommentApis,
         _DynamicRepositoryFeedApis,
-        _DynamicRepositoryPublishApis
-    implements domain.DynamicRepository {
+        _DynamicRepositoryPublishApis {
   final DynamicApi _api;
   final Dio _dio;
   final CookieJar _cookieJar;

@@ -24,14 +24,12 @@ import 'package:culcul/features/notification/domain/entities/private_message.dar
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
 import 'package:culcul/features/notification/domain/entities/system_notice.dart';
-import 'package:culcul/features/notification/domain/repositories/notification_repository.dart'
-    as domain;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'notification_repository_impl.g.dart';
 
 @riverpod
-domain.NotificationRepository notificationRepository(Ref ref) {
+NotificationRepositoryImpl notificationRepository(Ref ref) {
   final dio = ref.watch(dioClientProvider);
   return NotificationRepositoryImpl(
     NotificationApi(dio),
@@ -41,8 +39,7 @@ domain.NotificationRepository notificationRepository(Ref ref) {
 }
 
 class NotificationRepositoryImpl
-    with RequestExecutorBinding
-    implements domain.NotificationRepository {
+    with RequestExecutorBinding {
   NotificationRepositoryImpl(
     this.api,
     this.database,
@@ -97,12 +94,10 @@ class NotificationRepositoryImpl
         : PrivateSessionType.user;
   }
 
-  @override
   Future<NotificationSummary?> getUnreadCountFromLocal({required int ownerUid}) {
     return localReadStore.getUnreadCountFromLocal(ownerUid: ownerUid);
   }
 
-  @override
   Future<List<PrivateSession>> pageSessionsFromLocal({
     required int ownerUid,
     required PrivateSessionType sessionType,
@@ -115,7 +110,6 @@ class NotificationRepositoryImpl
     );
   }
 
-  @override
   Future<List<PrivateMessage>> pageMessagesFromLocal({
     required int ownerUid,
     required int talkerId,
@@ -130,7 +124,6 @@ class NotificationRepositoryImpl
     );
   }
 
-  @override
   Future<Map<String, String>> getMessageEmojiMapFromLocal({
     required int ownerUid,
     required int talkerId,
@@ -143,7 +136,6 @@ class NotificationRepositoryImpl
     );
   }
 
-  @override
   Future<List<NotificationEntry>> pageFeedFromLocal({
     required int ownerUid,
     required NotificationFeedType type,
@@ -156,17 +148,14 @@ class NotificationRepositoryImpl
     );
   }
 
-  @override
   Stream<NotificationSummary> watchUnreadCount({required int ownerUid}) {
     return streamWatchers.watchUnreadCount(ownerUid: ownerUid);
   }
 
-  @override
   Stream<List<SystemNotice>> watchSystemNotices({required int ownerUid}) {
     return streamWatchers.watchSystemNotices(ownerUid: ownerUid);
   }
 
-  @override
   Future<Result<void, AppError>> syncUnreadCount({
     required int ownerUid,
     bool force = false,
@@ -174,7 +163,6 @@ class NotificationRepositoryImpl
     return sessionSync.syncUnreadCount(ownerUid: ownerUid, force: force);
   }
 
-  @override
   Future<Result<void, AppError>> syncSessions({
     required int ownerUid,
     bool force = false,
@@ -182,7 +170,6 @@ class NotificationRepositoryImpl
     return sessionSync.syncSessions(ownerUid: ownerUid, force: force);
   }
 
-  @override
   Future<Result<void, AppError>> syncSessionsOlder({
     required int ownerUid,
     required PrivateSessionType sessionType,
@@ -195,7 +182,6 @@ class NotificationRepositoryImpl
     );
   }
 
-  @override
   Future<Result<void, AppError>> syncMessagesHead({
     required int ownerUid,
     required int talkerId,
@@ -208,7 +194,6 @@ class NotificationRepositoryImpl
     );
   }
 
-  @override
   Future<Result<void, AppError>> syncMessagesOlder({
     required int ownerUid,
     required int talkerId,
@@ -223,7 +208,6 @@ class NotificationRepositoryImpl
     );
   }
 
-  @override
   Future<Result<void, AppError>> syncFeedHead({
     required int ownerUid,
     required NotificationFeedType type,
@@ -231,7 +215,6 @@ class NotificationRepositoryImpl
     return feedSync.syncFeedHead(ownerUid: ownerUid, type: type);
   }
 
-  @override
   Future<Result<void, AppError>> syncFeedOlder({
     required int ownerUid,
     required NotificationFeedType type,
@@ -240,7 +223,6 @@ class NotificationRepositoryImpl
     return feedSync.syncFeedOlder(ownerUid: ownerUid, type: type, cursor: cursor);
   }
 
-  @override
   Future<Result<ImageUploadResult, AppError>> uploadImage(
     Uint8List bytes,
     String filename,
@@ -248,7 +230,6 @@ class NotificationRepositoryImpl
     return messageSendService.uploadImage(bytes, filename);
   }
 
-  @override
   Future<Result<SendMessageResult, AppError>> sendPrivateMessage({
     required int ownerUid,
     required int receiverId,

@@ -1,4 +1,4 @@
-import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/notification/presentation/view_models/unread_count_view_model.dart';
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/ui/ui.dart';
@@ -13,7 +13,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final unreadCount = ref.watch(unreadCountProvider);
     final semanticColors = context.semanticColors;
-    final t = i18n(context);
+    final t = context.t;
 
     return unreadCount.when(
       data: (data) => Padding(

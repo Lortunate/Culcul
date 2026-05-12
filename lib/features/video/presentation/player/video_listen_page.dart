@@ -8,7 +8,7 @@ import 'package:culcul/features/video/presentation/player/player_view_model.dart
 import 'package:culcul/features/video/presentation/detail/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/player/controls/listen_settings_sheet.dart';
 import 'package:culcul/features/video/presentation/player/controls/player_theme.dart';
-import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -26,7 +26,7 @@ class VideoListenPage extends HookConsumerWidget {
     final detailState = ref.watch(videoDetailControllerProvider(bvid));
     final detail = detailState.videoDetail;
     final colorScheme = Theme.of(context).colorScheme;
-    final t = i18n(context);
+    final t = context.t;
     useListenAudioMode(ref, (
       aid: detail?.aid,
       currentCid: detailState.currentCid,

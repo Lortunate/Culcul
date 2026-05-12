@@ -1,4 +1,4 @@
-import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/notification/presentation/view_models/system_notification_view_model.dart';
 import 'package:culcul/features/notification/domain/entities/system_notice.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_navigation.dart';
@@ -15,7 +15,7 @@ class SystemNotificationPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(systemNotificationListProvider);
-    final t = i18n(context);
+    final t = context.t;
     final refresh = ref.read(systemNotificationListProvider.notifier).refresh;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -71,7 +71,7 @@ class _SystemNotificationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final t = i18n(context);
+    final t = context.t;
 
     return Card(
       elevation: 0,

@@ -1,26 +1,26 @@
 part of 'dynamic_repository_impl.dart';
 
 mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
-  Future<Result<DynamicData, AppError>> getFeed(domain.DynamicFeedQuery query) {
+  Future<Result<DynamicData, AppError>> getFeed(DynamicFeedQuery query) {
     return requestApiResult(
       () => api.getDynamicFeed(type: query.type, offset: query.offset, page: 1),
     );
   }
 
   Future<Result<DynamicData, AppError>> getSpaceDynamicFeed(
-    domain.SpaceDynamicFeedQuery query,
+    SpaceDynamicFeedQuery query,
   ) {
     return requestApiResult(
       () => api.getSpaceDynamicFeed(
         hostMid: query.hostMid,
         offset: query.offset,
         forceRefresh: query.forceRefresh ? true : null,
-        cancelToken: query.cancelToken?.dioToken,
+        cancelToken: query.cancelToken,
       ),
     );
   }
 
-  Future<Result<DynamicData, AppError>> getTopicFeed(domain.TopicDynamicFeedQuery query) {
+  Future<Result<DynamicData, AppError>> getTopicFeed(TopicDynamicFeedQuery query) {
     return requestApiResult(
       () => api.getTopicFeed(topicId: query.topicId, offset: query.offset),
     );

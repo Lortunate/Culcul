@@ -1,4 +1,4 @@
-import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/notification/application/chat_page_commands.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -18,7 +18,7 @@ class ChatInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final t = i18n(context);
+    final t = context.t;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),

@@ -4,8 +4,8 @@ mixin _VideoDetailControllerHelpersMixin on _$VideoDetailController {
   int get loadToken;
   int get playUrlRequestToken;
   Map<String, PlayUrl> get playUrlSessionCache;
-  RequestCancelToken? get auxiliaryLoadCancelToken;
-  set auxiliaryLoadCancelToken(RequestCancelToken? value);
+  CancelToken? get auxiliaryLoadCancelToken;
+  set auxiliaryLoadCancelToken(CancelToken? value);
 
   Future<void> reportProgress(int progress) async {
     final detail = state.videoDetail;
@@ -18,7 +18,7 @@ mixin _VideoDetailControllerHelpersMixin on _$VideoDetailController {
 
   Future<void> _loadAuxiliaryData({required int requestToken}) async {
     auxiliaryLoadCancelToken?.cancel('video_auxiliary_replaced');
-    final cancelToken = RequestCancelToken();
+    final cancelToken = CancelToken();
     auxiliaryLoadCancelToken = cancelToken;
     final result = await ref
         .read(loadVideoDetailWorkflowProvider)

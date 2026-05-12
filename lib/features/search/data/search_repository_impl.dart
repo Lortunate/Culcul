@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/errors/exceptions.dart';
-import 'package:culcul/core/data/network/request_cancel_token.dart';
+import 'package:dio/dio.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/data/network/request_executor_binding.dart';
@@ -12,25 +12,22 @@ import 'package:culcul/features/search/data/dtos/search_suggestion.dart';
 import 'package:culcul/features/search/data/dtos/trending_ranking.dart';
 import 'package:culcul/features/search/data/search_mapper.dart';
 import 'package:culcul/features/search/data/search_api.dart';
-import 'package:culcul/features/search/domain/entities/search_default_hint.dart';
+import 'package:culcul/core/contracts/search_port.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';
-import 'package:culcul/features/search/domain/entities/search_suggestion_entry.dart';
 import 'package:culcul/features/search/domain/entities/search_trending_keyword.dart';
 import 'package:culcul/core/contracts/search_query_contract.dart';
-import 'package:culcul/features/search/domain/repositories/search_repository.dart'
-    as domain;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_repository_impl.g.dart';
 
 @riverpod
-domain.SearchRepository searchRepository(Ref ref) {
+SearchRepositoryImpl searchRepository(Ref ref) {
   return SearchRepositoryImpl(api: SearchApi(ref.watch(dioClientProvider)));
 }
 
 class SearchRepositoryImpl
     with RequestExecutorBinding
-    implements domain.SearchRepository {
+    implements SearchPort {
   static const int _defaultSearchPageSize = 20;
   final SearchApi api;
   final RequestExecutor _requestExecutor;
@@ -43,11 +40,11 @@ class SearchRepositoryImpl
 
   Future<Result<List<SearchSuggestionTag>, AppError>> _fetchSearchSuggestions(
     String term, {
-    RequestCancelToken? cancelToken,
+    CancelToken? cancelToken,
   }) async {
     if (term.isEmpty) return const Success(<SearchSuggestionTag>[]);
     final result = await requestResult(
-      () => api.fetchSearchSuggestions(term, cancelToken: cancelToken?.dioToken),
+      () => api.fetchSearchSuggestions(term, cancelToken: cancelToken),
     );
     return result.map(_parseSuggestionsResponse);
   }
@@ -88,7 +85,7 @@ class SearchRepositoryImpl
 
   Future<Result<SearchResultData, AppError>> _fetchSearchResult({
     required SearchQuery query,
-    RequestCancelToken? cancelToken,
+    CancelToken? cancelToken,
   }) async {
     return requestResult(() async {
       final response = query.type == SearchType.all
@@ -99,7 +96,7 @@ class SearchRepositoryImpl
               searchType: query.type.apiValue,
               order: query.order.apiValue,
               duration: query.duration.apiValue,
-              cancelToken: cancelToken?.dioToken,
+              cancelToken: cancelToken,
             )
           : await api.fetchSearchByType(
               keyword: query.keyword,
@@ -108,7 +105,7 @@ class SearchRepositoryImpl
               searchType: query.type.apiValue,
               order: query.order.apiValue,
               duration: query.duration.apiValue,
-              cancelToken: cancelToken?.dioToken,
+              cancelToken: cancelToken,
             );
       if (response.code != 0 || response.data == null) {
         throw ServerException(response.message, code: response.code);
@@ -121,29 +118,27 @@ class SearchRepositoryImpl
     return forceRefresh ? true : null;
   }
 
-  @override
-  Future<Result<List<SearchSuggestionEntry>, AppError>> getSuggestions(
+  Future<Result<List<String>, AppError>> getSuggestions(
     String term, {
-    RequestCancelToken? cancelToken,
+    CancelToken? cancelToken,
   }) async {
     final result = await _fetchSearchSuggestions(term, cancelToken: cancelToken);
     return result.map(
       (suggestions) => suggestions
           .map((item) => item.toDomain())
-          .whereType<SearchSuggestionEntry>()
+          .whereType<String>()
+          .where((s) => s.isNotEmpty)
           .toList(),
     );
   }
 
-  @override
-  Future<Result<SearchDefaultHint?, AppError>> getDefaultSearch({
+  Future<Result<String?, AppError>> getDefaultSearch({
     bool forceRefresh = false,
   }) async {
     final result = await _fetchDefaultSearch(forceRefresh: forceRefresh);
     return result.map((data) => data.toDomain());
   }
 
-  @override
   Future<Result<List<SearchTrendingKeyword>, AppError>> getTrendingRanking({
     bool forceRefresh = false,
   }) async {
@@ -154,7 +149,7 @@ class SearchRepositoryImpl
   @override
   Future<Result<SearchResultPage, AppError>> search({
     required SearchQuery query,
-    RequestCancelToken? cancelToken,
+    CancelToken? cancelToken,
   }) async {
     final result = await _fetchSearchResult(query: query, cancelToken: cancelToken);
     return result.map((data) => data.toDomain());

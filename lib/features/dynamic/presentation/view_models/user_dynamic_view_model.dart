@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/data/network/interceptors/cache_interceptor.dart';
-import 'package:culcul/core/data/network/request_cancel_token.dart';
+import 'package:dio/dio.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/features/dynamic/feature_scope.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_response.dart';
-import 'package:culcul/features/dynamic/domain/repositories/dynamic_repository.dart';
+import 'package:culcul/features/dynamic/domain/entities/dynamic_queries.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_feed_view_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -22,8 +22,8 @@ part 'user_dynamic_view_model.g.dart';
 class UserDynamicNotifier extends _$UserDynamicNotifier
     with CursorPagedAsyncNotifier<DynamicItem, String>, DynamicFeedController {
   int _hostMid = 0;
-  RequestCancelToken? _activePageCancelToken;
-  RequestCancelToken? _silentRefreshCancelToken;
+  CancelToken? _activePageCancelToken;
+  CancelToken? _silentRefreshCancelToken;
 
   @override
   Future<List<DynamicItem>> build(int hostMid) async {
@@ -56,7 +56,7 @@ class UserDynamicNotifier extends _$UserDynamicNotifier
   @override
   Future<CursorPage<DynamicItem, String>> fetchPage(String? currentCursor) async {
     _activePageCancelToken?.cancel('dynamic_user_space_page_replaced');
-    final cancelToken = RequestCancelToken();
+    final cancelToken = CancelToken();
     _activePageCancelToken = cancelToken;
     final result = await ref
         .read(dynamicRepositoryProvider)
@@ -93,7 +93,7 @@ class UserDynamicNotifier extends _$UserDynamicNotifier
 
     final stopwatch = Stopwatch()..start();
     _silentRefreshCancelToken?.cancel('dynamic_user_space_silent_refresh_replaced');
-    final cancelToken = RequestCancelToken();
+    final cancelToken = CancelToken();
     _silentRefreshCancelToken = cancelToken;
     final result = await ref
         .read(dynamicRepositoryProvider)

@@ -2,7 +2,7 @@ import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/features/video/presentation/player/listen_sleep_timer_view_model.dart';
 import 'package:culcul/features/video/presentation/player/controls/player_panel.dart';
 import 'package:culcul/features/video/presentation/player/controls/video_overlay_styles.dart';
-import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -15,7 +15,7 @@ class ListenSettingsSheet extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final t = i18n(context);
+    final t = context.t;
     final colorScheme = Theme.of(context).colorScheme;
     final timerState = ref.watch(listenSleepTimerControllerProvider);
     final timerController = ref.read(listenSleepTimerControllerProvider.notifier);
@@ -151,7 +151,7 @@ class _PresetMinuteTextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = i18n(context);
+    final t = context.t;
     final colorScheme = Theme.of(context).colorScheme;
     final label = t.video.listen_settings.preset_minutes(minutes: minutes);
 

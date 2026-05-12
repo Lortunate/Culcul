@@ -1,4 +1,4 @@
-import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/presentation/pages/notification_list_page_helpers.dart';
@@ -43,7 +43,7 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
       type: widget.type,
       watchFeedState: () => ref.watch(notificationFeedListProvider(widget.type)),
     );
-    final t = i18n(context);
+    final t = context.t;
     final colorScheme = Theme.of(context).colorScheme;
     final title = switch (widget.type) {
       NotificationFeedType.reply => t.notification.types.reply,
@@ -140,7 +140,7 @@ class _EmptyNotificationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = i18n(context);
+    final t = context.t;
     return Center(child: Text(t.notification.chat.no_message));
   }
 }

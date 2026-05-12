@@ -1,6 +1,5 @@
 import 'package:culcul/core/services/media_service.dart';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +59,7 @@ class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
     if (_isSaving) return;
     setState(() => _isSaving = true);
     final messenger = ScaffoldMessenger.of(context);
-    final t = i18n(context);
+    final t = context.t;
 
     try {
       messenger
@@ -102,7 +101,7 @@ class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final mediaQuery = MediaQuery.of(context);
-    final t = i18n(context);
+    final t = context.t;
 
     return Scaffold(
       backgroundColor: colorScheme.scrim,

@@ -5,7 +5,7 @@ import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/utils/danmaku_mask_parser.dart';
 import 'package:culcul/features/video/data/danmaku_repository_impl.dart';
-import 'package:culcul/features/video/domain/repositories/video_repository.dart';
+import 'package:culcul/features/video/data/video_repository_impl.dart';
 import 'package:culcul/features/video/feature_scope.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_drawing/path_drawing.dart';
@@ -22,7 +22,7 @@ VideoExtraWorkflows videoExtraWorkflows(Ref ref) {
 }
 
 class VideoExtraWorkflows {
-  final VideoRepository videoRepository;
+  final VideoRepositoryImpl videoRepository;
   final DanmakuRepositoryImpl danmakuRepository;
 
   const VideoExtraWorkflows({

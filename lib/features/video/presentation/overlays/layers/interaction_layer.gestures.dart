@@ -15,7 +15,7 @@ class _InteractionGestureSurface extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final t = i18n(context);
+    final t = context.t;
     final playerController = ref.read(playerControllerProvider.notifier);
     final isLocked = ref.watch(playerControllerProvider.select((s) => s.isLocked));
     final playbackSpeed = ref.watch(

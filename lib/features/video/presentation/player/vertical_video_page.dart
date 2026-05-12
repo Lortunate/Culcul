@@ -11,7 +11,6 @@ import 'package:culcul/features/video/presentation/overlays/layers/danmaku_layer
 import 'package:culcul/features/video/presentation/overlays/layers/interaction_layer.dart';
 import 'package:culcul/features/video/presentation/overlays/layers/subtitle_layer.dart';
 import 'package:culcul/features/video/presentation/overlays/layers/video_layer.dart';
-import 'package:culcul/i18n/i18n.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/users/app_avatar.dart';
 import 'package:flutter/material.dart';

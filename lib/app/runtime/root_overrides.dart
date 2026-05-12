@@ -63,7 +63,7 @@ List<Override> createRootOverrides(AppRuntime runtime) {
 
     // Search
     searchPortProvider.overrideWith((ref) {
-      return ref.read(searchRepositoryProvider) as SearchPort;
+      return ref.read(searchRepositoryProvider);
     }),
 
     // Watch later

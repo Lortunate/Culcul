@@ -3,7 +3,7 @@ import 'dart:developer' as developer;
 
 import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
-import 'package:culcul/core/data/network/request_cancel_token.dart';
+import 'package:dio/dio.dart';
 import 'package:culcul/core/session/relation_providers.dart';
 import 'package:culcul/features/video/application/video_detail_workflows.dart';
 import 'package:culcul/features/video/feature_scope.dart';
@@ -21,9 +21,9 @@ class VideoDetailController extends _$VideoDetailController
   int _loadToken = 0;
   int _playUrlRequestToken = 0;
   final Map<String, PlayUrl> _playUrlSessionCache = <String, PlayUrl>{};
-  RequestCancelToken? _criticalLoadCancelToken;
-  RequestCancelToken? _playUrlLoadCancelToken;
-  RequestCancelToken? _auxiliaryLoadCancelToken;
+  CancelToken? _criticalLoadCancelToken;
+  CancelToken? _playUrlLoadCancelToken;
+  CancelToken? _auxiliaryLoadCancelToken;
 
   @override
   int get loadToken => _loadToken;
@@ -35,10 +35,10 @@ class VideoDetailController extends _$VideoDetailController
   Map<String, PlayUrl> get playUrlSessionCache => _playUrlSessionCache;
 
   @override
-  RequestCancelToken? get auxiliaryLoadCancelToken => _auxiliaryLoadCancelToken;
+  CancelToken? get auxiliaryLoadCancelToken => _auxiliaryLoadCancelToken;
 
   @override
-  set auxiliaryLoadCancelToken(RequestCancelToken? value) {
+  set auxiliaryLoadCancelToken(CancelToken? value) {
     _auxiliaryLoadCancelToken = value;
   }
 
@@ -59,7 +59,7 @@ class VideoDetailController extends _$VideoDetailController
     _criticalLoadCancelToken?.cancel('video_detail_reloaded');
     _auxiliaryLoadCancelToken?.cancel('video_auxiliary_reloaded');
     _playUrlLoadCancelToken?.cancel('video_playurl_reloaded');
-    final cancelToken = RequestCancelToken();
+    final cancelToken = CancelToken();
     _criticalLoadCancelToken = cancelToken;
     state = state.copyWith(isLoading: true, error: null);
     final result = await ref
@@ -195,7 +195,7 @@ class VideoDetailController extends _$VideoDetailController
 
     final requestToken = ++_playUrlRequestToken;
     _playUrlLoadCancelToken?.cancel('video_playurl_replaced');
-    final cancelToken = RequestCancelToken();
+    final cancelToken = CancelToken();
     _playUrlLoadCancelToken = cancelToken;
     final result = await ref
         .read(videoRepositoryProvider)

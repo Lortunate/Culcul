@@ -1,13 +1,11 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
-import 'package:culcul/core/data/network/request_cancel_token.dart';
+import 'package:dio/dio.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/data/network/resource_api.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/video/domain/repositories/video_repository.dart'
-    as domain;
 import 'package:culcul/features/video/data/video_api.dart';
 import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
 import 'package:culcul/features/video/data/dtos/player_info_dto.dart';
@@ -19,14 +17,14 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'video_repository_impl.g.dart';
 
 @riverpod
-domain.VideoRepository videoRepository(Ref ref) {
+VideoRepositoryImpl videoRepository(Ref ref) {
   return VideoRepositoryImpl(
     api: VideoApi(ref.watch(dioClientProvider)),
     resourceApi: ResourceApi(ref.watch(dioClientProvider)),
   );
 }
 
-class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRepository {
+class VideoRepositoryImpl with RequestExecutorBinding {
   static const _videoCommentType = 1;
   static const _defaultCommentPageSize = 20;
 
@@ -43,7 +41,6 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
   @override
   RequestExecutor get requestExecutor => _requestExecutor;
 
-  @override
   Future<Result<void, AppError>> setCommentLike({
     required int oid,
     required int rpid,
@@ -54,7 +51,6 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
     );
   }
 
-  @override
   Future<Result<void, AppError>> setCommentDislike({
     required int oid,
     required int rpid,
@@ -65,7 +61,6 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
     );
   }
 
-  @override
   Future<Result<CommentItem, AppError>> replyToComment({
     required int oid,
     required int root,
@@ -77,17 +72,15 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
     );
   }
 
-  @override
   Future<Result<VideoDetail, AppError>> fetchVideoView(
     String bvid, {
-    RequestCancelToken? cancelToken,
+    CancelToken? cancelToken,
   }) {
     return requestApiResult(
-      () => api.fetchVideoView(bvid, cancelToken: cancelToken?.dioToken),
+      () => api.fetchVideoView(bvid, cancelToken: cancelToken),
     );
   }
 
-  @override
   Future<Result<VideoDimension?, AppError>> fetchVideoEntryDimension(String bvid) {
     return requestApiResult(() => api.fetchVideoPagelist(bvid)).then(
       (result) => result.map((value) {
@@ -99,17 +92,15 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
     );
   }
 
-  @override
   Future<Result<List<VideoTag>, AppError>> fetchVideoTags(
     String bvid, {
-    RequestCancelToken? cancelToken,
+    CancelToken? cancelToken,
   }) {
     return requestApiResult(
-      () => api.fetchVideoTags(bvid, cancelToken: cancelToken?.dioToken),
+      () => api.fetchVideoTags(bvid, cancelToken: cancelToken),
     );
   }
 
-  @override
   Future<Result<PlayUrl, AppError>> fetchVideoPlayUrl({
     required int aid,
     required int cid,
@@ -117,7 +108,7 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
     int fnval = 1,
     int fnver = 0,
     int fourk = 1,
-    RequestCancelToken? cancelToken,
+    CancelToken? cancelToken,
   }) {
     return requestApiResult(
       () => api.fetchVideoPlayUrl(
@@ -127,12 +118,11 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
         fnval: fnval,
         fnver: fnver,
         fourk: fourk,
-        cancelToken: cancelToken?.dioToken,
+        cancelToken: cancelToken,
       ),
     );
   }
 
-  @override
   Future<Result<PlayerInfo, AppError>> fetchPlayerInfo({
     required int aid,
     required int cid,
@@ -140,22 +130,20 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
     return requestApiResult(() => api.fetchPlayerInfo(aid, cid));
   }
 
-  @override
   Future<Result<List<RelatedVideo>, AppError>> fetchRelatedVideos(
     String bvid, {
-    RequestCancelToken? cancelToken,
+    CancelToken? cancelToken,
   }) {
     return requestApiResult(
-      () => api.fetchRelatedVideos(bvid, cancelToken: cancelToken?.dioToken),
+      () => api.fetchRelatedVideos(bvid, cancelToken: cancelToken),
     );
   }
 
-  @override
   Future<Result<CommentResponse, AppError>> fetchComments({
     required int oid,
     CommentSort sort = CommentSort.hot,
     int page = 1,
-    RequestCancelToken? cancelToken,
+    CancelToken? cancelToken,
   }) {
     return requestApiResult(
       () => api.fetchComments(
@@ -164,17 +152,16 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
         sort.apiValue,
         _defaultCommentPageSize,
         page,
-        cancelToken: cancelToken?.dioToken,
+        cancelToken: cancelToken,
       ),
     );
   }
 
-  @override
   Future<Result<CommentResponse, AppError>> fetchReply({
     required int oid,
     required int root,
     int page = 1,
-    RequestCancelToken? cancelToken,
+    CancelToken? cancelToken,
   }) {
     return requestApiResult(
       () => api.fetchReply(
@@ -183,12 +170,11 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
         _videoCommentType,
         _defaultCommentPageSize,
         page,
-        cancelToken: cancelToken?.dioToken,
+        cancelToken: cancelToken,
       ),
     );
   }
 
-  @override
   Future<Result<SubtitleContent, AppError>> fetchSubtitleContent(String url) {
     return requestResult(() async {
       final fullUrl = url.startsWith('http') ? url : 'https:$url';
@@ -200,7 +186,6 @@ class VideoRepositoryImpl with RequestExecutorBinding implements domain.VideoRep
     });
   }
 
-  @override
   Future<Result<void, AppError>> reportVideoProgress({
     required int aid,
     required int cid,

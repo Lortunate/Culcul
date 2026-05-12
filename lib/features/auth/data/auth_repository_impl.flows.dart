@@ -1,10 +1,8 @@
 part of 'auth_repository_impl.dart';
 
-mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin
-    implements domain.AuthRepository {
+mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin {
   abstract final RequestExecutor _executor;
 
-  @override
   Future<Result<UserEntity, AppError>> loginWithPassword({
     required String username,
     required String password,
@@ -53,7 +51,6 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin
     });
   }
 
-  @override
   Future<Result<List<CountryCode>, AppError>> getCountryList() async {
     return _executor.run(() async {
       final response = await _api.getCountryList();
@@ -82,7 +79,6 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin
     });
   }
 
-  @override
   Future<Result<AuthCaptchaChallenge, AppError>> getCaptchaChallenge() async {
     return _executor.runApi(
       () async {
@@ -108,7 +104,6 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin
     );
   }
 
-  @override
   Future<Result<String, AppError>> sendSms(
     int cid,
     String phone,
@@ -138,7 +133,6 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin
     });
   }
 
-  @override
   Future<Result<UserEntity, AppError>> loginWithSms(
     int cid,
     String phone,
@@ -154,7 +148,6 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin
     });
   }
 
-  @override
   Future<Result<AuthQrCode, AppError>> getQrCode() async {
     return _executor.runApi(
       () async {
@@ -176,7 +169,6 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin
     );
   }
 
-  @override
   Future<Result<AuthQrPollResult, AppError>> pollQrCode(String authCode) async {
     return _executor.run(() async {
       final response = await _api.pollQrCode(authCode);
@@ -189,7 +181,6 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin
     });
   }
 
-  @override
   Future<Result<UserEntity, AppError>> getCurrentUser() async {
     return _executor.run(() async => _loadCurrentUser());
   }

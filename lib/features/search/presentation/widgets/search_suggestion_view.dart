@@ -35,8 +35,7 @@ class SearchSuggestionView extends HookConsumerWidget {
           }
 
           final nonEmptySuggestions = suggestions
-              .map((entry) => entry.value)
-              .where((value) => value.isNotEmpty)
+              .where((entry) => entry.isNotEmpty)
               .toList(growable: false);
 
           return AnimatedSwitcher(

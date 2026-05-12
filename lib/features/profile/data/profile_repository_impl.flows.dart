@@ -1,7 +1,6 @@
 part of 'profile_repository_impl.dart';
 
-mixin _ProfileRepositoryImplFlowsMixin on RequestExecutorBinding
-    implements domain.ProfileRepository {
+mixin _ProfileRepositoryImplFlowsMixin on RequestExecutorBinding {
   ProfileApi get api;
   Future<Result<ProfileUser, AppError>> getProfileModel(int userId);
 
@@ -10,7 +9,7 @@ mixin _ProfileRepositoryImplFlowsMixin on RequestExecutorBinding
     int page = 1,
     String order = 'pubdate',
     bool forceRefresh = false,
-    RequestCancelToken? cancelToken,
+    CancelToken? cancelToken,
   }) async {
     final result = await requestApiResult(
       () => api.getSpaceVideos(
@@ -19,7 +18,7 @@ mixin _ProfileRepositoryImplFlowsMixin on RequestExecutorBinding
         pageSize: ProfileRepositoryImpl._defaultSpaceVideoPageSize,
         order: order,
         forceRefresh: forceRefresh ? true : null,
-        cancelToken: cancelToken?.dioToken,
+        cancelToken: cancelToken,
       ),
     );
     return result.map((data) => data.list.vlist);
@@ -48,7 +47,6 @@ mixin _ProfileRepositoryImplFlowsMixin on RequestExecutorBinding
     );
   }
 
-  @override
   Future<Result<void, AppError>> modifyRelation({
     required int mid,
     required bool isFollow,
@@ -56,18 +54,16 @@ mixin _ProfileRepositoryImplFlowsMixin on RequestExecutorBinding
     return requestVoidResult(() => api.modifyRelation(mid, isFollow ? 1 : 2, 11));
   }
 
-  @override
   Future<Result<ProfileUser, AppError>> getProfile(int userId) async {
     return getProfileModel(userId);
   }
 
-  @override
   Future<Result<List<ProfileVideo>, AppError>> getSpaceVideos({
     required int mid,
     int page = 1,
     String order = 'pubdate',
     bool forceRefresh = false,
-    RequestCancelToken? cancelToken,
+    CancelToken? cancelToken,
   }) async {
     final result = await getSpaceVideosModel(
       mid: mid,
@@ -79,13 +75,11 @@ mixin _ProfileRepositoryImplFlowsMixin on RequestExecutorBinding
     return result.map((data) => data.map((item) => item.toDomain()).toList());
   }
 
-  @override
   Future<Result<ProfileVideo?, AppError>> getStickyVideo(int vmid) async {
     final result = await getStickyVideoModel(vmid);
     return result.map((data) => data?.toDomain());
   }
 
-  @override
   Future<Result<List<ProfileVideo>, AppError>> getMasterpiece(int vmid) async {
     final result = await getMasterpieceModels(vmid);
     return result.map((data) => data.map((item) => item.toDomain()).toList());

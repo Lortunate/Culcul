@@ -1,14 +1,12 @@
 import 'dart:async';
 
 import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/core/data/network/request_cancel_token.dart';
+import 'package:dio/dio.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/features/search/feature_scope.dart';
-import 'package:culcul/features/search/domain/entities/search_default_hint.dart';
 import 'package:culcul/core/contracts/search_query_contract.dart';
-import 'package:culcul/features/search/domain/entities/search_suggestion_entry.dart';
 import 'package:culcul/features/search/domain/entities/search_trending_keyword.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -16,9 +14,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'search_view_model.g.dart';
 
 @riverpod
-Future<List<SearchSuggestionEntry>> searchSuggestions(Ref ref, String term) async {
+Future<List<String>> searchSuggestions(Ref ref, String term) async {
   if (term.isEmpty) return [];
-  final cancelToken = RequestCancelToken();
+  final cancelToken = CancelToken();
   ref.onDispose(() => cancelToken.cancel('search_suggestions_disposed'));
   final result = await ref
       .watch(searchRepositoryProvider)
@@ -29,7 +27,7 @@ Future<List<SearchSuggestionEntry>> searchSuggestions(Ref ref, String term) asyn
 @Riverpod(keepAlive: true)
 class DefaultSearch extends _$DefaultSearch {
   @override
-  Future<SearchDefaultHint?> build() async {
+  Future<String?> build() async {
     final stopwatch = Stopwatch()..start();
     final hasCachedValue = await _hasCachedValue(ApiConstants.searchDefaultUrl);
     final result = await ref.watch(searchRepositoryProvider).getDefaultSearch();
@@ -60,7 +58,7 @@ class DefaultSearch extends _$DefaultSearch {
     }
 
     final next = result.dataOrNull;
-    if (next == null || next.text == previous.text) {
+    if (next == null || next == previous) {
       DevLogger.log(
         'feature',
         'search.default_hint silent_refresh_skip',
@@ -157,17 +155,17 @@ class TrendingRanking extends _$TrendingRanking {
 
 @riverpod
 class SearchResult extends _$SearchResult {
-  RequestCancelToken? _activeRequestCancelToken;
+  CancelToken? _activeCancelToken;
 
   @override
   Future<SearchResultPage?> build(SearchQuery query) async {
     ref.onDispose(() {
-      _activeRequestCancelToken?.cancel('search_result_disposed');
+      _activeCancelToken?.cancel('search_result_disposed');
     });
     if (query.keyword.isEmpty) return null;
-    _activeRequestCancelToken?.cancel('search_result_rebuilt');
-    final cancelToken = RequestCancelToken();
-    _activeRequestCancelToken = cancelToken;
+    _activeCancelToken?.cancel('search_result_rebuilt');
+    final cancelToken = CancelToken();
+    _activeCancelToken = cancelToken;
     final result = await ref
         .watch(searchRepositoryProvider)
         .search(query: query, cancelToken: cancelToken);
@@ -181,9 +179,9 @@ class SearchResult extends _$SearchResult {
     }
 
     state = const AsyncLoading<SearchResultPage?>().copyWithPrevious(state);
-    _activeRequestCancelToken?.cancel('search_result_load_more_replaced');
-    final cancelToken = RequestCancelToken();
-    _activeRequestCancelToken = cancelToken;
+    _activeCancelToken?.cancel('search_result_load_more_replaced');
+    final cancelToken = CancelToken();
+    _activeCancelToken = cancelToken;
     state = await AsyncValue.guard(() async {
       final nextQuery = query.copyWith(page: oldState.page + 1);
       final result = await ref

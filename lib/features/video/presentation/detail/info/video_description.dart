@@ -1,5 +1,5 @@
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
-import 'package:culcul/i18n/i18n.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -19,7 +19,7 @@ class ExpandableDescriptionAndTags extends HookWidget {
     final isExpanded = useState(false);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final t = i18n(context);
+    final t = context.t;
 
     return AppClickable(
       onTap: () => isExpanded.value = !isExpanded.value,

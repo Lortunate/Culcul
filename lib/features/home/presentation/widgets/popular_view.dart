@@ -12,7 +12,7 @@ import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart'
 import 'package:culcul/features/home/presentation/widgets/popular_video_card.dart';
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
 import 'package:culcul/ui/widgets/skeletons/page_skeletons.dart';
-import 'package:culcul/ui/assemblies/feed_cards/feed_cards.dart';
+import 'package:culcul/ui/assemblies/feed_cards/video_list_skeleton.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:culcul/features/home/presentation/home_breakpoints.dart';
 import 'package:culcul/ui/responsive/responsive_container.dart';

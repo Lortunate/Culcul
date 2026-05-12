@@ -4,7 +4,6 @@ import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/live/data/live_api.dart';
-import 'package:culcul/features/live/domain/repositories/live_repository.dart' as domain;
 import 'package:culcul/core/contracts/live_room_summary_contract.dart';
 import 'package:culcul/features/live/data/dtos/live_anchor_info_model.dart';
 import 'package:culcul/features/live/data/dtos/live_danmaku_model.dart';
@@ -19,11 +18,11 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'live_repository_impl.g.dart';
 
 @Riverpod(keepAlive: true)
-domain.LiveRepository liveRepository(Ref ref) {
+LiveRepositoryImpl liveRepository(Ref ref) {
   return LiveRepositoryImpl(LiveApi(ref.watch(dioClientProvider)));
 }
 
-class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepository {
+class LiveRepositoryImpl with RequestExecutorBinding {
   static const int _recommendPageSize = 30;
   static const int _rankPageSize = 20;
   final LiveApi _api;
@@ -35,12 +34,10 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
   @override
   RequestExecutor get requestExecutor => _requestExecutor;
 
-  @override
   Future<Result<LiveRoomDetailModel, AppError>> getRoomInfo(int roomId) async {
     return requestApiResult(() => _api.getRoomInfo(roomId));
   }
 
-  @override
   Future<Result<LivePlayUrlModel, AppError>> getPlayUrl({
     required int roomId,
     int? qn,
@@ -48,17 +45,14 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
     return requestApiResult(() => _api.getPlayUrl(roomId: roomId, qn: qn));
   }
 
-  @override
   Future<Result<LiveDanmakuConfigModel, AppError>> getDanmakuConfig(int roomId) async {
     return requestApiResult(() => _api.getDanmakuConfig(roomId));
   }
 
-  @override
   Future<Result<LiveHistoryDanmakuModel, AppError>> getHistoryDanmaku(int roomId) async {
     return requestApiResult(() => _api.getHistoryDanmaku(roomId));
   }
 
-  @override
   Future<Result<LiveDanmuInfoModel, AppError>> getDanmuInfo(int roomId) async {
     return requestApiResult(() => _api.getDanmuInfo(roomId, 0));
   }
@@ -72,12 +66,10 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
     return result.map((data) => data.roomList);
   }
 
-  @override
   Future<Result<LiveAnchorInfoModel, AppError>> getAnchorInfo(int uid) async {
     return requestApiResult(() => _api.getAnchorInfo(uid));
   }
 
-  @override
   Future<Result<LiveGoldRankModel, AppError>> getOnlineGoldRank({
     required int ruid,
     required int roomId,
@@ -93,7 +85,6 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
     );
   }
 
-  @override
   Future<Result<LiveGuardListModel, AppError>> getGuardList({
     required int ruid,
     required int roomId,
@@ -109,7 +100,6 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
     );
   }
 
-  @override
   Future<Result<void, AppError>> sendDanmaku({
     required int roomId,
     required String msg,
@@ -123,7 +113,6 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
     );
   }
 
-  @override
   Future<Result<List<LiveRoomSummary>, AppError>> getRecommendList({int page = 1}) async {
     return fetchRecommendListModels(page: page);
   }

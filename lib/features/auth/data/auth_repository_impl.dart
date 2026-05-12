@@ -16,7 +16,6 @@ import 'package:culcul/features/auth/domain/entities/user_entity.dart';
 import 'package:culcul/features/auth/domain/entities/auth_captcha_challenge.dart';
 import 'package:culcul/features/auth/domain/entities/auth_qr_code.dart';
 import 'package:culcul/features/auth/domain/entities/auth_qr_poll_result.dart';
-import 'package:culcul/features/auth/domain/repositories/auth_repository.dart' as domain;
 import 'package:pointycastle/export.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,7 +26,7 @@ part 'auth_repository_impl.session.dart';
 part 'auth_repository_impl.flows.dart';
 
 @riverpod
-domain.AuthRepository authRepository(Ref ref) {
+AuthRepositoryImpl authRepository(Ref ref) {
   return AuthRepositoryImpl(
     AuthApi(ref.watch(dioClientProvider)),
     ref.watch(sharedPreferencesProvider),
@@ -38,13 +37,9 @@ class AuthRepositoryImpl
     with
         _AuthRepositoryHelpersMixin,
         _AuthRepositorySessionMixin,
-        _AuthRepositoryFlowsMixin
-    implements domain.AuthRepository {
-  @override
+        _AuthRepositoryFlowsMixin {
   final AuthApi _api;
-  @override
   final SharedPreferences _prefs;
-  @override
   final RequestExecutor _executor;
 
   AuthRepositoryImpl(this._api, this._prefs) : _executor = const RequestExecutor();

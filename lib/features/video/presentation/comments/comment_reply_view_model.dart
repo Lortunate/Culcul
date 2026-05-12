@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:culcul/features/video/feature_scope.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/data/network/request_cancel_token.dart';
+import 'package:dio/dio.dart';
 import 'package:culcul/core/data/pagination/paged_list_state_transitions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -14,7 +14,7 @@ part 'comment_reply_view_model.g.dart';
 @riverpod
 class CommentReplyController extends _$CommentReplyController {
   int _loadRequestToken = 0;
-  RequestCancelToken? _activeLoadCancelToken;
+  CancelToken? _activeLoadCancelToken;
 
   @override
   CommentReplyState build(int oid, int rootId) {
@@ -33,7 +33,7 @@ class CommentReplyController extends _$CommentReplyController {
     state = state.copyWith(paging: PagedListStateTransitions.beginRefresh(state.paging));
     final requestToken = ++_loadRequestToken;
     _activeLoadCancelToken?.cancel('comment_reply_refresh_replaced');
-    final cancelToken = RequestCancelToken();
+    final cancelToken = CancelToken();
     _activeLoadCancelToken = cancelToken;
 
     final result = await ref
@@ -72,7 +72,7 @@ class CommentReplyController extends _$CommentReplyController {
     state = state.copyWith(paging: PagedListStateTransitions.beginLoadMore(state.paging));
     final requestToken = ++_loadRequestToken;
     _activeLoadCancelToken?.cancel('comment_reply_load_more_replaced');
-    final cancelToken = RequestCancelToken();
+    final cancelToken = CancelToken();
     _activeLoadCancelToken = cancelToken;
 
     final result = await ref

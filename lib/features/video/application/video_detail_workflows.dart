@@ -1,5 +1,5 @@
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/data/network/request_cancel_token.dart';
+import 'package:dio/dio.dart';
 import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
@@ -7,7 +7,7 @@ import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
 import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
-import 'package:culcul/features/video/domain/repositories/video_repository.dart';
+import 'package:culcul/features/video/data/video_repository_impl.dart';
 import 'package:culcul/features/video/feature_scope.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -42,7 +42,7 @@ LoadVideoDetailWorkflow loadVideoDetailWorkflow(Ref ref) {
 }
 
 class LoadVideoDetailWorkflow {
-  final VideoRepository _repository;
+  final VideoRepositoryImpl _repository;
   final NetworkConcurrencyExecutor _concurrencyExecutor;
 
   const LoadVideoDetailWorkflow(
@@ -52,14 +52,14 @@ class LoadVideoDetailWorkflow {
 
   Future<Result<VideoInitialData, AppError>> call(
     String bvid, {
-    RequestCancelToken? cancelToken,
+    CancelToken? cancelToken,
   }) {
     return loadCritical(bvid, cancelToken: cancelToken);
   }
 
   Future<Result<VideoInitialData, AppError>> loadCritical(
     String bvid, {
-    RequestCancelToken? cancelToken,
+    CancelToken? cancelToken,
   }) async {
     final stopwatch = Stopwatch()..start();
     return (await _repository.fetchVideoView(bvid, cancelToken: cancelToken)).when(
@@ -113,7 +113,7 @@ class LoadVideoDetailWorkflow {
 
   Future<Result<VideoAuxiliaryData, AppError>> loadAuxiliary(
     String bvid, {
-    RequestCancelToken? cancelToken,
+    CancelToken? cancelToken,
   }) async {
     final responses = await _concurrencyExecutor.runConcurrent(
       tasks: <ConcurrentTask<dynamic>>[

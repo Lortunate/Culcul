@@ -1,4 +1,4 @@
-import 'package:culcul/features/favorites/domain/repositories/favorite_repository.dart';
+import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
 import 'package:culcul/features/favorites/feature_scope.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
@@ -12,7 +12,7 @@ FavoriteFolderCommandWorkflow favoriteFolderCommandWorkflow(Ref ref) =>
     FavoriteFolderCommandWorkflow(ref.read(favRepositoryProvider));
 
 class FavoriteFolderCommandWorkflow {
-  final FavoriteRepository _repository;
+  final FavRepositoryImpl _repository;
 
   const FavoriteFolderCommandWorkflow(this._repository);
 
