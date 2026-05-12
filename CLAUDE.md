@@ -42,14 +42,14 @@ This project is indexed by GitNexus as **Culcul** (2701 symbols, 3378 relationsh
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 13 — Structural Simplification & Single Source of Truth)
+## Architecture (Phase 14 — Dependency Modernization & Model Consistency)
 
-`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–12 established correct boundaries; Phase 13 eliminates remaining structural ceremony: redundant indirection layers, duplicate definitions, dead code, and over-sharded implementations.
+`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–13 established correct boundaries and eliminated structural ceremony. Phase 14 modernizes dependencies, standardizes model patterns, and removes remaining zero-value indirection.
 
 See `docs/architecture/architecture-guide.md` for the current implemented baseline.
 
-Active spec: `docs/superpowers/specs/2026-05-12-phase13-structural-simplification-and-single-source-of-truth.md`
-Active plan: `docs/superpowers/plans/2026-05-12-phase13-structural-simplification-and-single-source-of-truth.md`
+Active spec: `docs/superpowers/specs/2026-05-12-phase14-dependency-modernization-and-model-consistency.md`
+Active plan: `docs/superpowers/plans/2026-05-12-phase14-dependency-modernization-and-model-consistency.md`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`
@@ -58,8 +58,12 @@ Active plan: `docs/superpowers/plans/2026-05-12-phase13-structural-simplificatio
 - `feature_scope.dart` exports directly from `data/*_repository_impl.dart` — no intermediate entry/provider files
 - DTOs belong in `data/dtos/`, never in `domain/`
 - Every shared model has exactly ONE definition in `core/contracts/`
+- All domain entities and DTOs use freezed — no hand-written `copyWith` or equality
+- No typedef-only or re-export-only files — import the source directly
+- All dependencies pinned to specific versions (no `any`)
+- Prefer `shared_preferences` + `flutter_secure_storage` over Hive for local storage
 - Prefer `dio_smart_retry` over custom retry logic; prefer generated providers over hand-written wiring
-- If architecture docs disagree, the active Phase 13 spec/plan override older phase text
+- If architecture docs disagree, the active Phase 14 spec/plan override older phase text
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:full hash:f65d5d33 -->
 ## Issue Tracking with bd (beads)

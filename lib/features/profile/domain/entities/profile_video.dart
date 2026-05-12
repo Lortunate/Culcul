@@ -1,65 +1,47 @@
-class ProfileVideoOwner {
-  final int mid;
-  final String name;
-  final String face;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const ProfileVideoOwner({required this.mid, required this.name, required this.face});
+part 'profile_video.freezed.dart';
+
+@freezed
+sealed class ProfileVideoOwner with _$ProfileVideoOwner {
+  const factory ProfileVideoOwner({
+    required int mid,
+    required String name,
+    required String face,
+  }) = _ProfileVideoOwner;
 }
 
-class ProfileVideoStats {
-  final int view;
-  final int danmaku;
-  final int reply;
-  final int like;
-  final int coin;
-  final int favorite;
-  final int share;
-
-  const ProfileVideoStats({
-    required this.view,
-    required this.danmaku,
-    required this.reply,
-    required this.like,
-    required this.coin,
-    required this.favorite,
-    required this.share,
-  });
+@freezed
+sealed class ProfileVideoStats with _$ProfileVideoStats {
+  const factory ProfileVideoStats({
+    required int view,
+    required int danmaku,
+    required int reply,
+    required int like,
+    required int coin,
+    required int favorite,
+    required int share,
+  }) = _ProfileVideoStats;
 }
 
-class ProfileVideo {
-  final int aid;
-  final String bvid;
-  final String title;
-  final String pic;
-  final String tname;
-  final int duration;
-  final int pubDate;
-  final int ctime;
-  final String desc;
-  final int state;
-  final int attribute;
-  final int tid;
-  final ProfileVideoOwner owner;
-  final ProfileVideoStats stats;
-  final String reason;
-  final bool interVideo;
-
-  const ProfileVideo({
-    required this.aid,
-    required this.bvid,
-    required this.title,
-    required this.pic,
-    required this.tname,
-    required this.duration,
-    required this.pubDate,
-    required this.ctime,
-    required this.desc,
-    required this.state,
-    required this.attribute,
-    required this.tid,
-    required this.owner,
-    required this.stats,
-    required this.reason,
-    required this.interVideo,
-  });
+@freezed
+sealed class ProfileVideo with _$ProfileVideo {
+  const factory ProfileVideo({
+    required int aid,
+    required String bvid,
+    required String title,
+    required String pic,
+    required String tname,
+    required int duration,
+    required int pubDate,
+    required int ctime,
+    required String desc,
+    required int state,
+    required int attribute,
+    required int tid,
+    required ProfileVideoOwner owner,
+    required ProfileVideoStats stats,
+    required String reason,
+    required bool interVideo,
+  }) = _ProfileVideo;
 }

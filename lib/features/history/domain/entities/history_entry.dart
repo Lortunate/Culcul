@@ -1,23 +1,18 @@
-class HistoryEntry {
-  final String title;
-  final String coverUrl;
-  final String bvid;
-  final String business;
-  final String authorName;
-  final int viewedAt;
-  final int progress;
-  final int duration;
-  final String badge;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const HistoryEntry({
-    required this.title,
-    required this.coverUrl,
-    required this.bvid,
-    required this.business,
-    required this.authorName,
-    required this.viewedAt,
-    required this.progress,
-    required this.duration,
-    required this.badge,
-  });
+part 'history_entry.freezed.dart';
+
+@freezed
+sealed class HistoryEntry with _$HistoryEntry {
+  const factory HistoryEntry({
+    required String title,
+    required String coverUrl,
+    required String bvid,
+    required String business,
+    required String authorName,
+    required int viewedAt,
+    required int progress,
+    required int duration,
+    required String badge,
+  }) = _HistoryEntry;
 }

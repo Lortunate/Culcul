@@ -26,7 +26,7 @@ class UserProfileNotifier extends _$UserProfileNotifier {
   Future<ProfileUser> build(String userId) async {
     final result = await loadUserProfileAction(
       userId: userId,
-      readCachedProfile: ref.read(profileCacheRepositoryProvider.notifier).readProfile,
+      readCachedProfile: ref.read(profileCacheRepositoryProvider).readProfile,
       loadFreshProfile: _loadFreshProfile,
     );
     if (result.shouldRefreshInBackground) {
@@ -51,7 +51,7 @@ class UserProfileNotifier extends _$UserProfileNotifier {
         .getProfile(int.parse(userId));
     return result.when(
       success: (data) async {
-        await ref.read(profileCacheRepositoryProvider.notifier).writeProfile(data);
+        await ref.read(profileCacheRepositoryProvider).writeProfile(data);
         return data;
       },
       failure: (error) => throw error,

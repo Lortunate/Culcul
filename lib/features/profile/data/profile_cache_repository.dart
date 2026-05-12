@@ -9,21 +9,21 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'profile_cache_repository.g.dart';
 
 @riverpod
-class ProfileCacheRepository extends _$ProfileCacheRepository
-    implements domain.ProfileCacheRepository {
-  @override
-  Future<UserInfoCacheService> build() {
-    return ref.watch(userInfoCacheServiceProvider.future);
-  }
+ProfileCacheRepositoryImpl profileCacheRepository(Ref ref) {
+  return ProfileCacheRepositoryImpl(ref.watch(userInfoCacheServiceProvider));
+}
+
+class ProfileCacheRepositoryImpl implements domain.ProfileCacheRepository {
+  final UserInfoCacheService _cache;
+
+  ProfileCacheRepositoryImpl(this._cache);
 
   Future<UserProfile?> read(String userId) async {
-    final cache = await future;
-    return await cache.getUser(userId);
+    return await _cache.getUser(userId);
   }
 
   Future<void> write(UserProfile profile) async {
-    final cache = await future;
-    await cache.saveUser(profile);
+    await _cache.saveUser(profile);
   }
 
   @override

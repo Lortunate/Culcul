@@ -1,19 +1,19 @@
-class SystemNotice {
-  final int id;
-  final String? title;
-  final String? text;
-  final int time;
-  final String? uri;
-  final String? jumpText;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const SystemNotice({
-    required this.id,
-    this.title,
-    this.text,
-    required this.time,
-    this.uri,
-    this.jumpText,
-  });
+part 'system_notice.freezed.dart';
+
+@freezed
+sealed class SystemNotice with _$SystemNotice {
+  const SystemNotice._();
+
+  const factory SystemNotice({
+    required int id,
+    String? title,
+    String? text,
+    required int time,
+    String? uri,
+    String? jumpText,
+  }) = _SystemNotice;
 
   Map<String, dynamic> toJson() {
     return <String, dynamic>{

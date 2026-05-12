@@ -1,5 +1,5 @@
-import 'package:culcul/features/live/data/dtos/live_dtos.dart' as dto;
-import 'package:culcul/features/live/domain/entities/live_entities.dart' as domain;
+import 'package:culcul/features/live/data/dtos/live_history_danmaku_model.dart' as dto;
+import 'package:culcul/features/live/domain/entities/live_history_danmaku_model.dart' as domain;
 
 extension LiveHistoryDanmakuModelMapper on dto.LiveHistoryDanmakuModel {
   domain.LiveHistoryDanmakuModel toDomain() {

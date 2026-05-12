@@ -1,7 +1,7 @@
 part of 'article_detail_page.dart';
 
 class _ImageBlockView extends StatelessWidget {
-  final ArticleBlock block;
+  final ArticleBlockImage block;
   final void Function(int index) onTap;
 
   const _ImageBlockView({required this.block, required this.onTap});
@@ -45,7 +45,7 @@ class _ImageBlockView extends StatelessWidget {
 }
 
 class _LinkCardView extends StatelessWidget {
-  final ArticleBlock block;
+  final ArticleBlockLinkCard block;
   final VoidCallback? onTap;
 
   const _LinkCardView({required this.block, this.onTap});
@@ -84,7 +84,7 @@ class _LinkCardView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      block.title ?? '链接卡片',
+                      block.title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.titleSmall?.copyWith(
@@ -116,7 +116,7 @@ class _LinkCardView extends StatelessWidget {
 }
 
 class _QuoteBlockView extends StatelessWidget {
-  final ArticleBlock block;
+  final ArticleBlockQuote block;
 
   const _QuoteBlockView({required this.block});
 

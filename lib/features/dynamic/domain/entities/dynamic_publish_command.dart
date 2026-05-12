@@ -1,21 +1,20 @@
-class PublishMediaAsset {
-  final String path;
-  final int width;
-  final int height;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const PublishMediaAsset({
-    required this.path,
-    required this.width,
-    required this.height,
-  });
+part 'dynamic_publish_command.freezed.dart';
+
+@freezed
+sealed class PublishMediaAsset with _$PublishMediaAsset {
+  const factory PublishMediaAsset({
+    required String path,
+    required int width,
+    required int height,
+  }) = _PublishMediaAsset;
 }
 
-class PublishDynamicCommand {
-  final String text;
-  final List<PublishMediaAsset> media;
-
-  const PublishDynamicCommand({
-    required this.text,
-    required this.media,
-  });
+@freezed
+sealed class PublishDynamicCommand with _$PublishDynamicCommand {
+  const factory PublishDynamicCommand({
+    required String text,
+    required List<PublishMediaAsset> media,
+  }) = _PublishDynamicCommand;
 }

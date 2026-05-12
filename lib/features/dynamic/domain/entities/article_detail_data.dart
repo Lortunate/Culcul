@@ -1,167 +1,76 @@
-enum ArticleBlockType { paragraph, image, linkCard, quote, divider }
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'article_detail_data.freezed.dart';
 
 enum ArticleTextAlign { start, center, end }
 
-class ArticleDetailData {
-  final String url;
-  final String commentOid;
-  final int commentType;
-  final String title;
-  final String summary;
-  final String? bannerUrl;
-  final String authorName;
-  final int authorMid;
-  final String authorAvatar;
-  final int publishTime;
-  final ArticleStats stats;
-  final List<ArticleBlock> blocks;
-
-  const ArticleDetailData({
-    required this.url,
-    required this.commentOid,
-    required this.commentType,
-    required this.title,
-    required this.summary,
-    required this.bannerUrl,
-    required this.authorName,
-    required this.authorMid,
-    required this.authorAvatar,
-    required this.publishTime,
-    required this.stats,
-    required this.blocks,
-  });
+@freezed
+sealed class ArticleDetailData with _$ArticleDetailData {
+  const factory ArticleDetailData({
+    required String url,
+    required String commentOid,
+    required int commentType,
+    required String title,
+    required String summary,
+    String? bannerUrl,
+    required String authorName,
+    required int authorMid,
+    required String authorAvatar,
+    required int publishTime,
+    required ArticleStats stats,
+    required List<ArticleBlock> blocks,
+  }) = _ArticleDetailData;
 }
 
-class ArticleStats {
-  final int view;
-  final int favorite;
-  final int like;
-  final int dislike;
-  final int reply;
-  final int share;
-  final int coin;
-  final int dynamicCount;
-
-  const ArticleStats({
-    required this.view,
-    required this.favorite,
-    required this.like,
-    required this.dislike,
-    required this.reply,
-    required this.share,
-    required this.coin,
-    required this.dynamicCount,
-  });
+@freezed
+sealed class ArticleStats with _$ArticleStats {
+  const factory ArticleStats({
+    required int view,
+    required int favorite,
+    required int like,
+    required int dislike,
+    required int reply,
+    required int share,
+    required int coin,
+    required int dynamicCount,
+  }) = _ArticleStats;
 }
 
-class ArticleBlock {
-  final ArticleBlockType type;
-  final List<ArticleInlineNode> nodes;
-  final List<String> imageUrls;
-  final String? caption;
-  final String? title;
-  final String? subtitle;
-  final String? linkUrl;
-  final ArticleTextAlign? align;
-  final double? fontSize;
-  final bool bold;
-
-  const ArticleBlock._({
-    required this.type,
-    this.nodes = const [],
-    this.imageUrls = const [],
-    this.caption,
-    this.title,
-    this.subtitle,
-    this.linkUrl,
-    this.align,
-    this.fontSize,
-    this.bold = false,
-  });
-
-  factory ArticleBlock.paragraph({
+@freezed
+sealed class ArticleBlock with _$ArticleBlock {
+  const factory ArticleBlock.paragraph({
     required List<ArticleInlineNode> nodes,
     ArticleTextAlign? align,
     double? fontSize,
-    bool bold = false,
-  }) {
-    return ArticleBlock._(
-      type: ArticleBlockType.paragraph,
-      nodes: nodes,
-      align: align,
-      fontSize: fontSize,
-      bold: bold,
-    );
-  }
+    @Default(false) bool bold,
+  }) = ArticleBlockParagraph;
 
-  factory ArticleBlock.image({required List<String> imageUrls, String? caption}) {
-    return ArticleBlock._(
-      type: ArticleBlockType.image,
-      imageUrls: imageUrls,
-      caption: caption,
-    );
-  }
+  const factory ArticleBlock.image({
+    required List<String> imageUrls,
+    String? caption,
+  }) = ArticleBlockImage;
 
-  factory ArticleBlock.linkCard({
+  const factory ArticleBlock.linkCard({
     required String title,
     String? subtitle,
     String? linkUrl,
-  }) {
-    return ArticleBlock._(
-      type: ArticleBlockType.linkCard,
-      title: title,
-      subtitle: subtitle,
-      linkUrl: linkUrl,
-    );
-  }
+  }) = ArticleBlockLinkCard;
 
-  const ArticleBlock.quote({required List<ArticleInlineNode> nodes})
-    : this._(type: ArticleBlockType.quote, nodes: nodes);
+  const factory ArticleBlock.quote({
+    required List<ArticleInlineNode> nodes,
+  }) = ArticleBlockQuote;
 
-  const ArticleBlock.divider() : this._(type: ArticleBlockType.divider);
+  const factory ArticleBlock.divider() = ArticleBlockDivider;
 }
 
-class ArticleInlineNode {
-  final String text;
-  final String? linkUrl;
-  final String? color;
-  final double? fontSize;
-  final bool bold;
-  final bool italic;
-
-  const ArticleInlineNode({
-    required this.text,
-    this.linkUrl,
-    this.color,
-    this.fontSize,
-    this.bold = false,
-    this.italic = false,
-  });
-
-  const ArticleInlineNode.text(
-    this.text, {
-    this.linkUrl,
-    this.color,
-    this.fontSize,
-    this.bold = false,
-    this.italic = false,
-  });
-
-  ArticleInlineNode copyWith({
-    String? text,
+@freezed
+sealed class ArticleInlineNode with _$ArticleInlineNode {
+  const factory ArticleInlineNode({
+    required String text,
     String? linkUrl,
     String? color,
     double? fontSize,
-    bool? bold,
-    bool? italic,
-  }) {
-    return ArticleInlineNode(
-      text: text ?? this.text,
-      linkUrl: linkUrl ?? this.linkUrl,
-      color: color ?? this.color,
-      fontSize: fontSize ?? this.fontSize,
-      bold: bold ?? this.bold,
-      italic: italic ?? this.italic,
-    );
-  }
+    @Default(false) bool bold,
+    @Default(false) bool italic,
+  }) = _ArticleInlineNode;
 }

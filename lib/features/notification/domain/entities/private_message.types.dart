@@ -140,16 +140,12 @@ class PrivateMessageContent {
   String? _readString(String key) => _data[key]?.toString();
 }
 
-class PrivateMessageEmoji {
-  final String text;
-  final String url;
-  final int size;
-  final String? gifUrl;
-
-  const PrivateMessageEmoji({
-    required this.text,
-    required this.url,
-    this.size = 1,
-    this.gifUrl,
-  });
+@freezed
+sealed class PrivateMessageEmoji with _$PrivateMessageEmoji {
+  const factory PrivateMessageEmoji({
+    required String text,
+    required String url,
+    @Default(1) int size,
+    String? gifUrl,
+  }) = _PrivateMessageEmoji;
 }

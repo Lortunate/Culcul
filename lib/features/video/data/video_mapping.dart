@@ -1,5 +1,5 @@
 import 'dtos/related_video_dto.dart';
-import 'dtos/video_model_dto.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
 
 extension RelatedVideoMapping on RelatedVideo {
   VideoModel toVideoModel() {

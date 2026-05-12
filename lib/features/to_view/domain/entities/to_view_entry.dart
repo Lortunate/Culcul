@@ -1,25 +1,22 @@
-class ToViewEntry {
-  final int aid;
-  final String bvid;
-  final String title;
-  final String coverUrl;
-  final int duration;
-  final int progress;
-  final String ownerName;
-  final int viewCount;
-  final int danmakuCount;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const ToViewEntry({
-    required this.aid,
-    required this.bvid,
-    required this.title,
-    required this.coverUrl,
-    required this.duration,
-    required this.progress,
-    required this.ownerName,
-    required this.viewCount,
-    required this.danmakuCount,
-  });
+part 'to_view_entry.freezed.dart';
+
+@freezed
+sealed class ToViewEntry with _$ToViewEntry {
+  const ToViewEntry._();
+
+  const factory ToViewEntry({
+    required int aid,
+    required String bvid,
+    required String title,
+    required String coverUrl,
+    required int duration,
+    required int progress,
+    required String ownerName,
+    required int viewCount,
+    required int danmakuCount,
+  }) = _ToViewEntry;
 
   bool get hasProgress => progress > 0;
 

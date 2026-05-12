@@ -1,4 +1,5 @@
-import 'package:culcul/features/favorites/data/dtos/favorite_dtos.dart';
+import 'package:culcul/features/favorites/data/dtos/fav_folder_model.dart';
+import 'package:culcul/features/favorites/data/dtos/fav_resource_model.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 

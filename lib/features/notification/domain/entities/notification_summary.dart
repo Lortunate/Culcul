@@ -1,27 +1,20 @@
-class NotificationSummary {
-  final int at;
-  final int chat;
-  final int coin;
-  final int danmu;
-  final int favorite;
-  final int like;
-  final int recvLike;
-  final int recvReply;
-  final int reply;
-  final int system;
-  final int up;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const NotificationSummary({
-    this.at = 0,
-    this.chat = 0,
-    this.coin = 0,
-    this.danmu = 0,
-    this.favorite = 0,
-    this.like = 0,
-    this.recvLike = 0,
-    this.recvReply = 0,
-    this.reply = 0,
-    this.system = 0,
-    this.up = 0,
-  });
+part 'notification_summary.freezed.dart';
+
+@freezed
+sealed class NotificationSummary with _$NotificationSummary {
+  const factory NotificationSummary({
+    @Default(0) int at,
+    @Default(0) int chat,
+    @Default(0) int coin,
+    @Default(0) int danmu,
+    @Default(0) int favorite,
+    @Default(0) int like,
+    @Default(0) int recvLike,
+    @Default(0) int recvReply,
+    @Default(0) int reply,
+    @Default(0) int system,
+    @Default(0) int up,
+  }) = _NotificationSummary;
 }

@@ -1,9 +1,11 @@
-class CountryCode {
-  final int id;
-  final String name;
-  final String code;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const CountryCode({required this.id, required this.name, required this.code});
+part 'country_code.freezed.dart';
+
+@freezed
+sealed class CountryCode with _$CountryCode {
+  const factory CountryCode({required int id, required String name, required String code}) =
+      _CountryCode;
 }
 
 const List<CountryCode> defaultCountryCodes = [

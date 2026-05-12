@@ -1,4 +1,8 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
+
+part 'private_session.freezed.dart';
 
 enum PrivateSessionType {
   unknown(0),
@@ -25,33 +29,23 @@ enum PrivateSessionType {
   }
 }
 
-class PrivateSessionAccountInfo {
-  final String name;
-  final String picUrl;
-
-  const PrivateSessionAccountInfo({required this.name, required this.picUrl});
+@freezed
+sealed class PrivateSessionAccountInfo with _$PrivateSessionAccountInfo {
+  const factory PrivateSessionAccountInfo({required String name, required String picUrl}) =
+      _PrivateSessionAccountInfo;
 }
 
-class PrivateSession {
-  final int talkerId;
-  final PrivateSessionType sessionType;
-  final int unreadCount;
-  final PrivateMessage? lastMessage;
-  final String? groupName;
-  final String? groupCover;
-  final int isFollow;
-  final int sessionTs;
-  final PrivateSessionAccountInfo? accountInfo;
-
-  const PrivateSession({
-    required this.talkerId,
-    required this.sessionType,
-    required this.unreadCount,
-    required this.lastMessage,
-    required this.groupName,
-    required this.groupCover,
-    required this.isFollow,
-    required this.sessionTs,
-    required this.accountInfo,
-  });
+@freezed
+sealed class PrivateSession with _$PrivateSession {
+  const factory PrivateSession({
+    required int talkerId,
+    required PrivateSessionType sessionType,
+    required int unreadCount,
+    PrivateMessage? lastMessage,
+    String? groupName,
+    String? groupCover,
+    required int isFollow,
+    required int sessionTs,
+    PrivateSessionAccountInfo? accountInfo,
+  }) = _PrivateSession;
 }

@@ -6,7 +6,10 @@ import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/live/data/live_room_mapper.dart';
 import 'package:culcul/features/live/data/live_api.dart';
 import 'package:culcul/features/live/domain/repositories/live_repository.dart' as domain;
-import 'package:culcul/features/live/domain/entities/live_entities_exports.dart';
+import 'package:culcul/core/contracts/live_room_summary_contract.dart';
+import 'package:culcul/features/live/data/dtos/live_dtos.dart';
+import 'package:culcul/features/live/domain/entities/live_history_danmaku_model.dart'
+    as domain_danmaku;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'live_repository_impl.g.dart';
@@ -47,7 +50,7 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
   }
 
   @override
-  Future<Result<LiveHistoryDanmakuModel, AppError>> getHistoryDanmaku(int roomId) async {
+  Future<Result<domain_danmaku.LiveHistoryDanmakuModel, AppError>> getHistoryDanmaku(int roomId) async {
     final result = await requestApiResult(() => _api.getHistoryDanmaku(roomId));
     return result.map((data) => data.toDomain());
   }
@@ -57,7 +60,7 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
     return requestApiResult(() => _api.getDanmuInfo(roomId, 0));
   }
 
-  Future<Result<List<LiveRoomModel>, AppError>> fetchRecommendListModels({
+  Future<Result<List<LiveRoomSummary>, AppError>> fetchRecommendListModels({
     int page = 1,
   }) async {
     final result = await requestApiResult(

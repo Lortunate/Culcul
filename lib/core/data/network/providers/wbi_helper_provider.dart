@@ -5,7 +5,9 @@ import 'package:culcul/core/data/network/resource_api.dart';
 import 'package:culcul/core/data/network/resource_api_provider.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'wbi_helper_provider.g.dart';
 
 // Mixin key encoding table
 const _mixinKeyEncTab = [
@@ -200,6 +202,7 @@ class WbiHelper {
   }
 }
 
-final wbiHelperProvider = Provider<WbiHelper>((ref) {
+@Riverpod(keepAlive: true)
+WbiHelper wbiHelper(Ref ref) {
   return WbiHelper(ref.watch(basicResourceApiProvider));
-});
+}

@@ -1,11 +1,12 @@
-class ImageUploadResult {
-  final String imageUrl;
-  final int imageWidth;
-  final int imageHeight;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const ImageUploadResult({
-    required this.imageUrl,
-    required this.imageWidth,
-    required this.imageHeight,
-  });
+part 'image_upload_result.freezed.dart';
+
+@freezed
+sealed class ImageUploadResult with _$ImageUploadResult {
+  const factory ImageUploadResult({
+    required String imageUrl,
+    required int imageWidth,
+    required int imageHeight,
+  }) = _ImageUploadResult;
 }

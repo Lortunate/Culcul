@@ -1,37 +1,29 @@
 import 'dart:convert';
 
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 part 'private_message.types.dart';
+part 'private_message.freezed.dart';
 
-class PrivateMessage {
-  final int senderUid;
-  final PrivateMessageReceiverType receiverType;
-  final int receiverId;
-  final PrivateMessageType type;
-  final PrivateMessageContent content;
-  final int msgSeqno;
-  final int timestamp;
-  final List<int>? atUids;
-  final int? msgKey;
-  final int? msgStatus;
-  final String? notifyCode;
-  final int? newFaceVersion;
-  final int? msgSource;
+@freezed
+sealed class PrivateMessage with _$PrivateMessage {
+  const PrivateMessage._();
 
-  const PrivateMessage({
-    required this.senderUid,
-    required this.receiverType,
-    required this.receiverId,
-    required this.type,
-    required this.content,
-    required this.msgSeqno,
-    required this.timestamp,
-    required this.atUids,
-    required this.msgKey,
-    required this.msgStatus,
-    required this.notifyCode,
-    required this.newFaceVersion,
-    required this.msgSource,
-  });
+  const factory PrivateMessage({
+    required int senderUid,
+    required PrivateMessageReceiverType receiverType,
+    required int receiverId,
+    required PrivateMessageType type,
+    required PrivateMessageContent content,
+    required int msgSeqno,
+    required int timestamp,
+    List<int>? atUids,
+    int? msgKey,
+    int? msgStatus,
+    String? notifyCode,
+    int? newFaceVersion,
+    int? msgSource,
+  }) = _PrivateMessage;
 
   Map<String, dynamic>? get contentMap {
     final json = content.toRawMap();

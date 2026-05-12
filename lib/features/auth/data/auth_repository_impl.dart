@@ -16,9 +16,9 @@ import 'package:culcul/features/auth/domain/entities/auth_qr_code.dart';
 import 'package:culcul/features/auth/domain/entities/auth_qr_poll_result.dart';
 import 'package:culcul/features/auth/domain/repositories/auth_repository.dart' as domain;
 import 'package:encrypt/encrypt.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pointycastle/asymmetric/api.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'auth_repository_impl.g.dart';
 part 'auth_repository_impl.helpers.dart';
@@ -29,7 +29,7 @@ part 'auth_repository_impl.flows.dart';
 domain.AuthRepository authRepository(Ref ref) {
   return AuthRepositoryImpl(
     AuthApi(ref.watch(dioClientProvider)),
-    ref.watch(sessionStorageBoxProvider),
+    ref.watch(sharedPreferencesProvider),
   );
 }
 
@@ -42,9 +42,9 @@ class AuthRepositoryImpl
   @override
   final AuthApi _api;
   @override
-  final Box<dynamic> _box;
+  final SharedPreferences _prefs;
   @override
   final RequestExecutor _executor;
 
-  AuthRepositoryImpl(this._api, this._box) : _executor = const RequestExecutor();
+  AuthRepositoryImpl(this._api, this._prefs) : _executor = const RequestExecutor();
 }

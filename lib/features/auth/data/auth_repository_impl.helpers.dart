@@ -1,29 +1,29 @@
 part of 'auth_repository_impl.dart';
 
 mixin _AuthRepositoryHelpersMixin on Object {
-  abstract final Box<dynamic> _box;
+  abstract final SharedPreferences _prefs;
   abstract final AuthApi _api;
 
   UserEntity? getCachedUser() {
-    final jsonStr = _box.get(StorageKeys.authUserCache);
+    final jsonStr = _prefs.getString(StorageKeys.authUserCache);
     if (jsonStr == null) return null;
     try {
       return AuthUserDto.fromJson(jsonDecode(jsonStr) as Map<String, dynamic>).toDomain();
     } catch (_) {
-      _box.delete(StorageKeys.authUserCache);
+      _prefs.remove(StorageKeys.authUserCache);
       return null;
     }
   }
 
   Future<void> _cacheUser(UserEntity user) async {
-    await _box.put(
+    await _prefs.setString(
       StorageKeys.authUserCache,
       jsonEncode(AuthUserDto.fromDomain(user).toJson()),
     );
   }
 
   Future<void> clearCache() async {
-    await _box.delete(StorageKeys.authUserCache);
+    await _prefs.remove(StorageKeys.authUserCache);
   }
 
   Future<bool> isLoggedIn() async {

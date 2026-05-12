@@ -11,13 +11,12 @@ List<Widget> buildArticleBlocks(BuildContext context, List<ArticleBlock> blocks)
   }
 
   for (final block in blocks) {
-    switch (block.type) {
-      case ArticleBlockType.paragraph:
+    switch (block) {
+      case ArticleBlockParagraph():
         final hasText = block.nodes.any((node) => _hasVisibleText(node.text));
         if (!hasText) break;
         addWithSpacing(_ParagraphBlockView(block: block));
-        break;
-      case ArticleBlockType.image:
+      case ArticleBlockImage():
         addWithSpacing(
           _ImageBlockView(
             block: block,
@@ -28,8 +27,7 @@ List<Widget> buildArticleBlocks(BuildContext context, List<ArticleBlock> blocks)
             ),
           ),
         );
-        break;
-      case ArticleBlockType.linkCard:
+      case ArticleBlockLinkCard():
         addWithSpacing(
           _LinkCardView(
             block: block,
@@ -38,13 +36,10 @@ List<Widget> buildArticleBlocks(BuildContext context, List<ArticleBlock> blocks)
                 : () => DynamicNavigation.open(context, url: block.linkUrl!),
           ),
         );
-        break;
-      case ArticleBlockType.quote:
+      case ArticleBlockQuote():
         addWithSpacing(_QuoteBlockView(block: block));
-        break;
-      case ArticleBlockType.divider:
+      case ArticleBlockDivider():
         addWithSpacing(const Divider(height: 18));
-        break;
     }
   }
 

@@ -1,11 +1,12 @@
-class SearchTrendingKeyword {
-  final int position;
-  final String keyword;
-  final String label;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const SearchTrendingKeyword({
-    required this.position,
-    required this.keyword,
-    required this.label,
-  });
+part 'search_trending_keyword.freezed.dart';
+
+@freezed
+sealed class SearchTrendingKeyword with _$SearchTrendingKeyword {
+  const factory SearchTrendingKeyword({
+    required int position,
+    required String keyword,
+    required String label,
+  }) = _SearchTrendingKeyword;
 }

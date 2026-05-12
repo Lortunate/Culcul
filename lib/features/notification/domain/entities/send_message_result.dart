@@ -1,11 +1,12 @@
-class SendMessageResult {
-  final int msgKey;
-  final String? msgContent;
-  final Map<String, dynamic>? keyHitInfos;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const SendMessageResult({
-    required this.msgKey,
-    this.msgContent,
-    this.keyHitInfos,
-  });
+part 'send_message_result.freezed.dart';
+
+@freezed
+sealed class SendMessageResult with _$SendMessageResult {
+  const factory SendMessageResult({
+    required int msgKey,
+    String? msgContent,
+    Map<String, dynamic>? keyHitInfos,
+  }) = _SendMessageResult;
 }

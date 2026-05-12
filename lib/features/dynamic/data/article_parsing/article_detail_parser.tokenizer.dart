@@ -16,7 +16,7 @@ List<ArticleBlock> _parseHtmlNode(html_dom.Node node) {
     final text = node.text.trim();
     if (text.isEmpty) return const [];
     return [
-      ArticleBlock.paragraph(nodes: [ArticleInlineNode.text(text)]),
+      ArticleBlock.paragraph(nodes: [ArticleInlineNode(text: text)]),
     ];
   }
 
@@ -81,7 +81,7 @@ List<ArticleBlock> _parseHtmlNode(html_dom.Node node) {
         if (nodes.isEmpty) continue;
         final bulletPrefix = tag == 'ol' ? '${listBlocks.length + 1}. ' : '• ';
         listBlocks.add(
-          ArticleBlock.paragraph(nodes: [ArticleInlineNode.text(bulletPrefix), ...nodes]),
+          ArticleBlock.paragraph(nodes: [ArticleInlineNode(text: bulletPrefix), ...nodes]),
         );
       }
       return listBlocks;
@@ -116,19 +116,19 @@ List<ArticleInlineNode> _parseHtmlInlineNode(
   if (node is html_dom.Text) {
     final text = node.text;
     if (text.isEmpty) return const [];
-    return [ArticleInlineNode.text(text)];
+    return [ArticleInlineNode(text: text)];
   }
 
   if (node is! html_dom.Element) return const [];
   final tag = node.localName?.toLowerCase() ?? '';
 
   if (tag == 'br') {
-    return [const ArticleInlineNode.text('\n')];
+    return [const ArticleInlineNode(text: '\n')];
   }
 
   final baseChildren = node.nodes.isNotEmpty
       ? _parseHtmlInlineNodes(node.nodes, forceBold: forceBold)
-      : [ArticleInlineNode.text(node.text)];
+      : [ArticleInlineNode(text: node.text)];
 
   switch (tag) {
     case 'a':

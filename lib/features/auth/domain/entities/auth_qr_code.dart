@@ -1,6 +1,8 @@
-final class AuthQrCode {
-  final String url;
-  final String key;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const AuthQrCode({required this.url, required this.key});
+part 'auth_qr_code.freezed.dart';
+
+@freezed
+sealed class AuthQrCode with _$AuthQrCode {
+  const factory AuthQrCode({required String url, required String key}) = _AuthQrCode;
 }

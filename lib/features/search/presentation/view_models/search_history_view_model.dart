@@ -10,28 +10,24 @@ class SearchHistory extends _$SearchHistory {
 
   @override
   List<String> build() {
-    final box = ref.watch(searchStorageBoxProvider);
-    final history = box.get(StorageKeys.searchHistory, defaultValue: <String>[]);
-    if (history is List) {
-      return history.cast<String>();
-    }
-    return [];
+    final prefs = ref.watch(sharedPreferencesProvider);
+    return prefs.getStringList(StorageKeys.searchHistory) ?? [];
   }
 
   Future<void> add(String term) async {
     final nextHistory = addSearchHistoryEntry(state, term, maxHistory: _maxHistory);
     state = nextHistory;
-    await ref.read(searchStorageBoxProvider).put(StorageKeys.searchHistory, nextHistory);
+    await ref.read(sharedPreferencesProvider).setStringList(StorageKeys.searchHistory, nextHistory);
   }
 
   Future<void> remove(String term) async {
     final nextHistory = removeSearchHistoryEntry(state, term);
     state = nextHistory;
-    await ref.read(searchStorageBoxProvider).put(StorageKeys.searchHistory, nextHistory);
+    await ref.read(sharedPreferencesProvider).setStringList(StorageKeys.searchHistory, nextHistory);
   }
 
   Future<void> clear() async {
     state = [];
-    await ref.read(searchStorageBoxProvider).delete(StorageKeys.searchHistory);
+    await ref.read(sharedPreferencesProvider).remove(StorageKeys.searchHistory);
   }
 }

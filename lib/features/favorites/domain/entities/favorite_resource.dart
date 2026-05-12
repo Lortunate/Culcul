@@ -1,87 +1,63 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 
-class FavoriteResourceStats {
-  final int collect;
-  final int play;
-  final int danmaku;
+part 'favorite_resource.freezed.dart';
 
-  const FavoriteResourceStats({
-    required this.collect,
-    required this.play,
-    required this.danmaku,
-  });
+@freezed
+sealed class FavoriteResourceStats with _$FavoriteResourceStats {
+  const factory FavoriteResourceStats({
+    required int collect,
+    required int play,
+    required int danmaku,
+  }) = _FavoriteResourceStats;
 }
 
-class FavoriteResource {
-  final int id;
-  final int type;
-  final String title;
-  final String cover;
-  final String intro;
-  final int page;
-  final int duration;
-  final FavoriteOwner upper;
-  final int attr;
-  final FavoriteResourceStats stats;
-  final String link;
-  final int ctime;
-  final int pubtime;
-  final int favTime;
-  final String? bvId;
-  final String? bvid;
+@freezed
+sealed class FavoriteResource with _$FavoriteResource {
+  const FavoriteResource._();
 
-  const FavoriteResource({
-    required this.id,
-    required this.type,
-    required this.title,
-    required this.cover,
-    required this.intro,
-    required this.page,
-    required this.duration,
-    required this.upper,
-    required this.attr,
-    required this.stats,
-    required this.link,
-    required this.ctime,
-    required this.pubtime,
-    required this.favTime,
-    required this.bvId,
-    required this.bvid,
-  });
+  const factory FavoriteResource({
+    required int id,
+    required int type,
+    required String title,
+    required String cover,
+    required String intro,
+    required int page,
+    required int duration,
+    required FavoriteOwner upper,
+    required int attr,
+    required FavoriteResourceStats stats,
+    required String link,
+    required int ctime,
+    required int pubtime,
+    required int favTime,
+    required String? bvId,
+    required String? bvid,
+  }) = _FavoriteResource;
 
   String? get preferredBvid => bvid ?? bvId;
 }
 
-class FavoriteFolderInfo {
-  final int id;
-  final int fid;
-  final int mid;
-  final int attr;
-  final String title;
-  final String cover;
-  final FavoriteOwner upper;
-  final int mediaCount;
-
-  const FavoriteFolderInfo({
-    required this.id,
-    required this.fid,
-    required this.mid,
-    required this.attr,
-    required this.title,
-    required this.cover,
-    required this.upper,
-    required this.mediaCount,
-  });
+@freezed
+sealed class FavoriteFolderInfo with _$FavoriteFolderInfo {
+  const factory FavoriteFolderInfo({
+    required int id,
+    required int fid,
+    required int mid,
+    required int attr,
+    required String title,
+    required String cover,
+    required FavoriteOwner upper,
+    required int mediaCount,
+  }) = _FavoriteFolderInfo;
 }
 
-class FavoriteResourcePage {
-  final FavoriteFolderInfo info;
-  final List<FavoriteResource> medias;
-  final bool hasMore;
-
-  const FavoriteResourcePage({
-    required this.info,
-    required this.medias,
-    required this.hasMore,
-  });
+@freezed
+sealed class FavoriteResourcePage with _$FavoriteResourcePage {
+  const factory FavoriteResourcePage({
+    required FavoriteFolderInfo info,
+    required List<FavoriteResource> medias,
+    required bool hasMore,
+  }) = _FavoriteResourcePage;
 }

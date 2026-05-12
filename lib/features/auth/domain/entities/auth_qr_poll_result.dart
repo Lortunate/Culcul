@@ -1,6 +1,8 @@
-final class AuthQrPollResult {
-  final int code;
-  final String? message;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const AuthQrPollResult({required this.code, this.message});
+part 'auth_qr_poll_result.freezed.dart';
+
+@freezed
+sealed class AuthQrPollResult with _$AuthQrPollResult {
+  const factory AuthQrPollResult({required int code, String? message}) = _AuthQrPollResult;
 }

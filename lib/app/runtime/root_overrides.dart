@@ -26,9 +26,7 @@ List<Override> createRootOverrides(AppRuntime runtime) {
     // Infrastructure
     cookieJarProvider.overrideWithValue(runtime.cookieJar),
     cacheStoreProvider.overrideWithValue(runtime.cacheStore),
-    sessionStorageBoxProvider.overrideWithValue(runtime.sessionBox),
-    settingsStorageBoxProvider.overrideWithValue(runtime.settingsBox),
-    searchStorageBoxProvider.overrideWithValue(runtime.searchHistoryBox),
+    sharedPreferencesProvider.overrideWithValue(runtime.prefs),
 
     // Auth / session lifecycle
     sessionCookieRefresherProvider.overrideWith((ref) => AuthSessionCookieRefresher(ref)),
@@ -79,9 +77,7 @@ void verifyRootOverrides(List<Override> overrides) {
   try {
     container.read(cookieJarProvider);
     container.read(cacheStoreProvider);
-    container.read(sessionStorageBoxProvider);
-    container.read(settingsStorageBoxProvider);
-    container.read(searchStorageBoxProvider);
+    container.read(sharedPreferencesProvider);
     container.read(sessionCookieRefresherProvider);
     container.read(sessionRefreshActionProvider);
     container.read(logoutActionProvider);

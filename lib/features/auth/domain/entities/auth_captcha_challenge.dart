@@ -1,11 +1,12 @@
-final class AuthCaptchaChallenge {
-  final String token;
-  final String gt;
-  final String challenge;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const AuthCaptchaChallenge({
-    required this.token,
-    required this.gt,
-    required this.challenge,
-  });
+part 'auth_captcha_challenge.freezed.dart';
+
+@freezed
+sealed class AuthCaptchaChallenge with _$AuthCaptchaChallenge {
+  const factory AuthCaptchaChallenge({
+    required String token,
+    required String gt,
+    required String challenge,
+  }) = _AuthCaptchaChallenge;
 }

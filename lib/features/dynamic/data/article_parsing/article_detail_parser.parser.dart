@@ -64,8 +64,8 @@ List<ArticleInlineNode> _parseOpusInlineNodes(List<Map<String, dynamic>> nodes) 
         final text = _string(word['words']) ?? '';
         if (text.isEmpty) continue;
         spans.add(
-          ArticleInlineNode.text(
-            text,
+          ArticleInlineNode(
+            text: text,
             fontSize: _double(word['font_size']),
             color: _string(word['color']),
           ),
@@ -76,12 +76,12 @@ List<ArticleInlineNode> _parseOpusInlineNodes(List<Map<String, dynamic>> nodes) 
         final text = _string(link['show_text']) ?? '';
         final href = _normalizeUrl(_string(link['link']) ?? '');
         if (text.isEmpty) continue;
-        spans.add(ArticleInlineNode.text(text, linkUrl: href, color: '#1E80FF'));
+        spans.add(ArticleInlineNode(text: text, linkUrl: href, color: '#1E80FF'));
         break;
       default:
         final text = _string(node['text']) ?? _string(node['show_text']) ?? '';
         if (text.isEmpty) continue;
-        spans.add(ArticleInlineNode.text(text));
+        spans.add(ArticleInlineNode(text: text));
         break;
     }
   }

@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'video_model_dto.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
 
 part 'related_video_dto.freezed.dart';
 part 'related_video_dto.g.dart';

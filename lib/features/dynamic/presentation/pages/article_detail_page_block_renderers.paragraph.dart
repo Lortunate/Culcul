@@ -1,7 +1,7 @@
 part of 'article_detail_page.dart';
 
 class _ParagraphBlockView extends StatefulWidget {
-  final ArticleBlock block;
+  final ArticleBlockParagraph block;
 
   const _ParagraphBlockView({required this.block});
 

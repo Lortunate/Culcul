@@ -1,36 +1,32 @@
-class DanmakuEntry {
-  final String content;
-  final int progress;
-  final int color;
-  final int mode;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const DanmakuEntry({
-    required this.content,
-    required this.progress,
-    required this.color,
-    required this.mode,
-  });
+part 'danmaku_model.freezed.dart';
+
+@freezed
+sealed class DanmakuEntry with _$DanmakuEntry {
+  const factory DanmakuEntry({
+    required String content,
+    required int progress,
+    required int color,
+    required int mode,
+  }) = _DanmakuEntry;
 }
 
-class DanmakuSegment {
-  final List<DanmakuEntry> entries;
-  final int state;
-
-  const DanmakuSegment({required this.entries, required this.state});
+@freezed
+sealed class DanmakuSegment with _$DanmakuSegment {
+  const factory DanmakuSegment({
+    required List<DanmakuEntry> entries,
+    required int state,
+  }) = _DanmakuSegment;
 }
 
-class DanmakuView {
-  final bool closed;
-  final bool allow;
-  final int sendBoxStyle;
-  final String textPlaceholder;
-  final String inputPlaceholder;
-
-  const DanmakuView({
-    required this.closed,
-    required this.allow,
-    required this.sendBoxStyle,
-    required this.textPlaceholder,
-    required this.inputPlaceholder,
-  });
+@freezed
+sealed class DanmakuView with _$DanmakuView {
+  const factory DanmakuView({
+    required bool closed,
+    required bool allow,
+    required int sendBoxStyle,
+    required String textPlaceholder,
+    required String inputPlaceholder,
+  }) = _DanmakuView;
 }
