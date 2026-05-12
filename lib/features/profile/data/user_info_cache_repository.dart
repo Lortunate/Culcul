@@ -7,12 +7,12 @@ import 'package:culcul/features/profile/data/dtos/profile_dtos.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-part 'user_info_cache_service.g.dart';
+part 'user_info_cache_repository.g.dart';
 
-class UserInfoCacheService {
+class UserInfoCacheRepository {
   final SharedPreferences _prefs;
 
-  UserInfoCacheService(this._prefs);
+  UserInfoCacheRepository(this._prefs);
 
   Future<UserProfile?> getUser(String uid) async {
     final jsonString = _prefs.getString('${StorageKeys.userCachePrefix}$uid');
@@ -33,6 +33,6 @@ class UserInfoCacheService {
 }
 
 @Riverpod(keepAlive: true)
-UserInfoCacheService userInfoCacheService(Ref ref) {
-  return UserInfoCacheService(ref.watch(sharedPreferencesProvider));
+UserInfoCacheRepository userInfoCacheRepository(Ref ref) {
+  return UserInfoCacheRepository(ref.watch(sharedPreferencesProvider));
 }

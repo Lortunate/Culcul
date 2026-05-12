@@ -1,6 +1,6 @@
 import 'package:culcul/features/profile/data/profile_mapper.dart';
 import 'package:culcul/features/profile/data/dtos/profile_dtos.dart';
-import 'package:culcul/features/profile/data/user_info_cache_service.dart';
+import 'package:culcul/features/profile/data/user_info_cache_repository.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/repositories/profile_cache_repository.dart'
     as domain;
@@ -10,11 +10,11 @@ part 'profile_cache_repository.g.dart';
 
 @riverpod
 ProfileCacheRepositoryImpl profileCacheRepository(Ref ref) {
-  return ProfileCacheRepositoryImpl(ref.watch(userInfoCacheServiceProvider));
+  return ProfileCacheRepositoryImpl(ref.watch(userInfoCacheRepositoryProvider));
 }
 
 class ProfileCacheRepositoryImpl implements domain.ProfileCacheRepository {
-  final UserInfoCacheService _cache;
+  final UserInfoCacheRepository _cache;
 
   ProfileCacheRepositoryImpl(this._cache);
 

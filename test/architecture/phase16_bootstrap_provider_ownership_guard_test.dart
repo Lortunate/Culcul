@@ -10,7 +10,7 @@ const _allowedBootstrapImports = {
   'lib/features/dynamic/data/dynamic_repository_impl.dart',
   'lib/features/dynamic/presentation/view_models/user_dynamic_view_model.dart',
   'lib/features/home/presentation/view_models/home_feed_paging_mixin.dart',
-  'lib/features/profile/data/user_info_cache_service.dart',
+  'lib/features/profile/data/user_info_cache_repository.dart',
   'lib/features/profile/presentation/view_models/user_space_videos_view_model.dart',
   'lib/features/search/presentation/view_models/search_history_view_model.dart',
   'lib/features/search/presentation/view_models/search_view_model.dart',
