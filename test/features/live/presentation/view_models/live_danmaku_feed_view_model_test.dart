@@ -1,5 +1,5 @@
 import 'package:culcul/features/live/presentation/view_models/live_danmaku_feed_view_model.dart';
-import 'package:culcul/features/live/domain/entities/live_entities.dart';
+import 'package:culcul/features/live/domain/entities/live_history_danmaku_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 

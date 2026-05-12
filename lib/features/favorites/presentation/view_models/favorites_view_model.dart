@@ -3,7 +3,7 @@ import 'package:culcul/core/data/pagination/paged_list_state.dart';
 import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/utils/list_utils.dart';
 import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';

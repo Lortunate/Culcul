@@ -4,20 +4,17 @@ class FeedResponseDto {
   const FeedResponseDto({this.item = const []});
 
   factory FeedResponseDto.fromJson(Map<String, dynamic> json) {
-    final normalized = Map<String, dynamic>.from(json);
-
-    final rawItem = normalized['item'];
-    if (rawItem is List) {
-      normalized['item'] = rawItem
-          .whereType<Map>()
+    final rawItem = json['item'];
+    final List<Map<String, dynamic>> items;
+    if (rawItem is List<dynamic>) {
+      items = rawItem
+          .whereType<Map<dynamic, dynamic>>()
           .map((e) => Map<String, dynamic>.from(e))
           .toList();
     } else {
-      normalized['item'] = const <Map<String, dynamic>>[];
+      items = const <Map<String, dynamic>>[];
     }
 
-    return FeedResponseDto(
-      item: (normalized['item'] as List).cast<Map<String, dynamic>>(),
-    );
+    return FeedResponseDto(item: items);
   }
 }

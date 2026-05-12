@@ -6,9 +6,9 @@ class PopularResponseDto {
   const PopularResponseDto({this.list = const []});
 
   factory PopularResponseDto.fromJson(Map<String, dynamic> json) {
-    final listJson = (json['list'] as List?) ?? const [];
+    final listJson = (json['list'] as List<dynamic>?) ?? const <dynamic>[];
     final videos = listJson
-        .whereType<Map>()
+        .whereType<Map<dynamic, dynamic>>()
         .map((e) => VideoModel.fromJson(Map<String, dynamic>.from(e)))
         .toList();
     return PopularResponseDto(list: videos);

@@ -1,7 +1,10 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/features/live/domain/entities/live_entities.dart';
+import 'package:culcul/features/live/data/dtos/live_anchor_info_model.dart';
+import 'package:culcul/features/live/data/dtos/live_gold_rank_model.dart';
+import 'package:culcul/features/live/data/dtos/live_guard_list_model.dart';
+import 'package:culcul/features/live/data/dtos/live_room_detail_model.dart';
 import 'package:culcul/core/contracts/user_card_contract.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/users/app_avatar.dart';

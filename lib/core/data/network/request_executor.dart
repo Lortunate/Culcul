@@ -1,4 +1,5 @@
-import 'package:culcul/core/core.dart';
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
 
 class RequestExecutor {
@@ -12,9 +13,9 @@ class RequestExecutor {
     }
   }
 
-  Future<Result<T, AppError>> runApi<T>(
-    Future<ApiResponse<dynamic>> Function() action, {
-    required T Function(dynamic data) transform,
+  Future<Result<T, AppError>> runApi<T, D>(
+    Future<ApiResponse<D>> Function() action, {
+    required T Function(D data) transform,
   }) async {
     final result = await run(action);
     return result.when(
@@ -36,8 +37,8 @@ class RequestExecutor {
     );
   }
 
-  Future<Result<void, AppError>> runUnit(
-    Future<ApiResponse<dynamic>> Function() action,
+  Future<Result<void, AppError>> runUnit<D>(
+    Future<ApiResponse<D>> Function() action,
   ) async {
     final result = await run(action);
     return result.when(

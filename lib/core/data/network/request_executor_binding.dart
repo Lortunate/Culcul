@@ -1,4 +1,6 @@
-import 'package:culcul/core/core.dart';
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/data/network/request_executor.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
 
 mixin RequestExecutorBinding {
@@ -11,7 +13,7 @@ mixin RequestExecutorBinding {
   Future<Result<T, AppError>> requestApiResult<T>(
     Future<ApiResponse<T>> Function() apiCall,
   ) async {
-    return requestExecutor.runApi<T>(apiCall, transform: (data) => data as T);
+    return requestExecutor.runApi<T, T>(apiCall, transform: (data) => data);
   }
 
   Future<Result<void, AppError>> requestVoidResult(

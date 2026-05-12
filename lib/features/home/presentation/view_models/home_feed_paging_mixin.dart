@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/data/network/interceptors/cache_interceptor.dart';
-import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -33,10 +33,10 @@ mixin HomeFeedPagingMixin on OffsetPagedAsyncNotifier<VideoModel> {
         .read(cacheStoreProvider)
         .exists(CacheInterceptor.buildCacheKey(cachePath, cacheQuery));
 
-    FeatureFlowPerfLogger.log(
-      chain: perfChain,
-      stage: 'initial_data',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      '$perfChain initial_data',
+      <String, Object?>{
         'items': items.length,
         'cache_present': hasCachedValue,
         'ms': stopwatch.elapsedMilliseconds,
@@ -86,10 +86,10 @@ mixin HomeFeedPagingMixin on OffsetPagedAsyncNotifier<VideoModel> {
   }) async {
     final stopwatch = Stopwatch()..start();
     final items = await loadPage(1, forceRefresh: true);
-    FeatureFlowPerfLogger.log(
-      chain: perfChain,
-      stage: 'silent_refresh_fetch',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      '$perfChain silent_refresh_fetch',
+      <String, Object?>{
         'items': items.length,
         'ms': stopwatch.elapsedMilliseconds,
       },

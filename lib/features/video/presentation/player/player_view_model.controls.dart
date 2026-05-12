@@ -85,9 +85,10 @@ mixin _PlayerControllerControlsMixin on _$PlayerController {
       return;
     }
     _controlsInteractionLogged = true;
-    VideoPerfLogger.log(
-      VideoPerfEvent.controlsFirstInteraction,
-      fields: <String, Object?>{'session': sessionId, 'action': action},
+    DevLogger.log(
+      'video',
+      'controls_first_interaction',
+      <String, Object?>{'session': sessionId, 'action': action},
     );
   }
 }

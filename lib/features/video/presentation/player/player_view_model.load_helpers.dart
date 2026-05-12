@@ -20,9 +20,10 @@ mixin _PlayerControllerLoadHelpersMixin
     }
     final requestTiming = _loadRequestTimings.remove(requestToken);
     final elapsedMs = requestTiming?.elapsedMilliseconds;
-    VideoPerfLogger.log(
-      VideoPerfEvent.firstFrameReady,
-      fields: <String, Object?>{
+    DevLogger.log(
+      'video',
+      'first_frame_ready',
+      <String, Object?>{
         'session': sessionId,
         'token': requestToken,
         'elapsedMs': elapsedMs,

@@ -1,7 +1,7 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/features/live/data/dtos/live_dtos.dart';
-import 'package:culcul/features/live/data/dtos/live_history_danmaku_model.dart';
+import 'package:culcul/features/live/domain/entities/live_history_danmaku_model.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 

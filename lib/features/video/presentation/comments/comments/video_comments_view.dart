@@ -152,7 +152,7 @@ class VideoCommentsView extends HookConsumerWidget {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, dynamic notifier) {
+  Widget _buildEmptyState(BuildContext context, VideoCommentsController notifier) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);

@@ -1,0 +1,36 @@
+targets:
+  $default:
+    builders:
+      freezed:
+        generate_for:
+          include:
+            - lib/**
+          exclude:
+            - lib/protos/**
+      json_serializable:
+        generate_for:
+          include:
+            - lib/**
+          exclude:
+            - lib/protos/**
+      riverpod_generator:
+        generate_for:
+          include:
+            - lib/**
+      retrofit_generator:
+        generate_for:
+          include:
+            - lib/**
+      go_router_builder:
+        generate_for:
+          include:
+            - lib/app/router/**
+            - lib/features/**/route_entry.dart
+      drift_dev:
+        generate_for:
+          include:
+            - lib/features/notification/data/local/**
+      slang_build_runner:
+        generate_for:
+          include:
+            - lib/i18n/**

@@ -1,4 +1,4 @@
-import 'package:culcul/core/perf/list_perf_logger.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'search_result.freezed.dart';
@@ -165,9 +165,10 @@ class _SearchResultConverter implements JsonConverter<List<SearchResultItem>, dy
     }
 
     if (droppedUnknownTypeCount > 0) {
-      ListPerfLogger.log(
-        ListPerfEvent.dropUnknownSearchType,
-        fields: <String, Object?>{
+      DevLogger.log(
+        'list',
+        'drop_unknown_search_type',
+        <String, Object?>{
           'source': 'search.result_converter',
           'count': droppedUnknownTypeCount,
         },

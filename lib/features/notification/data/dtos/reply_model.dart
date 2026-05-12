@@ -15,7 +15,7 @@ sealed class ReplyResponse with _$ReplyResponse {
       _$ReplyResponseFromJson(json);
 }
 
-Object? _readSubjectId(Map json, String key) {
+Object? _readSubjectId(Map<dynamic, dynamic> json, String key) {
   return json['subject_id'] ?? json['item_id'] ?? 0;
 }
 

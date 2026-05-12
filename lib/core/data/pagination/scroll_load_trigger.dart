@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
-import 'package:culcul/core/perf/list_perf_logger.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/widgets.dart';
 
@@ -103,9 +103,10 @@ class ScrollLoadTrigger {
 
     final sessionId = '${DateTime.now().millisecondsSinceEpoch}_${++_sessionSeed}';
     final beforeItemCount = itemCount?.call();
-    ListPerfLogger.log(
-      ListPerfEvent.loadTrigger,
-      fields: <String, Object?>{
+    DevLogger.log(
+      'list',
+      'load_trigger',
+      <String, Object?>{
         'source': source,
         'session_id': sessionId,
         'count': beforeItemCount,
@@ -123,9 +124,10 @@ class ScrollLoadTrigger {
         ? null
         : afterItemCount - beforeItemCount;
 
-    ListPerfLogger.log(
-      ListPerfEvent.loadComplete,
-      fields: <String, Object?>{
+    DevLogger.log(
+      'list',
+      'load_complete',
+      <String, Object?>{
         'source': source,
         'session_id': sessionId,
         'result': result.name,

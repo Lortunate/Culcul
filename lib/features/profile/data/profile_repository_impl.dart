@@ -1,6 +1,7 @@
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
+import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/data/network/request_cancel_token.dart';
@@ -101,7 +102,7 @@ class ProfileRepositoryImpl
         profile: NetworkConcurrencyProfile.enrich,
         scope: 'profile_get_profile_model',
       );
-      final infoResponse = responses['info'] as dynamic;
+      final infoResponse = responses['info'] as ApiResponse<dynamic>;
 
       if (infoResponse.code != 0) {
         throw ServerException(infoResponse.message, code: infoResponse.code);

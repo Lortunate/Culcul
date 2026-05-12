@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:culcul/features/live/domain/entities/live_entities.dart';
+import 'package:culcul/features/live/data/dtos/live_danmu_info_model.dart';
+import 'package:culcul/features/live/domain/entities/live_history_danmaku_model.dart';
 import 'package:culcul/features/live/presentation/view_models/live_danmaku_event_parser.dart';
 import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/io.dart';
@@ -132,7 +133,7 @@ class LiveSocketService {
               // Intentionally synchronous: live danmaku messages arrive at
               // high throughput. Using compute() per-message would add
               // isolate spawn overhead exceeding the decode cost itself.
-              final json = jsonDecode(jsonStr);
+              final json = jsonDecode(jsonStr) as Map<String, dynamic>;
               _parseNotification(json);
             } catch (e) {
               debugPrint('Failed to parse notification JSON: $e');

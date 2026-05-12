@@ -1,36 +1,17 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-@immutable
-class AudioPlaybackSnapshot {
-  final bool playing;
-  final AudioProcessingState processingState;
-  final Duration position;
-  final Duration bufferedPosition;
-  final double speed;
+part 'audio_playback_state_gate.freezed.dart';
 
-  const AudioPlaybackSnapshot({
-    required this.playing,
-    required this.processingState,
-    required this.position,
-    required this.bufferedPosition,
-    required this.speed,
-  });
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is AudioPlaybackSnapshot &&
-        other.playing == playing &&
-        other.processingState == processingState &&
-        other.position == position &&
-        other.bufferedPosition == bufferedPosition &&
-        other.speed == speed;
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(playing, processingState, position, bufferedPosition, speed);
+@freezed
+sealed class AudioPlaybackSnapshot with _$AudioPlaybackSnapshot {
+  const factory AudioPlaybackSnapshot({
+    required bool playing,
+    required AudioProcessingState processingState,
+    required Duration position,
+    required Duration bufferedPosition,
+    required double speed,
+  }) = _AudioPlaybackSnapshot;
 }
 
 class AudioPlaybackStateGate {

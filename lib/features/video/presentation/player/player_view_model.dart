@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:culcul/core/perf/video_perf_logger.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/services/audio_handler.dart';
 import 'package:culcul/features/video/presentation/player/player_session_coordinator.dart';
 import 'package:flutter/foundation.dart';
@@ -47,7 +47,7 @@ class PlayerController extends _$PlayerController
 
   @override
   Timer? _controlsTimer;
-  final List<StreamSubscription> _subscriptions = [];
+  final List<StreamSubscription<dynamic>> _subscriptions = [];
   @override
   final PlayerSessionCoordinator _sessionCoordinator = PlayerSessionCoordinator();
   @override

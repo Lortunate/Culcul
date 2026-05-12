@@ -128,7 +128,7 @@ class PrivateMessageContent {
         return null;
       }
       return decoded
-          .whereType<Map>()
+          .whereType<Map<String, dynamic>>()
           .map((item) => item['text']?.toString() ?? '')
           .where((text) => text.isNotEmpty)
           .toList();

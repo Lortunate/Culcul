@@ -1,5 +1,8 @@
 import 'package:culcul/features/home/data/home_api.dart';
 import 'package:culcul/features/home/data/weekly_api.dart';
+import 'package:culcul/features/home/data/dtos/feed_response_dto.dart';
+import 'package:culcul/features/home/data/dtos/popular_response_dto.dart';
+import 'package:culcul/features/home/data/dtos/weekly_model_dto.dart';
 import 'package:culcul/features/home/domain/repositories/home_repository.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
@@ -43,7 +46,7 @@ class HomeFeedDataSource implements HomeRepository {
     required int page,
     bool forceRefresh = false,
   }) {
-    return _requestExecutor.runApi<List<VideoModel>>(
+    return _requestExecutor.runApi<List<VideoModel>, FeedResponseDto>(
       () async => _requireHomeApi().fetchRecommend(
         freshIdx: page,
         freshIdx1h: page,
@@ -58,7 +61,7 @@ class HomeFeedDataSource implements HomeRepository {
     required int page,
     bool forceRefresh = false,
   }) {
-    return _requestExecutor.runApi<List<VideoModel>>(
+    return _requestExecutor.runApi<List<VideoModel>, PopularResponseDto>(
       () async => _requireHomeApi().fetchPopular(
         pn: page,
         ps: _popularPageSize,
@@ -70,7 +73,7 @@ class HomeFeedDataSource implements HomeRepository {
 
   @override
   Future<Result<List<VideoModel>, AppError>> fetchWeeklyList() {
-    return _requestExecutor.runApi<List<VideoModel>>(
+    return _requestExecutor.runApi<List<VideoModel>, WeeklyModelDto>(
       () async => _requireWeeklyApi().getWeeklyList(),
       transform: (data) => data.list,
     );

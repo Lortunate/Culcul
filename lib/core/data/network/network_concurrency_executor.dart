@@ -1,6 +1,6 @@
-import 'package:culcul/core/core.dart';
-import 'package:culcul/core/perf/network_perf_logger.dart';
-import 'package:pool/pool.dart';
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
+import 'package:culcul/core/data/network/semaphore.dart';
 
 typedef AsyncMapper<T, R> = Future<R> Function(T item);
 typedef AsyncTask<T> = Future<T> Function();
@@ -28,79 +28,24 @@ class NetworkConcurrencyExecutor {
     required String scope,
     required AsyncMapper<T, R> mapper,
   }) async {
-    if (items.isEmpty) {
-      return <R>[];
-    }
+    if (items.isEmpty) return <R>[];
 
-    final maxConcurrency = profile.maxConcurrency;
-    final pool = Pool(maxConcurrency);
-    final groupWatch = Stopwatch()..start();
+    final semaphore = Semaphore(profile.maxConcurrency);
     final results = List<R?>.filled(items.length, null);
-    final tasks = <Future<void>>[];
+    final futures = <Future<void>>[];
 
-    for (var index = 0; index < items.length; index++) {
-      tasks.add(() async {
-        final queuedAtUs = groupWatch.elapsedMicroseconds;
-        final resource = await pool.request();
-        final waitUs = groupWatch.elapsedMicroseconds - queuedAtUs;
-        if (waitUs > 0) {
-          NetworkPerfLogger.log(
-            NetworkPerfEvent.queueWait,
-            fields: <String, Object?>{
-              'scope': scope,
-              'profile': profile.name,
-              'index': index,
-              'wait_us': waitUs,
-            },
-          );
-        }
-
-        final taskWatch = Stopwatch()..start();
+    for (var i = 0; i < items.length; i++) {
+      futures.add(() async {
+        await semaphore.acquire();
         try {
-          results[index] = await mapper(items[index]);
-          NetworkPerfLogger.log(
-            NetworkPerfEvent.taskSuccess,
-            fields: <String, Object?>{
-              'scope': scope,
-              'profile': profile.name,
-              'index': index,
-              'elapsed_ms': taskWatch.elapsedMilliseconds,
-            },
-          );
-        } catch (error) {
-          NetworkPerfLogger.log(
-            NetworkPerfEvent.taskFailure,
-            fields: <String, Object?>{
-              'scope': scope,
-              'profile': profile.name,
-              'index': index,
-              'elapsed_ms': taskWatch.elapsedMilliseconds,
-              'error': error.toString(),
-            },
-          );
-          rethrow;
+          results[i] = await mapper(items[i]);
         } finally {
-          resource.release();
+          semaphore.release();
         }
       }());
     }
 
-    try {
-      await Future.wait(tasks, eagerError: true);
-    } finally {
-      await pool.close();
-      NetworkPerfLogger.log(
-        NetworkPerfEvent.groupComplete,
-        fields: <String, Object?>{
-          'scope': scope,
-          'profile': profile.name,
-          'elapsed_ms': groupWatch.elapsedMilliseconds,
-          'size': items.length,
-          'concurrency': maxConcurrency,
-        },
-      );
-    }
-
+    await Future.wait(futures, eagerError: true);
     return results.cast<R>();
   }
 
@@ -109,95 +54,29 @@ class NetworkConcurrencyExecutor {
     required NetworkConcurrencyProfile profile,
     required String scope,
   }) async {
-    if (tasks.isEmpty) {
-      return const <String, dynamic>{};
-    }
+    if (tasks.isEmpty) return const <String, dynamic>{};
 
-    final maxConcurrency = profile.maxConcurrency;
-    final pool = Pool(maxConcurrency);
-    final groupWatch = Stopwatch()..start();
+    final semaphore = Semaphore(profile.maxConcurrency);
     final results = <String, dynamic>{};
     final futures = <Future<void>>[];
 
     for (final task in tasks) {
       futures.add(() async {
-        final queuedAtUs = groupWatch.elapsedMicroseconds;
-        final resource = await pool.request();
-        final waitUs = groupWatch.elapsedMicroseconds - queuedAtUs;
-        if (waitUs > 0) {
-          NetworkPerfLogger.log(
-            NetworkPerfEvent.queueWait,
-            fields: <String, Object?>{
-              'scope': scope,
-              'profile': profile.name,
-              'task': task.label,
-              'wait_us': waitUs,
-            },
-          );
-        }
-
-        final taskWatch = Stopwatch()..start();
+        await semaphore.acquire();
         try {
           results[task.label] = await task.task();
-          NetworkPerfLogger.log(
-            NetworkPerfEvent.taskSuccess,
-            fields: <String, Object?>{
-              'scope': scope,
-              'profile': profile.name,
-              'task': task.label,
-              'critical': task.critical,
-              'elapsed_ms': taskWatch.elapsedMilliseconds,
-            },
-          );
         } catch (error) {
-          final appError = error is AppError ? error : AppError.fromObject(error);
-          if (task.critical) {
-            NetworkPerfLogger.log(
-              NetworkPerfEvent.taskFailure,
-              fields: <String, Object?>{
-                'scope': scope,
-                'profile': profile.name,
-                'task': task.label,
-                'critical': true,
-                'elapsed_ms': taskWatch.elapsedMilliseconds,
-                'error': appError.message,
-              },
-            );
-            throw appError;
-          }
-
+          final appError =
+              error is AppError ? error : AppError.fromObject(error);
+          if (task.critical) throw appError;
           results[task.label] = task.fallback?.call(appError);
-          NetworkPerfLogger.log(
-            NetworkPerfEvent.taskFallback,
-            fields: <String, Object?>{
-              'scope': scope,
-              'profile': profile.name,
-              'task': task.label,
-              'elapsed_ms': taskWatch.elapsedMilliseconds,
-              'error': appError.message,
-            },
-          );
         } finally {
-          resource.release();
+          semaphore.release();
         }
       }());
     }
 
-    try {
-      await Future.wait(futures, eagerError: true);
-      return results;
-    } finally {
-      await pool.close();
-      NetworkPerfLogger.log(
-        NetworkPerfEvent.groupComplete,
-        fields: <String, Object?>{
-          'scope': scope,
-          'profile': profile.name,
-          'elapsed_ms': groupWatch.elapsedMilliseconds,
-          'size': tasks.length,
-          'concurrency': maxConcurrency,
-        },
-      );
-    }
+    await Future.wait(futures, eagerError: true);
+    return results;
   }
 }

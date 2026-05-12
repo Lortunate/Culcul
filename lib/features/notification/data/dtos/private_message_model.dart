@@ -95,7 +95,7 @@ sealed class PrivateMessageDetail with _$PrivateMessageDetail {
         final innerContentStr = contentMap?['content'] as String?;
         if (innerContentStr != null) {
           // Intentionally synchronous: system tip content is small.
-          final List<dynamic> list = jsonDecode(innerContentStr);
+          final list = jsonDecode(innerContentStr) as List<dynamic>;
           return list.map((e) => e as Map<String, dynamic>).toList();
         }
       } catch (e) {

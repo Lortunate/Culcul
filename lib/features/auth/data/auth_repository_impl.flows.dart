@@ -25,11 +25,8 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin
       final hash = keyData['hash'] as String;
       final pubKeyPem = keyData['key'] as String;
 
-      final parser = RSAKeyParser();
-      final publicKey = parser.parse(pubKeyPem) as RSAPublicKey;
-      final encrypter = Encrypter(RSA(publicKey: publicKey));
-      final encrypted = encrypter.encrypt(hash + password);
-      final encryptedPassword = encrypted.base64;
+      final publicKey = _parsePublicKeyFromPem(pubKeyPem);
+      final encryptedPassword = _rsaEncrypt(publicKey, hash + password);
 
       final loginResponse = await _api.loginWithPassword(
         username,
@@ -48,8 +45,8 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin
           return _loadCurrentUser();
         }
         throw AuthException(
-          data?['message'] ?? loginResponse.message,
-          code: data?['status'],
+          (data?['message'] as String?) ?? loginResponse.message,
+          code: data?['status'] as int?,
         );
       }
       throw AuthException(loginResponse.message, code: loginResponse.code);
@@ -90,7 +87,7 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin
     return _executor.runApi(
       () async {
         final response = await _api.getCaptcha();
-        return ApiResponse<Map<String, dynamic>?>(
+        return ApiResponse<Map<String, dynamic>>(
           code: response.code,
           message: response.message,
           data: response.data as Map<String, dynamic>?,
@@ -162,7 +159,7 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin
     return _executor.runApi(
       () async {
         final response = await _api.getQrCode();
-        return ApiResponse<Map<String, dynamic>?>(
+        return ApiResponse<Map<String, dynamic>>(
           code: response.code,
           message: response.message,
           data: response.data as Map<String, dynamic>?,

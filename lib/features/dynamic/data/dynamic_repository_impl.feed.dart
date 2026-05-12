@@ -60,10 +60,10 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
         headers: {'Referer': uri.toString(), 'Origin': 'https://www.bilibili.com'},
       ),
     );
-    FeatureFlowPerfLogger.log(
-      chain: 'dynamic.article_detail',
-      stage: 'request',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'dynamic.article_detail request',
+      <String, Object?>{
         'source': 'read',
         'articleId': articleId,
         'ms': requestStopwatch.elapsedMilliseconds,
@@ -81,10 +81,10 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
       throw const UnknownException('Invalid article payload');
     }
     final detail = ArticleDetailParser.fromArticleView(sourceUri: uri, data: data);
-    FeatureFlowPerfLogger.log(
-      chain: 'dynamic.article_detail',
-      stage: 'parse',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'dynamic.article_detail parse',
+      <String, Object?>{
         'source': 'read',
         'articleId': articleId,
         'ms': parseStopwatch.elapsedMilliseconds,
@@ -106,10 +106,10 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
         },
       ),
     );
-    FeatureFlowPerfLogger.log(
-      chain: 'dynamic.article_detail',
-      stage: 'request',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'dynamic.article_detail request',
+      <String, Object?>{
         'source': 'opus',
         'uri': uri.path,
         'ms': requestStopwatch.elapsedMilliseconds,
@@ -123,10 +123,10 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
       throw const UnknownException('Failed to parse article page');
     }
     final detail = ArticleDetailParser.fromOpusState(sourceUri: uri, state: initialState);
-    FeatureFlowPerfLogger.log(
-      chain: 'dynamic.article_detail',
-      stage: 'parse',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'dynamic.article_detail parse',
+      <String, Object?>{
         'source': 'opus',
         'uri': uri.path,
         'ms': parseStopwatch.elapsedMilliseconds,

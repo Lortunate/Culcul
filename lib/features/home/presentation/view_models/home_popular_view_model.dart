@@ -3,7 +3,7 @@ import 'package:culcul/features/home/presentation/view_models/home_feed_paging_m
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
-import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -31,10 +31,10 @@ class HomePopular extends _$HomePopular
         .read(homeFeedDataSourceProvider)
         .fetchPopularPage(page: page, forceRefresh: forceRefresh);
     if (forceRefresh) {
-      FeatureFlowPerfLogger.log(
-        chain: 'home.popular_feed',
-        stage: 'silent_refresh_result',
-        fields: <String, Object?>{'success': result.isSuccess},
+      DevLogger.log(
+        'feature',
+        'home.popular_feed silent_refresh_result',
+        <String, Object?>{'success': result.isSuccess},
       );
     }
     return result.when(

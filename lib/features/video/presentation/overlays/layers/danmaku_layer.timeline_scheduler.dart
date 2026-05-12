@@ -2,7 +2,7 @@ part of 'danmaku_layer.dart';
 
 void useDanmakuPlaybackScheduler({
   required WidgetRef ref,
-  required dynamic player,
+  required Player player,
   required int currentCid,
   required int? aid,
   required ObjectRef<DanmakuController?> controllerRef,

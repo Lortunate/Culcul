@@ -44,7 +44,7 @@ class InFlightDedupInterceptor extends Interceptor {
   }
 
   @override
-  void onResponse(Response response, ResponseInterceptorHandler handler) {
+  void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) {
     _completePendingSuccess(response.requestOptions, response);
     handler.next(response);
   }
@@ -93,7 +93,7 @@ class InFlightDedupInterceptor extends Interceptor {
     return sb.toString();
   }
 
-  void _completePendingSuccess(RequestOptions requestOptions, Response response) {
+  void _completePendingSuccess(RequestOptions requestOptions, Response<dynamic> response) {
     final dedupKey = requestOptions.extra[_dedupKeyExtra];
     if (dedupKey is! String) {
       return;

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/data/network/interceptors/cache_interceptor.dart';
 import 'package:culcul/core/data/network/request_cancel_token.dart';
-import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
@@ -38,10 +38,10 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
       'order': order,
     });
     final hasCachedValue = await ref.read(cacheStoreProvider).exists(cacheKey);
-    FeatureFlowPerfLogger.log(
-      chain: 'profile.space_videos',
-      stage: 'initial_data',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'profile.space_videos initial_data',
+      <String, Object?>{
         'mid': mid,
         'order': order,
         'items': items.length,
@@ -108,10 +108,10 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
 
     final nextItems = result.dataOrNull;
     if (nextItems == null || _sameItems(previousItems, nextItems)) {
-      FeatureFlowPerfLogger.log(
-        chain: 'profile.space_videos',
-        stage: 'silent_refresh_skip',
-        fields: <String, Object?>{
+      DevLogger.log(
+        'feature',
+        'profile.space_videos silent_refresh_skip',
+        <String, Object?>{
           'mid': _mid,
           'order': _order,
           'items': nextItems?.length,
@@ -120,10 +120,10 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
       );
       return;
     }
-    FeatureFlowPerfLogger.log(
-      chain: 'profile.space_videos',
-      stage: 'silent_refresh_apply',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'profile.space_videos silent_refresh_apply',
+      <String, Object?>{
         'mid': _mid,
         'order': _order,
         'items': nextItems.length,

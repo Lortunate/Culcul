@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/errors/app_error.dart';
@@ -15,8 +16,7 @@ import 'package:culcul/features/auth/domain/entities/auth_captcha_challenge.dart
 import 'package:culcul/features/auth/domain/entities/auth_qr_code.dart';
 import 'package:culcul/features/auth/domain/entities/auth_qr_poll_result.dart';
 import 'package:culcul/features/auth/domain/repositories/auth_repository.dart' as domain;
-import 'package:encrypt/encrypt.dart';
-import 'package:pointycastle/asymmetric/api.dart';
+import 'package:pointycastle/export.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

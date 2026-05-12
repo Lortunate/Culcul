@@ -16,9 +16,9 @@ class TokenInterceptor extends QueuedInterceptor {
   TokenInterceptor(this._ref, [this._csrfInterceptor]);
 
   @override
-  Future<void> onResponse(Response response, ResponseInterceptorHandler handler) async {
-    if (response.data is Map) {
-      final data = response.data as Map;
+  Future<void> onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) async {
+    if (response.data is Map<String, dynamic>) {
+      final data = response.data as Map<String, dynamic>;
       final code = data['code'];
 
       if (code == -101) {

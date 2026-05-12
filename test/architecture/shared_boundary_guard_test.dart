@@ -28,12 +28,10 @@ void main() {
     );
   });
 
-  test('Core barrel exports canonical modules', () async {
-    final coreEntry = File('lib/core/core.dart');
+  test('Core canonical modules exist', () async {
     final coreAppError = File('lib/core/errors/app_error.dart');
     final coreResult = File('lib/core/result/result.dart');
 
-    expect(coreEntry.existsSync(), isTrue, reason: 'Missing lib/core/core.dart');
     expect(
       coreAppError.existsSync(),
       isTrue,
@@ -44,9 +42,5 @@ void main() {
       isTrue,
       reason: 'Missing lib/core/result/result.dart',
     );
-
-    final coreEntryContent = await coreEntry.readAsString();
-    expect(coreEntryContent, contains("export 'errors/app_error.dart';"));
-    expect(coreEntryContent, contains("export 'result/result.dart';"));
   });
 }

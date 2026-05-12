@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/data/network/request_cancel_token.dart';
-import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/features/search/feature_scope.dart';
@@ -90,10 +90,10 @@ class DefaultSearchController extends AsyncNotifier<SearchDefaultHint?> {
     final hasCachedValue = await _hasCachedValue(ApiConstants.searchDefaultUrl);
     final result = await ref.watch(searchRepositoryProvider).getDefaultSearch();
     final value = result.dataOrNull;
-    FeatureFlowPerfLogger.log(
-      chain: 'search.default_hint',
-      stage: 'initial_data',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'search.default_hint initial_data',
+      <String, Object?>{
         'cache_present': hasCachedValue,
         'has_value': value != null,
         'ms': stopwatch.elapsedMilliseconds,
@@ -121,20 +121,20 @@ class DefaultSearchController extends AsyncNotifier<SearchDefaultHint?> {
 
     final next = result.dataOrNull;
     if (next == null || next.text == previous.text) {
-      FeatureFlowPerfLogger.log(
-        chain: 'search.default_hint',
-        stage: 'silent_refresh_skip',
-        fields: <String, Object?>{
+      DevLogger.log(
+        'feature',
+        'search.default_hint silent_refresh_skip',
+        <String, Object?>{
           'has_value': next != null,
           'ms': stopwatch.elapsedMilliseconds,
         },
       );
       return;
     }
-    FeatureFlowPerfLogger.log(
-      chain: 'search.default_hint',
-      stage: 'silent_refresh_apply',
-      fields: <String, Object?>{'ms': stopwatch.elapsedMilliseconds},
+    DevLogger.log(
+      'feature',
+      'search.default_hint silent_refresh_apply',
+      <String, Object?>{'ms': stopwatch.elapsedMilliseconds},
     );
     state = AsyncData(next);
   }
@@ -151,10 +151,10 @@ class TrendingRankingController extends AsyncNotifier<List<SearchTrendingKeyword
     final hasCachedValue = await _hasCachedValue(ApiConstants.searchTrendingRanking);
     final result = await ref.watch(searchRepositoryProvider).getTrendingRanking();
     final value = result.when(success: (data) => data, failure: (error) => throw error);
-    FeatureFlowPerfLogger.log(
-      chain: 'search.hot_ranking',
-      stage: 'initial_data',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'search.hot_ranking initial_data',
+      <String, Object?>{
         'cache_present': hasCachedValue,
         'items': value.length,
         'ms': stopwatch.elapsedMilliseconds,
@@ -182,20 +182,20 @@ class TrendingRankingController extends AsyncNotifier<List<SearchTrendingKeyword
 
     final next = result.when(success: (data) => data, failure: (_) => previous);
     if (_sameTrendingItems(previous, next)) {
-      FeatureFlowPerfLogger.log(
-        chain: 'search.hot_ranking',
-        stage: 'silent_refresh_skip',
-        fields: <String, Object?>{
+      DevLogger.log(
+        'feature',
+        'search.hot_ranking silent_refresh_skip',
+        <String, Object?>{
           'items': next.length,
           'ms': stopwatch.elapsedMilliseconds,
         },
       );
       return;
     }
-    FeatureFlowPerfLogger.log(
-      chain: 'search.hot_ranking',
-      stage: 'silent_refresh_apply',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'search.hot_ranking silent_refresh_apply',
+      <String, Object?>{
         'items': next.length,
         'ms': stopwatch.elapsedMilliseconds,
       },

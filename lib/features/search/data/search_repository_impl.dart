@@ -53,7 +53,7 @@ class SearchRepositoryImpl
     try {
       // Intentionally synchronous: suggestion responses are small (<1KB)
       // and this runs inside result.map() which requires a sync callback.
-      final Map<String, dynamic> json = jsonDecode(responseStr);
+      final json = jsonDecode(responseStr) as Map<String, dynamic>;
       final response = SearchSuggestionResponse.fromJson(json);
       return response.result?.tags ?? [];
     } catch (e) {

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/data/network/interceptors/cache_interceptor.dart';
 import 'package:culcul/core/data/network/request_cancel_token.dart';
-import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/features/dynamic/feature_scope.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_entities.dart';
@@ -41,10 +41,10 @@ class UserDynamicNotifier extends _$UserDynamicNotifier
           'itemOpusStyle,listOnlyfans,opusBigCover,onlyfansVote,decorationCard,onlyfansAssetsV2,forwardListHidden,ugcDelete',
     });
     final hasCachedValue = await ref.read(cacheStoreProvider).exists(cacheKey);
-    FeatureFlowPerfLogger.log(
-      chain: 'dynamic.user_space_feed',
-      stage: 'initial_data',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'dynamic.user_space_feed initial_data',
+      <String, Object?>{
         'hostMid': hostMid,
         'items': items.length,
         'cache_present': hasCachedValue,
@@ -114,10 +114,10 @@ class UserDynamicNotifier extends _$UserDynamicNotifier
 
     final nextFeed = result.dataOrNull;
     if (nextFeed == null || _sameItems(previousItems, nextFeed.items)) {
-      FeatureFlowPerfLogger.log(
-        chain: 'dynamic.user_space_feed',
-        stage: 'silent_refresh_skip',
-        fields: <String, Object?>{
+      DevLogger.log(
+        'feature',
+        'dynamic.user_space_feed silent_refresh_skip',
+        <String, Object?>{
           'hostMid': _hostMid,
           'items': nextFeed?.items.length,
           'ms': stopwatch.elapsedMilliseconds,
@@ -125,10 +125,10 @@ class UserDynamicNotifier extends _$UserDynamicNotifier
       );
       return;
     }
-    FeatureFlowPerfLogger.log(
-      chain: 'dynamic.user_space_feed',
-      stage: 'silent_refresh_apply',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'dynamic.user_space_feed silent_refresh_apply',
+      <String, Object?>{
         'hostMid': _hostMid,
         'items': nextFeed.items.length,
         'ms': stopwatch.elapsedMilliseconds,

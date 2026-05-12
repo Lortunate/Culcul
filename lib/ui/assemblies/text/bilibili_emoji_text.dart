@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class BilibiliEmojiText extends StatelessWidget {
   static final _emojiRegex = RegExp(r'(\[.*?\])');
   final String text;
-  final Map emojiMap;
+  final Map<String, dynamic> emojiMap;
   final TextStyle? style;
   final double emojiSize;
   final bool selectable;
@@ -42,18 +42,12 @@ class BilibiliEmojiText extends StatelessWidget {
   }
 
   static String? _resolveEmojiUrl(dynamic emojiData) {
-    if (emojiData is String) {
-      return emojiData;
+    if (emojiData is String) return emojiData;
+    if (emojiData == null) return null;
+    if (emojiData is Map<String, dynamic>) {
+      return emojiData['url'] as String?;
     }
-    if (emojiData == null) {
-      return null;
-    }
-
-    try {
-      return (emojiData as dynamic).url as String?;
-    } catch (_) {
-      return null;
-    }
+    return null;
   }
 
   static InlineSpan _buildEmojiSpan({
@@ -82,7 +76,7 @@ class BilibiliEmojiText extends StatelessWidget {
 
   static TextSpan buildEmojiTextSpan({
     required String text,
-    required Map emojiMap,
+    required Map<String, dynamic> emojiMap,
     required TextStyle style,
     double emojiSize = 20.0,
     ValueChanged<String>? onEmojiTap,

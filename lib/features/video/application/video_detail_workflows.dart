@@ -2,7 +2,7 @@ import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/request_cancel_token.dart';
 import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
-import 'package:culcul/core/perf/video_perf_logger.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/video/domain/entities/video_entities.dart';
 import 'package:culcul/features/video/domain/repositories/video_repository.dart';
@@ -62,9 +62,10 @@ class LoadVideoDetailWorkflow {
     final stopwatch = Stopwatch()..start();
     return (await _repository.fetchVideoView(bvid, cancelToken: cancelToken)).when(
       success: (detail) async {
-        VideoPerfLogger.log(
-          VideoPerfEvent.criticalLoaded,
-          fields: <String, Object?>{'bvid': bvid, 'ms': stopwatch.elapsedMilliseconds},
+        DevLogger.log(
+          'video',
+          'critical_loaded',
+          <String, Object?>{'bvid': bvid, 'ms': stopwatch.elapsedMilliseconds},
         );
         final cid = detail.pages.isNotEmpty ? detail.pages.first.cid : 0;
 
@@ -79,9 +80,10 @@ class LoadVideoDetailWorkflow {
             cancelToken: cancelToken,
           );
           if (loadedPlayUrl.dataOrNull != null) {
-            VideoPerfLogger.log(
-              VideoPerfEvent.playurlLoaded,
-              fields: <String, Object?>{
+            DevLogger.log(
+              'video',
+              'playurl_loaded',
+              <String, Object?>{
                 'bvid': bvid,
                 'cid': cid,
                 'ms': playUrlStopwatch.elapsedMilliseconds,

@@ -15,9 +15,9 @@ void main() {
   });
 
   test('runApi returns ServerAppError when api response is unsuccessful', () async {
-    final result = await executor.runApi<String>(
-      () async => const ApiResponse(code: -1, message: 'failed', data: 'ignored'),
-      transform: (data) => data as String,
+    final result = await executor.runApi<String, String>(
+      () async => const ApiResponse<String>(code: -1, message: 'failed', data: 'ignored'),
+      transform: (data) => data,
     );
 
     expect(result, isA<Failure<String, AppError>>());
@@ -26,8 +26,8 @@ void main() {
   });
 
   test('runApi returns DataAppError when transform throws', () async {
-    final result = await executor.runApi<int>(
-      () async => const ApiResponse(code: 0, message: 'ok', data: 'bad'),
+    final result = await executor.runApi<int, String>(
+      () async => const ApiResponse<String>(code: 0, message: 'ok', data: 'bad'),
       transform: (data) => (data as List<Object?>).length,
     );
 

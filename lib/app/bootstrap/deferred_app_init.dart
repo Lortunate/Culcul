@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:culcul/core/perf/startup_perf_logger.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:flutter/widgets.dart';
 import 'package:media_kit/media_kit.dart';
 
@@ -54,9 +54,10 @@ class DeferredAppInitController {
   }
 
   Future<void> _runWarmups() async {
-    StartupPerfLogger.log(
-      StartupPerfEvent.deferredWarmupStart,
-      fields: <String, Object?>{'task_count': _tasks.length},
+    DevLogger.log(
+      'startup',
+      'deferred_warmup_start',
+      <String, Object?>{'task_count': _tasks.length},
     );
     final stopwatch = Stopwatch()..start();
     await Future.wait(
@@ -67,9 +68,10 @@ class DeferredAppInitController {
           if (task.label == 'media_kit') {
             _mediaKitReady = true;
           }
-          StartupPerfLogger.log(
-            StartupPerfEvent.deferredWarmupReady,
-            fields: <String, Object?>{
+          DevLogger.log(
+            'startup',
+            'deferred_warmup_ready',
+            <String, Object?>{
               'task': task.label,
               'task_ms': taskWatch.elapsedMilliseconds,
             },
@@ -81,9 +83,10 @@ class DeferredAppInitController {
       eagerError: false,
     );
 
-    StartupPerfLogger.log(
-      StartupPerfEvent.deferredWarmupReady,
-      fields: <String, Object?>{'total_ms': stopwatch.elapsedMilliseconds},
+    DevLogger.log(
+      'startup',
+      'deferred_warmup_ready',
+      <String, Object?>{'total_ms': stopwatch.elapsedMilliseconds},
     );
   }
 }

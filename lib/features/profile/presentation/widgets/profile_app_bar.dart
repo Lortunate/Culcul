@@ -1,5 +1,7 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/core/contracts/user_session_contract.dart';
 import 'package:culcul/core/session/user_providers.dart';
+import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
 import 'package:culcul/ui/widgets/users/app_avatar.dart';
 import 'package:culcul/ui/assemblies/users/users.dart';
@@ -46,8 +48,8 @@ class ProfileAppBar extends ConsumerWidget {
 }
 
 class _HeaderBackground extends StatelessWidget {
-  final dynamic profile;
-  final dynamic session;
+  final ProfileUser? profile;
+  final UserSession? session;
 
   const _HeaderBackground({required this.profile, required this.session});
 
@@ -74,8 +76,8 @@ class _HeaderBackground extends StatelessWidget {
 }
 
 class _ProfileAvatar extends StatelessWidget {
-  final dynamic profile;
-  final dynamic session;
+  final ProfileUser? profile;
+  final UserSession? session;
 
   const _ProfileAvatar({required this.profile, required this.session});
 
@@ -102,8 +104,8 @@ class _ProfileAvatar extends StatelessWidget {
 }
 
 class _ProfileDetails extends StatelessWidget {
-  final dynamic profile;
-  final dynamic session;
+  final ProfileUser? profile;
+  final UserSession? session;
 
   const _ProfileDetails({required this.profile, required this.session});
 

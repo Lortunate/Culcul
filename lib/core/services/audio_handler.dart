@@ -27,7 +27,7 @@ class CilixiliAudioHandler extends BaseAudioHandler {
 
   final Player player = Player();
   final AudioPlaybackStateGate _playbackStateGate = AudioPlaybackStateGate();
-  final List<StreamSubscription> _subscriptions = [];
+  final List<StreamSubscription<dynamic>> _subscriptions = [];
 
   DateTime _broadcastWindowStart = DateTime.now();
   int _broadcastWindowCount = 0;

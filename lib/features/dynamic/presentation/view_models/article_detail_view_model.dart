@@ -6,7 +6,7 @@ import 'dart:math' as math;
 
 import 'package:culcul/features/dynamic/feature_scope.dart';
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/perf/feature_flow_perf_logger.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'article_detail_view_model.g.dart';

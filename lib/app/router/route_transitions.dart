@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 /// A fade transition with a subtle scale effect, ideal for modal-like pages
-class FadeTransitionPage extends CustomTransitionPage {
+class FadeTransitionPage extends CustomTransitionPage<void> {
   FadeTransitionPage({required LocalKey super.key, required super.child})
     : super(
         transitionsBuilder:
@@ -27,7 +27,7 @@ class FadeTransitionPage extends CustomTransitionPage {
 }
 
 /// A slide transition from the bottom, perfect for modals and bottom sheets
-class SlideFromBottomTransitionPage extends CustomTransitionPage {
+class SlideFromBottomTransitionPage extends CustomTransitionPage<void> {
   SlideFromBottomTransitionPage({required LocalKey super.key, required super.child})
     : super(
         transitionsBuilder:
@@ -54,7 +54,7 @@ class SlideFromBottomTransitionPage extends CustomTransitionPage {
 }
 
 /// A slide transition from the right, ideal for navigational pages
-class SlideFromRightTransitionPage extends CustomTransitionPage {
+class SlideFromRightTransitionPage extends CustomTransitionPage<void> {
   SlideFromRightTransitionPage({required LocalKey super.key, required super.child})
     : super(
         transitionsBuilder:
@@ -75,7 +75,7 @@ class SlideFromRightTransitionPage extends CustomTransitionPage {
 }
 
 /// A slide transition from the left, useful for backward navigation
-class SlideFromLeftTransitionPage extends CustomTransitionPage {
+class SlideFromLeftTransitionPage extends CustomTransitionPage<void> {
   SlideFromLeftTransitionPage({required LocalKey super.key, required super.child})
     : super(
         transitionsBuilder:

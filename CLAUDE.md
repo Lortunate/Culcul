@@ -42,14 +42,14 @@ This project is indexed by GitNexus as **Culcul** (2701 symbols, 3378 relationsh
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 14 — Dependency Modernization & Model Consistency)
+## Architecture (Phase 15 — Architecture Streamlining & Dead Weight Removal)
 
-`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–13 established correct boundaries and eliminated structural ceremony. Phase 14 modernizes dependencies, standardizes model patterns, and removes remaining zero-value indirection.
+`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–14 established correct boundaries, eliminated structural ceremony, modernized dependencies, and standardized model patterns. Phase 15 removes remaining dead weight: duplicate models, barrel chains, unused packages, over-engineered perf infra, and weak lint rules.
 
 See `docs/architecture/architecture-guide.md` for the current implemented baseline.
 
-Active spec: `docs/superpowers/specs/2026-05-12-phase14-dependency-modernization-and-model-consistency.md`
-Active plan: `docs/superpowers/plans/2026-05-12-phase14-dependency-modernization-and-model-consistency.md`
+Active spec: `docs/superpowers/specs/2026-05-12-phase15-architecture-streamlining-and-dead-weight-removal.md`
+Active plan: `docs/superpowers/plans/2026-05-12-phase15-architecture-streamlining-and-dead-weight-removal.md`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`
@@ -60,10 +60,12 @@ Active plan: `docs/superpowers/plans/2026-05-12-phase14-dependency-modernization
 - Every shared model has exactly ONE definition in `core/contracts/`
 - All domain entities and DTOs use freezed — no hand-written `copyWith` or equality
 - No typedef-only or re-export-only files — import the source directly
+- No barrel-chain files (file that only re-exports other files) except `core_contracts.dart`
 - All dependencies pinned to specific versions (no `any`)
 - Prefer `shared_preferences` + `flutter_secure_storage` over Hive for local storage
 - Prefer `dio_smart_retry` over custom retry logic; prefer generated providers over hand-written wiring
-- If architecture docs disagree, the active Phase 14 spec/plan override older phase text
+- Prefer `pointycastle` + `crypto` for cryptography; do not use `encrypt` wrapper
+- If architecture docs disagree, the active Phase 15 spec/plan override older phase text
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:full hash:f65d5d33 -->
 ## Issue Tracking with bd (beads)

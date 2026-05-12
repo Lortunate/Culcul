@@ -28,10 +28,10 @@ class FavFolderResources extends _$FavFolderResources {
     final firstInteractiveStopwatch = Stopwatch()..start();
     final page = await _fetchItems(mediaId, 1);
     if (page == null) {
-      FeatureFlowPerfLogger.log(
-        chain: 'favorites.detail',
-        stage: 'state_commit',
-        fields: <String, Object?>{'mediaId': mediaId, 'hasData': false},
+      DevLogger.log(
+        'feature',
+        'favorites.detail state_commit',
+        <String, Object?>{'mediaId': mediaId, 'hasData': false},
       );
       return const FavFolderDetailState();
     }
@@ -46,20 +46,20 @@ class FavFolderResources extends _$FavFolderResources {
         error: null,
       ),
     );
-    FeatureFlowPerfLogger.log(
-      chain: 'favorites.detail',
-      stage: 'state_commit',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'favorites.detail state_commit',
+      <String, Object?>{
         'mediaId': mediaId,
         'hasData': true,
         'itemCount': page.medias.length,
         'hasMore': page.hasMore,
       },
     );
-    FeatureFlowPerfLogger.log(
-      chain: 'favorites.detail',
-      stage: 'first_interactive',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'favorites.detail first_interactive',
+      <String, Object?>{
         'mediaId': mediaId,
         'ms': firstInteractiveStopwatch.elapsedMilliseconds,
         'itemCount': page.medias.length,
@@ -73,10 +73,10 @@ class FavFolderResources extends _$FavFolderResources {
     final result = await ref
         .read(favRepositoryProvider)
         .getFolderResources(FavoriteFolderResourcesQuery(mediaId: mediaId, page: page));
-    FeatureFlowPerfLogger.log(
-      chain: 'favorites.detail',
-      stage: 'request',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'favorites.detail request',
+      <String, Object?>{
         'mediaId': mediaId,
         'page': page,
         'ms': requestStopwatch.elapsedMilliseconds,
@@ -132,10 +132,10 @@ class FavFolderResources extends _$FavFolderResources {
           ),
         ),
       );
-      FeatureFlowPerfLogger.log(
-        chain: 'favorites.detail',
-        stage: 'state_commit',
-        fields: <String, Object?>{
+      DevLogger.log(
+        'feature',
+        'favorites.detail state_commit',
+        <String, Object?>{
           'mediaId': mediaId,
           'page': current.paging.nextPage,
           'itemCount': state.value?.paging.items.length ?? 0,

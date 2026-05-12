@@ -68,6 +68,6 @@ sealed class SupportFormat with _$SupportFormat {
       _$SupportFormatFromJson(json);
 }
 
-Object? _readBaseUrl(Map json, String _) => json['baseUrl'] ?? json['base_url'];
+Object? _readBaseUrl(Map<dynamic, dynamic> json, String _) => json['baseUrl'] ?? json['base_url'];
 
-Object? _readBackupUrls(Map json, String _) => json['backupUrl'] ?? json['backup_url'];
+Object? _readBackupUrls(Map<dynamic, dynamic> json, String _) => json['backupUrl'] ?? json['backup_url'];

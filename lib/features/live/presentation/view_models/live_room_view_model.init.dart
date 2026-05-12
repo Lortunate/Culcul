@@ -22,10 +22,10 @@ mixin _LiveRoomControllerInitMixin
 
     final roomInfoRequestStopwatch = Stopwatch()..start();
     final infoResult = await ref.read(liveRepositoryProvider).getRoomInfo(roomId);
-    FeatureFlowPerfLogger.log(
-      chain: 'live.room_init',
-      stage: 'request',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'live.room_init request',
+      <String, Object?>{
         'segment': 'room_info',
         'roomId': roomId,
         'ms': roomInfoRequestStopwatch.elapsedMilliseconds,
@@ -43,10 +43,10 @@ mixin _LiveRoomControllerInitMixin
       return;
     }
     state = state.copyWith(roomInfo: info);
-    FeatureFlowPerfLogger.log(
-      chain: 'live.room_init',
-      stage: 'parse',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'live.room_init parse',
+      <String, Object?>{
         'segment': 'room_info',
         'roomId': roomId,
         'anchorUid': info.uid,
@@ -76,10 +76,10 @@ mixin _LiveRoomControllerInitMixin
         criticalResults['play_url'] as AppError? ??
         criticalResults['danmaku_config'] as AppError?;
     if (criticalError != null) {
-      FeatureFlowPerfLogger.log(
-        chain: 'live.room_init',
-        stage: 'request',
-        fields: <String, Object?>{
+      DevLogger.log(
+        'feature',
+        'live.room_init request',
+        <String, Object?>{
           'segment': 'critical_group',
           'roomId': roomId,
           'ms': criticalRequestStopwatch.elapsedMilliseconds,
@@ -89,10 +89,10 @@ mixin _LiveRoomControllerInitMixin
       state = state.copyWith(isLoading: false, error: criticalError);
       return;
     }
-    FeatureFlowPerfLogger.log(
-      chain: 'live.room_init',
-      stage: 'request',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'live.room_init request',
+      <String, Object?>{
         'segment': 'critical_group',
         'roomId': roomId,
         'ms': criticalRequestStopwatch.elapsedMilliseconds,
@@ -101,19 +101,19 @@ mixin _LiveRoomControllerInitMixin
     );
 
     state = state.copyWith(isLoading: false, error: null);
-    FeatureFlowPerfLogger.log(
-      chain: 'live.room_init',
-      stage: 'state_commit',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'live.room_init state_commit',
+      <String, Object?>{
         'roomId': roomId,
         'hasPlayUrl': state.playUrl != null,
         'hasDanmakuConfig': state.danmakuConfig != null,
       },
     );
-    FeatureFlowPerfLogger.log(
-      chain: 'live.room_init',
-      stage: 'first_interactive',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'live.room_init first_interactive',
+      <String, Object?>{
         'roomId': roomId,
         'ms': firstInteractiveStopwatch.elapsedMilliseconds,
       },
@@ -183,10 +183,10 @@ mixin _LiveRoomControllerInitMixin
       profile: NetworkConcurrencyProfile.backgroundSync,
       scope: 'live_room_init_optional',
     );
-    FeatureFlowPerfLogger.log(
-      chain: 'live.room_init',
-      stage: 'request',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'live.room_init request',
+      <String, Object?>{
         'segment': 'optional_group',
         'roomId': info.roomId,
         'ms': optionalRequestStopwatch.elapsedMilliseconds,

@@ -3,13 +3,11 @@ import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/live/data/live_room_mapper.dart';
 import 'package:culcul/features/live/data/live_api.dart';
 import 'package:culcul/features/live/domain/repositories/live_repository.dart' as domain;
 import 'package:culcul/core/contracts/live_room_summary_contract.dart';
 import 'package:culcul/features/live/data/dtos/live_dtos.dart';
-import 'package:culcul/features/live/domain/entities/live_history_danmaku_model.dart'
-    as domain_danmaku;
+import 'package:culcul/features/live/domain/entities/live_history_danmaku_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'live_repository_impl.g.dart';
@@ -50,9 +48,8 @@ class LiveRepositoryImpl with RequestExecutorBinding implements domain.LiveRepos
   }
 
   @override
-  Future<Result<domain_danmaku.LiveHistoryDanmakuModel, AppError>> getHistoryDanmaku(int roomId) async {
-    final result = await requestApiResult(() => _api.getHistoryDanmaku(roomId));
-    return result.map((data) => data.toDomain());
+  Future<Result<LiveHistoryDanmakuModel, AppError>> getHistoryDanmaku(int roomId) async {
+    return requestApiResult(() => _api.getHistoryDanmaku(roomId));
   }
 
   @override

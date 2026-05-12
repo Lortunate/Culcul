@@ -19,10 +19,10 @@ mixin _ArticleDetailViewModelActions on _$ArticleDetailViewModel {
       ),
       failure: (error) => state.copyWith(isLoading: false, error: error),
     );
-    FeatureFlowPerfLogger.log(
-      chain: 'dynamic.article_detail',
-      stage: 'state_commit',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'dynamic.article_detail state_commit',
+      <String, Object?>{
         'hasDetail': state.detail != null,
         'hasError': state.error != null,
       },
@@ -36,10 +36,10 @@ mixin _ArticleDetailViewModelActions on _$ArticleDetailViewModel {
     if (commentsEnabled) {
       unawaited(loadComments(refresh: true));
     }
-    FeatureFlowPerfLogger.log(
-      chain: 'dynamic.article_detail',
-      stage: 'first_interactive',
-      fields: <String, Object?>{
+    DevLogger.log(
+      'feature',
+      'dynamic.article_detail first_interactive',
+      <String, Object?>{
         'ms': firstInteractiveStopwatch.elapsedMilliseconds,
         'commentsEnabled': commentsEnabled,
         'commentCount': state.comments.length,
