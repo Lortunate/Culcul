@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'route_transitions.dart';
+import 'package:culcul/app/router/route_transitions.dart';
 
 /// Base class for route data that provides a default [SlideFromRightTransitionPage]
 /// transition. Subclasses only need to override [build] and can skip [buildPage]

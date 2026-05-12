@@ -17,7 +17,7 @@ class DeferredAppInitController {
   static final DeferredAppInitController instance = DeferredAppInitController._();
 
   final List<AppWarmupTask> _tasks = <AppWarmupTask>[
-    AppWarmupTask(label: 'media_kit', run: MediaKit.ensureInitialized),
+    const AppWarmupTask(label: 'media_kit', run: MediaKit.ensureInitialized),
   ];
 
   bool _didSchedule = false;
@@ -80,7 +80,6 @@ class DeferredAppInitController {
           // Defer-only warmups must never block the main app flow.
         }
       }),
-      eagerError: false,
     );
 
     DevLogger.log(
