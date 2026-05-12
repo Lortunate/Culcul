@@ -90,13 +90,6 @@ Dio dioClient(Ref ref) {
     networkQualityInterceptor.invalidateCache();
   });
 
-  // Interceptor chain order optimized for minimal overhead:
-  // 1. Dedup first — cheapest check, avoids all downstream work for duplicates
-  // 2. Network quality — applies timeouts (cached policy read)
-  // 3. Cache — checks cache before expensive signing/retry setup
-  // 4. Retry — wraps the signing interceptors so retries get fresh signatures
-  // 5. CSRF + WBI — signing (only runs for marked requests)
-  // 6. Token — last, handles auth refresh after all else fails
   dio.interceptors.add(InFlightDedupInterceptor());
   dio.interceptors.add(networkQualityInterceptor);
   dio.interceptors.add(CacheInterceptor(cacheStore));
@@ -104,11 +97,8 @@ Dio dioClient(Ref ref) {
     DioCacheInterceptor(
       options: CacheOptions(
         store: cacheStore,
-        policy: CachePolicy.request,
         hitCacheOnErrorExcept: [500, 502, 503, 504],
         maxStale: const Duration(days: 7),
-        priority: CachePriority.normal,
-        allowPostMethod: false,
       ),
     ),
   );
