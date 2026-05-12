@@ -10,8 +10,10 @@ import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:culcul/features/favorites/domain/repositories/favorite_repository.dart';
 import 'package:culcul/features/favorites/feature_scope.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+part 'favorites_view_model.freezed.dart';
 part 'favorites_view_model.g.dart';
 part 'favorites_view_model.collected.dart';
 part 'favorites_view_model.folder_resources.dart';

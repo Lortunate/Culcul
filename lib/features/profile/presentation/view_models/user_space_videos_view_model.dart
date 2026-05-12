@@ -4,8 +4,8 @@ import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/data/network/interceptors/cache_interceptor.dart';
 import 'package:culcul/core/data/network/request_cancel_token.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
-import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
+import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/features/profile/feature_scope.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -38,17 +38,13 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
       'order': order,
     });
     final hasCachedValue = await ref.read(cacheStoreProvider).exists(cacheKey);
-    DevLogger.log(
-      'feature',
-      'profile.space_videos initial_data',
-      <String, Object?>{
-        'mid': mid,
-        'order': order,
-        'items': items.length,
-        'cache_present': hasCachedValue,
-        'ms': stopwatch.elapsedMilliseconds,
-      },
-    );
+    DevLogger.log('feature', 'profile.space_videos initial_data', <String, Object?>{
+      'mid': mid,
+      'order': order,
+      'items': items.length,
+      'cache_present': hasCachedValue,
+      'ms': stopwatch.elapsedMilliseconds,
+    });
     if (hasCachedValue && items.isNotEmpty) {
       unawaited(Future<void>.microtask(_refreshFirstPageSilently));
     }

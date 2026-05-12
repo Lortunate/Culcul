@@ -3,6 +3,11 @@
 **Spec:** `docs/superpowers/specs/2026-05-12-phase15-architecture-streamlining-and-dead-weight-removal.md`  
 **Date:** 2026-05-12
 
+**Status:** Superseded after partial landing  
+**Replaced by:** `docs/superpowers/plans/2026-05-12-phase16-guard-green-architecture-convergence.md`
+
+> Phase 15 is archived as superseded, not completed. The implementation commit exists, but architecture guards are red and the docs still contain stale active/archive truth.
+
 ## Execution Order
 
 Tasks are ordered by dependency and risk. Tasks 1-4 are independent and can be parallelized. Tasks 5-7 depend on earlier tasks. Task 8 is last (project-wide impact).

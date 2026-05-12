@@ -1,6 +1,6 @@
 # Architecture Guide
 
-Current implemented baseline for Culcul (BiliBili 3rd-party client). `lib/shared/` is fully retired, and all features now follow a standardized slice architecture. The remaining active architecture work is semantic rather than structural: the repo already has the right top-level buckets, but some feature facades, barrels, and docs still need convergence before the public seams are truly clean.
+Current implemented baseline for Culcul (BiliBili 3rd-party client). `lib/shared/` is fully retired, and all features now follow a standardized slice architecture. Phase 17 consolidates duplicate models, completes freezed/@riverpod code generation adoption, and removes dead indirection layers.
 
 ## Directory Structure
 
@@ -257,12 +257,12 @@ Archived plan: `docs/superpowers/plans/archive/2026-05-11-phase10-slice-normaliz
 
 Phase 10 therefore remains important historical context, but it is no longer the truthful active baseline.
 
-## Phase 12 (Active): Capability Facade Simplification & Generator-First Convergence
+## Phase 12 (Complete): Capability Facade Simplification & Generator-First Convergence
 
-Started 2026-05-12. The focus is simplifying the active feature seams themselves: remove thin wrapper layers, stop exporting implementation-shaped public contracts, and lean more consistently on the repo's existing mainstream generator stack instead of adding more hand-written glue.
+Started and completed 2026-05-12. The focus was simplifying active feature seams: remove thin wrapper layers, stop exporting implementation-shaped public contracts, and lean more consistently on the repo's existing mainstream generator stack instead of adding more hand-written glue.
 
-Active spec: `docs/superpowers/specs/2026-05-12-phase12-capability-facade-simplification-and-generator-first-design.md`
-Active plan: `docs/superpowers/plans/2026-05-12-phase12-capability-facade-simplification-and-generator-first.md`
+Archived spec: `docs/superpowers/specs/archive/2026-05-12-phase12-capability-facade-simplification-and-generator-first-design.completed.md`
+Archived plan: `docs/superpowers/plans/archive/2026-05-12-phase12-capability-facade-simplification-and-generator-first.completed.md`
 
 **Current verified debt carried into Phase 12:**
 1. Several non-core facades are still thin wrappers or repository-entry aliases in `auth`, `favorites`, `history`, `profile`, `ranking`, `settings`, and `to_view`.
@@ -291,3 +291,59 @@ Active plan: `docs/superpowers/plans/2026-05-12-phase12-capability-facade-simpli
 - If a facade method is `return _repository.doThing(args)` with no transformation, delete the facade and let consumers depend on the repository provider.
 - Generator-first (`@riverpod`) is preferred for new capability providers. Hand-written `Provider`/`FutureProvider` is acceptable only when the generator cannot express the needed lifecycle (e.g., manual `ref.onDispose` with complex teardown).
 - `data/*_repository_entry.dart` is the single wiring point that imports the concrete `_impl.dart` — `feature_scope.dart` and `application/` must not import `_impl` files directly.
+
+## Phase 13 (Complete): Structural Simplification & Single Source of Truth
+
+Completed 2026-05-12. Phase 13 removed zero-value structural ceremony around feature scopes, provider entry wrappers, and stale shared surfaces.
+
+Archived spec: `docs/superpowers/specs/archive/2026-05-12-phase13-structural-simplification-and-single-source-of-truth.completed.md`
+Archived plan: `docs/superpowers/plans/archive/2026-05-12-phase13-structural-simplification-and-single-source-of-truth.completed.md`
+
+**Verified landed state:**
+1. Feature scope indirection was reduced.
+2. Several zero-behavior wrappers were removed.
+3. The active architecture direction shifted from directory creation to single-source-of-truth cleanup.
+
+## Phase 14 (Complete): Dependency Modernization & Model Consistency
+
+Completed 2026-05-12. Phase 14 normalized dependency declarations, removed stale packages, and moved model definitions toward generated, consistent data classes.
+
+Archived spec: `docs/superpowers/specs/archive/2026-05-12-phase14-dependency-modernization-and-model-consistency.completed.md`
+Archived plan: `docs/superpowers/plans/archive/2026-05-12-phase14-dependency-modernization-and-model-consistency.completed.md`
+
+**Verified landed state:**
+1. `encrypt` and `pool` are no longer direct dependencies.
+2. Package versions are pinned rather than `any`.
+3. Live/video model ownership was simplified compared with earlier phases.
+
+## Phase 15 (Superseded After Partial Landing): Architecture Streamlining & Dead Weight Removal
+
+Started 2026-05-12 and superseded on 2026-05-12. Phase 15 landed substantial cleanup and was superseded by Phase 16 once the guard baseline was repaired.
+
+Archived spec: `docs/superpowers/specs/archive/2026-05-12-phase15-architecture-streamlining-and-dead-weight-removal.superseded.md`
+Archived plan: `docs/superpowers/plans/archive/2026-05-12-phase15-architecture-streamlining-and-dead-weight-removal.superseded.md`
+
+**Verified state in Phase 16:**
+1. `test/architecture` passes.
+2. Runtime/bootstrap provider ownership is explicit through `app/runtime/root_overrides.dart` and related guards.
+3. Feature seams no longer rely on the stale `followListServiceProvider` / `searchServiceProvider` assertions.
+4. Phase 13/14 archive files now carry honest statuses.
+
+## Phase 16 (Completed): Guard-Green Architecture Convergence
+
+Started 2026-05-12, completed 2026-05-13. Phase 16 achieved guard-green baseline: all architecture tests pass, docs are honest, runtime/bootstrap provider ownership is enforced.
+
+## Phase 17 (Active): Model Consolidation & Code Modernization
+
+Started 2026-05-13. Phase 17 eliminates model duplication, completes freezed and @riverpod code generation adoption, and removes dead indirection layers.
+
+Active spec: `docs/superpowers/specs/2026-05-13-phase17-model-consolidation-and-code-modernization.md`
+Active plan: `docs/superpowers/plans/2026-05-13-phase17-model-consolidation-and-code-modernization.md`
+
+**Changes landed:**
+1. Consolidated video models — `ProfileVideoOwner`/`ProfileVideoStats` removed, features reuse core `VideoOwner`/`VideoStat`.
+2. Standardized user models — `UserProfileInfo.avatarUrl` → `face`, `ProfileRelationUser` converted to freezed.
+3. Freezed migration — 9 hand-written value objects converted to `@freezed`.
+4. @riverpod migration — 12 hand-written providers converted to `@riverpod` code generation.
+5. Removed dead indirection — 5 re-export files deleted, `runtime_dependencies.dart` double-layer eliminated.
+6. Bootstrap providers now imported directly by features (no intermediate seam).

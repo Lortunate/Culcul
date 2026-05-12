@@ -8,14 +8,13 @@ mixin _ArticleDetailViewModelActions on _$ArticleDetailViewModel {
   }
 
   Future<void> loadDetail() async {
-    state = state.copyWith(isLoading: true, clearError: true);
+    state = state.copyWith(isLoading: true, error: null);
     final result = await ref.read(dynamicRepositoryProvider).getArticleDetail(_url);
     state = result.when(
       success: (detail) => state.copyWith(
-        setDetail: true,
         detail: detail,
         isLoading: false,
-        clearError: true,
+        error: null,
       ),
       failure: (error) => state.copyWith(isLoading: false, error: error),
     );
@@ -53,7 +52,7 @@ mixin _ArticleDetailViewModelActions on _$ArticleDetailViewModel {
     if (!state.commentsEnabled) {
       state = state.copyWith(
         commentsLoading: false,
-        clearCommentsError: true,
+        commentsError: null,
         commentsHasMore: false,
       );
       return;
@@ -66,9 +65,9 @@ mixin _ArticleDetailViewModelActions on _$ArticleDetailViewModel {
 
     state = state.copyWith(
       commentsLoading: true,
-      clearCommentsError: true,
-      clearCommentsNext: refresh,
-      commentsHasMore: refresh ? true : null,
+      commentsError: null,
+      commentsNext: refresh ? null : state.commentsNext,
+      commentsHasMore: refresh ? true : state.commentsHasMore,
     );
 
     final result = await ref
@@ -88,16 +87,16 @@ mixin _ArticleDetailViewModelActions on _$ArticleDetailViewModel {
           commentsNext: response.cursor?.next,
           commentsHasMore: _resolveHasMore(response),
           commentsLoading: false,
-          clearCommentsError: true,
+          commentsError: null,
         );
       },
       failure: (error) {
         state = state.copyWith(
           commentsLoading: false,
           commentsError: error.message,
-          comments: refresh ? previousComments : null,
-          commentsNext: refresh ? previousNext : null,
-          commentsHasMore: refresh ? previousHasMore : null,
+          comments: refresh ? previousComments : state.comments,
+          commentsNext: refresh ? previousNext : state.commentsNext,
+          commentsHasMore: refresh ? previousHasMore : state.commentsHasMore,
         );
       },
     );

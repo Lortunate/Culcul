@@ -10,8 +10,10 @@ import 'package:culcul/features/notification/domain/entities/private_message.dar
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/feature_scope.dart';
 import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+part 'chat_view_model.freezed.dart';
 part 'chat_view_model.g.dart';
 part 'chat_view_model.helpers.dart';
 part 'chat_view_model.send.dart';

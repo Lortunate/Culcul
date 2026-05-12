@@ -1,32 +1,23 @@
 import 'dart:async';
 
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+part 'listen_sleep_timer_view_model.freezed.dart';
 part 'listen_sleep_timer_view_model.g.dart';
 
 const int minListenSleepMinutes = 1;
 const int maxListenSleepMinutes = 720;
 
-class ListenSleepTimerState {
-  final Duration? remaining;
-  final Duration? total;
+@freezed
+sealed class ListenSleepTimerState with _$ListenSleepTimerState {
+  const ListenSleepTimerState._();
 
-  const ListenSleepTimerState({this.remaining, this.total});
+  const factory ListenSleepTimerState({Duration? remaining, Duration? total}) =
+      _ListenSleepTimerState;
 
   bool get isActive => remaining != null && remaining! > Duration.zero;
-
-  ListenSleepTimerState copyWith({
-    Duration? remaining,
-    Duration? total,
-    bool clearRemaining = false,
-    bool clearTotal = false,
-  }) {
-    return ListenSleepTimerState(
-      remaining: clearRemaining ? null : (remaining ?? this.remaining),
-      total: clearTotal ? null : (total ?? this.total),
-    );
-  }
 }
 
 typedef ListenSleepTimerOnExpire = Future<void> Function();
@@ -79,7 +70,7 @@ class ListenSleepTimerController extends _$ListenSleepTimerController {
     _ticker = null;
     _deadline = null;
     _total = null;
-    state = state.copyWith(clearRemaining: true, clearTotal: true);
+    state = const ListenSleepTimerState();
   }
 
   void _emitRemaining() {

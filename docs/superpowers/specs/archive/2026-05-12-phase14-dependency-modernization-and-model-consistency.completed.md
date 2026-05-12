@@ -1,6 +1,6 @@
 # Phase 14: Dependency Modernization & Model Consistency
 
-**Status:** Active  
+**Status:** Completed and archived  
 **Date:** 2026-05-12  
 **Supersedes:** Phase 13 (completed)
 

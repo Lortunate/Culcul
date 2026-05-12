@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **Culcul** (2701 symbols, 3378 relationships, 19 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **Culcul** (2702 symbols, 3378 relationships, 19 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -42,14 +42,14 @@ This project is indexed by GitNexus as **Culcul** (2701 symbols, 3378 relationsh
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 15 — Architecture Streamlining & Dead Weight Removal)
+## Architecture (Phase 17 — Model Consolidation & Code Modernization)
 
-`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–14 established correct boundaries, eliminated structural ceremony, modernized dependencies, and standardized model patterns. Phase 15 removes remaining dead weight: duplicate models, barrel chains, unused packages, over-engineered perf infra, and weak lint rules.
+`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–16 established structural cleanup and guard-green baseline. Phase 17 focuses on eliminating model duplication, completing freezed/riverpod code generation adoption, and removing dead indirection.
 
 See `docs/architecture/architecture-guide.md` for the current implemented baseline.
 
-Active spec: `docs/superpowers/specs/2026-05-12-phase15-architecture-streamlining-and-dead-weight-removal.md`
-Active plan: `docs/superpowers/plans/2026-05-12-phase15-architecture-streamlining-and-dead-weight-removal.md`
+Active spec: `docs/superpowers/specs/2026-05-13-phase17-model-consolidation-and-code-modernization.md`
+Active plan: `docs/superpowers/plans/2026-05-13-phase17-model-consolidation-and-code-modernization.md`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`
@@ -64,8 +64,11 @@ Active plan: `docs/superpowers/plans/2026-05-12-phase15-architecture-streamlinin
 - All dependencies pinned to specific versions (no `any`)
 - Prefer `shared_preferences` + `flutter_secure_storage` over Hive for local storage
 - Prefer `dio_smart_retry` over custom retry logic; prefer generated providers over hand-written wiring
+- Riverpod 3 work MUST use `@riverpod` generated providers and `Notifier`/`AsyncNotifier` patterns — no new hand-written providers
+- go_router is already typed/generated through `go_router_builder`; do not rewrite routing unless a route seam is actually broken
 - Prefer `pointycastle` + `crypto` for cryptography; do not use `encrypt` wrapper
-- If architecture docs disagree, the active Phase 15 spec/plan override older phase text
+- Features must reuse `VideoOwner`/`VideoStat` from core contracts — no feature-local duplicates
+- If architecture docs disagree, the active Phase 17 spec/plan override older phase text
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:full hash:f65d5d33 -->
 ## Issue Tracking with bd (beads)

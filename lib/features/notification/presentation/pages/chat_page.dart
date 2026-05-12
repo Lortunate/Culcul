@@ -134,7 +134,7 @@ class ChatPage extends HookConsumerWidget {
     final profile = profileAsync.value;
     if (profile == null) return (avatarUrl: displayAvatarUrl, name: displayName);
     if (displayAvatarUrl.isEmpty) {
-      displayAvatarUrl = profile.avatarUrl;
+      displayAvatarUrl = profile.face;
     }
     displayName = profile.name;
     return (avatarUrl: displayAvatarUrl, name: displayName);

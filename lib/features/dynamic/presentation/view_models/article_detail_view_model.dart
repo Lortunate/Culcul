@@ -7,63 +7,30 @@ import 'dart:math' as math;
 import 'package:culcul/features/dynamic/feature_scope.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+part 'article_detail_view_model.freezed.dart';
 part 'article_detail_view_model.g.dart';
 part 'article_detail_view_model.actions.dart';
 
-class ArticleDetailUiState {
-  final ArticleDetailData? detail;
-  final bool isLoading;
-  final AppError? error;
-  final List<CommentItem> comments;
-  final bool commentsLoading;
-  final String? commentsError;
-  final int? commentsNext;
-  final bool commentsHasMore;
-  final bool isSendingComment;
+@freezed
+sealed class ArticleDetailUiState with _$ArticleDetailUiState {
+  const factory ArticleDetailUiState({
+    ArticleDetailData? detail,
+    @Default(true) bool isLoading,
+    AppError? error,
+    @Default([]) List<CommentItem> comments,
+    @Default(false) bool commentsLoading,
+    String? commentsError,
+    int? commentsNext,
+    @Default(true) bool commentsHasMore,
+    @Default(false) bool isSendingComment,
+  }) = _ArticleDetailUiState;
 
-  const ArticleDetailUiState({
-    this.detail,
-    this.isLoading = true,
-    this.error,
-    this.comments = const [],
-    this.commentsLoading = false,
-    this.commentsError,
-    this.commentsNext,
-    this.commentsHasMore = true,
-    this.isSendingComment = false,
-  });
+  const ArticleDetailUiState._();
 
   bool get commentsEnabled => (detail?.commentOid ?? '').isNotEmpty;
-
-  ArticleDetailUiState copyWith({
-    ArticleDetailData? detail,
-    bool setDetail = false,
-    bool? isLoading,
-    AppError? error,
-    bool clearError = false,
-    List<CommentItem>? comments,
-    bool? commentsLoading,
-    String? commentsError,
-    bool clearCommentsError = false,
-    int? commentsNext,
-    bool clearCommentsNext = false,
-    bool? commentsHasMore,
-    bool? isSendingComment,
-  }) {
-    return ArticleDetailUiState(
-      detail: setDetail ? detail : this.detail,
-      isLoading: isLoading ?? this.isLoading,
-      error: clearError ? null : (error ?? this.error),
-      comments: comments ?? this.comments,
-      commentsLoading: commentsLoading ?? this.commentsLoading,
-      commentsError: clearCommentsError ? null : (commentsError ?? this.commentsError),
-      commentsNext: clearCommentsNext ? null : (commentsNext ?? this.commentsNext),
-      commentsHasMore: commentsHasMore ?? this.commentsHasMore,
-      isSendingComment: isSendingComment ?? this.isSendingComment,
-    );
-  }
 }
 
 @riverpod

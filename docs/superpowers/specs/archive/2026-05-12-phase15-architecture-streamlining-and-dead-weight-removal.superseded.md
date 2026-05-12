@@ -1,8 +1,11 @@
 # Phase 15: Architecture Streamlining & Dead Weight Removal
 
-**Status:** Active  
+**Status:** Superseded after partial landing  
 **Supersedes:** Phase 14 (completed)  
 **Date:** 2026-05-12
+
+> Superseded on 2026-05-12 by `docs/superpowers/specs/2026-05-12-phase16-guard-green-architecture-convergence.md`.
+> Phase 15 landed substantial cleanup (`refactor(phase15): architecture streamlining and dead weight removal`), but it cannot be marked completed because `flutter test test/architecture --reporter compact` is red and `docs/architecture/architecture-guide.md` did not truthfully record Phases 13-15.
 
 ## Motivation
 

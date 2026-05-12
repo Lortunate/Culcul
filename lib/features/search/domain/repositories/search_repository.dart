@@ -3,7 +3,7 @@ import 'package:culcul/core/data/network/request_cancel_token.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/contracts/search_port.dart';
 import 'package:culcul/features/search/domain/entities/search_default_hint.dart';
-import 'package:culcul/features/search/domain/entities/search_query.dart';
+import 'package:culcul/core/contracts/search_query_contract.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/features/search/domain/entities/search_suggestion_entry.dart';
 import 'package:culcul/features/search/domain/entities/search_trending_keyword.dart';

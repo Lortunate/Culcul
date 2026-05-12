@@ -1,20 +1,12 @@
 part of 'favorites_view_model.dart';
 
-class FavFolderDetailState {
-  final FavoriteFolderInfo? info;
-  final PagedListState<FavoriteResource> paging;
-
-  const FavFolderDetailState({
-    this.info,
-    this.paging = const PagedListState<FavoriteResource>(isInitialLoading: false),
-  });
-
-  FavFolderDetailState copyWith({
+@freezed
+sealed class FavFolderDetailState with _$FavFolderDetailState {
+  const factory FavFolderDetailState({
     FavoriteFolderInfo? info,
-    PagedListState<FavoriteResource>? paging,
-  }) {
-    return FavFolderDetailState(info: info ?? this.info, paging: paging ?? this.paging);
-  }
+    @Default(PagedListState<FavoriteResource>(isInitialLoading: false))
+    PagedListState<FavoriteResource> paging,
+  }) = _FavFolderDetailState;
 }
 
 @riverpod

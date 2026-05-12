@@ -58,8 +58,7 @@ void main() {
       expect(firstState.isLoading, isTrue);
 
       final loadedState = await _waitForState(
-        container: container,
-        provider: provider,
+        readState: () => container.read(provider),
         predicate: (state) =>
             !state.isLoading && state.playUrl != null && state.danmakuConfig != null,
       );
@@ -81,14 +80,13 @@ void main() {
 }
 
 Future<LiveRoomState> _waitForState({
-  required ProviderContainer container,
-  required dynamic provider,
+  required LiveRoomState Function() readState,
   required bool Function(LiveRoomState state) predicate,
   Duration timeout = const Duration(seconds: 2),
 }) async {
   final end = DateTime.now().add(timeout);
   while (DateTime.now().isBefore(end)) {
-    final state = container.read(provider) as LiveRoomState;
+    final state = readState();
     if (predicate(state)) {
       return state;
     }

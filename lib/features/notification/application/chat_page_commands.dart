@@ -1,10 +1,13 @@
 import 'dart:typed_data';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final chatPageCommandWorkflowProvider = Provider<ChatPageCommandWorkflow>(
-  (ref) => const ChatPageCommandWorkflow(),
-);
+part 'chat_page_commands.g.dart';
+
+@riverpod
+ChatPageCommandWorkflow chatPageCommandWorkflow(Ref ref) =>
+    const ChatPageCommandWorkflow();
 
 typedef ChatTextCommand = Future<ChatPageCommandResult> Function(String text);
 typedef ChatImageCommand = Future<ChatPageCommandResult> Function(

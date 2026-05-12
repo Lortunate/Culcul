@@ -65,26 +65,6 @@ extension RelationUserMapper on RelationUser {
   }
 }
 
-extension UserSpaceVideoOwnerMapper on VideoOwner {
-  ProfileVideoOwner toDomain() {
-    return ProfileVideoOwner(mid: mid, name: name, face: face);
-  }
-}
-
-extension UserSpaceVideoStatsMapper on VideoStat {
-  ProfileVideoStats toDomain() {
-    return ProfileVideoStats(
-      view: view,
-      danmaku: danmaku,
-      reply: reply,
-      like: like,
-      coin: coin,
-      favorite: favorite,
-      share: share,
-    );
-  }
-}
-
 extension UserSpaceVideoMapper on UserSpaceVideoModel {
   ProfileVideo toDomain() {
     return ProfileVideo(
@@ -100,8 +80,8 @@ extension UserSpaceVideoMapper on UserSpaceVideoModel {
       state: state,
       attribute: attribute,
       tid: tid,
-      owner: owner.toDomain(),
-      stats: stat.toDomain(),
+      owner: owner,
+      stats: stat,
       reason: reason,
       interVideo: interVideo,
     );

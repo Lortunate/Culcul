@@ -1,42 +1,45 @@
-class RelationOfficialVerify {
-  final int type;
-  final String desc;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  const RelationOfficialVerify({required this.type, required this.desc});
+part 'relation_user_contract.freezed.dart';
+part 'relation_user_contract.g.dart';
+
+@freezed
+sealed class RelationOfficialVerify with _$RelationOfficialVerify {
+  const factory RelationOfficialVerify({
+    required int type,
+    required String desc,
+  }) = _RelationOfficialVerify;
+
+  factory RelationOfficialVerify.fromJson(Map<String, dynamic> json) =>
+      _$RelationOfficialVerifyFromJson(json);
 }
 
-class RelationVipInfo {
-  final int vipType;
-  final int vipStatus;
-  final String nicknameColor;
+@freezed
+sealed class RelationVipInfo with _$RelationVipInfo {
+  const factory RelationVipInfo({
+    required int vipType,
+    required int vipStatus,
+    required String nicknameColor,
+  }) = _RelationVipInfo;
 
-  const RelationVipInfo({
-    required this.vipType,
-    required this.vipStatus,
-    required this.nicknameColor,
-  });
+  factory RelationVipInfo.fromJson(Map<String, dynamic> json) =>
+      _$RelationVipInfoFromJson(json);
 }
 
-class ProfileRelationUser {
-  final int mid;
-  final String uname;
-  final String face;
-  final String sign;
-  final int attribute;
-  final RelationOfficialVerify? officialVerify;
-  final RelationVipInfo? vip;
-  final int mtime;
-  final int special;
+@freezed
+sealed class ProfileRelationUser with _$ProfileRelationUser {
+  const factory ProfileRelationUser({
+    required int mid,
+    required String uname,
+    required String face,
+    required String sign,
+    required int attribute,
+    RelationOfficialVerify? officialVerify,
+    RelationVipInfo? vip,
+    required int mtime,
+    required int special,
+  }) = _ProfileRelationUser;
 
-  const ProfileRelationUser({
-    required this.mid,
-    required this.uname,
-    required this.face,
-    required this.sign,
-    required this.attribute,
-    required this.officialVerify,
-    required this.vip,
-    required this.mtime,
-    required this.special,
-  });
+  factory ProfileRelationUser.fromJson(Map<String, dynamic> json) =>
+      _$ProfileRelationUserFromJson(json);
 }

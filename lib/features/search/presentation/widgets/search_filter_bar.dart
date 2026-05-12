@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/search/domain/entities/search_query.dart';
+import 'package:culcul/core/contracts/search_query_contract.dart';
 
 class SearchFilterBar extends StatelessWidget {
   final SearchOrder order;

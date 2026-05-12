@@ -3,10 +3,13 @@ import 'package:culcul/features/favorites/feature_scope.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final favoriteFolderCommandWorkflowProvider = Provider<FavoriteFolderCommandWorkflow>(
-  (ref) => FavoriteFolderCommandWorkflow(ref.read(favRepositoryProvider)),
-);
+part 'favorite_folder_commands.g.dart';
+
+@riverpod
+FavoriteFolderCommandWorkflow favoriteFolderCommandWorkflow(Ref ref) =>
+    FavoriteFolderCommandWorkflow(ref.read(favRepositoryProvider));
 
 class FavoriteFolderCommandWorkflow {
   final FavoriteRepository _repository;

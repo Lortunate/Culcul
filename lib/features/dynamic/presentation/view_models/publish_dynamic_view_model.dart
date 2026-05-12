@@ -3,18 +3,17 @@ import 'dart:io';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_publish_command.dart';
 import 'package:culcul/features/dynamic/application/dynamic_workflows.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_view_model.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+part 'publish_dynamic_view_model.freezed.dart';
 part 'publish_dynamic_view_model.g.dart';
 
-class PublishDynamicUiState {
-  final bool isPublishing;
-
-  const PublishDynamicUiState({this.isPublishing = false});
-
-  PublishDynamicUiState copyWith({bool? isPublishing}) {
-    return PublishDynamicUiState(isPublishing: isPublishing ?? this.isPublishing);
-  }
+@freezed
+sealed class PublishDynamicUiState with _$PublishDynamicUiState {
+  const factory PublishDynamicUiState({
+    @Default(false) bool isPublishing,
+  }) = _PublishDynamicUiState;
 }
 
 @riverpod

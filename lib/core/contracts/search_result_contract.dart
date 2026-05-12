@@ -1,3 +1,7 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'search_result_contract.freezed.dart';
+
 sealed class SearchResultEntry {
   const SearchResultEntry();
 }
@@ -96,22 +100,11 @@ class SearchTopicEntry extends SearchResultEntry {
   });
 }
 
-class SearchResultPage {
-  final int page;
-  final int numPages;
-  final List<SearchResultEntry> items;
-
-  const SearchResultPage({
-    required this.page,
-    required this.numPages,
-    required this.items,
-  });
-
-  SearchResultPage copyWith({int? page, int? numPages, List<SearchResultEntry>? items}) {
-    return SearchResultPage(
-      page: page ?? this.page,
-      numPages: numPages ?? this.numPages,
-      items: items ?? this.items,
-    );
-  }
+@freezed
+sealed class SearchResultPage with _$SearchResultPage {
+  const factory SearchResultPage({
+    required int page,
+    required int numPages,
+    required List<SearchResultEntry> items,
+  }) = _SearchResultPage;
 }

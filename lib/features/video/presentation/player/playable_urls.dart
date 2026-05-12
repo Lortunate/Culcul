@@ -1,4 +1,4 @@
-import 'package:culcul/features/video/data/dtos/play_url_dto.dart' as domain;
+import 'package:culcul/features/video/domain/entities/video_entities.dart' as domain;
 
 List<String> buildPlayableUrlsFromDurl(domain.Durl durl) {
   final seen = <String>{};

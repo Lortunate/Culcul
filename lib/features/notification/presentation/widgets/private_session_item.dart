@@ -38,7 +38,7 @@ class PrivateSessionItem extends ConsumerWidget {
           final profile = userProfileAsync.value;
           if (profile != null) {
             title = profile.name;
-            avatarUrl = profile.avatarUrl;
+            avatarUrl = profile.face;
           }
         } else {
           isLoading = true;

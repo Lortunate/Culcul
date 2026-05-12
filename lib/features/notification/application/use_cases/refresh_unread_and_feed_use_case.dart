@@ -1,4 +1,4 @@
-import 'package:culcul/features/notification/data/notification_repository_impl.dart';
+import 'package:culcul/features/notification/feature_scope.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/repositories/notification_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -11,10 +11,7 @@ RefreshUnreadAndFeedUseCase refreshUnreadAndFeedUseCase(Ref ref) {
 }
 
 class RefreshUnreadAndFeedCommand {
-  const RefreshUnreadAndFeedCommand({
-    required this.ownerUid,
-    required this.feedType,
-  });
+  const RefreshUnreadAndFeedCommand({required this.ownerUid, required this.feedType});
 
   final int ownerUid;
   final NotificationFeedType feedType;
@@ -26,9 +23,7 @@ class RefreshUnreadAndFeedUseCase {
   final NotificationRepository _repository;
 
   Future<void> call(RefreshUnreadAndFeedCommand command) async {
-    await Future.wait([
-      _repository.syncUnreadCount(ownerUid: command.ownerUid, force: true),
-      _repository.syncFeedHead(ownerUid: command.ownerUid, type: command.feedType),
-    ]);
+    await _repository.syncUnreadCount(ownerUid: command.ownerUid, force: true);
+    await _repository.syncFeedHead(ownerUid: command.ownerUid, type: command.feedType);
   }
 }

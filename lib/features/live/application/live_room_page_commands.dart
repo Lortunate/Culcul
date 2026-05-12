@@ -1,12 +1,16 @@
 import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/live/presentation/view_models/live_room_view_model.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'live_room_page_commands.g.dart';
 
 enum LiveRoomFollowCommandResult { toggled, requiresLogin }
 
 typedef LiveRoomToggleFollow = Future<void> Function(int roomId);
 
-final liveRoomPageCommandsProvider = Provider<LiveRoomPageCommands>((ref) {
+@riverpod
+LiveRoomPageCommands liveRoomPageCommands(Ref ref) {
   return LiveRoomPageCommands(
     isLoggedIn: () {
       final session = ref.read(currentUserProvider);
@@ -15,7 +19,7 @@ final liveRoomPageCommandsProvider = Provider<LiveRoomPageCommands>((ref) {
     toggleFollow: (roomId) =>
         ref.read(liveRoomControllerProvider(roomId).notifier).toggleFollow(),
   );
-});
+}
 
 class LiveRoomPageCommands {
   final bool Function() _isLoggedIn;

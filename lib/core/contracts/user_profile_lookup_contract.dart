@@ -15,6 +15,6 @@ sealed class UserProfileInfo with _$UserProfileInfo {
   const factory UserProfileInfo({
     required String mid,
     required String name,
-    required String avatarUrl,
+    required String face,
   }) = _UserProfileInfo;
 }

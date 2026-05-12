@@ -17,7 +17,7 @@ class ProfileLookupAdapter implements UserProfileLookup {
         UserProfileInfo(
           mid: profile.id,
           name: profile.username,
-          avatarUrl: profile.avatarUrl ?? '',
+          face: profile.avatarUrl ?? '',
         ),
       );
     } catch (e) {

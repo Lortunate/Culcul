@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/data/network/interceptors/cache_interceptor.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
-import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
+import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 mixin HomeFeedPagingMixin on OffsetPagedAsyncNotifier<VideoModel> {
@@ -33,15 +33,11 @@ mixin HomeFeedPagingMixin on OffsetPagedAsyncNotifier<VideoModel> {
         .read(cacheStoreProvider)
         .exists(CacheInterceptor.buildCacheKey(cachePath, cacheQuery));
 
-    DevLogger.log(
-      'feature',
-      '$perfChain initial_data',
-      <String, Object?>{
-        'items': items.length,
-        'cache_present': hasCachedValue,
-        'ms': stopwatch.elapsedMilliseconds,
-      },
-    );
+    DevLogger.log('feature', '$perfChain initial_data', <String, Object?>{
+      'items': items.length,
+      'cache_present': hasCachedValue,
+      'ms': stopwatch.elapsedMilliseconds,
+    });
 
     if (hasCachedValue && items.isNotEmpty) {
       unawaited(
@@ -86,14 +82,10 @@ mixin HomeFeedPagingMixin on OffsetPagedAsyncNotifier<VideoModel> {
   }) async {
     final stopwatch = Stopwatch()..start();
     final items = await loadPage(1, forceRefresh: true);
-    DevLogger.log(
-      'feature',
-      '$perfChain silent_refresh_fetch',
-      <String, Object?>{
-        'items': items.length,
-        'ms': stopwatch.elapsedMilliseconds,
-      },
-    );
+    DevLogger.log('feature', '$perfChain silent_refresh_fetch', <String, Object?>{
+      'items': items.length,
+      'ms': stopwatch.elapsedMilliseconds,
+    });
     return items;
   }
 

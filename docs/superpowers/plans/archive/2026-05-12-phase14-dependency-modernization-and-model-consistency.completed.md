@@ -1,7 +1,7 @@
 # Phase 14: Dependency Modernization & Model Consistency — Implementation Plan
 
 **Spec:** `docs/superpowers/specs/2026-05-12-phase14-dependency-modernization-and-model-consistency.md`  
-**Status:** Active  
+**Status:** Completed and archived  
 **Estimated effort:** 6 tasks, ~30 file deletions, ~50 file modifications
 
 ---

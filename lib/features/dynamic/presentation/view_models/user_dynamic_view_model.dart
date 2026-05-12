@@ -41,16 +41,12 @@ class UserDynamicNotifier extends _$UserDynamicNotifier
           'itemOpusStyle,listOnlyfans,opusBigCover,onlyfansVote,decorationCard,onlyfansAssetsV2,forwardListHidden,ugcDelete',
     });
     final hasCachedValue = await ref.read(cacheStoreProvider).exists(cacheKey);
-    DevLogger.log(
-      'feature',
-      'dynamic.user_space_feed initial_data',
-      <String, Object?>{
-        'hostMid': hostMid,
-        'items': items.length,
-        'cache_present': hasCachedValue,
-        'ms': stopwatch.elapsedMilliseconds,
-      },
-    );
+    DevLogger.log('feature', 'dynamic.user_space_feed initial_data', <String, Object?>{
+      'hostMid': hostMid,
+      'items': items.length,
+      'cache_present': hasCachedValue,
+      'ms': stopwatch.elapsedMilliseconds,
+    });
     if (hasCachedValue && items.isNotEmpty) {
       unawaited(Future<void>.delayed(Duration.zero, _refreshFirstPageSilently));
     }

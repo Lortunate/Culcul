@@ -1,7 +1,7 @@
 # Phase 13: Structural Simplification — Implementation Plan
 
 **Spec:** `docs/superpowers/specs/2026-05-12-phase13-structural-simplification-and-single-source-of-truth.md`  
-**Status:** Active  
+**Status:** Completed and archived  
 **Estimated effort:** 6 tasks, ~26 file deletions, ~40 file modifications
 
 ---

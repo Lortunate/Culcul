@@ -22,11 +22,19 @@ void main() {
     );
   });
 
-  test('app dependencies do not expose raw hive boxes to the app layer', () async {
-    final content = await File('lib/app/bootstrap/app_dependencies.dart').readAsString();
+  test('app runtime bootstrap stays typed and box-free', () async {
+    final runtimeContent = await File('lib/app/runtime/app_runtime.dart').readAsString();
+    final bootstrapContent = await File(
+      'lib/app/bootstrap/app_bootstrap.dart',
+    ).readAsString();
 
-    expect(content, isNot(contains('Box<dynamic>')));
-    expect(content, contains('AppRuntime'));
+    expect(runtimeContent, isNot(contains('Box<dynamic>')));
+    expect(runtimeContent, contains('class AppRuntime'));
+    expect(runtimeContent, contains('PersistCookieJar'));
+    expect(runtimeContent, contains('FileCacheStore'));
+    expect(runtimeContent, contains('SharedPreferences'));
+    expect(bootstrapContent, contains('Future<AppRuntime> initialize()'));
+    expect(bootstrapContent, contains('return AppRuntime('));
   });
 
   test('root overrides own runtime boot wiring and verification', () async {
@@ -42,8 +50,8 @@ void main() {
     expect(content, contains('userCardProvider'));
     expect(content, contains('userProfileLookupProvider'));
     expect(content, contains('modifyRelationProvider'));
-    expect(content, contains('followListServiceProvider'));
-    expect(content, contains('searchServiceProvider'));
+    expect(content, contains('relationPortProvider'));
+    expect(content, contains('searchPortProvider'));
   });
 
   test('core session lifecycle providers stay free of login dialog wiring', () async {

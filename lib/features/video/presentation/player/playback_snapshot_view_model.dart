@@ -1,40 +1,20 @@
 import 'dart:async';
 
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
-import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-@immutable
-class PlaybackSnapshot {
-  final Duration position;
-  final Duration duration;
-  final Duration buffer;
+part 'playback_snapshot_view_model.freezed.dart';
+part 'playback_snapshot_view_model.g.dart';
 
-  const PlaybackSnapshot({
-    this.position = Duration.zero,
-    this.duration = Duration.zero,
-    this.buffer = Duration.zero,
-  });
-
-  PlaybackSnapshot copyWith({Duration? position, Duration? duration, Duration? buffer}) {
-    return PlaybackSnapshot(
-      position: position ?? this.position,
-      duration: duration ?? this.duration,
-      buffer: buffer ?? this.buffer,
-    );
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is PlaybackSnapshot &&
-        other.position == position &&
-        other.duration == duration &&
-        other.buffer == buffer;
-  }
-
-  @override
-  int get hashCode => Object.hash(position, duration, buffer);
+@freezed
+sealed class PlaybackSnapshot with _$PlaybackSnapshot {
+  const factory PlaybackSnapshot({
+    @Default(Duration.zero) Duration position,
+    @Default(Duration.zero) Duration duration,
+    @Default(Duration.zero) Duration buffer,
+  }) = _PlaybackSnapshot;
 }
 
 class _PlaybackSnapshotQuantizer {
@@ -54,7 +34,8 @@ class _PlaybackSnapshotQuantizer {
   }
 }
 
-final playbackSnapshotProvider = StreamProvider.autoDispose<PlaybackSnapshot>((ref) {
+@riverpod
+Stream<PlaybackSnapshot> playbackSnapshot(Ref ref) {
   final player = ref.watch(playerControllerProvider.notifier).player;
   final controller = StreamController<PlaybackSnapshot>();
   final subscriptions = <StreamSubscription<dynamic>>[];
@@ -67,7 +48,10 @@ final playbackSnapshotProvider = StreamProvider.autoDispose<PlaybackSnapshot>((r
   controller.add(current);
 
   void emit({Duration? position, Duration? duration, Duration? buffer}) {
-    final next = current.copyWith(position: position, duration: duration, buffer: buffer);
+    var next = current;
+    if (position != null) next = next.copyWith(position: position);
+    if (duration != null) next = next.copyWith(duration: duration);
+    if (buffer != null) next = next.copyWith(buffer: buffer);
     if (next != current) {
       current = next;
       controller.add(current);
@@ -94,22 +78,26 @@ final playbackSnapshotProvider = StreamProvider.autoDispose<PlaybackSnapshot>((r
   });
 
   return controller.stream;
-});
+}
 
-final playbackSnapshotValueProvider = Provider.autoDispose<PlaybackSnapshot>((ref) {
+@riverpod
+PlaybackSnapshot playbackSnapshotValue(Ref ref) {
   return ref
       .watch(playbackSnapshotProvider)
       .maybeWhen(data: (value) => value, orElse: () => const PlaybackSnapshot());
-});
+}
 
-final playbackPositionProvider = Provider.autoDispose<Duration>((ref) {
+@riverpod
+Duration playbackPosition(Ref ref) {
   return ref.watch(playbackSnapshotValueProvider.select((value) => value.position));
-});
+}
 
-final playbackDurationProvider = Provider.autoDispose<Duration>((ref) {
+@riverpod
+Duration playbackDuration(Ref ref) {
   return ref.watch(playbackSnapshotValueProvider.select((value) => value.duration));
-});
+}
 
-final playbackBufferProvider = Provider.autoDispose<Duration>((ref) {
+@riverpod
+Duration playbackBuffer(Ref ref) {
   return ref.watch(playbackSnapshotValueProvider.select((value) => value.buffer));
-});
+}

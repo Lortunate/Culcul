@@ -7,98 +7,38 @@ import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/features/search/feature_scope.dart';
 import 'package:culcul/features/search/domain/entities/search_default_hint.dart';
-import 'package:culcul/features/search/domain/entities/search_query.dart';
+import 'package:culcul/core/contracts/search_query_contract.dart';
 import 'package:culcul/features/search/domain/entities/search_suggestion_entry.dart';
 import 'package:culcul/features/search/domain/entities/search_trending_keyword.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final searchSuggestionsProvider = FutureProvider.autoDispose
-    .family<List<SearchSuggestionEntry>, String>((ref, term) async {
-      if (term.isEmpty) return [];
-      final cancelToken = RequestCancelToken();
-      ref.onDispose(() => cancelToken.cancel('search_suggestions_disposed'));
-      final result = await ref
-          .watch(searchRepositoryProvider)
-          .getSuggestions(term, cancelToken: cancelToken);
-      return result.when(success: (data) => data, failure: (error) => throw error);
-    });
+part 'search_view_model.g.dart';
 
-final defaultSearchProvider =
-    AsyncNotifierProvider<DefaultSearchController, SearchDefaultHint?>(
-      DefaultSearchController.new,
-    );
-
-final trendingRankingProvider =
-    AsyncNotifierProvider<TrendingRankingController, List<SearchTrendingKeyword>>(
-      TrendingRankingController.new,
-    );
-
-final searchResultProvider = AsyncNotifierProvider.autoDispose
-    .family<SearchResultController, SearchResultPage?, SearchQuery>(
-      SearchResultController.new,
-    );
-
-class SearchResultController extends AsyncNotifier<SearchResultPage?> {
-  SearchResultController(this._query);
-
-  final SearchQuery _query;
-  RequestCancelToken? _activeRequestCancelToken;
-
-  @override
-  Future<SearchResultPage?> build() async {
-    ref.onDispose(() {
-      _activeRequestCancelToken?.cancel('search_result_disposed');
-    });
-    if (_query.keyword.isEmpty) return null;
-    _activeRequestCancelToken?.cancel('search_result_rebuilt');
-    final cancelToken = RequestCancelToken();
-    _activeRequestCancelToken = cancelToken;
-    final result = await ref
-        .watch(searchRepositoryProvider)
-        .search(query: _query, cancelToken: cancelToken);
-    return result.dataOrNull;
-  }
-
-  Future<void> fetchMore() async {
-    final oldState = state.value;
-    if (oldState == null || state.isLoading || oldState.page >= oldState.numPages) {
-      return;
-    }
-
-    state = const AsyncLoading<SearchResultPage?>().copyWithPrevious(state);
-    _activeRequestCancelToken?.cancel('search_result_load_more_replaced');
-    final cancelToken = RequestCancelToken();
-    _activeRequestCancelToken = cancelToken;
-    state = await AsyncValue.guard(() async {
-      final nextQuery = _query.copyWith(page: oldState.page + 1);
-      final result = await ref
-          .read(searchRepositoryProvider)
-          .search(query: nextQuery, cancelToken: cancelToken);
-      return result.when(
-        success: (newData) =>
-            newData.copyWith(items: [...oldState.items, ...newData.items]),
-        failure: (_) => oldState,
-      );
-    });
-  }
+@riverpod
+Future<List<SearchSuggestionEntry>> searchSuggestions(Ref ref, String term) async {
+  if (term.isEmpty) return [];
+  final cancelToken = RequestCancelToken();
+  ref.onDispose(() => cancelToken.cancel('search_suggestions_disposed'));
+  final result = await ref
+      .watch(searchRepositoryProvider)
+      .getSuggestions(term, cancelToken: cancelToken);
+  return result.when(success: (data) => data, failure: (error) => throw error);
 }
 
-class DefaultSearchController extends AsyncNotifier<SearchDefaultHint?> {
+@Riverpod(keepAlive: true)
+class DefaultSearch extends _$DefaultSearch {
   @override
   Future<SearchDefaultHint?> build() async {
     final stopwatch = Stopwatch()..start();
     final hasCachedValue = await _hasCachedValue(ApiConstants.searchDefaultUrl);
     final result = await ref.watch(searchRepositoryProvider).getDefaultSearch();
     final value = result.dataOrNull;
-    DevLogger.log(
-      'feature',
-      'search.default_hint initial_data',
-      <String, Object?>{
-        'cache_present': hasCachedValue,
-        'has_value': value != null,
-        'ms': stopwatch.elapsedMilliseconds,
-      },
-    );
+    DevLogger.log('feature', 'search.default_hint initial_data', <String, Object?>{
+      'cache_present': hasCachedValue,
+      'has_value': value != null,
+      'ms': stopwatch.elapsedMilliseconds,
+    });
     if (hasCachedValue && value != null) {
       unawaited(Future<void>.microtask(_refreshSilently));
     }
@@ -124,10 +64,7 @@ class DefaultSearchController extends AsyncNotifier<SearchDefaultHint?> {
       DevLogger.log(
         'feature',
         'search.default_hint silent_refresh_skip',
-        <String, Object?>{
-          'has_value': next != null,
-          'ms': stopwatch.elapsedMilliseconds,
-        },
+        <String, Object?>{'has_value': next != null, 'ms': stopwatch.elapsedMilliseconds},
       );
       return;
     }
@@ -144,22 +81,19 @@ class DefaultSearchController extends AsyncNotifier<SearchDefaultHint?> {
   }
 }
 
-class TrendingRankingController extends AsyncNotifier<List<SearchTrendingKeyword>> {
+@Riverpod(keepAlive: true)
+class TrendingRanking extends _$TrendingRanking {
   @override
   Future<List<SearchTrendingKeyword>> build() async {
     final stopwatch = Stopwatch()..start();
     final hasCachedValue = await _hasCachedValue(ApiConstants.searchTrendingRanking);
     final result = await ref.watch(searchRepositoryProvider).getTrendingRanking();
     final value = result.when(success: (data) => data, failure: (error) => throw error);
-    DevLogger.log(
-      'feature',
-      'search.hot_ranking initial_data',
-      <String, Object?>{
-        'cache_present': hasCachedValue,
-        'items': value.length,
-        'ms': stopwatch.elapsedMilliseconds,
-      },
-    );
+    DevLogger.log('feature', 'search.hot_ranking initial_data', <String, Object?>{
+      'cache_present': hasCachedValue,
+      'items': value.length,
+      'ms': stopwatch.elapsedMilliseconds,
+    });
     if (hasCachedValue && value.isNotEmpty) {
       unawaited(Future<void>.microtask(_refreshSilently));
     }
@@ -185,21 +119,14 @@ class TrendingRankingController extends AsyncNotifier<List<SearchTrendingKeyword
       DevLogger.log(
         'feature',
         'search.hot_ranking silent_refresh_skip',
-        <String, Object?>{
-          'items': next.length,
-          'ms': stopwatch.elapsedMilliseconds,
-        },
+        <String, Object?>{'items': next.length, 'ms': stopwatch.elapsedMilliseconds},
       );
       return;
     }
-    DevLogger.log(
-      'feature',
-      'search.hot_ranking silent_refresh_apply',
-      <String, Object?>{
-        'items': next.length,
-        'ms': stopwatch.elapsedMilliseconds,
-      },
-    );
+    DevLogger.log('feature', 'search.hot_ranking silent_refresh_apply', <String, Object?>{
+      'items': next.length,
+      'ms': stopwatch.elapsedMilliseconds,
+    });
     state = AsyncData(next);
   }
 
@@ -225,5 +152,48 @@ class TrendingRankingController extends AsyncNotifier<List<SearchTrendingKeyword
       }
     }
     return true;
+  }
+}
+
+@riverpod
+class SearchResult extends _$SearchResult {
+  RequestCancelToken? _activeRequestCancelToken;
+
+  @override
+  Future<SearchResultPage?> build(SearchQuery query) async {
+    ref.onDispose(() {
+      _activeRequestCancelToken?.cancel('search_result_disposed');
+    });
+    if (query.keyword.isEmpty) return null;
+    _activeRequestCancelToken?.cancel('search_result_rebuilt');
+    final cancelToken = RequestCancelToken();
+    _activeRequestCancelToken = cancelToken;
+    final result = await ref
+        .watch(searchRepositoryProvider)
+        .search(query: query, cancelToken: cancelToken);
+    return result.dataOrNull;
+  }
+
+  Future<void> fetchMore() async {
+    final oldState = state.value;
+    if (oldState == null || state.isLoading || oldState.page >= oldState.numPages) {
+      return;
+    }
+
+    state = const AsyncLoading<SearchResultPage?>().copyWithPrevious(state);
+    _activeRequestCancelToken?.cancel('search_result_load_more_replaced');
+    final cancelToken = RequestCancelToken();
+    _activeRequestCancelToken = cancelToken;
+    state = await AsyncValue.guard(() async {
+      final nextQuery = query.copyWith(page: oldState.page + 1);
+      final result = await ref
+          .read(searchRepositoryProvider)
+          .search(query: nextQuery, cancelToken: cancelToken);
+      return result.when(
+        success: (newData) =>
+            newData.copyWith(items: [...oldState.items, ...newData.items]),
+        failure: (_) => oldState,
+      );
+    });
   }
 }

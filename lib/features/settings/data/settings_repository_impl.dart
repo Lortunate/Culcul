@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:culcul/core/bootstrap/providers/storage_provider.dart';
+import 'package:culcul/core/storage/storage_keys.dart';
 import 'package:culcul/features/settings/domain/entities/app_theme_preference.dart';
 import 'package:culcul/features/settings/domain/repositories/settings_repository.dart';
 import 'package:culcul/features/settings/domain/repositories/settings_repository.dart'
@@ -13,14 +14,11 @@ part 'settings_repository_impl.g.dart';
 
 @riverpod
 SettingsRepository settingsRepository(Ref ref) {
-  return SettingsRepositoryImpl(
-    prefs: ref.watch(sharedPreferencesProvider),
-  );
+  return SettingsRepositoryImpl(prefs: ref.watch(sharedPreferencesProvider));
 }
 
 class SettingsRepositoryImpl implements domain.SettingsRepository {
-  const SettingsRepositoryImpl({required SharedPreferences prefs})
-    : _prefs = prefs;
+  const SettingsRepositoryImpl({required SharedPreferences prefs}) : _prefs = prefs;
 
   final SharedPreferences _prefs;
 

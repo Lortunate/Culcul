@@ -1,6 +1,6 @@
 # Phase 13: Structural Simplification & Single Source of Truth
 
-**Status:** Active  
+**Status:** Completed and archived  
 **Date:** 2026-05-12  
 **Supersedes:** Phase 12 (completed)
 

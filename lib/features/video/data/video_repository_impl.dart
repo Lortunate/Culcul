@@ -4,11 +4,12 @@ import 'package:culcul/core/data/network/request_cancel_token.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/data/network/resource_api.dart';
+import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/video/domain/repositories/video_repository.dart'
     as domain;
 import 'package:culcul/features/video/data/video_api.dart';
-import 'package:culcul/features/video/domain/entities/video_entities_exports.dart';
+import 'package:culcul/features/video/data/dtos/video_dtos.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'video_repository_impl.g.dart';
