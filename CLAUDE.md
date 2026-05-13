@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **Culcul** (2020 symbols, 2818 relationships, 27 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **Culcul** (2015 symbols, 2813 relationships, 27 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -48,6 +48,7 @@ This project is indexed by GitNexus as **Culcul** (2020 symbols, 2818 relationsh
 
 Active spec: `docs/specs/phase21-consolidation-and-modernization.md`
 Active plan: `docs/plans/phase21-consolidation-and-modernization.md`
+Architecture guide: `docs/architecture/architecture-guide.md`
 Archived: Phase 20 spec/plan in `docs/specs/archive/` and `docs/plans/archive/`
 
 **Key rules**:
