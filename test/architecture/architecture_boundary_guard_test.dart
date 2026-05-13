@@ -1,0 +1,130 @@
+import 'package:flutter_test/flutter_test.dart';
+
+import 'architecture_guard_utils.dart';
+
+void main() {
+  test('feature presentation code must not import other presentation features', () {
+    final offenders = <String>[];
+
+    for (final file in dartFiles('lib')) {
+      final importerPath = normalizePath(file.path);
+      final importerFeature = featureNameFromPath(importerPath);
+      if (importerFeature == null ||
+          !importerPath.startsWith('lib/features/$importerFeature/presentation/')) {
+        continue;
+      }
+
+      for (final import in dartImports(file)) {
+        final targetPath = import.resolvedPath;
+        final targetFeature = targetPath == null ? null : featureNameFromPath(targetPath);
+        if (targetPath == null ||
+            targetFeature == null ||
+            targetFeature == importerFeature) {
+          continue;
+        }
+
+        if (targetPath.startsWith('lib/features/$targetFeature/presentation/')) {
+          offenders.add(
+            '${formatLocation(import.importerPath, import.lineNumber)} '
+            'imports ${import.uri} -> $targetPath',
+          );
+        }
+      }
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'Cross-feature presentation imports are not allowed:\n'
+          '${offenders.join('\n')}',
+    );
+  });
+
+  test('features must not import other feature data implementations', () {
+    final offenders = <String>[];
+
+    for (final file in dartFiles('lib')) {
+      final importerPath = normalizePath(file.path);
+      final importerFeature = featureNameFromPath(importerPath);
+      if (importerFeature == null) {
+        continue;
+      }
+
+      for (final import in dartImports(file)) {
+        final targetPath = import.resolvedPath;
+        final targetFeature = targetPath == null ? null : featureNameFromPath(targetPath);
+        if (targetPath == null ||
+            targetFeature == null ||
+            targetFeature == importerFeature) {
+          continue;
+        }
+
+        if (targetPath.startsWith('lib/features/$targetFeature/data/')) {
+          offenders.add(
+            '${formatLocation(import.importerPath, import.lineNumber)} '
+            'imports ${import.uri} -> $targetPath',
+          );
+        }
+      }
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'Cross-feature data imports are not allowed:\n'
+          '${offenders.join('\n')}',
+    );
+  });
+
+  test('AppException must not appear in lib', () {
+    final offenders = <String>[];
+
+    for (final file in dartFiles('lib')) {
+      final path = normalizePath(file.path);
+      for (final line in authoredDartCodeLines(file)) {
+        if (line.text.contains('AppException')) {
+          offenders.add('${formatLocation(path, line.lineNumber)} AppException');
+        }
+      }
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'AppException references are not allowed in lib/:\n'
+          '${offenders.join('\n')}',
+    );
+  });
+
+  test('only approved contract files may be re-export-only barrels', () {
+    final offenders = <String>[];
+
+    for (final file in dartFiles('lib')) {
+      final normalizedPath = normalizePath(file.path);
+      if (normalizedPath == 'lib/core/contracts/core_contracts.dart') {
+        continue;
+      }
+
+      final lines = meaningfulLines(file);
+
+      if (lines.isNotEmpty &&
+          lines.every(
+            (line) =>
+                line.startsWith('export ') ||
+                line.startsWith('library ') ||
+                line.startsWith('@'),
+          )) {
+        offenders.add(normalizedPath);
+      }
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason: 'Unauthorized re-export-only files:\n${offenders.join('\n')}',
+    );
+  });
+}

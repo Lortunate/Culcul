@@ -1,3 +1,6 @@
+> Superseded by `docs/specs/phase21-consolidation-and-modernization.md`.
+> Archived on 2026-05-13 after Phase 20 cleanup was rolled into Phase 21.
+
 # Phase 20: Architecture Cleanup & Dead Weight Removal
 
 **Date**: 2026-05-13

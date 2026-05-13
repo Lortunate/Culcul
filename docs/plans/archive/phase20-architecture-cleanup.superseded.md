@@ -1,7 +1,10 @@
+> Superseded by `docs/plans/phase21-consolidation-and-modernization.md`.
+> Archived on 2026-05-13 after Phase 20 cleanup was rolled into Phase 21.
+
 # Phase 20 Execution Plan: Architecture Cleanup & Dead Weight Removal
 
 **Created**: 2026-05-13
-**Spec**: `docs/specs/phase20-architecture-cleanup.md`
+**Spec**: `docs/specs/archive/phase20-architecture-cleanup.superseded.md`
 **Status**: Ready for execution
 
 ---
