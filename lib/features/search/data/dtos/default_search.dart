@@ -4,17 +4,17 @@ part 'default_search.freezed.dart';
 part 'default_search.g.dart';
 
 @freezed
-sealed class DefaultSearch with _$DefaultSearch {
-  const factory DefaultSearch({
+sealed class DefaultSearchDto with _$DefaultSearchDto {
+  const factory DefaultSearchDto({
     @JsonKey(name: 'show_name') required String showName,
     required String name,
     required int type,
     @JsonKey(name: 'search_type') required String searchType,
     @JsonKey(name: 'id') required int id,
-  }) = _DefaultSearch;
+  }) = _DefaultSearchDto;
 
-  factory DefaultSearch.fromJson(Map<String, dynamic> json) =>
-      _$DefaultSearchFromJson(json);
+  factory DefaultSearchDto.fromJson(Map<String, dynamic> json) =>
+      _$DefaultSearchDtoFromJson(json);
 }
 
 @freezed

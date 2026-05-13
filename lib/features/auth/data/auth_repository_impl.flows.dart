@@ -14,7 +14,7 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin {
     return _executor.run(() async {
       final keyResponse = await _api.getKey();
       if (keyResponse.code != 0) {
-        throw AuthException(
+        throw AppError.auth(
           'Failed to get encryption key: ${keyResponse.message}',
           code: keyResponse.code,
         );
@@ -42,12 +42,12 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin {
         if (data != null && data['status'] == 0) {
           return _loadCurrentUser();
         }
-        throw AuthException(
+        throw AppError.auth(
           (data?['message'] as String?) ?? loginResponse.message,
           code: data?['status'] as int?,
         );
       }
-      throw AuthException(loginResponse.message, code: loginResponse.code);
+      throw AppError.auth(loginResponse.message, code: loginResponse.code);
     });
   }
 
@@ -75,7 +75,7 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin {
         }
         return <CountryCode>[];
       }
-      throw AuthException(response.message, code: response.code);
+      throw AppError.auth(response.message, code: response.code);
     });
   }
 
@@ -97,7 +97,7 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin {
         final gt = geetest['gt'] as String?;
         final challenge = geetest['challenge'] as String?;
         if (token == null || gt == null || challenge == null) {
-          throw const DataException('Invalid captcha payload');
+          throw const AppError.data('Invalid captcha payload');
         }
         return AuthCaptchaChallenge(token: token, gt: gt, challenge: challenge);
       },
@@ -129,7 +129,7 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin {
         }
         return '';
       }
-      throw AuthException(response.message, code: response.code);
+      throw AppError.auth(response.message, code: response.code);
     });
   }
 
@@ -144,7 +144,7 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin {
       if (response.code == 0) {
         return _loadCurrentUser();
       }
-      throw AuthException(response.message, code: response.code);
+      throw AppError.auth(response.message, code: response.code);
     });
   }
 
@@ -162,7 +162,7 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin {
         final url = data['url'] as String?;
         final key = data['qrcode_key'] as String?;
         if (url == null || key == null) {
-          throw const DataException('Invalid QR code payload');
+          throw const AppError.data('Invalid QR code payload');
         }
         return AuthQrCode(url: url, key: key);
       },

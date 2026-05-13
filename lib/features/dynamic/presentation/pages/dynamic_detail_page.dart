@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:culcul/features/dynamic/application/dynamic_detail_actions.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_comment_view_model.dart';
+import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_detail_view_model.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_detail_bottom_bar.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_detail_header.dart';
@@ -85,8 +86,9 @@ class DynamicDetailPage extends HookConsumerWidget {
       if (!context.mounted) {
         return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(t.moments.operation_failed(message: message))),
+      context.showAppFeedback(
+        t.moments.operation_failed(message: message),
+        level: AppFeedbackLevel.error,
       );
     }
 

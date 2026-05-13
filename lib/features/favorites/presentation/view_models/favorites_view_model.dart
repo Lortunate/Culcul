@@ -8,7 +8,6 @@ import 'package:culcul/core/utils/list_utils.dart';
 import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
-import 'package:culcul/features/favorites/domain/entities/favorite_queries.dart';
 import 'package:culcul/features/favorites/feature_scope.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -49,7 +48,8 @@ class FavCreatedFolders extends _$FavCreatedFolders {
 
             try {
               final resourcesResult = await repository.getFolderResources(
-                FavoriteFolderResourcesQuery(mediaId: folder.id, page: 1),
+                mediaId: folder.id,
+                page: 1,
               );
               final resources = resourcesResult.dataOrNull;
               if (resources == null) {

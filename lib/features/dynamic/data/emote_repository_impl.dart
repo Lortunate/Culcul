@@ -4,7 +4,7 @@ import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/dynamic/data/emote_api.dart';
-import 'package:culcul/features/dynamic/domain/entities/emote_response.dart';
+import 'package:culcul/features/dynamic/data/dtos/emote_response.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'emote_repository_impl.g.dart';

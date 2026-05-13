@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/data/network/resource_api.dart';
 import 'package:culcul/core/data/network/resource_api_provider.dart';
@@ -22,7 +23,7 @@ class MediaService {
   Future<void> saveImage(String url) async {
     final formattedUrl = FormatUtils.formatImageUrl(url);
     if (formattedUrl.isEmpty) {
-      throw Exception('Invalid image URL');
+      throw const AppError.unknown('Invalid image URL');
     }
 
     final tempDir = await getTemporaryDirectory();

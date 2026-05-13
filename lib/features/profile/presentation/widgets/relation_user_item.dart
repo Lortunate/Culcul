@@ -1,4 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/core/contracts/relation_user_contract.dart';
 import 'package:culcul/features/profile/presentation/view_models/relation_user_action_view_model.dart';
@@ -107,12 +108,9 @@ class _RelationUserItemState extends ConsumerState<RelationUserItem> {
         setState(() {
           _attribute = widget.user.attribute;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              Translations.of(context).profile.relation.failed(error: error.message),
-            ),
-          ),
+        context.showAppFeedback(
+          Translations.of(context).profile.relation.failed(error: error.message),
+          level: AppFeedbackLevel.error,
         );
       }
     }

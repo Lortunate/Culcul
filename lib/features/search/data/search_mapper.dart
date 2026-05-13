@@ -1,9 +1,7 @@
 import 'package:culcul/features/search/data/dtos/default_search.dart';
 import 'package:culcul/features/search/data/dtos/search_result.dart';
 import 'package:culcul/features/search/data/dtos/search_suggestion.dart';
-import 'package:culcul/features/search/data/dtos/trending_ranking.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';
-import 'package:culcul/features/search/domain/entities/search_trending_keyword.dart';
 
 extension DefaultSearchDataMapper on DefaultSearchData {
   String toDomain() => showName;
@@ -14,12 +12,6 @@ extension SearchSuggestionTagMapper on SearchSuggestionTag {
     final displayValue = value ?? term ?? '';
     if (displayValue.isEmpty) return null;
     return displayValue;
-  }
-}
-
-extension TrendingItemMapper on TrendingItem {
-  SearchTrendingKeyword toDomain() {
-    return SearchTrendingKeyword(position: position, keyword: keyword, label: showName);
   }
 }
 

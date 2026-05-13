@@ -6,7 +6,7 @@ import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/features/live/feature_scope.dart';
 import 'package:culcul/features/live/data/dtos/live_room_detail_model.dart';
-import 'package:culcul/features/live/domain/entities/live_history_danmaku_model.dart';
+import 'package:culcul/features/live/data/dtos/live_history_danmaku_model.dart';
 import 'package:culcul/features/live/presentation/view_models/live_danmaku_feed_view_model.dart';
 import 'package:culcul/features/live/presentation/view_models/live_room_state.dart';
 import 'package:culcul/features/live/presentation/view_models/live_socket_service.dart';

@@ -1,5 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/dynamic/presentation/pages/article_detail_page.dart';
+import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -35,9 +36,7 @@ class DynamicNavigation {
 
     final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!launched && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(Translations.of(context).moments.open_link_failed)),
-      );
+      context.showAppFeedback(Translations.of(context).moments.open_link_failed);
     }
   }
 

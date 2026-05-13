@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/core/utils/toast_utils.dart';
+import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:culcul/ui/responsive/app_breakpoints.dart';
 import 'package:culcul/ui/responsive/app_responsive.dart';
@@ -85,7 +85,9 @@ class ProfileActionGrid extends StatelessWidget {
       (
         icon: Icons.support_agent_outlined,
         label: t.profile.menu.support,
-        onTap: () => ToastUtils.show(t.common.coming_soon(tab: t.profile.menu.support)),
+        onTap: () => context.showAppFeedback(
+          t.common.coming_soon(tab: t.profile.menu.support),
+        ),
       ),
     ];
   }

@@ -1,4 +1,4 @@
-import 'package:culcul/features/live/domain/entities/live_history_danmaku_model.dart';
+import 'package:culcul/features/live/data/dtos/live_history_danmaku_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/ui.dart';
 import 'package:flutter/material.dart';

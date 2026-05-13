@@ -3,6 +3,7 @@ import 'package:culcul/features/favorites/presentation/view_models/favorites_vie
 import 'package:culcul/features/favorites/application/favorite_folder_commands.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
+import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/layout/app_tab_bar.dart';
@@ -109,9 +110,10 @@ Future<bool> _handleCreateFolder({
   }
 
   if (context.mounted) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('${t.common.error}: ${error.message}')));
+    context.showAppFeedback(
+      '${t.common.error}: ${error.message}',
+      level: AppFeedbackLevel.error,
+    );
   }
   return false;
 }

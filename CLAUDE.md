@@ -42,7 +42,7 @@ Claude's primary role is **task orchestration and decision-making**. Codex (via 
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **Culcul** (2022 symbols, 2820 relationships, 27 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **Culcul** (2020 symbols, 2818 relationships, 27 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -100,7 +100,7 @@ Archived: Phase 20 spec/plan in `docs/specs/archive/` and `docs/plans/archive/`
 - Every shared model has exactly ONE definition in `core/contracts/`
 - All domain entities and DTOs use freezed — no hand-written `copyWith` or equality
 - No typedef-only or re-export-only files — import the source directly
-- No barrel-chain files (file that only re-exports other files) except `core_contracts.dart`
+- No barrel-chain files (file that only re-exports other files) except `core_contracts.dart` and the approved UI public API `lib/ui/ui.dart`
 - All dependencies pinned to specific versions (no `any`)
 - Prefer `shared_preferences` + `flutter_secure_storage` over Hive for local storage
 - Prefer `dio_smart_retry` over custom retry logic; prefer generated providers over hand-written wiring

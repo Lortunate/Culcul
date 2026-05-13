@@ -1,4 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/settings/presentation/view_models/settings_view_model.dart';
 import 'package:culcul/features/settings/presentation/widgets/settings_group.dart';
 import 'package:culcul/features/settings/presentation/widgets/settings_selection_item.dart';
@@ -161,12 +162,7 @@ class SettingsPage extends ConsumerWidget {
     final t = Translations.of(context);
     await ref.read(cacheMaintenanceProvider.notifier).clear();
     if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(t.common.refresh_completed),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      context.showAppFeedback(t.common.refresh_completed);
     }
   }
 }

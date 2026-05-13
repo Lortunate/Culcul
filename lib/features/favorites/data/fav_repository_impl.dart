@@ -8,7 +8,6 @@ import 'package:culcul/features/favorites/data/dtos/fav_folder_model.dart';
 import 'package:culcul/features/favorites/data/dtos/fav_resource_model.dart';
 import 'package:culcul/features/favorites/data/favorite_mapper.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
-import 'package:culcul/features/favorites/domain/entities/favorite_queries.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -114,23 +113,29 @@ class FavRepositoryImpl with RequestExecutorBinding {
     return result.map((data) => data.toDomain());
   }
 
-  Future<Result<FavoriteFolderPage, AppError>> getCollectedFolders(
-    FavoriteFolderListQuery query,
-  ) async {
-    final result = await getCollectedFoldersModel(upMid: query.upMid, pn: query.page);
+  Future<Result<FavoriteFolderPage, AppError>> getCollectedFolders({
+    required int upMid,
+    required int page,
+  }) async {
+    final result = await getCollectedFoldersModel(upMid: upMid, pn: page);
     return result.map((data) => data.toDomain());
   }
 
-  Future<Result<FavoriteResourcePage, AppError>> getFolderResources(
-    FavoriteFolderResourcesQuery query,
-  ) async {
+  Future<Result<FavoriteResourcePage, AppError>> getFolderResources({
+    required int mediaId,
+    required int page,
+    String? keyword,
+    String? order,
+    int? type,
+    int? tid,
+  }) async {
     final result = await getFolderResourcesModel(
-      mediaId: query.mediaId,
-      pn: query.page,
-      keyword: query.keyword,
-      order: query.order,
-      type: query.type,
-      tid: query.tid,
+      mediaId: mediaId,
+      pn: page,
+      keyword: keyword,
+      order: order,
+      type: type,
+      tid: tid,
     );
     return result.map((data) => data.toDomain());
   }

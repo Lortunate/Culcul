@@ -182,7 +182,8 @@ Future<bool> _handleDeleteResources({
 void _showFavoriteActionErrorSnackBar(BuildContext context, String message) {
   if (!context.mounted) return;
   final t = Translations.of(context);
-  ScaffoldMessenger.of(
-    context,
-  ).showSnackBar(SnackBar(content: Text('${t.common.error}: $message')));
+  context.showAppFeedback(
+    '${t.common.error}: $message',
+    level: AppFeedbackLevel.error,
+  );
 }

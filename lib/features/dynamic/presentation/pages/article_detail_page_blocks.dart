@@ -55,9 +55,7 @@ Future<void> handleArticleMenuAction(
     case 'copy':
       await Clipboard.setData(ClipboardData(text: data.url));
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(Translations.of(context).moments.copied_link)),
-        );
+        context.showAppFeedback(Translations.of(context).moments.copied_link);
       }
       break;
     case 'share':

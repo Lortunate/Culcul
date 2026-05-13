@@ -51,33 +51,8 @@ class RankingCategory {
   };
 }
 
-final rankingCategories = [
-  const RankingCategory(name: 'all', rid: null),
-  const RankingCategory(name: 'animation', rid: 1),
-  const RankingCategory(name: 'bangumi', rid: 13),
-  const RankingCategory(name: 'guochuang', rid: 167),
-  const RankingCategory(name: 'music', rid: 3),
-  const RankingCategory(name: 'dance', rid: 129),
-  const RankingCategory(name: 'game', rid: 4),
-  const RankingCategory(name: 'knowledge', rid: 36),
-  const RankingCategory(name: 'technology', rid: 188),
-  const RankingCategory(name: 'sports', rid: 234),
-  const RankingCategory(name: 'car', rid: 223),
-  const RankingCategory(name: 'life', rid: 160),
-  const RankingCategory(name: 'food', rid: 211),
-  const RankingCategory(name: 'animal', rid: 217),
-  const RankingCategory(name: 'kichiku', rid: 119),
-  const RankingCategory(name: 'fashion', rid: 155),
-  const RankingCategory(name: 'information', rid: 202),
-  const RankingCategory(name: 'entertainment', rid: 5),
-  const RankingCategory(name: 'film', rid: 181),
-  const RankingCategory(name: 'documentary', rid: 177),
-  const RankingCategory(name: 'movie', rid: 23),
-  const RankingCategory(name: 'tv', rid: 11),
-];
-
 final rankingCategoriesV2 = [
-  const RankingCategory(name: 'all', rid: null),
+  const RankingCategory(name: 'all'),
   const RankingCategory(name: 'animation', rid: 1005),
   const RankingCategory(name: 'game', rid: 1008),
   const RankingCategory(name: 'kichiku', rid: 1007),

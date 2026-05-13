@@ -1,6 +1,7 @@
-import 'package:culcul/features/dynamic/domain/entities/dynamic_response.dart';
+import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_extension.dart';
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_post_header.dart';
@@ -96,9 +97,7 @@ class DynamicPostCard extends StatelessWidget {
             () {
               final likeHandler = onLike;
               if (likeHandler == null) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(t.moments.like_coming_soon)));
+                context.showAppFeedback(t.moments.like_coming_soon);
                 return;
               }
               likeHandler(post);

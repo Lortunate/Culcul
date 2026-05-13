@@ -31,13 +31,6 @@ sealed class ToViewModelDto with _$ToViewModelDto {
     @JsonKey(name: 'bvid') @Default('') String? bvid,
   }) = _ToViewModelDto;
 
-  bool get hasProgress => (progress ?? 0) > 0;
-
-  double get progressRatio {
-    final d = (duration ?? 0) == 0 ? 1 : (duration ?? 1);
-    return (progress ?? 0) / d;
-  }
-
   factory ToViewModelDto.fromJson(Map<String, dynamic> json) =>
       _$ToViewModelDtoFromJson(json);
 }

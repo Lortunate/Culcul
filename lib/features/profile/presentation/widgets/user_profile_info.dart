@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/session/user_providers.dart';
-import 'package:culcul/features/profile/domain/entities/profile_user.dart';
+import 'package:culcul/features/profile/data/dtos/profile_user.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_banner.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_buttons.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_stat_item.dart';
@@ -14,14 +14,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 part 'user_profile_info.sections.dart';
 
-class UserProfileInfo extends HookConsumerWidget {
+class UserProfileHeader extends HookConsumerWidget {
   final ProfileUser? profile;
 
   static const double _bannerHeight = 160.0;
   static const double _avatarSize = 88.0;
   static const double _borderRadius = 20.0;
 
-  const UserProfileInfo({super.key, required this.profile});
+  const UserProfileHeader({super.key, required this.profile});
 
   void _showImagePreview(BuildContext context, String? url) {
     if (url == null || url.isEmpty) return;

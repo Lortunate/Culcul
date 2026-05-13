@@ -19,7 +19,7 @@ class FavCollectedFolders extends _$FavCollectedFolders
   Future<List<FavoriteFolder>> fetchPage(int page) async {
     final result = await ref
         .read(favRepositoryProvider)
-        .getCollectedFolders(FavoriteFolderListQuery(upMid: _mid, page: page));
+        .getCollectedFolders(upMid: _mid, page: page);
     return result.dataOrNull?.folders ?? const <FavoriteFolder>[];
   }
 

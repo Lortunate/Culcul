@@ -12,7 +12,7 @@ import 'package:culcul/features/live/data/dtos/live_gold_rank_model.dart';
 import 'package:culcul/features/live/data/dtos/live_guard_list_model.dart';
 import 'package:culcul/features/live/data/dtos/live_play_url_model.dart';
 import 'package:culcul/features/live/data/dtos/live_room_detail_model.dart';
-import 'package:culcul/features/live/domain/entities/live_history_danmaku_model.dart';
+import 'package:culcul/features/live/data/dtos/live_history_danmaku_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'live_repository_impl.g.dart';

@@ -1,3 +1,4 @@
+import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/notification/application/chat_page_commands.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
@@ -62,8 +63,9 @@ class ChatPage extends HookConsumerWidget {
         return;
       }
       final t = context.t;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(t.notification.chat.send_failed(error: error.toString()))),
+      context.showAppFeedback(
+        t.notification.chat.send_failed(error: error.toString()),
+        level: AppFeedbackLevel.error,
       );
     }
 

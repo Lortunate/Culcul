@@ -42,14 +42,14 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
         return _getReadArticleDetail(uri);
       }
 
-      throw const UnknownException('Unsupported article url');
+      throw const AppError.unknown('Unsupported article url');
     });
   }
 
   Future<ArticleDetailData> _getReadArticleDetail(Uri uri) async {
     final articleId = ArticleDetailParser.extractArticleId(uri);
     if (articleId == null) {
-      throw const UnknownException('Invalid article url');
+      throw const AppError.unknown('Invalid article url');
     }
 
     final requestStopwatch = Stopwatch()..start();
@@ -73,12 +73,12 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
     final parseStopwatch = Stopwatch()..start();
     final payload = response.data ?? const <String, dynamic>{};
     if (payload['code'] != 0) {
-      throw ServerException(payload['message']?.toString() ?? 'Failed to load article');
+      throw AppError.server(payload['message']?.toString() ?? 'Failed to load article');
     }
 
     final data = payload['data'];
     if (data is! Map<String, dynamic>) {
-      throw const UnknownException('Invalid article payload');
+      throw const AppError.unknown('Invalid article payload');
     }
     final detail = ArticleDetailParser.fromArticleView(sourceUri: uri, data: data);
     DevLogger.log(
@@ -120,7 +120,7 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
     final html = response.data ?? '';
     final initialState = await ArticleDetailParser.extractInitialState(html);
     if (initialState == null) {
-      throw const UnknownException('Failed to parse article page');
+      throw const AppError.unknown('Failed to parse article page');
     }
     final detail = ArticleDetailParser.fromOpusState(sourceUri: uri, state: initialState);
     DevLogger.log(

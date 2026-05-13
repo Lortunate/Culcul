@@ -1,5 +1,7 @@
 import 'dart:typed_data';
+
 import 'package:archive/archive.dart';
+import 'package:culcul/core/errors/app_error.dart';
 
 class DanmakuMaskParser {
   final List<int> bytes;
@@ -13,7 +15,7 @@ class DanmakuMaskParser {
 
     // Header "MASK"
     final header = String.fromCharCodes(bytes.sublist(0, 4));
-    if (header != 'MASK') throw Exception('Invalid mask file');
+    if (header != 'MASK') throw const AppError.data('Invalid mask file');
     offset += 4;
 
     // Version

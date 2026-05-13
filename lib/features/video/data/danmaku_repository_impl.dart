@@ -2,6 +2,7 @@ import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/data/network/resource_api.dart';
+import 'package:culcul/core/data/network/resource_api_provider.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/video/domain/entities/danmaku_model.dart';
@@ -15,7 +16,7 @@ part 'danmaku_repository_impl.g.dart';
 DanmakuRepositoryImpl danmakuRepository(Ref ref) {
   return DanmakuRepositoryImpl(
     DanmakuApi(ref.watch(basicDioProvider)),
-    ResourceApi(ref.watch(basicDioProvider)),
+    ref.watch(basicResourceApiProvider),
   );
 }
 
@@ -59,7 +60,7 @@ class DanmakuRepositoryImpl
     });
   }
 
-  Future<Result<DanmakuView, AppError>> fetchDanmakuView({
+  Future<Result<DanmakuViewConfig, AppError>> fetchDanmakuView({
     required int oid,
     required int pid,
   }) {
@@ -67,7 +68,7 @@ class DanmakuRepositoryImpl
       final response = DmViewReply.fromBuffer(
         await _api.fetchDanmakuView(oid: oid, pid: pid),
       );
-      return DanmakuView(
+      return DanmakuViewConfig(
         closed: response.closed,
         allow: response.allow,
         sendBoxStyle: response.sendBoxStyle,

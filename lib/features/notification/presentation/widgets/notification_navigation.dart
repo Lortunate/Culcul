@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
-import 'package:culcul/features/notification/domain/entities/system_notice.dart';
+import 'package:culcul/features/notification/data/dtos/system_notice.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 

@@ -1,5 +1,6 @@
+import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/core/utils/share_utils.dart';
-import 'package:culcul/features/profile/domain/entities/profile_user.dart';
+import 'package:culcul/features/profile/data/dtos/profile_user.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/overlays/app_bottom_sheet.dart';
 import 'package:flutter/foundation.dart';
@@ -93,9 +94,7 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                   color: contentColor,
                   backgroundColor: iconBackgroundColor,
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(t.profile.space_search_coming_soon)),
-                    );
+                    context.showAppFeedback(t.profile.space_search_coming_soon);
                   },
                 ),
                 _buildIconButton(

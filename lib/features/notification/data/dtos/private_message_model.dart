@@ -1,4 +1,6 @@
 import 'dart:convert';
+
+import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'private_message_model.freezed.dart';
@@ -124,18 +126,6 @@ sealed class PrivateMessageDetail with _$PrivateMessageDetail {
       _ => PrivateMessageSummaryKind.unknown,
     };
   }
-}
-
-enum PrivateMessageSummaryKind {
-  withdrawn,
-  text,
-  image,
-  notice,
-  video,
-  article,
-  card,
-  share,
-  unknown,
 }
 
 @freezed

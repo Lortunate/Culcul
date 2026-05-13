@@ -81,28 +81,4 @@ class ErrorHandler {
 
   @visibleForTesting
   static int get loggedErrorCountForTest => _loggedErrorSignatures.length;
-
-  static void showErrorSnackBar(
-    BuildContext context,
-    dynamic error, {
-    VoidCallback? onRetry,
-  }) {
-    final message = getErrorMessage(context, error);
-    final theme = Theme.of(context);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message, style: TextStyle(color: theme.colorScheme.onError)),
-        backgroundColor: theme.colorScheme.error,
-        behavior: SnackBarBehavior.floating,
-        action: onRetry != null
-            ? SnackBarAction(
-                label: Translations.of(context).common.retry,
-                textColor: theme.colorScheme.onErrorContainer,
-                onPressed: onRetry,
-              )
-            : null,
-      ),
-    );
-  }
 }

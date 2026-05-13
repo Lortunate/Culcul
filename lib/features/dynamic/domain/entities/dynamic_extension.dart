@@ -1,4 +1,4 @@
-import 'dynamic_response.dart';
+import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
 import 'dynamic_content_entities.dart';
 
 part 'dynamic_extension.identity.dart';

@@ -4,7 +4,7 @@ import 'package:culcul/features/profile/presentation/widgets/user_home_tab.dart'
 import 'package:culcul/features/profile/presentation/widgets/user_video_tab.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_app_bar.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_info.dart';
-import 'package:culcul/features/profile/domain/entities/profile_user.dart';
+import 'package:culcul/features/profile/data/dtos/profile_user.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/layout/sliver_tab_bar_delegate.dart';
@@ -115,7 +115,7 @@ class _UserProfileContent extends StatelessWidget {
         onRefresh: onRefresh,
         child: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            SliverToBoxAdapter(child: UserProfileInfo(profile: profile)),
+            SliverToBoxAdapter(child: UserProfileHeader(profile: profile)),
             SliverToBoxAdapter(
               child: Container(
                 height: 8,

@@ -34,7 +34,7 @@ sealed class TrendingItem with _$TrendingItem {
   const factory TrendingItem({
     required int position,
     required String keyword,
-    @JsonKey(name: 'show_name') required String showName,
+    @JsonKey(name: 'show_name') required String label,
     @JsonKey(name: 'word_type') required int wordType,
     String? icon,
     @JsonKey(name: 'hot_id') required int hotId,

@@ -12,7 +12,7 @@ mixin _AuthRepositorySessionMixin on _AuthRepositoryHelpersMixin {
       await clearCache();
       final response = await _api.logout();
       if (response.code != 0) {
-        throw AuthException(response.message, code: response.code);
+        throw AppError.auth(response.message, code: response.code);
       }
     });
   }

@@ -64,7 +64,7 @@ class FavFolderResources extends _$FavFolderResources {
     final requestStopwatch = Stopwatch()..start();
     final result = await ref
         .read(favRepositoryProvider)
-        .getFolderResources(FavoriteFolderResourcesQuery(mediaId: mediaId, page: page));
+        .getFolderResources(mediaId: mediaId, page: page);
     DevLogger.log(
       'feature',
       'favorites.detail request',
@@ -93,13 +93,11 @@ class FavFolderResources extends _$FavFolderResources {
     try {
       final result = await ref
           .read(favRepositoryProvider)
-          .getFolderResources(
-            FavoriteFolderResourcesQuery(mediaId: mediaId, page: current.paging.nextPage),
-          );
+          .getFolderResources(mediaId: mediaId, page: current.paging.nextPage);
       final nextPageData = result.dataOrNull;
       if (nextPageData == null) {
         final error =
-            result.errorOrNull ?? AppError.data('Failed to load favorite resources');
+            result.errorOrNull ?? const AppError.data('Failed to load favorite resources');
         state = AsyncData(
           current.copyWith(
             paging: current.paging.copyWith(isLoadingMore: false, error: error),

@@ -1,9 +1,9 @@
 import 'package:culcul/core/session/feature_action_providers.dart';
+import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/services/media_service.dart';
 import 'package:culcul/core/utils/id_utils.dart';
-import 'package:culcul/core/utils/toast_utils.dart';
-import 'package:culcul/features/video/presentation/overlays/video_actions_bottom_sheet.dart';
+import 'package:culcul/features/video/feature_scope.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -21,14 +21,22 @@ Future<void> showHomeVideoActionsBottomSheet(
     try {
       final aid = IdUtils.bv2av(bvid);
       if (aid == 0) {
-        ToastUtils.showError(t.home.video_more.invalid_video_id);
+        context.showAppFeedback(
+          t.home.video_more.invalid_video_id,
+          level: AppFeedbackLevel.error,
+        );
         return;
       }
 
       await ref.read(watchLaterPortProvider).addToWatchLater(aid);
-      ToastUtils.show(t.home.video_more.added_to_watch_later);
+      if (!context.mounted) return;
+      context.showAppFeedback(t.home.video_more.added_to_watch_later);
     } catch (e) {
-      ToastUtils.showError(t.home.video_more.add_failed(error: e.toString()));
+      if (!context.mounted) return;
+      context.showAppFeedback(
+        t.home.video_more.add_failed(error: e.toString()),
+        level: AppFeedbackLevel.error,
+      );
     }
   }
 
@@ -37,20 +45,20 @@ Future<void> showHomeVideoActionsBottomSheet(
 
     try {
       await ref.read(mediaServiceProvider).saveImage(coverUrl);
-      ToastUtils.show(t.common.save_success);
+      if (!context.mounted) return;
+      context.showAppFeedback(t.common.save_success);
     } catch (e) {
-      ToastUtils.showError(t.home.video_more.download_failed(error: e.toString()));
+      if (!context.mounted) return;
+      context.showAppFeedback(
+        t.home.video_more.download_failed(error: e.toString()),
+        level: AppFeedbackLevel.error,
+      );
     }
   }
 
-  return showModalBottomSheet<void>(
-    context: context,
-    backgroundColor: Colors.transparent,
-    barrierColor: Colors.transparent,
-    isScrollControlled: true,
-    builder: (sheetContext) => VideoActionsBottomSheet(
-      onWatchLater: () => addToWatchLater(sheetContext),
-      onDownloadCover: () => downloadCover(sheetContext),
-    ),
+  return showVideoActionsBottomSheet(
+    context,
+    onWatchLater: addToWatchLater,
+    onDownloadCover: downloadCover,
   );
 }

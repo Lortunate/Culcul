@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';

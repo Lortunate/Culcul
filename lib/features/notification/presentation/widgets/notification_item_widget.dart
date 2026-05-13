@@ -1,6 +1,7 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
+import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_navigation.dart';
 import 'package:culcul/ui/widgets/users/app_avatar.dart';
@@ -138,15 +139,12 @@ class NotificationItemWidget extends StatelessWidget {
     final handled = await openNotificationNavigationTarget(context, target);
     if (handled || !context.mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          t.notification.navigation_error(
-            type: detail.type,
-            id: detail.subjectId.toString(),
-          ),
-        ),
+    context.showAppFeedback(
+      t.notification.navigation_error(
+        type: detail.type,
+        id: detail.subjectId.toString(),
       ),
+      level: AppFeedbackLevel.error,
     );
   }
 

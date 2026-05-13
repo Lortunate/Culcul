@@ -1,7 +1,7 @@
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/bootstrap/providers/cookie_jar_provider.dart';
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:dio/dio.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -38,7 +38,7 @@ class CsrfInterceptor extends Interceptor {
       final csrf = await _resolveCsrf(options);
       _injectCsrf(options, csrf);
       handler.next(options);
-    } on AuthException catch (error) {
+    } on AuthAppError catch (error) {
       handler.reject(DioException(requestOptions: options, error: error));
     }
   }
@@ -69,7 +69,7 @@ class CsrfInterceptor extends Interceptor {
       }
     }
 
-    throw const AuthException('CSRF token not found');
+    throw const AppError.auth('CSRF token not found');
   }
 
   String? _extractCsrfFromCookieHeader(Object? rawCookieHeader) {

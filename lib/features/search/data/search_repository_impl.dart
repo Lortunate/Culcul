@@ -1,6 +1,6 @@
 import 'dart:convert';
+
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/errors/exceptions.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
@@ -14,7 +14,6 @@ import 'package:culcul/features/search/data/search_mapper.dart';
 import 'package:culcul/features/search/data/search_api.dart';
 import 'package:culcul/core/contracts/search_port.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';
-import 'package:culcul/features/search/domain/entities/search_trending_keyword.dart';
 import 'package:culcul/core/contracts/search_query_contract.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -28,7 +27,6 @@ SearchRepositoryImpl searchRepository(Ref ref) {
 class SearchRepositoryImpl
     with RequestExecutorBinding
     implements SearchPort {
-  static const int _defaultSearchPageSize = 20;
   final SearchApi api;
   final RequestExecutor _requestExecutor;
 
@@ -77,7 +75,7 @@ class SearchRepositoryImpl
         forceRefresh: _forceRefreshQuery(forceRefresh),
       );
       if (response.code != 0) {
-        throw ServerException(response.message, code: response.code);
+        throw AppError.server(response.message, code: response.code);
       }
       return response.data;
     });
@@ -92,7 +90,6 @@ class SearchRepositoryImpl
           ? await api.fetchSearchAll(
               keyword: query.keyword,
               page: query.page,
-              pageSize: _defaultSearchPageSize,
               searchType: query.type.apiValue,
               order: query.order.apiValue,
               duration: query.duration.apiValue,
@@ -101,14 +98,13 @@ class SearchRepositoryImpl
           : await api.fetchSearchByType(
               keyword: query.keyword,
               page: query.page,
-              pageSize: _defaultSearchPageSize,
               searchType: query.type.apiValue,
               order: query.order.apiValue,
               duration: query.duration.apiValue,
               cancelToken: cancelToken,
             );
       if (response.code != 0 || response.data == null) {
-        throw ServerException(response.message, code: response.code);
+        throw AppError.server(response.message, code: response.code);
       }
       return response.data!;
     });
@@ -139,11 +135,11 @@ class SearchRepositoryImpl
     return result.map((data) => data.toDomain());
   }
 
-  Future<Result<List<SearchTrendingKeyword>, AppError>> getTrendingRanking({
+  Future<Result<List<TrendingItem>, AppError>> getTrendingRanking({
     bool forceRefresh = false,
   }) async {
     final result = await _fetchTrendingRanking(forceRefresh: forceRefresh);
-    return result.map((data) => data.list.map((item) => item.toDomain()).toList());
+    return result.map((data) => data.list);
   }
 
   @override

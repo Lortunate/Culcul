@@ -161,8 +161,8 @@ mixin _AuthRepositoryHelpersMixin on Object {
         return user;
       }
       await clearCache();
-      throw const AuthException('Not logged in');
+      throw const AppError.auth('Not logged in');
     }
-    throw AuthException(response.message, code: response.code);
+    throw AppError.auth(response.message, code: response.code);
   }
 }

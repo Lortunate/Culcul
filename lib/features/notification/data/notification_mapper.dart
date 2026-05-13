@@ -8,7 +8,7 @@ import 'package:culcul/features/notification/domain/entities/notification_summar
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
-import 'package:culcul/features/notification/domain/entities/system_notice.dart';
+import 'package:culcul/features/notification/data/dtos/system_notice.dart';
 import 'package:culcul/features/notification/domain/entities/image_upload_result.dart';
 
 extension ReplyUserMapper on ReplyUser {

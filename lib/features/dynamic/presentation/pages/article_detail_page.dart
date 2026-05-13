@@ -1,3 +1,4 @@
+import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/utils/share_utils.dart';
@@ -73,7 +74,7 @@ class ArticleDetailPage extends HookConsumerWidget {
 
     void showSnack(String message) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      context.showAppFeedback(message);
     }
 
     Future<void> submitComment() async {

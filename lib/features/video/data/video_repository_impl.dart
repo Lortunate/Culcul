@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/data/network/resource_api.dart';
+import 'package:culcul/core/data/network/resource_api_provider.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/video/data/video_api.dart';
@@ -20,7 +21,7 @@ part 'video_repository_impl.g.dart';
 VideoRepositoryImpl videoRepository(Ref ref) {
   return VideoRepositoryImpl(
     api: VideoApi(ref.watch(dioClientProvider)),
-    resourceApi: ResourceApi(ref.watch(dioClientProvider)),
+    resourceApi: ref.watch(resourceApiProvider),
   );
 }
 

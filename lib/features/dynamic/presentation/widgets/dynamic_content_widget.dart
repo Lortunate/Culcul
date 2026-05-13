@@ -1,4 +1,4 @@
-import 'package:culcul/features/dynamic/domain/entities/dynamic_response.dart';
+import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_extension.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_content_entities.dart';
 import 'package:culcul/features/dynamic/presentation/pages/topic_detail_page.dart';

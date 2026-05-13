@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:culcul/core/data/network/resource_api.dart';
 import 'package:culcul/core/data/network/resource_api_provider.dart';
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -112,25 +113,25 @@ class WbiHelper {
           debugPrint('Nav API error: code=${data['code']}, message=${data['message']}');
         }
         if (data['code'] == -352) {
-          throw Exception('Nav API risk control (-352)');
+          throw const AppError.data('Nav API risk control (-352)', code: -352);
         }
       }
 
       if (data['data'] == null) {
-        throw Exception('Nav response data is null: $data');
+        throw AppError.data('Nav response data is null: $data');
       }
 
       final navData = data['data'];
       final wbiImg = navData['wbi_img'];
       if (wbiImg == null) {
-        throw Exception('wbi_img is null in nav data');
+        throw const AppError.data('wbi_img is null in nav data');
       }
 
       final imgUrl = wbiImg['img_url'] as String?;
       final subUrl = wbiImg['sub_url'] as String?;
 
       if (imgUrl == null || subUrl == null) {
-        throw Exception('img_url or sub_url is null');
+        throw const AppError.data('img_url or sub_url is null');
       }
 
       _imgKey = imgUrl.split('/').last.split('.').first;
@@ -168,7 +169,7 @@ class WbiHelper {
       // If keys update failed, we can't sign properly.
       // Return params as is? Or throw?
       // WbiInterceptor catches exception.
-      throw Exception('WBI keys not initialized');
+      throw const AppError.data('WBI keys not initialized');
     }
 
     final mixinKey = _getMixinKey(_imgKey! + _subKey!);

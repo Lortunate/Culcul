@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:culcul/features/live/data/dtos/live_danmu_info_model.dart';
-import 'package:culcul/features/live/domain/entities/live_history_danmaku_model.dart';
+import 'package:culcul/features/live/data/dtos/live_history_danmaku_model.dart';
 import 'package:culcul/features/live/presentation/view_models/live_danmaku_event_parser.dart';
 import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/io.dart';

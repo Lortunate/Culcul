@@ -5,7 +5,7 @@ import 'package:culcul/features/notification/data/notification_mapper.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
-import 'package:culcul/features/notification/domain/entities/system_notice.dart';
+import 'package:culcul/features/notification/data/dtos/system_notice.dart';
 import 'package:drift/drift.dart';
 
 class NotificationStreamWatchers {

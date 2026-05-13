@@ -78,6 +78,38 @@ void main() {
     );
   });
 
+  test('core and ui must not import feature internals', () {
+    final offenders = <String>[];
+
+    for (final file in dartFiles('lib')) {
+      final importerPath = normalizePath(file.path);
+      if (!importerPath.startsWith('lib/core/') &&
+          !importerPath.startsWith('lib/ui/')) {
+        continue;
+      }
+
+      for (final import in dartImports(file)) {
+        final targetPath = import.resolvedPath;
+        if (targetPath == null || !targetPath.startsWith('lib/features/')) {
+          continue;
+        }
+
+        offenders.add(
+          '${formatLocation(import.importerPath, import.lineNumber)} '
+          'imports ${import.uri} -> $targetPath',
+        );
+      }
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'Core and UI layers must not import feature internals:\n'
+          '${offenders.join('\n')}',
+    );
+  });
+
   test('AppException must not appear in lib', () {
     final offenders = <String>[];
 
@@ -104,7 +136,10 @@ void main() {
 
     for (final file in dartFiles('lib')) {
       final normalizedPath = normalizePath(file.path);
-      if (normalizedPath == 'lib/core/contracts/core_contracts.dart') {
+      if (const {
+        'lib/core/contracts/core_contracts.dart',
+        'lib/ui/ui.dart',
+      }.contains(normalizedPath)) {
         continue;
       }
 

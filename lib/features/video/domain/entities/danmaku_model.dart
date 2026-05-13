@@ -21,12 +21,12 @@ sealed class DanmakuSegment with _$DanmakuSegment {
 }
 
 @freezed
-sealed class DanmakuView with _$DanmakuView {
-  const factory DanmakuView({
+sealed class DanmakuViewConfig with _$DanmakuViewConfig {
+  const factory DanmakuViewConfig({
     required bool closed,
     required bool allow,
     required int sendBoxStyle,
     required String textPlaceholder,
     required String inputPlaceholder,
-  }) = _DanmakuView;
+  }) = _DanmakuViewConfig;
 }

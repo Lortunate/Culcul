@@ -1,3 +1,4 @@
+import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/core/services/media_service.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/i18n/strings.g.dart';
@@ -58,40 +59,25 @@ class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
   Future<void> _saveImage(String url) async {
     if (_isSaving) return;
     setState(() => _isSaving = true);
-    final messenger = ScaffoldMessenger.of(context);
     final t = context.t;
 
     try {
-      messenger
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(
-            content: Text(t.common.saving),
-            duration: const Duration(seconds: 20),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+      context.showAppFeedback(
+        t.common.saving,
+        duration: const Duration(seconds: 20),
+        hideCurrent: true,
+      );
       await ref.read(mediaServiceProvider).saveImage(url);
       if (!mounted) return;
-      messenger
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(
-            content: Text(t.common.save_success),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+      context.showAppFeedback(t.common.save_success, hideCurrent: true);
     } catch (error) {
       if (!mounted) return;
       final message = error.toString().replaceFirst('Exception: ', '');
-      messenger
-        ..hideCurrentSnackBar()
-        ..showSnackBar(
-          SnackBar(
-            content: Text(t.common.save_failed(message: message)),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
+      context.showAppFeedback(
+        t.common.save_failed(message: message),
+        level: AppFeedbackLevel.error,
+        hideCurrent: true,
+      );
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }

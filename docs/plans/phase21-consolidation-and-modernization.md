@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Make Culcul's app architecture easier to read and maintain by removing the remaining real duplication, cross-feature coupling, stale abstractions, and undocumented provider/feedback variants.
+**Goal:** Make Culcul's app architecture easier to read and maintain by removing the remaining real duplication, cross-feature coupling, stale abstractions, dead code, zero-value wrappers, and undocumented provider/feedback variants.
 
-**Architecture:** Keep the existing `app/` + `core/` + `features/` + `ui/` structure. Use ports/contracts for cross-feature access, generated Riverpod providers for normal dependency wiring, and DTO/domain separation so each concept has one source of truth.
+**Architecture:** Keep the existing `app/` + `core/` + `features/` + `ui/` structure. Use ports/contracts for cross-feature access, generated Riverpod providers for normal dependency wiring, and DTO/domain separation so each concept has one source of truth. Inside a feature, keep `data/`, `application/`, `domain/`, and `presentation/` only when the layer owns real behavior; collapse pass-through layers.
 
 **Tech Stack:** Flutter, Dart 3.10, Riverpod 3 with `riverpod_generator`, go_router + go_router_builder, Dio + Retrofit, Drift, Freezed, Slang, build_runner, GitNexus.
 
@@ -46,7 +46,23 @@ Expected:
 - `CLAUDE.md` points to Phase 21.
 - Phase 20 appears only in archive paths.
 
-- [ ] **Step 2: Add guard tests**
+- [ ] **Step 2: Produce repo-wide cleanup inventory**
+
+Run:
+```bash
+rg -n "export '.*';$|class .*Repository|abstract class .*Repository|fromJson|toJson|JsonKey|ScaffoldMessenger\.of|ToastUtils|AppException|StateNotifierProvider|Provider<|Provider\(" lib
+find lib -type d -empty
+find lib -type f \( -name "*.dart" ! -name "*.g.dart" ! -name "*.freezed.dart" \) -print
+```
+
+Record findings in the task notes or `bd`:
+- duplicate owners and competing public entry points,
+- zero-value wrappers and pass-through files,
+- dead code candidates,
+- empty/pass-through directories,
+- approved exceptions such as `lib/ui/ui.dart` and `lib/core/contracts/core_contracts.dart`.
+
+- [ ] **Step 3: Add guard tests**
 
 Create tests that scan `lib/**/*.dart` and fail on:
 - `features/<a>/presentation/**` importing `features/<b>/presentation/**`.
@@ -54,9 +70,9 @@ Create tests that scan `lib/**/*.dart` and fail on:
 - DTO/response-shaped code in `features/*/domain/entities/**`.
 - `ScaffoldMessenger.of(` outside the approved feedback implementation.
 - `AppException`.
-- Re-export-only files except `lib/core/contracts/core_contracts.dart` and any explicitly approved UI public API decision from Task 6.
+- Re-export-only files except `lib/core/contracts/core_contracts.dart` and `lib/ui/ui.dart`.
 
-- [ ] **Step 3: Run guards**
+- [ ] **Step 4: Run guards**
 
 Run:
 ```bash
@@ -67,7 +83,7 @@ Expected:
 - Initial failures are acceptable only where they match Phase 21 known debt.
 - Commit guard tests once they correctly identify known failures.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 5: Commit**
 
 Run:
 ```bash
@@ -81,6 +97,7 @@ git commit -m "docs: define phase21 architecture consolidation plan"
 - `lib/features/home/presentation/pages/home_page.dart`
 - `lib/features/home/presentation/widgets/home_video_actions.dart`
 - `lib/features/home/presentation/widgets/live_view.dart`
+- `lib/features/home/presentation/widgets/home_app_bar.dart`
 - `lib/features/profile/presentation/widgets/user_dynamic_tab.dart`
 - `lib/core/contracts/`
 - affected feature `feature_scope.dart` and `route_entry.dart` files
@@ -103,6 +120,8 @@ Use one of these patterns:
 - Composition dependency: expose only the approved feature boundary from `feature_scope.dart`.
 
 Do not import another feature's `presentation/**` or `data/**`.
+Do not export presentation view models/widgets from `feature_scope.dart`; keep feature scopes limited to runtime/provider/data composition.
+Do not import `app/router/app_routes.dart` from feature widgets unless the file is an approved route entry point.
 
 - [ ] **Step 3: Run verification**
 
@@ -177,6 +196,7 @@ git commit -m "refactor: unify app feedback handling"
 **Files to inspect first:**
 - `lib/features/dynamic/domain/entities/dynamic_response*.dart`
 - `lib/features/dynamic/domain/entities/emote_response.dart`
+- `lib/features/dynamic/domain/entities/dynamic_extension.dart`
 - `lib/features/live/domain/entities/live_history_danmaku_model.dart`
 - `lib/features/notification/domain/entities/system_notice.dart`
 - `lib/features/profile/domain/entities/profile_user.dart`
@@ -192,6 +212,8 @@ For each file:
 - If it is JSON/API shaped, move it to `data/dtos/`.
 - If it is durable app/domain behavior, keep it in `domain/entities/` and remove JSON annotations by adding a DTO mapper.
 - If the feature is a pass-through API surface with no business behavior, remove the domain layer for that type.
+- If moving a type leaves an empty/pass-through layer or wrapper, delete that layer instead of preserving old structure.
+- If a domain file imports `data/dtos/`, move that mapping dependency into data/application code so domain does not depend on transport shapes.
 
 - [ ] **Step 3: Update imports and mappers**
 
@@ -211,6 +233,7 @@ dart analyze
 Expected:
 - No DTO/response-shaped code remains in `domain/entities`.
 - Generated files are updated only where expected.
+- No empty or pass-through layer remains without a concrete owner.
 
 - [ ] **Step 5: Commit**
 
@@ -276,18 +299,19 @@ git commit -m "refactor: normalize core provider ownership"
 - files defining or importing `PrivateMessageSummaryKind`
 - files defining or importing `UserProfileInfo`
 - files defining or importing `DanmakuView`
+- files defining or importing `PrivateSessionList`
+- files defining or importing `VideoSubtitle`
+- guard exception candidates: `lib/main.dart`, `lib/protos/`, `lib/ui/ui.dart`, `lib/features/auth/login_dialog_action.dart`
 
-- [ ] **Step 1: Decide `ui.dart`**
+- [x] **Step 1: Decide `ui.dart`**
 
-Pick one:
-- Approved public UI API: document why `lib/ui/ui.dart` is the one allowed UI barrel and update guard exceptions.
-- Direct imports: replace all imports of `ui.dart` with source imports and delete `ui.dart`.
+Decision: keep `lib/ui/ui.dart` as the approved public UI API. It exports only shared `ui/` components and is already consumed by app, feature, and UI-overlay entry points. Guard exceptions and spec/CLAUDE docs are updated for this explicit decision.
 
-- [ ] **Step 2: Rename confusing UI-only collisions**
+- [x] **Step 2: Rename confusing UI-only collisions**
 
 Use GitNexus rename or IDE-aware rename for symbols, never raw find-and-replace.
 
-- [ ] **Step 3: Merge true duplicate models**
+- [x] **Step 3: Merge true duplicate models**
 
 If two models represent the same durable concept, move the canonical type to `core/contracts/` or the owning feature domain, then update mappers/imports.
 
@@ -302,6 +326,7 @@ dart analyze
 Expected:
 - Re-export guard passes.
 - Code search for renamed concepts returns one obvious owner.
+- Guard exceptions are explicit and narrow; generated protobuf output is not treated as hand-authored duplicate app model code.
 
 - [ ] **Step 5: Commit**
 
@@ -318,7 +343,20 @@ git commit -m "refactor: clarify ui api and model names"
 - Modify: `pubspec.lock`
 - Generated Dart files only if build_runner changes output
 
-- [ ] **Step 1: Update only scoped packages**
+- [ ] **Step 1: Review current package state and docs**
+
+Run:
+```bash
+flutter pub outdated
+```
+
+Use Context7 or official docs for Riverpod, go_router, Drift, Retrofit, Freezed/json_serializable, and build_runner when API behavior is uncertain.
+
+Expected:
+- Existing stack remains preferred: Riverpod generator, go_router_builder, Drift, Dio + Retrofit, Freezed/JSON, Slang.
+- No new library is introduced unless it removes code, removes risk, or replaces custom code with a stable package API.
+
+- [ ] **Step 2: Update only scoped packages**
 
 Target package changes:
 - `drift` / `drift_dev`: `^2.31.0` to `^2.33.0`
@@ -326,7 +364,7 @@ Target package changes:
 - `retrofit_generator`: `^10.2.1` to `^10.2.6`
 - `json_serializable`: `^6.13.0` to `^6.13.2`
 
-- [ ] **Step 2: Verify package resolution**
+- [ ] **Step 3: Verify package resolution**
 
 Run:
 ```bash
@@ -334,7 +372,7 @@ flutter pub get
 dart run build_runner build --delete-conflicting-outputs
 ```
 
-- [ ] **Step 3: Review generated diff**
+- [ ] **Step 4: Review generated diff**
 
 Run:
 ```bash
@@ -345,7 +383,7 @@ Expected:
 - No broad generated churn unrelated to the scoped package updates.
 - Drift database setup still follows current `drift_flutter` API.
 
-- [ ] **Step 4: Run verification**
+- [ ] **Step 5: Run verification**
 
 Run:
 ```bash
@@ -354,7 +392,7 @@ flutter test --reporter compact
 flutter build apk --debug
 ```
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit**
 
 Run:
 ```bash
@@ -371,6 +409,8 @@ dart analyze
 dart run build_runner build --delete-conflicting-outputs
 flutter test --reporter compact
 flutter build apk --debug
+rg -n "AppException|ScaffoldMessenger\.of|ToastUtils|StateNotifierProvider" lib
+find lib -type d -empty
 ```
 
 Run GitNexus:
@@ -381,9 +421,12 @@ Expected:
 - No Phase 20 active docs remain.
 - Phase 21 guards pass.
 - Analyzer, tests, codegen, and debug build pass.
+- Remaining search results are approved exceptions or have `bd` follow-up issues.
+- No empty/pass-through architecture layer remains without a documented owner.
 
 ## Self-Review
 
 - Spec coverage: WI-1 maps to Task 1; WI-2 to Task 2; WI-3 to Task 3; WI-4 to Task 4; WI-5 to Task 5; WI-6 to Task 6; WI-7 to Task 7.
 - Placeholder scan: no placeholder paths or vague "fix later" tasks remain.
 - Type consistency: plan consistently uses `AppError`, `AppFeedback`, `core/contracts`, `feature_scope.dart`, `route_entry.dart`, DTOs, and generated Riverpod providers.
+- Architecture consistency: plan preserves the top-level folders while allowing feature-local pass-through layers to be deleted.

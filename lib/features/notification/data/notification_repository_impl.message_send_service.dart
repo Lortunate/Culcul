@@ -15,7 +15,7 @@ import 'package:culcul/features/notification/domain/entities/image_upload_result
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
-import 'package:culcul/features/notification/domain/entities/system_notice.dart';
+import 'package:culcul/features/notification/data/dtos/system_notice.dart';
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:uuid/uuid.dart';

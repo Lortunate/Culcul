@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/profile/application/profile_actions.dart';
 import 'package:culcul/features/profile/feature_scope.dart';
-import 'package:culcul/features/profile/domain/entities/profile_user.dart';
+import 'package:culcul/features/profile/data/dtos/profile_user.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'profile_view_model.g.dart';

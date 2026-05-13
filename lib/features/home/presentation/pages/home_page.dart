@@ -6,7 +6,7 @@ import 'package:culcul/features/home/presentation/widgets/home_app_bar.dart';
 import 'package:culcul/features/home/presentation/widgets/live_view.dart';
 import 'package:culcul/features/home/presentation/widgets/popular_view.dart';
 import 'package:culcul/features/home/presentation/widgets/recommend_view.dart';
-import 'package:culcul/features/search/presentation/view_models/search_view_model.dart';
+import 'package:culcul/features/search/feature_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:flutter/material.dart';
@@ -82,7 +82,7 @@ class HomePage extends HookConsumerWidget {
     required ValueNotifier<String?> hintText,
   }) async {
     try {
-      final hint = await ref.read(defaultSearchProvider.future);
+      final hint = await ref.read(searchDefaultHintProvider.future);
       if (!context.mounted) {
         return;
       }

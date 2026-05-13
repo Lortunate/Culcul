@@ -31,8 +31,6 @@ void main() {
 
 bool _isApprovedFeedbackImplementation(String path) {
   return const {
-    'lib/core/errors/error_handler.dart',
-    'lib/core/utils/toast_utils.dart',
     'lib/core/feedback/app_feedback.dart',
   }.contains(path);
 }

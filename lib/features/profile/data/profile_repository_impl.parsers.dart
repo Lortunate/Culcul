@@ -14,7 +14,7 @@ extension _ProfileRepositoryParsers on ProfileRepositoryImpl {
         isFollowed: following,
       );
     } catch (error) {
-      throw UnknownException('Failed to parse user card', cause: error);
+      throw AppError.unknown('Failed to parse user card', cause: error);
     }
   }
 

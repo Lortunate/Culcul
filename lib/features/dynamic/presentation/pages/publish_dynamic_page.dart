@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/publish_dynamic_view_model.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/emoji_picker.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/publish_dynamic_bottom_toolbar.dart';
@@ -112,16 +113,15 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
     if (error == null) {
       if (mounted) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(t.moments.publish_success)));
+        context.showAppFeedback(t.moments.publish_success);
       }
       return;
     }
     if (mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(t.moments.publish_failed(error: error))));
+      context.showAppFeedback(
+        t.moments.publish_failed(error: error),
+        level: AppFeedbackLevel.error,
+      );
     }
   }
 

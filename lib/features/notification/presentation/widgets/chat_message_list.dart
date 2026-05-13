@@ -1,4 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/paged_list_state.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
@@ -105,11 +106,9 @@ class ChatMessageList extends HookWidget {
                   emojiMap: emojiMap,
                   onAvatarTap: () {
                     if (!isSelf) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(t.notification.chat.page_not_developed),
-                          duration: const Duration(seconds: 1),
-                        ),
+                      context.showAppFeedback(
+                        t.notification.chat.page_not_developed,
+                        duration: const Duration(seconds: 1),
                       );
                     }
                   },

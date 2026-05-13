@@ -11,7 +11,7 @@ import 'package:culcul/features/notification/data/notification_repository_impl.m
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
-import 'package:culcul/features/notification/domain/entities/system_notice.dart';
+import 'package:culcul/features/notification/data/dtos/system_notice.dart';
 
 class NotificationMessageSupport {
   const NotificationMessageSupport(this.repo);

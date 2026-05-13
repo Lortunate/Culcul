@@ -1,4 +1,3 @@
-import 'package:culcul/core/errors/exceptions.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
@@ -12,7 +11,7 @@ import 'package:culcul/features/profile/data/dtos/user_space_video_model.dart';
 import 'package:culcul/features/profile/data/profile_mapper.dart';
 import 'package:culcul/features/profile/data/profile_api.dart';
 import 'package:culcul/core/contracts/user_card_contract.dart';
-import 'package:culcul/features/profile/domain/entities/profile_user.dart';
+import 'package:culcul/features/profile/data/dtos/profile_user.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -101,7 +100,7 @@ class ProfileRepositoryImpl
       final infoResponse = responses['info'] as ApiResponse<dynamic>;
 
       if (infoResponse.code != 0) {
-        throw ServerException(infoResponse.message, code: infoResponse.code);
+        throw AppError.server(infoResponse.message, code: infoResponse.code);
       }
 
       final infoData = infoResponse.data as Map<String, dynamic>;

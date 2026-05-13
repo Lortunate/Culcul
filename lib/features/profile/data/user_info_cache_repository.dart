@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:culcul/core/bootstrap/providers/storage_provider.dart';
 import 'package:culcul/core/storage/storage_keys.dart';
 import 'package:culcul/core/utils/json_compute.dart';
-import 'package:culcul/features/profile/domain/entities/profile_user.dart';
+import 'package:culcul/features/profile/data/dtos/profile_user.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

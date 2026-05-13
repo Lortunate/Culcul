@@ -1,64 +1,38 @@
-import 'package:culcul/core/errors/exceptions.dart';
 import 'package:dio/dio.dart';
 
-sealed class AppError {
+sealed class AppError implements Exception {
   final String message;
   final int? code;
   final Object? cause;
 
   const AppError(this.message, {this.code, this.cause});
 
-  static AppError _fromException(AppException exception) {
-    if (exception is NetworkException) {
-      return NetworkAppError(
-        exception.message,
-        code: exception.code,
-        cause: exception.cause,
-      );
-    }
-    if (exception is ServerException) {
-      return ServerAppError(
-        exception.message,
-        code: exception.code,
-        cause: exception.cause,
-      );
-    }
-    if (exception is AuthException) {
-      return AuthAppError(
-        exception.message,
-        code: exception.code,
-        cause: exception.cause,
-      );
-    }
-    if (exception is DataException) {
-      return DataAppError(
-        exception.message,
-        code: exception.code,
-        cause: exception.cause,
-      );
-    }
-    if (exception is CancelException) {
-      return CancelAppError(
-        exception.message,
-        code: exception.code,
-        cause: exception.cause,
-      );
-    }
-    return UnknownAppError(
-      exception.message,
-      code: exception.code,
-      cause: exception.cause,
-    );
-  }
+  const factory AppError.network(String message, {int? code, Object? cause}) =
+      NetworkAppError;
+
+  const factory AppError.server(String message, {int? code, Object? cause}) =
+      ServerAppError;
+
+  const factory AppError.auth(String message, {int? code, Object? cause}) =
+      AuthAppError;
+
+  const factory AppError.data(String message, {int? code, Object? cause}) =
+      DataAppError;
+
+  const factory AppError.cancel(String message, {int? code, Object? cause}) =
+      CancelAppError;
+
+  const factory AppError.unknown(String message, {int? code, Object? cause}) =
+      UnknownAppError;
 
   static AppError fromObject(Object error) {
-    if (error is AppException) {
-      return _fromException(error);
+    if (error is AppError) {
+      return error;
     }
     if (error is DioException) {
       return _fromDioException(error);
     }
-    return UnknownAppError(error.toString(), cause: error);
+    return AppError.unknown(error.toString(), cause: error);
   }
 
   static AppError _fromDioException(DioException error) {
@@ -66,14 +40,17 @@ sealed class AppError {
       DioExceptionType.connectionTimeout ||
       DioExceptionType.sendTimeout ||
       DioExceptionType.receiveTimeout ||
-      DioExceptionType.connectionError => NetworkAppError(
+      DioExceptionType.connectionError => AppError.network(
         'Network error: ${error.message}',
         cause: error,
       ),
       DioExceptionType.badResponse => _fromBadResponse(error),
-      DioExceptionType.cancel => CancelAppError('Request cancelled', cause: error),
-      DioExceptionType.badCertificate => NetworkAppError('Bad certificate', cause: error),
-      DioExceptionType.unknown => UnknownAppError(
+      DioExceptionType.cancel => AppError.cancel('Request cancelled', cause: error),
+      DioExceptionType.badCertificate => AppError.network(
+        'Bad certificate',
+        cause: error,
+      ),
+      DioExceptionType.unknown => AppError.unknown(
         'Unknown error: ${error.message}',
         cause: error,
       ),
@@ -84,25 +61,17 @@ sealed class AppError {
     final statusCode = error.response?.statusCode;
     final message = error.response?.statusMessage ?? 'Server error';
     if (statusCode == 401 || statusCode == 403) {
-      return AuthAppError(message, code: statusCode, cause: error);
+      return AppError.auth(message, code: statusCode, cause: error);
     }
-    return ServerAppError(message, code: statusCode, cause: error);
+    return AppError.server(message, code: statusCode, cause: error);
   }
 
-  static AppError network(String message, {int? code, Object? cause}) {
-    return NetworkAppError(message, code: code, cause: cause);
-  }
-
-  static AppError server(String message, {int? code, Object? cause}) {
-    return ServerAppError(message, code: code, cause: cause);
-  }
-
-  static AppError auth(String message, {int? code, Object? cause}) {
-    return AuthAppError(message, code: code, cause: cause);
-  }
-
-  static AppError data(String message, {int? code, Object? cause}) {
-    return DataAppError(message, code: code, cause: cause);
+  @override
+  String toString() {
+    if (code != null) {
+      return '$runtimeType: [$code] $message';
+    }
+    return '$runtimeType: $message';
   }
 }
 

@@ -1,4 +1,4 @@
-import 'package:culcul/features/profile/domain/entities/profile_user.dart';
+import 'package:culcul/features/profile/data/dtos/profile_user.dart';
 import 'package:culcul/features/profile/feature_scope.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

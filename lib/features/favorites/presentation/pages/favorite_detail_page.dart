@@ -1,6 +1,7 @@
 import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
+import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/core/session/user_providers.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:culcul/features/favorites/application/favorite_folder_commands.dart';

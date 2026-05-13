@@ -17,7 +17,7 @@ mixin _DynamicRepositoryPublishApis on _DynamicRepositoryAccess {
     return requestResult(() async {
       final csrf = await _getCsrfToken();
       if (csrf == null || csrf.isEmpty) {
-        throw const AuthException('Missing bili_jct csrf token');
+        throw const AppError.auth('Missing bili_jct csrf token');
       }
       return csrf;
     });
@@ -31,7 +31,7 @@ mixin _DynamicRepositoryPublishApis on _DynamicRepositoryAccess {
         csrf: csrf ?? '',
       );
       if (!response.isSuccess) {
-        throw ServerException(response.message, code: response.code);
+        throw AppError.server(response.message, code: response.code);
       }
     });
   }
@@ -95,7 +95,7 @@ mixin _DynamicRepositoryPublishApis on _DynamicRepositoryAccess {
       final response = await api.createDynamic(csrf: csrf, body: {'dyn_req': dynReq});
 
       if (!response.isSuccess) {
-        throw ServerException(response.message, code: response.code);
+        throw AppError.server(response.message, code: response.code);
       }
     });
   }
