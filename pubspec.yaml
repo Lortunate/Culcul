@@ -68,7 +68,7 @@ dev_dependencies:
   freezed: ^3.2.5
   go_router_builder: ^4.3.0
   json_serializable: ^6.13.0
-  retrofit_generator: ^10.2.1
+  retrofit_generator: ^10.2.6
   riverpod_generator: ^4.0.3
   slang_build_runner: ^4.14.0
   drift_dev: ^2.31.0
