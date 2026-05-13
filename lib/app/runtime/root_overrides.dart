@@ -2,7 +2,6 @@ import 'package:culcul/app/runtime/app_runtime.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/core/bootstrap/providers/cookie_jar_provider.dart';
 import 'package:culcul/core/bootstrap/providers/storage_provider.dart';
-import 'package:culcul/core/contracts/search_port.dart';
 import 'package:culcul/core/session/feature_action_providers.dart';
 import 'package:culcul/core/session/relation_providers.dart';
 import 'package:culcul/core/session/search_providers.dart';
