@@ -1,6 +1,6 @@
-import 'package:culcul/core/session/session_lifecycle_providers.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/interceptors/csrf_interceptor.dart';
+import 'package:culcul/core/session/session_lifecycle_providers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

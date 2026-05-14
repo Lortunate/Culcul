@@ -1,9 +1,50 @@
 import 'dart:async';
 
 import 'package:culcul/core/perf/performance_policy.dart';
+import 'package:culcul/core/runtime/runtime_performance_policy.dart';
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+
+class ScrollPrecacheBudget {
+  const ScrollPrecacheBudget({
+    required this.enabled,
+    required this.prefetchCount,
+    required this.maxConcurrency,
+  });
+
+  final bool enabled;
+  final int prefetchCount;
+  final int maxConcurrency;
+}
+
+ScrollPrecacheBudget resolveScrollPrecacheBudget({
+  required int requestedCount,
+  RuntimePerformancePolicy? runtimePolicy,
+  PerformancePolicy? renderPolicy,
+}) {
+  final policy =
+      runtimePolicy ??
+      RuntimePerformancePolicy.fromRenderPolicy(
+        renderPolicy ?? PerformancePolicyController.notifier.value,
+      );
+  if (!policy.allowImagePrefetch || !policy.allowsNonCriticalPrefetch) {
+    return const ScrollPrecacheBudget(
+      enabled: false,
+      prefetchCount: 0,
+      maxConcurrency: 0,
+    );
+  }
+
+  final adjustedCount = (requestedCount * policy.networkPrefetchLimitFactor).floor();
+  final prefetchCount = adjustedCount.clamp(1, requestedCount);
+  final maxConcurrency = policy.networkPrefetchMaxConcurrency.clamp(1, prefetchCount);
+  return ScrollPrecacheBudget(
+    enabled: true,
+    prefetchCount: prefetchCount,
+    maxConcurrency: maxConcurrency,
+  );
+}
 
 /// Precaches images for items that are about to scroll into view.
 ///
@@ -15,6 +56,7 @@ void useScrollPrecache({
   getUpcomingSpecs,
   int prefetchCount = 5,
   Duration debounce = const Duration(milliseconds: 300),
+  RuntimePerformancePolicy? runtimePolicy,
 }) {
   final context = useContext();
   final debounceTimer = useRef<Timer?>(null);
@@ -32,9 +74,11 @@ void useScrollPrecache({
       debounceTimer.value = Timer(debounce, () {
         if (!context.mounted) return;
 
-        // Check performance policy — skip precaching on minimal effects
-        final policy = PerformancePolicyController.notifier.value;
-        if (policy.level == RenderDegradeLevel.minimalEffects) return;
+        final budget = resolveScrollPrecacheBudget(
+          requestedCount: prefetchCount,
+          runtimePolicy: runtimePolicy,
+        );
+        if (!budget.enabled) return;
 
         // Estimate first visible index from scroll offset.
         // Use a rough estimate of 200px per item.
@@ -43,13 +87,13 @@ void useScrollPrecache({
         if (estimatedIndex == lastPrefetchedIndex.value) return;
         lastPrefetchedIndex.value = estimatedIndex;
 
-        final specs = getUpcomingSpecs(estimatedIndex, prefetchCount);
+        final specs = getUpcomingSpecs(estimatedIndex, budget.prefetchCount);
         if (specs.isNotEmpty) {
           AppNetworkImagePrefetcher.prefetch(
             context,
             specs: specs,
-            limit: prefetchCount,
-            maxConcurrency: 2,
+            limit: budget.prefetchCount,
+            maxConcurrency: budget.maxConcurrency,
           );
         }
       });
@@ -60,5 +104,5 @@ void useScrollPrecache({
       scrollController.removeListener(onScroll);
       debounceTimer.value?.cancel();
     };
-  }, [scrollController]);
+  }, [scrollController, runtimePolicy, prefetchCount, debounce]);
 }

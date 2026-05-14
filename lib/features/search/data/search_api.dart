@@ -16,6 +16,7 @@ abstract class SearchApi {
   Future<String> fetchSearchSuggestions(
     @Query('term') String term, {
     @Query('main_ver') String mainVer = 'v1',
+    @Extras() Map<String, dynamic>? extras,
     @CancelRequest() CancelToken? cancelToken,
   });
 
@@ -23,11 +24,13 @@ abstract class SearchApi {
   @Headers({'x-bili-wbi': 'true'})
   Future<ApiResponse<DefaultSearchData>> fetchDefaultSearch({
     @Query('force_refresh') bool? forceRefresh,
+    @Extras() Map<String, dynamic>? extras,
   });
 
   @GET(ApiConstants.searchTrendingRanking)
   Future<TrendingRankingResponse> fetchTrendingRanking({
     @Query('force_refresh') bool? forceRefresh,
+    @Extras() Map<String, dynamic>? extras,
   });
 
   @GET('https://api.bilibili.com/x/web-interface/wbi/search/all/v2')
@@ -40,6 +43,7 @@ abstract class SearchApi {
     @Query('order') String order = 'totalrank',
     @Query('duration') int duration = 0,
     @Query('tids') int? tids,
+    @Extras() Map<String, dynamic>? extras,
     @CancelRequest() CancelToken? cancelToken,
   });
 
@@ -53,6 +57,7 @@ abstract class SearchApi {
     @Query('order') String order = 'totalrank',
     @Query('duration') int duration = 0,
     @Query('tids') int? tids,
+    @Extras() Map<String, dynamic>? extras,
     @CancelRequest() CancelToken? cancelToken,
   });
 }

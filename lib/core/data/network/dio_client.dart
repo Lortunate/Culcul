@@ -1,4 +1,5 @@
 import 'package:culcul/core/constants/api_constants.dart';
+import 'package:culcul/core/data/network/endpoint_policy.dart';
 import 'package:culcul/core/data/network/interceptors/cache_interceptor.dart';
 import 'package:culcul/core/data/network/interceptors/csrf_interceptor.dart';
 import 'package:culcul/core/data/network/interceptors/in_flight_dedup_interceptor.dart';
@@ -63,7 +64,6 @@ void _addLogInterceptor(Dio dio) {
         requestBody: true,
         responseHeader: false,
         responseBody: true,
-        error: true,
       ),
     );
   }
@@ -90,8 +90,8 @@ Dio dioClient(Ref ref) {
     networkQualityInterceptor.invalidateCache();
   });
 
-  dio.interceptors.add(InFlightDedupInterceptor());
   dio.interceptors.add(networkQualityInterceptor);
+  dio.interceptors.add(InFlightDedupInterceptor());
   dio.interceptors.add(CacheInterceptor(cacheStore));
   dio.interceptors.add(
     DioCacheInterceptor(
@@ -109,8 +109,10 @@ Dio dioClient(Ref ref) {
       retryDelays: List.generate(
         networkPolicy.retryMaxAttempts,
         (i) => Duration(
-          milliseconds: (networkPolicy.retryBaseDelayMs * (1 << i))
-              .clamp(0, networkPolicy.retryMaxDelayMs),
+          milliseconds: (networkPolicy.retryBaseDelayMs * (1 << i)).clamp(
+            0,
+            networkPolicy.retryMaxDelayMs,
+          ),
         ),
       ),
       retryableExtraStatuses: {408, 429},
@@ -118,17 +120,25 @@ Dio dioClient(Ref ref) {
         if (error.requestOptions.extra['disable_retry'] == true) {
           return false;
         }
-        if (error.requestOptions.cancelToken?.isCancelled == true) {
+        final endpointPolicy = EndpointPolicy.fromOptions(error.requestOptions);
+        if (endpointPolicy != null &&
+            !endpointPolicy.canRetry(error.requestOptions, attempt)) {
           return false;
         }
-        final method = error.requestOptions.method.toUpperCase();
-        final isIdempotent = method == 'GET' ||
-            method == 'HEAD' ||
-            method == 'OPTIONS' ||
-            error.requestOptions.extra['force_retryable'] == true;
-        if (!isIdempotent) return false;
+        if (endpointPolicy == null) {
+          if (error.requestOptions.cancelToken?.isCancelled == true) {
+            return false;
+          }
+          final method = error.requestOptions.method.toUpperCase();
+          final isIdempotent =
+              method == 'GET' ||
+              method == 'HEAD' ||
+              method == 'OPTIONS' ||
+              error.requestOptions.extra['force_retryable'] == true;
+          if (!isIdempotent) return false;
+        }
         return DefaultRetryEvaluator(
-          {408, 429, 500, 502, 503, 504},
+          endpointPolicy?.retryableStatuses ?? {408, 429, 500, 502, 503, 504},
         ).evaluate(error, attempt);
       },
     ),

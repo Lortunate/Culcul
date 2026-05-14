@@ -1,4 +1,4 @@
-import 'package:culcul/core/constants/api_constants.dart';
+import 'package:culcul/core/data/network/endpoint_policy.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 
@@ -26,12 +26,13 @@ class CacheInterceptor extends Interceptor {
       return handler.next(options);
     }
 
-    final ttlSeconds = ApiConstants.cacheConfig[options.path];
-    if (ttlSeconds != null) {
+    final endpointPolicy = EndpointPolicy.fromOptions(options);
+    final cacheTtl = endpointPolicy?.cacheTtl;
+    if (cacheTtl != null) {
       final cacheOptions = CacheOptions(
         store: _store,
         policy: CachePolicy.forceCache,
-        maxStale: Duration(seconds: ttlSeconds),
+        maxStale: cacheTtl,
         keyBuilder: _generateKey,
       );
       options.extra.addAll(cacheOptions.toExtra());

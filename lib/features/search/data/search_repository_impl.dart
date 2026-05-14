@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
+import 'package:culcul/core/data/network/endpoint_policy.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
@@ -24,9 +25,7 @@ SearchRepositoryImpl searchRepository(Ref ref) {
   return SearchRepositoryImpl(api: SearchApi(ref.watch(dioClientProvider)));
 }
 
-class SearchRepositoryImpl
-    with RequestExecutorBinding
-    implements SearchPort {
+class SearchRepositoryImpl with RequestExecutorBinding implements SearchPort {
   final SearchApi api;
   final RequestExecutor _requestExecutor;
 
@@ -41,8 +40,17 @@ class SearchRepositoryImpl
     CancelToken? cancelToken,
   }) async {
     if (term.isEmpty) return const Success(<SearchSuggestionTag>[]);
+    final options = _requestOptions(
+      requestClass: EndpointRequestClass.search,
+      cancelToken: cancelToken,
+    );
     final result = await requestResult(
-      () => api.fetchSearchSuggestions(term, cancelToken: cancelToken),
+      () => api.fetchSearchSuggestions(
+        term,
+        extras: options.toDioExtras(),
+        cancelToken: cancelToken,
+      ),
+      options: options,
     );
     return result.map(_parseSuggestionsResponse);
   }
@@ -62,52 +70,74 @@ class SearchRepositoryImpl
   Future<Result<DefaultSearchData, AppError>> _fetchDefaultSearch({
     bool forceRefresh = false,
   }) {
+    final options = _requestOptions(requestClass: EndpointRequestClass.search);
     return requestApiResult(
-      () => api.fetchDefaultSearch(forceRefresh: _forceRefreshQuery(forceRefresh)),
+      () => api.fetchDefaultSearch(
+        forceRefresh: _forceRefreshQuery(forceRefresh),
+        extras: options.toDioExtras(),
+      ),
+      options: options,
     );
   }
 
   Future<Result<TrendingRankingData, AppError>> _fetchTrendingRanking({
     bool forceRefresh = false,
-  }) async {
-    return requestResult(() async {
-      final response = await api.fetchTrendingRanking(
+  }) {
+    final options = _requestOptions(requestClass: EndpointRequestClass.search);
+    return requestExecutor.runResponse(
+      () => api.fetchTrendingRanking(
         forceRefresh: _forceRefreshQuery(forceRefresh),
-      );
-      if (response.code != 0) {
-        throw AppError.server(response.message, code: response.code);
-      }
-      return response.data;
-    });
+        extras: options.toDioExtras(),
+      ),
+      isSuccess: (response) => response.code == 0,
+      data: (response) => response.data,
+      message: (response) => response.message,
+      code: (response) => response.code,
+      options: options,
+    );
   }
 
   Future<Result<SearchResultData, AppError>> _fetchSearchResult({
     required SearchQuery query,
     CancelToken? cancelToken,
-  }) async {
-    return requestResult(() async {
-      final response = query.type == SearchType.all
-          ? await api.fetchSearchAll(
+  }) {
+    final options = _requestOptions(
+      requestClass: EndpointRequestClass.search,
+      cancelToken: cancelToken,
+    );
+    return requestExecutor.runResponse(
+      () async => query.type == SearchType.all
+          ? api.fetchSearchAll(
               keyword: query.keyword,
               page: query.page,
               searchType: query.type.apiValue,
               order: query.order.apiValue,
               duration: query.duration.apiValue,
+              extras: options.toDioExtras(),
               cancelToken: cancelToken,
             )
-          : await api.fetchSearchByType(
+          : api.fetchSearchByType(
               keyword: query.keyword,
               page: query.page,
               searchType: query.type.apiValue,
               order: query.order.apiValue,
               duration: query.duration.apiValue,
+              extras: options.toDioExtras(),
               cancelToken: cancelToken,
-            );
-      if (response.code != 0 || response.data == null) {
-        throw AppError.server(response.message, code: response.code);
-      }
-      return response.data!;
-    });
+            ),
+      isSuccess: (response) => response.code == 0,
+      data: (response) => response.data,
+      message: (response) => response.message,
+      code: (response) => response.code,
+      options: options,
+    );
+  }
+
+  RequestExecutionOptions _requestOptions({
+    required EndpointRequestClass requestClass,
+    CancelToken? cancelToken,
+  }) {
+    return RequestExecutionOptions(requestClass: requestClass, cancelToken: cancelToken);
   }
 
   bool? _forceRefreshQuery(bool forceRefresh) {
@@ -128,9 +158,7 @@ class SearchRepositoryImpl
     );
   }
 
-  Future<Result<String?, AppError>> getDefaultSearch({
-    bool forceRefresh = false,
-  }) async {
+  Future<Result<String?, AppError>> getDefaultSearch({bool forceRefresh = false}) async {
     final result = await _fetchDefaultSearch(forceRefresh: forceRefresh);
     return result.map((data) => data.toDomain());
   }

@@ -6,19 +6,28 @@ import 'package:culcul/core/data/network/models/api_response.dart';
 mixin RequestExecutorBinding {
   RequestExecutor get requestExecutor;
 
-  Future<Result<T, AppError>> requestResult<T>(Future<T> Function() apiCall) {
-    return requestExecutor.run(apiCall);
+  Future<Result<T, AppError>> requestResult<T>(
+    Future<T> Function() apiCall, {
+    RequestExecutionOptions? options,
+  }) {
+    return requestExecutor.run(apiCall, options: options);
   }
 
   Future<Result<T, AppError>> requestApiResult<T>(
-    Future<ApiResponse<T>> Function() apiCall,
-  ) async {
-    return requestExecutor.runApi<T, T>(apiCall, transform: (data) => data);
+    Future<ApiResponse<T>> Function() apiCall, {
+    RequestExecutionOptions? options,
+  }) async {
+    return requestExecutor.runApi<T, T>(
+      apiCall,
+      transform: (data) => data,
+      options: options,
+    );
   }
 
   Future<Result<void, AppError>> requestVoidResult(
-    Future<ApiResponse<dynamic>> Function() apiCall,
-  ) {
-    return requestExecutor.runUnit(apiCall);
+    Future<ApiResponse<dynamic>> Function() apiCall, {
+    RequestExecutionOptions? options,
+  }) {
+    return requestExecutor.runUnit(apiCall, options: options);
   }
 }

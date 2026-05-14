@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:culcul/core/data/network/endpoint_policy.dart';
 import 'package:dio/dio.dart';
 
 class InFlightDedupInterceptor extends Interceptor {
@@ -27,13 +28,7 @@ class InFlightDedupInterceptor extends Interceptor {
               handler.reject(error.copyWith(requestOptions: options));
               return;
             }
-            handler.reject(
-              DioException(
-                requestOptions: options,
-                type: DioExceptionType.unknown,
-                error: error,
-              ),
-            );
+            handler.reject(DioException(requestOptions: options, error: error));
           });
       return;
     }
@@ -56,7 +51,9 @@ class InFlightDedupInterceptor extends Interceptor {
   }
 
   bool _shouldDeduplicate(RequestOptions options) {
+    final endpointPolicy = EndpointPolicy.fromOptions(options);
     return options.method.toUpperCase() == 'GET' &&
+        endpointPolicy?.dedupEnabled != false &&
         options.extra[disableDedupExtra] != true;
   }
 
@@ -93,7 +90,10 @@ class InFlightDedupInterceptor extends Interceptor {
     return sb.toString();
   }
 
-  void _completePendingSuccess(RequestOptions requestOptions, Response<dynamic> response) {
+  void _completePendingSuccess(
+    RequestOptions requestOptions,
+    Response<dynamic> response,
+  ) {
     final dedupKey = requestOptions.extra[_dedupKeyExtra];
     if (dedupKey is! String) {
       return;
