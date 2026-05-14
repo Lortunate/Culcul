@@ -52,11 +52,11 @@ Avoid new barrel files. Import source files directly unless the file is one of t
 - Dependencies: reuse current popular stack before adding new packages.
 - Local architecture guard: `bash tool/architecture/run_architecture_guards.sh`
 
-## Phase 27 Baseline
+## Phase 28 Baseline
 
-- `lib/` source Dart files: 644.
-- `lib/` generated Dart files: 225.
-- `lib/` total Dart files: 869.
+- `lib/` source Dart files: 635.
+- `lib/` generated Dart files: 233.
+- `lib/` total Dart files: 868.
 - `lib/shared/` files: 0.
 - provider/bootstrap/session placeholders: 0.
 - cross-feature private `data/**` or `presentation/**` imports found by planning audit: 0.
@@ -67,14 +67,24 @@ Avoid new barrel files. Import source files directly unless the file is one of t
 - generated files are excluded from source-debt architecture guards by default; generated verification remains explicit.
 - feature scopes are import/export-only and must not export feature `data/**` seams.
 
-### Removed in Phase 27
+### Removed/Changed in Phase 28
 
-- `EndpointConcurrencyLane` enum (dead infrastructure, never consumed).
-- `RequestExecutorBinding` mixin (replaced by direct `RequestExecutor` field injection).
-- `BootstrapCoordinator` and `AppRuntime` classes (flattened into `AppBootstrap.initialize()` returning `List<Override>`).
-- Mutable global initializers (`initializeCookieJar`, `initializeCacheStore`, `initializeStorage`) — providers now throw `StateError` if not overridden at startup.
-- `FavoriteFolderCommandWorkflow` pass-through application command (presentation calls repository directly).
-- `CacheInterceptor` renamed to `EndpointCacheOptionsInterceptor` for clarity.
-- Redundant `riverpod` dependency removed from pubspec (re-exported by `hooks_riverpod`).
+- `uuid` dependency removed (replaced by inline `lib/core/utils/uuid_v4.dart`).
+- `archive` dependency removed (replaced by `dart:io` GZipCodec).
+- 5 trivial alias providers eliminated (`searchDefaultHintProvider`, `clearProfileCacheProvider`, `logoutActionProvider`, `searchPortProvider`, `userCardProvider`).
+- 4 hand-written providers migrated to `@riverpod` codegen.
+- `EndpointPolicy` converted to freezed.
+- `PopularResponseDto`, `WeeklyModelDto`, `FeedResponseDto` converted to `@JsonSerializable` codegen.
+- 3 unnecessary single-export `feature_scope.dart` files removed.
+- Notification repository helpers refactored from mixin/god-object pattern to independent services with explicit dependency injection.
+- `NotificationMessagePersistence` extracted as shared persistence service.
+- `notification_repository_impl.message_send_helpers.dart` mixin deleted.
+- Circular dependency in notification data layer broken via callback injection (`SyncMessagesHeadFn`).
+
+### Phase 27 Baseline (archived)
+
+- `lib/` source Dart files: 644.
+- `lib/` generated Dart files: 225.
+- `lib/` total Dart files: 869.
 
 Update this baseline only when the active phase changes or when the source/generated audit count changes.

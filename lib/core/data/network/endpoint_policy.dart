@@ -1,6 +1,9 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/runtime/runtime_performance_policy.dart';
 import 'package:dio/dio.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part 'endpoint_policy.freezed.dart';
 
 enum EndpointRequestClass {
   interactiveRead,
@@ -12,55 +15,28 @@ enum EndpointRequestClass {
   download,
 }
 
-class EndpointPolicy {
+@freezed
+sealed class EndpointPolicy with _$EndpointPolicy {
   static const String requestClassExtra = 'endpoint_request_class';
   static const String resolvedPolicyExtra = 'resolved_endpoint_policy';
   static const String disableRetryExtra = 'disable_retry';
   static const String forceRetryableExtra = 'force_retryable';
   static const String cacheTtlOverrideExtra = 'cache_ttl_override';
 
-  final EndpointRequestClass requestClass;
-  final Duration? cacheTtl;
-  final bool allowStaleCache;
-  final int retryMaxAttempts;
-  final Set<int> retryableStatuses;
-  final bool dedupEnabled;
-  final bool retryUnsafeMethods;
-  final bool allowPrefetch;
+  const EndpointPolicy._();
 
-  const EndpointPolicy({
-    required this.requestClass,
-    required this.cacheTtl,
-    required this.allowStaleCache,
-    required this.retryMaxAttempts,
-    required this.retryableStatuses,
-    required this.dedupEnabled,
-    required this.retryUnsafeMethods,
-    required this.allowPrefetch,
-  });
+  const factory EndpointPolicy({
+    required EndpointRequestClass requestClass,
+    required Duration? cacheTtl,
+    required bool allowStaleCache,
+    required int retryMaxAttempts,
+    required Set<int> retryableStatuses,
+    required bool dedupEnabled,
+    required bool retryUnsafeMethods,
+    required bool allowPrefetch,
+  }) = _EndpointPolicy;
 
   bool get hasCache => cacheTtl != null;
-
-  EndpointPolicy copyWith({
-    Duration? cacheTtl,
-    bool? allowStaleCache,
-    int? retryMaxAttempts,
-    Set<int>? retryableStatuses,
-    bool? dedupEnabled,
-    bool? retryUnsafeMethods,
-    bool? allowPrefetch,
-  }) {
-    return EndpointPolicy(
-      requestClass: requestClass,
-      cacheTtl: cacheTtl ?? this.cacheTtl,
-      allowStaleCache: allowStaleCache ?? this.allowStaleCache,
-      retryMaxAttempts: retryMaxAttempts ?? this.retryMaxAttempts,
-      retryableStatuses: retryableStatuses ?? this.retryableStatuses,
-      dedupEnabled: dedupEnabled ?? this.dedupEnabled,
-      retryUnsafeMethods: retryUnsafeMethods ?? this.retryUnsafeMethods,
-      allowPrefetch: allowPrefetch ?? this.allowPrefetch,
-    );
-  }
 
   bool canRetry(RequestOptions options, int attempt) {
     if (options.extra[disableRetryExtra] == true) {
