@@ -34,7 +34,7 @@ class RelationUserList extends StatelessWidget {
       itemCount: () => asyncValue.value?.length ?? 0,
       hasMore: hasMore,
       emptyText: emptyText.isEmpty ? t.common.no_data : emptyText,
-      skeleton: const Center(child: CircularProgressIndicator()), // TODO: Better skeleton
+      skeleton: const Center(child: CircularProgressIndicator()),
       errorBuilder: (context, error, stack) {
         if (error is AppError && error.code == 22115) {
           return const PrivacyErrorWidget();

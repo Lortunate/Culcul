@@ -1,5 +1,7 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
+import 'package:culcul/core/feedback/app_feedback.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/text/icon_text.dart';
 import 'package:culcul/ui/assemblies/feed_cards/video_list_card.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +16,7 @@ class FavResourceItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final t = Translations.of(context);
 
     return DefaultTextStyle.merge(
       style: theme.textTheme.titleMedium?.copyWith(
@@ -26,7 +29,6 @@ class FavResourceItem extends StatelessWidget {
         coverUrl: item.cover,
         title: item.title,
         duration: item.duration,
-        thumbnailWidth: 160,
         aspectRatio: 16 / 9,
         height: 90,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -45,7 +47,9 @@ class FavResourceItem extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                // TODO: More actions
+                context.showAppFeedback(
+                  t.common.coming_soon(tab: 'More'),
+                );
               },
               child: Icon(Icons.more_vert, size: 16, color: colorScheme.onSurfaceVariant),
             ),
@@ -55,7 +59,6 @@ class FavResourceItem extends StatelessWidget {
           IconText(
             icon: Icons.play_circle_outline,
             text: FormatUtils.formatNumber(item.stats.play),
-            iconSize: 14,
             style: theme.textTheme.bodySmall?.copyWith(
               color: colorScheme.onSurfaceVariant,
               fontSize: 11,
@@ -64,7 +67,6 @@ class FavResourceItem extends StatelessWidget {
           IconText(
             icon: Icons.comment_outlined,
             text: FormatUtils.formatNumber(item.stats.danmaku),
-            iconSize: 14,
             style: theme.textTheme.bodySmall?.copyWith(
               color: colorScheme.onSurfaceVariant,
               fontSize: 11,

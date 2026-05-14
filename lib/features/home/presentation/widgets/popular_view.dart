@@ -8,6 +8,8 @@ import 'package:culcul/core/hooks/use_scroll_precache.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/data/network/network_quality_policy.dart';
 import 'package:culcul/core/perf/performance_policy.dart';
+import 'package:culcul/core/runtime/runtime_performance_policy.dart';
+import 'package:culcul/core/runtime/runtime_performance_policy_provider.dart';
 import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';
 import 'package:culcul/features/home/presentation/widgets/popular_video_card.dart';
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
@@ -29,6 +31,7 @@ class PopularView extends HookConsumerWidget {
 
     final layout = HomePopularLayoutSpec.fromContext(context);
     final networkPolicy = ref.watch(networkQualityPolicyProvider);
+    final runtimePolicy = ref.watch(runtimePerformancePolicyProvider);
     final perfPolicy = useValueListenable(PerformancePolicyController.notifier);
     final popularAsync = ref.watch(homePopularProvider);
     final scrollController = useScrollController();
@@ -68,6 +71,7 @@ class PopularView extends HookConsumerWidget {
           layout: layout,
           cacheExtent: cacheExtent,
           networkPolicy: networkPolicy,
+          runtimePolicy: runtimePolicy,
         ),
       ),
     );
@@ -82,6 +86,7 @@ class _PopularVideoList extends HookWidget {
     required this.layout,
     required this.cacheExtent,
     required this.networkPolicy,
+    required this.runtimePolicy,
   });
 
   final List<VideoModel> items;
@@ -90,6 +95,7 @@ class _PopularVideoList extends HookWidget {
   final HomePopularLayoutSpec layout;
   final double cacheExtent;
   final NetworkQualityPolicy networkPolicy;
+  final RuntimePerformancePolicy runtimePolicy;
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +120,7 @@ class _PopularVideoList extends HookWidget {
 
     useScrollPrecache(
       scrollController: scrollController,
-      prefetchCount: 5,
+      runtimePolicy: runtimePolicy,
       getUpcomingSpecs: (firstIndex, count) {
         final pixelRatio = MediaQuery.devicePixelRatioOf(context);
         final memW = (layout.thumbnailWidth * pixelRatio).round();
@@ -146,7 +152,7 @@ class _PopularVideoList extends HookWidget {
             itemBuilder: (context, index) {
               final video = items[index];
               return PopularVideoCard(
-                key: ValueKey('popular_v_${video.bvid}_$index'),
+                key: ValueKey('popular_v_${video.bvid}'),
                 video: video,
                 cardHeight: layout.cardHeight,
                 thumbnailWidth: layout.thumbnailWidth,

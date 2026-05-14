@@ -11,6 +11,8 @@ import 'package:culcul/core/hooks/use_scroll_precache.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/data/network/network_quality_policy.dart';
 import 'package:culcul/core/perf/performance_policy.dart';
+import 'package:culcul/core/runtime/runtime_performance_policy.dart';
+import 'package:culcul/core/runtime/runtime_performance_policy_provider.dart';
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
 import 'package:culcul/ui/widgets/skeletons/page_skeletons.dart';
 import 'package:culcul/ui/assemblies/feed_cards/video_card.dart';
@@ -31,6 +33,7 @@ class RecommendView extends HookConsumerWidget {
 
     final layout = HomeGridLayoutSpec.recommend(context);
     final networkPolicy = ref.watch(networkQualityPolicyProvider);
+    final runtimePolicy = ref.watch(runtimePerformancePolicyProvider);
     final perfPolicy = useValueListenable(PerformancePolicyController.notifier);
     final recommendAsync = ref.watch(homeRecommendProvider);
     final scrollController = useScrollController();
@@ -71,6 +74,7 @@ class RecommendView extends HookConsumerWidget {
           layout: layout,
           cacheExtent: cacheExtent,
           networkPolicy: networkPolicy,
+          runtimePolicy: runtimePolicy,
         ),
       ),
     );
@@ -85,6 +89,7 @@ class _RecommendVideoGrid extends HookWidget {
     required this.layout,
     required this.cacheExtent,
     required this.networkPolicy,
+    required this.runtimePolicy,
   });
 
   final List<VideoModel> items;
@@ -93,6 +98,7 @@ class _RecommendVideoGrid extends HookWidget {
   final HomeGridLayoutSpec layout;
   final double cacheExtent;
   final NetworkQualityPolicy networkPolicy;
+  final RuntimePerformancePolicy runtimePolicy;
 
   @override
   Widget build(BuildContext context) {
@@ -119,6 +125,7 @@ class _RecommendVideoGrid extends HookWidget {
     useScrollPrecache(
       scrollController: scrollController,
       prefetchCount: layout.gridDelegate.crossAxisCount * 2,
+      runtimePolicy: runtimePolicy,
       getUpcomingSpecs: (firstIndex, count) {
         final width = _estimateGridItemWidth(context);
         final pixelRatio = MediaQuery.devicePixelRatioOf(context);
@@ -152,7 +159,7 @@ class _RecommendVideoGrid extends HookWidget {
             itemBuilder: (context, index) {
               final video = items[index];
               return VideoCard(
-                key: ValueKey('recommend_v_${video.bvid}_$index'),
+                key: ValueKey('recommend_v_${video.bvid}'),
                 bvid: video.bvid,
                 title: video.title,
                 coverUrl: video.pic,

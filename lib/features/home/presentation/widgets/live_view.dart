@@ -5,6 +5,8 @@ import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
 import 'package:culcul/core/hooks/use_scroll_precache.dart';
 import 'package:culcul/core/data/network/network_quality_policy.dart';
 import 'package:culcul/core/perf/performance_policy.dart';
+import 'package:culcul/core/runtime/runtime_performance_policy.dart';
+import 'package:culcul/core/runtime/runtime_performance_policy_provider.dart';
 import 'package:culcul/core/contracts/live_room_summary_contract.dart';
 import 'package:culcul/features/live/feature_scope.dart';
 import 'package:culcul/features/home/presentation/widgets/live_card_skeleton.dart';
@@ -29,6 +31,7 @@ class LiveView extends HookConsumerWidget {
 
     final layout = HomeGridLayoutSpec.live(context);
     final networkPolicy = ref.watch(networkQualityPolicyProvider);
+    final runtimePolicy = ref.watch(runtimePerformancePolicyProvider);
     final perfPolicy = useValueListenable(PerformancePolicyController.notifier);
     final liveAsync = ref.watch(liveRecommendProvider);
     final scrollController = useScrollController();
@@ -67,6 +70,7 @@ class LiveView extends HookConsumerWidget {
           layout: layout,
           cacheExtent: cacheExtent,
           networkPolicy: networkPolicy,
+          runtimePolicy: runtimePolicy,
         ),
       ),
     );
@@ -110,6 +114,7 @@ class _LiveGrid extends HookWidget {
     required this.layout,
     required this.cacheExtent,
     required this.networkPolicy,
+    required this.runtimePolicy,
   });
 
   final List<LiveRoomSummary> items;
@@ -117,6 +122,7 @@ class _LiveGrid extends HookWidget {
   final HomeGridLayoutSpec layout;
   final double cacheExtent;
   final NetworkQualityPolicy networkPolicy;
+  final RuntimePerformancePolicy runtimePolicy;
 
   @override
   Widget build(BuildContext context) {
@@ -143,6 +149,7 @@ class _LiveGrid extends HookWidget {
     useScrollPrecache(
       scrollController: scrollController,
       prefetchCount: layout.gridDelegate.crossAxisCount * 2,
+      runtimePolicy: runtimePolicy,
       getUpcomingSpecs: (firstIndex, count) {
         final width = _estimateGridItemWidth(context);
         final pixelRatio = MediaQuery.devicePixelRatioOf(context);
@@ -176,6 +183,7 @@ class _LiveGrid extends HookWidget {
             itemBuilder: (context, index) {
               final room = items[index];
               return LiveRoomCard(
+                key: ValueKey('live_room_${room.roomId}'),
                 room: room,
                 onTap: () => LiveRoomRoute(roomId: room.roomId).push(context),
               );

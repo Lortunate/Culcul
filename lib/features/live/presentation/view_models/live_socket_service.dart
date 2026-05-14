@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:culcul/core/runtime/runtime_performance_policy.dart';
 import 'package:culcul/features/live/data/dtos/live_danmu_info_model.dart';
 import 'package:culcul/features/live/data/dtos/live_history_danmaku_model.dart';
 import 'package:culcul/features/live/presentation/view_models/live_danmaku_event_parser.dart';
@@ -14,16 +15,51 @@ class LiveSocketService {
     : _eventParser = eventParser ?? const LiveDanmakuEventParser();
 
   WebSocketChannel? _channel;
+  StreamSubscription<dynamic>? _channelSubscription;
   Timer? _heartbeatTimer;
   final StreamController<LiveDanmakuItem> _danmakuController =
       StreamController.broadcast();
   final LiveDanmakuEventParser _eventParser;
+  LiveDanmuInfoModel? _lastInfo;
+  int? _lastRoomId;
+  bool _isSuspended = false;
+  bool _isDisposed = false;
 
   Stream<LiveDanmakuItem> get danmakuStream => _danmakuController.stream;
 
   bool get isConnected => _channel != null;
 
   Future<void> connect({required LiveDanmuInfoModel info, required int roomId}) async {
+    _lastInfo = info;
+    _lastRoomId = roomId;
+    if (_isSuspended || _isDisposed) {
+      disconnect();
+      return;
+    }
+    await _connectNow(info: info, roomId: roomId);
+  }
+
+  void applyRuntimePolicy(RuntimePerformancePolicy policy) {
+    final shouldSuspend = policy.timerBehavior == RuntimeTimerBehavior.suspended;
+    if (_isSuspended == shouldSuspend) return;
+
+    _isSuspended = shouldSuspend;
+    if (shouldSuspend) {
+      disconnect();
+      return;
+    }
+
+    final info = _lastInfo;
+    final roomId = _lastRoomId;
+    if (info != null && roomId != null && !isConnected) {
+      unawaited(_connectNow(info: info, roomId: roomId));
+    }
+  }
+
+  Future<void> _connectNow({
+    required LiveDanmuInfoModel info,
+    required int roomId,
+  }) async {
     disconnect();
 
     try {
@@ -41,10 +77,14 @@ class LiveSocketService {
         pingInterval: const Duration(seconds: 30),
       );
 
-      _channel!.stream.listen(
-        (message) => _handleMessage(message),
+      _channelSubscription = _channel!.stream.listen(
+        _handleMessage,
         onError: (error) => debugPrint('Live WebSocket Error: $error'),
-        onDone: () => debugPrint('Live WebSocket Closed'),
+        onDone: () {
+          _heartbeatTimer?.cancel();
+          _channel = null;
+          debugPrint('Live WebSocket Closed');
+        },
       );
 
       // Send auth packet
@@ -67,12 +107,15 @@ class LiveSocketService {
 
   void disconnect() {
     _heartbeatTimer?.cancel();
+    _channelSubscription?.cancel();
+    _channelSubscription = null;
     _channel?.sink.close();
     _channel = null;
   }
 
   void _startHeartbeat() {
     _heartbeatTimer?.cancel();
+    if (_isSuspended) return;
     _heartbeatTimer = Timer.periodic(const Duration(seconds: 30), (_) {
       // Heartbeat packet: empty body, op 2
       _sendPacket(operation: 2, body: []);
@@ -80,7 +123,7 @@ class LiveSocketService {
   }
 
   void _sendPacket({required int operation, required List<int> body}) {
-    if (_channel == null) return;
+    if (_isSuspended || _channel == null) return;
 
     final header = ByteData(16);
     final packetLength = 16 + body.length;
@@ -145,13 +188,10 @@ class LiveSocketService {
             // Bilibili usually negotiates protover. We sent 2 in auth.
             debugPrint('Brotli compression (ver 3) not supported yet');
           }
-          break;
         case 8: // Auth Reply
           debugPrint('Live WebSocket Authenticated');
-          break;
         case 3: // Heartbeat Reply
           // debugPrint('Heartbeat reply: ${ByteData.sublistView(body).getUint32(0)} popularity');
-          break;
       }
 
       offset += packetLength;
@@ -166,6 +206,7 @@ class LiveSocketService {
   }
 
   void dispose() {
+    _isDisposed = true;
     disconnect();
     _danmakuController.close();
   }

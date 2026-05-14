@@ -1,4 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
@@ -52,7 +53,9 @@ class ProfileStats extends ConsumerWidget {
                 count: postsCount,
                 label: t.profile.stats.posts,
                 onTap: () {
-                  // TODO: Dynamic page
+                  context.showAppFeedback(
+                    t.common.coming_soon(tab: t.profile.stats.posts),
+                  );
                 },
               ),
               Container(
@@ -108,28 +111,28 @@ class _StatItem extends StatelessWidget {
       child: AppClickable(
         onTap: onTap,
         child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-        child: Column(
-          children: [
-            Text(
-              count,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: colorScheme.onSurface,
-                fontSize: 18,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+          child: Column(
+            children: [
+              Text(
+                count,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.onSurface,
+                  fontSize: 18,
+                ),
               ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: theme.textTheme.labelMedium?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-                fontSize: 12,
+              const SizedBox(height: 2),
+              Text(
+                label,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                  fontSize: 12,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
       ),
     );
   }

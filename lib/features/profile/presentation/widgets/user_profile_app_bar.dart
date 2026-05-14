@@ -134,7 +134,9 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
             title: Text(t.profile.menu.blacklist),
             onTap: () {
               Navigator.pop(context);
-              // TODO: Block
+              context.showAppFeedback(
+                t.common.coming_soon(tab: t.profile.menu.blacklist),
+              );
             },
           ),
           ListTile(
@@ -142,7 +144,9 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
             title: Text(t.profile.menu.report),
             onTap: () {
               Navigator.pop(context);
-              // TODO: Report
+              context.showAppFeedback(
+                t.common.coming_soon(tab: t.profile.menu.report),
+              );
             },
           ),
           const SizedBox(height: 16),

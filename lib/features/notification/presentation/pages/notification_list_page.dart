@@ -127,7 +127,7 @@ class _NotificationListView extends StatelessWidget {
           children: [SizedBox(height: 12), Divider(height: 1), SizedBox(height: 12)],
         ),
         itemBuilder: (context, index) => KeyedSubtree(
-          key: ValueKey('notification_${items[index].id}_$index'),
+          key: ValueKey('notification_${items[index].id}'),
           child: itemBuilder(context, items[index]),
         ),
       ),

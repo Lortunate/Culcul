@@ -17,7 +17,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:wakelock_plus/wakelock_plus.dart';
 
 part 'vertical_video_page.top_right.dart';
 part 'vertical_video_page.bottom_bar.dart';
@@ -51,11 +50,6 @@ class VerticalVideoPage extends HookConsumerWidget {
     final brightness = usePlayerSystemSettings(player);
     useVideoProgressReport(ref, bvid, player, isPlaying);
 
-    useEffect(() {
-      WakelockPlus.enable();
-      return () => WakelockPlus.disable();
-    }, []);
-
     final volumeSnapshot = useStream(player.stream.volume);
     final currentVolume = volumeSnapshot.data ?? player.state.volume;
 
@@ -70,7 +64,7 @@ class VerticalVideoPage extends HookConsumerWidget {
             currentVolume: currentVolume,
             child: Stack(
               children: [
-                const Positioned.fill(child: VideoLayer(fit: BoxFit.contain)),
+                const Positioned.fill(child: VideoLayer()),
                 Positioned.fill(child: DanmakuLayer(bvid: bvid)),
                 Positioned.fill(child: SubtitleLayer(bvid: bvid)),
               ],
