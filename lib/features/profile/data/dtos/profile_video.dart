@@ -1,5 +1,5 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'profile_video.freezed.dart';
 

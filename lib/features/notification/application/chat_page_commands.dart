@@ -10,9 +10,8 @@ ChatPageCommandWorkflow chatPageCommandWorkflow(Ref ref) =>
     const ChatPageCommandWorkflow();
 
 typedef ChatTextCommand = Future<ChatPageCommandResult> Function(String text);
-typedef ChatImageCommand = Future<ChatPageCommandResult> Function(
-  ChatImageAttachment image,
-);
+typedef ChatImageCommand =
+    Future<ChatPageCommandResult> Function(ChatImageAttachment image);
 typedef ChatPostSuccessAction = Future<void> Function();
 typedef ChatClearInputAction = void Function();
 

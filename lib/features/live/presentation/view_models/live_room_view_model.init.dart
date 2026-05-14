@@ -22,16 +22,12 @@ mixin _LiveRoomControllerInitMixin
 
     final roomInfoRequestStopwatch = Stopwatch()..start();
     final infoResult = await ref.read(liveRepositoryProvider).getRoomInfo(roomId);
-    DevLogger.log(
-      'feature',
-      'live.room_init request',
-      <String, Object?>{
-        'segment': 'room_info',
-        'roomId': roomId,
-        'ms': roomInfoRequestStopwatch.elapsedMilliseconds,
-        'success': infoResult.dataOrNull != null,
-      },
-    );
+    DevLogger.log('feature', 'live.room_init request', <String, Object?>{
+      'segment': 'room_info',
+      'roomId': roomId,
+      'ms': roomInfoRequestStopwatch.elapsedMilliseconds,
+      'success': infoResult.dataOrNull != null,
+    });
 
     final info = infoResult.dataOrNull;
     if (info == null) {
@@ -43,15 +39,11 @@ mixin _LiveRoomControllerInitMixin
       return;
     }
     state = state.copyWith(roomInfo: info);
-    DevLogger.log(
-      'feature',
-      'live.room_init parse',
-      <String, Object?>{
-        'segment': 'room_info',
-        'roomId': roomId,
-        'anchorUid': info.uid,
-      },
-    );
+    DevLogger.log('feature', 'live.room_init parse', <String, Object?>{
+      'segment': 'room_info',
+      'roomId': roomId,
+      'anchorUid': info.uid,
+    });
 
     final criticalRequestStopwatch = Stopwatch()..start();
     final criticalResults = await _concurrencyExecutor.runConcurrent(
@@ -76,48 +68,32 @@ mixin _LiveRoomControllerInitMixin
         criticalResults['play_url'] as AppError? ??
         criticalResults['danmaku_config'] as AppError?;
     if (criticalError != null) {
-      DevLogger.log(
-        'feature',
-        'live.room_init request',
-        <String, Object?>{
-          'segment': 'critical_group',
-          'roomId': roomId,
-          'ms': criticalRequestStopwatch.elapsedMilliseconds,
-          'success': false,
-        },
-      );
-      state = state.copyWith(isLoading: false, error: criticalError);
-      return;
-    }
-    DevLogger.log(
-      'feature',
-      'live.room_init request',
-      <String, Object?>{
+      DevLogger.log('feature', 'live.room_init request', <String, Object?>{
         'segment': 'critical_group',
         'roomId': roomId,
         'ms': criticalRequestStopwatch.elapsedMilliseconds,
-        'success': true,
-      },
-    );
+        'success': false,
+      });
+      state = state.copyWith(isLoading: false, error: criticalError);
+      return;
+    }
+    DevLogger.log('feature', 'live.room_init request', <String, Object?>{
+      'segment': 'critical_group',
+      'roomId': roomId,
+      'ms': criticalRequestStopwatch.elapsedMilliseconds,
+      'success': true,
+    });
 
     state = state.copyWith(isLoading: false, error: null);
-    DevLogger.log(
-      'feature',
-      'live.room_init state_commit',
-      <String, Object?>{
-        'roomId': roomId,
-        'hasPlayUrl': state.playUrl != null,
-        'hasDanmakuConfig': state.danmakuConfig != null,
-      },
-    );
-    DevLogger.log(
-      'feature',
-      'live.room_init first_interactive',
-      <String, Object?>{
-        'roomId': roomId,
-        'ms': firstInteractiveStopwatch.elapsedMilliseconds,
-      },
-    );
+    DevLogger.log('feature', 'live.room_init state_commit', <String, Object?>{
+      'roomId': roomId,
+      'hasPlayUrl': state.playUrl != null,
+      'hasDanmakuConfig': state.danmakuConfig != null,
+    });
+    DevLogger.log('feature', 'live.room_init first_interactive', <String, Object?>{
+      'roomId': roomId,
+      'ms': firstInteractiveStopwatch.elapsedMilliseconds,
+    });
     unawaited(_loadOptionalRoomData(info));
   }
 
@@ -183,14 +159,10 @@ mixin _LiveRoomControllerInitMixin
       profile: NetworkConcurrencyProfile.backgroundSync,
       scope: 'live_room_init_optional',
     );
-    DevLogger.log(
-      'feature',
-      'live.room_init request',
-      <String, Object?>{
-        'segment': 'optional_group',
-        'roomId': info.roomId,
-        'ms': optionalRequestStopwatch.elapsedMilliseconds,
-      },
-    );
+    DevLogger.log('feature', 'live.room_init request', <String, Object?>{
+      'segment': 'optional_group',
+      'roomId': info.roomId,
+      'ms': optionalRequestStopwatch.elapsedMilliseconds,
+    });
   }
 }

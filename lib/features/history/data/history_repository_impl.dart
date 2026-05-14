@@ -4,9 +4,9 @@ import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/history/data/history_api.dart';
+import 'package:culcul/features/history/data/dtos/history_entry.dart';
 import 'package:culcul/features/history/data/dtos/history_model_dto.dart';
 import 'package:culcul/features/history/data/history_mapper.dart';
-import 'package:culcul/features/history/domain/entities/history_entry.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'history_repository_impl.g.dart';

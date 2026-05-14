@@ -39,11 +39,11 @@ class DynamicGoodsWidget extends StatelessWidget {
                 onTap: () => DynamicNavigation.open(context, url: item.jumpUrl),
                 contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 leading: AppNetworkImage(
-                    url: item.cover,
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                    borderRadius: BorderRadius.circular(8),
+                  url: item.cover,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 title: Text(
                   item.name,

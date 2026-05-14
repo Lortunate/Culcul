@@ -77,9 +77,7 @@ class VideoRepositoryImpl with RequestExecutorBinding {
     String bvid, {
     CancelToken? cancelToken,
   }) {
-    return requestApiResult(
-      () => api.fetchVideoView(bvid, cancelToken: cancelToken),
-    );
+    return requestApiResult(() => api.fetchVideoView(bvid, cancelToken: cancelToken));
   }
 
   Future<Result<VideoDimension?, AppError>> fetchVideoEntryDimension(String bvid) {
@@ -97,9 +95,7 @@ class VideoRepositoryImpl with RequestExecutorBinding {
     String bvid, {
     CancelToken? cancelToken,
   }) {
-    return requestApiResult(
-      () => api.fetchVideoTags(bvid, cancelToken: cancelToken),
-    );
+    return requestApiResult(() => api.fetchVideoTags(bvid, cancelToken: cancelToken));
   }
 
   Future<Result<PlayUrl, AppError>> fetchVideoPlayUrl({
@@ -135,9 +131,7 @@ class VideoRepositoryImpl with RequestExecutorBinding {
     String bvid, {
     CancelToken? cancelToken,
   }) {
-    return requestApiResult(
-      () => api.fetchRelatedVideos(bvid, cancelToken: cancelToken),
-    );
+    return requestApiResult(() => api.fetchRelatedVideos(bvid, cancelToken: cancelToken));
   }
 
   Future<Result<CommentResponse, AppError>> fetchComments({

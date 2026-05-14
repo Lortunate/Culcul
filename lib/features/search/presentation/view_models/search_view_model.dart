@@ -6,7 +6,7 @@ import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/features/search/data/dtos/trending_ranking.dart';
-import 'package:culcul/features/search/feature_scope.dart';
+import 'package:culcul/features/search/data/search_repository_impl.dart';
 import 'package:culcul/core/contracts/search_query_contract.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -131,10 +131,7 @@ class TrendingRanking extends _$TrendingRanking {
     return ref.read(cacheStoreProvider).exists('api_cache_$path');
   }
 
-  bool _sameTrendingItems(
-    List<TrendingItem> previous,
-    List<TrendingItem> next,
-  ) {
+  bool _sameTrendingItems(List<TrendingItem> previous, List<TrendingItem> next) {
     if (previous.length != next.length) {
       return false;
     }

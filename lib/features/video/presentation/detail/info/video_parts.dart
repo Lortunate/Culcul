@@ -61,24 +61,24 @@ class VideoPartsSection extends StatelessWidget {
                   child: AppClickable(
                     onTap: () => onPartChanged(page.cid),
                     child: Container(
-                  constraints: const BoxConstraints(minWidth: 80),
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6),
-                    border: Border.all(
-                      color: isSelected ? colorScheme.primary : Colors.transparent,
-                      width: 1,
+                      constraints: const BoxConstraints(minWidth: 80),
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: isSelected ? colorScheme.primary : Colors.transparent,
+                          width: 1,
+                        ),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        'P${page.page} ${page.part}',
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: isSelected ? colorScheme.primary : colorScheme.onSurface,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                        ),
+                      ),
                     ),
-                  ),
-                  alignment: Alignment.center,
-                  child: Text(
-                    'P${page.page} ${page.part}',
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: isSelected ? colorScheme.primary : colorScheme.onSurface,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    ),
-                  ),
-                ),
                   ),
                 ),
               );

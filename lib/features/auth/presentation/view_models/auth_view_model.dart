@@ -1,7 +1,7 @@
 import 'package:culcul/features/auth/domain/entities/auth_captcha_challenge.dart';
 import 'package:culcul/features/auth/domain/entities/country_code.dart';
 import 'package:culcul/features/auth/domain/entities/user_entity.dart';
-import 'package:culcul/features/auth/feature_scope.dart';
+import 'package:culcul/features/auth/data/auth_repository_impl.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/profile/feature_scope.dart';

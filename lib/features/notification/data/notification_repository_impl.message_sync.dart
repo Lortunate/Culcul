@@ -86,7 +86,8 @@ class NotificationMessageSync {
             ownerUid: ownerUid,
             talkerId: talkerId,
             sessionType: sessionType,
-            emojis: response.emojiInfos
+            emojis:
+                response.emojiInfos
                     ?.map((emoji) => emoji.toDomain())
                     .toList(growable: false) ??
                 const <PrivateMessageEmoji>[],

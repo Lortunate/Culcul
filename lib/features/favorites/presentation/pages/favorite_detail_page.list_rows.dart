@@ -16,11 +16,11 @@ class _FavoriteFolderHeader extends StatelessWidget {
       child: Row(
         children: [
           AppNetworkImage(
-              url: info.cover,
-              width: 100,
-              height: 100,
-              fit: BoxFit.cover,
-              borderRadius: BorderRadius.circular(8),
+            url: info.cover,
+            width: 100,
+            height: 100,
+            fit: BoxFit.cover,
+            borderRadius: BorderRadius.circular(8),
           ),
           const SizedBox(width: 16),
           Expanded(

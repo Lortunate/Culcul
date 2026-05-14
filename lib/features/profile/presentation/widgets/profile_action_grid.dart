@@ -85,9 +85,8 @@ class ProfileActionGrid extends StatelessWidget {
       (
         icon: Icons.support_agent_outlined,
         label: t.profile.menu.support,
-        onTap: () => context.showAppFeedback(
-          t.common.coming_soon(tab: t.profile.menu.support),
-        ),
+        onTap: () =>
+            context.showAppFeedback(t.common.coming_soon(tab: t.profile.menu.support)),
       ),
     ];
   }

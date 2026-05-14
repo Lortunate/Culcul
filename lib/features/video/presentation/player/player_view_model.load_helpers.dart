@@ -20,16 +20,12 @@ mixin _PlayerControllerLoadHelpersMixin
     }
     final requestTiming = _loadRequestTimings.remove(requestToken);
     final elapsedMs = requestTiming?.elapsedMilliseconds;
-    DevLogger.log(
-      'video',
-      'first_frame_ready',
-      <String, Object?>{
-        'session': sessionId,
-        'token': requestToken,
-        'elapsedMs': elapsedMs,
-        'positionMs': player.state.position.inMilliseconds,
-      },
-    );
+    DevLogger.log('video', 'first_frame_ready', <String, Object?>{
+      'session': sessionId,
+      'token': requestToken,
+      'elapsedMs': elapsedMs,
+      'positionMs': player.state.position.inMilliseconds,
+    });
     state = state.copyWith(isMediaReady: true);
   }
 

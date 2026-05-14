@@ -89,36 +89,36 @@ class _HotSearchItem extends StatelessWidget {
       child: AppClickable(
         onTap: onTap,
         child: Row(
-        children: [
-          SizedBox(
-            width: 24,
-            child: Text(
-              '$position',
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w900,
-                fontStyle: FontStyle.italic,
-                color: position < 4
-                    ? colorScheme.primary
-                    : colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+          children: [
+            SizedBox(
+              width: 24,
+              child: Text(
+                '$position',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w900,
+                  fontStyle: FontStyle.italic,
+                  color: position < 4
+                      ? colorScheme.primary
+                      : colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 4),
-          Expanded(
-            child: Text(
-              keyword,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontSize: 14,
-                fontWeight: position < 4 ? FontWeight.w600 : FontWeight.w400,
-                color: colorScheme.onSurface,
+            const SizedBox(width: 4),
+            Expanded(
+              child: Text(
+                keyword,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontSize: 14,
+                  fontWeight: position < 4 ? FontWeight.w600 : FontWeight.w400,
+                  color: colorScheme.onSurface,
+                ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }

@@ -17,8 +17,7 @@ ToViewRepositoryImpl toViewRepository(Ref ref) {
   return ToViewRepositoryImpl(ToViewApi(ref.watch(dioClientProvider)));
 }
 
-class ToViewRepositoryImpl
-    with RequestExecutorBinding {
+class ToViewRepositoryImpl with RequestExecutorBinding {
   final ToViewApi? _api;
   final RequestExecutor _requestExecutor;
 

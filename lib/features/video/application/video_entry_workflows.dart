@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:culcul/features/video/application/video_entry_layout.dart';
-import 'package:culcul/features/video/feature_scope.dart';
+import 'package:culcul/features/video/data/video_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'video_entry_workflows.g.dart';

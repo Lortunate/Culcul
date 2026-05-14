@@ -1,5 +1,5 @@
 import 'package:culcul/core/contracts/video_model_contract.dart';
-import 'package:culcul/features/ranking/feature_scope.dart';
+import 'package:culcul/features/ranking/data/ranking_repository_impl.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

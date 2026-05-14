@@ -47,9 +47,7 @@ class FavResourceItem extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                context.showAppFeedback(
-                  t.common.coming_soon(tab: 'More'),
-                );
+                context.showAppFeedback(t.common.coming_soon(tab: 'More'));
               },
               child: Icon(Icons.more_vert, size: 16, color: colorScheme.onSurfaceVariant),
             ),

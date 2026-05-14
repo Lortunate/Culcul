@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
-import 'package:culcul/features/notification/feature_scope.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/network_concurrency_executor.dart';
@@ -92,7 +92,10 @@ class NotificationLifecycleSync extends _$NotificationLifecycleSync
           fallback: (_) => null,
           task: () async {
             await _runSyncTask(
-              repository.syncFeedHead(ownerUid: ownerUid, type: NotificationFeedType.like),
+              repository.syncFeedHead(
+                ownerUid: ownerUid,
+                type: NotificationFeedType.like,
+              ),
             );
             return null;
           },

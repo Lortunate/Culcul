@@ -1,5 +1,4 @@
 import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
-import 'package:culcul/features/favorites/feature_scope.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

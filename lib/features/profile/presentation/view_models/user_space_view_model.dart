@@ -1,6 +1,6 @@
 import 'package:culcul/features/profile/data/dtos/profile_user.dart';
 import 'package:culcul/core/services/relation_service.dart';
-import 'package:culcul/features/profile/feature_scope.dart';
+import 'package:culcul/features/profile/data/profile_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_space_view_model.g.dart';

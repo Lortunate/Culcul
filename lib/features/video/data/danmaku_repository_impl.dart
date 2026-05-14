@@ -5,7 +5,7 @@ import 'package:culcul/core/data/network/resource_api.dart';
 import 'package:culcul/core/data/network/resource_api_provider.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/video/domain/entities/danmaku_model.dart';
+import 'package:culcul/features/video/data/dtos/danmaku_model.dart';
 import 'package:culcul/features/video/data/danmaku_api.dart';
 import 'package:culcul/protos/dm.pb.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -20,8 +20,7 @@ DanmakuRepositoryImpl danmakuRepository(Ref ref) {
   );
 }
 
-class DanmakuRepositoryImpl
-    with RequestExecutorBinding {
+class DanmakuRepositoryImpl with RequestExecutorBinding {
   final DanmakuApi _api;
   final ResourceApi _resourceApi;
   final RequestExecutor _requestExecutor;

@@ -28,7 +28,7 @@ class ArticleDetailParser {
     try {
       final data = match.group(1);
       if (data == null || data.isEmpty) return null;
-      // Use import if needed, but since we are in a subagent's mess, 
+      // Use import if needed, but since we are in a subagent's mess,
       // let's check what's available.
       // Actually, let's just use the logic from the old one.
       return _parseInitialState(data);

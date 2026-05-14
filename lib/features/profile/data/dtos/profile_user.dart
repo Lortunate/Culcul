@@ -30,6 +30,5 @@ sealed class ProfileUser with _$ProfileUser {
     DateTime? createdAt,
   }) = _ProfileUser;
 
-  factory ProfileUser.fromJson(Map<String, dynamic> json) =>
-      _$ProfileUserFromJson(json);
+  factory ProfileUser.fromJson(Map<String, dynamic> json) => _$ProfileUserFromJson(json);
 }

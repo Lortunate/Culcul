@@ -1,4 +1,4 @@
-import 'package:culcul/features/home/feature_scope.dart';
+import 'package:culcul/features/home/data/home_repository_impl.dart';
 import 'package:culcul/features/home/presentation/view_models/home_feed_paging_mixin.dart';
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';

@@ -30,9 +30,7 @@ class NotificationPage extends ConsumerWidget {
             IconButton(
               icon: const Icon(Icons.settings_outlined),
               onPressed: () {
-                context.showAppFeedback(
-                  t.common.coming_soon(tab: t.notification.title),
-                );
+                context.showAppFeedback(t.common.coming_soon(tab: t.notification.title));
               },
             ),
         ],

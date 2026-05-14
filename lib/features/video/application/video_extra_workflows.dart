@@ -6,7 +6,6 @@ import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/utils/danmaku_mask_parser.dart';
 import 'package:culcul/features/video/data/danmaku_repository_impl.dart';
 import 'package:culcul/features/video/data/video_repository_impl.dart';
-import 'package:culcul/features/video/feature_scope.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_drawing/path_drawing.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

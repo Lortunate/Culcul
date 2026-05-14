@@ -1,5 +1,5 @@
-import 'package:culcul/features/profile/domain/entities/profile_video.dart';
-import 'package:culcul/features/profile/feature_scope.dart';
+import 'package:culcul/features/profile/data/dtos/profile_video.dart';
+import 'package:culcul/features/profile/data/profile_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_space_extras_view_model.g.dart';

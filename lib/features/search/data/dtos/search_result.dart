@@ -165,14 +165,10 @@ class _SearchResultConverter implements JsonConverter<List<SearchResultItem>, dy
     }
 
     if (droppedUnknownTypeCount > 0) {
-      DevLogger.log(
-        'list',
-        'drop_unknown_search_type',
-        <String, Object?>{
-          'source': 'search.result_converter',
-          'count': droppedUnknownTypeCount,
-        },
-      );
+      DevLogger.log('list', 'drop_unknown_search_type', <String, Object?>{
+        'source': 'search.result_converter',
+        'count': droppedUnknownTypeCount,
+      });
     }
     return items;
   }

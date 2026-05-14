@@ -45,10 +45,8 @@ sealed class ArticleBlock with _$ArticleBlock {
     @Default(false) bool bold,
   }) = ArticleBlockParagraph;
 
-  const factory ArticleBlock.image({
-    required List<String> imageUrls,
-    String? caption,
-  }) = ArticleBlockImage;
+  const factory ArticleBlock.image({required List<String> imageUrls, String? caption}) =
+      ArticleBlockImage;
 
   const factory ArticleBlock.linkCard({
     required String title,
@@ -56,9 +54,8 @@ sealed class ArticleBlock with _$ArticleBlock {
     String? linkUrl,
   }) = ArticleBlockLinkCard;
 
-  const factory ArticleBlock.quote({
-    required List<ArticleInlineNode> nodes,
-  }) = ArticleBlockQuote;
+  const factory ArticleBlock.quote({required List<ArticleInlineNode> nodes}) =
+      ArticleBlockQuote;
 
   const factory ArticleBlock.divider() = ArticleBlockDivider;
 }

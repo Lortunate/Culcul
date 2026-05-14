@@ -18,7 +18,7 @@ class SettingsPage extends ConsumerWidget {
     final t = Translations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     final themeMode = ref.watch(appThemeModeProvider);
     final cacheState = ref.watch(cacheSizeProvider);
     final cacheSize = cacheState.when(
@@ -94,16 +94,16 @@ class SettingsPage extends ConsumerWidget {
   }
 
   String _getLanguageName(Translations t, AppLocale locale) => switch (locale) {
-        AppLocale.zh => t.settings.chinese,
-        AppLocale.zhHant => t.settings.traditional_chinese,
-        AppLocale.en => t.settings.english,
-      };
+    AppLocale.zh => t.settings.chinese,
+    AppLocale.zhHant => t.settings.traditional_chinese,
+    AppLocale.en => t.settings.english,
+  };
 
   String _getThemeName(Translations t, ThemeMode mode) => switch (mode) {
-        ThemeMode.system => t.settings.theme_mode.system,
-        ThemeMode.light => t.settings.theme_mode.light,
-        ThemeMode.dark => t.settings.theme_mode.dark,
-      };
+    ThemeMode.system => t.settings.theme_mode.system,
+    ThemeMode.light => t.settings.theme_mode.light,
+    ThemeMode.dark => t.settings.theme_mode.dark,
+  };
 
   void _showLanguageSelector(BuildContext context) {
     final t = Translations.of(context);

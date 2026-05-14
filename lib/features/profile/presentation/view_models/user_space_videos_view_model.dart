@@ -6,8 +6,8 @@ import 'package:dio/dio.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
-import 'package:culcul/features/profile/domain/entities/profile_video.dart';
-import 'package:culcul/features/profile/feature_scope.dart';
+import 'package:culcul/features/profile/data/dtos/profile_video.dart';
+import 'package:culcul/features/profile/data/profile_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_space_videos_view_model.g.dart';

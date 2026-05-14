@@ -40,11 +40,11 @@ class SearchTopicItem extends StatelessWidget {
           children: [
             if (item.coverUrl != null)
               AppNetworkImage(
-                  url: item.coverUrl!,
-                  width: 80,
-                  height: 80,
-                  fit: BoxFit.cover,
-                  borderRadius: BorderRadius.circular(8),
+                url: item.coverUrl!,
+                width: 80,
+                height: 80,
+                fit: BoxFit.cover,
+                borderRadius: BorderRadius.circular(8),
               ),
             const SizedBox(width: 12),
             Expanded(

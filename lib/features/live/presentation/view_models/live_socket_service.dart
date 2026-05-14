@@ -191,7 +191,7 @@ class LiveSocketService {
         case 8: // Auth Reply
           debugPrint('Live WebSocket Authenticated');
         case 3: // Heartbeat Reply
-          // debugPrint('Heartbeat reply: ${ByteData.sublistView(body).getUint32(0)} popularity');
+        // debugPrint('Heartbeat reply: ${ByteData.sublistView(body).getUint32(0)} popularity');
       }
 
       offset += packetLength;

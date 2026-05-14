@@ -1,5 +1,5 @@
-import 'package:culcul/features/history/domain/entities/history_entry.dart';
-import 'package:culcul/features/history/feature_scope.dart';
+import 'package:culcul/features/history/data/dtos/history_entry.dart';
+import 'package:culcul/features/history/data/history_repository_impl.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

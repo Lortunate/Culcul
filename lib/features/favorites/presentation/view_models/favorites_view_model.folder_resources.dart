@@ -20,11 +20,10 @@ class FavFolderResources extends _$FavFolderResources {
     final firstInteractiveStopwatch = Stopwatch()..start();
     final page = await _fetchItems(mediaId, 1);
     if (page == null) {
-      DevLogger.log(
-        'feature',
-        'favorites.detail state_commit',
-        <String, Object?>{'mediaId': mediaId, 'hasData': false},
-      );
+      DevLogger.log('feature', 'favorites.detail state_commit', <String, Object?>{
+        'mediaId': mediaId,
+        'hasData': false,
+      });
       return const FavFolderDetailState();
     }
     final nextState = FavFolderDetailState(
@@ -38,25 +37,17 @@ class FavFolderResources extends _$FavFolderResources {
         error: null,
       ),
     );
-    DevLogger.log(
-      'feature',
-      'favorites.detail state_commit',
-      <String, Object?>{
-        'mediaId': mediaId,
-        'hasData': true,
-        'itemCount': page.medias.length,
-        'hasMore': page.hasMore,
-      },
-    );
-    DevLogger.log(
-      'feature',
-      'favorites.detail first_interactive',
-      <String, Object?>{
-        'mediaId': mediaId,
-        'ms': firstInteractiveStopwatch.elapsedMilliseconds,
-        'itemCount': page.medias.length,
-      },
-    );
+    DevLogger.log('feature', 'favorites.detail state_commit', <String, Object?>{
+      'mediaId': mediaId,
+      'hasData': true,
+      'itemCount': page.medias.length,
+      'hasMore': page.hasMore,
+    });
+    DevLogger.log('feature', 'favorites.detail first_interactive', <String, Object?>{
+      'mediaId': mediaId,
+      'ms': firstInteractiveStopwatch.elapsedMilliseconds,
+      'itemCount': page.medias.length,
+    });
     return nextState;
   }
 
@@ -65,16 +56,12 @@ class FavFolderResources extends _$FavFolderResources {
     final result = await ref
         .read(favRepositoryProvider)
         .getFolderResources(mediaId: mediaId, page: page);
-    DevLogger.log(
-      'feature',
-      'favorites.detail request',
-      <String, Object?>{
-        'mediaId': mediaId,
-        'page': page,
-        'ms': requestStopwatch.elapsedMilliseconds,
-        'success': result.dataOrNull != null,
-      },
-    );
+    DevLogger.log('feature', 'favorites.detail request', <String, Object?>{
+      'mediaId': mediaId,
+      'page': page,
+      'ms': requestStopwatch.elapsedMilliseconds,
+      'success': result.dataOrNull != null,
+    });
     return result.dataOrNull;
   }
 
@@ -97,7 +84,8 @@ class FavFolderResources extends _$FavFolderResources {
       final nextPageData = result.dataOrNull;
       if (nextPageData == null) {
         final error =
-            result.errorOrNull ?? const AppError.data('Failed to load favorite resources');
+            result.errorOrNull ??
+            const AppError.data('Failed to load favorite resources');
         state = AsyncData(
           current.copyWith(
             paging: current.paging.copyWith(isLoadingMore: false, error: error),
@@ -122,16 +110,12 @@ class FavFolderResources extends _$FavFolderResources {
           ),
         ),
       );
-      DevLogger.log(
-        'feature',
-        'favorites.detail state_commit',
-        <String, Object?>{
-          'mediaId': mediaId,
-          'page': current.paging.nextPage,
-          'itemCount': state.value?.paging.items.length ?? 0,
-          'hasMore': state.value?.paging.hasMore ?? false,
-        },
-      );
+      DevLogger.log('feature', 'favorites.detail state_commit', <String, Object?>{
+        'mediaId': mediaId,
+        'page': current.paging.nextPage,
+        'itemCount': state.value?.paging.items.length ?? 0,
+        'hasMore': state.value?.paging.hasMore ?? false,
+      });
     } finally {
       final latest = state.value;
       if (latest != null && latest.paging.isLoadingMore) {

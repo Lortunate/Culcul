@@ -7,10 +7,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'topic_search_view_model.g.dart';
 
 @riverpod
-Future<List<SearchTopicEntry>> topicSearchViewModel(
-  Ref ref,
-  String keyword,
-) async {
+Future<List<SearchTopicEntry>> topicSearchViewModel(Ref ref, String keyword) async {
   final trimmed = keyword.trim();
   if (trimmed.isEmpty) return const [];
 

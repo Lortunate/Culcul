@@ -1,5 +1,5 @@
 import 'package:culcul/core/session/session_lifecycle_providers.dart';
-import 'package:culcul/features/auth/feature_scope.dart';
+import 'package:culcul/features/auth/data/auth_repository_impl.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final class AuthSessionCookieRefresher implements SessionCookieRefresher {

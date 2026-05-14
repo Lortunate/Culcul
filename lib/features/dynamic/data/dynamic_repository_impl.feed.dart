@@ -7,9 +7,7 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
     );
   }
 
-  Future<Result<DynamicData, AppError>> getSpaceDynamicFeed(
-    SpaceDynamicFeedQuery query,
-  ) {
+  Future<Result<DynamicData, AppError>> getSpaceDynamicFeed(SpaceDynamicFeedQuery query) {
     return requestApiResult(
       () => api.getSpaceDynamicFeed(
         hostMid: query.hostMid,
@@ -60,15 +58,11 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
         headers: {'Referer': uri.toString(), 'Origin': 'https://www.bilibili.com'},
       ),
     );
-    DevLogger.log(
-      'feature',
-      'dynamic.article_detail request',
-      <String, Object?>{
-        'source': 'read',
-        'articleId': articleId,
-        'ms': requestStopwatch.elapsedMilliseconds,
-      },
-    );
+    DevLogger.log('feature', 'dynamic.article_detail request', <String, Object?>{
+      'source': 'read',
+      'articleId': articleId,
+      'ms': requestStopwatch.elapsedMilliseconds,
+    });
 
     final parseStopwatch = Stopwatch()..start();
     final payload = response.data ?? const <String, dynamic>{};
@@ -81,16 +75,12 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
       throw const AppError.unknown('Invalid article payload');
     }
     final detail = ArticleDetailParser.fromArticleView(sourceUri: uri, data: data);
-    DevLogger.log(
-      'feature',
-      'dynamic.article_detail parse',
-      <String, Object?>{
-        'source': 'read',
-        'articleId': articleId,
-        'ms': parseStopwatch.elapsedMilliseconds,
-        'blocks': detail.blocks.length,
-      },
-    );
+    DevLogger.log('feature', 'dynamic.article_detail parse', <String, Object?>{
+      'source': 'read',
+      'articleId': articleId,
+      'ms': parseStopwatch.elapsedMilliseconds,
+      'blocks': detail.blocks.length,
+    });
     return detail;
   }
 
@@ -106,15 +96,11 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
         },
       ),
     );
-    DevLogger.log(
-      'feature',
-      'dynamic.article_detail request',
-      <String, Object?>{
-        'source': 'opus',
-        'uri': uri.path,
-        'ms': requestStopwatch.elapsedMilliseconds,
-      },
-    );
+    DevLogger.log('feature', 'dynamic.article_detail request', <String, Object?>{
+      'source': 'opus',
+      'uri': uri.path,
+      'ms': requestStopwatch.elapsedMilliseconds,
+    });
 
     final parseStopwatch = Stopwatch()..start();
     final html = response.data ?? '';
@@ -123,16 +109,12 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
       throw const AppError.unknown('Failed to parse article page');
     }
     final detail = ArticleDetailParser.fromOpusState(sourceUri: uri, state: initialState);
-    DevLogger.log(
-      'feature',
-      'dynamic.article_detail parse',
-      <String, Object?>{
-        'source': 'opus',
-        'uri': uri.path,
-        'ms': parseStopwatch.elapsedMilliseconds,
-        'blocks': detail.blocks.length,
-      },
-    );
+    DevLogger.log('feature', 'dynamic.article_detail parse', <String, Object?>{
+      'source': 'opus',
+      'uri': uri.path,
+      'ms': parseStopwatch.elapsedMilliseconds,
+      'blocks': detail.blocks.length,
+    });
     return detail;
   }
 }

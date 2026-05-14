@@ -31,8 +31,10 @@ enum PrivateSessionType {
 
 @freezed
 sealed class PrivateSessionAccountInfo with _$PrivateSessionAccountInfo {
-  const factory PrivateSessionAccountInfo({required String name, required String picUrl}) =
-      _PrivateSessionAccountInfo;
+  const factory PrivateSessionAccountInfo({
+    required String name,
+    required String picUrl,
+  }) = _PrivateSessionAccountInfo;
 }
 
 @freezed

@@ -116,11 +116,11 @@ class NotificationItemWidget extends StatelessWidget {
                       if (detail.image.isNotEmpty) ...[
                         const SizedBox(width: 8),
                         AppNetworkImage(
-                            url: detail.image,
-                            width: 40,
-                            height: 40,
-                            fit: BoxFit.cover,
-                            borderRadius: BorderRadius.circular(4),
+                          url: detail.image,
+                          width: 40,
+                          height: 40,
+                          fit: BoxFit.cover,
+                          borderRadius: BorderRadius.circular(4),
                         ),
                       ],
                     ],
@@ -140,10 +140,7 @@ class NotificationItemWidget extends StatelessWidget {
     if (handled || !context.mounted) return;
 
     context.showAppFeedback(
-      t.notification.navigation_error(
-        type: detail.type,
-        id: detail.subjectId.toString(),
-      ),
+      t.notification.navigation_error(type: detail.type, id: detail.subjectId.toString()),
       level: AppFeedbackLevel.error,
     );
   }

@@ -11,21 +11,13 @@ mixin _ArticleDetailViewModelActions on _$ArticleDetailViewModel {
     state = state.copyWith(isLoading: true, error: null);
     final result = await ref.read(dynamicRepositoryProvider).getArticleDetail(_url);
     state = result.when(
-      success: (detail) => state.copyWith(
-        detail: detail,
-        isLoading: false,
-        error: null,
-      ),
+      success: (detail) => state.copyWith(detail: detail, isLoading: false, error: null),
       failure: (error) => state.copyWith(isLoading: false, error: error),
     );
-    DevLogger.log(
-      'feature',
-      'dynamic.article_detail state_commit',
-      <String, Object?>{
-        'hasDetail': state.detail != null,
-        'hasError': state.error != null,
-      },
-    );
+    DevLogger.log('feature', 'dynamic.article_detail state_commit', <String, Object?>{
+      'hasDetail': state.detail != null,
+      'hasError': state.error != null,
+    });
   }
 
   Future<void> refreshAll() async {

@@ -10,7 +10,5 @@ Widget buildDynamicDetailRoutePage(String id) => DynamicDetailPage(dynamicId: id
 
 Widget buildPublishDynamicRoutePage() => const PublishDynamicPage();
 
-Widget buildTopicDetailRoutePage({
-  required int topicId,
-  required String topicName,
-}) => TopicDetailPage(topicId: topicId, topicName: topicName);
+Widget buildTopicDetailRoutePage({required int topicId, required String topicName}) =>
+    TopicDetailPage(topicId: topicId, topicName: topicName);

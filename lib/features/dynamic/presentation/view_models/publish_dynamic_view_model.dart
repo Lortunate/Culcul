@@ -11,9 +11,8 @@ part 'publish_dynamic_view_model.g.dart';
 
 @freezed
 sealed class PublishDynamicUiState with _$PublishDynamicUiState {
-  const factory PublishDynamicUiState({
-    @Default(false) bool isPublishing,
-  }) = _PublishDynamicUiState;
+  const factory PublishDynamicUiState({@Default(false) bool isPublishing}) =
+      _PublishDynamicUiState;
 }
 
 @riverpod
@@ -31,11 +30,15 @@ class PublishDynamicViewModel extends _$PublishDynamicViewModel {
     // Hardening the public seam by converting presentation primitives (File)
     // into domain-shaped assets (PublishMediaAsset).
     // In a real scenario, we would decode image dimensions here.
-    final assets = images.map((f) => PublishMediaAsset(
-      path: f.path,
-      width: 0, // Placeholder
-      height: 0, // Placeholder
-    )).toList();
+    final assets = images
+        .map(
+          (f) => PublishMediaAsset(
+            path: f.path,
+            width: 0, // Placeholder
+            height: 0, // Placeholder
+          ),
+        )
+        .toList();
 
     final result = await ref
         .read(publishDynamicWorkflowProvider)

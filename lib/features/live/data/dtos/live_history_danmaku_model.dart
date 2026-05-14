@@ -25,10 +25,8 @@ sealed class LiveDanmakuItem with _$LiveDanmakuItem {
     @Default(0) int isadmin,
     @Default(0) int vip,
     @Default(0) int svip,
-    @JsonKey(fromJson: _medalFromJson, toJson: _medalToJson)
-    LiveDanmakuMedal? medal,
-    @JsonKey(fromJson: _titleFromJson, toJson: _titleToJson)
-    LiveDanmakuTitle? title,
+    @JsonKey(fromJson: _medalFromJson, toJson: _medalToJson) LiveDanmakuMedal? medal,
+    @JsonKey(fromJson: _titleFromJson, toJson: _titleToJson) LiveDanmakuTitle? title,
     @JsonKey(name: 'user_level', fromJson: _userLevelFromJson, toJson: _userLevelToJson)
     LiveDanmakuUserLevel? userLevel,
     @Default(0) int rank,

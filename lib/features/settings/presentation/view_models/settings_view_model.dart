@@ -1,6 +1,6 @@
 import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/features/settings/domain/entities/app_theme_preference.dart';
-import 'package:culcul/features/settings/feature_scope.dart';
+import 'package:culcul/features/settings/data/settings_repository_impl.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

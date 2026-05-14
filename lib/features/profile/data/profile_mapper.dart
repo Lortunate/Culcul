@@ -1,5 +1,5 @@
 import 'package:culcul/features/profile/data/dtos/user_space_video_model.dart';
-import 'package:culcul/features/profile/domain/entities/profile_video.dart';
+import 'package:culcul/features/profile/data/dtos/profile_video.dart';
 
 extension UserSpaceVideoMapper on UserSpaceVideoModel {
   ProfileVideo toDomain() {

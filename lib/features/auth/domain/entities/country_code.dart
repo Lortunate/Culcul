@@ -4,8 +4,11 @@ part 'country_code.freezed.dart';
 
 @freezed
 sealed class CountryCode with _$CountryCode {
-  const factory CountryCode({required int id, required String name, required String code}) =
-      _CountryCode;
+  const factory CountryCode({
+    required int id,
+    required String name,
+    required String code,
+  }) = _CountryCode;
 }
 
 const List<CountryCode> defaultCountryCodes = [

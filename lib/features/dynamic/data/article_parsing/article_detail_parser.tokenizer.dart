@@ -81,7 +81,12 @@ List<ArticleBlock> _parseHtmlNode(html_dom.Node node) {
         if (nodes.isEmpty) continue;
         final bulletPrefix = tag == 'ol' ? '${listBlocks.length + 1}. ' : '• ';
         listBlocks.add(
-          ArticleBlock.paragraph(nodes: [ArticleInlineNode(text: bulletPrefix), ...nodes]),
+          ArticleBlock.paragraph(
+            nodes: [
+              ArticleInlineNode(text: bulletPrefix),
+              ...nodes,
+            ],
+          ),
         );
       }
       return listBlocks;

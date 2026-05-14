@@ -5,7 +5,7 @@ import 'package:culcul/core/data/network/interceptors/cache_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
-import 'package:culcul/features/dynamic/feature_scope.dart';
+import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
 import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_queries.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';

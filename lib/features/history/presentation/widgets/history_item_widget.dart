@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/features/history/domain/entities/history_entry.dart';
+import 'package:culcul/features/history/data/dtos/history_entry.dart';
 import 'package:culcul/ui/widgets/text/icon_text.dart';
 import 'package:culcul/ui/assemblies/feed_cards/video_list_card.dart';
 

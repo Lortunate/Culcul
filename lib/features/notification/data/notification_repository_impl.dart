@@ -38,8 +38,7 @@ NotificationRepositoryImpl notificationRepository(Ref ref) {
   );
 }
 
-class NotificationRepositoryImpl
-    with RequestExecutorBinding {
+class NotificationRepositoryImpl with RequestExecutorBinding {
   NotificationRepositoryImpl(
     this.api,
     this.database,

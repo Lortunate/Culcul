@@ -8,7 +8,6 @@ import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
 import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
 import 'package:culcul/features/video/data/video_repository_impl.dart';
-import 'package:culcul/features/video/feature_scope.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'video_detail_workflows.g.dart';
@@ -64,11 +63,10 @@ class LoadVideoDetailWorkflow {
     final stopwatch = Stopwatch()..start();
     return (await _repository.fetchVideoView(bvid, cancelToken: cancelToken)).when(
       success: (detail) async {
-        DevLogger.log(
-          'video',
-          'critical_loaded',
-          <String, Object?>{'bvid': bvid, 'ms': stopwatch.elapsedMilliseconds},
-        );
+        DevLogger.log('video', 'critical_loaded', <String, Object?>{
+          'bvid': bvid,
+          'ms': stopwatch.elapsedMilliseconds,
+        });
         final cid = detail.pages.isNotEmpty ? detail.pages.first.cid : 0;
 
         final Result<PlayUrl?, AppError> playResult;
@@ -82,15 +80,11 @@ class LoadVideoDetailWorkflow {
             cancelToken: cancelToken,
           );
           if (loadedPlayUrl.dataOrNull != null) {
-            DevLogger.log(
-              'video',
-              'playurl_loaded',
-              <String, Object?>{
-                'bvid': bvid,
-                'cid': cid,
-                'ms': playUrlStopwatch.elapsedMilliseconds,
-              },
-            );
+            DevLogger.log('video', 'playurl_loaded', <String, Object?>{
+              'bvid': bvid,
+              'cid': cid,
+              'ms': playUrlStopwatch.elapsedMilliseconds,
+            });
           }
           playResult = loadedPlayUrl.map<PlayUrl?>((value) => value);
         }

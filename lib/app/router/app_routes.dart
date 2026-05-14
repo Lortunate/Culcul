@@ -11,7 +11,6 @@ import 'package:culcul/features/history/route_entry.dart';
 import 'package:culcul/features/home/route_entry.dart';
 import 'package:culcul/features/live/route_entry.dart';
 import 'package:culcul/features/notification/route_entry.dart';
-export 'package:culcul/features/notification/route_entry.dart' show ChatRouteInput;
 import 'package:culcul/features/profile/route_entry.dart';
 import 'package:culcul/features/ranking/route_entry.dart';
 import 'package:culcul/features/search/route_entry.dart';

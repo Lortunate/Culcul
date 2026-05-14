@@ -2,6 +2,7 @@ import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/auth/feature_scope.dart';
 import 'package:culcul/features/profile/data/dtos/profile_user.dart';
 import 'package:culcul/features/profile/presentation/view_models/user_space_view_model.dart';
+import 'package:culcul/features/notification/route_entry.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_action_button.dart';
 import 'package:culcul/ui/widgets/buttons/follow_button.dart';
