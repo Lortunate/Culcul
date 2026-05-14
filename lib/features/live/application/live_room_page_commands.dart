@@ -1,4 +1,4 @@
-import 'package:culcul/features/auth/feature_scope.dart';
+import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/live/presentation/view_models/live_room_view_model.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

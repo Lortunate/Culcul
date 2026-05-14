@@ -1,6 +1,6 @@
 import 'package:culcul/core/feedback/app_feedback.dart';
-import 'package:culcul/features/auth/feature_scope.dart';
-import 'package:culcul/features/profile/feature_scope.dart';
+import 'package:culcul/features/auth/application/auth_session_providers.dart';
+import 'package:culcul/features/profile/application/profile_session_providers.dart';
 import 'package:culcul/features/notification/application/chat_page_commands.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/presentation/view_models/chat_view_model.dart';

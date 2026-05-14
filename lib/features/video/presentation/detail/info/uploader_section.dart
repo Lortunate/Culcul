@@ -1,5 +1,5 @@
 import 'package:culcul/core/contracts/video_model_contract.dart';
-import 'package:culcul/features/auth/feature_scope.dart';
+import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/ui/widgets/buttons/follow_button.dart';
 import 'package:culcul/ui/widgets/users/user_list_tile.dart';

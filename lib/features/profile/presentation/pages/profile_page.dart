@@ -1,4 +1,4 @@
-import 'package:culcul/features/auth/feature_scope.dart';
+import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_action_grid.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_app_bar.dart';
 import 'package:culcul/features/profile/presentation/widgets/guest_profile_view.dart';

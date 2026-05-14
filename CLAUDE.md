@@ -42,14 +42,14 @@ This project is indexed by GitNexus as **Culcul** (2084 symbols, 2880 relationsh
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 27 — Architecture Simplification)
+## Architecture (Phase 28 — Deep Simplification)
 
-`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–26 completed structural cleanup, barrel elimination, freezed/@riverpod migration, model deduplication, abstract repo removal, dead weight removal, provider/bootstrap cleanup, runtime/network consolidation, source-of-truth cleanup, feature public surface reduction, thin domain collapse, generated/source audit separation, router alias cleanup, dependency/config source-of-truth cleanup, and application seam hardening. Phase 27 simplifies the architecture: flatten bootstrap, remove dead infrastructure, eliminate pass-through layers, and refactor notification repository circular dependencies.
+`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–26 completed structural cleanup, barrel elimination, freezed/@riverpod migration, model deduplication, abstract repo removal, dead weight removal, provider/bootstrap cleanup, runtime/network consolidation, source-of-truth cleanup, feature public surface reduction, thin domain collapse, generated/source audit separation, router alias cleanup, dependency/config source-of-truth cleanup, and application seam hardening. Phase 27 flattened bootstrap, removed dead infrastructure (EndpointConcurrencyLane, RequestExecutorBinding), eliminated pass-through commands, renamed CacheInterceptor, and cleaned redundant dependencies. Phase 28 deep-simplifies: refactor notification helpers into independent services, eliminate trivial alias providers, migrate hand-written providers to @riverpod, remove unnecessary dependencies (uuid, archive), and convert remaining hand-written codegen targets to freezed/json_serializable.
 
-Active spec: `docs/specs/phase27-architecture-simplification.md`
-Active plan: `docs/plans/phase27-architecture-simplification.md`
+Active spec: `docs/specs/phase28-deep-simplification.md`
+Active plan: `docs/plans/phase28-deep-simplification.md`
 Architecture guide: `docs/architecture/architecture-guide.md`
-Archived: Phase 22–26 specs/plans in `docs/specs/archive/` and `docs/plans/archive/`
+Archived: Phase 22–27 specs/plans in `docs/specs/archive/` and `docs/plans/archive/`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`
@@ -74,7 +74,7 @@ Archived: Phase 22–26 specs/plans in `docs/specs/archive/` and `docs/plans/arc
 - Single notification pattern: `AppFeedback` extension on `BuildContext` — no raw ScaffoldMessenger calls
 - Shared API services in `core/services/` for cross-feature endpoints (comments, etc.)
 - No business logic in DTOs — business methods belong in domain entities only
-- If architecture docs disagree, the active Phase 27 spec/plan override older phase text
+- If architecture docs disagree, the active Phase 28 spec/plan override older phase text
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:full hash:f65d5d33 -->
 ## Issue Tracking with bd (beads)

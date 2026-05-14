@@ -5,7 +5,7 @@ import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/utils/list_utils.dart';
-import 'package:culcul/features/auth/feature_scope.dart';
+import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:culcul/features/favorites/data/fav_repository_impl.dart';

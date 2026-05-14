@@ -17,7 +17,7 @@ import 'package:culcul/features/notification/domain/entities/send_message_result
 import 'package:culcul/features/notification/data/dtos/system_notice.dart';
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart' show Value;
-import 'package:uuid/uuid.dart';
+import 'package:culcul/core/utils/uuid_v4.dart';
 
 class NotificationMessageSendService with NotificationMessageSendHelpersMixin {
   NotificationMessageSendService(this.repo);
@@ -63,7 +63,7 @@ class NotificationMessageSendService with NotificationMessageSendHelpersMixin {
     final localMsgSeqno = -DateTime.now().microsecondsSinceEpoch;
     final contentMap = content.toRawMap();
     final contentRawJson = jsonEncode(contentMap);
-    final devId = const Uuid().v4().toUpperCase();
+    final devId = generateUuidV4();
 
     await repo.database.transaction(() async {
       await repo.database

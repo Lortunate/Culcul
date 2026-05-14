@@ -3,7 +3,9 @@ import 'dart:math' as math;
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'network_quality_policy.g.dart';
 
 enum NetworkQualityProfile { fast, normal, constrained }
 
@@ -99,24 +101,19 @@ class NetworkQualityPolicy {
   }
 }
 
-final _connectivityProvider = Provider<Connectivity>((ref) => Connectivity());
-
-final networkQualityProfileProvider = StreamProvider<NetworkQualityProfile>((ref) {
-  final connectivity = ref.watch(_connectivityProvider);
+@Riverpod(keepAlive: true)
+Stream<NetworkQualityProfile> networkQualityProfile(Ref ref) {
+  final connectivity = Connectivity();
   return _watchConnectivityProfiles(connectivity);
-});
+}
 
-final networkQualityPolicyProvider = Provider<NetworkQualityPolicy>((ref) {
-  final profile = ref.watch(
-    networkQualityProfileProvider.select(
-      (state) => state.maybeWhen(
-        data: (value) => value,
-        orElse: () => NetworkQualityProfile.normal,
-      ),
-    ),
-  );
+@Riverpod(keepAlive: true)
+NetworkQualityPolicy networkQualityPolicy(Ref ref) {
+  final profile = ref
+      .watch(networkQualityProfileProvider)
+      .maybeWhen(data: (value) => value, orElse: () => NetworkQualityProfile.normal);
   return NetworkQualityPolicy.forProfile(profile);
-});
+}
 
 Stream<NetworkQualityProfile> _watchConnectivityProfiles(
   Connectivity connectivity,

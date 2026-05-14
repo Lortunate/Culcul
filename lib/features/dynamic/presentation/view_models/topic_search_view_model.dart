@@ -1,6 +1,6 @@
 import 'package:culcul/core/contracts/search_query_contract.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';
-import 'package:culcul/features/search/feature_scope.dart';
+import 'package:culcul/features/search/data/search_repository_impl.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -12,7 +12,7 @@ Future<List<SearchTopicEntry>> topicSearchViewModel(Ref ref, String keyword) asy
   if (trimmed.isEmpty) return const [];
 
   final data = await ref
-      .read(searchPortProvider)
+      .read(searchRepositoryProvider)
       .search(
         query: SearchQuery(keyword: trimmed, type: SearchType.topic),
       );

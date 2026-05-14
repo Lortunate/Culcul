@@ -4,7 +4,7 @@ import 'package:culcul/features/auth/domain/entities/user_entity.dart';
 import 'package:culcul/features/auth/data/auth_repository_impl.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/profile/feature_scope.dart';
+import 'package:culcul/features/profile/data/profile_cache_repository.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -95,7 +95,7 @@ class Auth extends _$Auth {
     final result = await ref.read(authRepositoryProvider).logout();
     await result.when(
       success: (_) async {
-        await ref.read(clearProfileCacheProvider)();
+        await ref.read(profileCacheRepositoryProvider).clearAll();
         state = state.copyWith(isLoggedIn: false, user: null, error: null);
       },
       failure: (error) async => _storeFailure(error),

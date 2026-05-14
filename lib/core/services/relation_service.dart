@@ -6,11 +6,14 @@ import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:dio/dio.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final relationPortProvider = Provider<RelationPort>((ref) {
+part 'relation_service.g.dart';
+
+@Riverpod(keepAlive: true)
+RelationPort relationPort(Ref ref) {
   return RelationService(ref.watch(dioClientProvider));
-});
+}
 
 class RelationService implements RelationPort {
   static const int _defaultPageSize = 50;

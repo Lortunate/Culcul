@@ -1,11 +1,11 @@
 # Culcul Architecture Guide
 
-Active phase: Phase 27 Architecture Simplification.
+Active phase: Phase 28 Deep Simplification.
 
 Authoritative docs:
 
-- Spec: `docs/specs/phase27-architecture-simplification.md`
-- Plan: `docs/plans/phase27-architecture-simplification.md`
+- Spec: `docs/specs/phase28-deep-simplification.md`
+- Plan: `docs/plans/phase28-deep-simplification.md`
 
 ## Current Shape
 

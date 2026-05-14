@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:flutter/widgets.dart';
 import 'package:media_kit/media_kit.dart';

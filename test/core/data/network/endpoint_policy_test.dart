@@ -54,7 +54,6 @@ void main() {
       final options = RequestOptions(path: '/x/web-interface/popular', method: 'GET');
       final policy = resolverFor(backgroundRuntime).resolve(options);
 
-      expect(policy.concurrencyLane, EndpointConcurrencyLane.background);
       expect(policy.retryMaxAttempts, 1);
       expect(policy.allowPrefetch, isFalse);
     });

@@ -1,6 +1,6 @@
+import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:archive/archive.dart';
 import 'package:culcul/core/errors/app_error.dart';
 
 class DanmakuMaskParser {
@@ -49,7 +49,7 @@ class DanmakuMaskParser {
       if (startOffset >= bytes.length || endOffset > bytes.length) continue;
 
       final compressedData = bytes.sublist(startOffset, endOffset);
-      final decompressedData = GZipDecoder().decodeBytes(compressedData);
+      final decompressedData = gzip.decode(compressedData);
 
       // Skip first 16 bytes
       if (decompressedData.length < 16) continue;

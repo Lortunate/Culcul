@@ -1,6 +1,6 @@
 import 'package:culcul/core/contracts/relation_user_contract.dart';
 import 'package:culcul/core/services/relation_service.dart';
-import 'package:culcul/features/auth/feature_scope.dart';
+import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'recently_followed_view_model.g.dart';

@@ -2,7 +2,7 @@ import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/route_entry.dart';
-import 'package:culcul/features/profile/feature_scope.dart';
+import 'package:culcul/features/profile/application/profile_session_providers.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/ui.dart';
