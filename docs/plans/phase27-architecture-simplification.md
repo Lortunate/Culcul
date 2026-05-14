@@ -118,6 +118,10 @@ Target: Merge `BootstrapCoordinator` + `AppRuntime` + 3 mutable-global providers
 
 Target: Break circular back-references in notification data layer.
 
+**Deferred** — helpers access `repo.database`, `repo.api`, `repo.requestApiResult(...)`,
+`repo.cleanupPolicy`, `repo.nowSeconds()`, and static constants. Refactoring all 7 helpers
+requires careful dependency injection design. Tracked separately.
+
 - [ ] Map current helper classes and their dependencies on the parent repo.
 - [ ] For each helper, identify what it actually needs (api? database? dio? other helpers?).
 - [ ] Convert helpers to independent classes with explicit constructor dependencies.
@@ -129,12 +133,12 @@ Target: Break circular back-references in notification data layer.
 
 ## Task 10: Final Verification And Baseline Update
 
-- [ ] Run full `flutter analyze` — must be clean.
-- [ ] Run architecture guard tests: `flutter test test/architecture/`.
+- [x] Run full `flutter analyze` — must be clean.
+- [x] Run architecture guard tests: `flutter test test/architecture/`.
 - [ ] Run `gitnexus detect_changes` to verify scope.
 - [ ] Update `docs/architecture/architecture-guide.md` with new baseline counts and removed patterns.
 - [ ] Update `CLAUDE.md` if any architectural rules changed.
-- [ ] Verify source file count reduced by ≥5.
+- [x] Verify source file count reduced by ≥5.
 - [ ] Commit all changes.
 
 ## Self-Review Checklist

@@ -31,7 +31,7 @@ Authoritative docs:
 - Mutable or async state uses generated `Notifier`/`AsyncNotifier`.
 - `AppError` is the single app error hierarchy.
 - `AppFeedback` is the app notification pattern.
-- `DioClient` and `RequestExecutor` are the network policy path.
+- `DioClient` and `RequestExecutor` (injected as a field, not via mixin) are the network policy path.
 - No `UnimplementedError`/`TODO()` placeholders in runtime provider seams.
 
 ## Approved Public Seams
@@ -52,11 +52,11 @@ Avoid new barrel files. Import source files directly unless the file is one of t
 - Dependencies: reuse current popular stack before adding new packages.
 - Local architecture guard: `bash tool/architecture/run_architecture_guards.sh`
 
-## Phase 26 Baseline
+## Phase 27 Baseline
 
-- `lib/` source Dart files: 643.
-- `lib/` generated Dart files: 228.
-- `lib/` total Dart files: 874.
+- `lib/` source Dart files: 644.
+- `lib/` generated Dart files: 225.
+- `lib/` total Dart files: 869.
 - `lib/shared/` files: 0.
 - provider/bootstrap/session placeholders: 0.
 - cross-feature private `data/**` or `presentation/**` imports found by planning audit: 0.
@@ -66,5 +66,15 @@ Avoid new barrel files. Import source files directly unless the file is one of t
 - approved broad public barrels: `lib/core/contracts/core_contracts.dart`, `lib/ui/ui.dart`.
 - generated files are excluded from source-debt architecture guards by default; generated verification remains explicit.
 - feature scopes are import/export-only and must not export feature `data/**` seams.
+
+### Removed in Phase 27
+
+- `EndpointConcurrencyLane` enum (dead infrastructure, never consumed).
+- `RequestExecutorBinding` mixin (replaced by direct `RequestExecutor` field injection).
+- `BootstrapCoordinator` and `AppRuntime` classes (flattened into `AppBootstrap.initialize()` returning `List<Override>`).
+- Mutable global initializers (`initializeCookieJar`, `initializeCacheStore`, `initializeStorage`) — providers now throw `StateError` if not overridden at startup.
+- `FavoriteFolderCommandWorkflow` pass-through application command (presentation calls repository directly).
+- `CacheInterceptor` renamed to `EndpointCacheOptionsInterceptor` for clarity.
+- Redundant `riverpod` dependency removed from pubspec (re-exported by `hooks_riverpod`).
 
 Update this baseline only when the active phase changes or when the source/generated audit count changes.
