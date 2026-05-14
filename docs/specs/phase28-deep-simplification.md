@@ -2,7 +2,7 @@
 
 ## Status
 
-Active on 2026-05-15.
+Completed on 2026-05-15.
 
 Supersedes:
 
@@ -51,20 +51,20 @@ However, deeper simplification opportunities remain:
 
 ## Success Criteria
 
-- [ ] Notification helpers are independent classes with explicit constructor deps; no `repo` back-reference.
-- [ ] Runtime call cycle between messageSendService/messageSync is broken via explicit interface or callback injection.
-- [ ] 5 trivial alias providers deleted; all consumers updated to use source providers directly.
-- [ ] 4 providers migrated to `@riverpod` with `.g.dart` generation.
-- [ ] `uuid` removed from pubspec.yaml; inline UUID v4 utility in `core/utils/`.
-- [ ] `archive` removed from pubspec.yaml; `dart:io` GZipCodec used instead.
-- [ ] `EndpointPolicy` uses freezed with generated `copyWith`.
-- [ ] Home/ranking DTOs use `@JsonSerializable` or `@freezed` codegen.
-- [ ] Single-export `feature_scope.dart` files removed where safe.
-- [ ] All architecture guard tests pass.
-- [ ] `flutter analyze` clean.
-- [ ] App builds and runs correctly.
-- [ ] Source file count reduced by ≥3 files.
-- [ ] Dependency count reduced by ≥2 packages.
+- [x] Notification helpers are independent classes with explicit constructor deps; no `repo` back-reference.
+- [x] Runtime call cycle between messageSendService/messageSync is broken via explicit interface or callback injection.
+- [x] 5 trivial alias providers deleted; all consumers updated to use source providers directly.
+- [x] 4 providers migrated to `@riverpod` with `.g.dart` generation.
+- [x] `uuid` removed from pubspec.yaml; inline UUID v4 utility in `core/utils/`.
+- [x] `archive` removed from pubspec.yaml; `dart:io` GZipCodec used instead.
+- [x] `EndpointPolicy` uses freezed with generated `copyWith`.
+- [x] Home/ranking DTOs use `@JsonSerializable` or `@freezed` codegen.
+- [x] Single-export `feature_scope.dart` files removed where safe.
+- [x] All architecture guard tests pass.
+- [x] `flutter analyze` clean (info-level only, 0 errors/warnings).
+- [x] App builds and runs correctly.
+- [x] Source file count reduced by ≥3 files (644→635 = -9).
+- [x] Dependency count reduced by ≥2 packages (uuid, archive).
 
 ## Risks
 
