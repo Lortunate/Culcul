@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **Culcul** (2015 symbols, 2813 relationships, 27 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **Culcul** (2084 symbols, 2880 relationships, 27 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -42,20 +42,20 @@ This project is indexed by GitNexus as **Culcul** (2015 symbols, 2813 relationsh
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 21 — Consolidation & Modernization)
+## Architecture (Phase 25 — Surface Reduction)
 
-`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–20 completed structural cleanup, barrel elimination, freezed/@riverpod migration, model deduplication, abstract repo removal, and dead weight removal. Phase 21 targets semantic duplication: merging parallel error hierarchies, unifying notification patterns, extracting shared services, and removing remaining dead code.
+`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–24 completed structural cleanup, barrel elimination, freezed/@riverpod migration, model deduplication, abstract repo removal, dead weight removal, provider/bootstrap cleanup, runtime/network consolidation, and source-of-truth cleanup. Phase 25 targets architecture surface reduction: narrow feature public seams, thin domain layer collapse, generated/source audit separation, router alias cleanup, and dependency/config source-of-truth cleanup.
 
-Active spec: `docs/specs/phase21-consolidation-and-modernization.md`
-Active plan: `docs/plans/phase21-consolidation-and-modernization.md`
+Active spec: `docs/specs/phase25-architecture-surface-reduction.md`
+Active plan: `docs/plans/phase25-architecture-surface-reduction.md`
 Architecture guide: `docs/architecture/architecture-guide.md`
-Archived: Phase 20 spec/plan in `docs/specs/archive/` and `docs/plans/archive/`
+Archived: Phase 22 spec/plan, Phase 23 performance draft, and completed Phase 24 spec/plan in `docs/specs/archive/` and `docs/plans/archive/`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`
 - Features must NOT import another feature's `presentation/**` or `data/**` internals
 - `route_entry.dart` is the router-facing seam; `feature_scope.dart` and `<feature>.dart` are the approved runtime/composition seams
-- `feature_scope.dart` exports directly from `data/*_repository_impl.dart` — no intermediate entry/provider files
+- `feature_scope.dart` exports only runtime composition needed outside the feature; do not export data/presentation internals by default
 - DTOs belong in `data/dtos/`, never in `domain/`
 - Every shared model has exactly ONE definition in `core/contracts/`
 - All domain entities and DTOs use freezed — no hand-written `copyWith` or equality
@@ -74,7 +74,7 @@ Archived: Phase 20 spec/plan in `docs/specs/archive/` and `docs/plans/archive/`
 - Single notification pattern: `AppFeedback` extension on `BuildContext` — no raw ScaffoldMessenger calls
 - Shared API services in `core/services/` for cross-feature endpoints (comments, etc.)
 - No business logic in DTOs — business methods belong in domain entities only
-- If architecture docs disagree, the active Phase 21 spec/plan override older phase text
+- If architecture docs disagree, the active Phase 25 spec/plan override older phase text
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:full hash:f65d5d33 -->
 ## Issue Tracking with bd (beads)

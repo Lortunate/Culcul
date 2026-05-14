@@ -1,6 +1,9 @@
 # Phase 24 Architecture Source-of-Truth Consolidation Plan
 
-Spec: `docs/specs/phase24-architecture-source-of-truth-consolidation.md`
+> Superseded on 2026-05-14 by `docs/plans/phase25-architecture-surface-reduction.md`.
+> Phase 24 verification and commits are preserved below; remaining surface-area cleanup moved to Phase 25.
+
+Spec: `docs/specs/archive/2026-05-14-phase24-architecture-source-of-truth-consolidation.superseded.md`
 
 ## Ground Rules
 

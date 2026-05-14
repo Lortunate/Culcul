@@ -1,11 +1,11 @@
 # Culcul Architecture Guide
 
-Active phase: Phase 24 Architecture Source-of-Truth Consolidation.
+Active phase: Phase 25 Architecture Surface Reduction.
 
 Authoritative docs:
 
-- Spec: `docs/specs/phase24-architecture-source-of-truth-consolidation.md`
-- Plan: `docs/plans/phase24-architecture-source-of-truth-consolidation.md`
+- Spec: `docs/specs/phase25-architecture-surface-reduction.md`
+- Plan: `docs/plans/phase25-architecture-surface-reduction.md`
 
 ## Current Shape
 
@@ -26,6 +26,7 @@ Authoritative docs:
 - A feature must not import another feature's `data/**` or `presentation/**`.
 - Every shared model has one definition in `core/contracts/`.
 - DTOs belong in `data/dtos/`; domain entities exist only when they carry business behavior.
+- Feature public seams must be narrow; do not export data or presentation internals without a proven cross-feature consumer.
 - New or rewritten providers use Riverpod generated `@riverpod`.
 - Mutable or async state uses generated `Notifier`/`AsyncNotifier`.
 - `AppError` is the single app error hierarchy.
@@ -51,14 +52,18 @@ Avoid new barrel files. Import source files directly unless the file is one of t
 - Dependencies: reuse current popular stack before adding new packages.
 - Local architecture guard: `bash tool/architecture/run_architecture_guards.sh`
 
-## Phase 24 Baseline
+## Phase 25 Baseline
 
-- `lib/` Dart files: 890.
-- top-level counts: `app` 16, `core` 94, `features` 709, `i18n` 4, `protos` 2, `ui` 64.
-- Riverpod-annotated provider source files: 90.
+- `lib/` source Dart files: 643.
+- `lib/` generated Dart files: 228.
+- `lib/` total Dart files: 871.
+- `lib/shared/` files: 0.
+- provider/bootstrap/session placeholders: 0.
+- cross-feature private `data/**` or `presentation/**` imports found by planning audit: 0.
+- `core/` or `ui/` imports of `features/` found by planning audit: 0.
 - placeholder provider/bootstrap/session files: 0.
-- TODO/FIXME presentation files: 0.
-- barrel-like files: 2 approved.
-- `shared` imports: 0.
+- TODO/FIXME presentation files found by planning audit: 0.
+- approved broad public barrels: `lib/core/contracts/core_contracts.dart`, `lib/ui/ui.dart`.
+- generated files are excluded from source-debt architecture guards by default; generated verification remains explicit.
 
-Update this baseline only when the active phase changes or when Task 2 replaces manual counts with an automated guard.
+Update this baseline only when the active phase changes or when the source/generated audit count changes.
