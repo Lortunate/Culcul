@@ -161,4 +161,56 @@ void main() {
       reason: 'Unauthorized re-export-only files:\n${offenders.join('\n')}',
     );
   });
+
+  test('feature scopes must stay export-only composition seams', () {
+    final offenders = <String>[];
+    final declarationPattern = RegExp(
+      r'^(?:@\\w+\\s*)?(?:class|enum|typedef|final|const|var|Future<|void|[A-Z][A-Za-z0-9_<>?]*\\s+[a-zA-Z_])\\b',
+    );
+
+    for (final file in sourceDartFiles('lib')) {
+      final normalizedPath = normalizePath(file.path);
+      if (!RegExp(
+        r'^lib/features/[^/]+/feature_scope\\.dart$',
+      ).hasMatch(normalizedPath)) {
+        continue;
+      }
+
+      for (final line in commentStrippedDartCodeLines(file)) {
+        final text = line.text.trim();
+        if (text.isEmpty ||
+            text.startsWith('import ') ||
+            text.startsWith('export ') ||
+            text.startsWith('show ') ||
+            text == ';') {
+          continue;
+        }
+
+        if (declarationPattern.hasMatch(text) ||
+            !text.startsWith('//') && !text.startsWith('hide ')) {
+          offenders.add('${formatLocation(normalizedPath, line.lineNumber)} $text');
+        }
+      }
+
+      for (final import in dartImports(file)) {
+        final targetPath = import.resolvedPath;
+        if (targetPath != null &&
+            targetPath.startsWith('lib/features/') &&
+            targetPath.contains('/data/')) {
+          offenders.add(
+            '${formatLocation(import.importerPath, import.lineNumber)} '
+            'exports data seam ${import.uri} -> $targetPath',
+          );
+        }
+      }
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'feature_scope.dart files must only import/export source-owned seams:\\n'
+          '${offenders.join('\\n')}',
+    );
+  });
 }
