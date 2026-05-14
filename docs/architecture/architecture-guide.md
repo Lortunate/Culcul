@@ -1,11 +1,11 @@
 # Culcul Architecture Guide
 
-Active phase: Phase 25 Architecture Surface Reduction.
+Active phase: Phase 26 Application Seam Hardening.
 
 Authoritative docs:
 
-- Spec: `docs/specs/phase25-architecture-surface-reduction.md`
-- Plan: `docs/plans/phase25-architecture-surface-reduction.md`
+- Spec: `docs/specs/phase26-application-seam-hardening.md`
+- Plan: `docs/plans/phase26-application-seam-hardening.md`
 
 ## Current Shape
 
@@ -26,7 +26,7 @@ Authoritative docs:
 - A feature must not import another feature's `data/**` or `presentation/**`.
 - Every shared model has one definition in `core/contracts/`.
 - DTOs belong in `data/dtos/`; domain entities exist only when they carry business behavior.
-- Feature public seams must be narrow; do not export data or presentation internals without a proven cross-feature consumer.
+- Feature public seams must be narrow; do not export data internals or declare executable symbols inside `feature_scope.dart`.
 - New or rewritten providers use Riverpod generated `@riverpod`.
 - Mutable or async state uses generated `Notifier`/`AsyncNotifier`.
 - `AppError` is the single app error hierarchy.
@@ -42,7 +42,7 @@ Authoritative docs:
 - `lib/core/contracts/core_contracts.dart`
 - `lib/ui/ui.dart`
 
-Avoid new barrel files. Import source files directly unless the file is one of the approved public seams.
+Avoid new barrel files. Import source files directly unless the file is one of the approved public seams. `feature_scope.dart` must be export-only and source-owned: move providers, functions, typedefs, and command logic into the owning application or presentation file, then export that source.
 
 ## Modernization Defaults
 
@@ -52,7 +52,7 @@ Avoid new barrel files. Import source files directly unless the file is one of t
 - Dependencies: reuse current popular stack before adding new packages.
 - Local architecture guard: `bash tool/architecture/run_architecture_guards.sh`
 
-## Phase 25 Baseline
+## Phase 26 Baseline
 
 - `lib/` source Dart files: 643.
 - `lib/` generated Dart files: 228.

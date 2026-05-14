@@ -1,5 +1,7 @@
 # Phase 25 Architecture Surface Reduction Plan
 
+> Completed on 2026-05-14. Follow-up seam hardening continues in `docs/plans/phase26-application-seam-hardening.md`.
+
 Spec: `docs/specs/phase25-architecture-surface-reduction.md`
 
 ## Ground Rules
