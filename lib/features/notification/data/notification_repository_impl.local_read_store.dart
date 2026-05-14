@@ -1,8 +1,9 @@
 import 'package:culcul/core/utils/json_compute.dart';
 import 'package:culcul/features/notification/data/dtos/private_message_model.dart';
 import 'package:culcul/features/notification/data/dtos/reply_model.dart';
+import 'package:culcul/features/notification/data/local/notification_local_database.dart';
 import 'package:culcul/features/notification/data/notification_mapper.dart';
-import 'package:culcul/features/notification/data/notification_repository_impl.dart';
+import 'package:culcul/features/notification/data/notification_message_persistence.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_cursor.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
@@ -12,13 +13,19 @@ import 'package:culcul/features/notification/domain/entities/private_session.dar
 import 'package:drift/drift.dart';
 
 class NotificationLocalReadStore {
-  const NotificationLocalReadStore(this.repo);
+  const NotificationLocalReadStore({
+    required this.database,
+    required this.persistence,
+    required this.pageSize,
+  });
 
-  final NotificationRepositoryImpl repo;
+  final NotificationLocalDatabase database;
+  final NotificationMessagePersistence persistence;
+  final int pageSize;
 
   Future<NotificationSummary?> getUnreadCountFromLocal({required int ownerUid}) async {
     final row =
-        await (repo.database.select(repo.database.notificationUnreadSummaries)
+        await (database.select(database.notificationUnreadSummaries)
               ..where((t) => t.ownerUid.equals(ownerUid))
               ..limit(1))
             .getSingleOrNull();
@@ -32,7 +39,7 @@ class NotificationLocalReadStore {
     required PrivateSessionType sessionType,
     int? endTs,
   }) async {
-    final query = repo.database.select(repo.database.notificationSessions)
+    final query = database.select(database.notificationSessions)
       ..where(
         (t) =>
             t.ownerUid.equals(ownerUid) &
@@ -42,7 +49,7 @@ class NotificationLocalReadStore {
                 : t.sessionTs.isSmallerThanValue(endTs)),
       )
       ..orderBy([(t) => OrderingTerm.desc(t.sessionTs)])
-      ..limit(NotificationRepositoryImpl.pageSize);
+      ..limit(pageSize);
     final rows = await query.get();
     final sessions = <PrivateSession>[];
     for (final row in rows) {
@@ -60,7 +67,7 @@ class NotificationLocalReadStore {
     required PrivateSessionType sessionType,
     int? endSeqno,
   }) async {
-    final query = repo.database.select(repo.database.notificationMessages)
+    final query = database.select(database.notificationMessages)
       ..where((t) {
         final base =
             t.ownerUid.equals(ownerUid) &
@@ -73,9 +80,9 @@ class NotificationLocalReadStore {
         (t) => OrderingTerm.desc(t.timestamp),
         (t) => OrderingTerm.desc(t.msgSeqno),
       ])
-      ..limit(NotificationRepositoryImpl.pageSize);
+      ..limit(pageSize);
     final rows = await query.get();
-    return rows.map(repo.messageSendService.rowToPrivateMessage).toList();
+    return rows.map(persistence.rowToPrivateMessage).toList();
   }
 
   Future<Map<String, String>> getMessageEmojiMapFromLocal({
@@ -84,7 +91,7 @@ class NotificationLocalReadStore {
     required PrivateSessionType sessionType,
   }) async {
     final rows =
-        await (repo.database.select(repo.database.notificationMessageEmojis)
+        await (database.select(database.notificationMessageEmojis)
               ..where(
                 (t) =>
                     t.ownerUid.equals(ownerUid) &
@@ -96,7 +103,7 @@ class NotificationLocalReadStore {
 
     final map = <String, String>{};
     for (final row in rows) {
-      repo.messageSendService.putEmojiVariants(
+      persistence.putEmojiVariants(
         map: map,
         rawKey: row.emojiText,
         url: row.emojiUrl,
@@ -115,7 +122,7 @@ class NotificationLocalReadStore {
       return const <NotificationEntry>[];
     }
 
-    final query = repo.database.select(repo.database.notificationFeedItems)
+    final query = database.select(database.notificationFeedItems)
       ..where((t) {
         final base = t.ownerUid.equals(ownerUid) & t.feedType.equals(type.value);
         if (cursor == null) return base;
@@ -128,7 +135,7 @@ class NotificationLocalReadStore {
         (t) => OrderingTerm.desc(t.eventTime),
         (t) => OrderingTerm.desc(t.eventId),
       ])
-      ..limit(NotificationRepositoryImpl.pageSize);
+      ..limit(pageSize);
     final rows = await query.get();
     final items = <NotificationEntry>[];
     for (final row in rows) {

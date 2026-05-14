@@ -1,16 +1,31 @@
 import 'dart:convert';
 
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
-import 'package:culcul/features/notification/data/notification_repository_impl.dart';
+import 'package:culcul/features/notification/data/notification_api.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.cleanup_policy.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.message_support.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_cursor.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 
 class NotificationFeedSync {
-  const NotificationFeedSync(this.repo);
+  const NotificationFeedSync({
+    required this.database,
+    required this.api,
+    required this.requestExecutor,
+    required this.cleanupPolicy,
+    required this.messageSupport,
+    required this.nowSeconds,
+  });
 
-  final NotificationRepositoryImpl repo;
+  final NotificationLocalDatabase database;
+  final NotificationApi api;
+  final RequestExecutor requestExecutor;
+  final NotificationCleanupPolicy cleanupPolicy;
+  final NotificationMessageSupport messageSupport;
+  final int Function() nowSeconds;
 
   Future<Result<void, AppError>> syncFeedHead({
     required int ownerUid,
@@ -34,7 +49,7 @@ class NotificationFeedSync {
     bool force = false,
   }) async {
     final scope = 'feed:${type.value}:${cursor == null ? "head" : "older"}';
-    if (!await repo.cleanupPolicy.shouldSync(
+    if (!await cleanupPolicy.shouldSync(
       ownerUid: ownerUid,
       scope: scope,
       force: force,
@@ -42,14 +57,14 @@ class NotificationFeedSync {
       return const Success(null);
     }
 
-    final now = repo.nowSeconds();
+    final now = nowSeconds();
     if (type == NotificationFeedType.system) {
-      return (await repo.messageSendService.fetchSystemNotifications()).when(
+      return (await messageSupport.fetchSystemNotifications()).when(
         success: (items) async {
-          await repo.database.transaction(() async {
+          await database.transaction(() async {
             for (final item in items) {
-              await repo.database
-                  .into(repo.database.notificationFeedItems)
+              await database
+                  .into(database.notificationFeedItems)
                   .insertOnConflictUpdate(
                     NotificationFeedItemsCompanion.insert(
                       ownerUid: ownerUid,
@@ -62,29 +77,29 @@ class NotificationFeedSync {
                   );
             }
           });
-          await repo.cleanupPolicy.touchCursor(
+          await cleanupPolicy.touchCursor(
             ownerUid: ownerUid,
             scope: scope,
             cursorJson: null,
             hasMore: false,
           );
-          await repo.cleanupPolicy.maybeCleanup(ownerUid);
+          await cleanupPolicy.maybeCleanup(ownerUid);
           return const Success(null);
         },
         failure: (error) async => Failure(error),
       );
     }
 
-    return (await repo.messageSendService.fetchReplyLikeAtResponse(
+    return (await messageSupport.fetchReplyLikeAtResponse(
       type: type,
       id: cursor?.id,
       time: cursor?.time,
     )).when(
       success: (response) async {
-        await repo.database.transaction(() async {
+        await database.transaction(() async {
           for (final item in response.items) {
-            await repo.database
-                .into(repo.database.notificationFeedItems)
+            await database
+                .into(database.notificationFeedItems)
                 .insertOnConflictUpdate(
                   NotificationFeedItemsCompanion.insert(
                     ownerUid: ownerUid,
@@ -104,7 +119,7 @@ class NotificationFeedSync {
                 id: response.items.last.id,
                 time: response.items.last.replyTime ?? response.items.last.likeTime ?? 0,
               );
-        await repo.cleanupPolicy.touchCursor(
+        await cleanupPolicy.touchCursor(
           ownerUid: ownerUid,
           scope: scope,
           cursorJson: next == null
@@ -112,7 +127,7 @@ class NotificationFeedSync {
               : jsonEncode({'id': next.id, 'time': next.time}),
           hasMore: !response.cursor.isEnd,
         );
-        await repo.cleanupPolicy.maybeCleanup(ownerUid);
+        await cleanupPolicy.maybeCleanup(ownerUid);
         return const Success(null);
       },
       failure: (error) async => Failure(error),

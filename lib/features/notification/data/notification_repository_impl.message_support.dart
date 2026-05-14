@@ -1,12 +1,11 @@
-import 'dart:convert';
-
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/data/network/models/api_response.dart';
+import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/notification/data/dtos/private_message_model.dart';
 import 'package:culcul/features/notification/data/dtos/reply_model.dart';
-import 'package:culcul/features/notification/data/local/notification_local_database.dart';
+import 'package:culcul/features/notification/data/notification_api.dart';
 import 'package:culcul/features/notification/data/notification_mapper.dart';
-import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.message_support_helpers.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
@@ -14,9 +13,21 @@ import 'package:culcul/features/notification/domain/entities/private_session.dar
 import 'package:culcul/features/notification/data/dtos/system_notice.dart';
 
 class NotificationMessageSupport {
-  const NotificationMessageSupport(this.repo);
+  const NotificationMessageSupport({
+    required this.api,
+    required this.requestExecutor,
+    required this.pageSize,
+  });
 
-  final NotificationRepositoryImpl repo;
+  final NotificationApi api;
+  final RequestExecutor requestExecutor;
+  final int pageSize;
+
+  Future<Result<T, AppError>> _requestApiResult<T>(
+    Future<ApiResponse<T>> Function() apiCall,
+  ) {
+    return requestExecutor.runApiDirect(apiCall);
+  }
 
   Future<Result<ReplyResponse, AppError>> fetchReplyLikeAtResponse({
     required NotificationFeedType type,
@@ -25,14 +36,14 @@ class NotificationMessageSupport {
   }) async {
     switch (type) {
       case NotificationFeedType.reply:
-        return repo.requestApiResult(
-          () => repo.api.getReplyList(id: id, replyTime: time),
+        return _requestApiResult(
+          () => api.getReplyList(id: id, replyTime: time),
         );
       case NotificationFeedType.at:
-        return repo.requestApiResult(() => repo.api.getAtList(id: id, atTime: time));
+        return _requestApiResult(() => api.getAtList(id: id, atTime: time));
       case NotificationFeedType.like:
-        final likeResult = await repo.requestApiResult(
-          () => repo.api.getLikeList(id: id, likeTime: time),
+        final likeResult = await _requestApiResult(
+          () => api.getLikeList(id: id, likeTime: time),
         );
         return likeResult.map(
           (likeResponse) => ReplyResponse(
@@ -47,10 +58,10 @@ class NotificationMessageSupport {
   }
 
   Future<Result<List<SystemNotice>, AppError>> fetchSystemNotifications() async {
-    final sessionResult = await repo.requestApiResult(
-      () => repo.api.getPrivateSessions(
+    final sessionResult = await _requestApiResult(
+      () => api.getPrivateSessions(
         sessionType: PrivateSessionType.system.value,
-        size: NotificationRepositoryImpl.pageSize,
+        size: pageSize,
       ),
     );
     return sessionResult.when(
@@ -60,11 +71,11 @@ class NotificationMessageSupport {
           return const Success(<SystemNotice>[]);
         }
 
-        final msgsResult = await repo.requestApiResult(
-          () => repo.api.getPrivateMessages(
+        final msgsResult = await _requestApiResult(
+          () => api.getPrivateMessages(
             talkerId: talkerId,
             sessionType: PrivateSessionType.user.value,
-            size: NotificationRepositoryImpl.pageSize,
+            size: pageSize,
           ),
         );
         return msgsResult.map(
@@ -125,24 +136,7 @@ class NotificationMessageSupport {
     map.putIfAbsent(plain, () => url);
   }
 
-  PrivateMessage rowToPrivateMessage(NotificationMessage row) {
-    final jsonMap = <String, dynamic>{
-      'sender_uid': row.senderUid,
-      'receiver_type': row.receiverType,
-      'receiver_id': row.receiverId,
-      'msg_type': row.msgType,
-      'content': row.contentJson,
-      'msg_seqno': row.msgSeqno,
-      'timestamp': row.timestamp,
-      'at_uids': row.atUidsJson == null
-          ? null
-          : jsonDecode(row.atUidsJson!) as List<dynamic>,
-      'msg_key': row.msgKey,
-      'msg_status': row.msgStatus,
-      'notify_code': row.notifyCode,
-      'new_face_version': row.newFaceVersion,
-      'msg_source': row.msgSource,
-    };
+  PrivateMessage rowToPrivateMessage(Map<String, dynamic> jsonMap) {
     return PrivateMessageDetail.fromJson(jsonMap).toDomain();
   }
 }

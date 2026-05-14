@@ -1,17 +1,42 @@
 import 'dart:convert';
 
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/data/network/models/api_response.dart';
+import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/notification/data/dtos/private_message_model.dart';
+import 'package:culcul/features/notification/data/local/notification_local_database.dart';
+import 'package:culcul/features/notification/data/notification_api.dart';
 import 'package:culcul/features/notification/data/notification_mapper.dart';
-import 'package:culcul/features/notification/data/notification_repository_impl.dart';
+import 'package:culcul/features/notification/data/notification_message_persistence.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.cleanup_policy.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 
 class NotificationMessageSync {
-  const NotificationMessageSync(this.repo);
+  const NotificationMessageSync({
+    required this.database,
+    required this.api,
+    required this.requestExecutor,
+    required this.cleanupPolicy,
+    required this.persistence,
+    required this.pageSize,
+    required this.nowSeconds,
+  });
 
-  final NotificationRepositoryImpl repo;
+  final NotificationLocalDatabase database;
+  final NotificationApi api;
+  final RequestExecutor requestExecutor;
+  final NotificationCleanupPolicy cleanupPolicy;
+  final NotificationMessagePersistence persistence;
+  final int pageSize;
+  final int Function() nowSeconds;
+
+  Future<Result<T, AppError>> _requestApiResult<T>(
+    Future<ApiResponse<T>> Function() apiCall,
+  ) {
+    return requestExecutor.runApiDirect(apiCall);
+  }
 
   Future<Result<void, AppError>> syncMessagesHead({
     required int ownerUid,
@@ -51,7 +76,7 @@ class NotificationMessageSync {
   }) async {
     final scope =
         'messages:${sessionType.value}:$talkerId:${endSeqno == null ? "head" : "older"}';
-    if (!await repo.cleanupPolicy.shouldSync(
+    if (!await cleanupPolicy.shouldSync(
       ownerUid: ownerUid,
       scope: scope,
       force: force,
@@ -59,21 +84,21 @@ class NotificationMessageSync {
       return const Success(null);
     }
 
-    return (await repo.requestApiResult(
-      () => repo.api.getPrivateMessages(
+    return (await _requestApiResult(
+      () => api.getPrivateMessages(
         talkerId: talkerId,
         sessionType: sessionType.value,
-        size: NotificationRepositoryImpl.pageSize,
+        size: pageSize,
         endSeqno: endSeqno,
       ),
     )).when(
       success: (response) async {
-        final now = repo.nowSeconds();
+        final now = nowSeconds();
         final messages = response.messages ?? const <PrivateMessageDetail>[];
 
-        await repo.database.transaction(() async {
+        await database.transaction(() async {
           for (final message in messages) {
-            await repo.messageSendService.upsertMessageDetail(
+            await persistence.upsertMessageDetail(
               ownerUid: ownerUid,
               sessionType: sessionType,
               talkerId: talkerId,
@@ -82,7 +107,7 @@ class NotificationMessageSync {
               syncStatus: 'synced',
             );
           }
-          await repo.messageSendService.upsertMessageEmojis(
+          await persistence.upsertMessageEmojis(
             ownerUid: ownerUid,
             talkerId: talkerId,
             sessionType: sessionType,
@@ -93,14 +118,14 @@ class NotificationMessageSync {
                 const <PrivateMessageEmoji>[],
             now: now,
           );
-          await repo.messageSendService.reconcileTemporaryMessages(
+          await persistence.reconcileTemporaryMessages(
             ownerUid: ownerUid,
             talkerId: talkerId,
             sessionType: sessionType,
           );
         });
 
-        await repo.cleanupPolicy.touchCursor(
+        await cleanupPolicy.touchCursor(
           ownerUid: ownerUid,
           scope: scope,
           cursorJson: jsonEncode({
@@ -109,7 +134,7 @@ class NotificationMessageSync {
           }),
           hasMore: response.hasMore == 1,
         );
-        await repo.cleanupPolicy.maybeCleanup(ownerUid);
+        await cleanupPolicy.maybeCleanup(ownerUid);
         return const Success(null);
       },
       failure: (error) async => Failure(error),

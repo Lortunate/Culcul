@@ -8,6 +8,7 @@ import 'package:culcul/core/result/result.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
 import 'package:culcul/features/notification/data/notification_api.dart';
+import 'package:culcul/features/notification/data/notification_message_persistence.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.cleanup_policy.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.feed_sync.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.local_read_store.dart';
@@ -15,6 +16,7 @@ import 'package:culcul/features/notification/data/notification_repository_impl.m
 import 'package:culcul/features/notification/data/notification_repository_impl.message_sync.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.session_sync.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.stream_watchers.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.message_support.dart';
 import 'package:culcul/features/notification/domain/entities/image_upload_result.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_cursor.dart';
@@ -40,38 +42,102 @@ NotificationRepositoryImpl notificationRepository(Ref ref) {
 
 class NotificationRepositoryImpl {
   NotificationRepositoryImpl(
-    this.api,
-    this.database,
-    this.dio, {
+    this._api,
+    this._database,
+    this._dio, {
     RequestExecutor? requestExecutor,
-  }) : requestExecutor = requestExecutor ?? const RequestExecutor() {
-    localReadStore = NotificationLocalReadStore(this);
-    streamWatchers = NotificationStreamWatchers(this);
-    messageSendService = NotificationMessageSendService(this);
-    cleanupPolicy = NotificationCleanupPolicy(this);
-    sessionSync = NotificationSessionSync(this);
-    messageSync = NotificationMessageSync(this);
-    feedSync = NotificationFeedSync(this);
+  }) : _requestExecutor = requestExecutor ?? const RequestExecutor() {
+    _persistence = NotificationMessagePersistence(_database);
+
+    _cleanupPolicy = NotificationCleanupPolicy(
+      database: _database,
+      syncThrottleSeconds: syncThrottleSeconds,
+      retentionDays: retentionDays,
+      cleanupScope: cleanupScope,
+      nowSeconds: nowSeconds,
+    );
+
+    _messageSupport = NotificationMessageSupport(
+      api: _api,
+      requestExecutor: _requestExecutor,
+      pageSize: pageSize,
+    );
+
+    _streamWatchers = NotificationStreamWatchers(
+      database: _database,
+      emptySummary: emptySummary,
+    );
+
+    _localReadStore = NotificationLocalReadStore(
+      database: _database,
+      persistence: _persistence,
+      pageSize: pageSize,
+    );
+
+    _messageSync = NotificationMessageSync(
+      database: _database,
+      api: _api,
+      requestExecutor: _requestExecutor,
+      cleanupPolicy: _cleanupPolicy,
+      persistence: _persistence,
+      pageSize: pageSize,
+      nowSeconds: nowSeconds,
+    );
+
+    _sessionSync = NotificationSessionSync(
+      database: _database,
+      api: _api,
+      requestExecutor: _requestExecutor,
+      cleanupPolicy: _cleanupPolicy,
+      persistence: _persistence,
+      nowSeconds: nowSeconds,
+    );
+
+    _feedSync = NotificationFeedSync(
+      database: _database,
+      api: _api,
+      requestExecutor: _requestExecutor,
+      cleanupPolicy: _cleanupPolicy,
+      messageSupport: _messageSupport,
+      nowSeconds: nowSeconds,
+    );
+
+    _messageSendService = NotificationMessageSendService(
+      database: _database,
+      api: _api,
+      dio: _dio,
+      requestExecutor: _requestExecutor,
+      persistence: _persistence,
+      messageSupport: _messageSupport,
+      nowSeconds: nowSeconds,
+      syncMessagesHead: ({
+        required int ownerUid,
+        required int talkerId,
+        required PrivateSessionType sessionType,
+      }) async {
+        await _messageSync.syncMessagesHead(
+          ownerUid: ownerUid,
+          talkerId: talkerId,
+          sessionType: sessionType,
+        );
+      },
+    );
   }
 
-  final NotificationApi api;
-  final NotificationLocalDatabase database;
-  final Dio dio;
-  final RequestExecutor requestExecutor;
+  final NotificationApi _api;
+  final NotificationLocalDatabase _database;
+  final Dio _dio;
+  final RequestExecutor _requestExecutor;
 
-  Future<Result<T, AppError>> requestApiResult<T>(
-    Future<ApiResponse<T>> Function() apiCall, {
-    RequestExecutionOptions? options,
-  }) {
-    return requestExecutor.runApiDirect(apiCall, options: options);
-  }
-  late final NotificationLocalReadStore localReadStore;
-  late final NotificationStreamWatchers streamWatchers;
-  late final NotificationMessageSendService messageSendService;
-  late final NotificationCleanupPolicy cleanupPolicy;
-  late final NotificationSessionSync sessionSync;
-  late final NotificationMessageSync messageSync;
-  late final NotificationFeedSync feedSync;
+  late final NotificationMessagePersistence _persistence;
+  late final NotificationCleanupPolicy _cleanupPolicy;
+  late final NotificationMessageSupport _messageSupport;
+  late final NotificationStreamWatchers _streamWatchers;
+  late final NotificationLocalReadStore _localReadStore;
+  late final NotificationMessageSync _messageSync;
+  late final NotificationSessionSync _sessionSync;
+  late final NotificationFeedSync _feedSync;
+  late final NotificationMessageSendService _messageSendService;
 
   static const int pageSize = 20;
   static const int syncThrottleSeconds = 60;
@@ -93,14 +159,15 @@ class NotificationRepositoryImpl {
 
   int nowSeconds() => DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
-  PrivateSessionType sessionTypeFromReceiver(PrivateMessageReceiverType type) {
-    return type == PrivateMessageReceiverType.group
-        ? PrivateSessionType.group
-        : PrivateSessionType.user;
+  Future<Result<T, AppError>> requestApiResult<T>(
+    Future<ApiResponse<T>> Function() apiCall, {
+    RequestExecutionOptions? options,
+  }) {
+    return _requestExecutor.runApiDirect(apiCall, options: options);
   }
 
   Future<NotificationSummary?> getUnreadCountFromLocal({required int ownerUid}) {
-    return localReadStore.getUnreadCountFromLocal(ownerUid: ownerUid);
+    return _localReadStore.getUnreadCountFromLocal(ownerUid: ownerUid);
   }
 
   Future<List<PrivateSession>> pageSessionsFromLocal({
@@ -108,7 +175,7 @@ class NotificationRepositoryImpl {
     required PrivateSessionType sessionType,
     int? endTs,
   }) {
-    return localReadStore.pageSessionsFromLocal(
+    return _localReadStore.pageSessionsFromLocal(
       ownerUid: ownerUid,
       sessionType: sessionType,
       endTs: endTs,
@@ -121,7 +188,7 @@ class NotificationRepositoryImpl {
     required PrivateSessionType sessionType,
     int? endSeqno,
   }) {
-    return localReadStore.pageMessagesFromLocal(
+    return _localReadStore.pageMessagesFromLocal(
       ownerUid: ownerUid,
       talkerId: talkerId,
       sessionType: sessionType,
@@ -134,7 +201,7 @@ class NotificationRepositoryImpl {
     required int talkerId,
     required PrivateSessionType sessionType,
   }) {
-    return localReadStore.getMessageEmojiMapFromLocal(
+    return _localReadStore.getMessageEmojiMapFromLocal(
       ownerUid: ownerUid,
       talkerId: talkerId,
       sessionType: sessionType,
@@ -146,7 +213,7 @@ class NotificationRepositoryImpl {
     required NotificationFeedType type,
     NotificationFeedCursor? cursor,
   }) {
-    return localReadStore.pageFeedFromLocal(
+    return _localReadStore.pageFeedFromLocal(
       ownerUid: ownerUid,
       type: type,
       cursor: cursor,
@@ -154,25 +221,25 @@ class NotificationRepositoryImpl {
   }
 
   Stream<NotificationSummary> watchUnreadCount({required int ownerUid}) {
-    return streamWatchers.watchUnreadCount(ownerUid: ownerUid);
+    return _streamWatchers.watchUnreadCount(ownerUid: ownerUid);
   }
 
   Stream<List<SystemNotice>> watchSystemNotices({required int ownerUid}) {
-    return streamWatchers.watchSystemNotices(ownerUid: ownerUid);
+    return _streamWatchers.watchSystemNotices(ownerUid: ownerUid);
   }
 
   Future<Result<void, AppError>> syncUnreadCount({
     required int ownerUid,
     bool force = false,
   }) {
-    return sessionSync.syncUnreadCount(ownerUid: ownerUid, force: force);
+    return _sessionSync.syncUnreadCount(ownerUid: ownerUid, force: force);
   }
 
   Future<Result<void, AppError>> syncSessions({
     required int ownerUid,
     bool force = false,
   }) {
-    return sessionSync.syncSessions(ownerUid: ownerUid, force: force);
+    return _sessionSync.syncSessions(ownerUid: ownerUid, force: force);
   }
 
   Future<Result<void, AppError>> syncSessionsOlder({
@@ -180,7 +247,7 @@ class NotificationRepositoryImpl {
     required PrivateSessionType sessionType,
     required int endTs,
   }) {
-    return sessionSync.syncSessionsOlder(
+    return _sessionSync.syncSessionsOlder(
       ownerUid: ownerUid,
       sessionType: sessionType,
       endTs: endTs,
@@ -192,7 +259,7 @@ class NotificationRepositoryImpl {
     required int talkerId,
     required PrivateSessionType sessionType,
   }) {
-    return messageSync.syncMessagesHead(
+    return _messageSync.syncMessagesHead(
       ownerUid: ownerUid,
       talkerId: talkerId,
       sessionType: sessionType,
@@ -205,7 +272,7 @@ class NotificationRepositoryImpl {
     required PrivateSessionType sessionType,
     required int endSeqno,
   }) {
-    return messageSync.syncMessagesOlder(
+    return _messageSync.syncMessagesOlder(
       ownerUid: ownerUid,
       talkerId: talkerId,
       sessionType: sessionType,
@@ -217,7 +284,7 @@ class NotificationRepositoryImpl {
     required int ownerUid,
     required NotificationFeedType type,
   }) {
-    return feedSync.syncFeedHead(ownerUid: ownerUid, type: type);
+    return _feedSync.syncFeedHead(ownerUid: ownerUid, type: type);
   }
 
   Future<Result<void, AppError>> syncFeedOlder({
@@ -225,14 +292,14 @@ class NotificationRepositoryImpl {
     required NotificationFeedType type,
     required NotificationFeedCursor cursor,
   }) {
-    return feedSync.syncFeedOlder(ownerUid: ownerUid, type: type, cursor: cursor);
+    return _feedSync.syncFeedOlder(ownerUid: ownerUid, type: type, cursor: cursor);
   }
 
   Future<Result<ImageUploadResult, AppError>> uploadImage(
     Uint8List bytes,
     String filename,
   ) {
-    return messageSendService.uploadImage(bytes, filename);
+    return _messageSendService.uploadImage(bytes, filename);
   }
 
   Future<Result<SendMessageResult, AppError>> sendPrivateMessage({
@@ -242,7 +309,7 @@ class NotificationRepositoryImpl {
     required PrivateMessageType messageType,
     required PrivateMessageContent content,
   }) {
-    return messageSendService.sendPrivateMessage(
+    return _messageSendService.sendPrivateMessage(
       ownerUid: ownerUid,
       receiverId: receiverId,
       receiverType: receiverType,

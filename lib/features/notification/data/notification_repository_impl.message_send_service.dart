@@ -1,37 +1,70 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/data/network/models/api_response.dart';
+import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/notification/data/dtos/reply_model.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
+import 'package:culcul/features/notification/data/notification_api.dart';
 import 'package:culcul/features/notification/data/notification_mapper.dart';
-import 'package:culcul/features/notification/data/notification_repository_impl.dart';
-import 'package:culcul/features/notification/data/notification_repository_impl.message_send_helpers.dart';
+import 'package:culcul/features/notification/data/notification_message_persistence.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.message_support.dart';
 import 'package:culcul/features/notification/domain/entities/image_upload_result.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
 import 'package:culcul/features/notification/data/dtos/system_notice.dart';
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:culcul/core/utils/uuid_v4.dart';
 
-class NotificationMessageSendService with NotificationMessageSendHelpersMixin {
-  NotificationMessageSendService(this.repo);
+typedef SyncMessagesHeadFn = Future<void> Function({
+  required int ownerUid,
+  required int talkerId,
+  required PrivateSessionType sessionType,
+});
 
-  @override
-  final NotificationRepositoryImpl repo;
-  @override
-  late final NotificationMessageSupport support = NotificationMessageSupport(repo);
+class NotificationMessageSendService {
+  NotificationMessageSendService({
+    required this.database,
+    required this.api,
+    required this.dio,
+    required this.requestExecutor,
+    required this.persistence,
+    required this.messageSupport,
+    required this.nowSeconds,
+    required this.syncMessagesHead,
+  });
+
+  final NotificationLocalDatabase database;
+  final NotificationApi api;
+  final Dio dio;
+  final RequestExecutor requestExecutor;
+  final NotificationMessagePersistence persistence;
+  final NotificationMessageSupport messageSupport;
+  final int Function() nowSeconds;
+  final SyncMessagesHeadFn syncMessagesHead;
+
+  Future<Result<T, AppError>> _requestApiResult<T>(
+    Future<ApiResponse<T>> Function() apiCall,
+  ) {
+    return requestExecutor.runApiDirect(apiCall);
+  }
+
+  PrivateSessionType _sessionTypeFromReceiver(PrivateMessageReceiverType type) {
+    return type == PrivateMessageReceiverType.group
+        ? PrivateSessionType.group
+        : PrivateSessionType.user;
+  }
 
   Future<Result<ImageUploadResult, AppError>> uploadImage(
     Uint8List bytes,
     String filename,
   ) async {
-    final result = await repo.requestApiResult(() async {
+    final result = await _requestApiResult(() async {
       final formData = FormData.fromMap({
         'file_up': MultipartFile.fromBytes(bytes, filename: filename),
         'biz': 'draw',
@@ -39,7 +72,7 @@ class NotificationMessageSendService with NotificationMessageSendHelpersMixin {
         'build': '0',
         'mobi_app': 'web',
       });
-      final response = await repo.dio.post<Map<String, dynamic>>(
+      final response = await dio.post<Map<String, dynamic>>(
         'https://api.vc.bilibili.com/api/v1/drawImage/upload',
         data: formData,
         options: Options(contentType: 'multipart/form-data'),
@@ -59,19 +92,19 @@ class NotificationMessageSendService with NotificationMessageSendHelpersMixin {
     required PrivateMessageType messageType,
     required PrivateMessageContent content,
   }) async {
-    final now = repo.nowSeconds();
+    final now = nowSeconds();
     final localMsgSeqno = -DateTime.now().microsecondsSinceEpoch;
     final contentMap = content.toRawMap();
     final contentRawJson = jsonEncode(contentMap);
     final devId = generateUuidV4();
 
-    await repo.database.transaction(() async {
-      await repo.database
-          .into(repo.database.notificationMessages)
+    await database.transaction(() async {
+      await database
+          .into(database.notificationMessages)
           .insertOnConflictUpdate(
             NotificationMessagesCompanion.insert(
               ownerUid: ownerUid,
-              sessionType: repo.sessionTypeFromReceiver(receiverType).value,
+              sessionType: _sessionTypeFromReceiver(receiverType).value,
               talkerId: receiverId,
               msgSeqno: localMsgSeqno,
               senderUid: ownerUid,
@@ -92,12 +125,12 @@ class NotificationMessageSendService with NotificationMessageSendHelpersMixin {
             ),
           );
 
-      await repo.database
-          .into(repo.database.notificationOutbox)
+      await database
+          .into(database.notificationOutbox)
           .insert(
             NotificationOutboxCompanion.insert(
               ownerUid: ownerUid,
-              sessionType: repo.sessionTypeFromReceiver(receiverType).value,
+              sessionType: _sessionTypeFromReceiver(receiverType).value,
               talkerId: receiverId,
               localMsgSeqno: localMsgSeqno,
               senderUid: ownerUid,
@@ -112,8 +145,8 @@ class NotificationMessageSendService with NotificationMessageSendHelpersMixin {
           );
     });
 
-    final responseResult = await repo.requestApiResult(
-      () => repo.api.sendPrivateMessage(
+    final responseResult = await _requestApiResult(
+      () => api.sendPrivateMessage(
         wSenderUid: ownerUid,
         wReceiverId: receiverId,
         wDevId: devId,
@@ -130,23 +163,25 @@ class NotificationMessageSendService with NotificationMessageSendHelpersMixin {
     await responseResult.when(
       success: (responseJson) async {
         final response = sendMessageResultFromJson(responseJson);
-        await markOutboxAndTempMessage(
+        await persistence.markOutboxAndTempMessage(
           ownerUid: ownerUid,
           localMsgSeqno: localMsgSeqno,
           status: 'sent',
+          now: nowSeconds(),
           msgKey: response.msgKey,
         );
-        await repo.syncMessagesHead(
+        await syncMessagesHead(
           ownerUid: ownerUid,
           talkerId: receiverId,
-          sessionType: repo.sessionTypeFromReceiver(receiverType),
+          sessionType: _sessionTypeFromReceiver(receiverType),
         );
       },
       failure: (error) async {
-        await markOutboxAndTempMessage(
+        await persistence.markOutboxAndTempMessage(
           ownerUid: ownerUid,
           localMsgSeqno: localMsgSeqno,
           status: 'failed',
+          now: nowSeconds(),
           error: error.message,
         );
       },
@@ -160,23 +195,10 @@ class NotificationMessageSendService with NotificationMessageSendHelpersMixin {
     int? id,
     int? time,
   }) {
-    return support.fetchReplyLikeAtResponse(type: type, id: id, time: time);
+    return messageSupport.fetchReplyLikeAtResponse(type: type, id: id, time: time);
   }
 
   Future<Result<List<SystemNotice>, AppError>> fetchSystemNotifications() {
-    return support.fetchSystemNotifications();
-  }
-
-  void putEmojiVariants({
-    required Map<String, String> map,
-    required String rawKey,
-    required String url,
-    required bool overwrite,
-  }) {
-    support.putEmojiVariants(map: map, rawKey: rawKey, url: url, overwrite: overwrite);
-  }
-
-  PrivateMessage rowToPrivateMessage(NotificationMessage row) {
-    return support.rowToPrivateMessage(row);
+    return messageSupport.fetchSystemNotifications();
   }
 }

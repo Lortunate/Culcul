@@ -1,35 +1,57 @@
 import 'dart:convert';
 
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/data/network/models/api_response.dart';
+import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/notification/data/dtos/private_message_model.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
-import 'package:culcul/features/notification/data/notification_repository_impl.dart';
+import 'package:culcul/features/notification/data/notification_api.dart';
+import 'package:culcul/features/notification/data/notification_message_persistence.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.cleanup_policy.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:drift/drift.dart';
 
 class NotificationSessionSync {
-  const NotificationSessionSync(this.repo);
+  const NotificationSessionSync({
+    required this.database,
+    required this.api,
+    required this.requestExecutor,
+    required this.cleanupPolicy,
+    required this.persistence,
+    required this.nowSeconds,
+  });
 
-  final NotificationRepositoryImpl repo;
+  final NotificationLocalDatabase database;
+  final NotificationApi api;
+  final RequestExecutor requestExecutor;
+  final NotificationCleanupPolicy cleanupPolicy;
+  final NotificationMessagePersistence persistence;
+  final int Function() nowSeconds;
+
+  Future<Result<T, AppError>> _requestApiResult<T>(
+    Future<ApiResponse<T>> Function() apiCall,
+  ) {
+    return requestExecutor.runApiDirect(apiCall);
+  }
 
   Future<Result<void, AppError>> syncUnreadCount({
     required int ownerUid,
     bool force = false,
   }) async {
-    if (!await repo.cleanupPolicy.shouldSync(
+    if (!await cleanupPolicy.shouldSync(
       ownerUid: ownerUid,
       scope: 'unread',
       force: force,
     )) {
       return const Success(null);
     }
-    return (await repo.requestApiResult(repo.api.getUnreadCount)).when(
+    return (await _requestApiResult(api.getUnreadCount)).when(
       success: (response) async {
-        final now = repo.nowSeconds();
+        final now = nowSeconds();
 
-        await repo.database
-            .into(repo.database.notificationUnreadSummaries)
+        await database
+            .into(database.notificationUnreadSummaries)
             .insertOnConflictUpdate(
               NotificationUnreadSummariesCompanion.insert(
                 ownerUid: Value(ownerUid),
@@ -37,13 +59,13 @@ class NotificationSessionSync {
                 updatedAt: now,
               ),
             );
-        await repo.cleanupPolicy.touchCursor(
+        await cleanupPolicy.touchCursor(
           ownerUid: ownerUid,
           scope: 'unread',
           cursorJson: null,
           hasMore: true,
         );
-        await repo.cleanupPolicy.maybeCleanup(ownerUid);
+        await cleanupPolicy.maybeCleanup(ownerUid);
         return const Success(null);
       },
       failure: (error) async => Failure(error),
@@ -81,7 +103,7 @@ class NotificationSessionSync {
     bool force = false,
   }) async {
     final scope = 'sessions:${sessionType.value}:${endTs == null ? "head" : "older"}';
-    if (!await repo.cleanupPolicy.shouldSync(
+    if (!await cleanupPolicy.shouldSync(
       ownerUid: ownerUid,
       scope: scope,
       force: force,
@@ -89,17 +111,17 @@ class NotificationSessionSync {
       return const Success(null);
     }
 
-    return (await repo.requestApiResult(
-      () => repo.api.getPrivateSessions(sessionType: sessionType.value, endTs: endTs),
+    return (await _requestApiResult(
+      () => api.getPrivateSessions(sessionType: sessionType.value, endTs: endTs),
     )).when(
       success: (response) async {
-        final now = repo.nowSeconds();
+        final now = nowSeconds();
         final sessions = response.sessionList ?? const <PrivateMessageSession>[];
 
-        await repo.database.transaction(() async {
+        await database.transaction(() async {
           for (final session in sessions) {
-            await repo.database
-                .into(repo.database.notificationSessions)
+            await database
+                .into(database.notificationSessions)
                 .insertOnConflictUpdate(
                   NotificationSessionsCompanion.insert(
                     ownerUid: ownerUid,
@@ -113,7 +135,7 @@ class NotificationSessionSync {
                 );
 
             if (session.lastMsg != null) {
-              await repo.messageSendService.upsertMessageDetail(
+              await persistence.upsertMessageDetail(
                 ownerUid: ownerUid,
                 sessionType: PrivateSessionType.fromValue(session.sessionType),
                 talkerId: session.talkerId,
@@ -126,13 +148,13 @@ class NotificationSessionSync {
         });
 
         final nextCursor = sessions.isEmpty ? null : sessions.last.sessionTs;
-        await repo.cleanupPolicy.touchCursor(
+        await cleanupPolicy.touchCursor(
           ownerUid: ownerUid,
           scope: scope,
           cursorJson: nextCursor == null ? null : jsonEncode({'endTs': nextCursor}),
           hasMore: response.hasMore == 1,
         );
-        await repo.cleanupPolicy.maybeCleanup(ownerUid);
+        await cleanupPolicy.maybeCleanup(ownerUid);
         return const Success(null);
       },
       failure: (error) async => Failure(error),
