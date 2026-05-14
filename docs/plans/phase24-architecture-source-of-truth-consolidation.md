@@ -140,7 +140,7 @@ Verification:
 - [x] Review `build.yaml` and generated file policy.
 - [x] Confirm dependency versions are pinned and no unused performance dependency remains.
 - [x] Add cheap CI/local guard for architecture checks if current workflow supports it.
-- [ ] Do not add `sentry_flutter`, image/cache replacements, or isolate pools until Tasks 2-5 are green.
+- [x] Do not add `sentry_flutter`, image/cache replacements, or isolate pools until Tasks 2-5 are green.
 
 Verification:
 
@@ -161,14 +161,14 @@ Verification:
   - `flutter analyze`
   - focused tests from each task
 - [x] Run `gitnexus_detect_changes(scope: "all")`.
-- [ ] Split commits by coherent boundary:
+- [x] Split commits by coherent boundary:
   - docs/planning
   - guard tests/scripts
   - provider/session cleanup
   - network/request cleanup
   - feature cleanup
   - config closeout
-- [ ] Leave unrelated user changes unstaged.
+- [x] Leave unrelated user changes unstaged.
 
 Verification notes:
 
@@ -198,6 +198,10 @@ Verification notes:
   - touched-file `flutter analyze` for auth data files -> passed with no issues.
   - `rg -n "CountryCodeDto|AuthUserDto|UnreadCountModel|ImageUploadResponse|SendMessageResponse|fromDomain\\(" lib test` -> no matches.
   - `flutter test test/architecture/architecture_boundary_guard_test.dart test/architecture/architecture_domain_dto_guard_test.dart` -> passed.
+- 2026-05-14 Task 6/7 closeout:
+  - no new `sentry_flutter`, cache replacement, or isolate-pool dependency was introduced.
+  - work split into two coherent commits: `6a94c2b2` and `1a9403ca`.
+  - unrelated local edits remain unstaged: `AGENTS.md`, `CLAUDE.md`.
 
 ## Self-Review Checklist
 
