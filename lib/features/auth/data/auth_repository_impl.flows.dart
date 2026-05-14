@@ -59,16 +59,12 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin {
         if (data != null) {
           final common =
               (data['common'] as List<dynamic>?)
-                  ?.map(
-                    (e) => CountryCodeDto.fromJson(e as Map<String, dynamic>).toDomain(),
-                  )
+                  ?.map((e) => _countryCodeFromJson(e as Map<String, dynamic>))
                   .toList() ??
               [];
           final others =
               (data['others'] as List<dynamic>?)
-                  ?.map(
-                    (e) => CountryCodeDto.fromJson(e as Map<String, dynamic>).toDomain(),
-                  )
+                  ?.map((e) => _countryCodeFromJson(e as Map<String, dynamic>))
                   .toList() ??
               [];
           return [...common, ...others];
@@ -184,4 +180,12 @@ mixin _AuthRepositoryFlowsMixin on _AuthRepositoryHelpersMixin {
   Future<Result<UserEntity, AppError>> getCurrentUser() async {
     return _executor.run(() async => _loadCurrentUser());
   }
+}
+
+CountryCode _countryCodeFromJson(Map<String, dynamic> json) {
+  return CountryCode(
+    id: json['id'] as int? ?? 0,
+    name: json['cname'] as String? ?? '',
+    code: '+${json['country_id']?.toString() ?? ''}',
+  );
 }

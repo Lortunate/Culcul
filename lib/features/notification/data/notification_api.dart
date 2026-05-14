@@ -2,7 +2,6 @@ import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/features/notification/data/dtos/like_model.dart';
 import 'package:culcul/features/notification/data/dtos/private_message_model.dart';
 import 'package:culcul/features/notification/data/dtos/reply_model.dart';
-import 'package:culcul/features/notification/data/dtos/unread_count_model.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
@@ -13,7 +12,7 @@ abstract class NotificationApi {
   factory NotificationApi(Dio dio) = _NotificationApi;
 
   @GET('https://api.bilibili.com/x/msgfeed/unread')
-  Future<ApiResponse<UnreadCountModel>> getUnreadCount();
+  Future<ApiResponse<Map<String, dynamic>>> getUnreadCount();
 
   @GET('https://api.bilibili.com/x/msgfeed/reply')
   Future<ApiResponse<ReplyResponse>> getReplyList({
@@ -55,7 +54,7 @@ abstract class NotificationApi {
   @POST('https://api.vc.bilibili.com/web_im/v1/web_im/send_msg')
   @FormUrlEncoded()
   @Headers({'x-bili-wbi': 'true', 'x-bili-csrf': 'true'})
-  Future<ApiResponse<SendMessageResponse>> sendPrivateMessage({
+  Future<ApiResponse<Map<String, dynamic>>> sendPrivateMessage({
     @Query('w_sender_uid') required int wSenderUid,
     @Query('w_receiver_id') required int wReceiverId,
     @Query('w_dev_id') required String wDevId,

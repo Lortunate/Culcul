@@ -1,7 +1,6 @@
 import 'package:culcul/core/utils/json_compute.dart';
 import 'package:culcul/features/notification/data/dtos/private_message_model.dart';
 import 'package:culcul/features/notification/data/dtos/reply_model.dart';
-import 'package:culcul/features/notification/data/dtos/unread_count_model.dart';
 import 'package:culcul/features/notification/data/notification_mapper.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
@@ -25,8 +24,7 @@ class NotificationLocalReadStore {
             .getSingleOrNull();
     if (row == null) return null;
     final decoded = await jsonDecodeCompute(row.summaryJson);
-    final dto = UnreadCountModel.fromJson(decoded as Map<String, dynamic>);
-    return dto.toDomain();
+    return notificationSummaryFromJson(decoded as Map<String, dynamic>);
   }
 
   Future<List<PrivateSession>> pageSessionsFromLocal({

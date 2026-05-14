@@ -9,7 +9,6 @@ import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/bootstrap/providers/storage_provider.dart';
 import 'package:culcul/core/storage/storage_keys.dart';
 import 'package:culcul/features/auth/data/auth_api.dart';
-import 'package:culcul/features/auth/data/dtos/auth_dtos.dart';
 import 'package:culcul/features/auth/domain/entities/country_code.dart';
 import 'package:culcul/features/auth/domain/entities/user_entity.dart';
 import 'package:culcul/features/auth/domain/entities/auth_captcha_challenge.dart';
@@ -37,8 +36,11 @@ class AuthRepositoryImpl
         _AuthRepositoryHelpersMixin,
         _AuthRepositorySessionMixin,
         _AuthRepositoryFlowsMixin {
+  @override
   final AuthApi _api;
+  @override
   final SharedPreferences _prefs;
+  @override
   final RequestExecutor _executor;
 
   AuthRepositoryImpl(this._api, this._prefs) : _executor = const RequestExecutor();

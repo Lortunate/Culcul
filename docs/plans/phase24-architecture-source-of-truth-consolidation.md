@@ -119,8 +119,8 @@ Verification:
   - search
   - video player
 - [x] Remove feature-local duplicates of shared contracts.
-- [ ] Delete DTO/domain duplication where no business behavior exists.
-- [ ] Move cross-feature endpoint/service behavior into `core/services/` only when at least two features actually use it.
+- [x] Delete DTO/domain duplication where no business behavior exists.
+- [x] Move cross-feature endpoint/service behavior into `core/services/` only when at least two features actually use it.
 - [x] Remove TODO/FIXME placeholders in touched presentation files or convert them into tracked work outside code.
 
 Verification:
@@ -129,6 +129,9 @@ Verification:
 - duplicate model scan
 - TODO/FIXME scan for touched areas
   - shared-contract scan across prioritized features found no second definitions for `UserSession`, `UserCardModel`, `UserProfileInfo`, `SearchQuery`, `SearchResultPage`, `WatchLaterPort`, or `RelationPort`.
+  - shared relation follow/follower behavior now lives in `lib/core/services/relation_service.dart`; live/video/dynamic/profile callers no longer import profile-owned relation providers, and the old profile relation api/repository/dto files were deleted.
+  - notification unread/image/send-message result parsing now uses a single domain-owned representation; `UnreadCountModel`, `ImageUploadResponse`, and `SendMessageResponse` call paths were removed.
+  - auth cache/country parsing now maps directly to `UserEntity` / `CountryCode`; `AuthUserDto` and `CountryCodeDto` call paths were removed.
   - touched-area/global presentation TODO/FIXME scan result: `0`
 
 ## Task 6: Build And Configuration Closeout
@@ -185,6 +188,16 @@ Verification notes:
   - `test/architecture/architecture_feedback_guard_test.dart`
 - `bash tool/architecture/run_architecture_guards.sh` -> passed.
 - `gitnexus_detect_changes(scope: "all")` -> `risk_level: low`, `affected_count: 0`, but symbol mapping still only surfaced `AGENTS.md` / `CLAUDE.md` sections rather than the Dart symbols edited in this slice.
+- 2026-05-14 relation centralization slice:
+  - touched-file `flutter analyze` -> 4 info-level baseline lints, no new errors.
+  - `flutter test test/architecture/architecture_boundary_guard_test.dart` -> passed.
+- 2026-05-14 notification duplicate-model slice:
+  - touched-file `flutter analyze` for notification data files -> passed with no issues.
+  - `flutter test test/architecture/architecture_boundary_guard_test.dart test/architecture/architecture_domain_dto_guard_test.dart` -> passed.
+- 2026-05-14 auth duplicate-model slice:
+  - touched-file `flutter analyze` for auth data files -> passed with no issues.
+  - `rg -n "CountryCodeDto|AuthUserDto|UnreadCountModel|ImageUploadResponse|SendMessageResponse|fromDomain\\(" lib test` -> no matches.
+  - `flutter test test/architecture/architecture_boundary_guard_test.dart test/architecture/architecture_domain_dto_guard_test.dart` -> passed.
 
 ## Self-Review Checklist
 

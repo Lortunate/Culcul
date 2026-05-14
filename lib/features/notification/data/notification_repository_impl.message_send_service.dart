@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/notification/data/dtos/image_upload_response.dart';
 import 'package:culcul/features/notification/data/dtos/reply_model.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
 import 'package:culcul/features/notification/data/notification_mapper.dart';
@@ -45,12 +44,12 @@ class NotificationMessageSendService with NotificationMessageSendHelpersMixin {
         data: formData,
         options: Options(contentType: 'multipart/form-data'),
       );
-      return ApiResponse<ImageUploadResponse>.fromJson(
+      return ApiResponse<Map<String, dynamic>>.fromJson(
         response.data!,
-        (json) => ImageUploadResponse.fromJson(json as Map<String, dynamic>),
+        (json) => Map<String, dynamic>.from(json as Map),
       );
     });
-    return result.map((response) => response.toDomain());
+    return result.map(imageUploadResultFromJson);
   }
 
   Future<Result<SendMessageResult, AppError>> sendPrivateMessage({
@@ -129,12 +128,13 @@ class NotificationMessageSendService with NotificationMessageSendHelpersMixin {
     );
 
     await responseResult.when(
-      success: (value) async {
+      success: (responseJson) async {
+        final response = sendMessageResultFromJson(responseJson);
         await markOutboxAndTempMessage(
           ownerUid: ownerUid,
           localMsgSeqno: localMsgSeqno,
           status: 'sent',
-          msgKey: value.msgKey,
+          msgKey: response.msgKey,
         );
         await repo.syncMessagesHead(
           ownerUid: ownerUid,
@@ -152,7 +152,7 @@ class NotificationMessageSendService with NotificationMessageSendHelpersMixin {
       },
     );
 
-    return responseResult.map((response) => response.toDomain());
+    return responseResult.map(sendMessageResultFromJson);
   }
 
   Future<Result<ReplyResponse, AppError>> fetchReplyLikeAtResponse({

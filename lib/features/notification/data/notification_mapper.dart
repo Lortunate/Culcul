@@ -1,8 +1,6 @@
-import 'package:culcul/features/notification/data/dtos/image_upload_response.dart';
 import 'package:culcul/features/notification/data/dtos/private_message_model.dart';
 import 'package:culcul/features/notification/data/dtos/reply_model.dart';
 import 'package:culcul/features/notification/data/dtos/system_notification_model.dart';
-import 'package:culcul/features/notification/data/dtos/unread_count_model.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
@@ -117,42 +115,52 @@ extension PrivateMessageEmojiInfoMapper on PrivateMessageEmojiInfo {
   }
 }
 
-extension UnreadCountModelMapper on UnreadCountModel {
-  NotificationSummary toDomain() {
-    return NotificationSummary(
-      at: at,
-      chat: chat,
-      coin: coin,
-      danmu: danmu,
-      favorite: favorite,
-      like: like,
-      recvLike: recvLike,
-      recvReply: recvReply,
-      reply: reply,
-      system: system,
-      up: up,
-    );
-  }
+NotificationSummary notificationSummaryFromJson(Map<String, dynamic> json) {
+  return NotificationSummary(
+    at: _readInt(json['at']),
+    chat: _readInt(json['chat']),
+    coin: _readInt(json['coin']),
+    danmu: _readInt(json['danmu']),
+    favorite: _readInt(json['favorite']),
+    like: _readInt(json['like']),
+    recvLike: _readInt(json['recv_like']),
+    recvReply: _readInt(json['recv_reply']),
+    reply: _readInt(json['reply']),
+    system: _readInt(json['sys_msg']),
+    up: _readInt(json['up']),
+  );
 }
 
-extension SendMessageResponseMapper on SendMessageResponse {
-  SendMessageResult toDomain() {
-    return SendMessageResult(
-      msgKey: msgKey,
-      msgContent: msgContent,
-      keyHitInfos: keyHitInfos,
-    );
-  }
+Map<String, dynamic> notificationSummaryToJson(NotificationSummary summary) {
+  return <String, dynamic>{
+    'at': summary.at,
+    'chat': summary.chat,
+    'coin': summary.coin,
+    'danmu': summary.danmu,
+    'favorite': summary.favorite,
+    'like': summary.like,
+    'recv_like': summary.recvLike,
+    'recv_reply': summary.recvReply,
+    'reply': summary.reply,
+    'sys_msg': summary.system,
+    'up': summary.up,
+  };
 }
 
-extension ImageUploadResponseMapper on ImageUploadResponse {
-  ImageUploadResult toDomain() {
-    return ImageUploadResult(
-      imageUrl: imageUrl,
-      imageWidth: imageWidth,
-      imageHeight: imageHeight,
-    );
-  }
+SendMessageResult sendMessageResultFromJson(Map<String, dynamic> json) {
+  return SendMessageResult(
+    msgKey: _readInt(json['msg_key']),
+    msgContent: _readNullableString(json['msg_content']),
+    keyHitInfos: _readMapOrNull(json['key_hit_infos']),
+  );
+}
+
+ImageUploadResult imageUploadResultFromJson(Map<String, dynamic> json) {
+  return ImageUploadResult(
+    imageUrl: _readString(json['image_url']),
+    imageWidth: _readInt(json['image_width']),
+    imageHeight: _readInt(json['image_height']),
+  );
 }
 
 extension SystemNotificationItemMapper on SystemNotificationItem {
@@ -166,4 +174,36 @@ extension SystemNotificationItemMapper on SystemNotificationItem {
       jumpText: jumpText,
     );
   }
+}
+
+int _readInt(Object? value) {
+  if (value is int) {
+    return value;
+  }
+  if (value is num) {
+    return value.toInt();
+  }
+  return int.tryParse(value?.toString() ?? '') ?? 0;
+}
+
+String _readString(Object? value) {
+  return value?.toString() ?? '';
+}
+
+String? _readNullableString(Object? value) {
+  if (value == null) {
+    return null;
+  }
+  final stringValue = value.toString();
+  return stringValue.isEmpty ? null : stringValue;
+}
+
+Map<String, dynamic>? _readMapOrNull(Object? value) {
+  if (value is Map<String, dynamic>) {
+    return value;
+  }
+  if (value is Map) {
+    return Map<String, dynamic>.from(value);
+  }
+  return null;
 }

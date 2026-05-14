@@ -156,18 +156,6 @@ sealed class PrivateMessageEmojiInfo with _$PrivateMessageEmojiInfo {
 }
 
 @freezed
-sealed class SendMessageResponse with _$SendMessageResponse {
-  const factory SendMessageResponse({
-    @JsonKey(name: 'msg_key') required int msgKey,
-    @JsonKey(name: 'msg_content') String? msgContent,
-    @JsonKey(name: 'key_hit_infos') Map<String, dynamic>? keyHitInfos,
-  }) = _SendMessageResponse;
-
-  factory SendMessageResponse.fromJson(Map<String, dynamic> json) =>
-      _$SendMessageResponseFromJson(json);
-}
-
-@freezed
 sealed class PrivateMessageAccountInfo with _$PrivateMessageAccountInfo {
   const factory PrivateMessageAccountInfo({
     required String name,

@@ -24,7 +24,7 @@ class NotificationSessionSync {
     )) {
       return const Success(null);
     }
-    return (await repo.requestApiResult(() => repo.api.getUnreadCount())).when(
+    return (await repo.requestApiResult(repo.api.getUnreadCount)).when(
       success: (response) async {
         final now = repo.nowSeconds();
 
@@ -33,7 +33,7 @@ class NotificationSessionSync {
             .insertOnConflictUpdate(
               NotificationUnreadSummariesCompanion.insert(
                 ownerUid: Value(ownerUid),
-                summaryJson: jsonEncode(response.toJson()),
+                summaryJson: jsonEncode(response),
                 updatedAt: now,
               ),
             );
@@ -90,11 +90,7 @@ class NotificationSessionSync {
     }
 
     return (await repo.requestApiResult(
-      () => repo.api.getPrivateSessions(
-        sessionType: sessionType.value,
-        size: NotificationRepositoryImpl.pageSize,
-        endTs: endTs,
-      ),
+      () => repo.api.getPrivateSessions(sessionType: sessionType.value, endTs: endTs),
     )).when(
       success: (response) async {
         final now = repo.nowSeconds();

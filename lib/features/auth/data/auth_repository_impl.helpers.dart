@@ -1,10 +1,7 @@
 part of 'auth_repository_impl.dart';
 
 RSAPublicKey _parsePublicKeyFromPem(String pem) {
-  final lines = pem
-      .split('\n')
-      .where((line) => !line.startsWith('-----'))
-      .join();
+  final lines = pem.split('\n').where((line) => !line.startsWith('-----')).join();
   final bytes = base64Decode(lines);
 
   // X.509 SubjectPublicKeyInfo DER: SEQUENCE { SEQUENCE { OID, NULL }, BIT STRING { SEQUENCE { INTEGER modulus, INTEGER exponent } } }
@@ -113,7 +110,7 @@ mixin _AuthRepositoryHelpersMixin on Object {
     final jsonStr = _prefs.getString(StorageKeys.authUserCache);
     if (jsonStr == null) return null;
     try {
-      return AuthUserDto.fromJson(jsonDecode(jsonStr) as Map<String, dynamic>).toDomain();
+      return _userEntityFromJson(jsonDecode(jsonStr) as Map<String, dynamic>);
     } catch (_) {
       _prefs.remove(StorageKeys.authUserCache);
       return null;
@@ -123,7 +120,7 @@ mixin _AuthRepositoryHelpersMixin on Object {
   Future<void> _cacheUser(UserEntity user) async {
     await _prefs.setString(
       StorageKeys.authUserCache,
-      jsonEncode(AuthUserDto.fromDomain(user).toJson()),
+      jsonEncode(_userEntityToJson(user)),
     );
   }
 
@@ -145,18 +142,10 @@ mixin _AuthRepositoryHelpersMixin on Object {
     if (response.code == 0) {
       final data = response.data as Map<String, dynamic>?;
       if (data != null && data['isLogin'] == true) {
-        final levelInfo = data['level_info'] as Map<String, dynamic>?;
-        final userDto = AuthUserDto(
-          id: (data['mid'] as Object).toString(),
-          username: data['uname'] as String,
-          avatarUrl: data['face'] as String,
-          email: data['email'] as String?,
-          createdAt: DateTime.now(),
-          level: levelInfo?['current_level'] as int?,
-          currentExp: levelInfo?['current_exp'] as int?,
-          nextExp: levelInfo?['next_exp'] as int?,
-        );
-        final user = userDto.toDomain();
+        final user = _userEntityFromJson(<String, dynamic>{
+          ...data,
+          'created_at': data['created_at'] ?? DateTime.now().toIso8601String(),
+        });
         await _cacheUser(user);
         return user;
       }
@@ -165,4 +154,56 @@ mixin _AuthRepositoryHelpersMixin on Object {
     }
     throw AppError.auth(response.message, code: response.code);
   }
+}
+
+UserEntity _userEntityFromJson(Map<String, dynamic> json) {
+  final levelInfo = _asMapOrNull(json['level_info']);
+  final createdAtRaw = json['created_at'];
+  final createdAt = createdAtRaw is String
+      ? DateTime.tryParse(createdAtRaw) ?? DateTime.now()
+      : DateTime.now();
+
+  return UserEntity(
+    id: json['mid']?.toString() ?? '',
+    username: json['uname'] as String? ?? '',
+    avatarUrl: json['face'] as String?,
+    email: json['email'] as String?,
+    createdAt: createdAt,
+    level: _asIntOrNull(levelInfo?['current_level']),
+    currentExp: _asIntOrNull(levelInfo?['current_exp']),
+    nextExp: _asIntOrNull(levelInfo?['next_exp']),
+  );
+}
+
+Map<String, dynamic> _userEntityToJson(UserEntity entity) {
+  return <String, dynamic>{
+    'mid': entity.id,
+    'uname': entity.username,
+    'face': entity.avatarUrl,
+    'email': entity.email,
+    'created_at': entity.createdAt.toIso8601String(),
+    'level_info': <String, dynamic>{
+      'current_level': entity.level,
+      'current_exp': entity.currentExp,
+      'next_exp': entity.nextExp,
+    },
+  };
+}
+
+Map<String, dynamic>? _asMapOrNull(Object? value) {
+  if (value is Map<String, dynamic>) {
+    return value;
+  }
+  if (value is Map) {
+    return Map<String, dynamic>.from(value);
+  }
+  return null;
+}
+
+int? _asIntOrNull(Object? value) {
+  return switch (value) {
+    final int v => v,
+    final num v => v.toInt(),
+    _ => null,
+  };
 }
