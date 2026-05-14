@@ -1,6 +1,7 @@
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/core/session/user_providers.dart';
+import 'package:culcul/features/auth/feature_scope.dart';
 import 'package:culcul/features/notification/presentation/view_models/notification_lifecycle_sync_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_category_grid.dart';
 import 'package:culcul/features/notification/presentation/widgets/private_session_list.dart';
@@ -29,7 +30,9 @@ class NotificationPage extends ConsumerWidget {
             IconButton(
               icon: const Icon(Icons.settings_outlined),
               onPressed: () {
-                // TODO: Notification settings
+                context.showAppFeedback(
+                  t.common.coming_soon(tab: t.notification.title),
+                );
               },
             ),
         ],

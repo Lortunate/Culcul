@@ -1,5 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/core/session/user_providers.dart';
+import 'package:culcul/features/auth/feature_scope.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/live/data/dtos/live_anchor_info_model.dart';
 import 'package:culcul/features/live/data/dtos/live_gold_rank_model.dart';

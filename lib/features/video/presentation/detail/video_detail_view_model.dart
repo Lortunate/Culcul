@@ -4,7 +4,7 @@ import 'dart:developer' as developer;
 import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
 import 'package:dio/dio.dart';
-import 'package:culcul/core/session/relation_providers.dart';
+import 'package:culcul/features/profile/feature_scope.dart';
 import 'package:culcul/features/video/application/video_detail_workflows.dart';
 import 'package:culcul/features/video/feature_scope.dart';
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';

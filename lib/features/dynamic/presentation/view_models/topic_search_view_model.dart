@@ -1,6 +1,6 @@
 import 'package:culcul/core/contracts/search_query_contract.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';
-import 'package:culcul/core/session/search_providers.dart';
+import 'package:culcul/features/search/feature_scope.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

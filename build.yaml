@@ -30,6 +30,7 @@ targets:
         generate_for:
           include:
             - lib/features/notification/data/local/**
+            - lib/features/profile/data/local/**
       slang_build_runner:
         generate_for:
           include:

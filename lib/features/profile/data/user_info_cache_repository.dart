@@ -1,38 +1,40 @@
-import 'dart:convert';
-
-import 'package:culcul/core/bootstrap/providers/storage_provider.dart';
-import 'package:culcul/core/storage/storage_keys.dart';
-import 'package:culcul/core/utils/json_compute.dart';
 import 'package:culcul/features/profile/data/dtos/profile_user.dart';
+import 'package:culcul/features/profile/data/local/profile_cache_database.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 part 'user_info_cache_repository.g.dart';
 
 class UserInfoCacheRepository {
-  final SharedPreferences _prefs;
+  final ProfileCacheDatabase _database;
 
-  UserInfoCacheRepository(this._prefs);
+  UserInfoCacheRepository(this._database);
 
-  Future<ProfileUser?> getUser(String uid) async {
-    final jsonString = _prefs.getString('${StorageKeys.userCachePrefix}$uid');
-    if (jsonString == null) return null;
-    try {
-      final jsonMap = await jsonDecodeCompute(jsonString);
-      if (jsonMap is! Map) return null;
-      return ProfileUser.fromJson(jsonMap.cast<String, dynamic>());
-    } catch (e) {
-      return null;
-    }
+  Future<ProfileUser?> getUser(
+    String uid, {
+    bool allowStale = false,
+    DateTime? now,
+  }) async {
+    return _database.getUser(uid, allowStale: allowStale, now: now);
   }
 
-  Future<void> saveUser(ProfileUser user) async {
-    final jsonString = jsonEncode(user.toJson());
-    await _prefs.setString('${StorageKeys.userCachePrefix}${user.id}', jsonString);
+  Future<void> saveUser(
+    ProfileUser user, {
+    DateTime? now,
+    Duration ttl = profileUserCacheTtl,
+  }) async {
+    await _database.upsertUser(user, now: now, ttl: ttl);
+  }
+
+  Future<void> removeUser(String uid) async {
+    await _database.deleteUser(uid);
+  }
+
+  Future<void> clearAllUsers() async {
+    await _database.clearUsers();
   }
 }
 
 @Riverpod(keepAlive: true)
 UserInfoCacheRepository userInfoCacheRepository(Ref ref) {
-  return UserInfoCacheRepository(ref.watch(sharedPreferencesProvider));
+  return UserInfoCacheRepository(ref.watch(profileCacheDatabaseProvider));
 }

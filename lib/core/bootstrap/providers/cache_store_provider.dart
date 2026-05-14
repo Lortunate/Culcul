@@ -3,7 +3,17 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'cache_store_provider.g.dart';
 
+CacheStore? _cacheStoreInstance;
+
+void initializeCacheStore(CacheStore cacheStore) {
+  _cacheStoreInstance = cacheStore;
+}
+
 @Riverpod(keepAlive: true)
 CacheStore cacheStore(Ref ref) {
-  throw UnimplementedError('cacheStoreProvider not initialized');
+  final cacheStore = _cacheStoreInstance;
+  if (cacheStore == null) {
+    throw StateError('cacheStoreProvider not initialized');
+  }
+  return cacheStore;
 }

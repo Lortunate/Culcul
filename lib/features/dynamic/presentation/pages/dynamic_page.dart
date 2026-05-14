@@ -1,6 +1,6 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/core/session/user_providers.dart';
+import 'package:culcul/features/auth/feature_scope.dart';
 import 'package:culcul/features/dynamic/presentation/pages/publish_dynamic_page.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_list_view.dart';
 import 'package:culcul/ui/widgets/layout/app_tab_bar.dart';

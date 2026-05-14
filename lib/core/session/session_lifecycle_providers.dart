@@ -5,20 +5,7 @@ abstract interface class SessionCookieRefresher {
 }
 
 final sessionCookieRefresherProvider = Provider<SessionCookieRefresher>((ref) {
-  throw UnimplementedError(
-    'sessionCookieRefresherProvider must be overridden at app bootstrap',
+  throw StateError(
+    'sessionCookieRefresherProvider not initialized',
   );
-});
-
-typedef SessionRefreshAction = Future<void> Function();
-
-final sessionRefreshActionProvider = Provider<SessionRefreshAction>((ref) {
-  throw UnimplementedError('sessionRefreshActionProvider must be overridden');
-});
-
-typedef LogoutAction = Future<void> Function();
-
-/// Provides the logout action. Must be overridden at bootstrap.
-final logoutActionProvider = Provider<LogoutAction>((ref) {
-  throw UnimplementedError('logoutActionProvider must be overridden at bootstrap');
 });

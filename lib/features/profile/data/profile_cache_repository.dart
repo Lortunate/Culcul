@@ -21,4 +21,12 @@ class ProfileCacheRepositoryImpl {
   Future<void> writeProfile(ProfileUser profile) async {
     await _cache.saveUser(profile);
   }
+
+  Future<void> clearProfile(String userId) async {
+    await _cache.removeUser(userId);
+  }
+
+  Future<void> clearAll() async {
+    await _cache.clearAllUsers();
+  }
 }

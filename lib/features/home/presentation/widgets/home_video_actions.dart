@@ -1,4 +1,4 @@
-import 'package:culcul/core/session/feature_action_providers.dart';
+import 'package:culcul/features/to_view/feature_scope.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/services/media_service.dart';

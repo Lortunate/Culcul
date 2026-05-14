@@ -4,14 +4,14 @@ import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
+import 'package:culcul/core/runtime/runtime_performance_policy_provider.dart';
 import 'package:culcul/features/live/feature_scope.dart';
 import 'package:culcul/features/live/data/dtos/live_room_detail_model.dart';
 import 'package:culcul/features/live/data/dtos/live_history_danmaku_model.dart';
 import 'package:culcul/features/live/presentation/view_models/live_danmaku_feed_view_model.dart';
 import 'package:culcul/features/live/presentation/view_models/live_room_state.dart';
 import 'package:culcul/features/live/presentation/view_models/live_socket_service.dart';
-import 'package:culcul/core/session/relation_providers.dart';
-import 'package:culcul/core/session/user_providers.dart';
+import 'package:culcul/features/profile/feature_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -37,6 +37,8 @@ class LiveRoomController extends _$LiveRoomController
 
   @override
   LiveRoomState build(int roomId) {
+    final runtimePolicy = ref.watch(runtimePerformancePolicyProvider);
+    _socketService.applyRuntimePolicy(runtimePolicy);
     ref.onDispose(() {
       _danmakuSubscription?.cancel();
       _socketService.dispose();

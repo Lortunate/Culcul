@@ -4,7 +4,7 @@ import 'package:culcul/features/favorites/application/favorite_folder_commands.d
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
-import 'package:culcul/core/session/user_providers.dart';
+import 'package:culcul/features/auth/feature_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/layout/app_tab_bar.dart';
 import 'package:culcul/ui/widgets/users/guest_view.dart';

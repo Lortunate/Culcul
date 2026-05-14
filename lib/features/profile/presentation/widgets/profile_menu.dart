@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/core/session/session_lifecycle_providers.dart';
+import 'package:culcul/features/auth/feature_scope.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
 import 'package:culcul/ui/responsive/app_breakpoints.dart';

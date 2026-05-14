@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:culcul/core/session/user_providers.dart';
+import 'package:culcul/features/auth/feature_scope.dart';
 import 'package:culcul/features/profile/application/profile_actions.dart';
 import 'package:culcul/features/profile/feature_scope.dart';
 import 'package:culcul/features/profile/data/dtos/profile_user.dart';
