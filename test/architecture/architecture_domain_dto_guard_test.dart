@@ -7,12 +7,9 @@ void main() {
     final offenders = <String>[];
     final dtoPattern = RegExp(r'\b(fromJson|toJson|JsonKey|Response|Request|Dto|DTO)\b');
 
-    for (final file in dartFiles('lib')) {
+    for (final file in sourceDartFiles('lib')) {
       final path = normalizePath(file.path);
       if (!RegExp(r'^lib/features/[^/]+/domain/entities/').hasMatch(path)) {
-        continue;
-      }
-      if (path.endsWith('.freezed.dart') || path.endsWith('.g.dart')) {
         continue;
       }
 

@@ -11,6 +11,26 @@ List<File> dartFiles(String root) {
     ..sort((a, b) => normalizePath(a.path).compareTo(normalizePath(b.path)));
 }
 
+List<File> sourceDartFiles(String root) {
+  return dartFiles(
+    root,
+  ).where((file) => !isGeneratedDartPath(normalizePath(file.path))).toList();
+}
+
+List<File> generatedDartFiles(String root) {
+  return dartFiles(
+    root,
+  ).where((file) => isGeneratedDartPath(normalizePath(file.path))).toList();
+}
+
+bool isGeneratedDartPath(String path) {
+  final normalizedPath = normalizePath(path);
+  return normalizedPath.endsWith('.g.dart') ||
+      normalizedPath.endsWith('.freezed.dart') ||
+      normalizedPath.startsWith('lib/protos/') ||
+      RegExp(r'^lib/i18n/strings(?:_[A-Za-z_]+)?\.g\.dart$').hasMatch(normalizedPath);
+}
+
 String normalizePath(String path) => path.replaceAll(r'\', '/');
 
 List<String> meaningfulLines(File file) {

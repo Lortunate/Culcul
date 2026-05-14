@@ -6,7 +6,7 @@ void main() {
   test('feature code must not call ScaffoldMessenger directly', () {
     final offenders = <String>[];
 
-    for (final file in dartFiles('lib')) {
+    for (final file in sourceDartFiles('lib')) {
       final path = normalizePath(file.path);
       if (_isApprovedFeedbackImplementation(path)) {
         continue;
@@ -30,7 +30,5 @@ void main() {
 }
 
 bool _isApprovedFeedbackImplementation(String path) {
-  return const {
-    'lib/core/feedback/app_feedback.dart',
-  }.contains(path);
+  return const {'lib/core/feedback/app_feedback.dart'}.contains(path);
 }

@@ -6,7 +6,7 @@ void main() {
   test('feature presentation code must not import other presentation features', () {
     final offenders = <String>[];
 
-    for (final file in dartFiles('lib')) {
+    for (final file in sourceDartFiles('lib')) {
       final importerPath = normalizePath(file.path);
       final importerFeature = featureNameFromPath(importerPath);
       if (importerFeature == null ||
@@ -44,7 +44,7 @@ void main() {
   test('features must not import other feature data implementations', () {
     final offenders = <String>[];
 
-    for (final file in dartFiles('lib')) {
+    for (final file in sourceDartFiles('lib')) {
       final importerPath = normalizePath(file.path);
       final importerFeature = featureNameFromPath(importerPath);
       if (importerFeature == null) {
@@ -81,10 +81,9 @@ void main() {
   test('core and ui must not import feature internals', () {
     final offenders = <String>[];
 
-    for (final file in dartFiles('lib')) {
+    for (final file in sourceDartFiles('lib')) {
       final importerPath = normalizePath(file.path);
-      if (!importerPath.startsWith('lib/core/') &&
-          !importerPath.startsWith('lib/ui/')) {
+      if (!importerPath.startsWith('lib/core/') && !importerPath.startsWith('lib/ui/')) {
         continue;
       }
 
@@ -113,7 +112,7 @@ void main() {
   test('AppException must not appear in lib', () {
     final offenders = <String>[];
 
-    for (final file in dartFiles('lib')) {
+    for (final file in sourceDartFiles('lib')) {
       final path = normalizePath(file.path);
       for (final line in authoredDartCodeLines(file)) {
         if (line.text.contains('AppException')) {
@@ -134,7 +133,7 @@ void main() {
   test('only approved contract files may be re-export-only barrels', () {
     final offenders = <String>[];
 
-    for (final file in dartFiles('lib')) {
+    for (final file in sourceDartFiles('lib')) {
       final normalizedPath = normalizePath(file.path);
       if (const {
         'lib/core/contracts/core_contracts.dart',
