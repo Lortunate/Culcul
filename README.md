@@ -47,3 +47,11 @@ If you need a broader check, run:
 ```bash
 flutter analyze
 ```
+
+## Architecture Guard
+
+For the repo-local architecture guard entrypoint, run:
+
+```bash
+bash tool/architecture/run_architecture_guards.sh
+```
