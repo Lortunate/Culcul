@@ -95,7 +95,7 @@ class Auth extends _$Auth {
     final result = await ref.read(authRepositoryProvider).logout();
     await result.when(
       success: (_) async {
-        await ref.read(profileCacheRepositoryProvider).clearAll();
+        await ref.read(clearProfileCacheProvider)();
         state = state.copyWith(isLoggedIn: false, user: null, error: null);
       },
       failure: (error) async => _storeFailure(error),

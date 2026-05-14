@@ -56,7 +56,7 @@ Avoid new barrel files. Import source files directly unless the file is one of t
 
 - `lib/` source Dart files: 643.
 - `lib/` generated Dart files: 228.
-- `lib/` total Dart files: 871.
+- `lib/` total Dart files: 874.
 - `lib/shared/` files: 0.
 - provider/bootstrap/session placeholders: 0.
 - cross-feature private `data/**` or `presentation/**` imports found by planning audit: 0.
@@ -65,5 +65,6 @@ Avoid new barrel files. Import source files directly unless the file is one of t
 - TODO/FIXME presentation files found by planning audit: 0.
 - approved broad public barrels: `lib/core/contracts/core_contracts.dart`, `lib/ui/ui.dart`.
 - generated files are excluded from source-debt architecture guards by default; generated verification remains explicit.
+- feature scopes are import/export-only and must not export feature `data/**` seams.
 
 Update this baseline only when the active phase changes or when the source/generated audit count changes.

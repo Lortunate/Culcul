@@ -46,10 +46,16 @@ Files:
   - `profileCacheRepositoryProvider`
   - `Auth.logout`
   - `profile/feature_scope.dart`
-- [ ] Add a profile-owned application command provider for full profile-cache invalidation.
-- [ ] Update auth logout to use the application command instead of the profile data repository provider.
-- [ ] Remove `profileCacheRepositoryProvider` from `profile/feature_scope.dart`.
-- [ ] Run code generation if a generated provider is added.
+- [x] Add a profile-owned application command provider for full profile-cache invalidation.
+- [x] Update auth logout to use the application command instead of the profile data repository provider.
+- [x] Remove `profileCacheRepositoryProvider` from `profile/feature_scope.dart`.
+- [x] Run code generation if a generated provider is added.
+
+Task 2 result:
+
+- Added `clearProfileCacheProvider` in `profile/application/profile_cache_commands.dart`.
+- Auth logout now calls the profile-owned application command instead of reading the profile data repository provider.
+- `profile/feature_scope.dart` exports only profile application seams.
 
 Verification:
 
@@ -67,8 +73,13 @@ Files:
 - [ ] Impact analysis targets before editing:
   - `searchDefaultHintProvider`
   - `search/feature_scope.dart`
-- [ ] Move the provider alias out of `feature_scope.dart` and into search application code.
-- [ ] Keep `feature_scope.dart` as export-only composition seam.
+- [x] Move the provider alias out of `feature_scope.dart` and into search application code.
+- [x] Keep `feature_scope.dart` as export-only composition seam.
+
+Task 3 result:
+
+- Added `search/application/search_default_hint_provider.dart`.
+- `search/feature_scope.dart` now only exports search application seams.
 
 Verification:
 
@@ -85,8 +96,13 @@ Files:
 - [ ] Impact analysis targets before editing:
   - `showVideoActionsBottomSheet`
   - `video/feature_scope.dart`
-- [ ] Move `VideoActionSheetCallback` and `showVideoActionsBottomSheet` into the owning video presentation source file.
-- [ ] Keep `feature_scope.dart` as export-only composition seam.
+- [x] Move `VideoActionSheetCallback` and `showVideoActionsBottomSheet` into the owning video presentation source file.
+- [x] Keep `feature_scope.dart` as export-only composition seam.
+
+Task 4 result:
+
+- Added `video/presentation/overlays/video_action_sheet_entry.dart`.
+- `video/feature_scope.dart` now only exports the video action-sheet entry symbol.
 
 Verification:
 
@@ -102,9 +118,14 @@ Files:
 - Modify: `tool/architecture/run_architecture_guards.sh` only if output needs adjustment
 
 - [ ] Impact analysis target before editing architecture guard files.
-- [ ] Add a guard that fails when `feature_scope.dart` declares classes, enums, typedefs, providers, functions, or top-level variables.
-- [ ] Allow imports and exports only, with existing approved non-`feature_scope.dart` barrels unchanged.
-- [ ] Ensure the guard catches `data/**` exports from feature scopes unless explicitly justified in the plan.
+- [x] Add a guard that fails when `feature_scope.dart` declares classes, enums, typedefs, providers, functions, or top-level variables.
+- [x] Allow imports and exports only, with existing approved non-`feature_scope.dart` barrels unchanged.
+- [x] Ensure the guard catches `data/**` exports from feature scopes unless explicitly justified in the plan.
+
+Task 5 result:
+
+- Added an architecture guard that keeps `feature_scope.dart` files import/export-only.
+- The guard also rejects feature-scope imports/exports that resolve to feature `data/**` paths.
 
 Verification:
 
@@ -113,21 +134,29 @@ Verification:
 
 ## Task 6: Final Verification And Commit Split
 
-- [ ] Run:
+- [x] Run:
   - `dart run build_runner build --delete-conflicting-outputs`
   - `bash tool/architecture/run_architecture_guards.sh`
   - `flutter analyze --no-fatal-infos --no-fatal-warnings`
   - focused tests from each task
-- [ ] Run `gitnexus_detect_changes(scope: "all")`.
-- [ ] Split commits by coherent boundary:
+- [x] Run `gitnexus_detect_changes(scope: "all")`.
+- [x] Split commits by coherent boundary:
   - docs/planning
   - application seam cleanup
   - architecture guard
-- [ ] Leave unrelated user changes unstaged.
+- [x] Leave unrelated user changes unstaged.
+
+Task 6 verification result:
+
+- `dart run build_runner build --delete-conflicting-outputs`: passed.
+- `bash tool/architecture/run_architecture_guards.sh`: passed with source/generated/total counts `646/228/874`.
+- `flutter analyze --no-fatal-infos --no-fatal-warnings`: exit 0 with existing info-only lint noise.
+- Focused architecture/profile/video tests: passed.
+- `gitnexus_detect_changes(scope: "all")`: low risk, 0 affected processes.
 
 ## Self-Review Checklist
 
-- [ ] No stale active Phase 25 pointers outside archive history.
-- [ ] No data-layer provider exported through `feature_scope.dart`.
-- [ ] No executable declarations inside `feature_scope.dart`.
-- [ ] Tests/guards run and results recorded.
+- [x] No stale active Phase 25 pointers outside archive history.
+- [x] No data-layer provider exported through `feature_scope.dart`.
+- [x] No executable declarations inside `feature_scope.dart`.
+- [x] Tests/guards run and results recorded.
