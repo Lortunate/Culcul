@@ -42,14 +42,14 @@ This project is indexed by GitNexus as **Culcul** (2084 symbols, 2880 relationsh
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 26 — Application Seam Hardening)
+## Architecture (Phase 27 — Architecture Simplification)
 
-`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–25 completed structural cleanup, barrel elimination, freezed/@riverpod migration, model deduplication, abstract repo removal, dead weight removal, provider/bootstrap cleanup, runtime/network consolidation, source-of-truth cleanup, feature public surface reduction, thin domain collapse, generated/source audit separation, router alias cleanup, and dependency/config source-of-truth cleanup. Phase 26 hardens the remaining application seams: no data provider exports through `feature_scope.dart`, no executable declarations inside `feature_scope.dart`, and source-owned cross-feature composition entries.
+`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–26 completed structural cleanup, barrel elimination, freezed/@riverpod migration, model deduplication, abstract repo removal, dead weight removal, provider/bootstrap cleanup, runtime/network consolidation, source-of-truth cleanup, feature public surface reduction, thin domain collapse, generated/source audit separation, router alias cleanup, dependency/config source-of-truth cleanup, and application seam hardening. Phase 27 simplifies the architecture: flatten bootstrap, remove dead infrastructure, eliminate pass-through layers, and refactor notification repository circular dependencies.
 
-Active spec: `docs/specs/phase26-application-seam-hardening.md`
-Active plan: `docs/plans/phase26-application-seam-hardening.md`
+Active spec: `docs/specs/phase27-architecture-simplification.md`
+Active plan: `docs/plans/phase27-architecture-simplification.md`
 Architecture guide: `docs/architecture/architecture-guide.md`
-Archived: Phase 22 spec/plan, Phase 23 performance draft, and completed Phase 24/25 spec/plan in `docs/specs/archive/` and `docs/plans/archive/`
+Archived: Phase 22–26 specs/plans in `docs/specs/archive/` and `docs/plans/archive/`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`
@@ -74,7 +74,7 @@ Archived: Phase 22 spec/plan, Phase 23 performance draft, and completed Phase 24
 - Single notification pattern: `AppFeedback` extension on `BuildContext` — no raw ScaffoldMessenger calls
 - Shared API services in `core/services/` for cross-feature endpoints (comments, etc.)
 - No business logic in DTOs — business methods belong in domain entities only
-- If architecture docs disagree, the active Phase 26 spec/plan override older phase text
+- If architecture docs disagree, the active Phase 27 spec/plan override older phase text
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:full hash:f65d5d33 -->
 ## Issue Tracking with bd (beads)

@@ -1,11 +1,11 @@
 # Culcul Architecture Guide
 
-Active phase: Phase 26 Application Seam Hardening.
+Active phase: Phase 27 Architecture Simplification.
 
 Authoritative docs:
 
-- Spec: `docs/specs/phase26-application-seam-hardening.md`
-- Plan: `docs/plans/phase26-application-seam-hardening.md`
+- Spec: `docs/specs/phase27-architecture-simplification.md`
+- Plan: `docs/plans/phase27-architecture-simplification.md`
 
 ## Current Shape
 
