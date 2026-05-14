@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/core/data/network/interceptors/cache_interceptor.dart';
+import 'package:culcul/core/data/network/interceptors/endpoint_cache_options_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
@@ -34,7 +34,7 @@ class UserDynamicNotifier extends _$UserDynamicNotifier
     });
     final stopwatch = Stopwatch()..start();
     final items = await buildFirstPage();
-    final cacheKey = CacheInterceptor.buildCacheKey(ApiConstants.dynamicSpaceFeed, {
+    final cacheKey = EndpointCacheOptionsInterceptor.buildCacheKey(ApiConstants.dynamicSpaceFeed, {
       'host_mid': hostMid,
       'timezone_offset': -480,
       'features':

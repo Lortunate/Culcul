@@ -61,19 +61,19 @@ Target: `EndpointConcurrencyLane` enum and `RequestExecutorBinding` mixin.
 
 Target: Application layer files that are pure delegation with no business logic.
 
-- [ ] Audit `lib/features/favorites/application/favorite_folder_commands.dart` — confirm pure pass-through.
-- [ ] If confirmed: move repository calls directly into the presentation layer (view model).
-- [ ] Remove the commands file.
-- [ ] Audit other features' application layers for similar pass-throughs.
+- [x] Audit `lib/features/favorites/application/favorite_folder_commands.dart` — confirm pure pass-through.
+- [x] If confirmed: move repository calls directly into the presentation layer (view model).
+- [x] Remove the commands file.
+- [x] Audit other features' application layers for similar pass-throughs.
 - [ ] Run `flutter analyze`.
 
 ## Task 4: Rename CacheInterceptor
 
-- [ ] Run impact analysis on `CacheInterceptor`.
-- [ ] Rename class `CacheInterceptor` → `EndpointCacheOptionsInterceptor`.
-- [ ] Rename file `cache_interceptor.dart` → `endpoint_cache_options_interceptor.dart`.
-- [ ] Update all imports (likely only `dio_client.dart`).
-- [ ] Run `flutter analyze`.
+- [x] Run impact analysis on `CacheInterceptor`.
+- [x] Rename class `CacheInterceptor` → `EndpointCacheOptionsInterceptor`.
+- [x] Rename file `cache_interceptor.dart` → `endpoint_cache_options_interceptor.dart`.
+- [x] Update all imports (likely only `dio_client.dart`).
+- [x] Run `flutter analyze`.
 
 ## Task 5: Flatten Bootstrap Layer
 

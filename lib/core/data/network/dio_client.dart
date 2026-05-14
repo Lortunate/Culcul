@@ -1,6 +1,6 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/data/network/endpoint_policy.dart';
-import 'package:culcul/core/data/network/interceptors/cache_interceptor.dart';
+import 'package:culcul/core/data/network/interceptors/endpoint_cache_options_interceptor.dart';
 import 'package:culcul/core/data/network/interceptors/csrf_interceptor.dart';
 import 'package:culcul/core/data/network/interceptors/in_flight_dedup_interceptor.dart';
 import 'package:culcul/core/data/network/interceptors/network_quality_interceptor.dart';
@@ -92,7 +92,7 @@ Dio dioClient(Ref ref) {
 
   dio.interceptors.add(networkQualityInterceptor);
   dio.interceptors.add(InFlightDedupInterceptor());
-  dio.interceptors.add(CacheInterceptor(cacheStore));
+  dio.interceptors.add(EndpointCacheOptionsInterceptor(cacheStore));
   dio.interceptors.add(
     DioCacheInterceptor(
       options: CacheOptions(

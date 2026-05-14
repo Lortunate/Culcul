@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
-import 'package:culcul/features/favorites/application/favorite_folder_commands.dart';
+import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
@@ -101,7 +101,7 @@ Future<bool> _handleCreateFolder({
   }
 
   final result = await ref
-      .read(favoriteFolderCommandWorkflowProvider)
+      .read(favRepositoryProvider)
       .createFolder(title: data.title, intro: data.intro, privacy: data.privacy);
   final error = result.errorOrNull;
   if (error == null) {

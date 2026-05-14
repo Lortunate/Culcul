@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/core/data/network/interceptors/cache_interceptor.dart';
+import 'package:culcul/core/data/network/interceptors/endpoint_cache_options_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
@@ -31,7 +31,7 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
     });
     final stopwatch = Stopwatch()..start();
     final items = await buildFirstPage();
-    final cacheKey = CacheInterceptor.buildCacheKey(ApiConstants.profileSpaceVideos, {
+    final cacheKey = EndpointCacheOptionsInterceptor.buildCacheKey(ApiConstants.profileSpaceVideos, {
       'mid': mid,
       'pn': 1,
       'ps': _pageSize,

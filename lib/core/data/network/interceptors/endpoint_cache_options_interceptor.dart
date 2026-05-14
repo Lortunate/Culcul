@@ -2,12 +2,12 @@ import 'package:culcul/core/data/network/endpoint_policy.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 
-class CacheInterceptor extends Interceptor {
+class EndpointCacheOptionsInterceptor extends Interceptor {
   static final _stripKeys = {'w_rid', 'wts', '_', 'force_refresh'};
 
   final CacheStore _store;
 
-  CacheInterceptor(this._store);
+  EndpointCacheOptionsInterceptor(this._store);
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {

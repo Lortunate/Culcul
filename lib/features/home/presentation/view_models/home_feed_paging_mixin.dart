@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:culcul/core/contracts/video_model_contract.dart';
-import 'package:culcul/core/data/network/interceptors/cache_interceptor.dart';
+import 'package:culcul/core/data/network/interceptors/endpoint_cache_options_interceptor.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
@@ -31,7 +31,7 @@ mixin HomeFeedPagingMixin on OffsetPagedAsyncNotifier<VideoModel> {
     final items = await loadPage(1, forceRefresh: false);
     final hasCachedValue = await ref
         .read(cacheStoreProvider)
-        .exists(CacheInterceptor.buildCacheKey(cachePath, cacheQuery));
+        .exists(EndpointCacheOptionsInterceptor.buildCacheKey(cachePath, cacheQuery));
 
     DevLogger.log('feature', '$perfChain initial_data', <String, Object?>{
       'items': items.length,

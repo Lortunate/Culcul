@@ -92,8 +92,8 @@ Future<bool> _handleEditFolder({
   }
 
   final result = await ref
-      .read(favoriteFolderCommandWorkflowProvider)
-      .editFolder(
+      .read(favRepositoryProvider)
+      .updateFolder(
         mediaId: mediaId,
         title: data.title,
         intro: data.intro,
@@ -140,8 +140,8 @@ Future<bool> _handleDeleteFolder({
   }
 
   final result = await ref
-      .read(favoriteFolderCommandWorkflowProvider)
-      .deleteFolder(mediaId: mediaId);
+      .read(favRepositoryProvider)
+      .deleteFolder(mediaIds: mediaId.toString());
   final error = result.errorOrNull;
   if (error == null) {
     ref.invalidate(favCreatedFoldersProvider);
@@ -165,8 +165,8 @@ Future<bool> _handleDeleteResources({
   required Set<int> resourceIds,
 }) async {
   final result = await ref
-      .read(favoriteFolderCommandWorkflowProvider)
-      .deleteResources(mediaId: mediaId, resourceIds: resourceIds);
+      .read(favRepositoryProvider)
+      .deleteResources(mediaId: mediaId, resources: resourceIds.join(','));
   final error = result.errorOrNull;
   if (error == null) {
     return true;
