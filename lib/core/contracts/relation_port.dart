@@ -8,4 +8,14 @@ abstract interface class RelationPort {
     int vmid, {
     int page = 1,
   });
+
+  Future<Result<List<ProfileRelationUser>, AppError>> getFollowers(
+    int vmid, {
+    int page = 1,
+  });
+
+  Future<Result<void, AppError>> modifyRelation({
+    required int mid,
+    required bool isFollow,
+  });
 }

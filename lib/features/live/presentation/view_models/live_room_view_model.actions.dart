@@ -7,10 +7,9 @@ mixin _LiveRoomControllerActionsMixin
     if (anchor == null) return;
 
     final isFollowing = anchor.isFollowed;
-    final result = await ref.read(modifyRelationProvider)(
-      mid: int.parse(anchor.mid),
-      isFollow: !isFollowing,
-    );
+    final result = await ref
+        .read(relationPortProvider)
+        .modifyRelation(mid: int.parse(anchor.mid), isFollow: !isFollowing);
     if (result.isSuccess) {
       state = state.copyWith(anchorInfo: anchor.copyWith(isFollowed: !isFollowing));
     } else {

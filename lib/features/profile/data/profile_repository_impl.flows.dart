@@ -47,13 +47,6 @@ mixin _ProfileRepositoryImplFlowsMixin on RequestExecutorBinding {
     );
   }
 
-  Future<Result<void, AppError>> modifyRelation({
-    required int mid,
-    required bool isFollow,
-  }) {
-    return requestVoidResult(() => api.modifyRelation(mid, isFollow ? 1 : 2, 11));
-  }
-
   Future<Result<ProfileUser, AppError>> getProfile(int userId) async {
     return getProfileModel(userId);
   }

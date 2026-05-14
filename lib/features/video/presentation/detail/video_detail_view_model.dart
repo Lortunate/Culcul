@@ -3,14 +3,13 @@ import 'dart:developer' as developer;
 
 import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
+import 'package:culcul/core/services/relation_service.dart';
 import 'package:dio/dio.dart';
-import 'package:culcul/features/profile/feature_scope.dart';
 import 'package:culcul/features/video/application/video_detail_workflows.dart';
 import 'package:culcul/features/video/feature_scope.dart';
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import 'video_detail_state.dart';
+import 'package:culcul/features/video/presentation/detail/video_detail_state.dart';
 
 part 'video_detail_view_model.g.dart';
 part 'video_detail_view_model.helpers.dart';
@@ -171,10 +170,9 @@ class VideoDetailController extends _$VideoDetailController
       ),
     );
 
-    final result = await ref.read(modifyRelationProvider)(
-      mid: detail.owner.mid,
-      isFollow: !wasFollowed,
-    );
+    final result = await ref
+        .read(relationPortProvider)
+        .modifyRelation(mid: detail.owner.mid, isFollow: !wasFollowed);
     if (result.isFailure) {
       state = state.copyWith(videoDetail: previousDetail);
     }

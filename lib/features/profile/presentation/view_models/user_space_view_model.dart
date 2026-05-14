@@ -1,4 +1,5 @@
 import 'package:culcul/features/profile/data/dtos/profile_user.dart';
+import 'package:culcul/core/services/relation_service.dart';
 import 'package:culcul/features/profile/feature_scope.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -21,7 +22,7 @@ class UserSpaceNotifier extends _$UserSpaceNotifier {
     state = AsyncData(currentProfile.copyWith(isFollowing: newFollowStatus));
 
     final result = await ref
-        .read(profileRepositoryProvider)
+        .read(relationPortProvider)
         .modifyRelation(mid: int.parse(currentProfile.id), isFollow: newFollowStatus);
     if (result.isFailure) {
       // Revert if failed.
