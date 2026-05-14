@@ -5,16 +5,11 @@ class FeedResponseDto {
 
   factory FeedResponseDto.fromJson(Map<String, dynamic> json) {
     final rawItem = json['item'];
-    final List<Map<String, dynamic>> items;
-    if (rawItem is List<dynamic>) {
-      items = rawItem
-          .whereType<Map<dynamic, dynamic>>()
-          .map(Map<String, dynamic>.from)
-          .toList();
-    } else {
-      items = const <Map<String, dynamic>>[];
-    }
-
+    if (rawItem is! List<dynamic>) return const FeedResponseDto();
+    final items = rawItem
+        .whereType<Map<dynamic, dynamic>>()
+        .map(Map<String, dynamic>.from)
+        .toList();
     return FeedResponseDto(item: items);
   }
 }
