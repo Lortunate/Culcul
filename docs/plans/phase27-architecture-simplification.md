@@ -107,12 +107,12 @@ Target: Merge `BootstrapCoordinator` + `AppRuntime` + 3 mutable-global providers
 
 ## Task 8: Clean Up Redundant Dependencies
 
-- [ ] Remove explicit `riverpod: ^3.2.1` from pubspec.yaml (re-exported by `hooks_riverpod`).
-- [ ] Audit `crypto` usage: grep for `import 'package:crypto/`.
-- [ ] Audit `pointycastle` usage: grep for `import 'package:pointycastle/`.
+- [x] Remove explicit `riverpod: ^3.2.1` from pubspec.yaml (re-exported by `hooks_riverpod`).
+- [x] Audit `crypto` usage: grep for `import 'package:crypto/`.
+- [x] Audit `pointycastle` usage: grep for `import 'package:pointycastle/`.
 - [ ] If overlap confirmed (both used only for hashing): remove `pointycastle`, use `crypto`.
-- [ ] If `pointycastle` used for AES/RSA (likely for WBI): keep both, document why.
-- [ ] Run `flutter pub get` and `flutter analyze`.
+- [x] If `pointycastle` used for AES/RSA (likely for WBI): keep both, document why.
+- [x] Run `flutter pub get` and `flutter analyze`.
 
 ## Task 9: Refactor Notification Repository Helpers
 
