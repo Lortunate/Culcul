@@ -132,4 +132,11 @@ class RequestExecutor {
     final result = await run(action, options: options);
     return result.when(success: (_) => const Success(null), failure: Failure.new);
   }
+
+  Future<Result<T, AppError>> runApiDirect<T>(
+    Future<ApiResponse<T>> Function() action, {
+    RequestExecutionOptions? options,
+  }) {
+    return runApi<T, T>(action, transform: (data) => data, options: options);
+  }
 }

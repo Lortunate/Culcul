@@ -5,7 +5,6 @@ import 'package:dio/dio.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/endpoint_policy.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
-import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/search/data/dtos/default_search.dart';
 import 'package:culcul/features/search/data/dtos/search_result.dart';
@@ -25,15 +24,12 @@ SearchRepositoryImpl searchRepository(Ref ref) {
   return SearchRepositoryImpl(api: SearchApi(ref.watch(dioClientProvider)));
 }
 
-class SearchRepositoryImpl with RequestExecutorBinding implements SearchPort {
+class SearchRepositoryImpl implements SearchPort {
   final SearchApi api;
   final RequestExecutor _requestExecutor;
 
   SearchRepositoryImpl({required this.api, RequestExecutor? requestExecutor})
     : _requestExecutor = requestExecutor ?? const RequestExecutor();
-
-  @override
-  RequestExecutor get requestExecutor => _requestExecutor;
 
   Future<Result<List<SearchSuggestionTag>, AppError>> _fetchSearchSuggestions(
     String term, {
@@ -44,7 +40,7 @@ class SearchRepositoryImpl with RequestExecutorBinding implements SearchPort {
       requestClass: EndpointRequestClass.search,
       cancelToken: cancelToken,
     );
-    final result = await requestResult(
+    final result = await _requestExecutor.run(
       () => api.fetchSearchSuggestions(
         term,
         extras: options.toDioExtras(),
@@ -71,7 +67,7 @@ class SearchRepositoryImpl with RequestExecutorBinding implements SearchPort {
     bool forceRefresh = false,
   }) {
     final options = _requestOptions(requestClass: EndpointRequestClass.search);
-    return requestApiResult(
+    return _requestExecutor.runApiDirect(
       () => api.fetchDefaultSearch(
         forceRefresh: _forceRefreshQuery(forceRefresh),
         extras: options.toDioExtras(),
@@ -84,7 +80,7 @@ class SearchRepositoryImpl with RequestExecutorBinding implements SearchPort {
     bool forceRefresh = false,
   }) {
     final options = _requestOptions(requestClass: EndpointRequestClass.search);
-    return requestExecutor.runResponse(
+    return _requestExecutor.runResponse(
       () => api.fetchTrendingRanking(
         forceRefresh: _forceRefreshQuery(forceRefresh),
         extras: options.toDioExtras(),
@@ -105,7 +101,7 @@ class SearchRepositoryImpl with RequestExecutorBinding implements SearchPort {
       requestClass: EndpointRequestClass.search,
       cancelToken: cancelToken,
     );
-    return requestExecutor.runResponse(
+    return _requestExecutor.runResponse(
       () async => query.type == SearchType.all
           ? api.fetchSearchAll(
               keyword: query.keyword,

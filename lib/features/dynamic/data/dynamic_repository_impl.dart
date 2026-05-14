@@ -7,7 +7,6 @@ import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
-import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/bootstrap/providers/cookie_jar_provider.dart';
 import 'package:culcul/features/dynamic/data/article_parsing/article_detail_parser.dart';
@@ -38,7 +37,6 @@ DynamicRepositoryImpl dynamicRepository(Ref ref) {
 
 class DynamicRepositoryImpl
     with
-        RequestExecutorBinding,
         _DynamicRepositoryAccess,
         _DynamicRepositoryCommentApis,
         _DynamicRepositoryFeedApis,
@@ -46,6 +44,7 @@ class DynamicRepositoryImpl
   final DynamicApi _api;
   final Dio _dio;
   final CookieJar _cookieJar;
+  @override
   final RequestExecutor _requestExecutor;
   final NetworkConcurrencyExecutor _concurrencyExecutor;
 
@@ -57,9 +56,6 @@ class DynamicRepositoryImpl
     NetworkConcurrencyExecutor? concurrencyExecutor,
   }) : _requestExecutor = requestExecutor ?? const RequestExecutor(),
        _concurrencyExecutor = concurrencyExecutor ?? const NetworkConcurrencyExecutor();
-
-  @override
-  RequestExecutor get requestExecutor => _requestExecutor;
 
   @override
   DynamicApi get api => _api;
@@ -74,9 +70,10 @@ class DynamicRepositoryImpl
   NetworkConcurrencyExecutor get concurrencyExecutor => _concurrencyExecutor;
 }
 
-mixin _DynamicRepositoryAccess on RequestExecutorBinding {
+mixin _DynamicRepositoryAccess {
   DynamicApi get api;
   Dio get dio;
   CookieJar get cookieJar;
+  RequestExecutor get _requestExecutor;
   NetworkConcurrencyExecutor get concurrencyExecutor;
 }

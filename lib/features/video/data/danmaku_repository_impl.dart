@@ -1,6 +1,5 @@
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
-import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/data/network/resource_api.dart';
 import 'package:culcul/core/data/network/resource_api_provider.dart';
 import 'package:culcul/core/errors/app_error.dart';
@@ -20,7 +19,7 @@ DanmakuRepositoryImpl danmakuRepository(Ref ref) {
   );
 }
 
-class DanmakuRepositoryImpl with RequestExecutorBinding {
+class DanmakuRepositoryImpl {
   final DanmakuApi _api;
   final ResourceApi _resourceApi;
   final RequestExecutor _requestExecutor;
@@ -28,15 +27,12 @@ class DanmakuRepositoryImpl with RequestExecutorBinding {
   DanmakuRepositoryImpl(this._api, this._resourceApi, {RequestExecutor? requestExecutor})
     : _requestExecutor = requestExecutor ?? const RequestExecutor();
 
-  @override
-  RequestExecutor get requestExecutor => _requestExecutor;
-
   Future<Result<DanmakuSegment, AppError>> fetchDanmakuSegment({
     required int oid,
     required int pid,
     required int segmentIndex,
   }) {
-    return requestResult(() async {
+    return _requestExecutor.run(() async {
       final response = await _api.fetchDanmakuSegment(
         oid: oid,
         pid: pid,
@@ -63,7 +59,7 @@ class DanmakuRepositoryImpl with RequestExecutorBinding {
     required int oid,
     required int pid,
   }) {
-    return requestResult(() async {
+    return _requestExecutor.run(() async {
       final response = DmViewReply.fromBuffer(
         await _api.fetchDanmakuView(oid: oid, pid: pid),
       );
@@ -77,9 +73,7 @@ class DanmakuRepositoryImpl with RequestExecutorBinding {
     });
   }
 
-  Future<Result<List<int>, AppError>> fetchMaskData(String url) async {
-    return requestResult(() async {
-      return _resourceApi.fetchBytes(url);
-    });
+  Future<Result<List<int>, AppError>> fetchMaskData(String url) {
+    return _requestExecutor.run(() => _resourceApi.fetchBytes(url));
   }
 }

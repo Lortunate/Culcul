@@ -3,7 +3,6 @@ import 'package:culcul/core/contracts/relation_user_contract.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
-import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:dio/dio.dart';
@@ -13,7 +12,7 @@ final relationPortProvider = Provider<RelationPort>((ref) {
   return RelationService(ref.watch(dioClientProvider));
 });
 
-class RelationService with RequestExecutorBinding implements RelationPort {
+class RelationService implements RelationPort {
   static const int _defaultPageSize = 50;
 
   final Dio _dio;
@@ -21,9 +20,6 @@ class RelationService with RequestExecutorBinding implements RelationPort {
 
   RelationService(this._dio, {RequestExecutor? requestExecutor})
     : _requestExecutor = requestExecutor ?? const RequestExecutor();
-
-  @override
-  RequestExecutor get requestExecutor => _requestExecutor;
 
   @override
   Future<Result<List<ProfileRelationUser>, AppError>> getFollowings(
@@ -46,7 +42,7 @@ class RelationService with RequestExecutorBinding implements RelationPort {
     required int mid,
     required bool isFollow,
   }) {
-    return requestVoidResult(
+    return _requestExecutor.runUnit(
       () => _postApiResponse(
         '/x/relation/modify',
         data: <String, dynamic>{'fid': mid, 'act': isFollow ? 1 : 2, 're_src': 11},
@@ -63,7 +59,7 @@ class RelationService with RequestExecutorBinding implements RelationPort {
     required int vmid,
     required int page,
   }) {
-    return requestExecutor.runApi<List<ProfileRelationUser>, Map<String, dynamic>>(
+    return _requestExecutor.runApi<List<ProfileRelationUser>, Map<String, dynamic>>(
       () => _getApiResponse(
         path,
         queryParameters: <String, dynamic>{

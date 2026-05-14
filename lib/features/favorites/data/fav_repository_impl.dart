@@ -1,7 +1,6 @@
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
-import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/favorites/data/fav_api.dart';
 import 'package:culcul/features/favorites/data/dtos/fav_folder_model.dart';
@@ -18,7 +17,7 @@ FavRepositoryImpl favRepository(Ref ref) {
   return FavRepositoryImpl(FavApi(ref.watch(dioClientProvider)));
 }
 
-class FavRepositoryImpl with RequestExecutorBinding {
+class FavRepositoryImpl {
   static const int _defaultPageSize = 20;
   final FavApi _api;
   final RequestExecutor _requestExecutor;
@@ -26,21 +25,18 @@ class FavRepositoryImpl with RequestExecutorBinding {
   FavRepositoryImpl(this._api, {RequestExecutor? requestExecutor})
     : _requestExecutor = requestExecutor ?? const RequestExecutor();
 
-  @override
-  RequestExecutor get requestExecutor => _requestExecutor;
-
   Future<Result<FavFolderListResponse, AppError>> getCreatedFoldersModel({
     required int upMid,
-  }) async {
-    return requestApiResult(() => _api.getCreatedFolders(upMid));
+  }) {
+    return _requestExecutor.runApiDirect(() => _api.getCreatedFolders(upMid));
   }
 
   Future<Result<FavFolderListResponse, AppError>> getCollectedFoldersModel({
     required int upMid,
     required int pn,
     int ps = _defaultPageSize,
-  }) async {
-    return requestApiResult(() => _api.getCollectedFolders(upMid, pn, ps));
+  }) {
+    return _requestExecutor.runApiDirect(() => _api.getCollectedFolders(upMid, pn, ps));
   }
 
   Future<Result<FavResourceListResponse, AppError>> getFolderResourcesModel({
@@ -51,8 +47,8 @@ class FavRepositoryImpl with RequestExecutorBinding {
     String? order,
     int? type,
     int? tid,
-  }) async {
-    return requestApiResult(
+  }) {
+    return _requestExecutor.runApiDirect(
       () => _api.getFolderResources(
         mediaId,
         pn,
@@ -71,8 +67,8 @@ class FavRepositoryImpl with RequestExecutorBinding {
     String? intro,
     int? privacy,
     String? cover,
-  }) async {
-    return requestApiResult(
+  }) {
+    return _requestExecutor.runApiDirect(
       () => _api.addFolder(title, intro: intro, privacy: privacy, cover: cover),
     );
   }
@@ -83,27 +79,27 @@ class FavRepositoryImpl with RequestExecutorBinding {
     String? intro,
     int? privacy,
     String? cover,
-  }) async {
-    return requestApiResult(
+  }) {
+    return _requestExecutor.runApiDirect(
       () => _api.editFolder(mediaId, title, intro: intro, privacy: privacy, cover: cover),
     );
   }
 
-  Future<Result<void, AppError>> delFolder({required String mediaIds}) async {
-    return requestVoidResult(() => _api.delFolder(mediaIds));
+  Future<Result<void, AppError>> delFolder({required String mediaIds}) {
+    return _requestExecutor.runUnit(() => _api.delFolder(mediaIds));
   }
 
   Future<Result<void, AppError>> batchDelResource({
     required String resources,
     required int mediaId,
-  }) async {
-    return requestVoidResult(
+  }) {
+    return _requestExecutor.runUnit(
       () => _api.batchDelResource(resources, mediaId, platform: 'web'),
     );
   }
 
-  Future<Result<void, AppError>> cleanInvalidResources({required int mediaId}) async {
-    return requestVoidResult(() => _api.cleanInvalidResources(mediaId));
+  Future<Result<void, AppError>> cleanInvalidResources({required int mediaId}) {
+    return _requestExecutor.runUnit(() => _api.cleanInvalidResources(mediaId));
   }
 
   Future<Result<FavoriteFolderPage, AppError>> getCreatedFolders({

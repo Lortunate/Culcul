@@ -2,8 +2,8 @@ import 'dart:typed_data';
 
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
+import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
-import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
@@ -38,7 +38,7 @@ NotificationRepositoryImpl notificationRepository(Ref ref) {
   );
 }
 
-class NotificationRepositoryImpl with RequestExecutorBinding {
+class NotificationRepositoryImpl {
   NotificationRepositoryImpl(
     this.api,
     this.database,
@@ -57,8 +57,14 @@ class NotificationRepositoryImpl with RequestExecutorBinding {
   final NotificationApi api;
   final NotificationLocalDatabase database;
   final Dio dio;
-  @override
   final RequestExecutor requestExecutor;
+
+  Future<Result<T, AppError>> requestApiResult<T>(
+    Future<ApiResponse<T>> Function() apiCall, {
+    RequestExecutionOptions? options,
+  }) {
+    return requestExecutor.runApiDirect(apiCall, options: options);
+  }
   late final NotificationLocalReadStore localReadStore;
   late final NotificationStreamWatchers streamWatchers;
   late final NotificationMessageSendService messageSendService;

@@ -2,13 +2,13 @@ part of 'dynamic_repository_impl.dart';
 
 mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
   Future<Result<DynamicData, AppError>> getFeed(DynamicFeedQuery query) {
-    return requestApiResult(
+    return _requestExecutor.runApiDirect(
       () => api.getDynamicFeed(type: query.type, offset: query.offset, page: 1),
     );
   }
 
   Future<Result<DynamicData, AppError>> getSpaceDynamicFeed(SpaceDynamicFeedQuery query) {
-    return requestApiResult(
+    return _requestExecutor.runApiDirect(
       () => api.getSpaceDynamicFeed(
         hostMid: query.hostMid,
         offset: query.offset,
@@ -19,18 +19,18 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
   }
 
   Future<Result<DynamicData, AppError>> getTopicFeed(TopicDynamicFeedQuery query) {
-    return requestApiResult(
+    return _requestExecutor.runApiDirect(
       () => api.getTopicFeed(topicId: query.topicId, offset: query.offset),
     );
   }
 
   Future<Result<DynamicItem, AppError>> getDetail(String id) async {
-    final result = await requestApiResult(() => api.getDynamicDetail(id: id));
+    final result = await _requestExecutor.runApiDirect(() => api.getDynamicDetail(id: id));
     return result.map((data) => data.item);
   }
 
   Future<Result<ArticleDetailData, AppError>> getArticleDetail(String url) async {
-    return requestResult(() async {
+    return _requestExecutor.run(() async {
       final uri = Uri.parse(url);
       if (uri.path.contains('/opus/')) {
         return _getOpusDetail(uri);

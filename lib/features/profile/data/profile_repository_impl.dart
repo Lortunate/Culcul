@@ -5,7 +5,6 @@ import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
-import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/profile/data/dtos/user_space_video_model.dart';
 import 'package:culcul/features/profile/data/profile_mapper.dart';
@@ -27,11 +26,11 @@ ProfileRepositoryImpl profileRepository(Ref ref) {
   );
 }
 
-class ProfileRepositoryImpl
-    with RequestExecutorBinding, _ProfileRepositoryImplFlowsMixin {
+class ProfileRepositoryImpl with _ProfileRepositoryImplFlowsMixin {
   static const int _defaultSpaceVideoPageSize = 30;
   @override
   final ProfileApi api;
+  @override
   final RequestExecutor _requestExecutor;
   final NetworkConcurrencyExecutor _concurrencyExecutor;
 
@@ -42,11 +41,8 @@ class ProfileRepositoryImpl
   }) : _requestExecutor = requestExecutor ?? const RequestExecutor(),
        _concurrencyExecutor = concurrencyExecutor ?? const NetworkConcurrencyExecutor();
 
-  @override
-  RequestExecutor get requestExecutor => _requestExecutor;
-
   Future<Result<UserCardModel, AppError>> getUserCard(int mid) async {
-    final result = await requestApiResult(() => api.getCard(mid));
+    final result = await _requestExecutor.runApiDirect(() => api.getCard(mid));
     return result.when(
       success: (data) {
         try {
@@ -61,7 +57,7 @@ class ProfileRepositoryImpl
 
   @override
   Future<Result<ProfileUser, AppError>> getProfileModel(int userId) async {
-    return requestResult(() async {
+    return _requestExecutor.run(() async {
       final responses = await _concurrencyExecutor.runConcurrent(
         tasks: <ConcurrentTask<dynamic>>[
           ConcurrentTask<dynamic>(

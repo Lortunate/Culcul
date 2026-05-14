@@ -1,7 +1,6 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
-import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/live/data/live_api.dart';
 import 'package:culcul/core/contracts/live_room_summary_contract.dart';
@@ -22,7 +21,7 @@ LiveRepositoryImpl liveRepository(Ref ref) {
   return LiveRepositoryImpl(LiveApi(ref.watch(dioClientProvider)));
 }
 
-class LiveRepositoryImpl with RequestExecutorBinding {
+class LiveRepositoryImpl {
   static const int _recommendPageSize = 30;
   static const int _rankPageSize = 20;
   final LiveApi _api;
@@ -31,51 +30,48 @@ class LiveRepositoryImpl with RequestExecutorBinding {
   LiveRepositoryImpl(this._api, {RequestExecutor? requestExecutor})
     : _requestExecutor = requestExecutor ?? const RequestExecutor();
 
-  @override
-  RequestExecutor get requestExecutor => _requestExecutor;
-
-  Future<Result<LiveRoomDetailModel, AppError>> getRoomInfo(int roomId) async {
-    return requestApiResult(() => _api.getRoomInfo(roomId));
+  Future<Result<LiveRoomDetailModel, AppError>> getRoomInfo(int roomId) {
+    return _requestExecutor.runApiDirect(() => _api.getRoomInfo(roomId));
   }
 
   Future<Result<LivePlayUrlModel, AppError>> getPlayUrl({
     required int roomId,
     int? qn,
-  }) async {
-    return requestApiResult(() => _api.getPlayUrl(roomId: roomId, qn: qn));
+  }) {
+    return _requestExecutor.runApiDirect(() => _api.getPlayUrl(roomId: roomId, qn: qn));
   }
 
-  Future<Result<LiveDanmakuConfigModel, AppError>> getDanmakuConfig(int roomId) async {
-    return requestApiResult(() => _api.getDanmakuConfig(roomId));
+  Future<Result<LiveDanmakuConfigModel, AppError>> getDanmakuConfig(int roomId) {
+    return _requestExecutor.runApiDirect(() => _api.getDanmakuConfig(roomId));
   }
 
-  Future<Result<LiveHistoryDanmakuModel, AppError>> getHistoryDanmaku(int roomId) async {
-    return requestApiResult(() => _api.getHistoryDanmaku(roomId));
+  Future<Result<LiveHistoryDanmakuModel, AppError>> getHistoryDanmaku(int roomId) {
+    return _requestExecutor.runApiDirect(() => _api.getHistoryDanmaku(roomId));
   }
 
-  Future<Result<LiveDanmuInfoModel, AppError>> getDanmuInfo(int roomId) async {
-    return requestApiResult(() => _api.getDanmuInfo(roomId, 0));
+  Future<Result<LiveDanmuInfoModel, AppError>> getDanmuInfo(int roomId) {
+    return _requestExecutor.runApiDirect(() => _api.getDanmuInfo(roomId, 0));
   }
 
   Future<Result<List<LiveRoomSummary>, AppError>> fetchRecommendListModels({
     int page = 1,
   }) async {
-    final result = await requestApiResult(
+    final result = await _requestExecutor.runApiDirect(
       () => _api.getRecommendList(page: page, pageSize: _recommendPageSize),
     );
     return result.map((data) => data.roomList);
   }
 
-  Future<Result<LiveAnchorInfoModel, AppError>> getAnchorInfo(int uid) async {
-    return requestApiResult(() => _api.getAnchorInfo(uid));
+  Future<Result<LiveAnchorInfoModel, AppError>> getAnchorInfo(int uid) {
+    return _requestExecutor.runApiDirect(() => _api.getAnchorInfo(uid));
   }
 
   Future<Result<LiveGoldRankModel, AppError>> getOnlineGoldRank({
     required int ruid,
     required int roomId,
     int page = 1,
-  }) async {
-    return requestApiResult(
+  }) {
+    return _requestExecutor.runApiDirect(
       () => _api.getOnlineGoldRank(
         ruid: ruid,
         roomId: roomId,
@@ -89,8 +85,8 @@ class LiveRepositoryImpl with RequestExecutorBinding {
     required int ruid,
     required int roomId,
     int page = 1,
-  }) async {
-    return requestApiResult(
+  }) {
+    return _requestExecutor.runApiDirect(
       () => _api.getGuardList(
         ruid: ruid,
         roomId: roomId,
@@ -103,8 +99,8 @@ class LiveRepositoryImpl with RequestExecutorBinding {
   Future<Result<void, AppError>> sendDanmaku({
     required int roomId,
     required String msg,
-  }) async {
-    return requestVoidResult(
+  }) {
+    return _requestExecutor.runUnit(
       () => _api.sendDanmaku(
         msg: msg,
         roomId: roomId,
@@ -113,7 +109,7 @@ class LiveRepositoryImpl with RequestExecutorBinding {
     );
   }
 
-  Future<Result<List<LiveRoomSummary>, AppError>> getRecommendList({int page = 1}) async {
+  Future<Result<List<LiveRoomSummary>, AppError>> getRecommendList({int page = 1}) {
     return fetchRecommendListModels(page: page);
   }
 }

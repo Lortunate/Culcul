@@ -1,7 +1,8 @@
 part of 'profile_repository_impl.dart';
 
-mixin _ProfileRepositoryImplFlowsMixin on RequestExecutorBinding {
+mixin _ProfileRepositoryImplFlowsMixin {
   ProfileApi get api;
+  RequestExecutor get _requestExecutor;
   Future<Result<ProfileUser, AppError>> getProfileModel(int userId);
 
   Future<Result<List<UserSpaceVideoModel>, AppError>> getSpaceVideosModel({
@@ -11,7 +12,7 @@ mixin _ProfileRepositoryImplFlowsMixin on RequestExecutorBinding {
     bool forceRefresh = false,
     CancelToken? cancelToken,
   }) async {
-    final result = await requestApiResult(
+    final result = await _requestExecutor.runApiDirect(
       () => api.getSpaceVideos(
         mid: mid,
         page: page,
@@ -25,7 +26,7 @@ mixin _ProfileRepositoryImplFlowsMixin on RequestExecutorBinding {
   }
 
   Future<Result<UserSpaceVideoModel?, AppError>> getStickyVideoModel(int vmid) async {
-    final result = await requestApiResult(() => api.getStickyVideo(vmid));
+    final result = await _requestExecutor.runApiDirect(() => api.getStickyVideo(vmid));
     return result.when(
       success: (data) => Success(data),
       failure: (error) {
@@ -40,7 +41,7 @@ mixin _ProfileRepositoryImplFlowsMixin on RequestExecutorBinding {
   Future<Result<List<UserSpaceVideoModel>, AppError>> getMasterpieceModels(
     int vmid,
   ) async {
-    final result = await requestApiResult(() => api.getMasterpiece(vmid));
+    final result = await _requestExecutor.runApiDirect(() => api.getMasterpiece(vmid));
     return result.when(
       success: (data) => Success(data),
       failure: (_) => const Success(<UserSpaceVideoModel>[]),

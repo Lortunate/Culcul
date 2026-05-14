@@ -39,23 +39,23 @@ Target: `EndpointConcurrencyLane` enum and `RequestExecutorBinding` mixin.
 
 ### 2a: Remove EndpointConcurrencyLane
 
-- [ ] Run impact analysis on `EndpointConcurrencyLane`.
-- [ ] Remove enum definition from `lib/core/data/network/endpoint_policy.dart`.
-- [ ] Remove `concurrencyLane` field from `EndpointPolicy` class.
-- [ ] Remove lane assignment in `_basePolicyFor`.
-- [ ] Verify no other references exist.
-- [ ] Run `flutter analyze`.
+- [x] Run impact analysis on `EndpointConcurrencyLane`.
+- [x] Remove enum definition from `lib/core/data/network/endpoint_policy.dart`.
+- [x] Remove `concurrencyLane` field from `EndpointPolicy` class.
+- [x] Remove lane assignment in `_basePolicyFor`.
+- [x] Verify no other references exist.
+- [x] Run `flutter analyze`.
 
 ### 2b: Remove RequestExecutorBinding
 
-- [ ] Run impact analysis on `RequestExecutorBinding`.
-- [ ] Identify all repositories that use the mixin.
-- [ ] For each repository: replace `with RequestExecutorBinding` with a `RequestExecutor` field/parameter.
-- [ ] Replace `requestResult(...)` calls with `requestExecutor.run(...)`.
-- [ ] Replace `requestApiResult(...)` calls with `requestExecutor.runApi(...)`.
-- [ ] Replace `requestVoidResult(...)` calls with `requestExecutor.runUnit(...)`.
-- [ ] Delete `lib/core/data/network/request_executor_binding.dart`.
-- [ ] Run `flutter analyze`.
+- [x] Run impact analysis on `RequestExecutorBinding`.
+- [x] Identify all repositories that use the mixin.
+- [x] For each repository: replace `with RequestExecutorBinding` with a `RequestExecutor` field/parameter.
+- [x] Replace `requestResult(...)` calls with `requestExecutor.run(...)`.
+- [x] Replace `requestApiResult(...)` calls with `requestExecutor.runApi(...)`.
+- [x] Replace `requestVoidResult(...)` calls with `requestExecutor.runUnit(...)`.
+- [x] Delete `lib/core/data/network/request_executor_binding.dart`.
+- [x] Run `flutter analyze`.
 
 ## Task 3: Remove Pass-Through Application Commands
 

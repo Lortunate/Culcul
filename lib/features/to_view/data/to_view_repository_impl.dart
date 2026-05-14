@@ -1,7 +1,6 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
-import 'package:culcul/core/data/network/request_executor_binding.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/to_view/data/dtos/to_view_model_dto.dart';
 import 'package:culcul/features/to_view/data/to_view_mapper.dart';
@@ -17,7 +16,7 @@ ToViewRepositoryImpl toViewRepository(Ref ref) {
   return ToViewRepositoryImpl(ToViewApi(ref.watch(dioClientProvider)));
 }
 
-class ToViewRepositoryImpl with RequestExecutorBinding {
+class ToViewRepositoryImpl {
   final ToViewApi? _api;
   final RequestExecutor _requestExecutor;
 
@@ -30,11 +29,8 @@ class ToViewRepositoryImpl with RequestExecutorBinding {
     : _api = null,
       _requestExecutor = requestExecutor ?? const RequestExecutor();
 
-  @override
-  RequestExecutor get requestExecutor => _requestExecutor;
-
   Future<Result<ToViewListResponseDto, AppError>> getToViewList() async {
-    final result = await requestApiResult(() => _api!.getToViewList());
+    final result = await _requestExecutor.runApiDirect(() => _api!.getToViewList());
     return result.when(
       success: Success.new,
       failure: (error) {
@@ -47,15 +43,15 @@ class ToViewRepositoryImpl with RequestExecutorBinding {
   }
 
   Future<Result<void, AppError>> addToView({required int aid}) {
-    return requestResult(() => _api!.addToView(aid));
+    return _requestExecutor.run(() => _api!.addToView(aid));
   }
 
   Future<Result<void, AppError>> deleteToView({required int aid}) {
-    return requestResult(() => _api!.deleteToView(aid));
+    return _requestExecutor.run(() => _api!.deleteToView(aid));
   }
 
   Future<Result<void, AppError>> clearToView() {
-    return requestResult(() => _api!.clearToView());
+    return _requestExecutor.run(() => _api!.clearToView());
   }
 
   Future<Result<List<ToViewEntry>, AppError>> getList() async {

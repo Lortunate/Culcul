@@ -14,7 +14,7 @@ mixin _DynamicRepositoryPublishApis on _DynamicRepositoryAccess {
   }
 
   Future<Result<String, AppError>> getPublishCsrf() {
-    return requestResult(() async {
+    return _requestExecutor.run(() async {
       final csrf = await _getCsrfToken();
       if (csrf == null || csrf.isEmpty) {
         throw const AppError.auth('Missing bili_jct csrf token');
@@ -24,7 +24,7 @@ mixin _DynamicRepositoryPublishApis on _DynamicRepositoryAccess {
   }
 
   Future<Result<void, AppError>> likeDynamic(String id, bool like) async {
-    return requestResult(() async {
+    return _requestExecutor.run(() async {
       final csrf = await _getCsrfToken();
       final response = await api.likeDynamic(
         body: {'dyn_id_str': id, 'up': like ? 1 : 2},
@@ -44,14 +44,14 @@ mixin _DynamicRepositoryPublishApis on _DynamicRepositoryAccess {
       return const Success(<DynamicUploadImageData>[]);
     }
 
-    return requestResult(() async {
+    return _requestExecutor.run(() async {
       return concurrencyExecutor.mapConcurrent<PublishMediaAsset, DynamicUploadImageData>(
         items: files,
         profile: NetworkConcurrencyProfile.upload,
         scope: 'dynamic_publish_upload',
         mapper: (asset) async {
           final file = File(asset.path);
-          final uploadResult = await requestApiResult(
+          final uploadResult = await _requestExecutor.runApiDirect(
             () => api.uploadImage(file: file, csrf: csrf),
           );
           return uploadResult.when(
@@ -68,7 +68,7 @@ mixin _DynamicRepositoryPublishApis on _DynamicRepositoryAccess {
     required String csrf,
     List<DynamicUploadImageData> images = const [],
   }) async {
-    return requestResult(() async {
+    return _requestExecutor.run(() async {
       final pics = images
           .map(
             (img) => <String, dynamic>{

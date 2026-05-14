@@ -12,16 +12,6 @@ enum EndpointRequestClass {
   download,
 }
 
-enum EndpointConcurrencyLane {
-  interactive,
-  background,
-  media,
-  search,
-  auth,
-  mutation,
-  download,
-}
-
 class EndpointPolicy {
   static const String requestClassExtra = 'endpoint_request_class';
   static const String resolvedPolicyExtra = 'resolved_endpoint_policy';
@@ -35,7 +25,6 @@ class EndpointPolicy {
   final int retryMaxAttempts;
   final Set<int> retryableStatuses;
   final bool dedupEnabled;
-  final EndpointConcurrencyLane concurrencyLane;
   final bool retryUnsafeMethods;
   final bool allowPrefetch;
 
@@ -46,7 +35,6 @@ class EndpointPolicy {
     required this.retryMaxAttempts,
     required this.retryableStatuses,
     required this.dedupEnabled,
-    required this.concurrencyLane,
     required this.retryUnsafeMethods,
     required this.allowPrefetch,
   });
@@ -59,7 +47,6 @@ class EndpointPolicy {
     int? retryMaxAttempts,
     Set<int>? retryableStatuses,
     bool? dedupEnabled,
-    EndpointConcurrencyLane? concurrencyLane,
     bool? retryUnsafeMethods,
     bool? allowPrefetch,
   }) {
@@ -70,7 +57,6 @@ class EndpointPolicy {
       retryMaxAttempts: retryMaxAttempts ?? this.retryMaxAttempts,
       retryableStatuses: retryableStatuses ?? this.retryableStatuses,
       dedupEnabled: dedupEnabled ?? this.dedupEnabled,
-      concurrencyLane: concurrencyLane ?? this.concurrencyLane,
       retryUnsafeMethods: retryUnsafeMethods ?? this.retryUnsafeMethods,
       allowPrefetch: allowPrefetch ?? this.allowPrefetch,
     );
@@ -123,7 +109,6 @@ class EndpointPolicyResolver {
         retryMaxAttempts: 2,
         retryableStatuses: const {408, 429, 500, 502, 503, 504},
         dedupEnabled: true,
-        concurrencyLane: EndpointConcurrencyLane.interactive,
         retryUnsafeMethods: false,
         allowPrefetch: true,
       ),
@@ -134,7 +119,6 @@ class EndpointPolicyResolver {
         retryMaxAttempts: 1,
         retryableStatuses: const {408, 429, 500, 502, 503, 504},
         dedupEnabled: true,
-        concurrencyLane: EndpointConcurrencyLane.background,
         retryUnsafeMethods: false,
         allowPrefetch: false,
       ),
@@ -145,7 +129,6 @@ class EndpointPolicyResolver {
         retryMaxAttempts: 2,
         retryableStatuses: const {408, 429, 500, 502, 503, 504},
         dedupEnabled: true,
-        concurrencyLane: EndpointConcurrencyLane.media,
         retryUnsafeMethods: false,
         allowPrefetch: runtimePolicy.allowImagePrefetch,
       ),
@@ -156,7 +139,6 @@ class EndpointPolicyResolver {
         retryMaxAttempts: 2,
         retryableStatuses: const {408, 429, 500, 502, 503, 504},
         dedupEnabled: true,
-        concurrencyLane: EndpointConcurrencyLane.search,
         retryUnsafeMethods: false,
         allowPrefetch: true,
       ),
@@ -167,7 +149,6 @@ class EndpointPolicyResolver {
         retryMaxAttempts: 1,
         retryableStatuses: const {408, 429, 500, 502, 503, 504},
         dedupEnabled: false,
-        concurrencyLane: EndpointConcurrencyLane.auth,
         retryUnsafeMethods: false,
         allowPrefetch: false,
       ),
@@ -178,7 +159,6 @@ class EndpointPolicyResolver {
         retryMaxAttempts: 0,
         retryableStatuses: const {408, 429, 500, 502, 503, 504},
         dedupEnabled: false,
-        concurrencyLane: EndpointConcurrencyLane.mutation,
         retryUnsafeMethods: false,
         allowPrefetch: false,
       ),
@@ -189,7 +169,6 @@ class EndpointPolicyResolver {
         retryMaxAttempts: 2,
         retryableStatuses: const {408, 429, 500, 502, 503, 504},
         dedupEnabled: false,
-        concurrencyLane: EndpointConcurrencyLane.download,
         retryUnsafeMethods: false,
         allowPrefetch: false,
       ),
@@ -200,7 +179,6 @@ class EndpointPolicyResolver {
     if (runtimePolicy.profile == PerformanceProfile.background) {
       return policy.copyWith(
         retryMaxAttempts: policy.retryMaxAttempts.clamp(0, 1),
-        concurrencyLane: EndpointConcurrencyLane.background,
         allowPrefetch: false,
         allowStaleCache: true,
       );

@@ -58,7 +58,7 @@ mixin _DynamicRepositoryCommentApis on _DynamicRepositoryAccess {
     int page = 1,
     String? referer,
   }) {
-    return requestApiResult(
+    return _requestExecutor.runApiDirect(
       () => api.getComments(
         oid: oid,
         type: type,
@@ -76,7 +76,7 @@ mixin _DynamicRepositoryCommentApis on _DynamicRepositoryAccess {
     int? next,
   }) {
     final referer = article.url;
-    return requestApiResult(
+    return _requestExecutor.runApiDirect(
       () => api.getArticleComments(
         oid: article.commentOid,
         mode: 3,
@@ -111,7 +111,7 @@ mixin _DynamicRepositoryCommentApis on _DynamicRepositoryAccess {
     required String message,
     String? referer,
   }) {
-    return requestApiResult(
+    return _requestExecutor.runApiDirect(
       () => api.addReply(
         oid: oid,
         type: type,
@@ -145,7 +145,7 @@ mixin _DynamicRepositoryCommentApis on _DynamicRepositoryAccess {
     required bool isLiked,
     String? referer,
   }) {
-    return requestVoidResult(
+    return _requestExecutor.runUnit(
       () => api.actionComment(
         oid: oid,
         type: type,
