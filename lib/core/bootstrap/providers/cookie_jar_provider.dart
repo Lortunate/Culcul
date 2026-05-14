@@ -3,17 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'cookie_jar_provider.g.dart';
 
-CookieJar? _cookieJarInstance;
-
-void initializeCookieJar(CookieJar cookieJar) {
-  _cookieJarInstance = cookieJar;
-}
-
 @Riverpod(keepAlive: true)
 CookieJar cookieJar(Ref ref) {
-  final cookieJar = _cookieJarInstance;
-  if (cookieJar == null) {
-    throw StateError('cookieJarProvider not initialized');
-  }
-  return cookieJar;
+  throw StateError('cookieJarProvider must be overridden at app startup');
 }

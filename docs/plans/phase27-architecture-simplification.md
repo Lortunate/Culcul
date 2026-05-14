@@ -79,31 +79,31 @@ Target: Application layer files that are pure delegation with no business logic.
 
 Target: Merge `BootstrapCoordinator` + `AppRuntime` + 3 mutable-global providers into a single flat bootstrap.
 
-- [ ] Run impact analysis on `BootstrapCoordinator`, `AppRuntime`, `initializeCookieJar`, `initializeCacheStore`, `initializeStorage`.
-- [ ] Modify `AppBootstrap.initialize()` to return `List<Override>` directly (cookie jar, cache store, shared prefs as `overrideWithValue`).
-- [ ] Update `main()` to use the returned overrides in `ProviderScope`.
-- [ ] Delete `lib/app/runtime/bootstrap_coordinator.dart`.
-- [ ] Delete `lib/app/runtime/app_runtime.dart`.
-- [ ] Simplify `lib/core/bootstrap/providers/cookie_jar_provider.dart` — remove mutable global, keep only the provider declaration.
-- [ ] Simplify `lib/core/bootstrap/providers/cache_store_provider.dart` — same.
-- [ ] Simplify `lib/core/bootstrap/providers/storage_provider.dart` — same.
-- [ ] Ensure initialization order preserved: SharedPrefs → CookieJar → CacheStore.
-- [ ] Run `flutter analyze`.
-- [ ] Verify app starts correctly.
+- [x] Run impact analysis on `BootstrapCoordinator`, `AppRuntime`, `initializeCookieJar`, `initializeCacheStore`, `initializeStorage`.
+- [x] Modify `AppBootstrap.initialize()` to return `List<Override>` directly (cookie jar, cache store, shared prefs as `overrideWithValue`).
+- [x] Update `main()` to use the returned overrides in `ProviderScope`.
+- [x] Delete `lib/app/runtime/bootstrap_coordinator.dart`.
+- [x] Delete `lib/app/runtime/app_runtime.dart`.
+- [x] Simplify `lib/core/bootstrap/providers/cookie_jar_provider.dart` — remove mutable global, keep only the provider declaration.
+- [x] Simplify `lib/core/bootstrap/providers/cache_store_provider.dart` — same.
+- [x] Simplify `lib/core/bootstrap/providers/storage_provider.dart` — same.
+- [x] Ensure initialization order preserved: SharedPrefs → CookieJar → CacheStore.
+- [x] Run `flutter analyze`.
+- [x] Verify app starts correctly.
 
 ## Task 6: Simplify DeferredAppInitController
 
-- [ ] Run impact analysis on `DeferredAppInitController`.
-- [ ] If only one deferred task (MediaKit init): replace with `addPostFrameCallback` in `main()` or `AppBootstrap`.
-- [ ] If `ensureMediaKitInitialized()` is called elsewhere: keep a minimal future-based guard (≤15 lines).
-- [ ] Delete or reduce `lib/app/bootstrap/deferred_app_init.dart`.
-- [ ] Run `flutter analyze`.
+- [x] Run impact analysis on `DeferredAppInitController`.
+- [x] If only one deferred task (MediaKit init): replace with `addPostFrameCallback` in `main()` or `AppBootstrap`.
+- [x] If `ensureMediaKitInitialized()` is called elsewhere: keep a minimal future-based guard (≤15 lines).
+- [x] Delete or reduce `lib/app/bootstrap/deferred_app_init.dart`.
+- [x] Run `flutter analyze`.
 
 ## Task 7: Remove/Gate verifyRootOverrides
 
-- [ ] Run impact analysis on `verifyRootOverrides`.
-- [ ] Wrap in `if (kDebugMode)` or remove entirely.
-- [ ] Run `flutter analyze`.
+- [x] Run impact analysis on `verifyRootOverrides`.
+- [x] Wrap in `if (kDebugMode)` or remove entirely.
+- [x] Run `flutter analyze`.
 
 ## Task 8: Clean Up Redundant Dependencies
 
