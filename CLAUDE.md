@@ -42,12 +42,12 @@ This project is indexed by GitNexus as **Culcul** (2215 symbols, 3012 relationsh
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 30 completed — Architecture Optimization)
+## Architecture (Phase 31 active — Architecture Excellence)
 
-`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–30 completed structural cleanup, barrel elimination, freezed/@riverpod migration, model deduplication, abstract repo removal, dead weight removal, provider/bootstrap cleanup, runtime/network consolidation, source-of-truth cleanup, feature public surface reduction, thin domain collapse, generated/source audit separation, router alias cleanup, dependency/config source-of-truth cleanup, application seam hardening, bootstrap flattening, dead infrastructure removal, notification helper decomposition, alias-provider cleanup, codegen modernization, cross-feature import cleanup, provider tail cleanup, duplicate-name cleanup, placeholder/no-op classification, dependency source-of-truth audit, semantic seam classification, codegen source-of-truth cleanup, app runtime seam alignment, no-op workflow cleanup, and focused large-file decomposition.
+`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–30 completed structural cleanup, barrel elimination, freezed/@riverpod migration, model deduplication, abstract repo removal, dead weight removal, provider/bootstrap cleanup, runtime/network consolidation, source-of-truth cleanup, feature public surface reduction, thin domain collapse, generated/source audit separation, router alias cleanup, dependency/config source-of-truth cleanup, application seam hardening, bootstrap flattening, dead infrastructure removal, notification helper decomposition, alias-provider cleanup, codegen modernization, cross-feature import cleanup, provider tail cleanup, duplicate-name cleanup, placeholder/no-op classification, dependency source-of-truth audit, semantic seam classification, codegen source-of-truth cleanup, app runtime seam alignment, no-op workflow cleanup, and focused large-file decomposition. Phase 31 continues with semantic maintainability: presentation/data boundary cleanup, one-source contracts, guard baselines, and high-value decomposition.
 
-Active spec: none. Create the next phase spec before new architecture work.
-Active plan: none. Create the next phase plan before new architecture work.
+Active spec: `docs/specs/2026-05-16-phase31-architecture-excellence.md`
+Active plan: `docs/plans/2026-05-16-phase31-architecture-excellence.md`
 Architecture guide: `docs/architecture/architecture-guide.md`
 Archived: Phase 22–30 specs/plans in `docs/specs/archive/` and `docs/plans/archive/`
 

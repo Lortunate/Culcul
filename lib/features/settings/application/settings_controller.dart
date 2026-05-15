@@ -1,10 +1,10 @@
 import 'package:culcul/core/utils/format_extensions.dart';
-import 'package:culcul/features/settings/domain/entities/app_theme_preference.dart';
 import 'package:culcul/features/settings/data/settings_repository_impl.dart';
+import 'package:culcul/features/settings/domain/entities/app_theme_preference.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'settings_view_model.g.dart';
+part 'settings_controller.g.dart';
 
 @Riverpod(keepAlive: true)
 class AppThemeMode extends _$AppThemeMode {

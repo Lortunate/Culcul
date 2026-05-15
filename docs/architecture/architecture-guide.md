@@ -1,11 +1,11 @@
 # Culcul Architecture Guide
 
-Active phase: none. Last completed phase: Phase 30 Architecture Optimization.
+Active phase: Phase 31 Architecture Excellence. Last completed phase: Phase 30 Architecture Optimization.
 
 Authoritative docs:
 
-- Active spec: none.
-- Active plan: none.
+- Active spec: `docs/specs/2026-05-16-phase31-architecture-excellence.md`
+- Active plan: `docs/plans/2026-05-16-phase31-architecture-excellence.md`
 - Completed spec: `docs/specs/archive/2026-05-15-phase30-architecture-optimization.completed.md`
 - Completed plan: `docs/plans/archive/2026-05-15-phase30-architecture-optimization.completed.md`
 - Completed spec: `docs/specs/archive/2026-05-15-phase29-architecture-deep-cleanup.completed.md`
