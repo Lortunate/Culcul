@@ -1,9 +1,13 @@
 # Culcul Architecture Guide
 
-Active phase: none. Last completed phase: Phase 29 Architecture Deep Cleanup.
+Active phase: none. Last completed phase: Phase 30 Architecture Optimization.
 
 Authoritative docs:
 
+- Active spec: none.
+- Active plan: none.
+- Completed spec: `docs/specs/archive/2026-05-15-phase30-architecture-optimization.completed.md`
+- Completed plan: `docs/plans/archive/2026-05-15-phase30-architecture-optimization.completed.md`
 - Completed spec: `docs/specs/archive/2026-05-15-phase29-architecture-deep-cleanup.completed.md`
 - Completed plan: `docs/plans/archive/2026-05-15-phase29-architecture-deep-cleanup.completed.md`
 
@@ -26,7 +30,7 @@ Authoritative docs:
 - A feature must not import another feature's `data/**` or `presentation/**`.
 - Every shared model has one definition in `core/contracts/`.
 - DTOs belong in `data/dtos/`; domain entities exist only when they carry business behavior.
-- Feature public seams must be narrow; do not export data internals or declare executable symbols inside `feature_scope.dart`.
+- Feature public seams must be narrow; Phase 30 baseline has 0 `feature_scope.dart` files, so do not reintroduce them without a concrete approved runtime seam.
 - New or rewritten providers use Riverpod generated `@riverpod`.
 - Mutable or async state uses generated `Notifier`/`AsyncNotifier`.
 - `AppError` is the single app error hierarchy.
@@ -37,12 +41,11 @@ Authoritative docs:
 ## Approved Public Seams
 
 - `route_entry.dart`
-- `feature_scope.dart`
 - `<feature>.dart` when it exports a real feature API
 - `lib/core/contracts/core_contracts.dart`
 - `lib/ui/ui.dart`
 
-Avoid new barrel files. Import source files directly unless the file is one of the approved public seams. `feature_scope.dart` must be export-only and source-owned: move providers, functions, typedefs, and command logic into the owning application or presentation file, then export that source.
+Avoid new barrel files. Import source files directly unless the file is one of the approved public seams. `feature_scope.dart` is retired in the current baseline; reintroduce it only if a later plan names a concrete runtime composition seam.
 
 ## Modernization Defaults
 
@@ -81,6 +84,19 @@ Avoid new barrel files. Import source files directly unless the file is one of t
 - `NotificationMessagePersistence` extracted as shared persistence service.
 - `notification_repository_impl.message_send_helpers.dart` mixin deleted.
 - Circular dependency in notification data layer broken via callback injection (`SyncMessagesHeadFn`).
+
+### Phase 30 Completion Baseline
+
+- `lib/` source Dart files: 640.
+- `lib/` generated Dart files: 241.
+- `lib/` total Dart files: 881.
+- cross-feature private `data/**` or `presentation/**` imports: 0.
+- cross-feature `domain/**` or `application/**` imports classified: 27.
+- cross-feature application imports moved behind feature public APIs: 3.
+- Phase 30 cross-feature application/domain inventory: `docs/architecture/phase30-application-seam-inventory.md`.
+- Phase 30 presentation data/proto inventory: `docs/architecture/phase30-presentation-data-inventory.md` (118 same-feature feature-data/proto hits; classified, not banned).
+- `feature_scope.dart` files: 0.
+- Completed focus: semantic seam cleanup, domain/data leak cleanup, presentation data/proto classification, app runtime seam alignment, codegen source-of-truth cleanup, large-file decomposition, no-op workflow cleanup.
 
 ### Phase 27 Baseline (archived)
 

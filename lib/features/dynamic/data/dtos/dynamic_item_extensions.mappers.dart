@@ -1,4 +1,4 @@
-part of 'dynamic_extension.dart';
+part of 'dynamic_item_extensions.dart';
 
 DynamicVideoContent? _dynamicMapVideoContent(ModuleMajor? major) {
   if (major == null) return null;

@@ -34,4 +34,38 @@ void main() {
           '${offenders.join('\n')}',
     );
   });
+
+  test('domain entities must not import feature data DTOs', () {
+    final offenders = <String>[];
+    final domainEntityPattern = RegExp(r'^lib/features/[^/]+/domain/entities/');
+    final featureDataDtoPattern = RegExp(r'^lib/features/[^/]+/data/dtos/');
+
+    for (final file in sourceDartFiles('lib')) {
+      final importerPath = normalizePath(file.path);
+      if (!domainEntityPattern.hasMatch(importerPath)) {
+        continue;
+      }
+
+      for (final import in dartImports(file)) {
+        final targetPath = import.resolvedPath;
+        if (targetPath == null || !featureDataDtoPattern.hasMatch(targetPath)) {
+          continue;
+        }
+
+        offenders.add(
+          '${formatLocation(import.importerPath, import.lineNumber)} '
+          'imports ${import.uri} -> $targetPath',
+        );
+      }
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'Domain entities must not import feature data DTOs. Move response-shape '
+          'mapping to data/application instead:\n'
+          '${offenders.join('\n')}',
+    );
+  });
 }

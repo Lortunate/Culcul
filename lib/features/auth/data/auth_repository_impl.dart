@@ -19,6 +19,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'auth_repository_impl.g.dart';
+part 'auth_repository_impl.crypto.dart';
 part 'auth_repository_impl.helpers.dart';
 part 'auth_repository_impl.session.dart';
 part 'auth_repository_impl.flows.dart';

@@ -1,4 +1,4 @@
-part of 'dynamic_extension.dart';
+part of 'dynamic_item_extensions.dart';
 
 extension DynamicItemContentExtension on DynamicItem {
   String? get description => modules.moduleDynamic.desc?.text;

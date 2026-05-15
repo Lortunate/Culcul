@@ -94,9 +94,9 @@ mixin _ArticleDetailViewModelActions on _$ArticleDetailViewModel {
     );
   }
 
-  Future<ArticleDetailCommentActionResult> submitComment(String message) async {
+  Future<ArticleDetailCommentActionResult?> submitComment(String message) async {
     if (state.isSendingComment) {
-      return const ArticleDetailCommentActionResult.noop();
+      return null;
     }
 
     state = state.copyWith(isSendingComment: true);
@@ -106,6 +106,9 @@ mixin _ArticleDetailViewModelActions on _$ArticleDetailViewModel {
       rawMessage: message,
     );
     state = state.copyWith(isSendingComment: false);
+    if (result == null) {
+      return null;
+    }
     if (!result.submitted) {
       return result;
     }
@@ -113,7 +116,7 @@ mixin _ArticleDetailViewModelActions on _$ArticleDetailViewModel {
     return result;
   }
 
-  Future<ArticleDetailCommentActionResult> submitReply(
+  Future<ArticleDetailCommentActionResult?> submitReply(
     CommentItem item,
     String message,
   ) async {
@@ -123,6 +126,9 @@ mixin _ArticleDetailViewModelActions on _$ArticleDetailViewModel {
       item: item,
       message: message,
     );
+    if (result == null) {
+      return null;
+    }
     if (!result.submitted) {
       return result;
     }

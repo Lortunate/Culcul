@@ -1,8 +1,8 @@
-import 'package:culcul/features/to_view/application/watch_later_port_provider.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/services/media_service.dart';
 import 'package:culcul/core/utils/id_utils.dart';
+import 'package:culcul/features/to_view/to_view.dart';
 import 'package:culcul/features/video/video_action_sheet_entry.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -28,7 +28,7 @@ Future<void> showHomeVideoActionsBottomSheet(
         return;
       }
 
-      await ref.read(watchLaterPortProvider).addToWatchLater(aid);
+      await readWatchLaterPort(ref).addToWatchLater(aid);
       if (!context.mounted) return;
       context.showAppFeedback(t.home.video_more.added_to_watch_later);
     } catch (e) {

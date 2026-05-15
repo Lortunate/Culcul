@@ -1,4 +1,4 @@
-part of 'dynamic_extension.dart';
+part of 'dynamic_item_extensions.dart';
 
 extension DynamicItemIdentityExtension on DynamicItem {
   String get id => idStr;

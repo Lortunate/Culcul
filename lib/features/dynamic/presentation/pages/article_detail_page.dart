@@ -79,6 +79,8 @@ class ArticleDetailPage extends HookConsumerWidget {
 
     Future<void> submitComment() async {
       final result = await notifier.submitComment(commentController.text);
+      if (result == null) return;
+
       final errorMessage = result.commentsDisabled
           ? t.video.comment.empty
           : result.errorMessage;
@@ -96,6 +98,8 @@ class ArticleDetailPage extends HookConsumerWidget {
 
     Future<void> submitReply(CommentItem item, String message) async {
       final result = await notifier.submitReply(item, message);
+      if (result == null) return;
+
       final errorMessage = result.commentsDisabled
           ? t.video.comment.empty
           : result.errorMessage;

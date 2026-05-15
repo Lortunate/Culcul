@@ -28,15 +28,6 @@ class ArticleDetailCommentActionResult {
     required this.errorMessage,
   });
 
-  const ArticleDetailCommentActionResult.noop()
-    : this._(
-        submitted: false,
-        clearComposer: false,
-        unfocusComposer: false,
-        commentsDisabled: false,
-        errorMessage: null,
-      );
-
   const ArticleDetailCommentActionResult.submitted({
     bool clearComposer = false,
     bool unfocusComposer = false,
@@ -72,13 +63,13 @@ class ArticleDetailCommentWorkflow {
 
   const ArticleDetailCommentWorkflow(this._repository);
 
-  Future<ArticleDetailCommentActionResult> submitComment({
+  Future<ArticleDetailCommentActionResult?> submitComment({
     required ArticleDetailData? article,
     required bool commentsEnabled,
     required String rawMessage,
   }) async {
     if (article == null) {
-      return const ArticleDetailCommentActionResult.noop();
+      return null;
     }
     if (!commentsEnabled) {
       return const ArticleDetailCommentActionResult.commentsDisabled();
@@ -86,7 +77,7 @@ class ArticleDetailCommentWorkflow {
 
     final message = rawMessage.trim();
     if (message.isEmpty) {
-      return const ArticleDetailCommentActionResult.noop();
+      return null;
     }
 
     final result = await _repository.addArticleCommentReply(
@@ -105,14 +96,14 @@ class ArticleDetailCommentWorkflow {
     );
   }
 
-  Future<ArticleDetailCommentActionResult> submitReply({
+  Future<ArticleDetailCommentActionResult?> submitReply({
     required ArticleDetailData? article,
     required bool commentsEnabled,
     required CommentItem item,
     required String message,
   }) async {
     if (article == null) {
-      return const ArticleDetailCommentActionResult.noop();
+      return null;
     }
     if (!commentsEnabled) {
       return const ArticleDetailCommentActionResult.commentsDisabled();
@@ -168,7 +159,7 @@ class PublishDynamicWorkflow {
     final csrfResult = await _repository.getPublishCsrf();
     final csrf = csrfResult.dataOrNull;
     if (csrf == null || csrf.isEmpty) {
-      return Failure(csrfResult.errorOrNull ?? AppError.auth('Missing csrf token'));
+      return Failure(csrfResult.errorOrNull ?? const AppError.auth('Missing csrf token'));
     }
     return Success(csrf);
   }

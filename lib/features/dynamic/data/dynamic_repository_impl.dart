@@ -13,7 +13,7 @@ import 'package:culcul/features/dynamic/data/article_parsing/article_detail_pars
 import 'package:culcul/features/dynamic/data/dynamic_api.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
-import 'package:culcul/features/dynamic/domain/entities/dynamic_extension.dart';
+import 'package:culcul/features/dynamic/data/dtos/dynamic_item_extensions.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_publish_command.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_queries.dart';

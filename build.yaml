@@ -20,7 +20,8 @@ targets:
       retrofit_generator:
         generate_for:
           include:
-            - lib/**
+            - lib/core/data/network/*_api.dart
+            - lib/features/**/data/*_api.dart
       go_router_builder:
         generate_for:
           include:

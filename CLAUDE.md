@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **Culcul** (2214 symbols, 3011 relationships, 27 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **Culcul** (2215 symbols, 3012 relationships, 27 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -42,20 +42,20 @@ This project is indexed by GitNexus as **Culcul** (2214 symbols, 3011 relationsh
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 29 completed — Architecture Deep Cleanup)
+## Architecture (Phase 30 completed — Architecture Optimization)
 
-`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–29 completed structural cleanup, barrel elimination, freezed/@riverpod migration, model deduplication, abstract repo removal, dead weight removal, provider/bootstrap cleanup, runtime/network consolidation, source-of-truth cleanup, feature public surface reduction, thin domain collapse, generated/source audit separation, router alias cleanup, dependency/config source-of-truth cleanup, application seam hardening, bootstrap flattening, dead infrastructure removal, notification helper decomposition, alias-provider cleanup, codegen modernization, cross-feature import cleanup, provider tail cleanup, duplicate-name cleanup, placeholder/no-op classification, and dependency source-of-truth audit.
+`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–30 completed structural cleanup, barrel elimination, freezed/@riverpod migration, model deduplication, abstract repo removal, dead weight removal, provider/bootstrap cleanup, runtime/network consolidation, source-of-truth cleanup, feature public surface reduction, thin domain collapse, generated/source audit separation, router alias cleanup, dependency/config source-of-truth cleanup, application seam hardening, bootstrap flattening, dead infrastructure removal, notification helper decomposition, alias-provider cleanup, codegen modernization, cross-feature import cleanup, provider tail cleanup, duplicate-name cleanup, placeholder/no-op classification, dependency source-of-truth audit, semantic seam classification, codegen source-of-truth cleanup, app runtime seam alignment, no-op workflow cleanup, and focused large-file decomposition.
 
 Active spec: none. Create the next phase spec before new architecture work.
 Active plan: none. Create the next phase plan before new architecture work.
 Architecture guide: `docs/architecture/architecture-guide.md`
-Archived: Phase 22–29 specs/plans in `docs/specs/archive/` and `docs/plans/archive/`
+Archived: Phase 22–30 specs/plans in `docs/specs/archive/` and `docs/plans/archive/`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`
 - Features must NOT import another feature's `presentation/**` or `data/**` internals
-- `route_entry.dart` is the router-facing seam; `feature_scope.dart` and `<feature>.dart` are the approved runtime/composition seams
-- `feature_scope.dart` exports only runtime composition needed outside the feature; do not export data internals, and do not define executable symbols there
+- `route_entry.dart` is the router-facing seam; `<feature>.dart` is allowed only when it exports a real feature API
+- `feature_scope.dart` is retired in the Phase 30 baseline (0 files); do not reintroduce it without a concrete approved runtime seam
 - DTOs belong in `data/dtos/`, never in `domain/`
 - Every shared model has exactly ONE definition in `core/contracts/`
 - All domain entities and DTOs use freezed — no hand-written `copyWith` or equality
