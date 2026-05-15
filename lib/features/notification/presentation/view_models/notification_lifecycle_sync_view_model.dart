@@ -46,7 +46,7 @@ class NotificationLifecycleSync extends _$NotificationLifecycleSync
         ConcurrentTask<Object?>(
           label: 'unread',
           critical: false,
-          fallback: (_) => null,
+          fallback: _ignoreSyncFailure,
           task: () async {
             await _runSyncTask(repository.syncUnreadCount(ownerUid: ownerUid));
             return null;
@@ -55,7 +55,7 @@ class NotificationLifecycleSync extends _$NotificationLifecycleSync
         ConcurrentTask<Object?>(
           label: 'sessions',
           critical: false,
-          fallback: (_) => null,
+          fallback: _ignoreSyncFailure,
           task: () async {
             await _runSyncTask(repository.syncSessions(ownerUid: ownerUid));
             return null;
@@ -64,7 +64,7 @@ class NotificationLifecycleSync extends _$NotificationLifecycleSync
         ConcurrentTask<Object?>(
           label: 'feed_reply',
           critical: false,
-          fallback: (_) => null,
+          fallback: _ignoreSyncFailure,
           task: () async {
             await _runSyncTask(
               repository.syncFeedHead(
@@ -78,7 +78,7 @@ class NotificationLifecycleSync extends _$NotificationLifecycleSync
         ConcurrentTask<Object?>(
           label: 'feed_at',
           critical: false,
-          fallback: (_) => null,
+          fallback: _ignoreSyncFailure,
           task: () async {
             await _runSyncTask(
               repository.syncFeedHead(ownerUid: ownerUid, type: NotificationFeedType.at),
@@ -89,7 +89,7 @@ class NotificationLifecycleSync extends _$NotificationLifecycleSync
         ConcurrentTask<Object?>(
           label: 'feed_like',
           critical: false,
-          fallback: (_) => null,
+          fallback: _ignoreSyncFailure,
           task: () async {
             await _runSyncTask(
               repository.syncFeedHead(
@@ -111,5 +111,9 @@ class NotificationLifecycleSync extends _$NotificationLifecycleSync
     if (result.errorOrNull case final error?) {
       debugPrint('NotificationLifecycleSync ignored error: ${error.message}');
     }
+  }
+
+  Object? _ignoreSyncFailure(Object _) {
+    return null;
   }
 }

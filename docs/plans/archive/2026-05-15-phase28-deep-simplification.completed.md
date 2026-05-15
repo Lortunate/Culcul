@@ -1,6 +1,6 @@
 # Phase 28 Deep Simplification Plan
 
-Spec: `docs/specs/phase28-deep-simplification.md`
+Spec: `docs/specs/archive/2026-05-15-phase28-deep-simplification.completed.md`
 
 ## Ground Rules
 

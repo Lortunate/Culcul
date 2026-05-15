@@ -1,7 +1,7 @@
 import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_extension.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_view_model.dart';
-import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_card.dart';
+import 'package:culcul/features/dynamic/dynamic_post_card.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/recently_followed_widget.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/assemblies/feed_cards/video_list_skeleton.dart';

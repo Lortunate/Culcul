@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/features/dynamic/presentation/view_models/topic_search_view_model.dart';
+import 'package:culcul/features/search/application/search_application_providers.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/media/app_network_image.dart';
 import 'package:flutter/material.dart';
@@ -21,7 +21,7 @@ class TopicPicker extends HookConsumerWidget {
     final searchKeyword = useState('');
     final debounceTimer = useRef<Timer?>(null);
     final searchResultAsync = ref.watch(
-      topicSearchViewModelProvider(searchKeyword.value),
+      topicSearchProvider(searchKeyword.value),
     );
     final topics = searchResultAsync.asData?.value ?? const [];
 

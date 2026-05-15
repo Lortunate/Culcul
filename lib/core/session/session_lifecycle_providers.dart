@@ -1,11 +1,14 @@
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'session_lifecycle_providers.g.dart';
 
 abstract interface class SessionCookieRefresher {
   Future<void> refreshCookies();
 }
 
-final sessionCookieRefresherProvider = Provider<SessionCookieRefresher>((ref) {
+@Riverpod(keepAlive: true)
+SessionCookieRefresher sessionCookieRefresher(Ref ref) {
   throw StateError(
     'sessionCookieRefresherProvider not initialized',
   );
-});
+}

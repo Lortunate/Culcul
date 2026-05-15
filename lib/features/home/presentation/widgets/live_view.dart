@@ -8,7 +8,7 @@ import 'package:culcul/core/perf/performance_policy.dart';
 import 'package:culcul/core/runtime/runtime_performance_policy.dart';
 import 'package:culcul/core/runtime/runtime_performance_policy_provider.dart';
 import 'package:culcul/core/contracts/live_room_summary_contract.dart';
-import 'package:culcul/features/live/presentation/view_models/live_recommend_view_model.dart';
+import 'package:culcul/features/live/application/live_recommend_provider.dart';
 import 'package:culcul/features/home/presentation/widgets/live_card_skeleton.dart';
 import 'package:culcul/features/home/presentation/widgets/home_feed_view_utils.dart';
 import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';

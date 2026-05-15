@@ -2,7 +2,7 @@ import 'package:culcul/features/dynamic/domain/entities/dynamic_extension.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/topic_dynamic_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/feedback/app_empty_state_widget.dart';
-import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_card.dart';
+import 'package:culcul/features/dynamic/dynamic_post_card.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/layout/refresh_header_footer.dart';
 import 'package:culcul/ui/assemblies/feed_cards/video_list_skeleton.dart';

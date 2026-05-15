@@ -4,7 +4,7 @@ import 'package:culcul/features/live/data/live_repository_impl.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'live_recommend_view_model.g.dart';
+part 'live_recommend_provider.g.dart';
 
 @riverpod
 class LiveRecommend extends _$LiveRecommend

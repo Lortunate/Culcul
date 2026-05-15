@@ -40,7 +40,7 @@ class NotificationPage extends ConsumerWidget {
               children: [
                 NotificationCategoryGrid(),
                 Divider(height: 1),
-                Expanded(child: PrivateSessionList()),
+                Expanded(child: PrivateSessionListView()),
               ],
             )
           : GuestView(

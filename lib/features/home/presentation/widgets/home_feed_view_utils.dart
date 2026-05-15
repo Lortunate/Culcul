@@ -38,7 +38,7 @@ double resolveHomeFeedCacheExtent(
     value *= tuning.reducedEffectsFactor;
   }
 
-  return value.clamp(tuning.minExtent, base).toDouble();
+  return value.clamp(tuning.minExtent, base);
 }
 
 void prefetchHomeFeedImages(

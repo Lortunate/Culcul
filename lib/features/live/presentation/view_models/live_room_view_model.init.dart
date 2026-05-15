@@ -104,7 +104,7 @@ mixin _LiveRoomControllerInitMixin
         ConcurrentTask<Object?>(
           label: 'history_danmaku',
           critical: false,
-          fallback: (_) => null,
+          fallback: _ignoreOptionalFailure,
           task: () async {
             await _fetchHistoryDanmaku(info.roomId);
             return null;
@@ -113,7 +113,7 @@ mixin _LiveRoomControllerInitMixin
         ConcurrentTask<Object?>(
           label: 'anchor_info',
           critical: false,
-          fallback: (_) => null,
+          fallback: _ignoreOptionalFailure,
           task: () async {
             await _fetchAnchorInfo(info.uid);
             return null;
@@ -122,7 +122,7 @@ mixin _LiveRoomControllerInitMixin
         ConcurrentTask<Object?>(
           label: 'live_anchor_info',
           critical: false,
-          fallback: (_) => null,
+          fallback: _ignoreOptionalFailure,
           task: () async {
             await _fetchLiveAnchorInfo(info.uid);
             return null;
@@ -131,7 +131,7 @@ mixin _LiveRoomControllerInitMixin
         ConcurrentTask<Object?>(
           label: 'gold_rank',
           critical: false,
-          fallback: (_) => null,
+          fallback: _ignoreOptionalFailure,
           task: () async {
             await _fetchGoldRank(info.roomId, info.uid);
             return null;
@@ -140,7 +140,7 @@ mixin _LiveRoomControllerInitMixin
         ConcurrentTask<Object?>(
           label: 'guard_list',
           critical: false,
-          fallback: (_) => null,
+          fallback: _ignoreOptionalFailure,
           task: () async {
             await _fetchGuardList(info.roomId, info.uid);
             return null;
@@ -149,7 +149,7 @@ mixin _LiveRoomControllerInitMixin
         ConcurrentTask<Object?>(
           label: 'connect_danmaku',
           critical: false,
-          fallback: (_) => null,
+          fallback: _ignoreOptionalFailure,
           task: () async {
             await _connectDanmaku(info.roomId);
             return null;
@@ -164,5 +164,9 @@ mixin _LiveRoomControllerInitMixin
       'roomId': info.roomId,
       'ms': optionalRequestStopwatch.elapsedMilliseconds,
     });
+  }
+
+  Object? _ignoreOptionalFailure(Object _) {
+    return null;
   }
 }

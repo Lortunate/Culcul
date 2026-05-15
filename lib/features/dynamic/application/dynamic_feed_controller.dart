@@ -1,7 +1,7 @@
+import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
 import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_extension.dart';
-import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod/riverpod.dart';
 
 mixin DynamicFeedController {
   Ref get ref;

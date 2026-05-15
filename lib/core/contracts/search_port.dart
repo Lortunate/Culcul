@@ -5,5 +5,7 @@ import 'package:culcul/core/result/result.dart';
 
 /// Feature-neutral runtime port for cross-feature search access.
 abstract interface class SearchPort {
+  Future<Result<String?, AppError>> getDefaultSearch({bool forceRefresh = false});
+
   Future<Result<SearchResultPage, AppError>> search({required SearchQuery query});
 }

@@ -17,6 +17,11 @@ class RecentlyFollowed extends _$RecentlyFollowed {
     final result = await ref
         .read(relationPortProvider)
         .getFollowings(int.parse(session.uid));
-    return result.when(success: (users) => users.take(20).toList(), failure: (_) => []);
+    return result.when(
+      success: (users) => users.take(20).toList(),
+      failure: (_) {
+        return <ProfileRelationUser>[];
+      },
+    );
   }
 }

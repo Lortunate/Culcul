@@ -201,9 +201,11 @@ Map<String, dynamic>? _asMapOrNull(Object? value) {
 }
 
 int? _asIntOrNull(Object? value) {
-  return switch (value) {
-    final int v => v,
-    final num v => v.toInt(),
-    _ => null,
-  };
+  if (value is int) {
+    return value;
+  }
+  if (value is num) {
+    return value.toInt();
+  }
+  return null;
 }

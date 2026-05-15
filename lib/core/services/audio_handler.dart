@@ -6,16 +6,19 @@ import 'package:audio_session/audio_session.dart';
 import 'package:culcul/app/bootstrap/deferred_app_init.dart';
 import 'package:culcul/core/services/audio_playback_state_gate.dart';
 import 'package:flutter/foundation.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final audioHandlerProvider = Provider<CilixiliAudioHandler>((ref) {
+part 'audio_handler.g.dart';
+
+@Riverpod(keepAlive: true)
+CilixiliAudioHandler audioHandler(Ref ref) {
   DeferredAppInitController.instance.ensureMediaKitInitialized();
   final handler = CilixiliAudioHandler.shared;
   unawaited(handler.initializeAudioServiceIfNeeded());
   ref.onDispose(handler.dispose);
   return handler;
-});
+}
 
 class CilixiliAudioHandler extends BaseAudioHandler {
   static const String _loggerName = 'audio.performance';

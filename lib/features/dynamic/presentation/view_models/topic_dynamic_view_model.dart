@@ -2,7 +2,7 @@ import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_queries.dart';
 import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
-import 'package:culcul/features/dynamic/presentation/view_models/dynamic_feed_view_model.dart';
+import 'package:culcul/features/dynamic/application/dynamic_feed_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'topic_dynamic_view_model.g.dart';

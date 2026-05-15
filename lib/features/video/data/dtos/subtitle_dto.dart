@@ -4,11 +4,12 @@ part 'subtitle_dto.freezed.dart';
 part 'subtitle_dto.g.dart';
 
 @freezed
-sealed class VideoSubtitle with _$VideoSubtitle {
-  const factory VideoSubtitle({@Default([]) List<SubtitleInfo> list}) = _VideoSubtitle;
+sealed class VideoSubtitleDto with _$VideoSubtitleDto {
+  const factory VideoSubtitleDto({@Default([]) List<SubtitleInfo> list}) =
+      _VideoSubtitleDto;
 
-  factory VideoSubtitle.fromJson(Map<String, dynamic> json) =>
-      _$VideoSubtitleFromJson(json);
+  factory VideoSubtitleDto.fromJson(Map<String, dynamic> json) =>
+      _$VideoSubtitleDtoFromJson(json);
 }
 
 @freezed

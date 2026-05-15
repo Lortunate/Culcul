@@ -24,61 +24,6 @@ Future<List<String>> searchSuggestions(Ref ref, String term) async {
 }
 
 @Riverpod(keepAlive: true)
-class DefaultSearch extends _$DefaultSearch {
-  @override
-  Future<String?> build() async {
-    final stopwatch = Stopwatch()..start();
-    final hasCachedValue = await _hasCachedValue(ApiConstants.searchDefaultUrl);
-    final result = await ref.watch(searchRepositoryProvider).getDefaultSearch();
-    final value = result.dataOrNull;
-    DevLogger.log('feature', 'search.default_hint initial_data', <String, Object?>{
-      'cache_present': hasCachedValue,
-      'has_value': value != null,
-      'ms': stopwatch.elapsedMilliseconds,
-    });
-    if (hasCachedValue && value != null) {
-      unawaited(Future<void>.microtask(_refreshSilently));
-    }
-    return value;
-  }
-
-  Future<void> _refreshSilently() async {
-    final previous = state.asData?.value;
-    if (previous == null || state.isLoading) {
-      return;
-    }
-
-    final stopwatch = Stopwatch()..start();
-    final result = await ref
-        .read(searchRepositoryProvider)
-        .getDefaultSearch(forceRefresh: true);
-    if (!ref.mounted) {
-      return;
-    }
-
-    final next = result.dataOrNull;
-    if (next == null || next == previous) {
-      DevLogger.log(
-        'feature',
-        'search.default_hint silent_refresh_skip',
-        <String, Object?>{'has_value': next != null, 'ms': stopwatch.elapsedMilliseconds},
-      );
-      return;
-    }
-    DevLogger.log(
-      'feature',
-      'search.default_hint silent_refresh_apply',
-      <String, Object?>{'ms': stopwatch.elapsedMilliseconds},
-    );
-    state = AsyncData(next);
-  }
-
-  Future<bool> _hasCachedValue(String path) {
-    return ref.read(cacheStoreProvider).exists('api_cache_$path');
-  }
-}
-
-@Riverpod(keepAlive: true)
 class TrendingRanking extends _$TrendingRanking {
   @override
   Future<List<TrendingItem>> build() async {

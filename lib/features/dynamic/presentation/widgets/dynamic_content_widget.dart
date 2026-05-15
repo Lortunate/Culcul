@@ -107,14 +107,22 @@ class DynamicContentWidget extends StatelessWidget {
     );
   }
 
-  Widget? _buildAdditional(DynamicAdditional additional) => switch (additional.type) {
-    'ADDITIONAL_TYPE_VOTE' => DynamicVoteWidget(additional: additional),
-    'ADDITIONAL_TYPE_GOODS' => DynamicGoodsWidget(additional: additional),
-    'ADDITIONAL_TYPE_RESERVE' => DynamicReserveWidget(additional: additional),
-    'ADDITIONAL_TYPE_UGC' => DynamicUgcWidget(additional: additional),
-    'ADDITIONAL_TYPE_COMMON' => DynamicCommonWidget(additional: additional),
-    _ => null,
-  };
+  Widget? _buildAdditional(DynamicAdditional additional) {
+    switch (additional.type) {
+      case 'ADDITIONAL_TYPE_VOTE':
+        return DynamicVoteWidget(additional: additional);
+      case 'ADDITIONAL_TYPE_GOODS':
+        return DynamicGoodsWidget(additional: additional);
+      case 'ADDITIONAL_TYPE_RESERVE':
+        return DynamicReserveWidget(additional: additional);
+      case 'ADDITIONAL_TYPE_UGC':
+        return DynamicUgcWidget(additional: additional);
+      case 'ADDITIONAL_TYPE_COMMON':
+        return DynamicCommonWidget(additional: additional);
+      default:
+        return null;
+    }
+  }
 }
 
 class _TopicChip extends StatelessWidget {

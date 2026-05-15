@@ -25,7 +25,7 @@ class UserProfileHeader extends HookConsumerWidget {
 
   void _showImagePreview(BuildContext context, String? url) {
     if (url == null || url.isEmpty) return;
-    AppImagePreview.open(context, imageUrls: [url], initialIndex: 0);
+    AppImagePreview.open(context, imageUrls: [url]);
   }
 
   @override
@@ -42,7 +42,7 @@ class UserProfileHeader extends HookConsumerWidget {
     final isExpanded = useState(false);
     final session = ref.watch(currentUserProvider);
     final isSelf =
-        (session?.isLoggedIn ?? false) && session?.uid.toString() == user.id.toString();
+        (session?.isLoggedIn ?? false) && session?.uid == user.id;
 
     return Column(
       children: [

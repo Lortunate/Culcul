@@ -28,8 +28,8 @@ class CommentImagesWidget extends StatelessWidget {
     CommentPicture picture,
     List<String> imageUrls,
   ) {
-    final double? w = picture.imgWidth > 0 ? picture.imgWidth.toDouble() : null;
-    final double? h = picture.imgHeight > 0 ? picture.imgHeight.toDouble() : null;
+    final double? w = picture.imgWidth > 0 ? picture.imgWidth : null;
+    final double? h = picture.imgHeight > 0 ? picture.imgHeight : null;
 
     double aspectRatio = 1.0;
     if (w != null && h != null && h > 0) {
@@ -61,7 +61,6 @@ class CommentImagesWidget extends StatelessWidget {
             child: ExtendedImage.network(
               FormatUtils.formatImageUrl(picture.imgSrc),
               fit: BoxFit.cover,
-              cache: true,
               cacheWidth: _toCacheDimension(displaySize.width, devicePixelRatio),
               cacheHeight: _toCacheDimension(displaySize.height, devicePixelRatio),
               borderRadius: BorderRadius.circular(8),
@@ -102,7 +101,6 @@ class CommentImagesWidget extends StatelessWidget {
                   child: ExtendedImage.network(
                     FormatUtils.formatImageUrl(pictures[index].imgSrc),
                     fit: BoxFit.cover,
-                    cache: true,
                     cacheWidth: decodeSize,
                     cacheHeight: decodeSize,
                     borderRadius: BorderRadius.circular(8),

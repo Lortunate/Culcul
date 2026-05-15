@@ -41,6 +41,10 @@ class ProfileRepositoryImpl with _ProfileRepositoryImplFlowsMixin {
   }) : _requestExecutor = requestExecutor ?? const RequestExecutor(),
        _concurrencyExecutor = concurrencyExecutor ?? const NetworkConcurrencyExecutor();
 
+  Object? _ignoreOptionalProfileResponse(Object _) {
+    return null;
+  }
+
   Future<Result<UserCardModel, AppError>> getUserCard(int mid) async {
     final result = await _requestExecutor.runApiDirect(() => api.getCard(mid));
     return result.when(
@@ -68,25 +72,25 @@ class ProfileRepositoryImpl with _ProfileRepositoryImplFlowsMixin {
           ConcurrentTask<dynamic>(
             label: 'relation',
             critical: false,
-            fallback: (_) => null,
+            fallback: _ignoreOptionalProfileResponse,
             task: () => api.getRelationStat(userId),
           ),
           ConcurrentTask<dynamic>(
             label: 'upStat',
             critical: false,
-            fallback: (_) => null,
+            fallback: _ignoreOptionalProfileResponse,
             task: () => api.getUpStat(userId),
           ),
           ConcurrentTask<dynamic>(
             label: 'navNum',
             critical: false,
-            fallback: (_) => null,
+            fallback: _ignoreOptionalProfileResponse,
             task: () => api.getNavNum(userId),
           ),
           ConcurrentTask<dynamic>(
             label: 'card',
             critical: false,
-            fallback: (_) => null,
+            fallback: _ignoreOptionalProfileResponse,
             task: () => api.getCard(userId, photo: true),
           ),
         ],

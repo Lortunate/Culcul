@@ -24,7 +24,7 @@ sealed class VideoDetail with _$VideoDetail {
     required VideoStat stat,
     @Default(VideoDimension()) VideoDimension dimension,
     @Default([]) List<VideoPage> pages,
-    VideoSubtitle? subtitle,
+    VideoSubtitleDto? subtitle,
     @Default([]) List<VideoTag> tag,
     @JsonKey(name: 'req_user') ReqUser? reqUser,
   }) = _VideoDetail;

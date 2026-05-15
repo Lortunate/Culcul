@@ -6,18 +6,18 @@ sealed class Result<T, E> {
 
   T? get dataOrNull {
     final self = this;
-    return switch (self) {
-      Success<T, E>(:final value) => value,
-      Failure<T, E>() => null,
-    };
+    if (self is Success<T, E>) {
+      return self.value;
+    }
+    return null;
   }
 
   E? get errorOrNull {
     final self = this;
-    return switch (self) {
-      Success<T, E>() => null,
-      Failure<T, E>(:final error) => error,
-    };
+    if (self is Failure<T, E>) {
+      return self.error;
+    }
+    return null;
   }
 
   R when<R>({

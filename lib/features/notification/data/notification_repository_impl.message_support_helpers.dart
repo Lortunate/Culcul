@@ -8,13 +8,15 @@ extension NotificationMessageSupportHelpers on NotificationMessageSupport {
   int? resolveSystemTalkerId(PrivateMessageSessionResponse response) {
     final systemMsgMap = response.systemMsg;
     if (systemMsgMap != null && systemMsgMap.isNotEmpty) {
-      final preferred =
-          systemMsgMap['5'] ??
-          systemMsgMap['7'] ??
-          systemMsgMap.values.cast<int?>().firstWhere(
-            (item) => item != null && item > 0,
-            orElse: () => null,
-          );
+      var preferred = systemMsgMap['5'] ?? systemMsgMap['7'];
+      if (preferred == null || preferred <= 0) {
+        for (final item in systemMsgMap.values) {
+          if (item > 0) {
+            preferred = item;
+            break;
+          }
+        }
+      }
       if (preferred != null && preferred > 0) {
         return preferred;
       }

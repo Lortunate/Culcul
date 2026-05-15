@@ -3,7 +3,7 @@ import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/services/media_service.dart';
 import 'package:culcul/core/utils/id_utils.dart';
-import 'package:culcul/features/video/presentation/overlays/video_action_sheet_entry.dart';
+import 'package:culcul/features/video/video_action_sheet_entry.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 

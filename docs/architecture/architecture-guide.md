@@ -1,11 +1,11 @@
 # Culcul Architecture Guide
 
-Active phase: Phase 28 Deep Simplification.
+Active phase: none. Last completed phase: Phase 29 Architecture Deep Cleanup.
 
 Authoritative docs:
 
-- Spec: `docs/specs/phase28-deep-simplification.md`
-- Plan: `docs/plans/phase28-deep-simplification.md`
+- Completed spec: `docs/specs/archive/2026-05-15-phase29-architecture-deep-cleanup.completed.md`
+- Completed plan: `docs/plans/archive/2026-05-15-phase29-architecture-deep-cleanup.completed.md`
 
 ## Current Shape
 
@@ -52,22 +52,23 @@ Avoid new barrel files. Import source files directly unless the file is one of t
 - Dependencies: reuse current popular stack before adding new packages.
 - Local architecture guard: `bash tool/architecture/run_architecture_guards.sh`
 
-## Phase 28 Baseline
+## Phase 29 Completion Baseline
 
-- `lib/` source Dart files: 635.
-- `lib/` generated Dart files: 233.
-- `lib/` total Dart files: 868.
+- `lib/` source Dart files: 636.
+- `lib/` generated Dart files: 241.
+- `lib/` total Dart files: 877.
 - `lib/shared/` files: 0.
-- provider/bootstrap/session placeholders: 0.
-- cross-feature private `data/**` or `presentation/**` imports found by planning audit: 0.
+- Phase 29 provider tail target: 0 unnecessary hand-written providers remain.
+- cross-feature private `data/**` or `presentation/**` imports found by final audit: 0.
 - `core/` or `ui/` imports of `features/` found by planning audit: 0.
-- placeholder provider/bootstrap/session files: 0.
-- TODO/FIXME presentation files found by planning audit: 0.
+- placeholder/no-op grep matches found by final strict source audit: 0.
+- duplicate model/DTO exact names found by final audit: 0.
 - approved broad public barrels: `lib/core/contracts/core_contracts.dart`, `lib/ui/ui.dart`.
 - generated files are excluded from source-debt architecture guards by default; generated verification remains explicit.
-- feature scopes are import/export-only and must not export feature `data/**` seams.
+- `feature_scope.dart` files: 0.
+- `pubspec.yaml` direct dependencies are all imported, generated/tooling-backed, or platform/runtime-backed. `riverpod` is directly imported by source, and `flutter_launcher_icons`, `media_kit_libs_video`, and `sqlite3_flutter_libs` are retained with evidence.
 
-### Removed/Changed in Phase 28
+### Completed in Phase 28
 
 - `uuid` dependency removed (replaced by inline `lib/core/utils/uuid_v4.dart`).
 - `archive` dependency removed (replaced by `dart:io` GZipCodec).
@@ -87,4 +88,4 @@ Avoid new barrel files. Import source files directly unless the file is one of t
 - `lib/` generated Dart files: 225.
 - `lib/` total Dart files: 869.
 
-Update this baseline only when the active phase changes or when the source/generated audit count changes.
+Update this baseline when the next active phase is created or when the source/generated audit count changes.
