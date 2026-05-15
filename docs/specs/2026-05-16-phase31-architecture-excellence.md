@@ -8,7 +8,7 @@ Active.
 
 Phase 30 completed the top-level cleanup. The current baseline is still `app/` + `core/` + `features/` + `ui/`, with `lib/shared/` retired and no hand-written Riverpod provider declarations found in authored source. The next work is not another directory rewrite. It is semantic cleanup: remove remaining presentation-to-data coupling, preserve one source of truth for view-facing models, reduce mixed-responsibility files, and keep generated/provider code on modern APIs.
 
-The current local branch contains a `tmp` commit that removed the historical docs tree. Phase 31 re-establishes active planning docs as the current source of truth. Older Phase 22-30 docs were already completed/archived in the previous baseline and are treated as historical, not active.
+Phase 31 re-establishes active planning docs as the current source of truth on a clean branch based on the completed Phase 30 baseline. Older Phase 22-30 docs remain archived historical context, not active plans.
 
 Relevant modern-library direction:
 

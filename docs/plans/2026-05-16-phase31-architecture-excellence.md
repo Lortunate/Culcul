@@ -4,7 +4,7 @@ Spec: `docs/specs/2026-05-16-phase31-architecture-excellence.md`
 
 ## Execution Rules
 
-- Work in `phase31-architecture-excellence` worktree.
+- Work in the clean `phase31-architecture-excellence-clean` worktree.
 - Keep `app/` + `core/` + `features/` + `ui/`; do not reintroduce `shared/`.
 - Prefer generated Riverpod (`@riverpod`) and Freezed 3 models when a generator removes real boilerplate.
 - Do not create alias-only providers, barrel chains, or empty abstraction layers.
@@ -24,7 +24,7 @@ Spec: `docs/specs/2026-05-16-phase31-architecture-excellence.md`
 
 1. Verify branch/worktree state.
 2. Restore active architecture pointers to Phase 31.
-3. Record that older Phase 22-30 docs are historical and no active spec/plan exists before Phase 31 in the current tree.
+3. Record that older Phase 22-30 docs remain historical and Phase 31 is the only active spec/plan.
 4. Verify pointers with `rg -n "Phase 31|Active spec|Active plan" CLAUDE.md docs/architecture docs/specs docs/plans`.
 
 ## Task 1: Add Architecture Guard Baseline

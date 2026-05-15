@@ -1,12 +1,16 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'package:culcul/features/live/domain/entities/live_danmaku_item.dart';
+
 part 'live_history_danmaku_model.freezed.dart';
 part 'live_history_danmaku_model.g.dart';
 
 @freezed
 sealed class LiveHistoryDanmakuModel with _$LiveHistoryDanmakuModel {
   const factory LiveHistoryDanmakuModel({
+    @JsonKey(fromJson: _itemsFromJson, toJson: _itemsToJson)
     required List<LiveDanmakuItem> admin,
+    @JsonKey(fromJson: _itemsFromJson, toJson: _itemsToJson)
     required List<LiveDanmakuItem> room,
   }) = _LiveHistoryDanmakuModel;
 
@@ -14,54 +18,65 @@ sealed class LiveHistoryDanmakuModel with _$LiveHistoryDanmakuModel {
       _$LiveHistoryDanmakuModelFromJson(json);
 }
 
-@freezed
-sealed class LiveDanmakuItem with _$LiveDanmakuItem {
-  const factory LiveDanmakuItem({
-    required String text,
-    required String nickname,
-    required int uid,
-    @Default('') String timeline,
-    @Default(0) @JsonKey(name: 'dm_type') int dmType,
-    @Default(0) int isadmin,
-    @Default(0) int vip,
-    @Default(0) int svip,
-    @JsonKey(fromJson: _medalFromJson, toJson: _medalToJson) LiveDanmakuMedal? medal,
-    @JsonKey(fromJson: _titleFromJson, toJson: _titleToJson) LiveDanmakuTitle? title,
-    @JsonKey(name: 'user_level', fromJson: _userLevelFromJson, toJson: _userLevelToJson)
-    LiveDanmakuUserLevel? userLevel,
-    @Default(0) int rank,
-    @Default(0) int teamid,
-    @Default('') String rnd,
-    @Default('') @JsonKey(name: 'user_title') String userTitle,
-    @Default(0) @JsonKey(name: 'guard_level') int guardLevel,
-    @Default(0) int bubble,
-    @Default({}) @JsonKey(name: 'check_info') Map<String, dynamic> checkInfo,
-  }) = _LiveDanmakuItem;
-
-  factory LiveDanmakuItem.fromJson(Map<String, dynamic> json) =>
-      _$LiveDanmakuItemFromJson(json);
+List<LiveDanmakuItem> _itemsFromJson(dynamic raw) {
+  if (raw is! List) return const [];
+  return [
+    for (final item in raw)
+      if (item is Map<String, dynamic>)
+        _itemFromJson(item)
+      else if (item is Map<Object?, Object?>)
+        _itemFromJson(Map<String, dynamic>.from(item)),
+  ];
 }
 
-@freezed
-sealed class LiveDanmakuMedal with _$LiveDanmakuMedal {
-  const factory LiveDanmakuMedal({
-    @Default(0) int level,
-    @Default('') String name,
-    @Default(0) int anchorRoomId,
-    @Default(0) int color,
-  }) = _LiveDanmakuMedal;
+List<Map<String, dynamic>> _itemsToJson(List<LiveDanmakuItem> items) {
+  return items.map(_itemToJson).toList(growable: false);
 }
 
-@freezed
-sealed class LiveDanmakuTitle with _$LiveDanmakuTitle {
-  const factory LiveDanmakuTitle({@Default('') String title, @Default('') String skin}) =
-      _LiveDanmakuTitle;
+LiveDanmakuItem _itemFromJson(Map<String, dynamic> json) {
+  return LiveDanmakuItem(
+    text: json['text']?.toString() ?? '',
+    nickname: json['nickname']?.toString() ?? '',
+    uid: _asInt(json['uid']),
+    timeline: json['timeline']?.toString() ?? '',
+    dmType: _asInt(json['dm_type']),
+    isadmin: _asInt(json['isadmin']),
+    vip: _asInt(json['vip']),
+    svip: _asInt(json['svip']),
+    medal: _medalFromJson(json['medal']),
+    title: _titleFromJson(json['title']),
+    userLevel: _userLevelFromJson(json['user_level']),
+    rank: _asInt(json['rank']),
+    teamid: _asInt(json['teamid']),
+    rnd: json['rnd']?.toString() ?? '',
+    userTitle: json['user_title']?.toString() ?? '',
+    guardLevel: _asInt(json['guard_level']),
+    bubble: _asInt(json['bubble']),
+    checkInfo: _asStringKeyMap(json['check_info']),
+  );
 }
 
-@freezed
-sealed class LiveDanmakuUserLevel with _$LiveDanmakuUserLevel {
-  const factory LiveDanmakuUserLevel({@Default(0) int level, @Default(0) int rank}) =
-      _LiveDanmakuUserLevel;
+Map<String, dynamic> _itemToJson(LiveDanmakuItem item) {
+  return <String, dynamic>{
+    'text': item.text,
+    'nickname': item.nickname,
+    'uid': item.uid,
+    'timeline': item.timeline,
+    'dm_type': item.dmType,
+    'isadmin': item.isadmin,
+    'vip': item.vip,
+    'svip': item.svip,
+    'medal': _medalToJson(item.medal),
+    'title': _titleToJson(item.title),
+    'user_level': _userLevelToJson(item.userLevel),
+    'rank': item.rank,
+    'teamid': item.teamid,
+    'rnd': item.rnd,
+    'user_title': item.userTitle,
+    'guard_level': item.guardLevel,
+    'bubble': item.bubble,
+    'check_info': item.checkInfo,
+  };
 }
 
 // -- JSON converters for array-encoded sub-models --
@@ -105,4 +120,17 @@ LiveDanmakuUserLevel? _userLevelFromJson(dynamic raw) {
 List<dynamic>? _userLevelToJson(LiveDanmakuUserLevel? userLevel) {
   if (userLevel == null) return null;
   return [userLevel.level, userLevel.rank];
+}
+
+int _asInt(dynamic value) {
+  if (value is int) return value;
+  if (value is num) return value.toInt();
+  if (value is String) return int.tryParse(value) ?? 0;
+  return 0;
+}
+
+Map<String, dynamic> _asStringKeyMap(dynamic value) {
+  if (value is Map<String, dynamic>) return value;
+  if (value is Map) return Map<String, dynamic>.from(value);
+  return const {};
 }
