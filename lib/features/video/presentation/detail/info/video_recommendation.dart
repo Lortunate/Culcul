@@ -1,4 +1,4 @@
-import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
+import 'package:culcul/features/video/application/presentation_contracts/dtos/related_video_dto.dart';
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/ui/assemblies/feed_cards/video_card.dart';
 import 'package:flutter/material.dart';

@@ -1,6 +1,6 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
-import 'package:culcul/features/profile/data/dtos/profile_user.dart';
+import 'package:culcul/features/profile/application/presentation_contracts/dtos/profile_user.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_banner.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_buttons.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_stat_item.dart';

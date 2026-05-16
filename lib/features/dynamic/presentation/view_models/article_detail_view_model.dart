@@ -4,7 +4,7 @@ import 'package:culcul/features/dynamic/application/dynamic_workflows.dart';
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
+import 'package:culcul/features/dynamic/application/presentation_contracts/dynamic_repository_impl.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';

@@ -20,9 +20,7 @@ class TopicPicker extends HookConsumerWidget {
     final searchController = useTextEditingController();
     final searchKeyword = useState('');
     final debounceTimer = useRef<Timer?>(null);
-    final searchResultAsync = ref.watch(
-      topicSearchProvider(searchKeyword.value),
-    );
+    final searchResultAsync = ref.watch(topicSearchProvider(searchKeyword.value));
     final topics = searchResultAsync.asData?.value ?? const [];
 
     void onSearchChanged(String value) {

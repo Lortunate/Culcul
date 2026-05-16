@@ -1,4 +1,4 @@
-import 'package:culcul/features/home/data/home_repository_impl.dart';
+import 'package:culcul/features/home/application/presentation_contracts/home_repository_impl.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

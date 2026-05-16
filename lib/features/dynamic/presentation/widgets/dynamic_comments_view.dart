@@ -1,4 +1,4 @@
-import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
+import 'package:culcul/features/dynamic/application/presentation_contracts/dtos/dynamic_response.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_comment_view_model.dart';
 import 'package:culcul/ui/assemblies/comments/comment_item.dart';
