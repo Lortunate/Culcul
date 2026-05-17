@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **Culcul** (9413 symbols, 20864 relationships, 187 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **Culcul** (9414 symbols, 20870 relationships, 187 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -42,14 +42,14 @@ This project is indexed by GitNexus as **Culcul** (9413 symbols, 20864 relations
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 35 active — Architecture Simplification)
+## Architecture (Phase 36 active — Aggressive Architecture Cleanup)
 
-`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–34 completed structural cleanup, barrel elimination, freezed/@riverpod migration, model deduplication, abstract repo removal, dead weight removal, provider/bootstrap cleanup, runtime/network consolidation, source-of-truth cleanup, feature public surface reduction, thin domain collapse, generated/source audit separation, router alias cleanup, dependency/config source-of-truth cleanup, application seam hardening, bootstrap flattening, dead infrastructure removal, notification helper decomposition, alias-provider cleanup, codegen modernization, cross-feature import cleanup, provider tail cleanup, duplicate-name cleanup, placeholder/no-op classification, dependency source-of-truth audit, semantic classification, codegen source-of-truth cleanup, app runtime alignment, no-op workflow cleanup, focused large-file decomposition, architecture consolidation, and Phase 34 source-of-truth modernization. Phase 35 narrows execution to shared comment ownership, app feedback unification, analyzer info debt, large-file splits with real seams, and dependency/codegen simplification when it removes custom code or risk.
+`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–35 completed structural cleanup, barrel elimination, freezed/@riverpod migration, model deduplication, abstract repo removal, dead weight removal, provider/bootstrap cleanup, runtime/network consolidation, source-of-truth cleanup, feature public surface reduction, thin domain collapse, generated/source audit separation, router alias cleanup, dependency/config source-of-truth cleanup, application seam hardening, bootstrap flattening, dead infrastructure removal, notification helper decomposition, alias-provider cleanup, codegen modernization, cross-feature import cleanup, provider tail cleanup, duplicate-name cleanup, placeholder/no-op classification, dependency source-of-truth audit, semantic classification, codegen source-of-truth cleanup, app runtime alignment, no-op workflow cleanup, focused large-file decomposition, architecture consolidation, Phase 34 source-of-truth modernization, and Phase 35 conservative simplification planning. Phase 36 permits aggressive internal feature restructuring, compatibility shim removal, source-of-truth consolidation, dead wrapper deletion, and performance cleanup without preserving old local APIs.
 
-Active spec: `docs/specs/2026-05-17-phase35-architecture-simplification.md`
-Active plan: `docs/plans/2026-05-17-phase35-architecture-simplification.md`
+Active spec: `docs/specs/2026-05-18-phase36-aggressive-architecture-cleanup.md`
+Active plan: `docs/plans/2026-05-18-phase36-aggressive-architecture-cleanup.md`
 Architecture guide: `docs/architecture/architecture-guide.md`
-Archived: Phase 22–34 specs/plans in `docs/specs/archive/` and `docs/plans/archive/`
+Archived: Phase 22–35 specs/plans in `docs/specs/archive/` and `docs/plans/archive/`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`
@@ -61,6 +61,7 @@ Archived: Phase 22–34 specs/plans in `docs/specs/archive/` and `docs/plans/arc
 - All domain entities and DTOs use freezed — no hand-written `copyWith` or equality
 - No typedef-only or re-export-only files — import the source directly
 - No barrel-chain files (file that only re-exports other files) except `core_contracts.dart` and the approved UI public API `lib/ui/ui.dart`
+- No compatibility shims for removed internal APIs
 - All dependencies pinned to specific versions (no `any`)
 - Prefer `shared_preferences` + `flutter_secure_storage` over Hive for local storage
 - Prefer `dio_smart_retry` over custom retry logic; prefer generated providers over hand-written wiring

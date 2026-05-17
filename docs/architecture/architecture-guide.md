@@ -1,11 +1,13 @@
 # Culcul Architecture Guide
 
-Active phase: Phase 35 Architecture Simplification. Last completed phase: Phase 34 Architecture Modernization.
+Active phase: Phase 36 Aggressive Architecture Cleanup. Last completed phase: Phase 34 Architecture Modernization. Phase 35 was superseded before code execution.
 
 Authoritative docs:
 
-- Active spec: `docs/specs/2026-05-17-phase35-architecture-simplification.md`
-- Active plan: `docs/plans/2026-05-17-phase35-architecture-simplification.md`
+- Active spec: `docs/specs/2026-05-18-phase36-aggressive-architecture-cleanup.md`
+- Active plan: `docs/plans/2026-05-18-phase36-aggressive-architecture-cleanup.md`
+- Superseded spec: `docs/specs/archive/2026-05-17-phase35-architecture-simplification.superseded.md`
+- Superseded plan: `docs/plans/archive/2026-05-17-phase35-architecture-simplification.superseded.md`
 - Completed spec: `docs/specs/archive/2026-05-17-phase34-architecture-modernization.completed.md`
 - Completed plan: `docs/plans/archive/2026-05-17-phase34-architecture-modernization.completed.md`
 - Superseded spec: `docs/specs/archive/2026-05-17-phase33-architecture-consolidation.superseded.md`
@@ -30,6 +32,9 @@ Authoritative docs:
 
 `lib/shared/` is retired and must not return.
 
+Phase 36 may aggressively reorganize directories inside a feature. It must keep
+the top-level `app/`, `core/`, `features/`, and `ui/` boundary intact.
+
 ## Hard Rules
 
 - `core/` and `ui/` must not import `features/`.
@@ -43,6 +48,7 @@ Authoritative docs:
 - `AppFeedback` is the app notification pattern.
 - `DioClient` and `RequestExecutor` (injected as a field, not via mixin) are the network policy path.
 - No `UnimplementedError`/`TODO()` placeholders in runtime provider seams.
+- No compatibility shims for removed internal APIs.
 
 ## Approved Public Seams
 

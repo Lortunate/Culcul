@@ -2,7 +2,7 @@
 
 ## Status
 
-Active.
+Superseded by Phase 36.
 
 Supersedes:
 
@@ -10,7 +10,11 @@ Supersedes:
 
 Implementation plan:
 
-- `docs/plans/2026-05-17-phase35-architecture-simplification.md`
+- `docs/plans/archive/2026-05-17-phase35-architecture-simplification.superseded.md`
+
+Superseding spec:
+
+- `docs/specs/2026-05-18-phase36-aggressive-architecture-cleanup.md`
 
 Tracking issue:
 
@@ -54,7 +58,8 @@ Current dependency direction is already modern enough for this phase:
 
 ## Goals
 
-- Make Phase 35 the only active architecture source of truth.
+- Make Phase 35 the only active architecture source of truth. This goal was
+  superseded before implementation by Phase 36.
 - Archive Phase 34 as completed.
 - Execute the remaining ready cleanup through bd, not an extra markdown tracker.
 - Extract one shared comment API owner for cross-feature comment calls.

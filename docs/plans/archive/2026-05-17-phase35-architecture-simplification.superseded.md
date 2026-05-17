@@ -1,6 +1,8 @@
 # Phase 35 Architecture Simplification Plan
 
-Spec: `docs/specs/2026-05-17-phase35-architecture-simplification.md`
+Spec: `docs/specs/archive/2026-05-17-phase35-architecture-simplification.superseded.md`
+
+Status: Superseded by `docs/specs/2026-05-18-phase36-aggressive-architecture-cleanup.md`.
 
 ## Global Rules
 
@@ -18,10 +20,10 @@ Spec: `docs/specs/2026-05-17-phase35-architecture-simplification.md`
 
 ## File Map
 
-Active docs:
+Former active docs:
 
-- `docs/specs/2026-05-17-phase35-architecture-simplification.md`
-- `docs/plans/2026-05-17-phase35-architecture-simplification.md`
+- `docs/specs/archive/2026-05-17-phase35-architecture-simplification.superseded.md`
+- `docs/plans/archive/2026-05-17-phase35-architecture-simplification.superseded.md`
 
 Archived docs:
 
