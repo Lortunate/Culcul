@@ -1,20 +1,20 @@
 import 'package:culcul/core/contracts/user_session_contract.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/auth/domain/entities/user_entity.dart';
 
-/// Bridges core's UserSession contract with auth's AuthState.
+/// Bridges core's UserSession contract with auth's domain user.
 class AuthSessionAdapter implements UserSession {
-  final AuthState _authState;
-  AuthSessionAdapter(this._authState);
+  final UserEntity _user;
+  AuthSessionAdapter(this._user);
 
   @override
-  String get uid => _authState.user?.id ?? '';
+  String get uid => _user.id;
 
   @override
-  bool get isLoggedIn => _authState.isLoggedIn;
+  bool get isLoggedIn => true;
 
   @override
-  String? get avatarUrl => _authState.user?.avatarUrl;
+  String? get avatarUrl => _user.avatarUrl;
 
   @override
-  String? get nickname => _authState.user?.username;
+  String? get nickname => _user.username;
 }

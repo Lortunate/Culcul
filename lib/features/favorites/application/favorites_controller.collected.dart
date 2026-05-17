@@ -1,4 +1,4 @@
-part of 'favorites_view_model.dart';
+part of 'favorites_controller.dart';
 
 @riverpod
 class FavCollectedFolders extends _$FavCollectedFolders
@@ -6,12 +6,8 @@ class FavCollectedFolders extends _$FavCollectedFolders
   late int _mid;
 
   @override
-  Future<List<FavoriteFolder>> build() async {
-    final session = ref.read(currentUserProvider);
-    if (session == null || !session.isLoggedIn) {
-      return [];
-    }
-    _mid = int.parse(session.uid);
+  Future<List<FavoriteFolder>> build(int upMid) async {
+    _mid = upMid;
     return buildFirstPage();
   }
 

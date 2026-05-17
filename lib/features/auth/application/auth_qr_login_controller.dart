@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/auth/data/auth_repository_impl.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'auth_qr_login_view_model.freezed.dart';
-part 'auth_qr_login_view_model.g.dart';
+part 'auth_qr_login_controller.freezed.dart';
+part 'auth_qr_login_controller.g.dart';
 
 enum AuthQrLoginStatus { loading, success, scanned, expired, error }
 
@@ -78,7 +78,7 @@ class AuthQrLoginController extends _$AuthQrLoginController {
 
     if (code == 0) {
       _pollTimer?.cancel();
-      unawaited(ref.read(authProvider.notifier).refreshUser());
+      unawaited(ref.read(authSessionProvider.notifier).refreshUser());
     } else if (code == 86038) {
       _pollTimer?.cancel();
     }

@@ -38,7 +38,7 @@ mixin _LiveRoomControllerInitMixin
       );
       return;
     }
-    state = state.copyWith(roomInfo: info);
+    state = state.copyWith(roomInfo: info.toLiveRoomDetail());
     DevLogger.log('feature', 'live.room_init parse', <String, Object?>{
       'segment': 'room_info',
       'roomId': roomId,

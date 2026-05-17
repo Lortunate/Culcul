@@ -6,7 +6,7 @@ import 'package:dio/dio.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
-import 'package:culcul/features/profile/data/dtos/profile_video.dart';
+import 'package:culcul/features/profile/application/profile_view_contracts.dart';
 import 'package:culcul/features/profile/data/profile_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -31,12 +31,10 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
     });
     final stopwatch = Stopwatch()..start();
     final items = await buildFirstPage();
-    final cacheKey = EndpointCacheOptionsInterceptor.buildCacheKey(ApiConstants.profileSpaceVideos, {
-      'mid': mid,
-      'pn': 1,
-      'ps': _pageSize,
-      'order': order,
-    });
+    final cacheKey = EndpointCacheOptionsInterceptor.buildCacheKey(
+      ApiConstants.profileSpaceVideos,
+      {'mid': mid, 'pn': 1, 'ps': _pageSize, 'order': order},
+    );
     final hasCachedValue = await ref.read(cacheStoreProvider).exists(cacheKey);
     DevLogger.log('feature', 'profile.space_videos initial_data', <String, Object?>{
       'mid': mid,
@@ -59,7 +57,10 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
     final result = await ref
         .read(profileRepositoryProvider)
         .getSpaceVideos(mid: _mid, page: page, order: _order, cancelToken: cancelToken);
-    return result.when(success: (data) => data, failure: (error) => throw error);
+    return result.when(
+      success: (data) => data.toProfileVideos(),
+      failure: (error) => throw error,
+    );
   }
 
   @override
@@ -102,7 +103,7 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
       return;
     }
 
-    final nextItems = result.dataOrNull;
+    final nextItems = result.dataOrNull?.toProfileVideos();
     if (nextItems == null || _sameItems(previousItems, nextItems)) {
       DevLogger.log(
         'feature',

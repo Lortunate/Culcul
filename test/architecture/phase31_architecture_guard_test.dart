@@ -3,8 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'architecture_guard_utils.dart';
 
 const _phase31AllowedPresentationDataImports = <String>{
-  'lib/features/auth/presentation/view_models/auth_qr_login_view_model.dart -> lib/features/auth/data/auth_repository_impl.dart',
-  'lib/features/auth/presentation/view_models/auth_view_model.dart -> lib/features/auth/data/auth_repository_impl.dart',
   'lib/features/dynamic/presentation/pages/topic_detail_page.dart -> lib/features/dynamic/data/dtos/dynamic_item_extensions.dart',
   'lib/features/dynamic/presentation/view_models/article_detail_view_model.dart -> lib/features/dynamic/data/dynamic_repository_impl.dart',
   'lib/features/dynamic/presentation/view_models/dynamic_comment_view_model.dart -> lib/features/dynamic/data/dtos/dynamic_response.dart',
@@ -33,9 +31,6 @@ const _phase31AllowedPresentationDataImports = <String>{
   'lib/features/dynamic/presentation/widgets/dynamic_post_actions.dart -> lib/features/dynamic/data/dtos/dynamic_response.dart',
   'lib/features/dynamic/presentation/widgets/dynamic_post_actions.dart -> lib/features/dynamic/data/dtos/dynamic_item_extensions.dart',
   'lib/features/dynamic/presentation/widgets/emoji_picker.dart -> lib/features/dynamic/data/dtos/emote_response.dart',
-  'lib/features/favorites/presentation/pages/favorite_detail_page.dart -> lib/features/favorites/data/fav_repository_impl.dart',
-  'lib/features/favorites/presentation/pages/favorites_page.dart -> lib/features/favorites/data/fav_repository_impl.dart',
-  'lib/features/favorites/presentation/view_models/favorites_view_model.dart -> lib/features/favorites/data/fav_repository_impl.dart',
   'lib/features/home/presentation/view_models/home_popular_view_model.dart -> lib/features/home/data/home_repository_impl.dart',
   'lib/features/home/presentation/view_models/home_recommend_view_model.dart -> lib/features/home/data/home_repository_impl.dart',
   'lib/features/home/presentation/view_models/weekly_view_model.dart -> lib/features/home/data/home_repository_impl.dart',
@@ -79,7 +74,6 @@ const _phase31AllowedPresentationDataImports = <String>{
   'lib/features/ranking/presentation/view_models/category_ranking_view_model.dart -> lib/features/ranking/data/ranking_repository_impl.dart',
   'lib/features/search/presentation/view_models/search_view_model.dart -> lib/features/search/data/dtos/trending_ranking.dart',
   'lib/features/search/presentation/view_models/search_view_model.dart -> lib/features/search/data/search_repository_impl.dart',
-  'lib/features/to_view/presentation/view_models/to_view_view_model.dart -> lib/features/to_view/data/to_view_repository_impl.dart',
   'lib/features/video/presentation/comments/comment_reply_view_model.dart -> lib/features/video/data/video_repository_impl.dart',
   'lib/features/video/presentation/comments/video_comments_view_model.dart -> lib/features/video/data/video_repository_impl.dart',
   'lib/features/video/presentation/detail/info/video_actions.dart -> lib/features/video/data/dtos/video_detail_dto.dart',

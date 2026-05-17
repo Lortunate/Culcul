@@ -1,4 +1,4 @@
-import 'package:culcul/features/auth/presentation/view_models/auth_qr_login_view_model.dart';
+import 'package:culcul/features/auth/application/auth_qr_login_controller.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

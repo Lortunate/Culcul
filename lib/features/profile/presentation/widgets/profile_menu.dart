@@ -1,5 +1,6 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/auth/auth_session_actions.dart';
+import 'package:culcul/features/profile/application/profile_cache_actions.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
 import 'package:culcul/ui/responsive/app_breakpoints.dart';
@@ -46,9 +47,14 @@ class ProfileMenu extends ConsumerWidget {
                           child: Text(t.common.cancel),
                         ),
                         TextButton(
-                          onPressed: () {
+                          onPressed: () async {
                             Navigator.of(context).pop();
-                            ref.read(authSessionActionsProvider).logout();
+                            final didLogout = await ref
+                                .read(authSessionActionsProvider)
+                                .logout();
+                            if (didLogout) {
+                              await ref.read(profileCacheActionsProvider).clearAll();
+                            }
                           },
                           child: Text(
                             t.auth.logout,

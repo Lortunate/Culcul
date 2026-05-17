@@ -4,9 +4,7 @@ import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
-import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
-import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
+import 'package:culcul/features/video/application/video_view_contracts.dart';
 import 'package:culcul/features/video/data/video_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -86,14 +84,14 @@ class LoadVideoDetailWorkflow {
               'ms': playUrlStopwatch.elapsedMilliseconds,
             });
           }
-          playResult = loadedPlayUrl.map<PlayUrl?>((value) => value);
+          playResult = loadedPlayUrl.map<PlayUrl?>((value) => value.toPlayUrl());
         }
 
         final playUrl = playResult.dataOrNull;
 
         return Success(
           VideoInitialData(
-            detail: detail,
+            detail: detail.toVideoDetail(),
             currentCid: cid,
             playUrl: playUrl,
             availableQualities: playUrl?.acceptQuality.toList() ?? const [],
@@ -120,7 +118,10 @@ class LoadVideoDetailWorkflow {
               bvid,
               cancelToken: cancelToken,
             );
-            return result.when(success: (data) => data, failure: (error) => throw error);
+            return result.when(
+              success: (data) => data.toRelatedVideos(),
+              failure: (error) => throw error,
+            );
           },
         ),
         ConcurrentTask<List<VideoTag>>(
@@ -132,7 +133,10 @@ class LoadVideoDetailWorkflow {
               bvid,
               cancelToken: cancelToken,
             );
-            return result.when(success: (data) => data, failure: (error) => throw error);
+            return result.when(
+              success: (data) => data.map((item) => item.toVideoTag()).toList(),
+              failure: (error) => throw error,
+            );
           },
         ),
       ],

@@ -19,7 +19,7 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
       );
       return;
     }
-    await _socketService.connect(info: info, roomId: roomId);
+    await _socketService.connect(info: info.toLiveDanmuInfo(), roomId: roomId);
     danmakuFeed.setConnected(true);
     await _danmakuSubscription?.cancel();
     _danmakuSubscription = _socketService.danmakuStream.listen(
@@ -34,7 +34,7 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
         .read(liveRepositoryProvider)
         .getPlayUrl(roomId: roomId, qn: qn);
     if (result.dataOrNull case final url?) {
-      state = state.copyWith(playUrl: url);
+      state = state.copyWith(playUrl: url.toLivePlayUrl());
       return null;
     }
     _logIgnoredError(
@@ -64,7 +64,7 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
   Future<void> _fetchLiveAnchorInfo(int uid) async {
     final result = await ref.read(liveRepositoryProvider).getAnchorInfo(uid);
     if (result.dataOrNull case final info?) {
-      state = state.copyWith(liveAnchorInfo: info);
+      state = state.copyWith(liveAnchorInfo: info.toLiveAnchorProfile());
       return;
     }
     _logIgnoredError(
@@ -79,7 +79,7 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
         .read(liveRepositoryProvider)
         .getOnlineGoldRank(roomId: roomId, ruid: ruid);
     if (result.dataOrNull case final rank?) {
-      state = state.copyWith(goldRank: rank);
+      state = state.copyWith(goldRank: rank.toLiveGoldRank());
       return;
     }
     _logIgnoredError(
@@ -94,7 +94,7 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
         .read(liveRepositoryProvider)
         .getGuardList(roomId: roomId, ruid: ruid);
     if (result.dataOrNull case final list?) {
-      state = state.copyWith(guardList: list);
+      state = state.copyWith(guardList: list.toLiveGuardList());
       return;
     }
     _logIgnoredError(
@@ -107,7 +107,7 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
   Future<AppError?> _fetchDanmakuConfig(int roomId, {bool critical = false}) async {
     final result = await ref.read(liveRepositoryProvider).getDanmakuConfig(roomId);
     if (result.dataOrNull case final config?) {
-      state = state.copyWith(danmakuConfig: config);
+      state = state.copyWith(danmakuConfig: config.toLiveDanmakuConfig());
       return null;
     }
     _logIgnoredError(

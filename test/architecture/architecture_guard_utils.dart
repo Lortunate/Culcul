@@ -11,6 +11,8 @@ List<File> dartFiles(String root) {
     ..sort((a, b) => normalizePath(a.path).compareTo(normalizePath(b.path)));
 }
 
+List<File> authoredDartFiles(Directory root) => sourceDartFiles(root.path);
+
 List<File> sourceDartFiles(String root) {
   return dartFiles(
     root,

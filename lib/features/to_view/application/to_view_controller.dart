@@ -1,19 +1,13 @@
-import 'package:culcul/features/auth/application/auth_session_providers.dart';
-import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
 import 'package:culcul/features/to_view/data/to_view_repository_impl.dart';
+import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'to_view_view_model.g.dart';
+part 'to_view_controller.g.dart';
 
 @riverpod
 class ToViewList extends _$ToViewList {
   @override
   Future<List<ToViewEntry>> build() async {
-    final session = ref.watch(currentUserProvider);
-    if (session == null || !session.isLoggedIn) {
-      return [];
-    }
-
     final result = await ref.read(toViewRepositoryProvider).getList();
     return result.when(success: (data) => data, failure: (error) => throw error);
   }

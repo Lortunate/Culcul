@@ -1,4 +1,4 @@
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_session_actions.g.dart';
@@ -13,7 +13,7 @@ class AuthSessionActions {
 
   final Ref _ref;
 
-  Future<void> logout() {
-    return _ref.read(authProvider.notifier).logout();
+  Future<bool> logout() {
+    return _ref.read(authSessionProvider.notifier).logout();
   }
 }

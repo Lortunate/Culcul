@@ -4,7 +4,7 @@ import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/profile/application/profile_actions.dart';
 import 'package:culcul/features/profile/data/profile_cache_repository.dart';
 import 'package:culcul/features/profile/data/profile_repository_impl.dart';
-import 'package:culcul/features/profile/data/dtos/profile_user.dart';
+import 'package:culcul/features/profile/application/profile_view_contracts.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'profile_view_model.g.dart';
@@ -18,7 +18,10 @@ Future<ProfileUser> myProfile(Ref ref) async {
   final result = await ref
       .watch(profileRepositoryProvider)
       .getProfile(int.parse(session.uid));
-  return result.when(success: (data) => data, failure: (error) => throw error);
+  return result.when(
+    success: (data) => data.toProfileUser(),
+    failure: (error) => throw error,
+  );
 }
 
 @riverpod
@@ -27,7 +30,9 @@ class UserProfileNotifier extends _$UserProfileNotifier {
   Future<ProfileUser> build(String userId) async {
     final result = await loadUserProfileAction(
       userId: userId,
-      readCachedProfile: ref.read(profileCacheRepositoryProvider).readProfile,
+      readCachedProfile: (id) async =>
+          (await ref.read(profileCacheRepositoryProvider).readProfile(id))
+              ?.toProfileUser(),
       loadFreshProfile: _loadFreshProfile,
     );
     if (result.shouldRefreshInBackground) {
@@ -53,7 +58,7 @@ class UserProfileNotifier extends _$UserProfileNotifier {
     return result.when(
       success: (data) async {
         await ref.read(profileCacheRepositoryProvider).writeProfile(data);
-        return data;
+        return data.toProfileUser();
       },
       failure: (error) => throw error,
     );

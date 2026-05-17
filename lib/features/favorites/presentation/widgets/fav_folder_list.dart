@@ -1,5 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
+import 'package:culcul/features/favorites/application/favorites_controller.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_item.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/ui/widgets/feedback/app_shimmer.dart';
@@ -12,19 +12,26 @@ enum FavFolderType { created, collected }
 
 class FavFolderList extends HookConsumerWidget {
   final FavFolderType type;
+  final int? currentMid;
 
-  const FavFolderList({super.key, required this.type});
+  const FavFolderList({super.key, required this.type, required this.currentMid});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     useAutomaticKeepAlive();
+    final mid = currentMid;
+    if (mid == null) {
+      return const SizedBox.shrink();
+    }
 
     final isCreated = type == FavFolderType.created;
-    final provider = isCreated ? favCreatedFoldersProvider : favCollectedFoldersProvider;
+    final provider = isCreated
+        ? favCreatedFoldersProvider(mid)
+        : favCollectedFoldersProvider(mid);
     final asyncValue = ref.watch(provider);
     final onLoadMore = isCreated
         ? null
-        : () => ref.read(favCollectedFoldersProvider.notifier).loadMore();
+        : () => ref.read(favCollectedFoldersProvider(mid).notifier).loadMore();
 
     return SmartPagingView<FavoriteFolder>(
       asyncValue: asyncValue,

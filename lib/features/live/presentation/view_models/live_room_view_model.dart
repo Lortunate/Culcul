@@ -7,7 +7,7 @@ import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/runtime/runtime_performance_policy_provider.dart';
 import 'package:culcul/core/services/relation_service.dart';
 import 'package:culcul/features/live/data/live_repository_impl.dart';
-import 'package:culcul/features/live/data/dtos/live_room_detail_model.dart';
+import 'package:culcul/features/live/application/live_room_contracts.dart';
 import 'package:culcul/features/live/domain/entities/live_danmaku_item.dart';
 import 'package:culcul/features/live/presentation/view_models/live_danmaku_feed_view_model.dart';
 import 'package:culcul/features/live/presentation/view_models/live_room_state.dart';

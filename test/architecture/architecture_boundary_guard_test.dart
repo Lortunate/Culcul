@@ -180,6 +180,33 @@ void main() {
     );
   });
 
+  test('app must not import feature presentation or data internals', () {
+    final offenders = <String>[];
+
+    for (final file in sourceDartFiles('lib/app')) {
+      for (final import in dartImports(file)) {
+        final targetPath = import.resolvedPath;
+        if (targetPath == null ||
+            !RegExp(r'^lib/features/[^/]+/(presentation|data)/').hasMatch(targetPath)) {
+          continue;
+        }
+
+        offenders.add(
+          '${formatLocation(import.importerPath, import.lineNumber)} '
+          'imports ${import.uri} -> $targetPath',
+        );
+      }
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'App layer must use feature public seams, not feature presentation/data '
+          'internals:\n${offenders.join('\n')}',
+    );
+  });
+
   test('AppException must not appear in lib', () {
     final offenders = <String>[];
 

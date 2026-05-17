@@ -1,10 +1,6 @@
 import 'package:culcul/features/auth/domain/entities/auth_captcha_challenge.dart';
 import 'package:culcul/features/auth/domain/entities/country_code.dart';
-import 'package:culcul/features/auth/domain/entities/user_entity.dart';
-import 'package:culcul/features/auth/data/auth_repository_impl.dart';
-import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/profile/application/profile_cache_actions.dart';
+import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -13,38 +9,23 @@ part 'auth_view_model.g.dart';
 
 @freezed
 sealed class AuthState with _$AuthState {
-  const factory AuthState({
-    @Default(false) bool isLoggedIn,
-    UserEntity? user,
-    @Default(false) bool isLoading,
-    String? error,
-  }) = _AuthState;
+  const factory AuthState({@Default(false) bool isLoading, String? error}) = _AuthState;
 }
 
 @Riverpod(keepAlive: true)
 class Auth extends _$Auth {
   @override
   AuthState build() {
-    Future<void>.microtask(_init);
-    return const AuthState(isLoading: true);
-  }
-
-  Future<void> _init() async {
-    final repository = ref.read(authRepositoryProvider);
-    final cachedUser = repository.getCachedUser();
-    final refreshedResult = await repository.getCurrentUser();
-    final user = refreshedResult.dataOrNull ?? cachedUser;
-    state = AuthState(isLoggedIn: user != null, user: user);
+    final session = ref.watch(authSessionProvider);
+    return AuthState(isLoading: session.isLoading, error: session.error);
   }
 
   Future<List<CountryCode>> getCountryList() async {
-    final result = await ref.read(authRepositoryProvider).getCountryList();
-    return _unwrapOrDefault(result, const <CountryCode>[]);
+    return ref.read(authSessionProvider.notifier).getCountryList();
   }
 
   Future<AuthCaptchaChallenge?> getCaptcha() async {
-    final result = await ref.read(authRepositoryProvider).getCaptchaChallenge();
-    return _unwrapOrNull(result);
+    return ref.read(authSessionProvider.notifier).getCaptcha();
   }
 
   Future<String?> sendSms(
@@ -55,10 +36,9 @@ class Auth extends _$Auth {
     String validate,
     String seccode,
   ) async {
-    final result = await ref
-        .read(authRepositoryProvider)
+    return ref
+        .read(authSessionProvider.notifier)
         .sendSms(cid, phone, token, challenge, validate, seccode);
-    return _unwrapOrNull(result);
   }
 
   Future<void> loginWithPassword(
@@ -69,93 +49,26 @@ class Auth extends _$Auth {
     String validate,
     String seccode,
   ) async {
-    state = state.copyWith(isLoading: true, error: null);
-    final result = await ref
-        .read(authRepositoryProvider)
-        .loginWithPassword(
-          username: username,
-          password: password,
-          token: token,
-          challenge: challenge,
-          validate: validate,
-          seccode: seccode,
-        );
-    _handleUserResult(result);
+    await ref
+        .read(authSessionProvider.notifier)
+        .loginWithPassword(username, password, token, challenge, validate, seccode);
   }
 
   Future<void> loginWithSms(int cid, String phone, String code, String captchaKey) async {
-    state = state.copyWith(isLoading: true, error: null);
-    final result = await ref
-        .read(authRepositoryProvider)
+    await ref
+        .read(authSessionProvider.notifier)
         .loginWithSms(cid, phone, code, captchaKey);
-    _handleUserResult(result);
   }
 
   Future<void> logout() async {
-    final result = await ref.read(authRepositoryProvider).logout();
-    await result.when(
-      success: (_) async {
-        await ref.read(profileCacheActionsProvider).clearAll();
-        state = state.copyWith(isLoggedIn: false, user: null, error: null);
-      },
-      failure: (error) async => _storeFailure(error),
-    );
+    await ref.read(authSessionProvider.notifier).logout();
   }
 
   Future<void> refreshUser() async {
-    final result = await ref.read(authRepositoryProvider).getCurrentUser();
-    result.when(
-      success: (user) {
-        state = state.copyWith(isLoggedIn: true, user: user, error: null);
-      },
-      failure: _storeFailure,
-    );
+    await ref.read(authSessionProvider.notifier).refreshUser();
   }
 
   void clearError() {
-    if (state.error != null) {
-      state = state.copyWith(error: null);
-    }
-  }
-
-  T _unwrapOrDefault<T>(Result<T, AppError> result, T fallback) {
-    return result.when(
-      success: (value) => value,
-      failure: (error) {
-        _storeFailure(error);
-        return fallback;
-      },
-    );
-  }
-
-  T? _unwrapOrNull<T>(Result<T, AppError> result) {
-    return result.when(
-      success: (value) => value,
-      failure: (error) {
-        _storeFailure(error);
-        return null;
-      },
-    );
-  }
-
-  void _handleUserResult(Result<UserEntity, AppError> result) {
-    result.when(
-      success: (user) {
-        state = state.copyWith(
-          isLoggedIn: true,
-          user: user,
-          isLoading: false,
-          error: null,
-        );
-      },
-      failure: (error) {
-        _storeFailure(error);
-        state = state.copyWith(isLoading: false);
-      },
-    );
-  }
-
-  void _storeFailure(AppError error) {
-    state = state.copyWith(error: error.message, isLoading: false);
+    ref.read(authSessionProvider.notifier).clearError();
   }
 }

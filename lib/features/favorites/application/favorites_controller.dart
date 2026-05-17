@@ -1,21 +1,20 @@
-import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
-import 'package:culcul/core/data/pagination/paged_list_state.dart';
 import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
+import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
+import 'package:culcul/core/data/pagination/paged_list_state.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/utils/list_utils.dart';
-import 'package:culcul/features/auth/application/auth_session_providers.dart';
+import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
-import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'favorites_view_model.freezed.dart';
-part 'favorites_view_model.g.dart';
-part 'favorites_view_model.collected.dart';
-part 'favorites_view_model.folder_resources.dart';
+part 'favorites_controller.freezed.dart';
+part 'favorites_controller.g.dart';
+part 'favorites_controller.collected.dart';
+part 'favorites_controller.folder_resources.dart';
 
 @riverpod
 class FavCreatedFolders extends _$FavCreatedFolders {
@@ -23,14 +22,9 @@ class FavCreatedFolders extends _$FavCreatedFolders {
       NetworkConcurrencyExecutor();
 
   @override
-  Future<List<FavoriteFolder>> build() async {
-    final session = ref.watch(currentUserProvider);
-    if (session == null || !session.isLoggedIn) {
-      return [];
-    }
-    final mid = int.parse(session.uid);
+  Future<List<FavoriteFolder>> build(int upMid) async {
     final repository = ref.read(favRepositoryProvider);
-    final result = await repository.getCreatedFolders(upMid: mid);
+    final result = await repository.getCreatedFolders(upMid: upMid);
     final response = result.dataOrNull;
     if (response == null) return <FavoriteFolder>[];
     final folders = response.folders;
@@ -71,5 +65,58 @@ class FavCreatedFolders extends _$FavCreatedFolders {
         );
 
     return foldersWithCovers;
+  }
+}
+
+@riverpod
+class FavoriteFolderCommands extends _$FavoriteFolderCommands {
+  @override
+  FutureOr<void> build() {}
+
+  Future<AppError?> createFolder({
+    required String title,
+    String? intro,
+    required int privacy,
+  }) async {
+    final result = await ref
+        .read(favRepositoryProvider)
+        .createFolder(title: title, intro: intro, privacy: privacy);
+    final error = result.errorOrNull;
+    return error;
+  }
+
+  Future<AppError?> updateFolder({
+    required int mediaId,
+    required String title,
+    String? intro,
+    required int privacy,
+  }) async {
+    final result = await ref
+        .read(favRepositoryProvider)
+        .updateFolder(mediaId: mediaId, title: title, intro: intro, privacy: privacy);
+    final error = result.errorOrNull;
+    return error;
+  }
+
+  Future<AppError?> deleteFolder({required int mediaId}) async {
+    final result = await ref
+        .read(favRepositoryProvider)
+        .deleteFolder(mediaIds: mediaId.toString());
+    final error = result.errorOrNull;
+    return error;
+  }
+
+  Future<AppError?> deleteResources({
+    required int mediaId,
+    required Set<int> resourceIds,
+  }) async {
+    final result = await ref
+        .read(favRepositoryProvider)
+        .deleteResources(mediaId: mediaId, resources: resourceIds.join(','));
+    final error = result.errorOrNull;
+    if (error == null) {
+      ref.invalidate(favFolderResourcesProvider(mediaId));
+    }
+    return error;
   }
 }

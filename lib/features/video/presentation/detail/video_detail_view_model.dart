@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'dart:developer' as developer;
 
-import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
-import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
+import 'package:culcul/features/video/application/video_view_contracts.dart';
 import 'package:culcul/core/services/relation_service.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/features/video/application/video_detail_workflows.dart';
@@ -204,13 +203,14 @@ class VideoDetailController extends _$VideoDetailController
 
     state = result.when(
       success: (playUrl) {
-        _cachePlayUrl(aid: aid, cid: cid, qn: playUrl.quality, playUrl: playUrl);
+        final viewPlayUrl = playUrl.toPlayUrl();
+        _cachePlayUrl(aid: aid, cid: cid, qn: playUrl.quality, playUrl: viewPlayUrl);
         return state.copyWith(
-          playUrl: playUrl,
+          playUrl: viewPlayUrl,
           isLoading: false,
           error: null,
-          selectedQuality: playUrl.quality,
-          availableQualities: playUrl.acceptQuality.toList(),
+          selectedQuality: viewPlayUrl.quality,
+          availableQualities: viewPlayUrl.acceptQuality.toList(),
         );
       },
       failure: (error) => state.copyWith(isLoading: false, error: error),

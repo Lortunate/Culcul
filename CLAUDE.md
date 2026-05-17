@@ -42,18 +42,19 @@ This project is indexed by GitNexus as **Culcul** (2215 symbols, 3012 relationsh
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 31 active — Architecture Excellence)
+## Architecture (Phase 32 active — Architecture Source Consolidation)
 
-`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–30 completed structural cleanup, barrel elimination, freezed/@riverpod migration, model deduplication, abstract repo removal, dead weight removal, provider/bootstrap cleanup, runtime/network consolidation, source-of-truth cleanup, feature public surface reduction, thin domain collapse, generated/source audit separation, router alias cleanup, dependency/config source-of-truth cleanup, application seam hardening, bootstrap flattening, dead infrastructure removal, notification helper decomposition, alias-provider cleanup, codegen modernization, cross-feature import cleanup, provider tail cleanup, duplicate-name cleanup, placeholder/no-op classification, dependency source-of-truth audit, semantic seam classification, codegen source-of-truth cleanup, app runtime seam alignment, no-op workflow cleanup, and focused large-file decomposition. Phase 31 continues with semantic maintainability: presentation/data boundary cleanup, one-source contracts, guard baselines, and high-value decomposition.
+`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–31 completed structural cleanup, barrel elimination, freezed/@riverpod migration, model deduplication, abstract repo removal, dead weight removal, provider/bootstrap cleanup, runtime/network consolidation, source-of-truth cleanup, feature public surface reduction, thin domain collapse, generated/source audit separation, router alias cleanup, dependency/config source-of-truth cleanup, application seam hardening, bootstrap flattening, dead infrastructure removal, notification helper decomposition, alias-provider cleanup, codegen modernization, cross-feature import cleanup, provider tail cleanup, duplicate-name cleanup, placeholder/no-op classification, dependency source-of-truth audit, semantic seam classification, codegen source-of-truth cleanup, app runtime seam alignment, no-op workflow cleanup, focused large-file decomposition, and Phase 31 architecture excellence baseline restoration. Phase 32 continues with aggressive source consolidation: app/auth boundary cleanup, presentation-to-data burn-down, one-source contracts, zero-wrapper deletion, guard baselines, and codegen command source-of-truth hardening.
 
-Active spec: `docs/specs/2026-05-16-phase31-architecture-excellence.md`
-Active plan: `docs/plans/2026-05-16-phase31-architecture-excellence.md`
+Active spec: `docs/specs/2026-05-16-phase32-architecture-source-consolidation.md`
+Active plan: `docs/plans/2026-05-16-phase32-architecture-source-consolidation.md`
 Architecture guide: `docs/architecture/architecture-guide.md`
-Archived: Phase 22–30 specs/plans in `docs/specs/archive/` and `docs/plans/archive/`
+Archived: Phase 22–31 specs/plans in `docs/specs/archive/` and `docs/plans/archive/`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`
 - Features must NOT import another feature's `presentation/**` or `data/**` internals
+- `app/` must NOT import feature `presentation/**` or `data/**` internals
 - `route_entry.dart` is the router-facing seam; `<feature>.dart` is allowed only when it exports a real feature API
 - `feature_scope.dart` is retired in the Phase 30 baseline (0 files); do not reintroduce it without a concrete approved runtime seam
 - DTOs belong in `data/dtos/`, never in `domain/`
@@ -75,6 +76,7 @@ Archived: Phase 22–30 specs/plans in `docs/specs/archive/` and `docs/plans/arc
 - Shared API services in `core/services/` for cross-feature endpoints (comments, etc.)
 - No business logic in DTOs — business methods belong in domain entities only
 - If architecture docs disagree, the newest active phase spec/plan override older phase text
+- Generated-code recovery path: run `dart run slang`, then `dart run build_runner build --delete-conflicting-outputs`; protobuf files require an explicit protoc/protoc_plugin path before editing generated protobuf Dart.
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:full hash:f65d5d33 -->
 ## Issue Tracking with bd (beads)

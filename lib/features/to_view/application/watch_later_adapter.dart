@@ -1,8 +1,8 @@
 import 'package:culcul/core/contracts/watch_later_port.dart';
-import 'package:culcul/features/to_view/presentation/view_models/to_view_view_model.dart';
+import 'package:culcul/features/to_view/application/to_view_controller.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-/// Bridges core's WatchLaterPort contract with to_view's view model.
+/// Bridges core's WatchLaterPort contract with to_view's controller.
 class WatchLaterAdapter implements WatchLaterPort {
   final Ref _ref;
   WatchLaterAdapter(this._ref);

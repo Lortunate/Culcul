@@ -1,4 +1,4 @@
-import 'package:culcul/features/profile/data/dtos/profile_user.dart';
+import 'package:culcul/features/profile/application/profile_view_contracts.dart';
 
 typedef CachedProfileReader = Future<ProfileUser?> Function(String userId);
 typedef FreshProfileLoader = Future<ProfileUser> Function(String userId);

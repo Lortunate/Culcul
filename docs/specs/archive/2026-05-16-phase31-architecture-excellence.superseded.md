@@ -1,3 +1,8 @@
+# Superseded
+
+This Phase 31 spec was superseded on 2026-05-16 by `docs/specs/2026-05-16-phase32-architecture-source-consolidation.md`.
+The newer phase keeps the Phase 31 baseline constraints but expands the work into aggressive app/code/directory source-of-truth cleanup.
+
 # Phase 31 Architecture Excellence Spec
 
 ## Status

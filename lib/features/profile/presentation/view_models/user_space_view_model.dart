@@ -1,4 +1,4 @@
-import 'package:culcul/features/profile/data/dtos/profile_user.dart';
+import 'package:culcul/features/profile/application/profile_view_contracts.dart';
 import 'package:culcul/core/services/relation_service.dart';
 import 'package:culcul/features/profile/data/profile_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -10,7 +10,10 @@ class UserSpaceNotifier extends _$UserSpaceNotifier {
   @override
   Future<ProfileUser> build(String mid) async {
     final result = await ref.read(profileRepositoryProvider).getProfile(int.parse(mid));
-    return result.when(success: (data) => data, failure: (error) => throw error);
+    return result.when(
+      success: (data) => data.toProfileUser(),
+      failure: (error) => throw error,
+    );
   }
 
   Future<void> toggleFollow() async {

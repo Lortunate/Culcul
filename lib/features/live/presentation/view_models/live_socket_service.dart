@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:culcul/core/runtime/runtime_performance_policy.dart';
-import 'package:culcul/features/live/data/dtos/live_danmu_info_model.dart';
+import 'package:culcul/features/live/application/live_room_contracts.dart';
 import 'package:culcul/features/live/domain/entities/live_danmaku_item.dart';
 import 'package:culcul/features/live/presentation/view_models/live_danmaku_event_parser.dart';
 import 'package:flutter/foundation.dart';

@@ -2,7 +2,7 @@ import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/profile/presentation/view_models/user_space_view_model.dart';
 import 'package:culcul/features/profile/presentation/view_models/user_space_videos_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/profile/data/dtos/profile_video.dart';
+import 'package:culcul/features/profile/application/profile_view_contracts.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
 import 'package:culcul/ui/assemblies/feed_cards/video_card.dart';

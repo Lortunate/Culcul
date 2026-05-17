@@ -1,4 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
 import 'package:culcul/features/auth/presentation/widgets/password_login_view.dart';
 import 'package:culcul/features/auth/presentation/widgets/qr_login_view.dart';
@@ -44,12 +45,14 @@ class LoginPanel extends HookConsumerWidget {
     }
 
     ref.listen(authProvider, (previous, next) {
-      if (next.isLoggedIn && !next.isLoading) {
-        closePanel();
-      }
       if (next.error != null) {
         showFeedback(next.error!);
         ref.read(authProvider.notifier).clearError();
+      }
+    });
+    ref.listen(currentUserProvider, (previous, next) {
+      if (next?.isLoggedIn ?? false) {
+        closePanel();
       }
     });
 

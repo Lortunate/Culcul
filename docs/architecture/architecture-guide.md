@@ -1,11 +1,13 @@
 # Culcul Architecture Guide
 
-Active phase: Phase 31 Architecture Excellence. Last completed phase: Phase 30 Architecture Optimization.
+Active phase: Phase 32 Architecture Source Consolidation. Last completed phase: Phase 30 Architecture Optimization. Phase 31 was superseded by Phase 32 before implementation closeout.
 
 Authoritative docs:
 
-- Active spec: `docs/specs/2026-05-16-phase31-architecture-excellence.md`
-- Active plan: `docs/plans/2026-05-16-phase31-architecture-excellence.md`
+- Active spec: `docs/specs/2026-05-16-phase32-architecture-source-consolidation.md`
+- Active plan: `docs/plans/2026-05-16-phase32-architecture-source-consolidation.md`
+- Superseded spec: `docs/specs/archive/2026-05-16-phase31-architecture-excellence.superseded.md`
+- Superseded plan: `docs/plans/archive/2026-05-16-phase31-architecture-excellence.superseded.md`
 - Completed spec: `docs/specs/archive/2026-05-15-phase30-architecture-optimization.completed.md`
 - Completed plan: `docs/plans/archive/2026-05-15-phase30-architecture-optimization.completed.md`
 - Completed spec: `docs/specs/archive/2026-05-15-phase29-architecture-deep-cleanup.completed.md`
@@ -27,6 +29,7 @@ Authoritative docs:
 ## Hard Rules
 
 - `core/` and `ui/` must not import `features/`.
+- `app/` must not import feature `presentation/**` or `data/**` internals.
 - A feature must not import another feature's `data/**` or `presentation/**`.
 - Every shared model has one definition in `core/contracts/`.
 - DTOs belong in `data/dtos/`; domain entities exist only when they carry business behavior.
@@ -37,6 +40,8 @@ Authoritative docs:
 - `AppFeedback` is the app notification pattern.
 - `DioClient` and `RequestExecutor` (injected as a field, not via mixin) are the network policy path.
 - No `UnimplementedError`/`TODO()` placeholders in runtime provider seams.
+- Generated-code recovery path is `dart run slang`, then `dart run build_runner build --delete-conflicting-outputs`.
+- `lib/protos/*.proto` is outside build_runner; do not edit generated protobuf Dart without adding or documenting an explicit protoc/protoc_plugin path.
 
 ## Approved Public Seams
 
@@ -54,6 +59,19 @@ Avoid new barrel files. Import source files directly unless the file is one of t
 - Dio: prefer `BaseOptions`, explicit interceptor order, `CancelToken`, `QueuedInterceptor`, request `extra`, and lifecycle cleanup over custom duplicated network side channels.
 - Dependencies: reuse current popular stack before adding new packages.
 - Local architecture guard: `bash tool/architecture/run_architecture_guards.sh`
+
+## Phase 32 Architecture Debt Snapshot Guards
+
+Purpose: keep source consolidation debt visible while later Phase 32 slices remove it. The guards fail on new debt and on stale allowlist entries after migration.
+
+Current snapshot:
+
+- `lib/shared/` authored Dart files: 0.
+- Old-style hand-written Riverpod provider declarations in authored source: 0.
+- `lib/app/**` imports of feature `presentation/**` or `data/**` internals: 0.
+- Feature presentation files with same-feature `data/**` references: 84 temporary allowlist entries, each tied to the planned Phase 32 cleanup task.
+- Feature presentation imports of another feature's `data/**` or `presentation/**`: 0.
+- Feature presentation DTO imports are allowed only when the importing file is in the Phase 32 snapshot allowlist.
 
 ## Phase 29 Completion Baseline
 

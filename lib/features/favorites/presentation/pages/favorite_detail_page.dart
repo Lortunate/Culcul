@@ -3,11 +3,10 @@ import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
+import 'package:culcul/features/favorites/application/favorites_controller.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
-import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_resource_item.dart';
-import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/feedback/app_empty_state_widget.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
@@ -59,6 +58,7 @@ class FavoriteDetailPage extends HookConsumerWidget {
           context: context,
           ref: ref,
           mediaId: mediaId,
+          mid: mid,
           isMine: isMine,
           isSelectionMode: isSelectionMode,
           selectedItems: selectedItems,

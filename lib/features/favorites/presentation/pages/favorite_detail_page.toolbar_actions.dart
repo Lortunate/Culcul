@@ -4,6 +4,7 @@ List<Widget> _buildFavoriteDetailAppBarActions({
   required BuildContext context,
   required WidgetRef ref,
   required int mediaId,
+  required int mid,
   required bool isMine,
   required ValueNotifier<bool> isSelectionMode,
   required ValueNotifier<Set<int>> selectedItems,
@@ -26,7 +27,6 @@ List<Widget> _buildFavoriteDetailAppBarActions({
                 if (success) {
                   isSelectionMode.value = false;
                   selectedItems.value = {};
-                  ref.invalidate(favFolderResourcesProvider(mediaId));
                   return;
                 }
               },
@@ -50,7 +50,7 @@ List<Widget> _buildFavoriteDetailAppBarActions({
     PopupMenuButton<String>(
       onSelected: (value) async {
         if (value == 'edit') {
-          await _handleEditFolder(context: context, ref: ref, mediaId: mediaId);
+          await _handleEditFolder(context: context, ref: ref, mediaId: mediaId, mid: mid);
           return;
         }
         if (value == 'manage') {
@@ -58,7 +58,12 @@ List<Widget> _buildFavoriteDetailAppBarActions({
           return;
         }
         if (value == 'delete') {
-          await _handleDeleteFolder(context: context, ref: ref, mediaId: mediaId);
+          await _handleDeleteFolder(
+            context: context,
+            ref: ref,
+            mediaId: mediaId,
+            mid: mid,
+          );
         }
       },
       itemBuilder: (context) => [
@@ -80,8 +85,9 @@ Future<bool> _handleEditFolder({
   required BuildContext context,
   required WidgetRef ref,
   required int mediaId,
+  required int mid,
 }) async {
-  final createdFolders = ref.read(favCreatedFoldersProvider).asData?.value;
+  final createdFolders = ref.read(favCreatedFoldersProvider(mid)).asData?.value;
   final folder = createdFolders?.where((f) => f.id == mediaId).firstOrNull;
   final data = await showDialog<FavFolderFormData>(
     context: context,
@@ -91,17 +97,16 @@ Future<bool> _handleEditFolder({
     return false;
   }
 
-  final result = await ref
-      .read(favRepositoryProvider)
+  final error = await ref
+      .read(favoriteFolderCommandsProvider.notifier)
       .updateFolder(
         mediaId: mediaId,
         title: data.title,
         intro: data.intro,
         privacy: data.privacy,
       );
-  final error = result.errorOrNull;
   if (error == null) {
-    ref.invalidate(favCreatedFoldersProvider);
+    ref.invalidate(favCreatedFoldersProvider(mid));
     return true;
   }
 
@@ -116,6 +121,7 @@ Future<bool> _handleDeleteFolder({
   required BuildContext context,
   required WidgetRef ref,
   required int mediaId,
+  required int mid,
 }) async {
   final t = Translations.of(context);
   final confirmed = await showDialog<bool>(
@@ -139,12 +145,11 @@ Future<bool> _handleDeleteFolder({
     return false;
   }
 
-  final result = await ref
-      .read(favRepositoryProvider)
-      .deleteFolder(mediaIds: mediaId.toString());
-  final error = result.errorOrNull;
+  final error = await ref
+      .read(favoriteFolderCommandsProvider.notifier)
+      .deleteFolder(mediaId: mediaId);
   if (error == null) {
-    ref.invalidate(favCreatedFoldersProvider);
+    ref.invalidate(favCreatedFoldersProvider(mid));
     if (context.mounted) {
       context.pop();
     }
@@ -164,10 +169,9 @@ Future<bool> _handleDeleteResources({
   required int mediaId,
   required Set<int> resourceIds,
 }) async {
-  final result = await ref
-      .read(favRepositoryProvider)
-      .deleteResources(mediaId: mediaId, resources: resourceIds.join(','));
-  final error = result.errorOrNull;
+  final error = await ref
+      .read(favoriteFolderCommandsProvider.notifier)
+      .deleteResources(mediaId: mediaId, resourceIds: resourceIds);
   if (error == null) {
     return true;
   }

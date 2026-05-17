@@ -1,3 +1,8 @@
+# Superseded
+
+This Phase 31 plan was superseded on 2026-05-16 by `docs/plans/2026-05-16-phase32-architecture-source-consolidation.md`.
+The newer phase is the active implementation plan for architecture/code/directory cleanup.
+
 # Phase 31 Architecture Excellence Plan
 
 Spec: `docs/specs/2026-05-16-phase31-architecture-excellence.md`

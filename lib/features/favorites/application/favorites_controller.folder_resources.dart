@@ -1,4 +1,4 @@
-part of 'favorites_view_model.dart';
+part of 'favorites_controller.dart';
 
 @freezed
 sealed class FavFolderDetailState with _$FavFolderDetailState {

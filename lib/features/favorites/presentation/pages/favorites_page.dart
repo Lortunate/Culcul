@@ -1,6 +1,5 @@
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
-import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
+import 'package:culcul/features/favorites/application/favorites_controller.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
@@ -24,6 +23,12 @@ class FavoritesPage extends HookConsumerWidget {
     final isLoggedIn = ref.watch(
       currentUserProvider.select((s) => s?.isLoggedIn ?? false),
     );
+    final currentMid = ref.watch(
+      currentUserProvider.select((s) {
+        final uid = s?.uid;
+        return uid == null ? null : int.tryParse(uid);
+      }),
+    );
 
     return Scaffold(
       backgroundColor: colorScheme.surface,
@@ -33,7 +38,12 @@ class FavoritesPage extends HookConsumerWidget {
         elevation: 0,
         backgroundColor: colorScheme.surface,
         surfaceTintColor: Colors.transparent,
-        actions: [_AddFolderAction(isVisible: isLoggedIn && tabController.index == 0)],
+        actions: [
+          _AddFolderAction(
+            isVisible: isLoggedIn && currentMid != null && tabController.index == 0,
+            currentMid: currentMid,
+          ),
+        ],
         bottom: isLoggedIn
             ? AppTabBar(
                 controller: tabController,
@@ -42,7 +52,7 @@ class FavoritesPage extends HookConsumerWidget {
             : null,
       ),
       body: isLoggedIn
-          ? _FavoritesTabView(controller: tabController)
+          ? _FavoritesTabView(controller: tabController, currentMid: currentMid)
           : GuestView(
               title: t.profile.not_logged_in,
               message: t.profile.login_hint,
@@ -54,16 +64,17 @@ class FavoritesPage extends HookConsumerWidget {
 
 class _FavoritesTabView extends StatelessWidget {
   final TabController controller;
+  final int? currentMid;
 
-  const _FavoritesTabView({required this.controller});
+  const _FavoritesTabView({required this.controller, required this.currentMid});
 
   @override
   Widget build(BuildContext context) {
     return TabBarView(
       controller: controller,
-      children: const [
-        FavFolderList(type: FavFolderType.created),
-        FavFolderList(type: FavFolderType.collected),
+      children: [
+        FavFolderList(type: FavFolderType.created, currentMid: currentMid),
+        FavFolderList(type: FavFolderType.collected, currentMid: currentMid),
       ],
     );
   }
@@ -71,8 +82,9 @@ class _FavoritesTabView extends StatelessWidget {
 
 class _AddFolderAction extends ConsumerWidget {
   final bool isVisible;
+  final int? currentMid;
 
-  const _AddFolderAction({required this.isVisible});
+  const _AddFolderAction({required this.isVisible, required this.currentMid});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -82,7 +94,8 @@ class _AddFolderAction extends ConsumerWidget {
 
     return IconButton(
       icon: const Icon(Icons.add),
-      onPressed: () => _handleCreateFolder(context: context, ref: ref),
+      onPressed: () =>
+          _handleCreateFolder(context: context, ref: ref, currentMid: currentMid),
     );
   }
 }
@@ -90,7 +103,11 @@ class _AddFolderAction extends ConsumerWidget {
 Future<bool> _handleCreateFolder({
   required BuildContext context,
   required WidgetRef ref,
+  required int? currentMid,
 }) async {
+  if (currentMid == null) {
+    return false;
+  }
   final t = Translations.of(context);
   final data = await showDialog<FavFolderFormData>(
     context: context,
@@ -100,12 +117,11 @@ Future<bool> _handleCreateFolder({
     return false;
   }
 
-  final result = await ref
-      .read(favRepositoryProvider)
+  final error = await ref
+      .read(favoriteFolderCommandsProvider.notifier)
       .createFolder(title: data.title, intro: data.intro, privacy: data.privacy);
-  final error = result.errorOrNull;
   if (error == null) {
-    ref.invalidate(favCreatedFoldersProvider);
+    ref.invalidate(favCreatedFoldersProvider(currentMid));
     return true;
   }
 
