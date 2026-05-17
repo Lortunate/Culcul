@@ -10,6 +10,7 @@ import 'package:culcul/ui/assemblies/comments/comment_list_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../detail/video_detail_view_model.dart';
+import 'video_comment_tree_update.dart';
 
 part 'video_comments_view_model.g.dart';
 
@@ -74,7 +75,11 @@ class VideoCommentsController extends _$VideoCommentsController {
 
   Future<void> toggleCommentLike(int oid, int rpid, bool isLiked) async {
     final previousComments = state.paging.items;
-    final nextComments = _updateComment(previousComments, rpid, isLiked: !isLiked);
+    final nextComments = updateCommentLikeState(
+      previousComments,
+      rpid,
+      isLiked: !isLiked,
+    );
     if (identical(nextComments, previousComments)) {
       return;
     }
@@ -169,47 +174,5 @@ class VideoCommentsController extends _$VideoCommentsController {
       await Future<void>.delayed(const Duration(milliseconds: 50));
     }
     return ref.read(videoDetailControllerProvider(bvid)).videoDetail?.aid;
-  }
-
-  List<CommentItem> _updateComment(
-    List<CommentItem> comments,
-    int rpid, {
-    required bool isLiked,
-  }) {
-    CommentItem? update(CommentItem item) {
-      if (item.rpid == rpid) {
-        return item.copyWith(
-          like: isLiked ? item.like + 1 : item.like - 1,
-          action: isLiked ? 1 : 0,
-        );
-      }
-
-      final replyIndex = item.replies.indexWhere((reply) => reply.rpid == rpid);
-      if (replyIndex == -1) {
-        return null;
-      }
-
-      final replies = List<CommentItem>.from(item.replies);
-      final oldReply = replies[replyIndex];
-      replies[replyIndex] = oldReply.copyWith(
-        like: isLiked ? oldReply.like + 1 : oldReply.like - 1,
-        action: isLiked ? 1 : 0,
-      );
-      return item.copyWith(replies: replies);
-    }
-
-    var changed = false;
-    final result = <CommentItem>[];
-    for (final comment in comments) {
-      final updated = update(comment);
-      if (updated != null) {
-        result.add(updated);
-        changed = true;
-      } else {
-        result.add(comment);
-      }
-    }
-
-    return changed ? result : comments;
   }
 }

@@ -5,6 +5,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
 import 'package:culcul/app/bootstrap/deferred_app_init.dart';
 import 'package:culcul/core/services/audio_playback_state_gate.dart';
+import 'package:culcul/core/services/audio_service_initializer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:media_kit/media_kit.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -15,7 +16,7 @@ part 'audio_handler.g.dart';
 CilixiliAudioHandler audioHandler(Ref ref) {
   DeferredAppInitController.instance.ensureMediaKitInitialized();
   final handler = CilixiliAudioHandler.shared;
-  unawaited(handler.initializeAudioServiceIfNeeded());
+  unawaited(initializeCulculAudioService(builder: () => handler));
   ref.onDispose(handler.dispose);
   return handler;
 }
@@ -25,8 +26,6 @@ class CilixiliAudioHandler extends BaseAudioHandler {
   static const Duration _broadcastReportInterval = Duration(seconds: 10);
 
   static final CilixiliAudioHandler _shared = CilixiliAudioHandler._();
-  static Future<void>? _audioServiceInitFuture;
-  static bool _audioServiceInitialized = false;
 
   final Player player = Player();
   final AudioPlaybackStateGate _playbackStateGate = AudioPlaybackStateGate();
@@ -164,41 +163,6 @@ class CilixiliAudioHandler extends BaseAudioHandler {
   @override
   Future<void> updateMediaItem(MediaItem mediaItem) async {
     this.mediaItem.add(mediaItem);
-  }
-
-  Future<void> initializeAudioServiceIfNeeded() async {
-    if (_audioServiceInitialized) {
-      return;
-    }
-
-    final existing = _audioServiceInitFuture;
-    if (existing != null) {
-      await existing;
-      return;
-    }
-
-    _audioServiceInitFuture = _initializeAudioService();
-    await _audioServiceInitFuture;
-  }
-
-  Future<void> _initializeAudioService() async {
-    try {
-      await AudioService.init(
-        builder: () => shared,
-        config: const AudioServiceConfig(
-          androidNotificationChannelId: 'com.lortunate.culcul.channel.audio',
-          androidNotificationChannelName: 'Video Playback',
-          androidNotificationOngoing: true,
-        ),
-      );
-      _audioServiceInitialized = true;
-    } catch (error) {
-      if (kDebugMode) {
-        debugPrint('AudioService init failed: $error');
-      }
-    } finally {
-      _audioServiceInitFuture = null;
-    }
   }
 
   void _recordBroadcast({required String reason}) {
