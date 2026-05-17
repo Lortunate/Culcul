@@ -6,7 +6,7 @@ import 'package:culcul/features/video/presentation/comments/comment_reply_view_m
 import 'package:culcul/ui/assemblies/comments/comment_item.dart';
 import 'package:culcul/ui/assemblies/comments/comment_reply_sheet.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/video/presentation/comments/comments/bottom_input_bar.dart';
+import 'package:culcul/features/video/presentation/comments/bottom_input_bar.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/ui/widgets/layout/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';

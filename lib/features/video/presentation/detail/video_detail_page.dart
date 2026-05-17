@@ -2,7 +2,7 @@ import 'package:culcul/features/video/presentation/detail/video_detail_view_mode
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
 import 'package:culcul/features/video/presentation/player/hooks/use_video_orientation.dart';
 import 'package:culcul/features/video/presentation/player/hooks/use_video_session.dart';
-import 'package:culcul/features/video/presentation/comments/comments/video_comments_view.dart';
+import 'package:culcul/features/video/presentation/comments/video_comments_view.dart';
 import 'package:culcul/features/video/presentation/detail/info/video_info_view.dart';
 import 'package:culcul/features/video/presentation/detail/info/video_tab_bar.dart';
 import 'package:culcul/features/video/presentation/player/video_player_view.dart';

@@ -27,7 +27,6 @@ const _phase31PresentationDataCleanupFeatures = {
   'ranking',
   'search',
   'to_view',
-  'video',
 };
 
 void main() {

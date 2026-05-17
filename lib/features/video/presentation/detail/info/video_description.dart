@@ -1,4 +1,4 @@
-import 'package:culcul/features/video/application/presentation_contracts/dtos/video_detail_dto.dart';
+import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
