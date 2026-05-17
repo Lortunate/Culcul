@@ -205,7 +205,7 @@ Expected:
 
 ## Phase Close
 
-- [ ] Run:
+- [x] Run:
 
 ```bash
 dart run build_runner build
@@ -215,5 +215,5 @@ gitnexus_detect_changes(scope: "all")
 bd ready --json
 ```
 
-- [ ] Close completed bd issues with concrete reasons.
-- [ ] Commit and push.
+- [x] Close completed bd issues with concrete reasons.
+- [x] Commit and push.
