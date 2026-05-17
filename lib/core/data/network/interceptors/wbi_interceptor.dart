@@ -46,7 +46,6 @@ class WbiInterceptor extends Interceptor {
         DioException(
           requestOptions: options,
           error: 'Wbi signing failed: $e',
-          type: DioExceptionType.unknown,
         ),
       );
     }

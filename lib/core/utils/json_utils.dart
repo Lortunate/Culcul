@@ -23,6 +23,6 @@ class JsonUtils {
 
   static List<String> parseStringListWithDefault(dynamic value) {
     if (value is! List) return const [];
-    return value.map((e) => parseStringWithDefault(e)).toList();
+    return value.map(parseStringWithDefault).toList();
   }
 }

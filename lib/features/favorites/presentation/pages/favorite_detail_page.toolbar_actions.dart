@@ -108,7 +108,10 @@ Future<bool> _handleEditFolder({
   if (!context.mounted) {
     return false;
   }
-  _showFavoriteActionErrorSnackBar(context, error.message);
+  context.showAppFeedback(
+    '${t.common.error}: ${error.message}',
+    level: AppFeedbackLevel.error,
+  );
   return false;
 }
 
@@ -154,7 +157,10 @@ Future<bool> _handleDeleteFolder({
   if (!context.mounted) {
     return false;
   }
-  _showFavoriteActionErrorSnackBar(context, error.message);
+  context.showAppFeedback(
+    '${t.common.error}: ${error.message}',
+    level: AppFeedbackLevel.error,
+  );
   return false;
 }
 
@@ -175,12 +181,10 @@ Future<bool> _handleDeleteResources({
   if (!context.mounted) {
     return false;
   }
-  _showFavoriteActionErrorSnackBar(context, error.message);
-  return false;
-}
-
-void _showFavoriteActionErrorSnackBar(BuildContext context, String message) {
-  if (!context.mounted) return;
   final t = Translations.of(context);
-  context.showAppFeedback('${t.common.error}: $message', level: AppFeedbackLevel.error);
+  context.showAppFeedback(
+    '${t.common.error}: ${error.message}',
+    level: AppFeedbackLevel.error,
+  );
+  return false;
 }

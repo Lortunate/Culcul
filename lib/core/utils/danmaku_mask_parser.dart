@@ -20,21 +20,21 @@ class DanmakuMaskParser {
 
     // Version
     // ignore: unused_local_variable
-    final version = data.getUint32(offset, Endian.big);
+    final version = data.getUint32(offset);
     offset += 4;
 
     // Unknown
     offset += 4;
 
     // Segment Count
-    final segmentCount = data.getUint32(offset, Endian.big);
+    final segmentCount = data.getUint32(offset);
     offset += 4;
 
     final segments = <_MaskSegment>[];
     for (int i = 0; i < segmentCount; i++) {
-      final time = data.getUint64(offset, Endian.big);
+      final time = data.getUint64(offset);
       offset += 8;
-      final fileOffset = data.getUint64(offset, Endian.big);
+      final fileOffset = data.getUint64(offset);
       offset += 8;
       segments.add(_MaskSegment(time, fileOffset));
     }
