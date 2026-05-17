@@ -76,11 +76,11 @@ Expected:
   - old worktree branch `phase31-architecture-excellence-clean`
   - old worktree branch `phase8-boundary-cleanup`
 
-- [ ] Compare branch heads against `master`.
-- [ ] For each branch, choose one:
+- [x] Compare branch heads against `master`.
+- [x] For each branch, choose one:
   - merge useful commits manually and run tests.
   - supersede branch with bd note explaining why it is stale.
-- [ ] Do not start code-heavy Phase 34 slices until this issue is closed or
+- [x] Do not start code-heavy Phase 34 slices until this issue is closed or
   explicitly deferred.
 
 Verification:
@@ -107,13 +107,13 @@ git branch --contains 44cd915
 - `lib/features/ranking/presentation/pages/ranking_page.dart`
 - `test/architecture/architecture_boundary_guard_test.dart`
 
-- [ ] Run GitNexus impact for each edited symbol before changing code.
-- [ ] Replace `AppException` throws with `AppError` factories and delete the
+- [x] Run GitNexus impact for each edited symbol before changing code.
+- [x] Replace `AppException` throws with `AppError` factories and delete the
   second hierarchy.
-- [ ] Inline favorite query parameter objects into named parameters.
-- [ ] Move `ToViewModelDto` business behavior into the mapper/domain owner.
-- [ ] Flatten `SearchTrendingKeyword` if it only mirrors another shape.
-- [ ] Delete retired pagination/ranking names after references are gone.
+- [x] Inline favorite query parameter objects into named parameters.
+- [x] Move `ToViewModelDto` business behavior into the mapper/domain owner.
+- [x] Flatten `SearchTrendingKeyword` if it only mirrors another shape.
+- [x] Delete retired pagination/ranking names after references are gone.
 
 Verification:
 
@@ -135,11 +135,11 @@ flutter analyze --no-fatal-infos
 - `lib/features/video/data/video_api.dart`
 - `lib/features/video/data/video_repository_impl.dart`
 
-- [ ] Run GitNexus impact before editing each API constructor/provider.
-- [ ] Find all ad hoc `ResourceApi` construction.
-- [ ] Route construction through provider or constructor injection.
-- [ ] Keep endpoint constants in one owner.
-- [ ] Do not create a repository interface unless tests or runtime polymorphism
+- [x] Run GitNexus impact before editing each API constructor/provider.
+- [x] Find all ad hoc `ResourceApi` construction.
+- [x] Route construction through provider or constructor injection.
+- [x] Keep endpoint constants in one owner.
+- [x] Do not create a repository interface unless tests or runtime polymorphism
   need it.
 
 Verification:
@@ -164,11 +164,11 @@ flutter analyze --no-fatal-infos
 - `lib/core/services/audio_handler.dart`
 - `lib/core/services/comment_service.dart`
 
-- [ ] Pick one candidate per commit.
-- [ ] Run GitNexus impact for the edited class or method.
-- [ ] Extract behavior only when the new file has one clear responsibility.
-- [ ] Keep imports direct.
-- [ ] Do not add a part file or wrapper just to shrink line count.
+- [x] Pick one candidate per commit.
+- [x] Run GitNexus impact for the edited class or method.
+- [x] Extract behavior only when the new file has one clear responsibility.
+- [x] Keep imports direct.
+- [x] Do not add a part file or wrapper just to shrink line count.
 
 Verification:
 
@@ -185,10 +185,10 @@ flutter analyze --no-fatal-infos
 
 - Any file reported by `flutter analyze --no-fatal-infos`.
 
-- [ ] Capture current analyzer info count.
-- [ ] Fix lints in small batches.
-- [ ] Do not weaken `analysis_options.yaml`.
-- [ ] Close duplicate analyzer-debt issue if `culcul-xap` and `culcul-ojk`
+- [x] Capture current analyzer info count.
+- [x] Fix lints in small batches.
+- [x] Do not weaken `analysis_options.yaml`.
+- [x] Close duplicate analyzer-debt issue if `culcul-xap` and `culcul-ojk`
   track the same work.
 
 Verification:

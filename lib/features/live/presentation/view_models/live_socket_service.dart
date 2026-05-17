@@ -6,6 +6,7 @@ import 'package:culcul/core/runtime/runtime_performance_policy.dart';
 import 'package:culcul/features/live/application/presentation_contracts/dtos/live_danmu_info_model.dart';
 import 'package:culcul/features/live/application/presentation_contracts/dtos/live_history_danmaku_model.dart';
 import 'package:culcul/features/live/presentation/view_models/live_danmaku_event_parser.dart';
+import 'package:culcul/features/live/presentation/view_models/live_socket_packet_codec.dart';
 import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -125,54 +126,27 @@ class LiveSocketService {
   void _sendPacket({required int operation, required List<int> body}) {
     if (_isSuspended || _channel == null) return;
 
-    final header = ByteData(16);
-    final packetLength = 16 + body.length;
-
-    header.setUint32(0, packetLength); // Packet Length
-    header.setUint16(4, 16); // Header Length
-    header.setUint16(6, 1); // Protocol Version
-    header.setUint32(8, operation); // Operation
-    header.setUint32(12, 1); // Sequence
-
-    final packet = Uint8List(packetLength);
-    packet.setRange(0, 16, header.buffer.asUint8List());
-    packet.setRange(16, packetLength, body);
-
-    _channel!.sink.add(packet);
+    _channel!.sink.add(LiveSocketPacketCodec.encode(operation: operation, body: body));
   }
 
   void _handleMessage(dynamic message) {
     if (message is! List<int>) return;
 
-    final data = Uint8List.fromList(message);
-    var offset = 0;
-
-    while (offset < data.length) {
-      if (offset + 16 > data.length) break;
-
-      final header = ByteData.sublistView(data, offset, offset + 16);
-      final packetLength = header.getUint32(0);
-      final protocolVer = header.getUint16(6);
-      final operation = header.getUint32(8);
-
-      if (offset + packetLength > data.length) break;
-
-      final body = data.sublist(offset + 16, offset + packetLength);
-
-      switch (operation) {
+    for (final packet in LiveSocketPacketCodec.decode(message)) {
+      switch (packet.operation) {
         case 5: // Notification
-          if (protocolVer == 2) {
+          if (packet.protocolVersion == 2) {
             // Zlib compressed
             try {
-              final uncompressed = zlib.decode(body);
+              final uncompressed = zlib.decode(packet.body);
               _handleMessage(uncompressed); // Recursive for uncompressed batch
             } catch (e) {
               debugPrint('Failed to decompress zlib body: $e');
             }
-          } else if (protocolVer == 0) {
+          } else if (packet.protocolVersion == 0) {
             // JSON
             try {
-              final jsonStr = utf8.decode(body);
+              final jsonStr = utf8.decode(packet.body);
               // Intentionally synchronous: live danmaku messages arrive at
               // high throughput. Using compute() per-message would add
               // isolate spawn overhead exceeding the decode cost itself.
@@ -181,7 +155,7 @@ class LiveSocketService {
             } catch (e) {
               debugPrint('Failed to parse notification JSON: $e');
             }
-          } else if (protocolVer == 3) {
+          } else if (packet.protocolVersion == 3) {
             // Brotli compressed - not supported natively in standard dart:io without plugins usually,
             // but let's assume zlib is used mostly for protover 2.
             // If protover 3 is used, we might need 'brotli' package or skip.
@@ -193,8 +167,6 @@ class LiveSocketService {
         case 3: // Heartbeat Reply
         // debugPrint('Heartbeat reply: ${ByteData.sublistView(body).getUint32(0)} popularity');
       }
-
-      offset += packetLength;
     }
   }
 

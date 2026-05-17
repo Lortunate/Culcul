@@ -5,14 +5,14 @@ class DynamicSkeleton extends StatelessWidget {
   const DynamicSkeleton({super.key});
 
   Widget _buildHeader() {
-    return Row(
+    return const Row(
       children: [
-        const AppShimmerBox(width: 40, height: 40, borderRadius: 20),
-        const SizedBox(width: 12),
+        AppShimmerBox(width: 40, height: 40, borderRadius: 20),
+        SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               AppShimmerBox(height: 14, width: 100),
               SizedBox(height: 6),
               AppShimmerBox(height: 12, width: 60),
@@ -37,9 +37,9 @@ class DynamicSkeleton extends StatelessWidget {
   }
 
   Widget _buildFooter() {
-    return Row(
+    return const Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: const [
+      children: [
         AppShimmerBox(height: 20, width: 60),
         AppShimmerBox(height: 20, width: 60),
         AppShimmerBox(height: 20, width: 60),
@@ -53,7 +53,7 @@ class DynamicSkeleton extends StatelessWidget {
       elevation: 0,
       color: Theme.of(context).colorScheme.surface,
       margin: EdgeInsets.zero,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+      shape: const RoundedRectangleBorder(),
       child: AppShimmer(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
