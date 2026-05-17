@@ -255,6 +255,40 @@ void main() {
     );
   });
 
+  test('lib/shared must stay retired', () {
+    final sharedDirectory = Directory('lib/shared');
+
+    expect(
+      sharedDirectory.existsSync(),
+      isFalse,
+      reason: 'lib/shared is retired. Use app/core/features/ui ownership instead.',
+    );
+  });
+
+  test('runtime code must not contain placeholder implementations', () {
+    final offenders = <String>[];
+    const forbiddenMarkers = {'TODO(', 'UnimplementedError', 'throw Exception('};
+
+    for (final file in sourceDartFiles('lib')) {
+      final path = normalizePath(file.path);
+      for (final line in authoredDartCodeLines(file)) {
+        for (final marker in forbiddenMarkers) {
+          if (line.text.contains(marker)) {
+            offenders.add('${formatLocation(path, line.lineNumber)} $marker');
+          }
+        }
+      }
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'Runtime placeholder implementations are not allowed:\n'
+          '${offenders.join('\n')}',
+    );
+  });
+
   test('retired architecture symbols must stay deleted', () {
     final offenders = <String>[];
     const retiredSymbols = {'PageQuery', 'rankingCategoriesV2'};

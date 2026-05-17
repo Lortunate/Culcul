@@ -44,7 +44,7 @@ Future<void> showDynamicPostActions(BuildContext context, DynamicItem post) asyn
 
   switch (action) {
     case DynamicPostAction.share:
-      await ShareUtils.shareDynamic(post.id, post.contentText ?? '');
+      await shareDynamic(post.id, post.contentText ?? '');
     case DynamicPostAction.copyLink:
       await Clipboard.setData(ClipboardData(text: link));
       if (context.mounted) {

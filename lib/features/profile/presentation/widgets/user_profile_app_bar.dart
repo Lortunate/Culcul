@@ -125,7 +125,7 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
             onTap: () {
               Navigator.pop(context);
               if (profile != null) {
-                ShareUtils.shareUser(profile!.id, profile!.username);
+                shareUser(profile!.id, profile!.username);
               }
             },
           ),

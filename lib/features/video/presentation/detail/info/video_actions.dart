@@ -22,7 +22,7 @@ class VideoActionsRow extends StatelessWidget {
           ActionButton(
             icon: Icons.share_outlined,
             label: '${t.actions.share} ${detail.stat.share.formatNumber}',
-            onTap: () => ShareUtils.shareVideo(detail.bvid, detail.title, detail.pic),
+            onTap: () => shareVideo(detail.bvid, detail.title, detail.pic),
           ),
         ],
       ),

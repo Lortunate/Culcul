@@ -119,7 +119,7 @@ class Chat extends _$Chat with _ChatHelpersMixin, _ChatSendMixin {
 
       final filteredOlder = _filterMessages(olderMessages);
       final latest = state.value ?? current;
-      final merged = ListUtils.mergeUnique(
+      final merged = mergeUnique(
         latest.paging.items,
         filteredOlder,
         idGetter: (item) => item.msgSeqno,

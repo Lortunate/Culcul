@@ -98,7 +98,7 @@ class FavFolderResources extends _$FavFolderResources {
         current.copyWith(
           info: nextPageData.info,
           paging: current.paging.copyWith(
-            items: ListUtils.mergeUnique(
+            items: mergeUnique(
               current.paging.items,
               nextPageData.medias,
               idGetter: (item) => item.id,

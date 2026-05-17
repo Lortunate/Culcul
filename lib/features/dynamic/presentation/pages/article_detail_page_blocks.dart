@@ -58,7 +58,7 @@ Future<void> handleArticleMenuAction(
         context.showAppFeedback(Translations.of(context).moments.copied_link);
       }
     case 'share':
-      await ShareUtils.shareUri(Uri.parse(data.url));
+      await shareUri(Uri.parse(data.url));
     case 'open':
       await launchUrl(Uri.parse(data.url), mode: LaunchMode.externalApplication);
   }

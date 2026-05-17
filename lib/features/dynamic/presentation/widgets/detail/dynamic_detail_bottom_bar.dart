@@ -69,7 +69,7 @@ class DynamicDetailBottomBar extends StatelessWidget {
             context,
             Icons.reply_rounded,
             post.forwardCount,
-            () => ShareUtils.shareDynamic(post.id, post.contentText ?? ''),
+            () => shareDynamic(post.id, post.contentText ?? ''),
           ),
         ],
       ),

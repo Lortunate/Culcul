@@ -27,7 +27,7 @@ mixin _ChatHelpersMixin on _$Chat {
     final current = state.value;
     if (current == null) return;
 
-    final merged = ListUtils.mergeUnique(
+    final merged = mergeUnique(
       filtered,
       current.paging.items,
       idGetter: (item) => item.msgSeqno,

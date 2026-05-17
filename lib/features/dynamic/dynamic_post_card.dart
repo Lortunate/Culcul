@@ -73,7 +73,7 @@ class DynamicPostCard extends StatelessWidget {
             post.forwardCount,
             t.actions.forward,
             () async {
-              await ShareUtils.shareDynamic(post.id, post.description ?? '');
+              await shareDynamic(post.id, post.description ?? '');
             },
           ),
         ),

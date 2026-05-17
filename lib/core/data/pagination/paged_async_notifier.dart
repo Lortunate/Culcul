@@ -86,7 +86,7 @@ mixin OffsetPagedAsyncNotifier<T> {
 
       _currentPage = nextPage;
       _hasMore = hasMoreAfterPage(newItems);
-      state = AsyncData(ListUtils.mergeUnique(previousItems, newItems, idGetter: itemId));
+      state = AsyncData(mergeUnique(previousItems, newItems, idGetter: itemId));
     } catch (error, stackTrace) {
       state = AsyncError<List<T>>(error, stackTrace).copyWithPrevious(previousState);
     } finally {
@@ -173,9 +173,7 @@ mixin CursorPagedAsyncNotifier<T, C> {
         return;
       }
 
-      state = AsyncData(
-        ListUtils.mergeUnique(previousItems, page.items, idGetter: itemId),
-      );
+      state = AsyncData(mergeUnique(previousItems, page.items, idGetter: itemId));
     } catch (error, stackTrace) {
       state = AsyncError<List<T>>(error, stackTrace).copyWithPrevious(previousState);
     } finally {
