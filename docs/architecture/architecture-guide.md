@@ -1,11 +1,13 @@
 # Culcul Architecture Guide
 
-Active phase: Phase 34 Architecture Modernization. Last superseded phase: Phase 33 Architecture Consolidation.
+Active phase: Phase 35 Architecture Simplification. Last completed phase: Phase 34 Architecture Modernization.
 
 Authoritative docs:
 
-- Active spec: `docs/specs/2026-05-17-phase34-architecture-modernization.md`
-- Active plan: `docs/plans/2026-05-17-phase34-architecture-modernization.md`
+- Active spec: `docs/specs/2026-05-17-phase35-architecture-simplification.md`
+- Active plan: `docs/plans/2026-05-17-phase35-architecture-simplification.md`
+- Completed spec: `docs/specs/archive/2026-05-17-phase34-architecture-modernization.completed.md`
+- Completed plan: `docs/plans/archive/2026-05-17-phase34-architecture-modernization.completed.md`
 - Superseded spec: `docs/specs/archive/2026-05-17-phase33-architecture-consolidation.superseded.md`
 - Superseded plan: `docs/plans/archive/2026-05-17-phase33-architecture-consolidation.superseded.md`
 - Superseded spec: `docs/specs/archive/2026-05-16-phase31-architecture-excellence.superseded.md`

@@ -1,7 +1,7 @@
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **Culcul** (9385 symbols, 20847 relationships, 187 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **Culcul** (9409 symbols, 20871 relationships, 187 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
 
@@ -42,14 +42,14 @@ This project is indexed by GitNexus as **Culcul** (9385 symbols, 20847 relations
 
 <!-- gitnexus:end -->
 
-## Architecture (Phase 34 active — Architecture Modernization)
+## Architecture (Phase 35 active — Architecture Simplification)
 
-`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–33 completed structural cleanup, barrel elimination, freezed/@riverpod migration, model deduplication, abstract repo removal, dead weight removal, provider/bootstrap cleanup, runtime/network consolidation, source-of-truth cleanup, feature public surface reduction, thin domain collapse, generated/source audit separation, router alias cleanup, dependency/config source-of-truth cleanup, application seam hardening, bootstrap flattening, dead infrastructure removal, notification helper decomposition, alias-provider cleanup, codegen modernization, cross-feature import cleanup, provider tail cleanup, duplicate-name cleanup, placeholder/no-op classification, dependency source-of-truth audit, semantic classification, codegen source-of-truth cleanup, app runtime alignment, no-op workflow cleanup, focused large-file decomposition, and architecture consolidation. Phase 34 continues with source-of-truth modernization: archive stale planning docs, close or supersede old cleanup issues, remove remaining duplicate wrappers, standardize API ownership, split mixed-responsibility files, and reduce analyzer debt.
+`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–34 completed structural cleanup, barrel elimination, freezed/@riverpod migration, model deduplication, abstract repo removal, dead weight removal, provider/bootstrap cleanup, runtime/network consolidation, source-of-truth cleanup, feature public surface reduction, thin domain collapse, generated/source audit separation, router alias cleanup, dependency/config source-of-truth cleanup, application seam hardening, bootstrap flattening, dead infrastructure removal, notification helper decomposition, alias-provider cleanup, codegen modernization, cross-feature import cleanup, provider tail cleanup, duplicate-name cleanup, placeholder/no-op classification, dependency source-of-truth audit, semantic classification, codegen source-of-truth cleanup, app runtime alignment, no-op workflow cleanup, focused large-file decomposition, architecture consolidation, and Phase 34 source-of-truth modernization. Phase 35 narrows execution to shared comment ownership, app feedback unification, analyzer info debt, large-file splits with real seams, and dependency/codegen simplification when it removes custom code or risk.
 
-Active spec: `docs/specs/2026-05-17-phase34-architecture-modernization.md`
-Active plan: `docs/plans/2026-05-17-phase34-architecture-modernization.md`
+Active spec: `docs/specs/2026-05-17-phase35-architecture-simplification.md`
+Active plan: `docs/plans/2026-05-17-phase35-architecture-simplification.md`
 Architecture guide: `docs/architecture/architecture-guide.md`
-Archived: Phase 22–33 specs/plans in `docs/specs/archive/` and `docs/plans/archive/`
+Archived: Phase 22–34 specs/plans in `docs/specs/archive/` and `docs/plans/archive/`
 
 **Key rules**:
 - `core/` and `ui/` must NOT import from `features/`
