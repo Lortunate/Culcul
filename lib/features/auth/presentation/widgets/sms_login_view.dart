@@ -160,7 +160,7 @@ class SmsLoginView extends HookConsumerWidget {
                 ),
               ),
               child: Text(
-                countdown.value == 0 ? t.auth.get_code : "${countdown.value}s",
+                countdown.value == 0 ? t.auth.get_code : '${countdown.value}s',
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 14,

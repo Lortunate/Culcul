@@ -22,7 +22,6 @@ List<ArticleBlock> _parseOpusBlocks(Map<String, dynamic>? moduleContent) {
             ),
           );
         }
-        break;
       case 2:
         final pic = _asMap(paragraph['pic']);
         final pics = (pic['pics'] as List?)?.cast<Map<String, dynamic>>() ?? const [];
@@ -33,7 +32,6 @@ List<ArticleBlock> _parseOpusBlocks(Map<String, dynamic>? moduleContent) {
         if (urls.isNotEmpty) {
           blocks.add(ArticleBlock.image(imageUrls: urls));
         }
-        break;
       case 7:
         final card = _asMap(paragraph['link_card'])['card'];
         final cardMap = _asMap(card);
@@ -45,9 +43,7 @@ List<ArticleBlock> _parseOpusBlocks(Map<String, dynamic>? moduleContent) {
             subtitle: linkType != null ? 'link_type $linkType' : null,
           ),
         );
-        break;
       default:
-        break;
     }
   }
 
@@ -70,19 +66,16 @@ List<ArticleInlineNode> _parseOpusInlineNodes(List<Map<String, dynamic>> nodes) 
             color: _string(word['color']),
           ),
         );
-        break;
       case 4:
         final link = _asMap(node['link']);
         final text = _string(link['show_text']) ?? '';
         final href = _normalizeUrl(_string(link['link']) ?? '');
         if (text.isEmpty) continue;
         spans.add(ArticleInlineNode(text: text, linkUrl: href, color: '#1E80FF'));
-        break;
       default:
         final text = _string(node['text']) ?? _string(node['show_text']) ?? '';
         if (text.isEmpty) continue;
         spans.add(ArticleInlineNode(text: text));
-        break;
     }
   }
   return spans;

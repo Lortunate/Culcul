@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'chat_page_commands.g.dart';

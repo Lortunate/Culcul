@@ -21,7 +21,7 @@ class ListenSettingsSheet extends HookConsumerWidget {
     final timerController = ref.read(listenSleepTimerControllerProvider.notifier);
     final customInputController = useTextEditingController();
     useListenable(customInputController);
-    final presetMinutes = const [15, 30, 60, 90];
+    const presetMinutes = [15, 30, 60, 90];
     final selectedPresetMinutes = timerState.isActive
         ? timerState.total?.inMinutes
         : null;

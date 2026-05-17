@@ -57,12 +57,9 @@ Future<void> handleArticleMenuAction(
       if (context.mounted) {
         context.showAppFeedback(Translations.of(context).moments.copied_link);
       }
-      break;
     case 'share':
       await ShareUtils.shareUri(Uri.parse(data.url));
-      break;
     case 'open':
       await launchUrl(Uri.parse(data.url), mode: LaunchMode.externalApplication);
-      break;
   }
 }

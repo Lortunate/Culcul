@@ -45,15 +45,12 @@ Future<void> showDynamicPostActions(BuildContext context, DynamicItem post) asyn
   switch (action) {
     case DynamicPostAction.share:
       await ShareUtils.shareDynamic(post.id, post.contentText ?? '');
-      break;
     case DynamicPostAction.copyLink:
       await Clipboard.setData(ClipboardData(text: link));
       if (context.mounted) {
         context.showAppFeedback(t.moments.copied_link);
       }
-      break;
     case DynamicPostAction.openInBrowser:
       await DynamicNavigation.open(context, url: link);
-      break;
   }
 }
