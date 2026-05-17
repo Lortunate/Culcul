@@ -41,3 +41,160 @@ This project is indexed by GitNexus as **Culcul** (9310 symbols, 20654 relations
 | Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md` |
 
 <!-- gitnexus:end -->
+
+## Architecture (Phase 31 active — Architecture Excellence)
+
+`lib/shared/` is **fully retired**. The architecture is `app/` + `features/` + `core/` + `ui/`. Phases 1–30 completed structural cleanup, barrel elimination, freezed/@riverpod migration, model deduplication, abstract repo removal, dead weight removal, provider/bootstrap cleanup, runtime/network consolidation, source-of-truth cleanup, feature public surface reduction, thin domain collapse, generated/source audit separation, router alias cleanup, dependency/config source-of-truth cleanup, application seam hardening, bootstrap flattening, dead infrastructure removal, notification helper decomposition, alias-provider cleanup, codegen modernization, cross-feature import cleanup, provider tail cleanup, duplicate-name cleanup, placeholder/no-op classification, dependency source-of-truth audit, semantic seam classification, codegen source-of-truth cleanup, app runtime seam alignment, no-op workflow cleanup, and focused large-file decomposition. Phase 31 continues with semantic maintainability: presentation/data boundary cleanup, one-source contracts, guard baselines, and high-value decomposition.
+
+Active spec: `docs/specs/2026-05-16-phase31-architecture-excellence.md`
+Active plan: `docs/plans/2026-05-16-phase31-architecture-excellence.md`
+Architecture guide: `docs/architecture/architecture-guide.md`
+Archived: Phase 22–30 specs/plans in `docs/specs/archive/` and `docs/plans/archive/`
+
+**Key rules**:
+- `core/` and `ui/` must NOT import from `features/`
+- Features must NOT import another feature's `presentation/**` or `data/**` internals
+- `route_entry.dart` is the router-facing seam; `<feature>.dart` is allowed only when it exports a real feature API
+- `feature_scope.dart` is retired in the Phase 30 baseline (0 files); do not reintroduce it without a concrete approved runtime seam
+- DTOs belong in `data/dtos/`, never in `domain/`
+- Every shared model has exactly ONE definition in `core/contracts/`
+- All domain entities and DTOs use freezed — no hand-written `copyWith` or equality
+- No typedef-only or re-export-only files — import the source directly
+- No barrel-chain files (file that only re-exports other files) except `core_contracts.dart` and the approved UI public API `lib/ui/ui.dart`
+- All dependencies pinned to specific versions (no `any`)
+- Prefer `shared_preferences` + `flutter_secure_storage` over Hive for local storage
+- Prefer `dio_smart_retry` over custom retry logic; prefer generated providers over hand-written wiring
+- Riverpod 3 work MUST use `@riverpod` generated providers and `Notifier`/`AsyncNotifier` patterns — no new hand-written providers
+- go_router is already typed/generated through `go_router_builder`; do not rewrite routing unless a route seam is actually broken
+- Prefer `pointycastle` + `crypto` for cryptography; do not use `encrypt` wrapper
+- Features must reuse `VideoOwner`/`VideoStat` from core contracts — no feature-local duplicates
+- Repository interfaces only where they enable mocking or polymorphism — simple features use impl directly
+- Simple features (ranking, history) may omit `domain/` layer if no business logic exists
+- Single error hierarchy: `AppError` (sealed, implements Exception) — no separate `AppException`
+- Single notification pattern: `AppFeedback` extension on `BuildContext` — no raw ScaffoldMessenger calls
+- Shared API services in `core/services/` for cross-feature endpoints (comments, etc.)
+- No business logic in DTOs — business methods belong in domain entities only
+- If architecture docs disagree, the newest active phase spec/plan override older phase text
+
+<!-- BEGIN BEADS INTEGRATION v:1 profile:full hash:f65d5d33 -->
+## Issue Tracking with bd (beads)
+
+**IMPORTANT**: This project uses **bd (beads)** for ALL issue tracking. Do NOT use markdown TODOs, task lists, or other tracking methods.
+
+### Why bd?
+
+- Dependency-aware: Track blockers and relationships between issues
+- Git-friendly: Dolt-powered version control with native sync
+- Agent-optimized: JSON output, ready work detection, discovered-from links
+- Prevents duplicate tracking systems and confusion
+
+### Quick Start
+
+**Check for ready work:**
+
+```bash
+bd ready --json
+```
+
+**Create new issues:**
+
+```bash
+bd create "Issue title" --description="Detailed context" -t bug|feature|task -p 0-4 --json
+bd create "Issue title" --description="What this issue is about" -p 1 --deps discovered-from:bd-123 --json
+```
+
+**Claim and update:**
+
+```bash
+bd update <id> --claim --json
+bd update bd-42 --priority 1 --json
+```
+
+**Complete work:**
+
+```bash
+bd close bd-42 --reason "Completed" --json
+```
+
+### Issue Types
+
+- `bug` - Something broken
+- `feature` - New functionality
+- `task` - Work item (tests, docs, refactoring)
+- `epic` - Large feature with subtasks
+- `chore` - Maintenance (dependencies, tooling)
+
+### Priorities
+
+- `0` - Critical (security, data loss, broken builds)
+- `1` - High (major features, important bugs)
+- `2` - Medium (default, nice-to-have)
+- `3` - Low (polish, optimization)
+- `4` - Backlog (future ideas)
+
+### Workflow for AI Agents
+
+1. **Check ready work**: `bd ready` shows unblocked issues
+2. **Claim your task atomically**: `bd update <id> --claim`
+3. **Work on it**: Implement, test, document
+4. **Discover new work?** Create linked issue:
+   - `bd create "Found bug" --description="Details about what was found" -p 1 --deps discovered-from:<parent-id>`
+5. **Complete**: `bd close <id> --reason "Done"`
+
+### Quality
+- Use `--acceptance` and `--design` fields when creating issues
+- Use `--validate` to check description completeness
+
+### Lifecycle
+- `bd defer <id>` / `bd supersede <id>` for issue management
+- `bd stale` / `bd orphans` / `bd lint` for hygiene
+- `bd human <id>` to flag for human decisions
+- `bd formula list` / `bd mol pour <name>` for structured workflows
+
+### Auto-Sync
+
+bd automatically syncs via Dolt:
+
+- Each write auto-commits to Dolt history
+- Use `bd dolt push`/`bd dolt pull` for remote sync
+- No manual export/import needed!
+
+### Important Rules
+
+- Use bd for ALL task tracking
+- Always use `--json` flag for programmatic use
+- Link discovered work with `discovered-from` dependencies
+- Check `bd ready` before asking "what should I work on?"
+- Do NOT create markdown TODO lists
+- Do NOT use external issue trackers
+- Do NOT duplicate tracking systems
+
+For more details, see README.md and docs/QUICKSTART.md.
+
+## Session Completion
+
+**When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until `git push` succeeds.
+
+**MANDATORY WORKFLOW:**
+
+1. **File issues for remaining work** - Create issues for anything that needs follow-up
+2. **Run quality gates** (if code changed) - Tests, linters, builds
+3. **Update issue status** - Close finished work, update in-progress items
+4. **PUSH TO REMOTE** - This is MANDATORY:
+   ```bash
+   git pull --rebase
+   bd dolt push
+   git push
+   git status  # MUST show "up to date with origin"
+   ```
+5. **Clean up** - Clear stashes, prune remote branches
+6. **Verify** - All changes committed AND pushed
+7. **Hand off** - Provide context for next session
+
+**CRITICAL RULES:**
+- Work is NOT complete until `git push` succeeds
+- NEVER stop before pushing - that leaves work stranded locally
+- NEVER say "ready to push when you are" - YOU must push
+- If push fails, resolve and retry until it succeeds
+
+<!-- END BEADS INTEGRATION -->

@@ -1,9 +1,9 @@
-import 'package:culcul/features/history/data/dtos/history_entry.dart';
 import 'package:culcul/features/history/data/history_repository_impl.dart';
+import 'package:culcul/features/history/domain/entities/history_entry.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'history_view_model.g.dart';
+part 'history_controller.g.dart';
 
 @riverpod
 class HistoryList extends _$HistoryList {

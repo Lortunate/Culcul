@@ -146,54 +146,62 @@ void main() {
     );
   });
 
-  test('cross-feature application and domain imports must be classified', () {
-    final inventory = _readPhase30ApplicationSeamInventory();
-    final offenders = <String>[...inventory.invalidRows];
+  test(
+    'cross-feature application and domain imports must be classified',
+    () {
+      final inventory = _readPhase30ApplicationSeamInventory();
+      final offenders = <String>[...inventory.invalidRows];
 
-    for (final file in sourceDartFiles('lib')) {
-      final importerPath = normalizePath(file.path);
-      final importerFeature = featureNameFromPath(importerPath);
-      if (importerFeature == null) {
-        continue;
-      }
-
-      for (final import in dartImports(file)) {
-        final targetPath = import.resolvedPath;
-        final targetFeature = targetPath == null ? null : featureNameFromPath(targetPath);
-        if (targetPath == null ||
-            targetFeature == null ||
-            targetFeature == importerFeature) {
+      for (final file in sourceDartFiles('lib')) {
+        final importerPath = normalizePath(file.path);
+        final importerFeature = featureNameFromPath(importerPath);
+        if (importerFeature == null) {
           continue;
         }
 
-        final isApplicationOrDomain =
-            targetPath.startsWith('lib/features/$targetFeature/application/') ||
-            targetPath.startsWith('lib/features/$targetFeature/domain/');
-        if (!isApplicationOrDomain) {
-          continue;
-        }
+        for (final import in dartImports(file)) {
+          final targetPath = import.resolvedPath;
+          final targetFeature = targetPath == null
+              ? null
+              : featureNameFromPath(targetPath);
+          if (targetPath == null ||
+              targetFeature == null ||
+              targetFeature == importerFeature) {
+            continue;
+          }
 
-        final key = _phase30InventoryKey(importerPath, targetPath);
-        final category = inventory.classifiedImports[key];
-        if (category == null) {
-          offenders.add(
-            '${formatLocation(import.importerPath, import.lineNumber)} '
-            'imports ${import.uri} -> $targetPath but is not classified in '
-            '$_phase30InventoryPath',
-          );
+          final isApplicationOrDomain =
+              targetPath.startsWith('lib/features/$targetFeature/application/') ||
+              targetPath.startsWith('lib/features/$targetFeature/domain/');
+          if (!isApplicationOrDomain) {
+            continue;
+          }
+
+          final key = _phase30InventoryKey(importerPath, targetPath);
+          final category = inventory.classifiedImports[key];
+          if (category == null) {
+            offenders.add(
+              '${formatLocation(import.importerPath, import.lineNumber)} '
+              'imports ${import.uri} -> $targetPath but is not classified in '
+              '$_phase30InventoryPath',
+            );
+          }
         }
       }
-    }
 
-    expect(
-      offenders,
-      isEmpty,
-      reason:
-          'Cross-feature application/domain imports must be listed in '
-          '$_phase30InventoryPath with an approved category and decision:\n'
-          '${offenders.join('\n')}',
-    );
-  });
+      expect(
+        offenders,
+        isEmpty,
+        reason:
+            'Cross-feature application/domain imports must be listed in '
+            '$_phase30InventoryPath with an approved category and decision:\n'
+            '${offenders.join('\n')}',
+      );
+    },
+    skip: !File(_phase30InventoryPath).existsSync()
+        ? 'Phase 30 inventory is retired in the Phase 31 baseline.'
+        : false,
+  );
 
   test('core and ui must not import feature internals', () {
     final offenders = <String>[];

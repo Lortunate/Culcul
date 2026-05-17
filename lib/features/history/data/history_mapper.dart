@@ -1,5 +1,5 @@
 import 'package:culcul/features/history/data/dtos/history_model_dto.dart';
-import 'package:culcul/features/history/data/dtos/history_entry.dart';
+import 'package:culcul/features/history/domain/entities/history_entry.dart';
 
 extension HistoryItemMapper on HistoryItemDto {
   HistoryEntry toDomain() {

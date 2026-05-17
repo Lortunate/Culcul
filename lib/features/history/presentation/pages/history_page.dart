@@ -1,8 +1,8 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
-import 'package:culcul/features/history/data/dtos/history_entry.dart';
-import 'package:culcul/features/history/presentation/view_models/history_view_model.dart';
+import 'package:culcul/features/history/application/history_controller.dart';
+import 'package:culcul/features/history/domain/entities/history_entry.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/users/guest_view.dart';
 import 'package:flutter/material.dart';
