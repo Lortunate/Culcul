@@ -59,12 +59,11 @@ mixin _DynamicRepositoryCommentApis on _DynamicRepositoryAccess {
     String? referer,
   }) {
     return _requestExecutor.runApiDirect(
-      () => api.getComments(
+      () => sharedCommentService.fetchComments(
         oid: oid,
         type: type,
-        sort: sort.apiValue,
-        pn: page,
-        ps: 20,
+        sort: sort,
+        page: page,
         referer: referer,
         origin: referer == null ? null : 'https://www.bilibili.com',
       ),
@@ -79,7 +78,6 @@ mixin _DynamicRepositoryCommentApis on _DynamicRepositoryAccess {
     return _requestExecutor.runApiDirect(
       () => api.getArticleComments(
         oid: article.commentOid,
-        mode: 3,
         next: next,
         referer: referer,
         origin: 'https://www.bilibili.com',
@@ -112,12 +110,12 @@ mixin _DynamicRepositoryCommentApis on _DynamicRepositoryAccess {
     String? referer,
   }) {
     return _requestExecutor.runApiDirect(
-      () => api.addReply(
+      () => sharedCommentService.addReply(
         oid: oid,
-        type: type,
         root: root,
         parent: parent,
         message: message,
+        type: type,
         referer: referer,
         origin: referer == null ? null : 'https://www.bilibili.com',
       ),
@@ -146,11 +144,11 @@ mixin _DynamicRepositoryCommentApis on _DynamicRepositoryAccess {
     String? referer,
   }) {
     return _requestExecutor.runUnit(
-      () => api.actionComment(
+      () => sharedCommentService.actionComment(
         oid: oid,
-        type: type,
         rpid: rpid,
         action: isLiked ? 1 : 0,
+        type: type,
         referer: referer,
         origin: referer == null ? null : 'https://www.bilibili.com',
       ),

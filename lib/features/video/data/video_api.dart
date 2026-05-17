@@ -1,5 +1,4 @@
 import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
 import 'package:culcul/features/video/data/dtos/player_info_dto.dart';
@@ -57,59 +56,6 @@ abstract class VideoApi {
     @Query('bvid') String bvid, {
     @CancelRequest() CancelToken? cancelToken,
   });
-
-  @GET(ApiConstants.reply)
-  @Headers({'x-bili-wbi': 'true'})
-  Future<ApiResponse<CommentResponse>> fetchComments(
-    @Query('oid') int oid,
-    @Query('type') int type,
-    @Query('sort') int sort,
-    @Query('ps') int ps,
-    @Query('pn') int pn, {
-    @CancelRequest() CancelToken? cancelToken,
-  });
-
-  @GET(ApiConstants.replyReply)
-  @Headers({'x-bili-wbi': 'true'})
-  Future<ApiResponse<CommentResponse>> fetchReply(
-    @Query('oid') int oid,
-    @Query('root') int root,
-    @Query('type') int type,
-    @Query('ps') int ps,
-    @Query('pn') int pn, {
-    @CancelRequest() CancelToken? cancelToken,
-  });
-
-  @POST(ApiConstants.replyAction)
-  @FormUrlEncoded()
-  @Headers({'x-bili-csrf': 'true'})
-  Future<ApiResponse<void>> actionComment(
-    @Field('oid') int oid,
-    @Field('rpid') int rpid,
-    @Field('action') int action,
-    @Field('type') int type,
-  );
-
-  @POST(ApiConstants.replyHate)
-  @FormUrlEncoded()
-  @Headers({'x-bili-csrf': 'true'})
-  Future<ApiResponse<void>> hateComment(
-    @Field('oid') int oid,
-    @Field('rpid') int rpid,
-    @Field('action') int action,
-    @Field('type') int type,
-  );
-
-  @POST(ApiConstants.replyAdd)
-  @FormUrlEncoded()
-  @Headers({'x-bili-csrf': 'true'})
-  Future<ApiResponse<CommentItem>> addReply(
-    @Field('oid') int oid,
-    @Field('root') int root,
-    @Field('parent') int parent,
-    @Field('message') String message,
-    @Field('type') int type,
-  );
 
   @POST(ApiConstants.historyReport)
   @FormUrlEncoded()

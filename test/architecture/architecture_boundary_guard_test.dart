@@ -247,6 +247,109 @@ void main() {
     );
   });
 
+  test('retired architecture symbols must stay deleted', () {
+    final offenders = <String>[];
+    const retiredSymbols = {'PageQuery', 'rankingCategoriesV2'};
+
+    for (final file in sourceDartFiles('lib')) {
+      final path = normalizePath(file.path);
+      for (final line in authoredDartCodeLines(file)) {
+        for (final symbol in retiredSymbols) {
+          if (line.text.contains(symbol)) {
+            offenders.add('${formatLocation(path, line.lineNumber)} $symbol');
+          }
+        }
+      }
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'Retired architecture symbols must not be reintroduced:\n'
+          '${offenders.join('\n')}',
+    );
+  });
+
+  test('ResourceApi construction stays centralized', () {
+    final offenders = <String>[];
+    const approvedConstructors = {
+      'lib/core/data/network/resource_api.dart',
+      'lib/core/data/network/resource_api_provider.dart',
+    };
+
+    for (final file in sourceDartFiles('lib')) {
+      final path = normalizePath(file.path);
+      if (approvedConstructors.contains(path)) {
+        continue;
+      }
+
+      for (final line in authoredDartCodeLines(file)) {
+        if (line.text.contains('ResourceApi(')) {
+          offenders.add('${formatLocation(path, line.lineNumber)} ResourceApi(');
+        }
+      }
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'ResourceApi must be constructed only by the central network provider:\n'
+          '${offenders.join('\n')}',
+    );
+  });
+
+  test('shared comment reply endpoints stay in CommentService', () {
+    final offenders = <String>[];
+    const approvedFiles = {
+      'lib/core/constants/api_constants.dart',
+      'lib/core/services/comment_service.dart',
+    };
+    const forbiddenMarkers = {
+      'ApiConstants.reply',
+      'ApiConstants.replyReply',
+      'ApiConstants.replyAction',
+      'ApiConstants.replyHate',
+      'ApiConstants.replyAdd',
+      "'/x/v2/reply'",
+      "'/x/v2/reply/reply'",
+      "'/x/v2/reply/action'",
+      "'/x/v2/reply/hate'",
+      "'/x/v2/reply/add'",
+    };
+
+    for (final file in sourceDartFiles('lib')) {
+      final path = normalizePath(file.path);
+      if (approvedFiles.contains(path)) {
+        continue;
+      }
+
+      final lines = file.readAsLinesSync();
+      for (var lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+        final trimmed = lines[lineIndex].trim();
+        if (trimmed.startsWith('//') ||
+            trimmed.startsWith('/*') ||
+            trimmed.startsWith('*')) {
+          continue;
+        }
+        for (final marker in forbiddenMarkers) {
+          if (trimmed.contains(marker)) {
+            offenders.add('${formatLocation(path, lineIndex + 1)} $marker');
+          }
+        }
+      }
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'Shared comment reply endpoints must be routed through CommentService:\n'
+          '${offenders.join('\n')}',
+    );
+  });
+
   test('only approved contract files may be re-export-only barrels', () {
     final offenders = <String>[];
 

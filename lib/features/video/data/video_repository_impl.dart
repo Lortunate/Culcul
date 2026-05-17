@@ -6,6 +6,7 @@ import 'package:culcul/core/data/network/resource_api.dart';
 import 'package:culcul/core/data/network/resource_api_provider.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/result/result.dart';
+import 'package:culcul/core/services/comment_service.dart';
 import 'package:culcul/features/video/data/video_api.dart';
 import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
 import 'package:culcul/features/video/data/dtos/player_info_dto.dart';
@@ -20,20 +21,22 @@ part 'video_repository_impl.g.dart';
 VideoRepositoryImpl videoRepository(Ref ref) {
   return VideoRepositoryImpl(
     api: VideoApi(ref.watch(dioClientProvider)),
+    commentService: ref.watch(commentServiceProvider),
     resourceApi: ref.watch(resourceApiProvider),
   );
 }
 
 class VideoRepositoryImpl {
   static const _videoCommentType = 1;
-  static const _defaultCommentPageSize = 20;
 
   final VideoApi api;
+  final CommentService commentService;
   final ResourceApi resourceApi;
   final RequestExecutor _requestExecutor;
 
   VideoRepositoryImpl({
     required this.api,
+    required this.commentService,
     required this.resourceApi,
     RequestExecutor? requestExecutor,
   }) : _requestExecutor = requestExecutor ?? const RequestExecutor();
@@ -44,7 +47,12 @@ class VideoRepositoryImpl {
     required bool isLiked,
   }) {
     return _requestExecutor.runUnit(
-      () => api.actionComment(oid, rpid, isLiked ? 1 : 0, _videoCommentType),
+      () => commentService.actionComment(
+        oid: oid.toString(),
+        rpid: rpid,
+        action: isLiked ? 1 : 0,
+        type: _videoCommentType,
+      ),
     );
   }
 
@@ -54,7 +62,12 @@ class VideoRepositoryImpl {
     bool isDisliked = true,
   }) {
     return _requestExecutor.runUnit(
-      () => api.hateComment(oid, rpid, isDisliked ? 1 : 0, _videoCommentType),
+      () => commentService.hateComment(
+        oid: oid.toString(),
+        rpid: rpid,
+        action: isDisliked ? 1 : 0,
+        type: _videoCommentType,
+      ),
     );
   }
 
@@ -65,7 +78,13 @@ class VideoRepositoryImpl {
     required String message,
   }) {
     return _requestExecutor.runApiDirect(
-      () => api.addReply(oid, root, parent, message, _videoCommentType),
+      () => commentService.addReply(
+        oid: oid.toString(),
+        root: root,
+        parent: parent,
+        message: message,
+        type: _videoCommentType,
+      ),
     );
   }
 
@@ -79,14 +98,16 @@ class VideoRepositoryImpl {
   }
 
   Future<Result<VideoDimension?, AppError>> fetchVideoEntryDimension(String bvid) {
-    return _requestExecutor.runApiDirect(() => api.fetchVideoPagelist(bvid)).then(
-      (result) => result.map((value) {
-        if (value.isEmpty) {
-          return null;
-        }
-        return value.first.dimension;
-      }),
-    );
+    return _requestExecutor
+        .runApiDirect(() => api.fetchVideoPagelist(bvid))
+        .then(
+          (result) => result.map((value) {
+            if (value.isEmpty) {
+              return null;
+            }
+            return value.first.dimension;
+          }),
+        );
   }
 
   Future<Result<List<VideoTag>, AppError>> fetchVideoTags(
@@ -143,12 +164,11 @@ class VideoRepositoryImpl {
     CancelToken? cancelToken,
   }) {
     return _requestExecutor.runApiDirect(
-      () => api.fetchComments(
-        oid,
-        _videoCommentType,
-        sort.apiValue,
-        _defaultCommentPageSize,
-        page,
+      () => commentService.fetchComments(
+        oid: oid.toString(),
+        type: _videoCommentType,
+        sort: sort,
+        page: page,
         cancelToken: cancelToken,
       ),
     );
@@ -161,12 +181,11 @@ class VideoRepositoryImpl {
     CancelToken? cancelToken,
   }) {
     return _requestExecutor.runApiDirect(
-      () => api.fetchReply(
-        oid,
-        root,
-        _videoCommentType,
-        _defaultCommentPageSize,
-        page,
+      () => commentService.fetchReply(
+        oid: oid.toString(),
+        root: root,
+        type: _videoCommentType,
+        page: page,
         cancelToken: cancelToken,
       ),
     );

@@ -10,10 +10,10 @@ class RankingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);
-    final tabs = rankingCategoriesV2.map((category) => category.label(t)).toList();
+    final tabs = rankingCategories.map((category) => category.label(t)).toList();
 
     return DefaultTabController(
-      length: rankingCategoriesV2.length,
+      length: rankingCategories.length,
       child: Scaffold(
         body: NestedScrollView(
           headerSliverBuilder: (_, innerBoxIsScrolled) => [
@@ -24,7 +24,7 @@ class RankingPage extends StatelessWidget {
             ),
           ],
           body: TabBarView(
-            children: rankingCategoriesV2
+            children: rankingCategories
                 .map((category) => RankingListView(category: category))
                 .toList(),
           ),

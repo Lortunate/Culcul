@@ -9,6 +9,7 @@ import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/bootstrap/providers/cookie_jar_provider.dart';
+import 'package:culcul/core/services/comment_service.dart';
 import 'package:culcul/features/dynamic/data/article_parsing/article_detail_parser.dart';
 import 'package:culcul/features/dynamic/data/dynamic_api.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
@@ -32,6 +33,7 @@ DynamicRepositoryImpl dynamicRepository(Ref ref) {
     DynamicApi(ref.watch(dioClientProvider)),
     ref.watch(dioClientProvider),
     ref.watch(cookieJarProvider),
+    commentService: ref.watch(commentServiceProvider),
   );
 }
 
@@ -44,6 +46,7 @@ class DynamicRepositoryImpl
   final DynamicApi _api;
   final Dio _dio;
   final CookieJar _cookieJar;
+  final CommentService _commentService;
   @override
   final RequestExecutor _requestExecutor;
   final NetworkConcurrencyExecutor _concurrencyExecutor;
@@ -52,9 +55,11 @@ class DynamicRepositoryImpl
     this._api,
     this._dio,
     this._cookieJar, {
+    required CommentService commentService,
     RequestExecutor? requestExecutor,
     NetworkConcurrencyExecutor? concurrencyExecutor,
-  }) : _requestExecutor = requestExecutor ?? const RequestExecutor(),
+  }) : _commentService = commentService,
+       _requestExecutor = requestExecutor ?? const RequestExecutor(),
        _concurrencyExecutor = concurrencyExecutor ?? const NetworkConcurrencyExecutor();
 
   @override
@@ -67,6 +72,9 @@ class DynamicRepositoryImpl
   CookieJar get cookieJar => _cookieJar;
 
   @override
+  CommentService get sharedCommentService => _commentService;
+
+  @override
   NetworkConcurrencyExecutor get concurrencyExecutor => _concurrencyExecutor;
 }
 
@@ -74,6 +82,7 @@ mixin _DynamicRepositoryAccess {
   DynamicApi get api;
   Dio get dio;
   CookieJar get cookieJar;
+  CommentService get sharedCommentService;
   RequestExecutor get _requestExecutor;
   NetworkConcurrencyExecutor get concurrencyExecutor;
 }

@@ -51,7 +51,7 @@ class RankingCategory {
   };
 }
 
-final rankingCategoriesV2 = [
+final rankingCategories = [
   const RankingCategory(name: 'all'),
   const RankingCategory(name: 'animation', rid: 1005),
   const RankingCategory(name: 'game', rid: 1008),
