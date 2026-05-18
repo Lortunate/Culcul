@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:culcul/features/video/data/video_repository_impl.dart';
+import 'package:culcul/features/video/application/presentation_contracts/video_repository_impl.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:dio/dio.dart';

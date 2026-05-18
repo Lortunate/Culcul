@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:developer' as developer;
 
-import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
-import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
+import 'package:culcul/features/video/application/presentation_contracts/dtos/play_url_dto.dart';
+import 'package:culcul/features/video/application/presentation_contracts/dtos/video_detail_dto.dart';
 import 'package:culcul/core/services/relation_service.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/features/video/application/video_detail_workflows.dart';
-import 'package:culcul/features/video/data/video_repository_impl.dart';
+import 'package:culcul/features/video/application/presentation_contracts/video_repository_impl.dart';
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:culcul/features/video/presentation/detail/video_detail_state.dart';
