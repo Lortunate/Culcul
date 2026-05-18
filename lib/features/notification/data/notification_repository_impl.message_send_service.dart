@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:culcul/core/errors/app_error.dart';
@@ -19,13 +20,13 @@ import 'package:culcul/features/notification/domain/entities/send_message_result
 import 'package:culcul/features/notification/data/dtos/system_notice.dart';
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart' show Value;
-import 'package:culcul/core/utils/uuid_v4.dart';
 
-typedef SyncMessagesHeadFn = Future<void> Function({
-  required int ownerUid,
-  required int talkerId,
-  required PrivateSessionType sessionType,
-});
+typedef SyncMessagesHeadFn =
+    Future<void> Function({
+      required int ownerUid,
+      required int talkerId,
+      required PrivateSessionType sessionType,
+    });
 
 class NotificationMessageSendService {
   NotificationMessageSendService({
@@ -96,7 +97,7 @@ class NotificationMessageSendService {
     final localMsgSeqno = -DateTime.now().microsecondsSinceEpoch;
     final contentMap = content.toRawMap();
     final contentRawJson = jsonEncode(contentMap);
-    final devId = generateUuidV4();
+    final devId = _generateUuidV4();
 
     await database.transaction(() async {
       await database
@@ -201,4 +202,38 @@ class NotificationMessageSendService {
   Future<Result<List<SystemNotice>, AppError>> fetchSystemNotifications() {
     return messageSupport.fetchSystemNotifications();
   }
+}
+
+String _generateUuidV4() {
+  final random = Random.secure();
+  final bytes = List<int>.generate(16, (_) => random.nextInt(256));
+
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+
+  String hex(int byte) => byte.toRadixString(16).padLeft(2, '0');
+
+  final buffer = StringBuffer()
+    ..write(hex(bytes[0]))
+    ..write(hex(bytes[1]))
+    ..write(hex(bytes[2]))
+    ..write(hex(bytes[3]))
+    ..write('-')
+    ..write(hex(bytes[4]))
+    ..write(hex(bytes[5]))
+    ..write('-')
+    ..write(hex(bytes[6]))
+    ..write(hex(bytes[7]))
+    ..write('-')
+    ..write(hex(bytes[8]))
+    ..write(hex(bytes[9]))
+    ..write('-')
+    ..write(hex(bytes[10]))
+    ..write(hex(bytes[11]))
+    ..write(hex(bytes[12]))
+    ..write(hex(bytes[13]))
+    ..write(hex(bytes[14]))
+    ..write(hex(bytes[15]));
+
+  return buffer.toString().toUpperCase();
 }
