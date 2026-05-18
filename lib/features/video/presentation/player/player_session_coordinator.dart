@@ -19,7 +19,6 @@ class PlayerSessionCoordinator {
 
   String? get activeSessionId => _sessionStack.isEmpty ? null : _sessionStack.last;
   int get activationVersion => _activationVersion;
-  int get sessionCount => _sessionStack.length;
 
   bool isSessionActive(String sessionId) => activeSessionId == sessionId;
 

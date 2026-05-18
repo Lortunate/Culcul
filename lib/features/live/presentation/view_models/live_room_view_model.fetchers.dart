@@ -43,13 +43,13 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
       StackTrace.current,
     );
     if (critical) {
-      return result.errorOrNull ?? AppError.data('Failed to load live play url');
+      return result.errorOrNull ?? const AppError.data('Failed to load live play url');
     }
     return null;
   }
 
   Future<void> _fetchAnchorInfo(int uid) async {
-    final result = await ref.read(profileUserCardLookupProvider).getUserCard(uid);
+    final result = await ref.read(profileRepositoryProvider).getUserCard(uid);
     if (result.dataOrNull case final card?) {
       state = state.copyWith(anchorInfo: card);
       return;
@@ -116,7 +116,8 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
       StackTrace.current,
     );
     if (critical) {
-      return result.errorOrNull ?? AppError.data('Failed to load live danmaku config');
+      return result.errorOrNull ??
+          const AppError.data('Failed to load live danmaku config');
     }
     return null;
   }

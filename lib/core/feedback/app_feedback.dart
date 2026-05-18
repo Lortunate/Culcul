@@ -1,5 +1,3 @@
-import 'package:culcul/core/errors/error_handler.dart';
-import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 
 final GlobalKey<ScaffoldMessengerState> globalScaffoldMessengerKey =
@@ -37,26 +35,4 @@ extension AppFeedbackContext on BuildContext {
       ),
     );
   }
-
-  void showAppError(Object error, {VoidCallback? onRetry}) {
-    if (!mounted) return;
-
-    final message = ErrorHandler.getErrorMessage(this, error);
-    final theme = Theme.of(this);
-    ScaffoldMessenger.of(this).showSnackBar(
-      SnackBar(
-        content: Text(message, style: TextStyle(color: theme.colorScheme.onError)),
-        backgroundColor: theme.colorScheme.error,
-        behavior: SnackBarBehavior.floating,
-        action: onRetry != null
-            ? SnackBarAction(
-                label: Translations.of(this).common.retry,
-                textColor: theme.colorScheme.onErrorContainer,
-                onPressed: onRetry,
-              )
-            : null,
-      ),
-    );
-  }
 }
-

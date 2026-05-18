@@ -64,11 +64,7 @@ class ProfileRepositoryImpl with _ProfileRepositoryImplFlowsMixin {
     return _requestExecutor.run(() async {
       final responses = await _concurrencyExecutor.runConcurrent(
         tasks: <ConcurrentTask<dynamic>>[
-          ConcurrentTask<dynamic>(
-            label: 'info',
-            critical: true,
-            task: () => api.getAccountInfo(userId),
-          ),
+          ConcurrentTask<dynamic>(label: 'info', task: () => api.getAccountInfo(userId)),
           ConcurrentTask<dynamic>(
             label: 'relation',
             critical: false,
@@ -91,7 +87,7 @@ class ProfileRepositoryImpl with _ProfileRepositoryImplFlowsMixin {
             label: 'card',
             critical: false,
             fallback: _ignoreOptionalProfileResponse,
-            task: () => api.getCard(userId, photo: true),
+            task: () => api.getCard(userId),
           ),
         ],
         profile: NetworkConcurrencyProfile.enrich,
@@ -120,19 +116,15 @@ class ProfileRepositoryImpl with _ProfileRepositoryImplFlowsMixin {
         avatarUrl: infoData['face'] as String? ?? '',
         bannerUrl: topPhoto,
         bio: infoData['sign'] as String?,
-        location: null,
         followersCount: relation.followers,
         followingCount: relation.following,
         videosCount: videoCount,
-        dynamicCount: 0,
         likesCount: likes,
         level: infoData['level'] as int? ?? 0,
         vipType: _parseVipType(infoData),
         vipStatus: _parseVipStatus(infoData),
-        coins: null,
         isFollowing: infoData['is_followed'] as bool? ?? false,
         isVerified: _isVerified(infoData),
-        createdAt: null,
       );
     });
   }

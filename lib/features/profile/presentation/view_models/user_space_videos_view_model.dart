@@ -31,12 +31,10 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
     });
     final stopwatch = Stopwatch()..start();
     final items = await buildFirstPage();
-    final cacheKey = EndpointCacheOptionsInterceptor.buildCacheKey(ApiConstants.profileSpaceVideos, {
-      'mid': mid,
-      'pn': 1,
-      'ps': _pageSize,
-      'order': order,
-    });
+    final cacheKey = EndpointCacheOptionsInterceptor.buildCacheKey(
+      ApiConstants.profileSpaceVideos,
+      {'mid': mid, 'pn': 1, 'ps': _pageSize, 'order': order},
+    );
     final hasCachedValue = await ref.read(cacheStoreProvider).exists(cacheKey);
     DevLogger.log('feature', 'profile.space_videos initial_data', <String, Object?>{
       'mid': mid,
@@ -93,7 +91,6 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
         .read(profileRepositoryProvider)
         .getSpaceVideos(
           mid: _mid,
-          page: 1,
           order: _order,
           forceRefresh: true,
           cancelToken: cancelToken,

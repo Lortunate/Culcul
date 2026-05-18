@@ -12,7 +12,7 @@ import 'package:culcul/features/live/application/presentation_contracts/dtos/liv
 import 'package:culcul/features/live/presentation/view_models/live_danmaku_feed_view_model.dart';
 import 'package:culcul/features/live/presentation/view_models/live_room_state.dart';
 import 'package:culcul/features/live/presentation/view_models/live_socket_service.dart';
-import 'package:culcul/features/profile/application/profile_user_card_lookup.dart';
+import 'package:culcul/features/profile/application/presentation_contracts/profile_repository_impl.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
