@@ -23,15 +23,24 @@ class VideoListenPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final detailState = ref.watch(videoDetailControllerProvider(bvid));
-    final detail = detailState.videoDetail;
+    final listenState = ref.watch(
+      videoDetailControllerProvider(bvid).select(
+        (state) => (
+          detail: state.videoDetail,
+          currentCid: state.currentCid,
+          selectedQuality: state.selectedQuality,
+          playUrl: state.playUrl,
+        ),
+      ),
+    );
+    final detail = listenState.detail;
     final colorScheme = Theme.of(context).colorScheme;
     final t = context.t;
     useListenAudioMode(ref, (
       aid: detail?.aid,
-      currentCid: detailState.currentCid,
-      selectedQuality: detailState.selectedQuality,
-      playUrl: detailState.playUrl,
+      currentCid: listenState.currentCid,
+      selectedQuality: listenState.selectedQuality,
+      playUrl: listenState.playUrl,
     ));
 
     if (detail == null) {

@@ -31,8 +31,9 @@ class VerticalVideoPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
-    final detailState = ref.watch(videoDetailControllerProvider(bvid));
-    final videoDetail = detailState.videoDetail;
+    final videoDetail = ref.watch(
+      videoDetailControllerProvider(bvid).select((state) => state.videoDetail),
+    );
     final sessionId = useVideoSession(ref, bvid);
 
     if (videoDetail == null) {
