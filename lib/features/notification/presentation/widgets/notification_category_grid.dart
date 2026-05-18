@@ -1,7 +1,7 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/notification/presentation/view_models/unread_count_view_model.dart';
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/ui/ui.dart';
+import 'package:culcul/ui/theme/culcul_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

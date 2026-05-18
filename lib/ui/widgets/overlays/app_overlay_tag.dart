@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:culcul/ui/ui.dart';
+import 'package:culcul/ui/theme/culcul_colors.dart';
 
 class AppOverlayTag extends StatelessWidget {
   final String text;

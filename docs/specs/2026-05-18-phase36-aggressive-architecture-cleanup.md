@@ -4,218 +4,225 @@
 
 Active.
 
-Supersedes:
-
-- `docs/specs/archive/2026-05-17-phase35-architecture-simplification.superseded.md`
-
-Implementation plan:
-
-- `docs/plans/2026-05-18-phase36-aggressive-architecture-cleanup.md`
+This is the only active architecture cleanup spec for Phase 36.
 
 Tracking:
 
 - `culcul-rg4`: Phase 36 aggressive architecture cleanup.
-- Child tasks: `culcul-4ir`, `culcul-dhm`, `culcul-rzy`, `culcul-psp`,
-  `culcul-fpl`.
+- Child work items: `culcul-4ir`, `culcul-rzy`, `culcul-psp`, `culcul-fpl`.
 
-## Context
+Supersedes older Phase 35 architecture cleanup direction. Do not mix Phase 35
+rules into new work.
 
-Phase 35 was intentionally conservative. The current product goal is more
-aggressive: simplify the app architecture, remove compatibility layers, delete
-dead code, collapse redundant abstractions, and improve runtime performance
-without preserving old local APIs.
+## Current App Boundary
 
-Current audit:
+Culcul is a Flutter media/content app. Current product boundaries are:
 
-- Active branch: `codex/phase34-architecture-modernization`.
-- GitNexus was refreshed before this spec: `9414` nodes, `20870` edges, `187`
-  flows.
-- `lib/` contains about `680` hand-written Dart files and `246` generated Dart
-  files.
-- Existing tests are small for the source size: `14` Dart test files, with
-  architecture guards under `test/architecture`.
-- Phase 35 docs referenced bd issues that are no longer open. Phase 36 uses
-  `culcul-rg4` and its child tasks instead of stale identifiers.
+- auth/session and current user state.
+- home, search, ranking, history, favorites, watch-later style content lists.
+- video playback/detail, dynamic/article detail, live content.
+- profile/social/notification flows.
+- settings, theme, localization, app shell, routing.
 
-Current top-level shape remains the intended macro architecture:
+No new product features belong in this phase.
+
+## Current Problems
+
+Current audit signals:
+
+- `lib/` has about 890 tracked source/generated files.
+- Largest feature areas: `video` 144 files, `dynamic` 106 files,
+  `notification` 88 files, `profile` 69 files, `live` 66 files.
+- Naming smells in current scan: 169 `model*` files, 30 `dto*` files,
+  3 `entity*` files, 49 `repository_impl*` files, 114 `view_model*` files,
+  8 mapper files, 6 helper files, 7 util files, 239 generated Dart files.
+- Some presentation code imports data DTOs directly, which weakens feature
+  boundaries and makes model ownership unclear.
+- Some repository implementations are split into many partial helper/service
+  files, especially notification and video, raising reading cost.
+- Cross-cutting concepts already exist but must stay singular: contracts,
+  app errors, typed results, app feedback, route ownership, storage keys,
+  network/cache policy, runtime performance policy.
+
+## Architecture Goals
+
+- Keep every concept owned by exactly one source of truth.
+- Reduce source count by deleting dead wrappers and compatibility seams.
+- Make directory ownership obvious from the path.
+- Prefer concrete implementations over interfaces when there is one
+  implementation.
+- Keep feature internals feature-owned and private unless another feature has a
+  proven need.
+- Use current Flutter/Riverpod/go_router/Drift practices already present in the
+  dependency set instead of adding new architectural frameworks.
+- Improve startup, rebuild, cache, stream, and media resource behavior by
+  removing unnecessary work first.
+
+## Directory Structure
+
+Target macro structure:
 
 ```text
 lib/
-  app/       app shell, bootstrap, router, root composition
-  core/      infrastructure, contracts, cross-feature services
-  features/  feature-owned data/application/presentation code
-  ui/        reusable UI primitives and approved UI public API
+  main.dart
+  app/
+    app.dart
+    bootstrap/
+    router/
+    runtime/
+    shell/
+  core/
+    contracts/
+    data/
+      network/
+      pagination/
+    errors/
+    feedback/
+    perf/
+    result/
+    services/
+    session/
+    storage/
+  features/
+    <feature>/
+      data/
+        api/
+        dtos/
+        local/
+        repositories/
+      application/
+        providers/
+        controllers/
+      presentation/
+        pages/
+        widgets/
+        view_models/
+      domain/
+        entities/
+        policies/
+  ui/
+    theme/
+    widgets/
+    responsive/
+  i18n/
+  protos/
 ```
 
-Phase 36 may aggressively reorganize directories inside those boundaries. It
-must not reintroduce `lib/shared/`.
+Rules:
 
-## Goals
+- `domain/` is optional. Use it only for behavior or policy that is not a DTO.
+- `data/local/` owns feature Drift tables, DAOs, persistence adapters, and
+  migrations.
+- `data/dtos/` owns remote payload shapes.
+- `application/` owns Riverpod providers and coordination that is not UI.
+- `presentation/` owns pages, widgets, and view models.
+- `core/` and `ui/` must not import from `features/`.
+- A feature must not import another feature's `data/` or `presentation/`.
 
-- Make Phase 36 the only active architecture source of truth.
-- Archive Phase 35 as superseded.
-- Rebuild bd tracking with a Phase 36 epic and concrete implementation tasks.
-- Keep exactly one real owner for every shared concept.
-- Remove dead code, zero-value wrappers, alias providers, export-only barrels,
-  duplicate DTO/model definitions, and compatibility shims.
-- Simplify feature internals, even when this breaks old local imports.
-- Improve startup, rebuild behavior, memory pressure, cache behavior, and
-  database/query cost where evidence shows a bottleneck.
-- Keep modern packages and generated APIs when they reduce code or risk.
+## Data Flow
 
-## Non-Goals
-
-- Do not rewrite the app from scratch.
-- Do not replace working popular packages with custom infrastructure.
-- Do not preserve old local import paths through compatibility files.
-- Do not add repository interfaces, service wrappers, or provider aliases unless
-  they own a real runtime boundary.
-- Do not split files only to reduce line count.
-- Do not weaken analyzer rules to hide debt.
-- Do not regenerate protobuf output unless `.proto` sources change and the
-  tool path is documented.
-
-## Architecture Direction
-
-### Macro Boundaries
-
-- `app/` owns app startup, root providers, router, and shell composition.
-- `core/` owns cross-feature contracts, errors, result types, network policy,
-  persistence infrastructure, feedback, and shared services.
-- `features/<name>/` owns its own API clients, DTOs, mappers, local persistence,
-  providers, view models, and UI.
-- `ui/` owns reusable design-system widgets only.
-
-### Feature Shape
-
-Feature directories should use only the layers they need. Example target shape
-for `video`:
+Default flow:
 
 ```text
-features/video/
-  data/            API clients, DTOs, mappers, local stores
-  application/     feature state owners and use-case coordinators
-  presentation/    pages, widgets, controllers/view models
-  video.dart       optional public API only when consumers need it
-  route_entry.dart router-facing seam
+UI widget
+  -> generated Riverpod provider/view model
+  -> feature repository or feature use case
+  -> API client / Drift DAO / platform service
+  -> DTO or local row
+  -> shared contract or feature state
+  -> AsyncValue / Result
+  -> UI
 ```
 
-`domain/` is optional. Add or keep it only when there is behavior that is not a
-DTO, not UI state, and not persistence mapping.
+Exceptions must be local, documented in the owning feature, and justified by
+lower complexity.
 
-### Single Sources Of Truth
+## State Management
 
-- `AppError` is the single error hierarchy.
+- Root state is installed through `ProviderScope` in `main.dart`.
+- New or rewritten providers use generated `@riverpod`.
+- Mutable state uses generated `Notifier`.
+- Async mutable state uses generated `AsyncNotifier`.
+- One-shot reads use provider functions or repositories, not ad hoc global
+  singletons.
+- UI handles `AsyncValue` directly for loading/error/data states.
+- Provider aliases are not allowed unless they replace duplicated ownership and
+  are removed in the same phase.
+
+## Error Handling
+
+- `AppError` is the single app error hierarchy.
 - `Result` is the single typed result wrapper.
-- `AppFeedback` is the only feature-facing feedback API.
-- Shared cross-feature endpoint logic belongs in one core service owner.
-- Shared UI primitives live in `ui/`; feature-specific widgets stay in the
-  owning feature.
-- Shared contracts live in `core/contracts/`; feature DTOs stay under the
-  owning feature `data/dtos/`.
-- Network configuration flows through the existing Dio/request policy path.
-- Local database ownership is explicit per feature; Drift accessors are kept
-  only when they own real queries or streams.
+- UI feedback goes through `AppFeedback`.
+- Repositories convert network/storage/platform failures at the boundary.
+- Presentation code must not duplicate error mapping strings or retry policy.
 
-### Modern API Defaults
+## Configuration
 
-- Riverpod: use generated `@riverpod` providers. Mutable state uses `Notifier`;
-  async state uses `AsyncNotifier`. Widgets call notifier methods instead of
-  carrying business logic.
-- go_router: keep typed/generated routes through `go_router_builder`; route
-  files are grouped by app navigation boundary, not by pass-through wrappers.
-- Drift: keep generated, type-safe access. Prefer `drift_flutter` connection
-  setup and reactive streams where they reduce manual cache/state code.
-- Freezed/json_serializable/retrofit/slang: keep generated code where it is the
-  source of truth. Delete hand-written duplicates around generated APIs.
+- `ApiConstants` owns API constants.
+- `storage_keys.dart` owns persisted key names.
+- Runtime policy lives under `core/runtime` and `core/perf`.
+- Feature-specific constants stay in the owning feature when they are not shared.
 
-## Workstreams
+## Persistence
 
-### WS-1: Phase Rollover And Tracking
+- Shared preference keys have one owner in `core/storage`.
+- Drift database access is feature-owned unless the data is cross-feature.
+- DAOs are preferred for non-trivial queries.
+- Local read caches must have explicit lifecycle and eviction rules.
+- Do not add memory caches unless profiling shows repeated expensive work.
 
-Archive Phase 35 spec and plan as superseded. Create Phase 36 spec and plan.
-Update `CLAUDE.md` and `docs/architecture/architecture-guide.md`. Create a bd
-epic plus child tasks for the implementation workstreams.
+## Performance Targets
 
-### WS-2: Source-Of-Truth Consolidation
+- Startup work after `runApp` is deferred when it is not required for first
+  paint.
+- Lists avoid broad provider watches that rebuild whole pages.
+- Image/cache and media resources are disposed at feature lifecycle boundaries.
+- Stream providers expose the narrowest useful stream.
+- JSON parsing and heavy transforms use existing compute helpers only when they
+  remove measurable main-isolate work.
+- Prefer deleting repeated computation over adding caches.
 
-Audit and consolidate comment APIs, app feedback, errors/results, network/cache
-policy, route definitions, provider owners, and local database owners. Delete
-compatibility files after callers move.
+## Removed Or Forbidden
 
-### WS-3: Feature Directory Cleanup
-
-For each large feature, normalize internal directories to the approved feature
-shape. Collapse empty or pass-through `domain/`, `application/`, service, or
-repository layers. Keep only boundaries that carry behavior or testing value.
-
-### WS-4: Dead Code And Wrapper Removal
-
-Remove unused helpers, alias providers, export-only barrels, empty adapters,
-no-op services, duplicate mappers, TODO stubs, and placeholder runtime seams.
-Every removal must be backed by search or GitNexus evidence.
-
-### WS-5: Performance Cleanup
-
-Profile and optimize startup work, provider lifetime, list rebuilds, image/cache
-pressure, Drift queries, stream granularity, and media/player resource cleanup.
-Prefer deleting unnecessary work over adding new caches.
-
-### WS-6: Quality And Guard Rails
-
-Expand architecture guards where Phase 36 adds a rule. Keep validation focused:
-codegen, architecture tests, analyzer, and targeted feature tests. Add tests
-before risky behavior changes.
-
-## Hard Rules
-
-- `lib/shared/` must stay absent.
-- `core/` and `ui/` must not import `features/`.
-- A feature must not import another feature's `data/**` or `presentation/**`.
-- No new barrel-chain files. Keep only approved public surfaces.
 - No compatibility shims for removed internal APIs.
-- No `UnimplementedError`, `TODO()`, or no-op runtime implementations.
-- No new hand-written Riverpod providers for state that should be generated.
-- No new repository interface unless at least two implementations, mockability,
-  or a runtime boundary requires it.
-- Run GitNexus impact before editing any function, class, or method.
-- Warn before proceeding if impact is HIGH or CRITICAL.
-- Run GitNexus detect changes before committing.
+- No export-only barrels that hide ownership.
+- No empty service, manager, helper, adapter, facade, or utils layer.
+- No duplicate DTO/model/entity definitions for the same payload.
+- No repository interface with one implementation unless tests or platform
+  substitution prove value.
+- No feature public seam without a concrete cross-feature caller.
+- No markdown task tracking. Use `bd`.
+
+## Archive Strategy
+
+- Superseded specs and plans move to `docs/specs/archive/` and
+  `docs/plans/archive/`.
+- Old code is not archived in `lib/`. If it has no caller, delete it.
+- If a temporary archive is required for human review, put it under
+  `archive/phase36/<date>/` with a deletion issue in `bd`.
+- Generated files are regenerated, not hand-edited or archived.
 
 ## Validation
 
-Run the smallest relevant gate for each implementation slice, then phase gates:
+Every code slice must run:
 
-```bash
-dart run build_runner build --delete-conflicting-outputs
-bash tool/architecture/run_architecture_guards.sh
-flutter analyze --no-fatal-infos
-```
-
-Before code commits:
-
-```bash
-npx gitnexus analyze
-gitnexus_detect_changes(scope: "all")
-```
-
-Before ending a work session with changes:
-
-```bash
-git pull --rebase
-bd dolt push
-git push
-git status
-```
+- GitNexus impact before editing any function, class, or method.
+- Context7 before changing Flutter, Riverpod, go_router, Drift, Dio, Retrofit,
+  Freezed, Slang, or build_runner API usage.
+- `dart run build_runner build --delete-conflicting-outputs` when generated
+  inputs change.
+- `dart format` or the Dart MCP formatter for touched Dart files.
+- `flutter analyze` or Dart MCP analyze.
+- Focused tests for touched feature paths.
+- Architecture guards.
+- GitNexus `detect_changes(scope: "all")` before commit.
 
 ## Acceptance Criteria
 
-- Phase 35 spec and plan are archived as superseded.
-- `CLAUDE.md` and `docs/architecture/architecture-guide.md` point to Phase 36.
-- Only one active spec exists under `docs/specs/`.
-- Only one active plan exists under `docs/plans/`.
-- New bd epic and child tasks exist for Phase 36.
-- Each code slice removes or simplifies a real source surface, not just moves
-  files.
-- Architecture guards and analyzer pass after each completed slice.
-- No new duplicate source-of-truth definitions are introduced.
+- The active spec and plan are current and linked from architecture docs.
+- Every touched concept has one owner and no compatibility copy.
+- Removed files have no imports or generated references.
+- Analyzer, architecture guards, and focused tests pass.
+- GitNexus change detection reports only intended symbols and flows.
+- Work is committed and pushed before the session is closed.

@@ -55,37 +55,34 @@ void main() {
     );
   });
 
-  test(
-    'phase 36 presentation contract shims stay deleted',
-    () {
-      final offenders = <String>[];
+  test('phase 36 presentation contract shims stay deleted', () {
+    final offenders = <String>[];
 
-      for (final file in sourceDartFiles('lib')) {
-        for (final import in dartImports(file)) {
-          final targetPath = import.resolvedPath;
-          if (targetPath == null) {
-            continue;
-          }
+    for (final file in sourceDartFiles('lib')) {
+      for (final import in dartImports(file)) {
+        final targetPath = import.resolvedPath;
+        if (targetPath == null) {
+          continue;
+        }
 
-          if (targetPath.contains('/application/presentation_contracts/')) {
-            offenders.add(
-              '${formatLocation(import.importerPath, import.lineNumber)} '
-              'imports ${import.uri} -> $targetPath',
-            );
-          }
+        if (targetPath.contains('/application/presentation_contracts/')) {
+          offenders.add(
+            '${formatLocation(import.importerPath, import.lineNumber)} '
+            'imports ${import.uri} -> $targetPath',
+          );
         }
       }
+    }
 
-      expect(
-        offenders,
-        isEmpty,
-        reason:
-            'Phase 36 removed presentation_contracts compatibility shims. '
-            'Import the owning feature source-of-truth directly instead:\n'
-            '${offenders.join('\n')}',
-      );
-    },
-  );
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'Phase 36 removed presentation_contracts compatibility shims. '
+          'Import the owning feature source-of-truth directly instead:\n'
+          '${offenders.join('\n')}',
+    );
+  });
 
   test('features must not import other feature data implementations', () {
     final offenders = <String>[];
@@ -370,17 +367,11 @@ void main() {
     );
   });
 
-  test('only approved contract files may be re-export-only barrels', () {
+  test('re-export-only barrels are not allowed', () {
     final offenders = <String>[];
 
     for (final file in sourceDartFiles('lib')) {
       final normalizedPath = normalizePath(file.path);
-      if (const {
-        'lib/core/contracts/core_contracts.dart',
-        'lib/ui/ui.dart',
-      }.contains(normalizedPath)) {
-        continue;
-      }
 
       final lines = meaningfulLines(file);
 
@@ -398,7 +389,7 @@ void main() {
     expect(
       offenders,
       isEmpty,
-      reason: 'Unauthorized re-export-only files:\n${offenders.join('\n')}',
+      reason: 'Re-export-only barrels:\n${offenders.join('\n')}',
     );
   });
 

@@ -54,10 +54,10 @@ the top-level `app/`, `core/`, `features/`, and `ui/` boundary intact.
 
 - `route_entry.dart`
 - `<feature>.dart` when it exports a real feature API
-- `lib/core/contracts/core_contracts.dart`
-- `lib/ui/ui.dart`
 
-Avoid new barrel files. Import source files directly unless the file is one of the approved public seams. `feature_scope.dart` is retired in the current baseline; reintroduce it only if a later plan names a concrete runtime composition seam.
+Broad public barrels are retired. Import source files directly. `feature_scope.dart`
+is retired in the current baseline; reintroduce it only if a later plan names a
+concrete runtime composition seam.
 
 ## Modernization Defaults
 
@@ -78,7 +78,7 @@ Avoid new barrel files. Import source files directly unless the file is one of t
 - `core/` or `ui/` imports of `features/` found by planning audit: 0.
 - placeholder/no-op grep matches found by final strict source audit: 0.
 - duplicate model/DTO exact names found by final audit: 0.
-- approved broad public barrels: `lib/core/contracts/core_contracts.dart`, `lib/ui/ui.dart`.
+- approved broad public barrels: none.
 - generated files are excluded from source-debt architecture guards by default; generated verification remains explicit.
 - `feature_scope.dart` files: 0.
 - `pubspec.yaml` direct dependencies are all imported, generated/tooling-backed, or platform/runtime-backed. `riverpod` is directly imported by source, and `flutter_launcher_icons`, `media_kit_libs_video`, and `sqlite3_flutter_libs` are retained with evidence.
