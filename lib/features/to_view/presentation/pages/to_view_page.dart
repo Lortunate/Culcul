@@ -20,10 +20,12 @@ class ToViewPage extends ConsumerWidget {
     final isLoggedIn = ref.watch(
       currentUserProvider.select((s) => s?.isLoggedIn ?? false),
     );
-    final currentItems = ref.watch(toViewListProvider).asData?.value ?? const [];
+    final currentItemCount = ref.watch(
+      toViewListProvider.select((value) => value.asData?.value.length ?? 0),
+    );
     final clearAllAction = planToViewClearAll(
       isLoggedIn: isLoggedIn,
-      itemCount: currentItems.length,
+      itemCount: currentItemCount,
     );
 
     return Scaffold(
