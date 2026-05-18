@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:culcul/features/live/application/presentation_contracts/dtos/live_history_danmaku_model.dart';
+import 'package:culcul/features/live/data/dtos/live_history_danmaku_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

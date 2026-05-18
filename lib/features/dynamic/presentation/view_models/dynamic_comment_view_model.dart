@@ -1,8 +1,8 @@
-import 'package:culcul/features/dynamic/application/presentation_contracts/dtos/dynamic_response.dart';
+import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'dart:async';
 
-import 'package:culcul/features/dynamic/application/presentation_contracts/dynamic_repository_impl.dart';
+import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
 import 'package:culcul/core/data/pagination/paged_list_state_transitions.dart';
 import 'package:culcul/ui/assemblies/comments/comment_list_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

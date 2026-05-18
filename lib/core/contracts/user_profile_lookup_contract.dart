@@ -1,5 +1,6 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
+import 'package:culcul/core/contracts/user_card_contract.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'user_profile_lookup_contract.freezed.dart';
@@ -8,6 +9,8 @@ part 'user_profile_lookup_contract.freezed.dart';
 /// Used by notification to display chat partner info.
 abstract interface class UserProfileLookup {
   Future<Result<UserProfileInfo, AppError>> getUserProfile(String mid);
+
+  Future<Result<UserCardModel, AppError>> getUserCard(String mid);
 }
 
 @freezed

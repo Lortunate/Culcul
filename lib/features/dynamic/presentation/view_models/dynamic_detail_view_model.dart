@@ -1,8 +1,8 @@
-import 'package:culcul/features/dynamic/application/presentation_contracts/dtos/dynamic_response.dart';
-import 'package:culcul/features/dynamic/application/presentation_contracts/dtos/dynamic_item_extensions.dart';
+import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
+import 'package:culcul/features/dynamic/data/dtos/dynamic_item_extensions.dart';
 import 'dart:async';
 
-import 'package:culcul/features/dynamic/application/presentation_contracts/dynamic_repository_impl.dart';
+import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

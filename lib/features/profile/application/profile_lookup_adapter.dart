@@ -1,6 +1,8 @@
 import 'package:culcul/core/contracts/user_profile_lookup_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
+import 'package:culcul/core/contracts/user_card_contract.dart';
+import 'package:culcul/features/profile/data/profile_repository_impl.dart';
 import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -23,5 +25,14 @@ class ProfileLookupAdapter implements UserProfileLookup {
     } catch (e) {
       return Failure(ServerAppError('Failed to fetch user profile: $e'));
     }
+  }
+
+  @override
+  Future<Result<UserCardModel, AppError>> getUserCard(String mid) async {
+    final uid = int.tryParse(mid);
+    if (uid == null) {
+      return Failure(ServerAppError('Invalid user id: $mid'));
+    }
+    return _ref.read(profileRepositoryProvider).getUserCard(uid);
   }
 }

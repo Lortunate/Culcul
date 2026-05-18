@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
-import 'package:culcul/features/notification/application/presentation_contracts/notification_repository_impl.dart';
+import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

@@ -4,7 +4,7 @@ import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
-import 'package:culcul/features/favorites/application/presentation_contracts/fav_repository_impl.dart';
+import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_resource_item.dart';
 import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';

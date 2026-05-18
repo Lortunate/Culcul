@@ -1,5 +1,5 @@
-import 'package:culcul/features/dynamic/application/presentation_contracts/dtos/dynamic_response.dart';
-import 'package:culcul/features/dynamic/application/presentation_contracts/dtos/dynamic_item_extensions.dart';
+import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
+import 'package:culcul/features/dynamic/data/dtos/dynamic_item_extensions.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_navigation.dart';

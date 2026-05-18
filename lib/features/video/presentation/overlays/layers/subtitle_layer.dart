@@ -1,4 +1,4 @@
-import 'package:culcul/features/video/application/presentation_contracts/dtos/subtitle_dto.dart';
+import 'package:culcul/features/video/data/dtos/subtitle_dto.dart';
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
 import 'package:culcul/features/video/presentation/overlays/subtitle_view_model.dart';
 import 'package:culcul/features/video/presentation/player/controls/player_theme.dart';

@@ -1,6 +1,6 @@
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
-import 'package:culcul/features/to_view/application/presentation_contracts/to_view_repository_impl.dart';
+import 'package:culcul/features/to_view/data/to_view_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'to_view_view_model.g.dart';

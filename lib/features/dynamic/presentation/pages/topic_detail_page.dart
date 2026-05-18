@@ -1,4 +1,4 @@
-import 'package:culcul/features/dynamic/application/presentation_contracts/dtos/dynamic_item_extensions.dart';
+import 'package:culcul/features/dynamic/data/dtos/dynamic_item_extensions.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/topic_dynamic_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/feedback/app_empty_state_widget.dart';

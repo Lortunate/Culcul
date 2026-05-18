@@ -1,6 +1,6 @@
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/core/utils/share_utils.dart';
-import 'package:culcul/features/profile/application/presentation_contracts/dtos/profile_user.dart';
+import 'package:culcul/features/profile/data/dtos/profile_user.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/overlays/app_bottom_sheet.dart';
 import 'package:flutter/foundation.dart';

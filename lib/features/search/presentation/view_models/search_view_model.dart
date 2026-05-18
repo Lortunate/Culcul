@@ -5,8 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/core/contracts/search_result_contract.dart';
-import 'package:culcul/features/search/application/presentation_contracts/dtos/trending_ranking.dart';
-import 'package:culcul/features/search/application/presentation_contracts/search_repository_impl.dart';
+import 'package:culcul/features/search/data/dtos/trending_ranking.dart';
+import 'package:culcul/features/search/data/search_repository_impl.dart';
 import 'package:culcul/core/contracts/search_query_contract.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

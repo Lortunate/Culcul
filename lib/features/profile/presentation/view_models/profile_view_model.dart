@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/profile/application/profile_actions.dart';
-import 'package:culcul/features/profile/application/presentation_contracts/dtos/profile_user.dart';
-import 'package:culcul/features/profile/application/presentation_contracts/profile_cache_repository.dart';
-import 'package:culcul/features/profile/application/presentation_contracts/profile_repository_impl.dart';
+import 'package:culcul/features/profile/data/dtos/profile_user.dart';
+import 'package:culcul/features/profile/data/profile_cache_repository.dart';
+import 'package:culcul/features/profile/data/profile_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'profile_view_model.g.dart';

@@ -16,19 +16,6 @@ const _phase30AllowedInventoryCategories = {
   'remove-accidental-coupling',
 };
 
-const _phase31PresentationDataCleanupFeatures = {
-  'auth',
-  'dynamic',
-  'favorites',
-  'home',
-  'live',
-  'notification',
-  'profile',
-  'ranking',
-  'search',
-  'to_view',
-};
-
 void main() {
   test('feature presentation code must not import other presentation features', () {
     final offenders = <String>[];
@@ -69,26 +56,18 @@ void main() {
   });
 
   test(
-    'phase 31 presentation code must not import same-feature data implementations',
+    'phase 36 presentation contract shims stay deleted',
     () {
       final offenders = <String>[];
 
       for (final file in sourceDartFiles('lib')) {
-        final importerPath = normalizePath(file.path);
-        final importerFeature = featureNameFromPath(importerPath);
-        if (importerFeature == null ||
-            !_phase31PresentationDataCleanupFeatures.contains(importerFeature) ||
-            !importerPath.startsWith('lib/features/$importerFeature/presentation/')) {
-          continue;
-        }
-
         for (final import in dartImports(file)) {
           final targetPath = import.resolvedPath;
           if (targetPath == null) {
             continue;
           }
 
-          if (targetPath.startsWith('lib/features/$importerFeature/data/')) {
+          if (targetPath.contains('/application/presentation_contracts/')) {
             offenders.add(
               '${formatLocation(import.importerPath, import.lineNumber)} '
               'imports ${import.uri} -> $targetPath',
@@ -101,8 +80,8 @@ void main() {
         offenders,
         isEmpty,
         reason:
-            'Phase 31 presentation code must use application/domain contracts, '
-            'not same-feature data implementations:\n'
+            'Phase 36 removed presentation_contracts compatibility shims. '
+            'Import the owning feature source-of-truth directly instead:\n'
             '${offenders.join('\n')}',
       );
     },

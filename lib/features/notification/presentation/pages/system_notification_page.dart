@@ -1,7 +1,7 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/notification/presentation/view_models/system_notification_view_model.dart';
-import 'package:culcul/features/notification/application/presentation_contracts/dtos/system_notice.dart';
+import 'package:culcul/features/notification/data/dtos/system_notice.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_navigation.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
