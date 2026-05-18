@@ -8,7 +8,7 @@ import 'package:culcul/core/perf/performance_policy.dart';
 import 'package:culcul/core/runtime/runtime_performance_policy.dart';
 import 'package:culcul/core/runtime/runtime_performance_policy_provider.dart';
 import 'package:culcul/core/contracts/live_room_summary_contract.dart';
-import 'package:culcul/features/live/live.dart';
+import 'package:culcul/features/live/application/live_recommend_provider.dart';
 import 'package:culcul/features/home/presentation/widgets/live_card_skeleton.dart';
 import 'package:culcul/features/home/presentation/widgets/home_feed_view_utils.dart';
 import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';
@@ -33,7 +33,7 @@ class LiveView extends HookConsumerWidget {
     final networkPolicy = ref.watch(networkQualityPolicyProvider);
     final runtimePolicy = ref.watch(runtimePerformancePolicyProvider);
     final perfPolicy = useValueListenable(PerformancePolicyController.notifier);
-    final liveAsync = watchLiveRecommendations(ref);
+    final liveAsync = ref.watch(liveRecommendProvider);
     final scrollController = useScrollController();
     final refreshController = useManagedEasyRefreshController();
     final cacheExtent = resolveHomeFeedCacheExtent(
@@ -56,8 +56,8 @@ class LiveView extends HookConsumerWidget {
       child: SmartPagingView(
         asyncValue: liveAsync,
         controller: refreshController,
-        onRefresh: readLiveRecommendations(ref).refresh,
-        onLoadMore: readLiveRecommendations(ref).loadMore,
+        onRefresh: ref.read(liveRecommendProvider.notifier).refresh,
+        onLoadMore: ref.read(liveRecommendProvider.notifier).loadMore,
         itemCount: () => liveAsync.value?.length ?? 0,
         skeleton: _LiveGridSkeleton(
           scrollController: scrollController,
