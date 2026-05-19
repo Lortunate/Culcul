@@ -1,5 +1,16 @@
 part of 'app_image_preview.dart';
 
+const double _previewImageDecodeScale = 2.0;
+const int _previewMaxDecodeDimension = 4096;
+
+int? _previewDecodeDimension(double logicalPixels, double devicePixelRatio) {
+  final dimension = logicalPixels * devicePixelRatio * _previewImageDecodeScale;
+  if (!dimension.isFinite || dimension <= 0) {
+    return null;
+  }
+  return dimension.round().clamp(1, _previewMaxDecodeDimension);
+}
+
 class _PreviewImagePager extends StatelessWidget {
   final List<String> imageUrls;
   final ExtendedPageController pageController;
@@ -15,6 +26,16 @@ class _PreviewImagePager extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final cacheWidth = _previewDecodeDimension(
+      mediaQuery.size.width,
+      mediaQuery.devicePixelRatio,
+    );
+    final cacheHeight = _previewDecodeDimension(
+      mediaQuery.size.height,
+      mediaQuery.devicePixelRatio,
+    );
+
     return ExtendedImageGesturePageView.builder(
       itemCount: imageUrls.length,
       controller: pageController,
@@ -26,15 +47,14 @@ class _PreviewImagePager extends StatelessWidget {
           child: ExtendedImage.network(
             url,
             fit: BoxFit.contain,
+            cacheWidth: cacheWidth,
+            cacheHeight: cacheHeight,
             mode: ExtendedImageMode.gesture,
             initGestureConfigHandler: (_) => GestureConfig(
               minScale: 0.9,
               animationMinScale: 0.7,
               maxScale: 3.0,
               animationMaxScale: 3.5,
-              speed: 1.0,
-              inertialSpeed: 100.0,
-              initialScale: 1.0,
               inPageView: true,
             ),
             loadStateChanged: (state) {

@@ -3,7 +3,7 @@
 Generated from the current authored `lib/features/**/*.dart` source.
 
 - Cross-feature `data/**` or `presentation/**` imports: 0.
-- Cross-feature `domain/**` or `application/**` imports: 29.
+- Cross-feature `domain/**` or `application/**` imports: 30.
 - Cross-feature imports moved to feature public APIs: 1.
 - `feature_scope.dart` files: 0.
 
@@ -42,6 +42,7 @@ Allowed categories:
 | `lib/features/profile/presentation/pages/profile_page.dart:1` | `lib/features/auth/application/auth_session_providers.dart` | `approved-session-seam` | Keep classified for the guard; auth session state is the current cross-feature session seam. |
 | `lib/features/profile/presentation/view_models/profile_view_model.dart:3` | `lib/features/auth/application/auth_session_providers.dart` | `approved-session-seam` | Keep classified for the guard; auth session state is the current cross-feature session seam. |
 | `lib/features/profile/presentation/widgets/profile_app_bar.dart:3` | `lib/features/auth/application/auth_session_providers.dart` | `approved-session-seam` | Keep classified for the guard; auth session state is the current cross-feature session seam. |
+| `lib/features/profile/presentation/widgets/profile_menu.dart:2` | `lib/features/auth/application/auth_controller.dart` | `approved-session-seam` | Keep classified for the guard; profile logout now calls the auth application command directly after retiring the root-level wrapper. |
 | `lib/features/profile/presentation/widgets/relation_user_item.dart:3` | `lib/features/auth/application/auth_session_providers.dart` | `approved-session-seam` | Keep classified for the guard; auth session state is the current cross-feature session seam. |
 | `lib/features/profile/presentation/widgets/user_profile_buttons.dart:2` | `lib/features/auth/application/auth_session_providers.dart` | `approved-session-seam` | Keep classified for the guard; auth session state is the current cross-feature session seam. |
 | `lib/features/profile/presentation/widgets/user_profile_info.dart:2` | `lib/features/auth/application/auth_session_providers.dart` | `approved-session-seam` | Keep classified for the guard; auth session state is the current cross-feature session seam. |

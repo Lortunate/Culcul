@@ -39,26 +39,29 @@ class AppImagePreview extends ConsumerStatefulWidget {
 }
 
 class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
-  late int _currentIndex;
+  late final ValueNotifier<int> _currentIndex;
   late final ExtendedPageController _pageController;
-  bool _isSaving = false;
+  late final ValueNotifier<bool> _isSaving;
 
   @override
   void initState() {
     super.initState();
-    _currentIndex = widget.initialIndex;
+    _currentIndex = ValueNotifier<int>(widget.initialIndex);
     _pageController = ExtendedPageController(initialPage: widget.initialIndex);
+    _isSaving = ValueNotifier<bool>(false);
   }
 
   @override
   void dispose() {
+    _currentIndex.dispose();
     _pageController.dispose();
+    _isSaving.dispose();
     super.dispose();
   }
 
   Future<void> _saveImage(String url) async {
-    if (_isSaving) return;
-    setState(() => _isSaving = true);
+    if (_isSaving.value) return;
+    _isSaving.value = true;
     final t = context.t;
 
     try {
@@ -79,7 +82,7 @@ class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
         hideCurrent: true,
       );
     } finally {
-      if (mounted) setState(() => _isSaving = false);
+      if (mounted) _isSaving.value = false;
     }
   }
 
@@ -97,21 +100,27 @@ class _AppImagePreviewState extends ConsumerState<AppImagePreview> {
             imageUrls: widget.imageUrls,
             pageController: _pageController,
             colorScheme: colorScheme,
-            onPageChanged: (index) => setState(() => _currentIndex = index),
+            onPageChanged: (index) => _currentIndex.value = index,
           ),
-          _PreviewTopBar(
-            colorScheme: colorScheme,
-            mediaQuery: mediaQuery,
-            currentIndex: _currentIndex,
-            totalCount: widget.imageUrls.length,
-            onClose: () => Navigator.of(context, rootNavigator: true).pop(),
+          ValueListenableBuilder<int>(
+            valueListenable: _currentIndex,
+            builder: (context, currentIndex, _) => _PreviewTopBar(
+              colorScheme: colorScheme,
+              mediaQuery: mediaQuery,
+              currentIndex: currentIndex,
+              totalCount: widget.imageUrls.length,
+              onClose: () => Navigator.of(context, rootNavigator: true).pop(),
+            ),
           ),
-          _PreviewSaveButton(
-            colorScheme: colorScheme,
-            mediaQuery: mediaQuery,
-            t: t,
-            isSaving: _isSaving,
-            onSave: () => _saveImage(widget.imageUrls[_currentIndex]),
+          ValueListenableBuilder<bool>(
+            valueListenable: _isSaving,
+            builder: (context, isSaving, _) => _PreviewSaveButton(
+              colorScheme: colorScheme,
+              mediaQuery: mediaQuery,
+              t: t,
+              isSaving: isSaving,
+              onSave: () => _saveImage(widget.imageUrls[_currentIndex.value]),
+            ),
           ),
           if (widget.imageUrls.length > 1)
             _PreviewSwipeHint(colorScheme: colorScheme, mediaQuery: mediaQuery, t: t),

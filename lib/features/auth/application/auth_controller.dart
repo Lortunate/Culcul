@@ -9,6 +9,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_controller.freezed.dart';
+
 part 'auth_controller.g.dart';
 
 @freezed

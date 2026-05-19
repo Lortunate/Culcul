@@ -58,8 +58,6 @@ class _PlaybackControls extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isPlaying = ref.watch(playerControllerProvider.select((s) => s.isPlaying));
-    final position = ref.watch(playbackPositionProvider);
-    final duration = ref.watch(playbackDurationProvider);
     final playerController = ref.read(playerControllerProvider.notifier);
     final colorScheme = Theme.of(context).colorScheme;
     final onPrimary = colorScheme.onPrimary;
@@ -73,6 +71,7 @@ class _PlaybackControls extends ConsumerWidget {
         ),
         IconButton(
           onPressed: () {
+            final position = ref.read(playbackPositionProvider);
             final newPos = position - const Duration(seconds: 10);
             playerController.seek(newPos < Duration.zero ? Duration.zero : newPos);
           },
@@ -93,6 +92,8 @@ class _PlaybackControls extends ConsumerWidget {
         ),
         IconButton(
           onPressed: () {
+            final position = ref.read(playbackPositionProvider);
+            final duration = ref.read(playbackDurationProvider);
             final newPos = position + const Duration(seconds: 10);
             playerController.seek(newPos > duration ? duration : newPos);
           },
