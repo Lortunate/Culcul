@@ -18,18 +18,22 @@ class AppBootstrap {
   static Future<List<Override>> initialize() async {
     WidgetsFlutterBinding.ensureInitialized();
 
+    final prefsFuture = SharedPreferences.getInstance();
+    final cacheDirectoryFuture = _resolveCacheDirectory();
+    final documentDirectoryFuture = getApplicationDocumentsDirectory();
+
+    LocaleSettings.useDeviceLocale();
+    SystemChrome.setSystemUIOverlayStyle(_systemUiOverlayStyle);
+
     final results = await Future.wait<dynamic>([
-      SharedPreferences.getInstance(),
-      _resolveCacheDirectory(),
-      getApplicationDocumentsDirectory(),
+      prefsFuture,
+      cacheDirectoryFuture,
+      documentDirectoryFuture,
     ]);
 
     final prefs = results[0] as SharedPreferences;
     final cacheDirectory = results[1] as Directory;
     final documentDirectory = results[2] as Directory;
-
-    LocaleSettings.useDeviceLocale();
-    SystemChrome.setSystemUIOverlayStyle(_systemUiOverlayStyle);
 
     final cookieJar = PersistCookieJar(
       storage: FileStorage('${documentDirectory.path}/.cookies/'),
