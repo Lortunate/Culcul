@@ -1,7 +1,7 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/to_view/application/to_view_commands.dart';
-import 'package:culcul/features/to_view/presentation/view_models/to_view_view_model.dart';
+import 'package:culcul/features/to_view/application/to_view_list_controller.dart';
 import 'package:culcul/features/to_view/presentation/widgets/to_view_list.dart';
 import 'package:culcul/features/to_view/presentation/widgets/to_view_page_app_bar.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';

@@ -1,11 +1,15 @@
 # Culcul Architecture Guide
 
-Active phase: Phase 36 Aggressive Architecture Cleanup. Last completed phase: Phase 34 Architecture Modernization. Phase 35 was superseded before code execution.
+Active phase: Phase 37 Modern Architecture Consolidation. Last completed phase: Phase 34 Architecture Modernization. Phase 35 and Phase 36 were superseded before code execution.
 
 Authoritative docs:
 
-- Active spec: `docs/specs/2026-05-18-phase36-aggressive-architecture-cleanup.md`
-- Active plan: `docs/plans/2026-05-18-phase36-aggressive-architecture-cleanup.md`
+- Active spec: `docs/specs/2026-05-19-phase37-modern-architecture-consolidation.md`
+- Active plan: `docs/plans/2026-05-19-phase37-modern-architecture-consolidation.md`
+- Superseded spec: `docs/specs/archive/2026-05-18-phase36-aggressive-architecture-cleanup.superseded.md`
+- Superseded plan: `docs/plans/archive/2026-05-18-phase36-aggressive-architecture-cleanup.superseded.md`
+- Superseded spec: `docs/specs/archive/2026-05-16-phase32-source-of-truth-consolidation.superseded.md`
+- Superseded plan: `docs/plans/archive/2026-05-16-phase32-source-of-truth-consolidation.superseded.md`
 - Superseded spec: `docs/specs/archive/2026-05-17-phase35-architecture-simplification.superseded.md`
 - Superseded plan: `docs/plans/archive/2026-05-17-phase35-architecture-simplification.superseded.md`
 - Completed spec: `docs/specs/archive/2026-05-17-phase34-architecture-modernization.completed.md`
@@ -32,7 +36,7 @@ Authoritative docs:
 
 `lib/shared/` is retired and must not return.
 
-Phase 36 may aggressively reorganize directories inside a feature. It must keep
+Phase 37 may aggressively reorganize directories inside a feature. It must keep
 the top-level `app/`, `core/`, `features/`, and `ui/` boundary intact.
 
 ## Hard Rules
