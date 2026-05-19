@@ -8,7 +8,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'private_session_view_model.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class PrivateSessionList extends _$PrivateSessionList
     with CursorPagedAsyncNotifier<PrivateSession, int> {
   @override
