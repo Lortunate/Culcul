@@ -115,33 +115,33 @@ class AdaptiveShellScaffold extends StatelessWidget {
             ),
           ),
           child: BottomNavigationBar(
-              currentIndex: currentIndex,
-              onTap: onDestinationSelected,
-              items: [
-                for (final (index, item) in items.indexed)
-                  BottomNavigationBarItem(
-                    icon: Padding(padding: iconPadding, child: Icon(item.icon, size: 24)),
-                    activeIcon: Padding(
-                      padding: iconPadding,
-                      child: Icon(item.selectedIcon, size: 24),
-                    ),
-                    label: labels[index],
+            currentIndex: currentIndex,
+            onTap: onDestinationSelected,
+            items: [
+              for (final (index, item) in items.indexed)
+                BottomNavigationBarItem(
+                  icon: Padding(padding: iconPadding, child: Icon(item.icon, size: 24)),
+                  activeIcon: Padding(
+                    padding: iconPadding,
+                    child: Icon(item.selectedIcon, size: 24),
                   ),
-              ],
-              elevation: 0,
-              backgroundColor: Colors.transparent,
-              selectedItemColor: colorScheme.primary,
-              unselectedItemColor: colorScheme.onSurfaceVariant,
-              selectedFontSize: 10,
-              unselectedFontSize: 10,
-              selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
-              unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
-              enableFeedback: true,
-              type: BottomNavigationBarType.fixed,
-              landscapeLayout: BottomNavigationBarLandscapeLayout.spread,
-            ),
+                  label: labels[index],
+                ),
+            ],
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            selectedItemColor: colorScheme.primary,
+            unselectedItemColor: colorScheme.onSurfaceVariant,
+            selectedFontSize: 10,
+            unselectedFontSize: 10,
+            selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
+            unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500),
+            enableFeedback: true,
+            type: BottomNavigationBarType.fixed,
+            landscapeLayout: BottomNavigationBarLandscapeLayout.spread,
           ),
         ),
-      );
+      ),
+    );
   }
 }

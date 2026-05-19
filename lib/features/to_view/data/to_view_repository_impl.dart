@@ -35,7 +35,7 @@ class ToViewRepositoryImpl {
       success: Success.new,
       failure: (error) {
         if (error is ServerAppError && error.code == 0 && error.message == 'No Data') {
-          return const Success(ToViewListResponseDto(count: 0, list: []));
+          return const Success(ToViewListResponseDto());
         }
         return Failure(error);
       },

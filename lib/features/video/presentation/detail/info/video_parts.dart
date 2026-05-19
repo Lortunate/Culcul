@@ -67,7 +67,6 @@ class VideoPartsSection extends StatelessWidget {
                         borderRadius: BorderRadius.circular(6),
                         border: Border.all(
                           color: isSelected ? colorScheme.primary : Colors.transparent,
-                          width: 1,
                         ),
                       ),
                       alignment: Alignment.center,

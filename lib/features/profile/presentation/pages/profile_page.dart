@@ -25,16 +25,16 @@ class ProfilePage extends HookConsumerWidget {
 
     return Scaffold(
       backgroundColor: colorScheme.surfaceContainerLow,
-      body: CustomScrollView(
-        physics: const BouncingScrollPhysics(),
+      body: const CustomScrollView(
+        physics: BouncingScrollPhysics(),
         slivers: [
-          const ProfileAppBar(),
-          const ProfileStats(),
-          const SliverToBoxAdapter(child: SizedBox(height: 12)),
-          const ProfileActionGrid(),
-          const SliverToBoxAdapter(child: SizedBox(height: 12)),
-          const ProfileMenu(),
-          const SliverToBoxAdapter(child: SizedBox(height: 24)),
+          ProfileAppBar(),
+          ProfileStats(),
+          SliverToBoxAdapter(child: SizedBox(height: 12)),
+          ProfileActionGrid(),
+          SliverToBoxAdapter(child: SizedBox(height: 12)),
+          ProfileMenu(),
+          SliverToBoxAdapter(child: SizedBox(height: 24)),
         ],
       ),
     );

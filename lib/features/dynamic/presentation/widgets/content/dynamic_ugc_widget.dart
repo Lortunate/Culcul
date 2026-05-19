@@ -23,7 +23,6 @@ class DynamicUgcWidget extends StatelessWidget {
             url: additional.cover ?? '',
             width: 140,
             height: 88,
-            fit: BoxFit.cover,
             borderRadius: const BorderRadius.only(
               topLeft: Radius.circular(6),
               bottomLeft: Radius.circular(6),

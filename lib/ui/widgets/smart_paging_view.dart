@@ -72,8 +72,8 @@ class SmartPagingView<T> extends HookConsumerWidget {
     return EasyRefresh(
       key: const ValueKey('paging_data'),
       controller: refreshController,
-      header: AppRefreshHeader(),
-      footer: onLoadMore == null || !hasMore ? null : AppLoadFooter(),
+      header: const AppRefreshHeader(),
+      footer: onLoadMore == null || !hasMore ? null : const AppLoadFooter(),
       onRefresh: () => _handleRefresh(onRefresh),
       onLoad: onLoadMore == null || !hasMore
           ? null

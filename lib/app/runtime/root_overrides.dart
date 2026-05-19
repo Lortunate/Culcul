@@ -5,9 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod/misc.dart' show Override;
 
 List<Override> createRootOverrides() {
-  return [
-    sessionCookieRefresherProvider.overrideWith(createAuthSessionCookieRefresher),
-  ];
+  return [sessionCookieRefresherProvider.overrideWith(createAuthSessionCookieRefresher)];
 }
 
 void verifyRootOverrides(List<Override> overrides) {

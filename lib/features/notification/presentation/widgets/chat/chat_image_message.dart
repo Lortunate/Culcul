@@ -21,7 +21,6 @@ class ChatImageMessage extends StatelessWidget {
       child: ExtendedImage.network(
         url,
         fit: BoxFit.cover,
-        cache: true,
         cacheWidth: cacheSize,
         cacheHeight: cacheSize,
         borderRadius: BorderRadius.circular(8),

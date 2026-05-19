@@ -76,7 +76,7 @@ class _DismissibleToViewItem extends StatelessWidget {
         child: Align(
           alignment: Alignment.centerRight,
           child: Padding(
-            padding: EdgeInsets.only(right: 20),
+            padding: const EdgeInsets.only(right: 20),
             child: Icon(
               Icons.delete_outline,
               color: Theme.of(context).colorScheme.onError,

@@ -146,9 +146,9 @@ class NotificationMessagePersistence {
             ),
           );
 
-      await (database.update(database.notificationMessages)..where(
-            (t) => t.ownerUid.equals(ownerUid) & t.msgSeqno.equals(localMsgSeqno),
-          ))
+      await (database.update(
+            database.notificationMessages,
+          )..where((t) => t.ownerUid.equals(ownerUid) & t.msgSeqno.equals(localMsgSeqno)))
           .write(
             NotificationMessagesCompanion(
               syncStatus: Value(status),

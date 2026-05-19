@@ -1,8 +1,7 @@
 import 'dart:async';
 
 import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/features/video/data/dtos/play_url_dto.dart'
-    as domain;
+import 'package:culcul/features/video/data/dtos/play_url_dto.dart' as domain;
 import 'package:culcul/features/video/data/video_repository_impl.dart';
 import 'package:culcul/features/video/presentation/player/playable_urls.dart';
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
@@ -57,8 +56,6 @@ void useListenAudioMode(WidgetRef ref, ListenAudioModeInput input) {
                 cid: input.currentCid,
                 quality: input.selectedQuality,
                 fnval: 16,
-                fnver: 0,
-                fourk: 1,
               );
           if (dashPlayUrl.errorOrNull != null) {
             return;

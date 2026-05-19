@@ -49,8 +49,8 @@ class TopicDetailPage extends HookConsumerWidget {
           final hasMore = notifier.hasMore;
 
           return EasyRefresh(
-            header: AppRefreshHeader(),
-            footer: hasMore ? AppLoadFooter() : null,
+            header: const AppRefreshHeader(),
+            footer: hasMore ? const AppLoadFooter() : null,
             onRefresh: () async {
               await notifier.refresh();
             },

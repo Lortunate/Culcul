@@ -43,7 +43,6 @@ class SearchTopicItem extends StatelessWidget {
                 url: item.coverUrl!,
                 width: 80,
                 height: 80,
-                fit: BoxFit.cover,
                 borderRadius: BorderRadius.circular(8),
               ),
             const SizedBox(width: 12),

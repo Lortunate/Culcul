@@ -20,8 +20,6 @@ HomeRepositoryImpl homeRepositoryImpl(Ref ref) {
 }
 
 class HomeRepositoryImpl {
-  static const int _popularPageSize = 20;
-
   final HomeApi? _homeApi;
   final WeeklyApi? _weeklyApi;
   final RequestExecutor _requestExecutor;
@@ -61,7 +59,6 @@ class HomeRepositoryImpl {
     return _requestExecutor.runApi<List<VideoModel>, PopularResponseDto>(
       () async => _requireHomeApi().fetchPopular(
         pn: page,
-        ps: _popularPageSize,
         forceRefresh: forceRefresh ? true : null,
       ),
       transform: (data) => data.list,

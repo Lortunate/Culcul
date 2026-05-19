@@ -39,32 +39,32 @@ class AppAvatar extends StatelessWidget {
       label: 'Avatar',
       image: hasUrl,
       child: ClipRRect(
-      borderRadius: BorderRadius.circular(size / 2),
-      child: AppClickable(
-        onTap: onTap,
-        child: Container(
-        width: size,
-        height: size,
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: colorScheme.surface,
-          boxShadow: _buildShadows(colorScheme),
-          border: _buildBorder(colorScheme),
-        ),
-        child: hasUrl
-            ? AppNetworkImage(
-                url: url!,
-                width: size,
-                height: size,
-                borderRadius: BorderRadius.circular(size / 2),
-                placeholder: Center(child: fallbackIcon),
-                errorWidget: Center(child: fallbackIcon),
-              )
-            : Center(child: fallbackIcon),
+        borderRadius: BorderRadius.circular(size / 2),
+        child: AppClickable(
+          onTap: onTap,
+          child: Container(
+            width: size,
+            height: size,
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: colorScheme.surface,
+              boxShadow: _buildShadows(colorScheme),
+              border: _buildBorder(colorScheme),
+            ),
+            child: hasUrl
+                ? AppNetworkImage(
+                    url: url!,
+                    width: size,
+                    height: size,
+                    borderRadius: BorderRadius.circular(size / 2),
+                    placeholder: Center(child: fallbackIcon),
+                    errorWidget: Center(child: fallbackIcon),
+                  )
+                : Center(child: fallbackIcon),
+          ),
         ),
       ),
-    ),
     );
   }
 }

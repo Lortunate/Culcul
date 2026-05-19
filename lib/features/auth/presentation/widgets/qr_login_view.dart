@@ -32,7 +32,6 @@ class QrLoginView extends ConsumerWidget {
                 padding: const EdgeInsets.all(12),
                 child: QrImageView(
                   data: qrState.qrUrl!,
-                  version: QrVersions.auto,
                   size: 180,
                   eyeStyle: QrEyeStyle(
                     eyeShape: QrEyeShape.square,

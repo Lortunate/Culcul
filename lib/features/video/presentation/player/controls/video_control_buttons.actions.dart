@@ -57,26 +57,26 @@ class _PlaybackQualityButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = Translations.of(context);
-    final selectedQuality = ref.watch(
-      videoDetailControllerProvider(bvid).select((s) => s.selectedQuality),
+    final qualityState = ref.watch(
+      videoDetailControllerProvider(bvid).select(
+        (s) => (
+          selectedQuality: s.selectedQuality,
+          availableQualities: s.availableQualities,
+          playUrl: s.playUrl,
+        ),
+      ),
     );
-    final availableQualities = ref.watch(
-      videoDetailControllerProvider(bvid).select((s) => s.availableQualities),
-    );
-    final playUrl = ref.watch(
-      videoDetailControllerProvider(bvid).select((s) => s.playUrl),
-    );
-    final qualityLabels = buildQualityLabels(playUrl, t);
+    final qualityLabels = buildQualityLabels(qualityState.playUrl, t);
     return PlayerCapsuleButton(
-      text: qualityLabels[selectedQuality] ?? t.video.quality.auto,
+      text: qualityLabels[qualityState.selectedQuality] ?? t.video.quality.auto,
       onTap: () {
         showSidePanel(
           context,
           QuickSelectionSheet<int>(
             title: t.video.player.choose_quality,
             subtitle: t.video.player.quality_section_hint,
-            items: availableQualities,
-            selectedItem: selectedQuality,
+            items: qualityState.availableQualities,
+            selectedItem: qualityState.selectedQuality,
             labelBuilder: (q) => qualityLabels[q] ?? t.video.quality.unknown,
             emptyText: t.video.player.quality_unavailable,
             onSelected: (q) {

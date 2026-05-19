@@ -101,9 +101,11 @@ class _PopularVideoList extends HookWidget {
   Widget build(BuildContext context) {
     useEffect(() {
       final pixelRatio = MediaQuery.devicePixelRatioOf(context);
+      const prefetchLimit = 6;
       prefetchHomeFeedImages(
         context,
         specs: items
+            .take(prefetchLimit)
             .map(
               (video) => NetworkImagePrefetchSpec(
                 url: video.pic,
@@ -113,7 +115,7 @@ class _PopularVideoList extends HookWidget {
             )
             .toList(growable: false),
         networkPolicy: networkPolicy,
-        limit: 6,
+        limit: prefetchLimit,
       );
       return null;
     }, [items, networkPolicy]);
@@ -142,8 +144,8 @@ class _PopularVideoList extends HookWidget {
     );
 
     return CustomScrollView(
-      controller: scrollController,
       cacheExtent: cacheExtent,
+      controller: scrollController,
       slivers: [
         SliverPadding(
           padding: layout.padding,

@@ -16,9 +16,7 @@ void main() {
     });
 
     test('uses constrained budgets for offline or weak connectivity', () {
-      final policy = NetworkQualityPolicy.forProfile(
-        NetworkQualityProfile.constrained,
-      );
+      final policy = NetworkQualityPolicy.forProfile(NetworkQualityProfile.constrained);
 
       expect(policy.isConstrained, isTrue);
       expect(policy.connectTimeout, const Duration(seconds: 15));

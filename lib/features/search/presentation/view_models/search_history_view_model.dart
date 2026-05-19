@@ -7,8 +7,6 @@ part 'search_history_view_model.g.dart';
 
 @riverpod
 class SearchHistory extends _$SearchHistory {
-  static const _maxHistory = 15;
-
   @override
   List<String> build() {
     final prefs = ref.watch(sharedPreferencesProvider);
@@ -16,7 +14,7 @@ class SearchHistory extends _$SearchHistory {
   }
 
   Future<void> add(String term) async {
-    final nextHistory = addSearchHistoryEntry(state, term, maxHistory: _maxHistory);
+    final nextHistory = addSearchHistoryEntry(state, term);
     state = nextHistory;
     await ref
         .read(sharedPreferencesProvider)

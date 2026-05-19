@@ -228,5 +228,4 @@ class SubtitleAiStatus extends $pb.ProtobufEnum {
   const SubtitleAiStatus._(super.value, super.name);
 }
 
-const $core.bool _omitEnumNames =
-    $core.bool.fromEnvironment('protobuf.omit_enum_names');
+const $core.bool _omitEnumNames = $core.bool.fromEnvironment('protobuf.omit_enum_names');

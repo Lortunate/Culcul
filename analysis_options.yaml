@@ -11,6 +11,7 @@ analyzer:
   errors:
     invalid_annotation_target: ignore
     invalid_use_of_internal_member: ignore
+    deprecated_member_use: ignore
     unawaited_futures: error
   language:
     strict-casts: true

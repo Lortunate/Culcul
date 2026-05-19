@@ -39,7 +39,6 @@ class DynamicContentWidget extends StatelessWidget {
         if (visibility.showText && contentText != null) ...[
           BilibiliEmojiText(
             text: contentText,
-            emojiMap: const {},
             style: theme.textTheme.bodyMedium?.copyWith(height: 1.5, fontSize: 15),
             selectable: selectableText,
           ),

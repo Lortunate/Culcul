@@ -34,7 +34,7 @@ class PasswordLoginView extends HookConsumerWidget {
               seccode,
             );
       },
-      onError: (error) => onFeedback(error),
+      onError: onFeedback,
     );
 
     Future<void> login() async {

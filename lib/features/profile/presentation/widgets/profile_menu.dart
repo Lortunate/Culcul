@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/auth/auth_session_actions.dart';
+import 'package:culcul/features/auth/application/auth_controller.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
 import 'package:culcul/ui/responsive/app_breakpoints.dart';
@@ -48,7 +48,7 @@ class ProfileMenu extends ConsumerWidget {
                         TextButton(
                           onPressed: () {
                             Navigator.of(context).pop();
-                            ref.read(authSessionActionsProvider).logout();
+                            ref.read(authProvider.notifier).logout();
                           },
                           child: Text(
                             t.auth.logout,

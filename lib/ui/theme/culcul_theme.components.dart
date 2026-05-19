@@ -105,7 +105,7 @@ CardThemeData _cardTheme(ColorScheme colorScheme) {
     margin: EdgeInsets.zero,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(18),
-      side: BorderSide(color: colorScheme.outlineVariant, width: 1),
+      side: BorderSide(color: colorScheme.outlineVariant),
     ),
     clipBehavior: Clip.antiAlias,
   );

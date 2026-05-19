@@ -60,7 +60,6 @@ class ListenSettingsSheet extends HookConsumerWidget {
       title: t.video.listen_settings.title,
       subtitle: t.video.listen_settings.sleep_timer,
       isBottomSheet: isBottomSheet,
-      panelWidth: 360,
       maxHeightFactor: 0.62,
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),

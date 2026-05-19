@@ -24,9 +24,7 @@ class SystemNotificationPage extends ConsumerWidget {
       backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: Text(t.notification.types.system),
-        actions: [
-          IconButton(icon: const Icon(Icons.refresh), onPressed: () => refresh()),
-        ],
+        actions: [IconButton(icon: const Icon(Icons.refresh), onPressed: refresh)],
       ),
       body: state.when(
         data: (items) {
@@ -55,7 +53,7 @@ class SystemNotificationPage extends ConsumerWidget {
           return RefreshIndicator(onRefresh: refresh, child: list);
         },
         error: (err, stack) =>
-            AppErrorWidget(error: err, stackTrace: stack, onRetry: () => refresh()),
+            AppErrorWidget(error: err, stackTrace: stack, onRetry: refresh),
         loading: () => const Center(child: CircularProgressIndicator()),
       ),
     );

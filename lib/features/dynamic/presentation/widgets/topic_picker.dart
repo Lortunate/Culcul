@@ -104,7 +104,6 @@ class TopicPicker extends HookConsumerWidget {
                                 url: topic.coverUrl!,
                                 width: 40,
                                 height: 40,
-                                fit: BoxFit.cover,
                                 borderRadius: BorderRadius.circular(4),
                               )
                             : Container(

@@ -46,7 +46,7 @@ class ChatMessageItem extends StatelessWidget {
       // System tip, such as follow restrictions
       final tips = message.systemTipTexts;
       if (tips != null && tips.isNotEmpty) {
-        final text = tips.join('');
+        final text = tips.join();
         return ChatSystemMessage(content: text);
       }
     }
@@ -77,7 +77,6 @@ class ChatMessageItem extends StatelessWidget {
               ? ExtendedImage.network(
                   url,
                   fit: BoxFit.cover,
-                  cache: true,
                   cacheWidth: cacheSize,
                   cacheHeight: cacheSize,
                   loadStateChanged: (state) {

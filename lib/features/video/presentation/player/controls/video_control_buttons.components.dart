@@ -93,10 +93,7 @@ class PlayerCapsuleButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: colorScheme.onPrimary.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(999),
-            border: Border.all(
-              color: colorScheme.onPrimary.withValues(alpha: 0.16),
-              width: 1,
-            ),
+            border: Border.all(color: colorScheme.onPrimary.withValues(alpha: 0.16)),
           ),
           child: Text(
             text,

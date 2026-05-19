@@ -28,7 +28,6 @@ class HistoryItemWidget extends StatelessWidget {
         title: item.title,
         // Hide default duration badge if showing progress bar
         duration: (item.progress > 0) ? 0 : item.duration,
-        thumbnailWidth: 160,
         aspectRatio: 16 / 9,
         height: 90,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -73,7 +72,6 @@ class HistoryItemWidget extends StatelessWidget {
           IconText(
             icon: Icons.access_time_rounded,
             text: FormatUtils.formatTimeAgo(item.viewedAt),
-            iconSize: 14,
             style: theme.textTheme.bodySmall?.copyWith(
               color: colorScheme.onSurfaceVariant,
               fontSize: 11,

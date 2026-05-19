@@ -16,7 +16,6 @@ mixin _ProfileRepositoryImplFlowsMixin {
       () => api.getSpaceVideos(
         mid: mid,
         page: page,
-        pageSize: ProfileRepositoryImpl._defaultSpaceVideoPageSize,
         order: order,
         forceRefresh: forceRefresh ? true : null,
         cancelToken: cancelToken,
@@ -28,7 +27,7 @@ mixin _ProfileRepositoryImplFlowsMixin {
   Future<Result<UserSpaceVideoModel?, AppError>> getStickyVideoModel(int vmid) async {
     final result = await _requestExecutor.runApiDirect(() => api.getStickyVideo(vmid));
     return result.when(
-      success: (data) => Success(data),
+      success: Success.new,
       failure: (error) {
         if (error is ServerAppError && error.code == 53016) {
           return const Success(null);
@@ -43,7 +42,7 @@ mixin _ProfileRepositoryImplFlowsMixin {
   ) async {
     final result = await _requestExecutor.runApiDirect(() => api.getMasterpiece(vmid));
     return result.when(
-      success: (data) => Success(data),
+      success: Success.new,
       failure: (_) => const Success(<UserSpaceVideoModel>[]),
     );
   }

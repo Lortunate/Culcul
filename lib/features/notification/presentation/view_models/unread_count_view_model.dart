@@ -15,19 +15,7 @@ class UnreadCount extends _$UnreadCount {
   FutureOr<NotificationSummary> build() async {
     final ownerUid = ref.watch(notificationOwnerUidProvider);
     if (ownerUid == null) {
-      return const NotificationSummary(
-        at: 0,
-        chat: 0,
-        coin: 0,
-        danmu: 0,
-        favorite: 0,
-        like: 0,
-        recvLike: 0,
-        recvReply: 0,
-        reply: 0,
-        system: 0,
-        up: 0,
-      );
+      return const NotificationSummary();
     }
 
     final repository = ref.read(notificationRepositoryProvider);

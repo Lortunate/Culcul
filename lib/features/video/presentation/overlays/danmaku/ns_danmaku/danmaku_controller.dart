@@ -1,5 +1,5 @@
-import 'models/danmaku_option.dart';
-import 'models/danmaku_item.dart';
+import 'package:culcul/features/video/presentation/overlays/danmaku/ns_danmaku/models/danmaku_option.dart';
+import 'package:culcul/features/video/presentation/overlays/danmaku/ns_danmaku/models/danmaku_item.dart';
 
 class DanmakuController {
   final void Function(List<DanmakuItem>) onAddItems;

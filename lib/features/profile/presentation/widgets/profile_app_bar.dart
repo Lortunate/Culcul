@@ -30,7 +30,6 @@ class ProfileAppBar extends ConsumerWidget {
       scrolledUnderElevation: 0,
       actions: _buildActions(context),
       flexibleSpace: FlexibleSpaceBar(
-        stretchModes: const [StretchMode.zoomBackground],
         background: _HeaderBackground(profile: profile, session: session),
       ),
     );
@@ -62,7 +61,6 @@ class _HeaderBackground extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
       alignment: Alignment.bottomLeft,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _ProfileAvatar(profile: profile, session: session),
           const SizedBox(width: 20),

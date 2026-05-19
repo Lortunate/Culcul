@@ -12,12 +12,12 @@ class _Background extends StatelessWidget {
     return Stack(
       fit: StackFit.expand,
       children: [
-        AppNetworkImage(url: imageUrl, fit: BoxFit.cover),
+        AppNetworkImage(url: imageUrl),
         RepaintBoundary(
           child: IgnorePointer(
             child: ImageFiltered(
               imageFilter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-              child: AppNetworkImage(url: imageUrl, fit: BoxFit.cover, useShimmer: false),
+              child: AppNetworkImage(url: imageUrl, useShimmer: false),
             ),
           ),
         ),
@@ -53,9 +53,7 @@ class _CoverArt extends StatelessWidget {
           width: 4,
         ),
       ),
-      child: ClipOval(
-        child: AppNetworkImage(url: imageUrl, fit: BoxFit.cover),
-      ),
+      child: ClipOval(child: AppNetworkImage(url: imageUrl)),
     );
   }
 }

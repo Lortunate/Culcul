@@ -9,11 +9,7 @@ import 'package:flutter/foundation.dart';
 class DevLogger {
   DevLogger._();
 
-  static void log(
-    String category,
-    String event, [
-    Map<String, Object?>? fields,
-  ]) {
+  static void log(String category, String event, [Map<String, Object?>? fields]) {
     if (!kDebugMode && !kProfileMode) return;
     final buffer = StringBuffer(event);
     if (fields != null) {

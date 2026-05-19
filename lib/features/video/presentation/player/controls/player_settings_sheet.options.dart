@@ -153,7 +153,6 @@ class _InlineTextOptionSectionState<T> extends State<_InlineTextOptionSection<T>
         ),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             alignment: Alignment.centerLeft,
@@ -198,11 +197,7 @@ class _InlineTextOptionSectionState<T> extends State<_InlineTextOptionSection<T>
                   physics: const BouncingScrollPhysics(),
                   child: ConstrainedBox(
                     constraints: BoxConstraints(minWidth: constraints.maxWidth),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: content,
-                    ),
+                    child: Row(children: content),
                   ),
                 );
               },

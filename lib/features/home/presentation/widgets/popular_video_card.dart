@@ -80,7 +80,6 @@ class _PopularTag extends StatelessWidget {
           ? colorScheme.primary.withValues(alpha: 0.1)
           : colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
       textColor: isMillion ? colorScheme.primary : colorScheme.onSurfaceVariant,
-      fontSize: 10,
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
       borderRadius: 6,
     );

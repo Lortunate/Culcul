@@ -11,7 +11,6 @@ class LoginDialog extends StatelessWidget {
       barrierDismissible: true,
       barrierLabel: 'Login',
       barrierColor: colorScheme.scrim.withValues(alpha: 0.5),
-      transitionDuration: const Duration(milliseconds: 200),
       pageBuilder: (context, animation, secondaryAnimation) {
         return const Center(child: LoginDialog());
       },

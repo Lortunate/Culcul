@@ -49,11 +49,7 @@ class NotificationFeedSync {
     bool force = false,
   }) async {
     final scope = 'feed:${type.value}:${cursor == null ? "head" : "older"}';
-    if (!await cleanupPolicy.shouldSync(
-      ownerUid: ownerUid,
-      scope: scope,
-      force: force,
-    )) {
+    if (!await cleanupPolicy.shouldSync(ownerUid: ownerUid, scope: scope, force: force)) {
       return const Success(null);
     }
 

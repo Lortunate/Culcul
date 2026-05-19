@@ -20,13 +20,11 @@ class LivePlayerView extends HookConsumerWidget {
     final isLoading = ref.watch(provider.select((state) => state.isLoading));
 
     DeferredAppInitController.instance.ensureMediaKitInitialized();
-    final player = useMemoized(() => Player());
+    final player = useMemoized(Player.new);
     final controller = useMemoized(() => VideoController(player));
 
     useEffect(() {
-      return () {
-        player.dispose();
-      };
+      return player.dispose;
     }, []);
 
     useEffect(() {
@@ -40,7 +38,6 @@ class LivePlayerView extends HookConsumerWidget {
               'User-Agent': ApiConstants.userAgent,
             },
           ),
-          play: true,
         );
       }
       return null;
@@ -50,10 +47,7 @@ class LivePlayerView extends HookConsumerWidget {
       color: colorScheme.scrim,
       child: Stack(
         children: [
-          Video(
-            controller: controller,
-            controls: (state) => AdaptiveVideoControls(state),
-          ),
+          Video(controller: controller),
           if (isLoading)
             Center(child: CircularProgressIndicator(color: colorScheme.onPrimary)),
         ],

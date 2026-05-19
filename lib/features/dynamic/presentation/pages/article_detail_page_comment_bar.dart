@@ -67,7 +67,6 @@ List<Widget> buildArticleCommentSlivers({
                 item: item,
                 upperMid: data.authorMid,
                 onLike: () => onToggleCommentLike(item),
-                onDislike: null,
                 onReply: () => CommentReplySheet.show(
                   context,
                   comment: item,

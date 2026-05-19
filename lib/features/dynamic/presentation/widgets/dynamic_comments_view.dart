@@ -40,7 +40,7 @@ class DynamicCommentsSliver extends ConsumerWidget {
     if (paging.items.isEmpty) {
       return SliverToBoxAdapter(
         child: Padding(
-          padding: EdgeInsets.all(32.0),
+          padding: const EdgeInsets.all(32.0),
           child: Center(child: Text(t.moments.no_comments)),
         ),
       );

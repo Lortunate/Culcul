@@ -35,7 +35,6 @@ class _Content extends StatelessWidget {
         text: content.message,
         emojiMap: content.emote ?? {},
         style: textStyle,
-        emojiSize: 20,
       ),
     );
 

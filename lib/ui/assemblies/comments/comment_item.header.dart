@@ -16,7 +16,6 @@ class _Header extends StatelessWidget {
     final isUpper = upperMid != null && member.mid == upperMid.toString();
 
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Flexible(
           child: Text(

@@ -151,8 +151,8 @@ class CommentReplyPage extends HookConsumerWidget {
             child: EasyRefresh(
               onRefresh: controller.refresh,
               onLoad: !hasMore ? null : commands.loadMoreReplies,
-              header: AppRefreshHeader(),
-              footer: hasMore ? AppLoadFooter() : null,
+              header: const AppRefreshHeader(),
+              footer: hasMore ? const AppLoadFooter() : null,
               child: CustomScrollView(
                 cacheExtent: 520,
                 slivers: [

@@ -105,9 +105,11 @@ class _RecommendVideoGrid extends HookWidget {
     useEffect(() {
       final width = _estimateGridItemWidth(context);
       final pixelRatio = MediaQuery.devicePixelRatioOf(context);
+      final prefetchLimit = layout.gridDelegate.crossAxisCount * 2;
       prefetchHomeFeedImages(
         context,
         specs: items
+            .take(prefetchLimit)
             .map(
               (video) => NetworkImagePrefetchSpec(
                 url: video.pic,
@@ -117,7 +119,7 @@ class _RecommendVideoGrid extends HookWidget {
             )
             .toList(growable: false),
         networkPolicy: networkPolicy,
-        limit: layout.gridDelegate.crossAxisCount * 2,
+        limit: prefetchLimit,
       );
       return null;
     }, [items, networkPolicy]);
@@ -148,8 +150,8 @@ class _RecommendVideoGrid extends HookWidget {
     );
 
     return CustomScrollView(
-      controller: scrollController,
       cacheExtent: cacheExtent,
+      controller: scrollController,
       slivers: [
         SliverPadding(
           padding: layout.padding,

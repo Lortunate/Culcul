@@ -8,7 +8,7 @@ import 'package:culcul/ui/widgets/users/guest_view.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '../widgets/history_item_widget.dart';
+import 'package:culcul/features/history/presentation/widgets/history_item_widget.dart';
 
 class HistoryPage extends ConsumerWidget {
   const HistoryPage({super.key});

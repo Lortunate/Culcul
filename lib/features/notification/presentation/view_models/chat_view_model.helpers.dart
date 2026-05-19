@@ -53,7 +53,6 @@ mixin _ChatHelpersMixin on _$Chat {
       tasks: <ConcurrentTask<dynamic>>[
         ConcurrentTask<List<PrivateMessage>>(
           label: 'messages',
-          critical: true,
           task: () => repository.pageMessagesFromLocal(
             ownerUid: ownerUid,
             talkerId: talkerId,

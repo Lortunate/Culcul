@@ -21,14 +21,13 @@ class DynamicCommentController extends _$DynamicCommentController {
     state = state.copyWith(paging: PagedListStateTransitions.beginRefresh(state.paging));
     final result = await ref
         .read(dynamicRepositoryProvider)
-        .getComments(post, sort: state.sort, page: 1);
+        .getComments(post, sort: state.sort);
     state = result.when(
       success: (data) => state.copyWith(
         paging: PagedListStateTransitions.completeRefresh(
           state.paging,
           items: data.replies,
           hasMore: _resolveHasMore(data, currentPage: 1),
-          nextPage: 2,
         ),
       ),
       failure: (error) =>

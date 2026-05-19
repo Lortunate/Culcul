@@ -7,7 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:culcul/core/data/pagination/paged_list_state_transitions.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'comment_reply_state.dart';
+import 'package:culcul/features/video/presentation/comments/comment_reply_state.dart';
 
 part 'comment_reply_view_model.g.dart';
 
@@ -38,7 +38,7 @@ class CommentReplyController extends _$CommentReplyController {
 
     final result = await ref
         .read(videoRepositoryProvider)
-        .fetchReply(oid: oid, root: rootId, page: 1, cancelToken: cancelToken);
+        .fetchReply(oid: oid, root: rootId, cancelToken: cancelToken);
     if (!ref.mounted || requestToken != _loadRequestToken) {
       return;
     }
@@ -47,7 +47,6 @@ class CommentReplyController extends _$CommentReplyController {
         paging: PagedListStateTransitions.completeRefresh(
           state.paging,
           items: response.replies,
-          nextPage: 2,
           hasMore: response.replies.isNotEmpty,
         ),
       ),

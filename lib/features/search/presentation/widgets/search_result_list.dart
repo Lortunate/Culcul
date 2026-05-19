@@ -127,8 +127,8 @@ class SearchResultList extends HookWidget {
             onlyOnScrollEnd: false,
           ),
       child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         cacheExtent: 640,
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         itemCount: items.length + (hasMore ? 1 : 0),
         separatorBuilder: (context, index) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
@@ -147,11 +147,11 @@ class SearchResultList extends HookWidget {
 
           final item = items[index];
           return switch (item) {
-            SearchVideoEntry v => SearchVideoItem(item: v),
-            SearchUserEntry u => SearchUserItem(item: u),
-            SearchBangumiEntry b => SearchBangumiItem(item: b),
-            SearchArticleEntry a => SearchArticleItem(item: a),
-            SearchTopicEntry t => SearchTopicItem(item: t),
+            final SearchVideoEntry v => SearchVideoItem(item: v),
+            final SearchUserEntry u => SearchUserItem(item: u),
+            final SearchBangumiEntry b => SearchBangumiItem(item: b),
+            final SearchArticleEntry a => SearchArticleItem(item: a),
+            final SearchTopicEntry t => SearchTopicItem(item: t),
           };
         },
       ),

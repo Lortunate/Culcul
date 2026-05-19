@@ -48,7 +48,7 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderSt
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
-                  children: packages.map((package) => _buildEmojiGrid(package)).toList(),
+                  children: packages.map(_buildEmojiGrid).toList(),
                 ),
               ),
               TabBar(
@@ -89,7 +89,6 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderSt
       padding: const EdgeInsets.all(8),
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 48,
-        childAspectRatio: 1,
         crossAxisSpacing: 8,
         mainAxisSpacing: 8,
       ),

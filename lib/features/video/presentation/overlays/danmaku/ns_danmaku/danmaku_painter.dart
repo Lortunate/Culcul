@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'models/danmaku_item.dart';
+import 'package:culcul/features/video/presentation/overlays/danmaku/ns_danmaku/models/danmaku_item.dart';
 
 class RenderDanmakuItem {
   final String id;

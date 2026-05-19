@@ -11,10 +11,6 @@ mixin _LiveRoomControllerInitMixin
       nickname: t.live.danmaku.system_notice,
       uid: 0,
       dmType: 3,
-      guardLevel: 0,
-      isadmin: 0,
-      vip: 0,
-      svip: 0,
     );
     final danmakuFeed = _danmakuFeed(roomId);
     danmakuFeed.clear();

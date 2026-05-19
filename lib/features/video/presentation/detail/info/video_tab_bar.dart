@@ -26,7 +26,6 @@ class VideoTabBar extends StatelessWidget {
         controller: controller,
         indicatorColor: colorScheme.primary,
         indicatorSize: TabBarIndicatorSize.label,
-        indicatorWeight: 2,
         labelColor: colorScheme.primary,
         unselectedLabelColor: colorScheme.onSurfaceVariant,
         labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),

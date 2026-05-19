@@ -1,12 +1,10 @@
 import 'package:culcul/features/notification/data/dtos/private_message_model.dart';
 import 'package:culcul/features/notification/data/dtos/reply_model.dart';
-import 'package:culcul/features/notification/data/dtos/system_notification_model.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
-import 'package:culcul/features/notification/data/dtos/system_notice.dart';
 import 'package:culcul/features/notification/domain/entities/image_upload_result.dart';
 
 extension ReplyUserMapper on ReplyUser {
@@ -161,19 +159,6 @@ ImageUploadResult imageUploadResultFromJson(Map<String, dynamic> json) {
     imageWidth: _readInt(json['image_width']),
     imageHeight: _readInt(json['image_height']),
   );
-}
-
-extension SystemNotificationItemMapper on SystemNotificationItem {
-  SystemNotice toDomain() {
-    return SystemNotice(
-      id: id,
-      title: title,
-      text: text,
-      time: time,
-      uri: uri,
-      jumpText: jumpText,
-    );
-  }
 }
 
 int _readInt(Object? value) {

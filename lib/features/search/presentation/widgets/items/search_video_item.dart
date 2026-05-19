@@ -29,7 +29,6 @@ class SearchVideoItem extends StatelessWidget {
       coverUrl: item.coverUrl,
       title: FormatUtils.stripHtmlTags(item.title),
       duration: item.durationText.parseDuration,
-      thumbnailWidth: 160,
       aspectRatio: 16 / 9,
       height: 90,
       author: Row(

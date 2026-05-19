@@ -30,7 +30,6 @@ class _SortChip extends StatelessWidget {
             color: selected
                 ? Colors.transparent
                 : colorScheme.outlineVariant.withValues(alpha: 0.5),
-            width: 1,
           ),
         ),
         child: Text(

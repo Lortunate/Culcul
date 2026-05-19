@@ -94,7 +94,6 @@ class PlayerController extends _$PlayerController
     return PlayerUiState(
       isPlaying: player.state.playing,
       isBuffering: player.state.buffering,
-      isMediaReady: false,
       renderEpoch: _renderEpoch,
       activeSessionId: _sessionCoordinator.activeSessionId,
       activationVersion: _sessionCoordinator.activationVersion,

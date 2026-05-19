@@ -8,7 +8,5 @@ abstract interface class SessionCookieRefresher {
 
 @Riverpod(keepAlive: true)
 SessionCookieRefresher sessionCookieRefresher(Ref ref) {
-  throw StateError(
-    'sessionCookieRefresherProvider not initialized',
-  );
+  throw StateError('sessionCookieRefresherProvider not initialized');
 }

@@ -66,8 +66,7 @@ class NetworkConcurrencyExecutor {
         try {
           results[task.label] = await task.task();
         } catch (error) {
-          final appError =
-              error is AppError ? error : AppError.fromObject(error);
+          final appError = error is AppError ? error : AppError.fromObject(error);
           if (task.critical) throw appError;
           results[task.label] = task.fallback?.call(appError);
         } finally {

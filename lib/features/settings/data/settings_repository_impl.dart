@@ -58,7 +58,7 @@ Future<int> _calculateSize(FileSystemEntity file) async {
   if (file is Directory) {
     var sum = 0;
     try {
-      await for (final child in file.list(recursive: false, followLinks: false)) {
+      await for (final child in file.list(followLinks: false)) {
         sum += await _calculateSize(child);
       }
     } catch (_) {}

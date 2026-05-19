@@ -65,7 +65,7 @@ class AuthTextField extends StatelessWidget {
             (suffix != null
                 ? Padding(padding: const EdgeInsets.only(right: 12), child: suffix)
                 : null),
-        suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+        suffixIconConstraints: const BoxConstraints(),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,

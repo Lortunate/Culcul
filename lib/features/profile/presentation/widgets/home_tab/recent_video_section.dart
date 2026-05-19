@@ -26,7 +26,7 @@ class RecentVideoSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final videosAsync = ref.watch(userSpaceVideosProvider(mid, order: 'pubdate'));
+    final videosAsync = ref.watch(userSpaceVideosProvider(mid));
     final profileAsync = ref.watch(userSpaceProvider(mid.toString()));
     final videoCount = profileAsync.asData?.value.videosCount ?? 0;
 
@@ -50,7 +50,6 @@ class RecentVideoSection extends ConsumerWidget {
                 ),
               )
               .toList(growable: false),
-          limit: _maxDisplayCount,
         );
         return SliverMainAxisGroup(
           slivers: [
@@ -68,7 +67,7 @@ class RecentVideoSection extends ConsumerWidget {
       error: (err, stack) => _ErrorState(
         error: err,
         stackTrace: stack,
-        onRetry: () => ref.refresh(userSpaceVideosProvider(mid, order: 'pubdate')),
+        onRetry: () => ref.refresh(userSpaceVideosProvider(mid)),
       ),
       loading: () => const _LoadingGrid(
         spacing: _gridSpacing,
@@ -172,7 +171,6 @@ class _VideoGrid extends StatelessWidget {
             reason: spaceVideo.reason,
             onTap: () => VideoDetailRoute(bvid: spaceVideo.bvid).push(context),
             showAuthor: false,
-            showDescription: false,
           );
         }, childCount: displayCount),
       ),

@@ -122,9 +122,7 @@ class PlayerControlsOverlay extends HookConsumerWidget {
                   ignoring: !showControls,
                   child: _LockButton(
                     isLocked: isLocked,
-                    onTap: () {
-                      playerController.toggleLock();
-                    },
+                    onTap: playerController.toggleLock,
                   ),
                 ),
               ),

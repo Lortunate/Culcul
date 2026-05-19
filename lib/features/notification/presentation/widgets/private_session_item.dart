@@ -52,11 +52,11 @@ class PrivateSessionItem extends ConsumerWidget {
     }
 
     if (isLoading) {
-      return AppShimmer(
+      return const AppShimmer(
         child: ListTile(
-          leading: const AppShimmerBox(width: 48, height: 48, borderRadius: 24),
-          title: const AppShimmerBox(width: 100, height: 16),
-          subtitle: const AppShimmerBox(width: 200, height: 14),
+          leading: AppShimmerBox(width: 48, height: 48, borderRadius: 24),
+          title: AppShimmerBox(width: 100, height: 16),
+          subtitle: AppShimmerBox(width: 200, height: 14),
         ),
       );
     }

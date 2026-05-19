@@ -18,7 +18,7 @@ mixin _ChatSendMixin on _$Chat, _ChatHelpersMixin {
     final uploadRes = uploadResult.dataOrNull;
     if (uploadRes == null) {
       return _setPagingError(
-        uploadResult.errorOrNull ?? AppError.data('Failed to upload image'),
+        uploadResult.errorOrNull ?? const AppError.data('Failed to upload image'),
       );
     }
 
@@ -38,7 +38,7 @@ mixin _ChatSendMixin on _$Chat, _ChatHelpersMixin {
   }) async {
     final ownerUid = ref.read(notificationOwnerUidProvider);
     if (ownerUid == null) {
-      return _setPagingError(AppError.auth('Not logged in'));
+      return _setPagingError(const AppError.auth('Not logged in'));
     }
 
     final repository = ref.read(notificationRepositoryProvider);
@@ -51,7 +51,7 @@ mixin _ChatSendMixin on _$Chat, _ChatHelpersMixin {
     );
 
     if (result.isFailure) {
-      final error = result.errorOrNull ?? AppError.data('Failed to send message');
+      final error = result.errorOrNull ?? const AppError.data('Failed to send message');
       await _refreshHeadFromLocal(ownerUid);
       return _setPagingError(error);
     }

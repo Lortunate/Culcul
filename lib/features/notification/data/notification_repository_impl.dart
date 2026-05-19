@@ -143,19 +143,7 @@ class NotificationRepositoryImpl {
   static const int syncThrottleSeconds = 60;
   static const int retentionDays = 90;
   static const String cleanupScope = '__cleanup__';
-  static const NotificationSummary emptySummary = NotificationSummary(
-    at: 0,
-    chat: 0,
-    coin: 0,
-    danmu: 0,
-    favorite: 0,
-    like: 0,
-    recvLike: 0,
-    recvReply: 0,
-    reply: 0,
-    system: 0,
-    up: 0,
-  );
+  static const NotificationSummary emptySummary = NotificationSummary();
 
   int nowSeconds() => DateTime.now().millisecondsSinceEpoch ~/ 1000;
 

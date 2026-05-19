@@ -61,7 +61,7 @@ class SmsLoginView extends HookConsumerWidget {
         onFeedback(t.auth.sms_sent, isSuccess: true);
         countdown.value = 60;
       },
-      onError: (error) => onFeedback(error),
+      onError: onFeedback,
     );
 
     Future<void> getCode() async {

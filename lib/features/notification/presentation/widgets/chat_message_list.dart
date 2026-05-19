@@ -72,8 +72,7 @@ class ChatMessageList extends HookWidget {
               itemCount: () => messages.length,
               source: 'notification.chat_message_list',
             ),
-      header: null,
-      footer: paging.hasMore ? AppLoadFooter() : null,
+      footer: paging.hasMore ? const AppLoadFooter() : null,
       child: ListView.separated(
         controller: scrollController,
         reverse: true,

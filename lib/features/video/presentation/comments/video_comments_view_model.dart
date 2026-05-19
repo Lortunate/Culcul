@@ -9,8 +9,8 @@ import 'package:culcul/core/data/pagination/paged_list_state_transitions.dart';
 import 'package:culcul/ui/assemblies/comments/comment_list_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../detail/video_detail_view_model.dart';
-import 'video_comment_tree_update.dart';
+import 'package:culcul/features/video/presentation/detail/video_detail_view_model.dart';
+import 'package:culcul/features/video/presentation/comments/video_comment_tree_update.dart';
 
 part 'video_comments_view_model.g.dart';
 

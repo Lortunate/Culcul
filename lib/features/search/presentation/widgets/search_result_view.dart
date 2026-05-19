@@ -65,7 +65,7 @@ class SearchResultTab extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    useAutomaticKeepAlive(wantKeepAlive: true);
+    useAutomaticKeepAlive();
 
     final order = useState(SearchOrder.totalrank);
     final duration = useState(SearchDuration.all);

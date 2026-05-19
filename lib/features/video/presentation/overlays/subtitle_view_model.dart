@@ -3,7 +3,7 @@ import 'package:culcul/features/video/data/video_repository_impl.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../detail/video_detail_view_model.dart';
+import 'package:culcul/features/video/presentation/detail/video_detail_view_model.dart';
 
 part 'subtitle_view_model.freezed.dart';
 part 'subtitle_view_model.g.dart';

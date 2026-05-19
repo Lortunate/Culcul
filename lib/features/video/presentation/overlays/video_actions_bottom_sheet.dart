@@ -22,8 +22,6 @@ class VideoActionsBottomSheet extends StatelessWidget {
     return ClipRRect(
       borderRadius: topRadius,
       child: AdaptiveBlur(
-        sigmaX: 20,
-        sigmaY: 20,
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: colorScheme.surface.withValues(alpha: 0.8),

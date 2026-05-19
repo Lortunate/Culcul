@@ -41,8 +41,7 @@ class UserProfileHeader extends HookConsumerWidget {
     final theme = Theme.of(context);
     final isExpanded = useState(false);
     final session = ref.watch(currentUserProvider);
-    final isSelf =
-        (session?.isLoggedIn ?? false) && session?.uid == user.id;
+    final isSelf = (session?.isLoggedIn ?? false) && session?.uid == user.id;
 
     return Column(
       children: [

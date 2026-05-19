@@ -22,8 +22,6 @@ LiveRepositoryImpl liveRepository(Ref ref) {
 }
 
 class LiveRepositoryImpl {
-  static const int _recommendPageSize = 30;
-  static const int _rankPageSize = 20;
   final LiveApi _api;
   final RequestExecutor _requestExecutor;
 
@@ -34,10 +32,7 @@ class LiveRepositoryImpl {
     return _requestExecutor.runApiDirect(() => _api.getRoomInfo(roomId));
   }
 
-  Future<Result<LivePlayUrlModel, AppError>> getPlayUrl({
-    required int roomId,
-    int? qn,
-  }) {
+  Future<Result<LivePlayUrlModel, AppError>> getPlayUrl({required int roomId, int? qn}) {
     return _requestExecutor.runApiDirect(() => _api.getPlayUrl(roomId: roomId, qn: qn));
   }
 
@@ -57,7 +52,7 @@ class LiveRepositoryImpl {
     int page = 1,
   }) async {
     final result = await _requestExecutor.runApiDirect(
-      () => _api.getRecommendList(page: page, pageSize: _recommendPageSize),
+      () => _api.getRecommendList(page: page),
     );
     return result.map((data) => data.roomList);
   }
@@ -72,12 +67,7 @@ class LiveRepositoryImpl {
     int page = 1,
   }) {
     return _requestExecutor.runApiDirect(
-      () => _api.getOnlineGoldRank(
-        ruid: ruid,
-        roomId: roomId,
-        page: page,
-        pageSize: _rankPageSize,
-      ),
+      () => _api.getOnlineGoldRank(ruid: ruid, roomId: roomId, page: page),
     );
   }
 
@@ -87,19 +77,11 @@ class LiveRepositoryImpl {
     int page = 1,
   }) {
     return _requestExecutor.runApiDirect(
-      () => _api.getGuardList(
-        ruid: ruid,
-        roomId: roomId,
-        page: page,
-        pageSize: _rankPageSize,
-      ),
+      () => _api.getGuardList(ruid: ruid, roomId: roomId, page: page),
     );
   }
 
-  Future<Result<void, AppError>> sendDanmaku({
-    required int roomId,
-    required String msg,
-  }) {
+  Future<Result<void, AppError>> sendDanmaku({required int roomId, required String msg}) {
     return _requestExecutor.runUnit(
       () => _api.sendDanmaku(
         msg: msg,

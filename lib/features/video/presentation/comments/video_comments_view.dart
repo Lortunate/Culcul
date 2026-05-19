@@ -90,11 +90,11 @@ class VideoCommentsView extends HookConsumerWidget {
                   ref.read(videoCommentsControllerProvider(bvid)).paging.items.length,
               source: 'video.video_comments',
             ),
-      header: AppRefreshHeader(),
-      footer: hasMore ? AppLoadFooter() : null,
+      header: const AppRefreshHeader(),
+      footer: hasMore ? const AppLoadFooter() : null,
       child: ListView.separated(
-        padding: const EdgeInsets.symmetric(vertical: 4),
         cacheExtent: 520,
+        padding: const EdgeInsets.symmetric(vertical: 4),
         itemCount: paging.items.length,
         separatorBuilder: (context, index) {
           return Divider(

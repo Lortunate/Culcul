@@ -58,8 +58,8 @@ class _UserDynamicFeedState extends ConsumerState<UserDynamicFeed>
         );
       },
       child: CustomScrollView(
-        key: PageStorageKey<String>('user_dynamic_tab_${widget.mid}'),
         cacheExtent: 560,
+        key: PageStorageKey<String>('user_dynamic_tab_${widget.mid}'),
         slivers: [
           SliverOverlapInjector(
             handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),

@@ -6,12 +6,12 @@ class VideoCardSkeleton extends StatelessWidget {
   const VideoCardSkeleton({super.key});
 
   Widget _buildContent() {
-    return Expanded(
+    return const Expanded(
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+        padding: EdgeInsets.fromLTRB(10, 8, 10, 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             AppShimmerBox(height: 14, width: double.infinity),
             SizedBox(height: 6),
             AppShimmerBox(height: 14, width: 100),

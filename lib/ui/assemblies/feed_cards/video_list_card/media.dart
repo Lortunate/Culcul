@@ -32,9 +32,6 @@ class _VideoListCardMedia extends StatelessWidget {
           VideoThumbnail(
             url: coverUrl,
             duration: duration ?? 0,
-            viewCount: null,
-            danmakuCount: null,
-            borderRadius: 8,
             aspectRatio: aspectRatio,
             width: thumbnailWidth,
             height: thumbnailWidth / aspectRatio,

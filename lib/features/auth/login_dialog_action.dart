@@ -8,5 +8,5 @@ typedef ShowLoginDialog = void Function(BuildContext context);
 
 @riverpod
 ShowLoginDialog showLoginDialog(Ref ref) {
-  return (context) => LoginDialog.show(context);
+  return LoginDialog.show;
 }

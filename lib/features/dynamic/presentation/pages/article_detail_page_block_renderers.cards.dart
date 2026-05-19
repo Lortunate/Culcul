@@ -22,7 +22,6 @@ class _ImageBlockView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
                 child: AppNetworkImage(
                   url: urls[i],
-                  fit: BoxFit.cover,
                   borderRadius: BorderRadius.circular(14),
                 ),
               ),

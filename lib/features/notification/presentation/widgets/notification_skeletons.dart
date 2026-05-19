@@ -26,23 +26,23 @@ class _PrivateSessionSkeletonItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppShimmer(
+    return const AppShimmer(
       child: Row(
         children: [
-          const AppShimmerBox(width: 48, height: 48, borderRadius: 24),
-          const SizedBox(width: 12),
+          AppShimmerBox(width: 48, height: 48, borderRadius: 24),
+          SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                AppShimmerBox(width: 120, height: 16, borderRadius: 4),
+              children: [
+                AppShimmerBox(width: 120, height: 16),
                 SizedBox(height: 8),
-                AppShimmerBox(width: double.infinity, height: 14, borderRadius: 4),
+                AppShimmerBox(width: double.infinity, height: 14),
               ],
             ),
           ),
-          const SizedBox(width: 16),
-          const AppShimmerBox(width: 40, height: 12, borderRadius: 4),
+          SizedBox(width: 16),
+          AppShimmerBox(width: 40, height: 12),
         ],
       ),
     );
@@ -55,9 +55,6 @@ class ChatMessageSkeletonList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return EasyRefresh(
-      header:
-          null, // Chat usually doesn't refresh from top in this context (history is top)
-      footer: null, // Skeleton doesn't need footer
       // Note: ChatPage usually has reverse: true.
       // If we want to simulate that, we should use reverse: true here too,
       // or just list items from bottom up visually.

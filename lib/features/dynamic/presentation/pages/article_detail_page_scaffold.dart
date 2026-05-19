@@ -27,13 +27,13 @@ Widget buildArticleDetailScaffold({
         PopupMenuButton<String>(
           icon: const Icon(Icons.more_vert_rounded),
           onSelected: (action) => handleArticleMenuAction(context, action, data),
-          itemBuilder: (context) => buildArticleActionsMenuItems(context),
+          itemBuilder: buildArticleActionsMenuItems,
         ),
       ],
     ),
     body: EasyRefresh(
-      header: AppRefreshHeader(),
-      footer: canLoadMore ? AppLoadFooter() : null,
+      header: const AppRefreshHeader(),
+      footer: canLoadMore ? const AppLoadFooter() : null,
       onRefresh: onRefresh,
       onLoad: onLoadMore,
       child: CustomScrollView(
@@ -45,11 +45,7 @@ Widget buildArticleDetailScaffold({
                 if (data.bannerUrl != null && data.bannerUrl!.isNotEmpty) ...[
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16),
-                    child: AppNetworkImage(
-                      url: data.bannerUrl!,
-                      height: 180,
-                      fit: BoxFit.cover,
-                    ),
+                    child: AppNetworkImage(url: data.bannerUrl!, height: 180),
                   ),
                   const SizedBox(height: 14),
                 ],

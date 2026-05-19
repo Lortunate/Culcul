@@ -57,7 +57,6 @@ class FavRepositoryImpl {
         order: order,
         type: type,
         tid: tid,
-        platform: 'web',
       ),
     );
   }
@@ -93,9 +92,7 @@ class FavRepositoryImpl {
     required String resources,
     required int mediaId,
   }) {
-    return _requestExecutor.runUnit(
-      () => _api.batchDelResource(resources, mediaId, platform: 'web'),
-    );
+    return _requestExecutor.runUnit(() => _api.batchDelResource(resources, mediaId));
   }
 
   Future<Result<void, AppError>> cleanInvalidResources({required int mediaId}) {

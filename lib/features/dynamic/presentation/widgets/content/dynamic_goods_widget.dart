@@ -42,7 +42,6 @@ class DynamicGoodsWidget extends StatelessWidget {
                   url: item.cover,
                   width: 50,
                   height: 50,
-                  fit: BoxFit.cover,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 title: Text(

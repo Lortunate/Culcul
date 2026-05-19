@@ -71,7 +71,7 @@ extension _ProfileRepositoryParsers on ProfileRepositoryImpl {
   }
 
   String? _resolveBanner(Map<String, dynamic> infoData, dynamic cardResponse) {
-    var topPhoto = infoData['top_photo'] as String?;
+    final topPhoto = infoData['top_photo'] as String?;
     if (cardResponse == null ||
         cardResponse.code != 0 ||
         cardResponse.data is! Map<String, dynamic>) {

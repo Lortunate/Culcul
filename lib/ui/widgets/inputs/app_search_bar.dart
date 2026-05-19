@@ -70,7 +70,7 @@ class AppSearchBar extends StatelessWidget {
             padding: const EdgeInsets.only(left: 14, right: 8),
             child: _buildSearchIcon(colorScheme.onSurfaceVariant),
           ),
-          prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+          prefixIconConstraints: const BoxConstraints(),
           suffixIcon: suffixIcon,
           suffixIconConstraints: const BoxConstraints(minWidth: 44, minHeight: 44),
           border: InputBorder.none,

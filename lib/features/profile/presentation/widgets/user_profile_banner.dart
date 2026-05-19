@@ -16,7 +16,7 @@ class UserProfileBanner extends StatelessWidget {
         fit: StackFit.expand,
         children: [
           if (bannerUrl != null && bannerUrl!.isNotEmpty)
-            AppNetworkImage(url: bannerUrl!, fit: BoxFit.cover)
+            AppNetworkImage(url: bannerUrl!)
           else
             Container(color: theme.colorScheme.surfaceContainerHighest),
           DecoratedBox(

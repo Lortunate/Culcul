@@ -47,7 +47,6 @@ class MasterpieceSection extends ConsumerWidget {
                               viewCount: video.stats.view,
                               danmakuCount: video.stats.danmaku,
                               borderRadius: 12,
-                              aspectRatio: 16 / 10,
                               width: 160,
                               height: 100,
                             ),

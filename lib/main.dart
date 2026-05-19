@@ -14,11 +14,9 @@ void main() async {
 
   final bootstrapOverrides = await AppBootstrap.initialize();
 
-  DevLogger.log(
-    'startup',
-    'bootstrap_ready',
-    {'bootstrap_ms': bootstrapStopwatch.elapsedMilliseconds},
-  );
+  DevLogger.log('startup', 'bootstrap_ready', {
+    'bootstrap_ms': bootstrapStopwatch.elapsedMilliseconds,
+  });
 
   final overrides = [...bootstrapOverrides, ...createRootOverrides()];
   verifyRootOverrides(overrides);

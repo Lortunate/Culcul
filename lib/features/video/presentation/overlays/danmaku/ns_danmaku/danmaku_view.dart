@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'danmaku_controller.dart';
-import 'danmaku_painter.dart';
-import 'models/danmaku_item.dart';
-import 'models/danmaku_option.dart';
+import 'package:culcul/features/video/presentation/overlays/danmaku/ns_danmaku/danmaku_controller.dart';
+import 'package:culcul/features/video/presentation/overlays/danmaku/ns_danmaku/danmaku_painter.dart';
+import 'package:culcul/features/video/presentation/overlays/danmaku/ns_danmaku/models/danmaku_item.dart';
+import 'package:culcul/features/video/presentation/overlays/danmaku/ns_danmaku/models/danmaku_option.dart';
 
 part 'danmaku_view.layout.dart';
 part 'danmaku_view.render.dart';

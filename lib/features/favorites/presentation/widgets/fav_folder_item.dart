@@ -39,12 +39,7 @@ class FavFolderItem extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: item.cover != null && item.cover!.isNotEmpty
-                    ? AppNetworkImage(
-                        url: item.cover!,
-                        fit: BoxFit.cover,
-                        width: 160,
-                        height: 90,
-                      )
+                    ? AppNetworkImage(url: item.cover!, width: 160, height: 90)
                     : Center(
                         child: Icon(
                           Icons.folder_open_rounded,

@@ -43,10 +43,7 @@ class WbiInterceptor extends Interceptor {
         debugPrint('WbiInterceptor signing failed: $e\n$stack');
       }
       return handler.reject(
-        DioException(
-          requestOptions: options,
-          error: 'Wbi signing failed: $e',
-        ),
+        DioException(requestOptions: options, error: 'Wbi signing failed: $e'),
       );
     }
 

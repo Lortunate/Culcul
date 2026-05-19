@@ -27,7 +27,6 @@ ProfileRepositoryImpl profileRepository(Ref ref) {
 }
 
 class ProfileRepositoryImpl with _ProfileRepositoryImplFlowsMixin {
-  static const int _defaultSpaceVideoPageSize = 30;
   @override
   final ProfileApi api;
   @override

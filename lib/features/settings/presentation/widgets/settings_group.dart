@@ -11,7 +11,7 @@ class SettingsGroup extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    Widget group = Material(
+    final Widget group = Material(
       color: colorScheme.surface,
       borderRadius: BorderRadius.circular(16),
       clipBehavior: Clip.antiAlias,

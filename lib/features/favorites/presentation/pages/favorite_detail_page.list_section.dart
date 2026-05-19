@@ -28,8 +28,8 @@ class _FavoriteDetailListSection extends ConsumerWidget {
 
         return EasyRefresh(
           controller: refreshController,
-          header: AppRefreshHeader(),
-          footer: pager.hasMore ? AppLoadFooter() : null,
+          header: const AppRefreshHeader(),
+          footer: pager.hasMore ? const AppLoadFooter() : null,
           onRefresh: () async {
             return ref.refresh(provider.future);
           },

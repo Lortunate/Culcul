@@ -7,7 +7,7 @@ import 'package:culcul/ui/responsive/app_responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'home_tab_bar.dart';
+import 'package:culcul/features/home/presentation/widgets/home_tab_bar.dart';
 
 class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
   final TabController tabController;
@@ -54,7 +54,6 @@ class HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
         child: Center(
           child: AppAvatar(
             url: authState.avatarUrl,
-            size: 32,
             onTap: () => _handleProtectedTap(
               context: context,
               ref: ref,

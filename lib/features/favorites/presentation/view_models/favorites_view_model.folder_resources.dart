@@ -32,9 +32,7 @@ class FavFolderResources extends _$FavFolderResources {
         items: page.medias,
         hasMore: page.hasMore,
         isInitialLoading: false,
-        isLoadingMore: false,
         nextPage: 2,
-        error: null,
       ),
     );
     DevLogger.log('feature', 'favorites.detail state_commit', <String, Object?>{

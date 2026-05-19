@@ -119,7 +119,6 @@ class NotificationItemWidget extends StatelessWidget {
                           url: detail.image,
                           width: 40,
                           height: 40,
-                          fit: BoxFit.cover,
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ],

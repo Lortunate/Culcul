@@ -103,15 +103,11 @@ class ScrollLoadTrigger {
 
     final sessionId = '${DateTime.now().millisecondsSinceEpoch}_${++_sessionSeed}';
     final beforeItemCount = itemCount?.call();
-    DevLogger.log(
-      'list',
-      'load_trigger',
-      <String, Object?>{
-        'source': source,
-        'session_id': sessionId,
-        'count': beforeItemCount,
-      },
-    );
+    DevLogger.log('list', 'load_trigger', <String, Object?>{
+      'source': source,
+      'session_id': sessionId,
+      'count': beforeItemCount,
+    });
 
     final stopwatch = Stopwatch()..start();
     final result = await gate.run(
@@ -124,18 +120,14 @@ class ScrollLoadTrigger {
         ? null
         : afterItemCount - beforeItemCount;
 
-    DevLogger.log(
-      'list',
-      'load_complete',
-      <String, Object?>{
-        'source': source,
-        'session_id': sessionId,
-        'result': result.name,
-        'elapsed_ms': stopwatch.elapsedMilliseconds,
-        'count': afterItemCount,
-        'items_delta': itemsDelta,
-      },
-    );
+    DevLogger.log('list', 'load_complete', <String, Object?>{
+      'source': source,
+      'session_id': sessionId,
+      'result': result.name,
+      'elapsed_ms': stopwatch.elapsedMilliseconds,
+      'count': afterItemCount,
+      'items_delta': itemsDelta,
+    });
     return result;
   }
 

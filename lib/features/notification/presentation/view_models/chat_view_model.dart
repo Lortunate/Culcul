@@ -34,12 +34,7 @@ class Chat extends _$Chat with _ChatHelpersMixin, _ChatSendMixin {
     final ownerUid = ref.read(notificationOwnerUidProvider);
     if (ownerUid == null) {
       return const ChatState(
-        paging: PagedListState(
-          items: [],
-          hasMore: false,
-          isInitialLoading: false,
-          isLoadingMore: false,
-        ),
+        paging: PagedListState(items: [], isInitialLoading: false),
         emojiMap: {},
       );
     }
@@ -58,7 +53,6 @@ class Chat extends _$Chat with _ChatHelpersMixin, _ChatSendMixin {
         items: initialMessages,
         hasMore: _canLoadOlder(),
         isInitialLoading: false,
-        isLoadingMore: false,
         nextPage: 2,
       ),
       emojiMap: emojiMap,

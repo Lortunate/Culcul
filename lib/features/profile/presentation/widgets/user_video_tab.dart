@@ -64,8 +64,8 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
         );
       },
       child: CustomScrollView(
-        key: PageStorageKey<String>('user_video_tab_${widget.mid}'),
         cacheExtent: 560,
+        key: PageStorageKey<String>('user_video_tab_${widget.mid}'),
         slivers: [
           SliverOverlapInjector(
             handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
@@ -150,7 +150,6 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
                         coverUrl: spaceVideo.pic,
                         title: spaceVideo.title,
                         duration: spaceVideo.duration,
-                        showDefaultStats: false,
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         stats: [
                           Text(

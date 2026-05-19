@@ -1,4 +1,4 @@
-import 'fav_resource_model.dart';
+import 'package:culcul/features/favorites/data/dtos/fav_resource_model.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'fav_folder_model.freezed.dart';

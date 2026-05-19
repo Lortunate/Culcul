@@ -20,8 +20,7 @@ sealed class VipInfo with _$VipInfo {
     @Default('') String nicknameColor,
   }) = _VipInfo;
 
-  factory VipInfo.fromJson(Map<String, dynamic> json) =>
-      _$VipInfoFromJson(json);
+  factory VipInfo.fromJson(Map<String, dynamic> json) => _$VipInfoFromJson(json);
 }
 
 @freezed

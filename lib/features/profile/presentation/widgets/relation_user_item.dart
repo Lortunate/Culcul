@@ -48,7 +48,6 @@ class _RelationUserItemState extends ConsumerState<RelationUserItem> {
       name: widget.user.uname,
       subtitle: widget.user.sign,
       trailing: _buildFollowButton(context),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
     );
   }
 

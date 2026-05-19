@@ -87,10 +87,7 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
   }
 
   void _showEmojiPicker() {
-    showPublishDynamicEmojiPicker(
-      context: context,
-      onEmojiSelected: (text) => _insertText(text),
-    );
+    showPublishDynamicEmojiPicker(context: context, onEmojiSelected: _insertText);
   }
 
   void _showTopicPicker() {

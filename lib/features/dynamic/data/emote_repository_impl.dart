@@ -21,6 +21,6 @@ class EmoteRepositoryImpl {
     : _requestExecutor = requestExecutor ?? const RequestExecutor();
 
   Future<Result<EmoteResponse, AppError>> getUserEmotes() {
-    return _requestExecutor.runApiDirect(() => _api.getUserEmotes(business: 'dynamic'));
+    return _requestExecutor.runApiDirect(_api.getUserEmotes);
   }
 }

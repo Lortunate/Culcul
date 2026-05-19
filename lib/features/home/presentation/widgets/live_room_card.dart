@@ -90,7 +90,7 @@ class _LiveRoomCover extends StatelessWidget {
       children: [
         AspectRatio(
           aspectRatio: 16 / 9,
-          child: AppNetworkImage(url: room.cover, fit: BoxFit.cover),
+          child: AppNetworkImage(url: room.cover),
         ),
         const Positioned.fill(child: _LiveRoomCoverGradient()),
         Positioned(right: 6, top: 6, child: AppOverlayTag(text: room.areaName)),

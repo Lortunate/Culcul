@@ -3,7 +3,7 @@ part of 'dynamic_repository_impl.dart';
 mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
   Future<Result<DynamicData, AppError>> getFeed(DynamicFeedQuery query) {
     return _requestExecutor.runApiDirect(
-      () => api.getDynamicFeed(type: query.type, offset: query.offset, page: 1),
+      () => api.getDynamicFeed(type: query.type, offset: query.offset),
     );
   }
 
@@ -25,7 +25,9 @@ mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
   }
 
   Future<Result<DynamicItem, AppError>> getDetail(String id) async {
-    final result = await _requestExecutor.runApiDirect(() => api.getDynamicDetail(id: id));
+    final result = await _requestExecutor.runApiDirect(
+      () => api.getDynamicDetail(id: id),
+    );
     return result.map((data) => data.item);
   }
 

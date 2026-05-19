@@ -70,7 +70,6 @@ class VideoThumbnail extends StatelessWidget {
                   pixelRatio,
                 ),
                 borderRadius: BorderRadius.circular(borderRadius),
-                fit: BoxFit.cover,
               ),
               _ThumbnailBottomOverlay(borderRadius: borderRadius),
               if (viewCount != null || danmakuCount != null)

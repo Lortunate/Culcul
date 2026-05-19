@@ -28,7 +28,9 @@ class HistoryRepositoryImpl {
     int viewAt = 0,
     int ps = _defaultPageSize,
   }) {
-    return _requestExecutor.runApiDirect(() => _api.getHistoryCursor(max, viewAt, '', ps));
+    return _requestExecutor.runApiDirect(
+      () => _api.getHistoryCursor(max, viewAt, '', ps),
+    );
   }
 
   Future<Result<List<HistoryEntry>, AppError>> getHistory({

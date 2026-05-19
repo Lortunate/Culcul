@@ -56,11 +56,7 @@ class NotificationCleanupPolicy {
     final now = nowSeconds();
     final cleanupCursor =
         await (database.select(database.notificationSyncCursors)
-              ..where(
-                (t) =>
-                    t.ownerUid.equals(ownerUid) &
-                    t.scope.equals(cleanupScope),
-              )
+              ..where((t) => t.ownerUid.equals(ownerUid) & t.scope.equals(cleanupScope))
               ..limit(1))
             .getSingleOrNull();
 

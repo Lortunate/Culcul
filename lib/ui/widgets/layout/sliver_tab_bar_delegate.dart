@@ -22,7 +22,7 @@ class SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,
         border: Border(
-          bottom: BorderSide(color: theme.dividerColor.withValues(alpha: 0.05), width: 1),
+          bottom: BorderSide(color: theme.dividerColor.withValues(alpha: 0.05)),
         ),
       ),
       child: tabBar,

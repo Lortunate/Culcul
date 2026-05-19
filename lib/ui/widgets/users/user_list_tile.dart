@@ -22,10 +22,7 @@ class UserListTile extends StatelessWidget {
     this.trailing,
     this.onTap,
     this.avatarSize = 48.0,
-    this.padding = const EdgeInsets.symmetric(
-      horizontal: 16.0,
-      vertical: 12.0,
-    ),
+    this.padding = const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
     this.titleBadge,
   });
 
@@ -101,10 +98,7 @@ class UserListTile extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildTitleRow(context),
-                  if (statsRow != null) ...[
-                    const SizedBox(height: 4.0),
-                    statsRow,
-                  ],
+                  if (statsRow != null) ...[const SizedBox(height: 4.0), statsRow],
                   if (subtitleView != null) ...[
                     const SizedBox(height: 4.0),
                     subtitleView,

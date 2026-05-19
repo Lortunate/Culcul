@@ -72,7 +72,7 @@ class CountryCodeSelectionPage extends HookConsumerWidget {
               hintText: t.auth.search_country_hint,
               suffixIcon: searchQuery.value.isNotEmpty
                   ? GestureDetector(
-                      onTap: () => searchController.clear(),
+                      onTap: searchController.clear,
                       child: Icon(
                         Icons.cancel,
                         size: 16,

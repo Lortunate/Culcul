@@ -13,11 +13,9 @@ sealed class AppError implements Exception {
   const factory AppError.server(String message, {int? code, Object? cause}) =
       ServerAppError;
 
-  const factory AppError.auth(String message, {int? code, Object? cause}) =
-      AuthAppError;
+  const factory AppError.auth(String message, {int? code, Object? cause}) = AuthAppError;
 
-  const factory AppError.data(String message, {int? code, Object? cause}) =
-      DataAppError;
+  const factory AppError.data(String message, {int? code, Object? cause}) = DataAppError;
 
   const factory AppError.cancel(String message, {int? code, Object? cause}) =
       CancelAppError;

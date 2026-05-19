@@ -11,9 +11,6 @@ abstract class AppRouteData extends GoRouteData {
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return SlideFromRightTransitionPage(
-      key: state.pageKey,
-      child: build(context, state),
-    );
+    return SlideFromRightTransitionPage(key: state.pageKey, child: build(context, state));
   }
 }

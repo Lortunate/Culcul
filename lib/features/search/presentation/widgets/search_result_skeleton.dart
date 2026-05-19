@@ -13,7 +13,6 @@ class SearchResultSkeleton extends StatelessWidget {
       itemBuilder: (context, index) {
         return const VideoListSkeleton(
           padding: EdgeInsets.zero,
-          height: 100,
           thumbnailWidth: 177,
           aspectRatio: 16 / 9,
         );

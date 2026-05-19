@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'reply_model.dart';
+import 'package:culcul/features/notification/data/dtos/reply_model.dart';
 
 part 'like_model.freezed.dart';
 part 'like_model.g.dart';

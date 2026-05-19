@@ -1,17 +1,13 @@
 import 'package:culcul/core/utils/json_compute.dart';
-import 'package:culcul/features/notification/data/dtos/system_notification_model.dart';
+import 'package:culcul/features/notification/data/dtos/system_notice.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
 import 'package:culcul/features/notification/data/notification_mapper.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
-import 'package:culcul/features/notification/data/dtos/system_notice.dart';
 import 'package:drift/drift.dart';
 
 class NotificationStreamWatchers {
-  const NotificationStreamWatchers({
-    required this.database,
-    required this.emptySummary,
-  });
+  const NotificationStreamWatchers({required this.database, required this.emptySummary});
 
   final NotificationLocalDatabase database;
   final NotificationSummary emptySummary;
@@ -48,9 +44,9 @@ class NotificationStreamWatchers {
           final notices = <SystemNotice>[];
           for (final row in rows) {
             notices.add(
-              SystemNotificationItem.fromJson(
+              SystemNotice.fromJson(
                 (await jsonDecodeCompute(row.itemJson)) as Map<String, dynamic>,
-              ).toDomain(),
+              ),
             );
           }
           return notices;

@@ -87,6 +87,6 @@ ProfileUser _profileUser(String id) {
     currentMinExp: 50,
     isFollowing: true,
     isVerified: false,
-    createdAt: DateTime(2020, 1, 1),
+    createdAt: DateTime(2020),
   );
 }

@@ -119,7 +119,7 @@ class DynamicDetailPage extends HookConsumerWidget {
         onRefresh: actions.refreshDetailAndComments,
         onLoad: !hasMore ? null : actions.loadMoreComments,
         header: const AppRefreshHeader(),
-        footer: hasMore ? AppLoadFooter() : null,
+        footer: hasMore ? const AppLoadFooter() : null,
         child: CustomScrollView(
           slivers: [
             SliverToBoxAdapter(child: DynamicDetailHeader(post: post)),

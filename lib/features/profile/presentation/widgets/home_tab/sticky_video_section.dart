@@ -59,7 +59,7 @@ class StickyVideoSection extends ConsumerWidget {
                             child: Stack(
                               fit: StackFit.expand,
                               children: [
-                                AppNetworkImage(url: video.pic, fit: BoxFit.cover),
+                                AppNetworkImage(url: video.pic),
                                 Positioned(
                                   bottom: 4,
                                   right: 4,
