@@ -45,7 +45,7 @@ flutter test test/app/shell/main_shell_responsive_test.dart --reporter compact
 If you need a broader check, run:
 
 ```bash
-flutter analyze
+flutter analyze --no-fatal-infos
 ```
 
 ## Architecture Guard

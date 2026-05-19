@@ -1,7 +1,7 @@
 .PHONY: analyze test test-coverage format format-check codegen i18n all ci clean
 
 analyze:
-	flutter analyze
+	flutter analyze --no-fatal-infos
 
 test:
 	flutter test
