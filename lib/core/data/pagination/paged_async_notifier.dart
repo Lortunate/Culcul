@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:culcul/core/utils/list_utils.dart';
+import 'package:culcul/core/data/pagination/page_merge.dart';
 
 class CursorPage<T, C> {
   final List<T> items;

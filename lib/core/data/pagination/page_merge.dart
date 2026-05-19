@@ -1,5 +1,3 @@
-/// Merges two lists, ensuring no duplicates based on an ID selector.
-/// New items are appended to the end.
 List<T> mergeUnique<T>(
   List<T> current,
   List<T> newItems, {

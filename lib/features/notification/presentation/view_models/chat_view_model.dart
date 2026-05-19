@@ -5,7 +5,7 @@ import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/data/pagination/paged_list_state.dart';
-import 'package:culcul/core/utils/list_utils.dart';
+import 'package:culcul/core/data/pagination/page_merge.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';
