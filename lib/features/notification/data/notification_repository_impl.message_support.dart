@@ -1,5 +1,4 @@
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/notification/data/dtos/private_message_model.dart';
@@ -23,12 +22,6 @@ class NotificationMessageSupport {
   final RequestExecutor requestExecutor;
   final int pageSize;
 
-  Future<Result<T, AppError>> _requestApiResult<T>(
-    Future<ApiResponse<T>> Function() apiCall,
-  ) {
-    return requestExecutor.runApiDirect(apiCall);
-  }
-
   Future<Result<ReplyResponse, AppError>> fetchReplyLikeAtResponse({
     required NotificationFeedType type,
     int? id,
@@ -36,13 +29,13 @@ class NotificationMessageSupport {
   }) async {
     switch (type) {
       case NotificationFeedType.reply:
-        return _requestApiResult(
+        return requestExecutor.runApiDirect(
           () => api.getReplyList(id: id, replyTime: time),
         );
       case NotificationFeedType.at:
-        return _requestApiResult(() => api.getAtList(id: id, atTime: time));
+        return requestExecutor.runApiDirect(() => api.getAtList(id: id, atTime: time));
       case NotificationFeedType.like:
-        final likeResult = await _requestApiResult(
+        final likeResult = await requestExecutor.runApiDirect(
           () => api.getLikeList(id: id, likeTime: time),
         );
         return likeResult.map(
@@ -53,12 +46,14 @@ class NotificationMessageSupport {
           ),
         );
       case NotificationFeedType.system:
-        return Failure(AppError.data('System notifications use a dedicated API flow'));
+        return const Failure(
+          AppError.data('System notifications use a dedicated API flow'),
+        );
     }
   }
 
   Future<Result<List<SystemNotice>, AppError>> fetchSystemNotifications() async {
-    final sessionResult = await _requestApiResult(
+    final sessionResult = await requestExecutor.runApiDirect(
       () => api.getPrivateSessions(
         sessionType: PrivateSessionType.system.value,
         size: pageSize,
@@ -71,7 +66,7 @@ class NotificationMessageSupport {
           return const Success(<SystemNotice>[]);
         }
 
-        final msgsResult = await _requestApiResult(
+        final msgsResult = await requestExecutor.runApiDirect(
           () => api.getPrivateMessages(
             talkerId: talkerId,
             sessionType: PrivateSessionType.user.value,

@@ -21,37 +21,38 @@ class VideoInfoView extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final provider = videoDetailControllerProvider(bvid);
-    final loadState = ref.watch(
+    final state = ref.watch(
       provider.select(
         (state) => (
           isInitialLoading: state.videoDetail == null && state.isLoading,
           error: state.videoDetail == null ? state.error : null,
           detail: state.videoDetail,
+          isFollowed: state.videoDetail?.reqUser?.attention == 1,
+          currentCid: state.currentCid,
+          relatedVideos: state.relatedVideos,
         ),
       ),
     );
-    final notifier = ref.read(videoDetailControllerProvider(bvid).notifier);
+    final notifier = ref.read(provider.notifier);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
 
-    if (loadState.isInitialLoading) {
+    if (state.isInitialLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    final detail = loadState.detail;
+    final detail = state.detail;
     if (detail == null) {
       return AppErrorWidget(
-        error: loadState.error ?? Exception(t.common.error),
+        error: state.error ?? Exception(t.common.error),
         onRetry: notifier.load,
       );
     }
 
-    final isFollowed = ref.watch(
-      provider.select((state) => state.videoDetail?.reqUser?.attention == 1),
-    );
-    final currentCid = ref.watch(provider.select((state) => state.currentCid));
-    final relatedVideos = ref.watch(provider.select((state) => state.relatedVideos));
+    final isFollowed = state.isFollowed;
+    final currentCid = state.currentCid;
+    final relatedVideos = state.relatedVideos;
 
     useEffect(() {
       if (relatedVideos.isEmpty) {

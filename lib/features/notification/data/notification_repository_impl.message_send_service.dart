@@ -49,12 +49,6 @@ class NotificationMessageSendService {
   final int Function() nowSeconds;
   final SyncMessagesHeadFn syncMessagesHead;
 
-  Future<Result<T, AppError>> _requestApiResult<T>(
-    Future<ApiResponse<T>> Function() apiCall,
-  ) {
-    return requestExecutor.runApiDirect(apiCall);
-  }
-
   PrivateSessionType _sessionTypeFromReceiver(PrivateMessageReceiverType type) {
     return type == PrivateMessageReceiverType.group
         ? PrivateSessionType.group
@@ -65,7 +59,7 @@ class NotificationMessageSendService {
     Uint8List bytes,
     String filename,
   ) async {
-    final result = await _requestApiResult(() async {
+    final result = await requestExecutor.runApiDirect(() async {
       final formData = FormData.fromMap({
         'file_up': MultipartFile.fromBytes(bytes, filename: filename),
         'biz': 'draw',
@@ -146,7 +140,7 @@ class NotificationMessageSendService {
           );
     });
 
-    final responseResult = await _requestApiResult(
+    final responseResult = await requestExecutor.runApiDirect(
       () => api.sendPrivateMessage(
         wSenderUid: ownerUid,
         wReceiverId: receiverId,

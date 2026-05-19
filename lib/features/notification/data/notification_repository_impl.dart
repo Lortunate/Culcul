@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
-import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:dio/dio.dart';
@@ -110,17 +109,18 @@ class NotificationRepositoryImpl {
       persistence: _persistence,
       messageSupport: _messageSupport,
       nowSeconds: nowSeconds,
-      syncMessagesHead: ({
-        required int ownerUid,
-        required int talkerId,
-        required PrivateSessionType sessionType,
-      }) async {
-        await _messageSync.syncMessagesHead(
-          ownerUid: ownerUid,
-          talkerId: talkerId,
-          sessionType: sessionType,
-        );
-      },
+      syncMessagesHead:
+          ({
+            required int ownerUid,
+            required int talkerId,
+            required PrivateSessionType sessionType,
+          }) async {
+            await _messageSync.syncMessagesHead(
+              ownerUid: ownerUid,
+              talkerId: talkerId,
+              sessionType: sessionType,
+            );
+          },
     );
   }
 
@@ -158,13 +158,6 @@ class NotificationRepositoryImpl {
   );
 
   int nowSeconds() => DateTime.now().millisecondsSinceEpoch ~/ 1000;
-
-  Future<Result<T, AppError>> requestApiResult<T>(
-    Future<ApiResponse<T>> Function() apiCall, {
-    RequestExecutionOptions? options,
-  }) {
-    return _requestExecutor.runApiDirect(apiCall, options: options);
-  }
 
   Future<NotificationSummary?> getUnreadCountFromLocal({required int ownerUid}) {
     return _localReadStore.getUnreadCountFromLocal(ownerUid: ownerUid);

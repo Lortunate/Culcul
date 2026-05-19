@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/notification/data/dtos/private_message_model.dart';
@@ -31,12 +30,6 @@ class NotificationMessageSync {
   final NotificationMessagePersistence persistence;
   final int pageSize;
   final int Function() nowSeconds;
-
-  Future<Result<T, AppError>> _requestApiResult<T>(
-    Future<ApiResponse<T>> Function() apiCall,
-  ) {
-    return requestExecutor.runApiDirect(apiCall);
-  }
 
   Future<Result<void, AppError>> syncMessagesHead({
     required int ownerUid,
@@ -76,15 +69,11 @@ class NotificationMessageSync {
   }) async {
     final scope =
         'messages:${sessionType.value}:$talkerId:${endSeqno == null ? "head" : "older"}';
-    if (!await cleanupPolicy.shouldSync(
-      ownerUid: ownerUid,
-      scope: scope,
-      force: force,
-    )) {
+    if (!await cleanupPolicy.shouldSync(ownerUid: ownerUid, scope: scope, force: force)) {
       return const Success(null);
     }
 
-    return (await _requestApiResult(
+    return (await requestExecutor.runApiDirect(
       () => api.getPrivateMessages(
         talkerId: talkerId,
         sessionType: sessionType.value,

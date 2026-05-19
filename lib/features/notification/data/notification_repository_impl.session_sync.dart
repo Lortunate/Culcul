@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/notification/data/dtos/private_message_model.dart';
@@ -29,12 +28,6 @@ class NotificationSessionSync {
   final NotificationMessagePersistence persistence;
   final int Function() nowSeconds;
 
-  Future<Result<T, AppError>> _requestApiResult<T>(
-    Future<ApiResponse<T>> Function() apiCall,
-  ) {
-    return requestExecutor.runApiDirect(apiCall);
-  }
-
   Future<Result<void, AppError>> syncUnreadCount({
     required int ownerUid,
     bool force = false,
@@ -46,7 +39,7 @@ class NotificationSessionSync {
     )) {
       return const Success(null);
     }
-    return (await _requestApiResult(api.getUnreadCount)).when(
+    return (await requestExecutor.runApiDirect(api.getUnreadCount)).when(
       success: (response) async {
         final now = nowSeconds();
 
@@ -103,15 +96,11 @@ class NotificationSessionSync {
     bool force = false,
   }) async {
     final scope = 'sessions:${sessionType.value}:${endTs == null ? "head" : "older"}';
-    if (!await cleanupPolicy.shouldSync(
-      ownerUid: ownerUid,
-      scope: scope,
-      force: force,
-    )) {
+    if (!await cleanupPolicy.shouldSync(ownerUid: ownerUid, scope: scope, force: force)) {
       return const Success(null);
     }
 
-    return (await _requestApiResult(
+    return (await requestExecutor.runApiDirect(
       () => api.getPrivateSessions(sessionType: sessionType.value, endTs: endTs),
     )).when(
       success: (response) async {
