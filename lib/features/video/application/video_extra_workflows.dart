@@ -1,9 +1,10 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/core/utils/danmaku_mask_parser.dart';
 import 'package:culcul/features/video/data/danmaku_repository_impl.dart';
 import 'package:culcul/features/video/data/video_repository_impl.dart';
 import 'package:flutter/foundation.dart';
@@ -109,8 +110,7 @@ class _ParseDanmakuMaskData {
 }
 
 Map<int, Path> _parseMaskData(_ParseDanmakuMaskData data) {
-  final parser = DanmakuMaskParser(data.bytes, data.fps);
-  final rawMasks = parser.parse();
+  final rawMasks = _parseRawDanmakuMasks(data.bytes, data.fps);
 
   final result = <int, Path>{};
   for (final entry in rawMasks.entries) {
@@ -133,4 +133,67 @@ Path? _parsePath(String base64Svg) {
     debugPrint('Error parsing SVG path: $error');
   }
   return null;
+}
+
+Map<int, String> _parseRawDanmakuMasks(List<int> bytes, int fps) {
+  final data = ByteData.sublistView(Uint8List.fromList(bytes));
+  var offset = 0;
+
+  final header = String.fromCharCodes(bytes.sublist(0, 4));
+  if (header != 'MASK') throw const AppError.data('Invalid mask file');
+  offset += 4;
+
+  offset += 4; // Version.
+  offset += 4; // Reserved.
+
+  final segmentCount = data.getUint32(offset);
+  offset += 4;
+
+  final segments = <_MaskSegment>[];
+  for (var index = 0; index < segmentCount; index++) {
+    final time = data.getUint64(offset);
+    offset += 8;
+    final fileOffset = data.getUint64(offset);
+    offset += 8;
+    segments.add(_MaskSegment(time, fileOffset));
+  }
+
+  final result = <int, String>{};
+  for (var index = 0; index < segmentCount; index++) {
+    final segment = segments[index];
+    final startOffset = segment.offset;
+    final endOffset = index == segmentCount - 1
+        ? bytes.length
+        : segments[index + 1].offset;
+
+    if (startOffset >= bytes.length || endOffset > bytes.length) continue;
+
+    final compressedData = bytes.sublist(startOffset, endOffset);
+    final decompressedData = gzip.decode(compressedData);
+    if (decompressedData.length < 16) continue;
+
+    final content = decompressedData.sublist(16);
+    final contentString = String.fromCharCodes(content);
+    final frames = contentString.split('data:image/svg+xml;base64,');
+
+    var currentTime = segment.time;
+    final frameDuration = (1000 / fps).round();
+
+    for (var frameIndex = 1; frameIndex < frames.length; frameIndex++) {
+      final svgBase64 = frames[frameIndex];
+      if (svgBase64.isEmpty) continue;
+
+      result[currentTime] = svgBase64;
+      currentTime += frameDuration;
+    }
+  }
+
+  return result;
+}
+
+class _MaskSegment {
+  final int time;
+  final int offset;
+
+  const _MaskSegment(this.time, this.offset);
 }
