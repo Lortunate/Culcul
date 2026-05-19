@@ -19,12 +19,9 @@ class VideoDetailPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final sessionId = useVideoSession(ref, bvid);
 
-    final videoDetail = ref.watch(
-      videoDetailControllerProvider(bvid).select((value) => value.videoDetail),
-    );
-    final currentCid = ref.watch(
-      videoDetailControllerProvider(bvid).select((value) => value.currentCid),
-    );
+    final detailState = ref.watch(videoDetailControllerProvider(bvid));
+    final videoDetail = detailState.videoDetail;
+    final currentCid = detailState.currentCid;
     final isFullscreen = ref.watch(
       playerControllerProvider.select((value) => value.isFullscreen),
     );
