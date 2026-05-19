@@ -51,12 +51,14 @@ Goal: keep `core/` to primitives with behavior.
 
 Steps:
 
-1. Audit `core/contracts` and classify each contract as real boundary, generated
+1. Move auth session state/control from presentation to application so
+   `auth_session_providers.dart` does not import `presentation/view_models`.
+2. Audit `core/contracts` and classify each contract as real boundary, generated
    model source, or removable compatibility seam.
-2. Move feature-owned contracts back into their owning feature or delete them.
-3. Collapse one-call application adapters into direct provider calls where the
+3. Move feature-owned contracts back into their owning feature or delete them.
+4. Collapse one-call application adapters into direct provider calls where the
    dependency is explicit and acyclic.
-4. Keep override-only bootstrap providers only for startup-created resources.
+5. Keep override-only bootstrap providers only for startup-created resources.
 
 ## Phase 3: Network And Error Source Of Truth
 
@@ -75,11 +77,13 @@ Goal: one source for each feature concept.
 
 Steps:
 
-1. Start with `notification`, `dynamic`, `video`, and `live`.
-2. Delete handwritten duplicates around generated DTOs.
-3. Keep domain-free response DTOs in `data/dtos`.
-4. Keep UI state in presentation view models, not in DTO folders.
-5. Update call sites and regenerate code per slice.
+1. Merge notification system notice DTOs into one source of truth.
+2. Consolidate duplicated search response wrappers and endpoint literal sources.
+3. Continue with `dynamic`, `video`, and `live`.
+4. Delete handwritten duplicates around generated DTOs.
+5. Keep domain-free response DTOs in `data/dtos`.
+6. Keep UI state in presentation view models, not in DTO folders.
+7. Update call sites and regenerate code per slice.
 
 ## Phase 5: Runtime Performance Cleanup
 
@@ -93,6 +97,9 @@ Steps:
    review shows avoidable rebuilds.
 4. Remove unnecessary in-memory caches whose data already lives in Riverpod,
    Drift, Dio cache, or shared preferences.
+5. Move `PerformancePolicy` static lifecycle wiring into an owned lifecycle or
+   disposal path before adding more frame-timing listeners.
+6. Stagger non-critical notification resume sync work after foreground resume.
 
 ## Verification
 

@@ -1,5 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/auth/application/auth_controller.dart';
 import 'package:culcul/features/auth/presentation/widgets/password_login_view.dart';
 import 'package:culcul/features/auth/presentation/widgets/qr_login_view.dart';
 import 'package:culcul/features/auth/presentation/widgets/sms_login_view.dart';

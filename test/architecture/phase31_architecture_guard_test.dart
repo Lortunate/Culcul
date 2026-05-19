@@ -4,7 +4,6 @@ import 'architecture_guard_utils.dart';
 
 const _phase31AllowedPresentationDataImports = <String>{
   'lib/features/auth/presentation/view_models/auth_qr_login_view_model.dart -> lib/features/auth/data/auth_repository_impl.dart',
-  'lib/features/auth/presentation/view_models/auth_view_model.dart -> lib/features/auth/data/auth_repository_impl.dart',
   'lib/features/dynamic/presentation/pages/topic_detail_page.dart -> lib/features/dynamic/data/dtos/dynamic_item_extensions.dart',
   'lib/features/dynamic/presentation/view_models/article_detail_view_model.dart -> lib/features/dynamic/data/dynamic_repository_impl.dart',
   'lib/features/dynamic/presentation/view_models/dynamic_comment_view_model.dart -> lib/features/dynamic/data/dtos/dynamic_response.dart',

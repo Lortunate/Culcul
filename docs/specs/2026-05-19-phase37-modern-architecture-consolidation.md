@@ -37,6 +37,15 @@ older architecture decisions:
 - Performance risk is mostly structural: unnecessary provider layers, broad
   watches in widgets, heavyweight startup ownership, and repeated mapping work
   around network/database boundaries.
+- `auth/application/auth_session_providers.dart` depended on
+  `auth/presentation/view_models/auth_view_model.dart`, which inverted the
+  intended application/presentation dependency direction.
+- DTO/source-of-truth duplication remains in notification system notices,
+  search response wrappers, relation list state, and endpoint literals split
+  between `ApiConstants` and feature Retrofit annotations.
+- Startup still blocks on platform storage/cache/cookie resources before
+  `runApp`; later phases should keep only first-frame-critical resources in
+  bootstrap overrides.
 
 ## Target Directory Structure
 
@@ -96,6 +105,9 @@ No `shared/` directory. No feature-owned compatibility shims in `core/`.
   Feature repositories should not duplicate generic Dio error mapping.
 - Generated code is the source for generated types. Handwritten duplicate
   model layers must be merged or deleted.
+- Application code must not import from a feature's `presentation/` tree. If a
+  provider is consumed outside UI, its state/controller belongs in
+  `application/`.
 
 ## Delete, Merge, Or Archive List
 
@@ -121,12 +133,17 @@ First code cleanup candidates:
 
 Next cleanup candidates after impact analysis:
 
-- Review `lib/features/profile/application/profile_lookup_adapter.dart` and
-  `lib/features/profile/application/profile_session_providers.dart`.
-- Review `lib/features/auth/application/auth_session_adapter.dart` and
-  `lib/features/auth/application/auth_session_providers.dart`.
+- `lib/features/auth/presentation/view_models/auth_view_model.dart` moved to
+  `lib/features/auth/application/auth_controller.dart` so `currentUserProvider`
+  no longer depends on presentation.
+- Review `lib/features/profile/application/profile_session_providers.dart`.
 - Review override-only startup providers under `lib/core/bootstrap/providers/`.
 - Review DTO/model ownership in `video`, `dynamic`, `notification`, and `live`.
+- Merge notification system notice DTOs:
+  `system_notice.dart` and `system_notification_model.dart`.
+- Consolidate duplicated search response wrappers and endpoint literal sources.
+- Revisit `RelationPort` only after impact analysis, because it has several
+  cross-feature callers.
 
 ## Acceptance Criteria
 

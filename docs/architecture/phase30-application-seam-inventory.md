@@ -19,7 +19,7 @@ Allowed categories:
 
 | Importer | Target | Category | Decision |
 |---|---|---|---|
-| `lib/features/auth/presentation/view_models/auth_view_model.dart:7` | `lib/features/profile/application/profile_cache_actions.dart` | `approved-profile-seam` | Keep classified for the guard; profile cleanup ownership remains with the profile seam slice. |
+| `lib/features/auth/application/auth_controller.dart:7` | `lib/features/profile/application/profile_cache_actions.dart` | `approved-profile-seam` | Keep classified for the guard; logout clears profile-owned cache through the profile application seam. |
 | `lib/features/dynamic/presentation/pages/dynamic_page.dart:3` | `lib/features/auth/application/auth_session_providers.dart` | `approved-session-seam` | Keep classified for the guard; auth session state is the current cross-feature session seam. |
 | `lib/features/dynamic/presentation/view_models/recently_followed_view_model.dart:3` | `lib/features/auth/application/auth_session_providers.dart` | `approved-session-seam` | Keep classified for the guard; auth session state is the current cross-feature session seam. |
 | `lib/features/dynamic/presentation/widgets/topic_picker.dart:3` | `lib/features/search/application/search_application_providers.dart` | `approved-search-seam` | Keep classified for the guard; search query state is the current cross-feature search seam. |

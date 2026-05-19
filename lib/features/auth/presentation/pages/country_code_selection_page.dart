@@ -1,6 +1,6 @@
 import 'package:culcul/features/auth/domain/entities/country_code.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/auth/presentation/view_models/auth_view_model.dart';
+import 'package:culcul/features/auth/application/auth_controller.dart';
 import 'package:culcul/ui/widgets/inputs/app_search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
