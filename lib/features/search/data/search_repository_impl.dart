@@ -12,9 +12,9 @@ import 'package:culcul/features/search/data/dtos/search_suggestion.dart';
 import 'package:culcul/features/search/data/dtos/trending_ranking.dart';
 import 'package:culcul/features/search/data/search_mapper.dart';
 import 'package:culcul/features/search/data/search_api.dart';
-import 'package:culcul/core/contracts/search_port.dart';
-import 'package:culcul/core/contracts/search_result_contract.dart';
-import 'package:culcul/core/contracts/search_query_contract.dart';
+import 'package:culcul/features/search/application/search_port.dart';
+import 'package:culcul/features/search/application/search_query.dart';
+import 'package:culcul/features/search/application/search_result.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_repository_impl.g.dart';
@@ -154,6 +154,7 @@ class SearchRepositoryImpl implements SearchPort {
     );
   }
 
+  @override
   Future<Result<String?, AppError>> getDefaultSearch({bool forceRefresh = false}) async {
     final result = await _fetchDefaultSearch(forceRefresh: forceRefresh);
     return result.map((data) => data.toDomain());

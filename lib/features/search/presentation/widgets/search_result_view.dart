@@ -2,7 +2,7 @@ import 'package:culcul/features/search/presentation/view_models/search_view_mode
 import 'package:culcul/features/search/presentation/widgets/search_filter_bar.dart';
 import 'package:culcul/features/search/presentation/widgets/search_result_list.dart';
 import 'package:culcul/features/search/presentation/widgets/search_result_skeleton.dart';
-import 'package:culcul/core/contracts/search_query_contract.dart';
+import 'package:culcul/features/search/application/search_query.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/layout/app_tab_bar.dart';

@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'search_query_contract.freezed.dart';
+part 'search_query.freezed.dart';
 
 enum SearchType {
   all('all'),

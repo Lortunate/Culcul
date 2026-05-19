@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/core/contracts/search_port.dart';
-import 'package:culcul/core/contracts/search_query_contract.dart';
-import 'package:culcul/core/contracts/search_result_contract.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
+import 'package:culcul/features/search/application/search_port.dart';
+import 'package:culcul/features/search/application/search_query.dart';
+import 'package:culcul/features/search/application/search_result.dart';
 import 'package:culcul/features/search/data/search_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -78,7 +78,9 @@ Future<List<SearchTopicEntry>> topicSearch(Ref ref, String keyword) async {
 
   final data = await ref
       .read(searchPortProvider)
-      .search(query: SearchQuery(keyword: trimmed, type: SearchType.topic));
+      .search(
+        query: SearchQuery(keyword: trimmed, type: SearchType.topic),
+      );
   final page = data.dataOrNull;
   if (page == null) return const <SearchTopicEntry>[];
   return page.items.whereType<SearchTopicEntry>().toList();

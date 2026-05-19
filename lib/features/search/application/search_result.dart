@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'search_result_contract.freezed.dart';
+part 'search_result.freezed.dart';
 
 sealed class SearchResultEntry {
   const SearchResultEntry();

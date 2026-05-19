@@ -1,7 +1,7 @@
 import 'package:culcul/features/search/data/dtos/default_search.dart';
 import 'package:culcul/features/search/data/dtos/search_result.dart';
 import 'package:culcul/features/search/data/dtos/search_suggestion.dart';
-import 'package:culcul/core/contracts/search_result_contract.dart';
+import 'package:culcul/features/search/application/search_result.dart';
 
 extension DefaultSearchDataMapper on DefaultSearchData {
   String toDomain() => showName;
