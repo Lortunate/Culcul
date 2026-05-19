@@ -68,9 +68,11 @@ Delete or merge first when import checks prove no behavior loss:
   `notification_repository_impl.message_support_helpers.dart`,
   `notification_list_page_helpers.dart`, `chat_view_model.helpers.dart`,
   `video_detail_view_model.helpers.dart`, `player_view_model.load_helpers.dart`.
-- Utility files: `core/utils/format_utils.dart`, `id_utils.dart`,
-  `json_utils.dart`, `list_utils.dart`, `share_utils.dart`,
+- Utility files: `core/utils/format_utils.dart`, `json_utils.dart`,
+  `list_utils.dart`, `share_utils.dart`,
   `home_feed_view_utils.dart`, `controls_utils.dart`.
+- Completed utility removals: `core/utils/id_utils.dart` was localized into
+  `home_video_actions.dart` because BVID conversion has a single caller.
 - Mapper files: `article_detail_parser.mapper.dart`,
   `dynamic_item_extensions.mappers.dart`, `favorite_mapper.dart`,
   `history_mapper.dart`.
