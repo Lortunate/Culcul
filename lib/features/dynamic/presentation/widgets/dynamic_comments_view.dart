@@ -1,3 +1,4 @@
+import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_comment_view_model.dart';
@@ -14,7 +15,6 @@ class DynamicCommentsSliver extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final t = Translations.of(context);
     final state = ref.watch(dynamicCommentControllerProvider(post));
     final controller = ref.read(dynamicCommentControllerProvider(post).notifier);
     final paging = state.paging;
@@ -38,27 +38,14 @@ class DynamicCommentsSliver extends ConsumerWidget {
     }
 
     if (paging.items.isEmpty) {
-      return SliverToBoxAdapter(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Center(child: Text(t.moments.no_comments)),
-        ),
-      );
+      return DynamicCommentsEmptyState(onRefresh: controller.refresh);
     }
 
-    return SliverList(
-      delegate: SliverChildBuilderDelegate((context, index) {
-        final comment = paging.items[index];
-        return KeyedSubtree(
-          key: ValueKey('dynamic_comment_${comment.rpid}_$index'),
-          child: CommentItemWidget(
-            item: comment,
-            onLike: () => controller.toggleLike(comment.rpid, comment.action == 1),
-            onDislike: () {},
-            onReply: () => _showReplySheet(context, ref, comment),
-          ),
-        );
-      }, childCount: paging.items.length),
+    return _DynamicCommentsList(
+      comments: paging.items,
+      onTapUser: (context, mid) => UserProfileRoute(mid: mid).push(context),
+      onLike: controller.toggleLike,
+      onReply: (context, comment) => _showReplySheet(context, ref, comment),
     );
   }
 
@@ -83,6 +70,61 @@ class DynamicCommentsSliver extends ConsumerWidget {
           },
         );
       },
+    );
+  }
+}
+
+class DynamicCommentsEmptyState extends StatelessWidget {
+  final VoidCallback onRefresh;
+
+  const DynamicCommentsEmptyState({super.key, required this.onRefresh});
+
+  @override
+  Widget build(BuildContext context) {
+    final t = Translations.of(context);
+
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: GestureDetector(
+          onTap: onRefresh,
+          behavior: HitTestBehavior.opaque,
+          child: Center(child: Text(t.moments.no_comments)),
+        ),
+      ),
+    );
+  }
+}
+
+class _DynamicCommentsList extends StatelessWidget {
+  final List<CommentItem> comments;
+  final void Function(BuildContext context, int mid) onTapUser;
+  final void Function(int rpid, bool isLiked) onLike;
+  final void Function(BuildContext context, CommentItem comment) onReply;
+
+  const _DynamicCommentsList({
+    required this.comments,
+    required this.onTapUser,
+    required this.onLike,
+    required this.onReply,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate((context, index) {
+        final comment = comments[index];
+        return KeyedSubtree(
+          key: ValueKey('dynamic_comment_${comment.rpid}_$index'),
+          child: CommentItemWidget(
+            item: comment,
+            onTapUser: (mid) => onTapUser(context, mid),
+            onLike: () => onLike(comment.rpid, comment.action == 1),
+            onDislike: () {},
+            onReply: () => onReply(context, comment),
+          ),
+        );
+      }, childCount: comments.length),
     );
   }
 }
