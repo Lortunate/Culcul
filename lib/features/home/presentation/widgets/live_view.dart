@@ -10,14 +10,13 @@ import 'package:culcul/core/runtime/runtime_performance_policy_provider.dart';
 import 'package:culcul/core/contracts/live_room_summary_contract.dart';
 import 'package:culcul/features/live/application/live_recommend_provider.dart';
 import 'package:culcul/features/home/presentation/widgets/live_card_skeleton.dart';
+import 'package:culcul/features/home/presentation/widgets/home_feed_paging_shell.dart';
 import 'package:culcul/features/home/presentation/widgets/home_feed_view_utils.dart';
 import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';
 import 'package:culcul/features/home/presentation/widgets/live_room_card.dart';
 import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
-import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:culcul/features/home/presentation/home_breakpoints.dart';
-import 'package:culcul/ui/responsive/responsive_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -51,27 +50,27 @@ class LiveView extends HookConsumerWidget {
 
     useHomeScrollSync(ref, scrollController, refreshController, 0);
 
-    return ResponsiveContentContainer(
+    return HomeFeedPagingShell(
       maxWidth: HomeBreakpoints.feedMaxWidth,
-      child: SmartPagingView(
-        asyncValue: liveAsync,
-        controller: refreshController,
-        onRefresh: ref.read(liveRecommendProvider.notifier).refresh,
-        onLoadMore: ref.read(liveRecommendProvider.notifier).loadMore,
-        itemCount: () => liveAsync.value?.length ?? 0,
-        skeleton: _LiveGridSkeleton(
-          scrollController: scrollController,
-          layout: layout,
-          cacheExtent: cacheExtent,
-        ),
-        builder: (context, items) => _LiveGrid(
-          items: items,
-          scrollController: scrollController,
-          layout: layout,
-          cacheExtent: cacheExtent,
-          networkPolicy: networkPolicy,
-          runtimePolicy: runtimePolicy,
-        ),
+      asyncValue: liveAsync,
+      controller: refreshController,
+      onRefresh: ref.read(liveRecommendProvider.notifier).refresh,
+      onLoadMore: ref.read(liveRecommendProvider.notifier).loadMore,
+      itemCount: () => ref.read(liveRecommendProvider).value?.length ?? 0,
+      hasMoreAfterLoad: ({required currentCount, required previousCount}) =>
+          ref.read(liveRecommendProvider.notifier).hasMore,
+      skeleton: _LiveGridSkeleton(
+        scrollController: scrollController,
+        layout: layout,
+        cacheExtent: cacheExtent,
+      ),
+      builder: (context, items) => _LiveGrid(
+        items: items,
+        scrollController: scrollController,
+        layout: layout,
+        cacheExtent: cacheExtent,
+        networkPolicy: networkPolicy,
+        runtimePolicy: runtimePolicy,
       ),
     );
   }

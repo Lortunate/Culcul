@@ -1,6 +1,7 @@
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
 import 'package:culcul/features/home/presentation/view_models/home_popular_view_model.dart';
+import 'package:culcul/features/home/presentation/widgets/home_feed_paging_shell.dart';
 import 'package:culcul/features/home/presentation/widgets/home_feed_view_utils.dart';
 import 'package:culcul/features/home/presentation/widgets/home_video_actions.dart';
 import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
@@ -15,9 +16,7 @@ import 'package:culcul/features/home/presentation/widgets/popular_video_card.dar
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
 import 'package:culcul/ui/widgets/skeletons/page_skeletons.dart';
 import 'package:culcul/ui/assemblies/feed_cards/video_list_skeleton.dart';
-import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:culcul/features/home/presentation/home_breakpoints.dart';
-import 'package:culcul/ui/responsive/responsive_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -51,28 +50,26 @@ class PopularView extends HookConsumerWidget {
 
     useHomeScrollSync(ref, scrollController, refreshController, 2);
 
-    return ResponsiveContentContainer(
+    return HomeFeedPagingShell(
       maxWidth: HomeBreakpoints.popularMaxWidth,
-      child: SmartPagingView(
-        asyncValue: popularAsync,
-        controller: refreshController,
-        onRefresh: ref.read(homePopularProvider.notifier).refresh,
-        onLoadMore: ref.read(homePopularProvider.notifier).loadMore,
-        itemCount: () => popularAsync.value?.length ?? 0,
-        skeleton: ListSkeletonView(
-          itemSkeleton: const VideoListSkeleton(),
-          padding: layout.padding,
-          itemPadding: layout.skeletonItemPadding,
-        ),
-        builder: (context, items) => _PopularVideoList(
-          items: items,
-          ref: ref,
-          scrollController: scrollController,
-          layout: layout,
-          cacheExtent: cacheExtent,
-          networkPolicy: networkPolicy,
-          runtimePolicy: runtimePolicy,
-        ),
+      asyncValue: popularAsync,
+      controller: refreshController,
+      onRefresh: ref.read(homePopularProvider.notifier).refresh,
+      onLoadMore: ref.read(homePopularProvider.notifier).loadMore,
+      itemCount: () => ref.read(homePopularProvider).value?.length ?? 0,
+      skeleton: ListSkeletonView(
+        itemSkeleton: const VideoListSkeleton(),
+        padding: layout.padding,
+        itemPadding: layout.skeletonItemPadding,
+      ),
+      builder: (context, items) => _PopularVideoList(
+        items: items,
+        ref: ref,
+        scrollController: scrollController,
+        layout: layout,
+        cacheExtent: cacheExtent,
+        networkPolicy: networkPolicy,
+        runtimePolicy: runtimePolicy,
       ),
     );
   }
