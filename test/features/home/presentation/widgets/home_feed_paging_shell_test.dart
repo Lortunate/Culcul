@@ -36,6 +36,20 @@ void main() {
 
     expect(find.text('items-3'), findsOneWidget);
   });
+
+  testWidgets('HomeFeedPagingShell requires load-more stop criteria', (tester) async {
+    expect(
+      () => HomeFeedPagingShell<int>(
+        maxWidth: 320,
+        asyncValue: const AsyncValue.data([]),
+        skeleton: const Text('loading-feed'),
+        onRefresh: () async {},
+        onLoadMore: () async {},
+        builder: (context, items) => Text('items-${items.length}'),
+      ),
+      throwsA(isA<AssertionError>()),
+    );
+  });
 }
 
 class _TestApp extends StatelessWidget {

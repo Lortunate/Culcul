@@ -29,7 +29,10 @@ class HomeFeedPagingShell<T> extends StatelessWidget {
     this.hasMore = true,
     this.hasMoreAfterLoad,
     this.controller,
-  });
+  }) : assert(
+         onLoadMore == null || itemCount != null || hasMoreAfterLoad != null,
+         'HomeFeedPagingShell needs itemCount or hasMoreAfterLoad when onLoadMore is set.',
+       );
 
   @override
   Widget build(BuildContext context) {
