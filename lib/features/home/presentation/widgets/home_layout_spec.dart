@@ -24,7 +24,7 @@ class HomeGridLayoutSpec {
         crossAxisCount: columns,
         mainAxisSpacing: isDesktop ? 10 : 6,
         crossAxisSpacing: isDesktop ? 10 : 6,
-        childAspectRatio: isDesktop ? 1.12 : 1.1,
+        childAspectRatio: isDesktop ? 1.02 : 0.98,
       ),
       skeletonCount: columns * 3,
       cacheExtent: isDesktop ? 1100 : 640,
