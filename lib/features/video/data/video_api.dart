@@ -1,9 +1,9 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
-import 'package:culcul/features/video/application/models/play_url.dart';
 import 'package:culcul/features/video/data/dtos/player_info_dto.dart';
 import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
+import 'package:culcul/features/video/data/dtos/video_play_url_dto.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
@@ -33,7 +33,7 @@ abstract class VideoApi {
 
   @GET(ApiConstants.videoPlayUrl)
   @Headers({'x-bili-wbi': 'true'})
-  Future<ApiResponse<PlayUrl>> fetchVideoPlayUrl(
+  Future<ApiResponse<VideoPlayUrlDto>> fetchVideoPlayUrl(
     @Query('avid') int aid,
     @Query('cid') int cid,
     @Query('qn') int qn, {

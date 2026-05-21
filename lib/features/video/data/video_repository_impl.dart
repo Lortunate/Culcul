@@ -13,6 +13,7 @@ import 'package:culcul/features/video/data/dtos/player_info_dto.dart';
 import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
 import 'package:culcul/features/video/application/models/subtitle.dart';
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
+import 'package:culcul/features/video/data/dtos/video_play_url_dto.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'video_repository_impl.g.dart';
@@ -128,17 +129,19 @@ class VideoRepositoryImpl {
     int fourk = 1,
     CancelToken? cancelToken,
   }) {
-    return _requestExecutor.runApiDirect(
-      () => api.fetchVideoPlayUrl(
-        aid,
-        cid,
-        quality,
-        fnval: fnval,
-        fnver: fnver,
-        fourk: fourk,
-        cancelToken: cancelToken,
-      ),
-    );
+    return _requestExecutor
+        .runApiDirect(
+          () => api.fetchVideoPlayUrl(
+            aid,
+            cid,
+            quality,
+            fnval: fnval,
+            fnver: fnver,
+            fourk: fourk,
+            cancelToken: cancelToken,
+          ),
+        )
+        .then((result) => result.map(_mapPlayUrl));
   }
 
   Future<Result<PlayerInfo, AppError>> fetchPlayerInfo({
@@ -225,4 +228,53 @@ class VideoRepositoryImpl {
       () => api.addVideoCoin(aid, count, selectLike: alsoLike ? 1 : 0),
     );
   }
+}
+
+PlayUrl _mapPlayUrl(VideoPlayUrlDto dto) {
+  return PlayUrl(
+    format: dto.format,
+    quality: dto.quality,
+    timeLength: dto.timeLength,
+    acceptFormat: dto.acceptFormat,
+    acceptDescription: dto.acceptDescription,
+    acceptQuality: dto.acceptQuality,
+    videoCodecId: dto.videoCodecId,
+    durl: dto.durl.map(_mapDurl).toList(growable: false),
+    dash: dto.dash == null ? null : _mapDashInfo(dto.dash!),
+    supportFormats: dto.supportFormats.map(_mapSupportFormat).toList(growable: false),
+  );
+}
+
+DashInfo _mapDashInfo(DashInfoDto dto) {
+  return DashInfo(audio: dto.audio.map(_mapDashStream).toList(growable: false));
+}
+
+DashStream _mapDashStream(DashStreamDto dto) {
+  return DashStream(
+    id: dto.id,
+    baseUrl: dto.baseUrl,
+    backupUrl: dto.backupUrl,
+    bandwidth: dto.bandwidth,
+  );
+}
+
+Durl _mapDurl(DurlDto dto) {
+  return Durl(
+    order: dto.order,
+    length: dto.length,
+    size: dto.size,
+    url: dto.url,
+    backupUrl: dto.backupUrl,
+  );
+}
+
+SupportFormat _mapSupportFormat(SupportFormatDto dto) {
+  return SupportFormat(
+    quality: dto.quality,
+    format: dto.format,
+    newDescription: dto.newDescription,
+    displayDesc: dto.displayDesc,
+    superscript: dto.superscript,
+    codecs: dto.codecs,
+  );
 }

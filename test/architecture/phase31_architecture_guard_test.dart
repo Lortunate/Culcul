@@ -38,6 +38,10 @@ const _phase31AllowedPresentationDataImports = <String>{
   'lib/features/video/presentation/player/hooks/use_listen_audio_mode.dart -> lib/features/video/data/video_repository_impl.dart',
 };
 
+const _jsonFreeApplicationModelFiles = <String>{
+  'lib/features/video/application/models/play_url.dart',
+};
+
 void main() {
   test('core and ui must not import features', () {
     final offenders = <String>[];
@@ -130,6 +134,36 @@ void main() {
       reason:
           'Transport DTO class names belong in data/dtos. Application models '
           'must use feature/runtime vocabulary instead:\n'
+          '${offenders.join('\n')}',
+    );
+  });
+
+  test('migrated application models must not own JSON transport serialization', () {
+    final offenders = <String>[];
+    final transportPattern = RegExp(r'\b(?:JsonKey|fromJson|toJson)\b');
+
+    for (final file in sourceDartFiles('lib/features')) {
+      final path = normalizePath(file.path);
+      if (!_jsonFreeApplicationModelFiles.contains(path)) {
+        continue;
+      }
+
+      for (final line in authoredDartCodeLines(file)) {
+        final match = transportPattern.firstMatch(line.text);
+        if (match == null) {
+          continue;
+        }
+
+        offenders.add('${formatLocation(path, line.lineNumber)} ${match.group(0)}');
+      }
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'Migrated application models must stay runtime/read models only. '
+          'JSON transport serialization belongs in data/dtos:\n'
           '${offenders.join('\n')}',
     );
   });
