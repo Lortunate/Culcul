@@ -2,233 +2,162 @@
 
 Tracking issue: `culcul-o9u`
 
-> For agentic workers: use `superpowers:subagent-driven-development` or inline
-> execution with review checkpoints when implementing independent slices. Do not
-> use Markdown checkbox tracking in this repository; bd is the task tracker.
+## Current Baseline
 
-## Operating Rules
+- `flutter analyze --no-pub`: no issues.
+- `flutter test test/architecture/architecture_boundary_guard_test.dart`: pass.
+- `flutter test test/architecture/architecture_route_ownership_guard_test.dart`:
+  pass.
+- `lib/shared` is absent.
+- Core/UI feature-internal import violations: 0.
+- Private feature-to-feature data/presentation imports: 0.
+- Runtime placeholder implementations: 0.
+- Raw string route pushes: 0.
+- Handwritten Riverpod provider declarations: 0.
 
-- Use Bash for shell commands.
-- Use Context7 for current library/framework documentation.
-- Use GitNexus impact analysis before editing any function, class, or method.
-- Do not create empty services, managers, helpers, adapters, or facades.
-- Do not keep old/new architecture side by side longer than the active slice.
-- Preserve unrelated user changes in the dirty worktree.
-- Run `gitnexus detect_changes` before committing.
-- Session completion requires quality gates, bd status updates, `bd dolt push`,
-  and `git push` per `AGENTS.md`.
-
-## Current Problem Analysis
-
-The active codebase already uses modern Flutter practices: Riverpod generated
-providers, go_router, Dio/Retrofit, Freezed/JSON, Drift, Slang, and architecture
-tests. The current complexity comes from incomplete consolidation rather than
-missing frameworks.
-
-Immediate baseline:
-
-- `flutter analyze --no-pub`: 292 errors, mostly Dynamic model generated-file
-  breakage after moving source files from `data/dtos` to `application/models`.
-- `flutter test test/architecture/architecture_boundary_guard_test.dart`:
-  passing.
-- Dirty worktree: broad architecture moves are already present. Work must close
-  the current move rather than restart it.
+The remaining value is structural consolidation and source-of-truth cleanup. Do
+not add new layers, new libraries, or compatibility shims to create the
+appearance of architecture progress.
 
 ## Recommended Directory Structure
 
 ```text
 lib/
-  app/                 bootstrap, root app, router composition, shell
-  core/                runtime contracts, network, storage, result/error, utils
-  ui/                  shared design tokens, widgets, assemblies
+  app/                 bootstrap, runtime overrides, typed router, app shell
+  core/                contracts, network, errors/result, storage, session, perf
+  ui/                  design tokens, reusable widgets, assemblies
   features/
     <feature>/
       route_entry.dart
       data/            APIs, DTOs, repository implementations
-      application/     providers, workflows, read/view models
-      domain/          real business entities and repository contracts
+      application/     generated providers, workflows, read/view models
+      domain/          business entities and repository contracts only
       presentation/    pages, view models, widgets
   i18n/
   protos/
 ```
 
-## New Architecture Summary
+## Execution Principles
 
-- `app` composes and bootstraps; it should not own business rules.
-- `core` contains cross-feature platform/runtime contracts and concrete shared
-  infrastructure.
-- `features` own their workflows. Cross-feature access goes through public route
-  entries, core contracts, or an explicitly approved application/domain seam.
-- `ui` is feature-agnostic.
-- State remains Riverpod-first.
-- Network remains `DioClient` plus repositories and `RequestExecutor`.
-- DTOs, read models, and domain entities must not duplicate the same concept.
+- Use `bd` for tracking remaining work.
+- Keep one active architecture spec and one active plan.
+- Before editing a function, class, or method, run GitNexus upstream impact
+  analysis for that symbol and record the blast radius.
+- Stop and report before editing when GitNexus reports HIGH or CRITICAL risk.
+- Prefer deleting or merging low-value code over wrapping it.
+- Avoid dependency upgrades in the same slice as structural moves.
 
-## Phase 1: Close Current Broken Move
+## Phase 1: Active Documentation And Guard Baseline
 
-Goal: restore analyzer health from the current Dynamic model move without
-introducing a second model architecture.
+Goal: make the architecture source of truth match the verified repo state.
 
-Step 1: inspect the Dynamic model library.
+Steps:
 
-Run:
-
-```bash
-flutter analyze --no-pub
-```
-
-Expected current failure: errors in
-`lib/features/dynamic/application/models/dynamic_response.*`,
-`dynamic_item_extensions.*`, and dependent Dynamic files.
-
-Step 2: choose the first-phase model location.
-
-Decision for this slice: keep the already moved Dynamic source files under
-`features/dynamic/application/models` and move/regenerate their generated files
-beside the library. A later DTO-classification slice can move transport DTOs
-back to `data/dtos` if that proves clearer.
-
-Step 3: close generated-file mismatch.
-
-Move or regenerate:
-
-- `lib/features/dynamic/data/dtos/dynamic_response.freezed.dart`
-  to `lib/features/dynamic/application/models/dynamic_response.freezed.dart`
-- `lib/features/dynamic/data/dtos/dynamic_response.g.dart`
-  to `lib/features/dynamic/application/models/dynamic_response.g.dart`
-- `lib/features/dynamic/data/dtos/emote_response.freezed.dart`
-  to `lib/features/dynamic/application/models/emote_response.freezed.dart`
-- `lib/features/dynamic/data/dtos/emote_response.g.dart`
-  to `lib/features/dynamic/application/models/emote_response.g.dart`
-
-Then run:
+1. Update the active Phase 39 spec and this plan with the current analyzer and
+   guard baseline.
+2. Move Phase 30 architecture inventories from active docs to
+   `docs/architecture/archive`.
+3. Update `architecture-guide.md` and architecture guard references to the new
+   archive paths.
+4. Run:
 
 ```bash
-dart run build_runner build --delete-conflicting-outputs
-flutter analyze --no-pub
-```
-
-Step 4: fix remaining imports created by the move.
-
-Use analyzer errors to update import paths only. Do not rename concepts or add
-facades.
-
-Step 5: verify.
-
-Run:
-
-```bash
-flutter analyze --no-pub
 flutter test test/architecture/architecture_boundary_guard_test.dart
+flutter test test/architecture/architecture_route_ownership_guard_test.dart
+flutter analyze --no-pub
 ```
 
-## Phase 2: Typed Navigation Cleanup
+## Phase 2: Model And DTO Ownership
 
-Goal: remove handwritten route strings while retaining go_router as the route
-source of truth.
+Goal: one model source per concept.
 
-Files identified:
+Approach:
 
-- `lib/features/history/presentation/pages/history_page.dart`
-- `lib/features/to_view/presentation/pages/to_view_page.dart`
-- `lib/features/notification/presentation/widgets/notification_category_grid.dart`
-
-For each edited route call:
-
-1. Run GitNexus impact analysis on the route class/helper being used.
-2. Replace `context.push('/...')` with typed route calls or a feature
-   `route_entry.dart` helper.
-3. Run focused widget/view-model tests if present.
-4. Run architecture guard.
-
-## Phase 3: Dependency Hygiene
-
-Goal: make dependency intent explicit without churn.
-
-Actions:
-
-- Keep `media_kit_libs_video` and `sqlite3_flutter_libs`; they are native runtime
-  packages.
-- Add direct `intl` if generated i18n files remain committed and import it.
-- Do not remove packages based on import count alone.
-- Do not upgrade major packages in the same slice as architecture moves.
+1. Classify files currently under `features/*/application/models` as transport
+   DTO, read/view model, command, or workflow state.
+2. Move only when the target ownership is clear and all generated parts move with
+   their source library.
+3. Keep DTOs in `data/dtos`; keep read/view models in `application`; keep
+   behaviorful domain concepts in `domain/entities`.
+4. Do not create duplicate domain and DTO objects for the same concept unless the
+   domain object owns behavior.
 
 Verification:
 
 ```bash
-flutter pub get
-flutter analyze --no-pub
-```
-
-## Phase 4: DTO And Entity Classification
-
-Goal: one model source per concept.
-
-Order:
-
-1. Video `play_url`, `subtitle`, and danmaku models.
-2. Dynamic `dynamic_response.*` and `emote_response.dart`.
-3. Live `*_model.dart`.
-4. Profile/history/to-view behaviorless domain entities.
-
-Decision rule:
-
-- Raw JSON transport shape: `data/dtos`.
-- Feature read/view state: `application/models`.
-- Cross-workflow business concept: `domain/entities`.
-- Cross-feature contract: `core/contracts`.
-
-## Phase 5: Endpoint Source Of Truth
-
-Goal: remove endpoint duplication.
-
-Actions:
-
-- Inventory Retrofit annotation endpoint literals and `ApiConstants`.
-- Decide per endpoint family whether Retrofit annotations or constants are the
-  executable source.
-- Delete duplicate constants that are not referenced.
-- Keep `CommentService` shared reply endpoints centralized, as enforced by the
-  architecture guard.
-
-## Phase 6: App Boundary And Startup
-
-Goal: reduce app-feature coupling and keep startup lean.
-
-Actions:
-
-- Move theme mode ownership out of `features/settings/application` only if a real
-  app/runtime preference source can replace it without a wrapper-only facade.
-- Keep network cache/cookie resources lazy unless a bootstrap test proves they
-  are needed before first frame.
-- Replace throwing provider defaults only with real safe defaults or explicit
-  bootstrap wiring; do not add placeholder fallbacks.
-
-## Delete, Merge, Archive Checklist
-
-Already archived for this phase:
-
-- Phase 38 active spec.
-- Phase 38 active plan.
-
-Delete during Phase 1:
-
-- Old generated Dynamic files under `features/dynamic/data/dtos` after generated
-  files exist under `features/dynamic/application/models`.
-
-Merge/classify in later phases:
-
-- DTO-shaped `application/models`.
-- Behaviorless entities that are read models.
-- Duplicate endpoint definitions.
-- Cross-feature imports where a public seam already exists.
-
-## First Phase Commands
-
-```bash
-flutter analyze --no-pub
 dart run build_runner build --delete-conflicting-outputs
 flutter analyze --no-pub
 flutter test test/architecture/architecture_boundary_guard_test.dart
 ```
 
+## Phase 3: Endpoint Source Of Truth
+
+Goal: endpoint paths and generic network policy are not duplicated.
+
+Approach:
+
+1. Inventory `ApiConstants` and Retrofit annotations by feature.
+2. Keep generic request execution, error mapping, and result policy in
+   `RequestExecutor`, `AppError`, and `Result`.
+3. Pick one endpoint ownership rule per feature and remove duplicates.
+4. Avoid feature repositories reimplementing generic Dio error handling.
+
+Verification:
+
+```bash
+flutter analyze --no-pub
+flutter test test/core/data/network/request_executor_test.dart
+```
+
+## Phase 4: Startup And Runtime Lifetime
+
+Goal: reduce first-frame startup work and unnecessary global lifetime.
+
+Approach:
+
+1. Keep only first-frame-critical work in `AppBootstrap.initialize`.
+2. Keep cache/cookie/network warmup in deferred initialization when possible.
+3. Review global caches and services for concrete ownership and disposal.
+4. Measure with `FrameTimingSampler`-related tests or focused startup tests when
+   touched.
+
+Verification:
+
+```bash
+flutter analyze --no-pub
+flutter test test/app/bootstrap/deferred_app_init_test.dart
+```
+
+## Phase 5: Low-Value Abstraction Cleanup
+
+Goal: remove code that increases reading cost without owning policy.
+
+Approach:
+
+1. Review `service`, `manager`, `helper`, `utils`, `adapter`, and `facade` names
+   only when usage evidence shows no real policy ownership.
+2. Delete unused code only after import graph, analyzer, tests, and GitNexus
+   impact analysis agree it is safe.
+3. Merge one-call wrappers into their callers unless they enforce a reusable
+   policy or break a real dependency cycle.
+
+Verification:
+
+```bash
+flutter analyze --no-pub
+flutter test
+```
+
+## Session Completion Gates
+
+Before closing the issue or committing:
+
+```bash
+flutter analyze --no-pub
+flutter test test/architecture/architecture_boundary_guard_test.dart
+flutter test test/architecture/architecture_route_ownership_guard_test.dart
+```
+
+Run GitNexus `detect_changes(scope: "all", repo: "Culcul")` before commit.
+Follow the project completion workflow for `bd dolt push` and `git push` once
+the session's intended changes are ready to publish.

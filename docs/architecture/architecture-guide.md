@@ -119,8 +119,8 @@ concrete runtime composition seam.
 - cross-feature private `data/**` or `presentation/**` imports: 0.
 - cross-feature `domain/**` or `application/**` imports found by planning audit: 34.
 - non-data imports of feature `data/dtos`: 77.
-- Phase 30 cross-feature application/domain inventory remains guard evidence: `docs/architecture/phase30-application-seam-inventory.md`.
-- Phase 30 presentation data/proto inventory remains baseline evidence: `docs/architecture/phase30-presentation-data-inventory.md`.
+- Phase 30 cross-feature application/domain inventory remains archived guard evidence: `docs/architecture/archive/2026-05-21-phase30-application-seam-inventory.superseded.md`.
+- Phase 30 presentation data/proto inventory remains archived baseline evidence: `docs/architecture/archive/2026-05-21-phase30-presentation-data-inventory.superseded.md`.
 
 ### Phase 30 Completion Baseline
 
@@ -130,8 +130,8 @@ concrete runtime composition seam.
 - cross-feature private `data/**` or `presentation/**` imports: 0.
 - cross-feature `domain/**` or `application/**` imports classified: 27.
 - cross-feature application imports moved behind feature public APIs: 3.
-- Phase 30 cross-feature application/domain inventory: `docs/architecture/phase30-application-seam-inventory.md`.
-- Phase 30 presentation data/proto inventory: `docs/architecture/phase30-presentation-data-inventory.md` (118 same-feature feature-data/proto hits; classified, not banned).
+- Phase 30 cross-feature application/domain inventory: `docs/architecture/archive/2026-05-21-phase30-application-seam-inventory.superseded.md`.
+- Phase 30 presentation data/proto inventory: `docs/architecture/archive/2026-05-21-phase30-presentation-data-inventory.superseded.md` (118 same-feature feature-data/proto hits; classified, not banned).
 - `feature_scope.dart` files: 0.
 - Completed focus: semantic seam cleanup, domain/data leak cleanup, presentation data/proto classification, app runtime seam alignment, codegen source-of-truth cleanup, large-file decomposition, no-op workflow cleanup.
 

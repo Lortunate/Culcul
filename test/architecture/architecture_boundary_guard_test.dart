@@ -4,7 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'architecture_guard_utils.dart';
 
-const _phase30InventoryPath = 'docs/architecture/phase30-application-seam-inventory.md';
+const _phase30InventoryPath =
+    'docs/architecture/archive/2026-05-21-phase30-application-seam-inventory.superseded.md';
 
 const _phase30AllowedInventoryCategories = {
   'approved-session-seam',
