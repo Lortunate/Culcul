@@ -1,5 +1,4 @@
-import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
-import 'package:culcul/features/dynamic/data/dtos/dynamic_item_extensions.dart';
+import 'package:culcul/features/dynamic/application/dynamic_post_card_view_data.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_content_entities.dart';
 import 'package:culcul/features/dynamic/presentation/pages/topic_detail_page.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_common_widget.dart';
@@ -15,7 +14,7 @@ import 'package:culcul/ui/assemblies/text/bilibili_emoji_text.dart';
 import 'package:flutter/material.dart';
 
 class DynamicContentWidget extends StatelessWidget {
-  final DynamicItem post;
+  final DynamicPostCardViewData post;
   final bool selectableText;
 
   const DynamicContentWidget({
@@ -80,7 +79,7 @@ class DynamicContentWidget extends StatelessWidget {
   }
 
   ({bool showText, bool showImages, bool showLinkCard, bool showAdditional})
-  _resolveVisibility(DynamicItem post) {
+  _resolveVisibility(DynamicPostCardViewData post) {
     final contentText = post.contentText;
     final hasText = contentText != null && contentText.isNotEmpty;
     final hasImages = post.images != null && post.images!.isNotEmpty;

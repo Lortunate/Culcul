@@ -1,4 +1,4 @@
-import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
+import 'package:culcul/features/dynamic/application/models/dynamic_response.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_queries.dart';
 import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';

@@ -8,10 +8,10 @@ import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/services/comment_service.dart';
 import 'package:culcul/features/video/data/video_api.dart';
-import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
+import 'package:culcul/features/video/application/models/play_url.dart';
 import 'package:culcul/features/video/data/dtos/player_info_dto.dart';
 import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
-import 'package:culcul/features/video/data/dtos/subtitle_dto.dart';
+import 'package:culcul/features/video/application/models/subtitle.dart';
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

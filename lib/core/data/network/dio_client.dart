@@ -35,7 +35,18 @@ Dio _createBaseDio(Ref ref, NetworkQualityPolicy networkPolicy) {
     ),
   );
 
-  dio.httpClientAdapter = Http2Adapter(
+  dio.httpClientAdapter = _createHttpClientAdapter(networkPolicy);
+
+  dio.transformer = BackgroundTransformer()..jsonDecodeCallback = jsonDecodeCompute;
+
+  final cookieJar = ref.read(cookieJarProvider);
+  dio.interceptors.add(CookieManager(cookieJar));
+
+  return dio;
+}
+
+HttpClientAdapter _createHttpClientAdapter(NetworkQualityPolicy networkPolicy) {
+  return Http2Adapter(
     ConnectionManager(
       idleTimeout: networkPolicy.connectionIdleTimeout,
       onClientCreate: (_, config) {
@@ -45,13 +56,70 @@ Dio _createBaseDio(Ref ref, NetworkQualityPolicy networkPolicy) {
       },
     ),
   );
+}
 
-  dio.transformer = BackgroundTransformer()..jsonDecodeCallback = jsonDecodeCompute;
+void _applyNetworkPolicy(Dio dio, NetworkQualityPolicy networkPolicy) {
+  dio.options.connectTimeout = networkPolicy.connectTimeout;
+  dio.options.receiveTimeout = networkPolicy.receiveTimeout;
+  dio.options.sendTimeout = networkPolicy.sendTimeout;
+  dio.httpClientAdapter = _createHttpClientAdapter(networkPolicy);
+}
 
-  final cookieJar = ref.read(cookieJarProvider);
-  dio.interceptors.add(CookieManager(cookieJar));
+List<Duration> _retryDelays(NetworkQualityPolicy networkPolicy) {
+  return List.generate(
+    networkPolicy.retryMaxAttempts,
+    (i) => Duration(
+      milliseconds: (networkPolicy.retryBaseDelayMs * (1 << i)).clamp(
+        0,
+        networkPolicy.retryMaxDelayMs,
+      ),
+    ),
+  );
+}
 
-  return dio;
+RetryInterceptor _createRetryInterceptor(Dio dio, NetworkQualityPolicy networkPolicy) {
+  return RetryInterceptor(
+    dio: dio,
+    retries: networkPolicy.retryMaxAttempts,
+    retryDelays: _retryDelays(networkPolicy),
+    retryEvaluator: (error, attempt) {
+      if (error.requestOptions.extra[EndpointPolicy.disableRetryExtra] == true) {
+        return false;
+      }
+      final endpointPolicy = EndpointPolicy.fromOptions(error.requestOptions);
+      if (endpointPolicy != null &&
+          !endpointPolicy.canRetry(error.requestOptions, attempt)) {
+        return false;
+      }
+      if (endpointPolicy == null) {
+        if (error.requestOptions.cancelToken?.isCancelled == true) {
+          return false;
+        }
+        final method = error.requestOptions.method.toUpperCase();
+        final isIdempotent =
+            method == 'GET' ||
+            method == 'HEAD' ||
+            method == 'OPTIONS' ||
+            error.requestOptions.extra[EndpointPolicy.forceRetryableExtra] == true;
+        if (!isIdempotent) return false;
+      }
+      return DefaultRetryEvaluator(
+        endpointPolicy?.retryableStatuses ?? {408, 429, 500, 502, 503, 504},
+      ).evaluate(error, attempt);
+    },
+  );
+}
+
+void _replaceRetryInterceptor(Dio dio, NetworkQualityPolicy networkPolicy) {
+  final index = dio.interceptors.indexWhere(
+    (interceptor) => interceptor is RetryInterceptor,
+  );
+  final retryInterceptor = _createRetryInterceptor(dio, networkPolicy);
+  if (index == -1) {
+    dio.interceptors.add(retryInterceptor);
+  } else {
+    dio.interceptors[index] = retryInterceptor;
+  }
 }
 
 void _addLogInterceptor(Dio dio) {
@@ -71,6 +139,9 @@ void _addLogInterceptor(Dio dio) {
 Dio basicDio(Ref ref) {
   final networkPolicy = ref.read(networkQualityPolicyProvider);
   final dio = _createBaseDio(ref, networkPolicy);
+  ref.listen(networkQualityPolicyProvider, (previous, next) {
+    _applyNetworkPolicy(dio, next);
+  });
   _addLogInterceptor(dio);
   return dio;
 }
@@ -82,10 +153,10 @@ Dio dioClient(Ref ref) {
   final cacheStore = ref.read(cacheStoreProvider);
 
   final networkQualityInterceptor = NetworkQualityInterceptor(ref);
-
-  // Invalidate cached policy when connectivity changes
-  ref.listen(networkQualityPolicyProvider, (prev, next) {
+  ref.listen(networkQualityPolicyProvider, (previous, next) {
     networkQualityInterceptor.invalidateCache();
+    _applyNetworkPolicy(dio, next);
+    _replaceRetryInterceptor(dio, next);
   });
 
   dio.interceptors.add(networkQualityInterceptor);
@@ -100,46 +171,7 @@ Dio dioClient(Ref ref) {
       ),
     ),
   );
-  dio.interceptors.add(
-    RetryInterceptor(
-      dio: dio,
-      retries: networkPolicy.retryMaxAttempts,
-      retryDelays: List.generate(
-        networkPolicy.retryMaxAttempts,
-        (i) => Duration(
-          milliseconds: (networkPolicy.retryBaseDelayMs * (1 << i)).clamp(
-            0,
-            networkPolicy.retryMaxDelayMs,
-          ),
-        ),
-      ),
-      retryEvaluator: (error, attempt) {
-        if (error.requestOptions.extra['disable_retry'] == true) {
-          return false;
-        }
-        final endpointPolicy = EndpointPolicy.fromOptions(error.requestOptions);
-        if (endpointPolicy != null &&
-            !endpointPolicy.canRetry(error.requestOptions, attempt)) {
-          return false;
-        }
-        if (endpointPolicy == null) {
-          if (error.requestOptions.cancelToken?.isCancelled == true) {
-            return false;
-          }
-          final method = error.requestOptions.method.toUpperCase();
-          final isIdempotent =
-              method == 'GET' ||
-              method == 'HEAD' ||
-              method == 'OPTIONS' ||
-              error.requestOptions.extra['force_retryable'] == true;
-          if (!isIdempotent) return false;
-        }
-        return DefaultRetryEvaluator(
-          endpointPolicy?.retryableStatuses ?? {408, 429, 500, 502, 503, 504},
-        ).evaluate(error, attempt);
-      },
-    ),
-  );
+  dio.interceptors.add(_createRetryInterceptor(dio, networkPolicy));
   final csrfInterceptor = CsrfInterceptor(ref);
   dio.interceptors.add(csrfInterceptor);
   dio.interceptors.add(WbiInterceptor(ref));

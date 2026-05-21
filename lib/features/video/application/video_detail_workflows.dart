@@ -6,10 +6,10 @@ import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/video/application/video_detail_models.dart';
-import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
 import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
 import 'package:culcul/features/video/data/video_repository_impl.dart';
+import 'package:culcul/features/video/application/models/play_url.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'video_detail_workflows.g.dart';

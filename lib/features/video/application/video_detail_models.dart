@@ -1,7 +1,7 @@
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/features/video/data/dtos/related_video_dto.dart' as related_dto;
-import 'package:culcul/features/video/data/dtos/subtitle_dto.dart';
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart' as detail_dto;
+import 'package:culcul/features/video/application/models/subtitle.dart';
 
 class VideoDetailViewData {
   final String bvid;

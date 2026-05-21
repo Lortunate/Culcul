@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'danmaku_model.freezed.dart';
+part 'danmaku.freezed.dart';
 
 @freezed
 sealed class DanmakuEntry with _$DanmakuEntry {

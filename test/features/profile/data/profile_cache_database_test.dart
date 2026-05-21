@@ -1,4 +1,4 @@
-import 'package:culcul/features/profile/data/dtos/profile_user.dart';
+import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/data/local/profile_cache_database.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';

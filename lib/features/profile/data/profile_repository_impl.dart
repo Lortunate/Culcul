@@ -10,8 +10,8 @@ import 'package:culcul/features/profile/data/dtos/user_space_video_model.dart';
 import 'package:culcul/features/profile/data/profile_mapper.dart';
 import 'package:culcul/features/profile/data/profile_api.dart';
 import 'package:culcul/core/contracts/user_card_contract.dart';
-import 'package:culcul/features/profile/data/dtos/profile_user.dart';
-import 'package:culcul/features/profile/data/dtos/profile_video.dart';
+import 'package:culcul/features/profile/domain/entities/profile_user.dart';
+import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'profile_repository_impl.g.dart';

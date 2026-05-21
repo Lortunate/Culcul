@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:developer' as developer;
 
-import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
+import 'package:culcul/features/video/application/models/play_url.dart';
 import 'package:culcul/core/services/relation_service.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/features/video/application/video_detail_workflows.dart';

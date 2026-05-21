@@ -1,13 +1,12 @@
-import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
-import 'package:culcul/features/dynamic/data/dtos/dynamic_item_extensions.dart';
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/features/dynamic/application/dynamic_post_card_view_data.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_actions.dart';
 import 'package:culcul/ui/widgets/users/app_avatar.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
 
 class DynamicPostHeader extends StatelessWidget {
-  final DynamicItem post;
+  final DynamicPostCardViewData post;
   final double avatarSize;
   final IconData moreIcon;
 

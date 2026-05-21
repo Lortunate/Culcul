@@ -25,6 +25,7 @@ part 'app_routes.g.dart';
 part 'routes/app_shell_routes.dart';
 part 'routes/app_social_routes.dart';
 part 'routes/app_content_routes.dart';
+part 'routes/app_dynamic_routes.dart';
 part 'routes/app_notification_routes.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();

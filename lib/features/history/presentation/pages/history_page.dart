@@ -6,7 +6,6 @@ import 'package:culcul/features/history/domain/entities/history_entry.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/users/guest_view.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:culcul/features/history/presentation/widgets/history_item_widget.dart';
 
@@ -58,7 +57,7 @@ class _HistoryContent extends ConsumerWidget {
                 onTap: () {
                   final bvid = item.bvid;
                   if (item.business == 'archive' && bvid.isNotEmpty) {
-                    context.push('/video/$bvid');
+                    VideoDetailRoute(bvid: bvid).push(context);
                   }
                 },
               ),

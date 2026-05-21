@@ -1,5 +1,5 @@
-import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
-import 'package:culcul/features/dynamic/data/dtos/dynamic_item_extensions.dart';
+import 'package:culcul/features/dynamic/application/models/dynamic_response.dart';
+import 'package:culcul/features/dynamic/application/models/dynamic_item_extensions.dart';
 import 'dart:async';
 
 import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';

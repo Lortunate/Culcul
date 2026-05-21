@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'play_url_dto.freezed.dart';
-part 'play_url_dto.g.dart';
+part 'play_url.freezed.dart';
+part 'play_url.g.dart';
 
 @freezed
 sealed class PlayUrl with _$PlayUrl {

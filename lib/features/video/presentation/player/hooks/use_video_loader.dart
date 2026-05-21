@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
-import 'package:culcul/features/video/data/dtos/play_url_dto.dart' as domain;
+import 'package:culcul/features/video/application/models/play_url.dart' as domain;
 import 'package:culcul/features/video/presentation/player/playable_urls.dart';
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
 import 'package:culcul/features/video/presentation/detail/video_detail_view_model.dart';

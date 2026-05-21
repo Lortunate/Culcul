@@ -85,9 +85,17 @@ concrete runtime composition seam.
 - placeholder/no-op grep matches found by final strict source audit: 0.
 - duplicate model/DTO exact names found by final audit: 0.
 - approved broad public barrels: none.
-- generated files are excluded from source-debt architecture guards by default; generated verification remains explicit.
+- generated files are excluded from source-debt architecture guards by default;
+  generated verification remains explicit.
+- generated Dart is ignored by default and restored with
+  `bash scripts/bootstrap_codegen.sh`; checked-in generated exceptions are
+  allowlisted only when needed for bootstrap/runtime/protobuf availability
+  before codegen.
 - `feature_scope.dart` files: 0.
-- `pubspec.yaml` direct dependencies are all imported, generated/tooling-backed, or platform/runtime-backed. `riverpod` is directly imported by source, and `flutter_launcher_icons`, `media_kit_libs_video`, and `sqlite3_flutter_libs` are retained with evidence.
+- `pubspec.yaml` direct dependencies are all imported, generated/tooling-backed,
+  or platform/runtime-backed. `riverpod` and `fixnum` are directly imported by
+  source/generated source; `flutter_launcher_icons`, `media_kit_libs_video`,
+  and `sqlite3_flutter_libs` are retained with evidence.
 
 ### Completed in Phase 28
 

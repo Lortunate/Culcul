@@ -1,7 +1,6 @@
-import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
-import 'package:culcul/features/dynamic/data/dtos/dynamic_item_extensions.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/core/utils/share_utils.dart';
+import 'package:culcul/features/dynamic/application/dynamic_post_card_view_data.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_navigation.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,10 @@ import 'package:flutter/services.dart';
 
 enum DynamicPostAction { share, copyLink, openInBrowser }
 
-Future<void> showDynamicPostActions(BuildContext context, DynamicItem post) async {
+Future<void> showDynamicPostActions(
+  BuildContext context,
+  DynamicPostCardViewData post,
+) async {
   final t = Translations.of(context);
   final link = 'https://t.bilibili.com/${post.id}';
 

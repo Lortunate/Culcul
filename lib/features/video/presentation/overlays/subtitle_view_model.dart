@@ -1,5 +1,5 @@
-import 'package:culcul/features/video/data/dtos/subtitle_dto.dart';
 import 'package:culcul/features/video/data/video_repository_impl.dart';
+import 'package:culcul/features/video/application/models/subtitle.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

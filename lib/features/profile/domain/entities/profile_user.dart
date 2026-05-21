@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'profile_user.freezed.dart';
-part 'profile_user.g.dart';
 
 @freezed
 sealed class ProfileUser with _$ProfileUser {
@@ -29,6 +28,4 @@ sealed class ProfileUser with _$ProfileUser {
     required bool isVerified,
     DateTime? createdAt,
   }) = _ProfileUser;
-
-  factory ProfileUser.fromJson(Map<String, dynamic> json) => _$ProfileUserFromJson(json);
 }

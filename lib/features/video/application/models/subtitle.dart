@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'subtitle_dto.freezed.dart';
-part 'subtitle_dto.g.dart';
+part 'subtitle.freezed.dart';
+part 'subtitle.g.dart';
 
 @freezed
 sealed class VideoSubtitleDto with _$VideoSubtitleDto {

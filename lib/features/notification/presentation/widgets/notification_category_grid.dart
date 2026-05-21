@@ -4,7 +4,6 @@ import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/ui/theme/culcul_colors.dart';
 import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class NotificationCategoryGrid extends ConsumerWidget {
@@ -28,7 +27,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
               label: t.notification.types.reply,
               count: data.reply,
               color: semanticColors.success,
-              onTap: () => context.push('/notification/reply'),
+              onTap: () => const ReplyNotificationRoute().push(context),
             ),
             _buildCategoryItem(
               context,
@@ -44,7 +43,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
               label: t.notification.types.like,
               count: data.like,
               color: Theme.of(context).colorScheme.primary,
-              onTap: () => context.push('/notification/like'),
+              onTap: () => const LikeNotificationRoute().push(context),
             ),
             _buildCategoryItem(
               context,

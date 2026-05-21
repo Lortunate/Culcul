@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'system_notice.freezed.dart';
-part 'system_notice.g.dart';
 
 @freezed
 sealed class SystemNotice with _$SystemNotice {
@@ -13,9 +12,6 @@ sealed class SystemNotice with _$SystemNotice {
     String? text,
     required int time,
     String? uri,
-    @JsonKey(name: 'jump_text') String? jumpText,
+    String? jumpText,
   }) = _SystemNotice;
-
-  factory SystemNotice.fromJson(Map<String, dynamic> json) =>
-      _$SystemNoticeFromJson(json);
 }

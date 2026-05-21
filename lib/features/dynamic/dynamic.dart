@@ -95,8 +95,8 @@ class _UserDynamicFeedState extends ConsumerState<UserDynamicFeed>
                     return DynamicPostCard(
                       key: ValueKey('user_dynamic_${cardPost.id}_$index'),
                       post: cardPost,
-                      header: DynamicPostHeader(post: item),
-                      content: DynamicContentWidget(post: item),
+                      header: DynamicPostHeader(post: cardPost),
+                      content: DynamicContentWidget(post: cardPost),
                       onLike: () => notifier.toggleLike(cardPost.id, cardPost.isLiked),
                     );
                   }, childCount: totalCount),

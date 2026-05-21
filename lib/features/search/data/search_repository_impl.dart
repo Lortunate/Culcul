@@ -15,6 +15,7 @@ import 'package:culcul/features/search/data/search_api.dart';
 import 'package:culcul/features/search/application/search_port.dart';
 import 'package:culcul/features/search/application/search_query.dart';
 import 'package:culcul/features/search/application/search_result.dart';
+import 'package:culcul/features/search/application/search_trending_item.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_repository_impl.g.dart';
@@ -160,11 +161,11 @@ class SearchRepositoryImpl implements SearchPort {
     return result.map((data) => data.toDomain());
   }
 
-  Future<Result<List<TrendingItem>, AppError>> getTrendingRanking({
+  Future<Result<List<SearchTrendingItem>, AppError>> getTrendingRanking({
     bool forceRefresh = false,
   }) async {
     final result = await _fetchTrendingRanking(forceRefresh: forceRefresh);
-    return result.map((data) => data.list);
+    return result.map((data) => data.list.map((item) => item.toDomain()).toList());
   }
 
   @override

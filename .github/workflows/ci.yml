@@ -20,7 +20,7 @@ jobs:
         with:
           flutter-version: '3.44.0'
           cache: true
-      - run: flutter pub get
+      - run: bash scripts/bootstrap_codegen.sh
       - run: flutter analyze --no-fatal-infos
       - run: bash tool/format_dart.sh --check
 
@@ -33,7 +33,7 @@ jobs:
         with:
           flutter-version: '3.44.0'
           cache: true
-      - run: flutter pub get
+      - run: bash scripts/bootstrap_codegen.sh
       - run: flutter test --coverage
       - name: Coverage threshold check
         run: |
@@ -66,5 +66,5 @@ jobs:
         with:
           flutter-version: '3.44.0'
           cache: true
-      - run: flutter pub get
+      - run: bash scripts/bootstrap_codegen.sh
       - run: flutter build apk --debug --target-platform android-arm64

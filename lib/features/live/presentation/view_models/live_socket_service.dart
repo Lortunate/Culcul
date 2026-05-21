@@ -4,8 +4,8 @@ import 'dart:io';
 
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/runtime/runtime_performance_policy.dart';
-import 'package:culcul/features/live/data/dtos/live_danmu_info_model.dart';
-import 'package:culcul/features/live/data/dtos/live_history_danmaku_model.dart';
+import 'package:culcul/features/live/application/models/live_danmu_info_model.dart';
+import 'package:culcul/features/live/application/models/live_history_danmaku_model.dart';
 import 'package:culcul/features/live/presentation/view_models/live_danmaku_event_parser.dart';
 import 'package:culcul/features/live/presentation/view_models/live_socket_packet_codec.dart';
 import 'package:web_socket_channel/io.dart';

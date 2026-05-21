@@ -1,4 +1,4 @@
-import 'package:culcul/features/dynamic/data/dtos/emote_response.dart';
+import 'package:culcul/features/dynamic/application/models/emote_response.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/emote_view_model.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';

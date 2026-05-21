@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/features/search/application/search_result.dart';
-import 'package:culcul/features/search/data/dtos/trending_ranking.dart';
+import 'package:culcul/features/search/application/search_trending_item.dart';
 import 'package:culcul/features/search/data/search_repository_impl.dart';
 import 'package:culcul/features/search/application/search_query.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -26,7 +26,7 @@ Future<List<String>> searchSuggestions(Ref ref, String term) async {
 @Riverpod(keepAlive: true)
 class TrendingRanking extends _$TrendingRanking {
   @override
-  Future<List<TrendingItem>> build() async {
+  Future<List<SearchTrendingItem>> build() async {
     final stopwatch = Stopwatch()..start();
     final hasCachedValue = await _hasCachedValue(ApiConstants.searchTrendingRanking);
     final result = await ref.watch(searchRepositoryProvider).getTrendingRanking();
@@ -76,7 +76,10 @@ class TrendingRanking extends _$TrendingRanking {
     return ref.read(cacheStoreProvider).exists('api_cache_$path');
   }
 
-  bool _sameTrendingItems(List<TrendingItem> previous, List<TrendingItem> next) {
+  bool _sameTrendingItems(
+    List<SearchTrendingItem> previous,
+    List<SearchTrendingItem> next,
+  ) {
     if (previous.length != next.length) {
       return false;
     }

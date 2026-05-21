@@ -1,10 +1,16 @@
 .idea
+# Generated Dart is rebuilt locally by scripts/bootstrap_codegen.sh.
 *.g.dart
 *.freezed.dart
 *.pb.dart
 *.pbenum.dart
 *.pbjson.dart
 *.pbserver.dart
+
+# Checked-in generated exceptions required before codegen/bootstrap runs.
+!lib/core/runtime/runtime_lifecycle_provider.g.dart
+!lib/core/runtime/runtime_performance_policy_provider.g.dart
+!lib/features/profile/data/local/profile_cache_database.g.dart
 !lib/protos/dm.pb.dart
 !lib/protos/dm.pbenum.dart
 !lib/protos/dm.pbjson.dart

@@ -90,8 +90,8 @@ class TopicDetailPage extends HookConsumerWidget {
                         key: ValueKey('topic_post_${cardPost.id}_$index'),
                         child: DynamicPostCard(
                           post: cardPost,
-                          header: DynamicPostHeader(post: post),
-                          content: DynamicContentWidget(post: post),
+                          header: DynamicPostHeader(post: cardPost),
+                          content: DynamicContentWidget(post: cardPost),
                           onLike: () =>
                               notifier.toggleLike(cardPost.id, cardPost.isLiked),
                         ),

@@ -52,8 +52,8 @@ class DynamicListView extends HookConsumerWidget {
                     key: ValueKey(cardPost.id),
                     child: DynamicPostCard(
                       post: cardPost,
-                      header: DynamicPostHeader(post: post),
-                      content: DynamicContentWidget(post: post),
+                      header: DynamicPostHeader(post: cardPost),
+                      content: DynamicContentWidget(post: cardPost),
                       onLike: () => notifier.toggleLike(cardPost.id, cardPost.isLiked),
                     ),
                   );

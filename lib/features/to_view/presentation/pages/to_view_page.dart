@@ -10,7 +10,6 @@ import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:go_router/go_router.dart';
 
 class ToViewPage extends ConsumerWidget {
   const ToViewPage({super.key});
@@ -37,7 +36,7 @@ class ToViewPage extends ConsumerWidget {
           ? _ToViewBody(
               onRefresh: () => _refreshList(ref),
               onDelete: (aid) => ref.read(toViewListProvider.notifier).delete(aid),
-              onOpenVideo: (bvid) => context.push('/video/$bvid'),
+              onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
             )
           : GuestView(
               title: t.profile.not_logged_in,

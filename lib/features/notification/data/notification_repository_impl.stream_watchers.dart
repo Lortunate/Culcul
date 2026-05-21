@@ -1,8 +1,9 @@
 import 'package:culcul/core/utils/json_compute.dart';
-import 'package:culcul/features/notification/data/dtos/system_notice.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
 import 'package:culcul/features/notification/data/notification_mapper.dart';
+import 'package:culcul/features/notification/data/system_notice_mapper.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
+import 'package:culcul/features/notification/domain/entities/system_notice.dart';
 import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
 import 'package:drift/drift.dart';
 
@@ -43,11 +44,8 @@ class NotificationStreamWatchers {
         .asyncMap((rows) async {
           final notices = <SystemNotice>[];
           for (final row in rows) {
-            notices.add(
-              SystemNotice.fromJson(
-                (await jsonDecodeCompute(row.itemJson)) as Map<String, dynamic>,
-              ),
-            );
+            final json = (await jsonDecodeCompute(row.itemJson)) as Map<String, dynamic>;
+            notices.add(systemNoticeFromJson(json));
           }
           return notices;
         });

@@ -7,6 +7,7 @@ import 'package:culcul/features/notification/data/local/notification_local_datab
 import 'package:culcul/features/notification/data/notification_api.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.cleanup_policy.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.message_support.dart';
+import 'package:culcul/features/notification/data/system_notice_mapper.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_cursor.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 
@@ -67,7 +68,7 @@ class NotificationFeedSync {
                       feedType: type.value,
                       eventId: item.id,
                       eventTime: item.time,
-                      itemJson: jsonEncode(item.toJson()),
+                      itemJson: jsonEncode(systemNoticeToJson(item)),
                       updatedAt: now,
                     ),
                   );

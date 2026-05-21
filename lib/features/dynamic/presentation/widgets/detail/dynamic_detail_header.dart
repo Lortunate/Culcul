@@ -1,9 +1,9 @@
-import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
+import 'package:culcul/features/dynamic/application/dynamic_post_card_view_data.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_post_header.dart';
 import 'package:flutter/material.dart';
 
 class DynamicDetailHeader extends StatelessWidget {
-  final DynamicItem post;
+  final DynamicPostCardViewData post;
 
   const DynamicDetailHeader({super.key, required this.post});
 

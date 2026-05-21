@@ -1,4 +1,4 @@
-import 'package:culcul/features/profile/data/dtos/profile_user.dart';
+import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

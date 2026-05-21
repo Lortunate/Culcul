@@ -1,5 +1,5 @@
 import 'package:culcul/core/perf/dev_logger.dart';
-import 'package:culcul/features/live/data/dtos/live_history_danmaku_model.dart';
+import 'package:culcul/features/live/application/models/live_history_danmaku_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 
 class LiveDanmakuEventParser {

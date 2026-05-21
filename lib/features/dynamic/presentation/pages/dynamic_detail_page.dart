@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:culcul/features/dynamic/application/dynamic_detail_actions.dart';
+import 'package:culcul/features/dynamic/application/dynamic_post_card_view_data.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_comment_view_model.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_detail_view_model.dart';
@@ -110,6 +111,7 @@ class DynamicDetailPage extends HookConsumerWidget {
 
     final post = state.post;
     if (post == null) return const SizedBox();
+    final cardPost = post.toDynamicPostCardViewData();
     final commentState = ref.watch(dynamicCommentControllerProvider(post));
     final hasMore = commentState.paging.hasMore;
 
@@ -122,11 +124,11 @@ class DynamicDetailPage extends HookConsumerWidget {
         footer: hasMore ? const AppLoadFooter() : null,
         child: CustomScrollView(
           slivers: [
-            SliverToBoxAdapter(child: DynamicDetailHeader(post: post)),
+            SliverToBoxAdapter(child: DynamicDetailHeader(post: cardPost)),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: DynamicContentWidget(post: post, selectableText: true),
+                child: DynamicContentWidget(post: cardPost, selectableText: true),
               ),
             ),
             const SliverToBoxAdapter(child: SizedBox(height: 12)),
@@ -137,7 +139,7 @@ class DynamicDetailPage extends HookConsumerWidget {
         ),
       ),
       bottomNavigationBar: DynamicDetailBottomBar(
-        post: post,
+        post: cardPost,
         onLike: () {
           unawaited(() async {
             final message = await actions.handleLike();

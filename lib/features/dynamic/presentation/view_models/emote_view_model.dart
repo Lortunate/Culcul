@@ -1,4 +1,4 @@
-import 'package:culcul/features/dynamic/data/dtos/emote_response.dart';
+import 'package:culcul/features/dynamic/application/models/emote_response.dart';
 import 'package:culcul/features/dynamic/data/emote_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

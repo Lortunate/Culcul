@@ -1,6 +1,5 @@
-import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
-import 'package:culcul/features/dynamic/data/dtos/dynamic_item_extensions.dart';
 import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/features/dynamic/application/dynamic_post_card_view_data.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_content_surface.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_content_widget.dart';
 import 'package:culcul/i18n/strings.g.dart';
@@ -8,7 +7,7 @@ import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
 
 class DynamicForwardWidget extends StatelessWidget {
-  final DynamicItem post;
+  final DynamicPostCardViewData post;
 
   const DynamicForwardWidget({super.key, required this.post});
 

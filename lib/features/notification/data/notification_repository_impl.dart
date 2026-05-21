@@ -24,7 +24,7 @@ import 'package:culcul/features/notification/domain/entities/notification_summar
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
-import 'package:culcul/features/notification/data/dtos/system_notice.dart';
+import 'package:culcul/features/notification/domain/entities/system_notice.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'notification_repository_impl.g.dart';

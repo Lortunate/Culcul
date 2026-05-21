@@ -1,4 +1,4 @@
-import 'package:culcul/features/profile/data/dtos/profile_video.dart';
+import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/features/profile/data/profile_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

@@ -12,11 +12,20 @@ flutter pub get
 
 ## Recover Ignored Generated Artifacts
 
-This repo does not track generated `*.g.dart` files. A fresh checkout/worktree
-can therefore be missing required artifacts such as:
+This repo ignores most generated Dart artifacts. A fresh checkout/worktree can
+therefore be missing required artifacts such as:
 
 - `lib/i18n/strings.g.dart`
 - `lib/app/router/app_routes.g.dart`
+
+Checked-in generated exceptions are limited to bootstrap/runtime artifacts that
+must exist before local code generation can run:
+
+- `lib/core/runtime/runtime_lifecycle_provider.g.dart`
+- `lib/core/runtime/runtime_performance_policy_provider.g.dart`
+- `lib/features/profile/data/local/profile_cache_database.g.dart`
+- `lib/protos/dm.pb.dart`
+- `lib/protos/dm.pbenum.dart`
 
 Use the repo-local recovery helper from Git Bash:
 
