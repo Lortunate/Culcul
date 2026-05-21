@@ -67,6 +67,15 @@ flutter test test/architecture/architecture_route_ownership_guard_test.dart
 flutter analyze --no-pub
 ```
 
+Additional first-phase hardening:
+
+- `tool/architecture/run_architecture_guards.sh` includes the route ownership
+  guard.
+- `make ci` runs the architecture guard script between analyze and tests.
+- GitHub CI runs the same architecture guard script before coverage tests.
+- The low-risk Dynamic public API seam stays at `features/dynamic/dynamic.dart`,
+  while the `UserDynamicFeed` implementation lives under Dynamic presentation.
+
 ## Phase 2: Model And DTO Ownership
 
 Goal: one model source per concept.

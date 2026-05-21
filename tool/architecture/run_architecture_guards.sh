@@ -80,5 +80,6 @@ flutter test \
   test/architecture/architecture_boundary_guard_test.dart \
   test/architecture/architecture_domain_dto_guard_test.dart \
   test/architecture/architecture_feedback_guard_test.dart \
+  test/architecture/architecture_route_ownership_guard_test.dart \
   test/architecture/phase31_architecture_guard_test.dart \
   --reporter compact

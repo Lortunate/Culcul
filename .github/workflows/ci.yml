@@ -34,6 +34,7 @@ jobs:
           flutter-version: '3.44.0'
           cache: true
       - run: bash scripts/bootstrap_codegen.sh
+      - run: bash tool/architecture/run_architecture_guards.sh
       - run: flutter test --coverage
       - name: Coverage threshold check
         run: |

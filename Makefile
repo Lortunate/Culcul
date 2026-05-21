@@ -1,4 +1,4 @@
-.PHONY: analyze test test-coverage format format-check codegen i18n all ci clean
+.PHONY: analyze test test-coverage format format-check codegen i18n architecture all ci clean
 
 analyze:
 	flutter analyze --no-fatal-infos
@@ -9,6 +9,9 @@ test:
 test-coverage:
 	flutter test --coverage
 	@echo "Coverage report: coverage/lcov.info"
+
+architecture:
+	bash tool/architecture/run_architecture_guards.sh
 
 format:
 	bash tool/format_dart.sh
@@ -24,7 +27,7 @@ i18n:
 
 all: analyze test
 
-ci: format-check analyze test
+ci: format-check analyze architecture test
 
 clean:
 	flutter clean

@@ -8,6 +8,6 @@ class UserDynamicTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return UserDynamicFeed(mid: mid);
+    return buildUserDynamicFeed(mid: mid);
   }
 }

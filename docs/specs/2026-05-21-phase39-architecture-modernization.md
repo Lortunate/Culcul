@@ -201,9 +201,13 @@ Retain:
 1. Update Phase 39 spec/plan to the verified current baseline.
 2. Archive Phase 30 inventory documents and update active references to the
    archive paths.
-3. Run the architecture boundary guard and route ownership guard.
-4. Run `flutter analyze --no-pub`.
-5. Run GitNexus `detect_changes` before commit to verify affected scope.
+3. Wire the route ownership guard into the shared architecture guard script,
+   Makefile CI target, and GitHub CI.
+4. Keep low-risk cross-feature UI reuse behind a narrow feature public seam
+   instead of importing another feature's presentation internals.
+5. Run the architecture boundary guard and route ownership guard.
+6. Run `flutter analyze --no-pub`.
+7. Run GitNexus `detect_changes` before commit to verify affected scope.
 
 ## Acceptance Criteria
 
