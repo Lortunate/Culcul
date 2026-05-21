@@ -1,17 +1,14 @@
 import 'package:culcul/features/profile/data/dtos/profile_user.dart';
 import 'package:culcul/features/profile/data/local/profile_cache_database.dart';
-import 'package:culcul/features/profile/data/user_info_cache_repository.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('ProfileCacheDatabase', () {
     late ProfileCacheDatabase database;
-    late UserInfoCacheRepository repository;
 
     setUp(() {
       database = ProfileCacheDatabase(executor: NativeDatabase.memory());
-      repository = UserInfoCacheRepository(database);
     });
 
     tearDown(() async {
@@ -21,23 +18,23 @@ void main() {
     test('warm read returns cached profile user', () async {
       final user = _profileUser('42');
 
-      await repository.saveUser(user);
+      await database.upsertUser(user);
 
-      expect(await repository.getUser('42'), user);
+      expect(await database.getUser('42'), user);
     });
 
     test('stale read respects ttl unless explicitly allowed', () async {
       final cachedAt = DateTime(2026, 1, 1, 10);
       final user = _profileUser('42');
 
-      await repository.saveUser(user, now: cachedAt, ttl: const Duration(minutes: 5));
+      await database.upsertUser(user, now: cachedAt, ttl: const Duration(minutes: 5));
 
       expect(
-        await repository.getUser('42', now: cachedAt.add(const Duration(minutes: 6))),
+        await database.getUser('42', now: cachedAt.add(const Duration(minutes: 6))),
         isNull,
       );
       expect(
-        await repository.getUser(
+        await database.getUser(
           '42',
           now: cachedAt.add(const Duration(minutes: 6)),
           allowStale: true,
@@ -47,13 +44,13 @@ void main() {
     });
 
     test('session invalidation clears sensitive rows', () async {
-      await repository.saveUser(_profileUser('42'));
-      await repository.saveUser(_profileUser('43'));
+      await database.upsertUser(_profileUser('42'));
+      await database.upsertUser(_profileUser('43'));
 
-      await repository.clearAllUsers();
+      await database.clearUsers();
 
-      expect(await repository.getUser('42', allowStale: true), isNull);
-      expect(await repository.getUser('43', allowStale: true), isNull);
+      expect(await database.getUser('42', allowStale: true), isNull);
+      expect(await database.getUser('43', allowStale: true), isNull);
     });
 
     test('migration opens cleanly', () async {

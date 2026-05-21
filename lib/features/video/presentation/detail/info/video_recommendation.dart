@@ -1,25 +1,39 @@
-import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/app/router/app_routes.dart';
-import 'package:culcul/ui/assemblies/feed_cards/video_card.dart';
+import 'package:culcul/ui/assemblies/feed_cards/video_list_card.dart';
+import 'package:culcul/ui/widgets/buttons/app_tag.dart';
 import 'package:flutter/material.dart';
 
 class RecommendationItem extends StatelessWidget {
-  final RelatedVideo video;
+  final VideoModel video;
 
   const RecommendationItem({super.key, required this.video});
 
   @override
   Widget build(BuildContext context) {
-    return VideoCard(
-      bvid: video.bvid,
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return VideoListCard(
       title: video.title,
       coverUrl: video.pic,
-      author: video.owner.name,
-      description: video.desc,
       duration: video.duration,
       viewCount: video.stat.view,
       danmakuCount: video.stat.danmaku,
-      reason: video.rcmdReason,
+      thumbnailWidth: 104,
+      height: 66,
+      padding: EdgeInsets.zero,
+      flat: true,
+      badge: video.rcmdReason.isNotEmpty
+          ? AppTag(text: video.rcmdReason, fontSize: 11)
+          : null,
+      author: Text(
+        video.owner.name,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: Theme.of(
+          context,
+        ).textTheme.labelSmall?.copyWith(color: colorScheme.onSurfaceVariant),
+      ),
       onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
     );
   }

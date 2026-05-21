@@ -1,7 +1,7 @@
 part of 'video_info_view.dart';
 
 class _VideoInfoEngagementSection extends StatelessWidget {
-  final VideoDetail detail;
+  final VideoDetailViewData detail;
   final int currentCid;
   final bool hasRecommendations;
   final VoidCallback onLike;

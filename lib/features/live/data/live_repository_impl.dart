@@ -50,9 +50,10 @@ class LiveRepositoryImpl {
 
   Future<Result<List<LiveRoomSummary>, AppError>> fetchRecommendListModels({
     int page = 1,
+    required int pageSize,
   }) async {
     final result = await _requestExecutor.runApiDirect(
-      () => _api.getRecommendList(page: page),
+      () => _api.getRecommendList(page: page, pageSize: pageSize),
     );
     return result.map((data) => data.roomList);
   }
@@ -91,7 +92,10 @@ class LiveRepositoryImpl {
     );
   }
 
-  Future<Result<List<LiveRoomSummary>, AppError>> getRecommendList({int page = 1}) {
-    return fetchRecommendListModels(page: page);
+  Future<Result<List<LiveRoomSummary>, AppError>> getRecommendList({
+    int page = 1,
+    required int pageSize,
+  }) {
+    return fetchRecommendListModels(page: page, pageSize: pageSize);
   }
 }

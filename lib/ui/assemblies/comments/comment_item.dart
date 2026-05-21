@@ -21,6 +21,7 @@ class CommentItemWidget extends StatelessWidget {
   final VoidCallback? onReply;
   final bool showRepliesPreview;
   final VoidCallback? onTapReplies;
+  final ValueChanged<int>? onTapUser;
   final int? upperMid;
 
   const CommentItemWidget({
@@ -31,8 +32,17 @@ class CommentItemWidget extends StatelessWidget {
     this.onReply,
     this.showRepliesPreview = true,
     this.onTapReplies,
+    this.onTapUser,
     this.upperMid,
   });
+
+  void _handleTapUser() {
+    final mid = int.tryParse(item.member.mid);
+    if (mid == null || mid <= 0) {
+      return;
+    }
+    onTapUser?.call(mid);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,13 +51,17 @@ class CommentItemWidget extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AppAvatar(url: item.member.avatar, size: 38),
+          AppAvatar(url: item.member.avatar, size: 38, onTap: _handleTapUser),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _Header(member: item.member, upperMid: upperMid),
+                _Header(
+                  member: item.member,
+                  upperMid: upperMid,
+                  onTapUser: _handleTapUser,
+                ),
                 const SizedBox(height: 6),
                 _Content(content: item.content, item: item),
                 const SizedBox(height: 8),

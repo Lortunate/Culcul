@@ -59,7 +59,7 @@ class SmartPagingView<T> extends HookConsumerWidget {
     }
 
     final items = asyncValue.value ?? <T>[];
-    final content = _PagingContent(
+    final content = SmartPagingContent<T>(
       asyncValue: asyncValue,
       items: items,
       builder: builder,

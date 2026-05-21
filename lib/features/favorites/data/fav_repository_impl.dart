@@ -18,7 +18,7 @@ FavRepositoryImpl favRepository(Ref ref) {
 }
 
 class FavRepositoryImpl {
-  static const int _defaultPageSize = 20;
+  static const int _favoritePageSize = 20;
   final FavApi _api;
   final RequestExecutor _requestExecutor;
 
@@ -34,7 +34,7 @@ class FavRepositoryImpl {
   Future<Result<FavFolderListResponse, AppError>> getCollectedFoldersModel({
     required int upMid,
     required int pn,
-    int ps = _defaultPageSize,
+    int ps = _favoritePageSize,
   }) {
     return _requestExecutor.runApiDirect(() => _api.getCollectedFolders(upMid, pn, ps));
   }
@@ -42,7 +42,7 @@ class FavRepositoryImpl {
   Future<Result<FavResourceListResponse, AppError>> getFolderResourcesModel({
     required int mediaId,
     required int pn,
-    int ps = _defaultPageSize,
+    int ps = _favoritePageSize,
     String? keyword,
     String? order,
     int? type,

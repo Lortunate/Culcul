@@ -9,7 +9,6 @@ part 'relation_view_model.g.dart';
 @riverpod
 class Followings extends _$Followings with OffsetPagedAsyncNotifier<ProfileRelationUser> {
   late int _vmid;
-  static const _pageSize = 50;
 
   @override
   Future<List<ProfileRelationUser>> build(int vmid) async {
@@ -27,7 +26,8 @@ class Followings extends _$Followings with OffsetPagedAsyncNotifier<ProfileRelat
   Object itemId(ProfileRelationUser item) => item.mid;
 
   @override
-  bool hasMoreAfterPage(List<ProfileRelationUser> items) => items.length >= _pageSize;
+  bool hasMoreAfterPage(List<ProfileRelationUser> items) =>
+      items.length >= RelationService.defaultPageSize;
 
   Future<void> refresh() {
     return refreshPage();
@@ -41,7 +41,6 @@ class Followings extends _$Followings with OffsetPagedAsyncNotifier<ProfileRelat
 @riverpod
 class Followers extends _$Followers with OffsetPagedAsyncNotifier<ProfileRelationUser> {
   late int _vmid;
-  static const _pageSize = 50;
 
   @override
   Future<List<ProfileRelationUser>> build(int vmid) async {
@@ -59,7 +58,8 @@ class Followers extends _$Followers with OffsetPagedAsyncNotifier<ProfileRelatio
   Object itemId(ProfileRelationUser item) => item.mid;
 
   @override
-  bool hasMoreAfterPage(List<ProfileRelationUser> items) => items.length >= _pageSize;
+  bool hasMoreAfterPage(List<ProfileRelationUser> items) =>
+      items.length >= RelationService.defaultPageSize;
 
   Future<void> refresh() {
     return refreshPage();

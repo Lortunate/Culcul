@@ -37,6 +37,9 @@ sealed class ReqUser with _$ReqUser {
   const factory ReqUser({
     @Default(0) int attention,
     @JsonKey(name: 'guest_attention') @Default(0) int guestAttention,
+    @Default(0) int like,
+    @Default(0) int coin,
+    @Default(0) int favorite,
   }) = _ReqUser;
 
   factory ReqUser.fromJson(Map<String, dynamic> json) => _$ReqUserFromJson(json);

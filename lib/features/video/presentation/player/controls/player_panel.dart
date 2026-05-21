@@ -1,4 +1,5 @@
 import 'package:culcul/features/video/presentation/player/controls/video_overlay_styles.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 
 part 'player_panel_empty_state.dart';

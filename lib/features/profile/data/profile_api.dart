@@ -42,6 +42,7 @@ abstract class ProfileApi {
   Future<ApiResponse<dynamic>> getNavNum(@Query('mid') int mid);
 
   @GET('/x/web-interface/card')
+  @Headers({'x-bili-wbi': 'true'})
   Future<ApiResponse<dynamic>> getCard(
     @Query('mid') int mid, {
     @Query('photo') bool photo = true,

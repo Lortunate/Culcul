@@ -11,10 +11,10 @@ test-coverage:
 	@echo "Coverage report: coverage/lcov.info"
 
 format:
-	dart format .
+	bash tool/format_dart.sh
 
 format-check:
-	dart format --output=none --set-exit-if-changed .
+	bash tool/format_dart.sh --check
 
 codegen:
 	dart run build_runner build --delete-conflicting-outputs

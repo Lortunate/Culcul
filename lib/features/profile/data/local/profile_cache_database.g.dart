@@ -18,7 +18,9 @@ class $CachedProfileUsersTable extends CachedProfileUsers
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _usernameMeta = const VerificationMeta('username');
+  static const VerificationMeta _usernameMeta = const VerificationMeta(
+    'username',
+  );
   @override
   late final GeneratedColumn<String> username = GeneratedColumn<String>(
     'username',
@@ -27,7 +29,9 @@ class $CachedProfileUsersTable extends CachedProfileUsers
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _avatarUrlMeta = const VerificationMeta('avatarUrl');
+  static const VerificationMeta _avatarUrlMeta = const VerificationMeta(
+    'avatarUrl',
+  );
   @override
   late final GeneratedColumn<String> avatarUrl = GeneratedColumn<String>(
     'avatar_url',
@@ -36,7 +40,9 @@ class $CachedProfileUsersTable extends CachedProfileUsers
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _bannerUrlMeta = const VerificationMeta('bannerUrl');
+  static const VerificationMeta _bannerUrlMeta = const VerificationMeta(
+    'bannerUrl',
+  );
   @override
   late final GeneratedColumn<String> bannerUrl = GeneratedColumn<String>(
     'banner_url',
@@ -54,7 +60,9 @@ class $CachedProfileUsersTable extends CachedProfileUsers
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _locationMeta = const VerificationMeta('location');
+  static const VerificationMeta _locationMeta = const VerificationMeta(
+    'location',
+  );
   @override
   late final GeneratedColumn<String> location = GeneratedColumn<String>(
     'location',
@@ -85,7 +93,9 @@ class $CachedProfileUsersTable extends CachedProfileUsers
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
-  static const VerificationMeta _videosCountMeta = const VerificationMeta('videosCount');
+  static const VerificationMeta _videosCountMeta = const VerificationMeta(
+    'videosCount',
+  );
   @override
   late final GeneratedColumn<int> videosCount = GeneratedColumn<int>(
     'videos_count',
@@ -106,7 +116,9 @@ class $CachedProfileUsersTable extends CachedProfileUsers
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
-  static const VerificationMeta _likesCountMeta = const VerificationMeta('likesCount');
+  static const VerificationMeta _likesCountMeta = const VerificationMeta(
+    'likesCount',
+  );
   @override
   late final GeneratedColumn<int> likesCount = GeneratedColumn<int>(
     'likes_count',
@@ -126,7 +138,9 @@ class $CachedProfileUsersTable extends CachedProfileUsers
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
-  static const VerificationMeta _vipTypeMeta = const VerificationMeta('vipType');
+  static const VerificationMeta _vipTypeMeta = const VerificationMeta(
+    'vipType',
+  );
   @override
   late final GeneratedColumn<int> vipType = GeneratedColumn<int>(
     'vip_type',
@@ -136,7 +150,9 @@ class $CachedProfileUsersTable extends CachedProfileUsers
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
-  static const VerificationMeta _vipStatusMeta = const VerificationMeta('vipStatus');
+  static const VerificationMeta _vipStatusMeta = const VerificationMeta(
+    'vipStatus',
+  );
   @override
   late final GeneratedColumn<int> vipStatus = GeneratedColumn<int>(
     'vip_status',
@@ -164,7 +180,9 @@ class $CachedProfileUsersTable extends CachedProfileUsers
     type: DriftSqlType.double,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _currentExpMeta = const VerificationMeta('currentExp');
+  static const VerificationMeta _currentExpMeta = const VerificationMeta(
+    'currentExp',
+  );
   @override
   late final GeneratedColumn<int> currentExp = GeneratedColumn<int>(
     'current_exp',
@@ -173,7 +191,9 @@ class $CachedProfileUsersTable extends CachedProfileUsers
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _nextExpMeta = const VerificationMeta('nextExp');
+  static const VerificationMeta _nextExpMeta = const VerificationMeta(
+    'nextExp',
+  );
   @override
   late final GeneratedColumn<int> nextExp = GeneratedColumn<int>(
     'next_exp',
@@ -193,7 +213,9 @@ class $CachedProfileUsersTable extends CachedProfileUsers
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
-  static const VerificationMeta _isFollowingMeta = const VerificationMeta('isFollowing');
+  static const VerificationMeta _isFollowingMeta = const VerificationMeta(
+    'isFollowing',
+  );
   @override
   late final GeneratedColumn<bool> isFollowing = GeneratedColumn<bool>(
     'is_following',
@@ -205,7 +227,9 @@ class $CachedProfileUsersTable extends CachedProfileUsers
       'CHECK ("is_following" IN (0, 1))',
     ),
   );
-  static const VerificationMeta _isVerifiedMeta = const VerificationMeta('isVerified');
+  static const VerificationMeta _isVerifiedMeta = const VerificationMeta(
+    'isVerified',
+  );
   @override
   late final GeneratedColumn<bool> isVerified = GeneratedColumn<bool>(
     'is_verified',
@@ -318,7 +342,10 @@ class $CachedProfileUsersTable extends CachedProfileUsers
       );
     }
     if (data.containsKey('bio')) {
-      context.handle(_bioMeta, bio.isAcceptableOrUnknown(data['bio']!, _bioMeta));
+      context.handle(
+        _bioMeta,
+        bio.isAcceptableOrUnknown(data['bio']!, _bioMeta),
+      );
     }
     if (data.containsKey('location')) {
       context.handle(
@@ -351,7 +378,10 @@ class $CachedProfileUsersTable extends CachedProfileUsers
     if (data.containsKey('videos_count')) {
       context.handle(
         _videosCountMeta,
-        videosCount.isAcceptableOrUnknown(data['videos_count']!, _videosCountMeta),
+        videosCount.isAcceptableOrUnknown(
+          data['videos_count']!,
+          _videosCountMeta,
+        ),
       );
     } else if (isInserting) {
       context.missing(_videosCountMeta);
@@ -359,7 +389,10 @@ class $CachedProfileUsersTable extends CachedProfileUsers
     if (data.containsKey('dynamic_count')) {
       context.handle(
         _dynamicCountMeta,
-        dynamicCount.isAcceptableOrUnknown(data['dynamic_count']!, _dynamicCountMeta),
+        dynamicCount.isAcceptableOrUnknown(
+          data['dynamic_count']!,
+          _dynamicCountMeta,
+        ),
       );
     }
     if (data.containsKey('likes_count')) {
@@ -369,7 +402,10 @@ class $CachedProfileUsersTable extends CachedProfileUsers
       );
     }
     if (data.containsKey('level')) {
-      context.handle(_levelMeta, level.isAcceptableOrUnknown(data['level']!, _levelMeta));
+      context.handle(
+        _levelMeta,
+        level.isAcceptableOrUnknown(data['level']!, _levelMeta),
+      );
     }
     if (data.containsKey('vip_type')) {
       context.handle(
@@ -384,7 +420,10 @@ class $CachedProfileUsersTable extends CachedProfileUsers
       );
     }
     if (data.containsKey('coins')) {
-      context.handle(_coinsMeta, coins.isAcceptableOrUnknown(data['coins']!, _coinsMeta));
+      context.handle(
+        _coinsMeta,
+        coins.isAcceptableOrUnknown(data['coins']!, _coinsMeta),
+      );
     }
     if (data.containsKey('b_coins')) {
       context.handle(
@@ -407,13 +446,19 @@ class $CachedProfileUsersTable extends CachedProfileUsers
     if (data.containsKey('current_min_exp')) {
       context.handle(
         _currentMinExpMeta,
-        currentMinExp.isAcceptableOrUnknown(data['current_min_exp']!, _currentMinExpMeta),
+        currentMinExp.isAcceptableOrUnknown(
+          data['current_min_exp']!,
+          _currentMinExpMeta,
+        ),
       );
     }
     if (data.containsKey('is_following')) {
       context.handle(
         _isFollowingMeta,
-        isFollowing.isAcceptableOrUnknown(data['is_following']!, _isFollowingMeta),
+        isFollowing.isAcceptableOrUnknown(
+          data['is_following']!,
+          _isFollowingMeta,
+        ),
       );
     } else if (isInserting) {
       context.missing(_isFollowingMeta);
@@ -571,7 +616,8 @@ class $CachedProfileUsersTable extends CachedProfileUsers
   }
 }
 
-class CachedProfileUser extends DataClass implements Insertable<CachedProfileUser> {
+class CachedProfileUser extends DataClass
+    implements Insertable<CachedProfileUser> {
   final String userId;
   final String username;
   final String? avatarUrl;
@@ -683,7 +729,9 @@ class CachedProfileUser extends DataClass implements Insertable<CachedProfileUse
           ? const Value.absent()
           : Value(bannerUrl),
       bio: bio == null && nullToAbsent ? const Value.absent() : Value(bio),
-      location: location == null && nullToAbsent ? const Value.absent() : Value(location),
+      location: location == null && nullToAbsent
+          ? const Value.absent()
+          : Value(location),
       followersCount: Value(followersCount),
       followingCount: Value(followingCount),
       videosCount: Value(videosCount),
@@ -692,12 +740,18 @@ class CachedProfileUser extends DataClass implements Insertable<CachedProfileUse
       level: Value(level),
       vipType: Value(vipType),
       vipStatus: Value(vipStatus),
-      coins: coins == null && nullToAbsent ? const Value.absent() : Value(coins),
-      bCoins: bCoins == null && nullToAbsent ? const Value.absent() : Value(bCoins),
+      coins: coins == null && nullToAbsent
+          ? const Value.absent()
+          : Value(coins),
+      bCoins: bCoins == null && nullToAbsent
+          ? const Value.absent()
+          : Value(bCoins),
       currentExp: currentExp == null && nullToAbsent
           ? const Value.absent()
           : Value(currentExp),
-      nextExp: nextExp == null && nullToAbsent ? const Value.absent() : Value(nextExp),
+      nextExp: nextExp == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nextExp),
       currentMinExp: currentMinExp == null && nullToAbsent
           ? const Value.absent()
           : Value(currentMinExp),
@@ -818,7 +872,9 @@ class CachedProfileUser extends DataClass implements Insertable<CachedProfileUse
     bCoins: bCoins.present ? bCoins.value : this.bCoins,
     currentExp: currentExp.present ? currentExp.value : this.currentExp,
     nextExp: nextExp.present ? nextExp.value : this.nextExp,
-    currentMinExp: currentMinExp.present ? currentMinExp.value : this.currentMinExp,
+    currentMinExp: currentMinExp.present
+        ? currentMinExp.value
+        : this.currentMinExp,
     isFollowing: isFollowing ?? this.isFollowing,
     isVerified: isVerified ?? this.isVerified,
     createdAtMillis: createdAtMillis.present
@@ -841,23 +897,33 @@ class CachedProfileUser extends DataClass implements Insertable<CachedProfileUse
       followingCount: data.followingCount.present
           ? data.followingCount.value
           : this.followingCount,
-      videosCount: data.videosCount.present ? data.videosCount.value : this.videosCount,
+      videosCount: data.videosCount.present
+          ? data.videosCount.value
+          : this.videosCount,
       dynamicCount: data.dynamicCount.present
           ? data.dynamicCount.value
           : this.dynamicCount,
-      likesCount: data.likesCount.present ? data.likesCount.value : this.likesCount,
+      likesCount: data.likesCount.present
+          ? data.likesCount.value
+          : this.likesCount,
       level: data.level.present ? data.level.value : this.level,
       vipType: data.vipType.present ? data.vipType.value : this.vipType,
       vipStatus: data.vipStatus.present ? data.vipStatus.value : this.vipStatus,
       coins: data.coins.present ? data.coins.value : this.coins,
       bCoins: data.bCoins.present ? data.bCoins.value : this.bCoins,
-      currentExp: data.currentExp.present ? data.currentExp.value : this.currentExp,
+      currentExp: data.currentExp.present
+          ? data.currentExp.value
+          : this.currentExp,
       nextExp: data.nextExp.present ? data.nextExp.value : this.nextExp,
       currentMinExp: data.currentMinExp.present
           ? data.currentMinExp.value
           : this.currentMinExp,
-      isFollowing: data.isFollowing.present ? data.isFollowing.value : this.isFollowing,
-      isVerified: data.isVerified.present ? data.isVerified.value : this.isVerified,
+      isFollowing: data.isFollowing.present
+          ? data.isFollowing.value
+          : this.isFollowing,
+      isVerified: data.isVerified.present
+          ? data.isVerified.value
+          : this.isVerified,
       createdAtMillis: data.createdAtMillis.present
           ? data.createdAtMillis.value
           : this.createdAtMillis,
@@ -1274,8 +1340,10 @@ class CachedProfileUsersCompanion extends UpdateCompanion<CachedProfileUser> {
 
 abstract class _$ProfileCacheDatabase extends GeneratedDatabase {
   _$ProfileCacheDatabase(QueryExecutor e) : super(e);
-  $ProfileCacheDatabaseManager get managers => $ProfileCacheDatabaseManager(this);
-  late final $CachedProfileUsersTable cachedProfileUsers = $CachedProfileUsersTable(this);
+  $ProfileCacheDatabaseManager get managers =>
+      $ProfileCacheDatabaseManager(this);
+  late final $CachedProfileUsersTable cachedProfileUsers =
+      $CachedProfileUsersTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1369,8 +1437,10 @@ class $$CachedProfileUsersTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnFilters<String> get bio =>
-      $composableBuilder(column: $table.bio, builder: (column) => ColumnFilters(column));
+  ColumnFilters<String> get bio => $composableBuilder(
+    column: $table.bio,
+    builder: (column) => ColumnFilters(column),
+  );
 
   ColumnFilters<String> get location => $composableBuilder(
     column: $table.location,
@@ -1625,20 +1695,30 @@ class $$CachedProfileUsersTableAnnotationComposer
   GeneratedColumn<String> get location =>
       $composableBuilder(column: $table.location, builder: (column) => column);
 
-  GeneratedColumn<int> get followersCount =>
-      $composableBuilder(column: $table.followersCount, builder: (column) => column);
+  GeneratedColumn<int> get followersCount => $composableBuilder(
+    column: $table.followersCount,
+    builder: (column) => column,
+  );
 
-  GeneratedColumn<int> get followingCount =>
-      $composableBuilder(column: $table.followingCount, builder: (column) => column);
+  GeneratedColumn<int> get followingCount => $composableBuilder(
+    column: $table.followingCount,
+    builder: (column) => column,
+  );
 
-  GeneratedColumn<int> get videosCount =>
-      $composableBuilder(column: $table.videosCount, builder: (column) => column);
+  GeneratedColumn<int> get videosCount => $composableBuilder(
+    column: $table.videosCount,
+    builder: (column) => column,
+  );
 
-  GeneratedColumn<int> get dynamicCount =>
-      $composableBuilder(column: $table.dynamicCount, builder: (column) => column);
+  GeneratedColumn<int> get dynamicCount => $composableBuilder(
+    column: $table.dynamicCount,
+    builder: (column) => column,
+  );
 
-  GeneratedColumn<int> get likesCount =>
-      $composableBuilder(column: $table.likesCount, builder: (column) => column);
+  GeneratedColumn<int> get likesCount => $composableBuilder(
+    column: $table.likesCount,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<int> get level =>
       $composableBuilder(column: $table.level, builder: (column) => column);
@@ -1655,29 +1735,43 @@ class $$CachedProfileUsersTableAnnotationComposer
   GeneratedColumn<double> get bCoins =>
       $composableBuilder(column: $table.bCoins, builder: (column) => column);
 
-  GeneratedColumn<int> get currentExp =>
-      $composableBuilder(column: $table.currentExp, builder: (column) => column);
+  GeneratedColumn<int> get currentExp => $composableBuilder(
+    column: $table.currentExp,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<int> get nextExp =>
       $composableBuilder(column: $table.nextExp, builder: (column) => column);
 
-  GeneratedColumn<int> get currentMinExp =>
-      $composableBuilder(column: $table.currentMinExp, builder: (column) => column);
+  GeneratedColumn<int> get currentMinExp => $composableBuilder(
+    column: $table.currentMinExp,
+    builder: (column) => column,
+  );
 
-  GeneratedColumn<bool> get isFollowing =>
-      $composableBuilder(column: $table.isFollowing, builder: (column) => column);
+  GeneratedColumn<bool> get isFollowing => $composableBuilder(
+    column: $table.isFollowing,
+    builder: (column) => column,
+  );
 
-  GeneratedColumn<bool> get isVerified =>
-      $composableBuilder(column: $table.isVerified, builder: (column) => column);
+  GeneratedColumn<bool> get isVerified => $composableBuilder(
+    column: $table.isVerified,
+    builder: (column) => column,
+  );
 
-  GeneratedColumn<int> get createdAtMillis =>
-      $composableBuilder(column: $table.createdAtMillis, builder: (column) => column);
+  GeneratedColumn<int> get createdAtMillis => $composableBuilder(
+    column: $table.createdAtMillis,
+    builder: (column) => column,
+  );
 
-  GeneratedColumn<int> get cachedAtMillis =>
-      $composableBuilder(column: $table.cachedAtMillis, builder: (column) => column);
+  GeneratedColumn<int> get cachedAtMillis => $composableBuilder(
+    column: $table.cachedAtMillis,
+    builder: (column) => column,
+  );
 
-  GeneratedColumn<int> get expiresAtMillis =>
-      $composableBuilder(column: $table.expiresAtMillis, builder: (column) => column);
+  GeneratedColumn<int> get expiresAtMillis => $composableBuilder(
+    column: $table.expiresAtMillis,
+    builder: (column) => column,
+  );
 }
 
 class $$CachedProfileUsersTableTableManager
@@ -1714,7 +1808,10 @@ class $$CachedProfileUsersTableTableManager
           createOrderingComposer: () =>
               $$CachedProfileUsersTableOrderingComposer($db: db, $table: table),
           createComputedFieldComposer: () =>
-              $$CachedProfileUsersTableAnnotationComposer($db: db, $table: table),
+              $$CachedProfileUsersTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
           updateCompanionCallback:
               ({
                 Value<String> userId = const Value.absent(),
@@ -1823,8 +1920,9 @@ class $$CachedProfileUsersTableTableManager
                 expiresAtMillis: expiresAtMillis,
                 rowid: rowid,
               ),
-          withReferenceMapper: (p0) =>
-              p0.map((e) => (e.readTable(table), BaseReferences(db, table, e))).toList(),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
           prefetchHooksCallback: null,
         ),
       );
@@ -1893,8 +1991,9 @@ final class ProfileCacheDatabaseProvider
 
   @$internal
   @override
-  $ProviderElement<ProfileCacheDatabase> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<ProfileCacheDatabase> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   ProfileCacheDatabase create(Ref ref) {
@@ -1910,4 +2009,5 @@ final class ProfileCacheDatabaseProvider
   }
 }
 
-String _$profileCacheDatabaseHash() => r'c96491958c016d1e2c5a3b488b4724eaed84db54';
+String _$profileCacheDatabaseHash() =>
+    r'c96491958c016d1e2c5a3b488b4724eaed84db54';

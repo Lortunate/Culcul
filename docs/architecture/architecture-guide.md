@@ -1,11 +1,13 @@
 # Culcul Architecture Guide
 
-Active phase: Phase 37 Modern Architecture Consolidation. Last completed phase: Phase 34 Architecture Modernization. Phase 35 and Phase 36 were superseded before code execution.
+Active phase: Phase 38 Architecture SSOT And Startup Performance. Last completed phase: Phase 34 Architecture Modernization. Phase 35, Phase 36, and Phase 37 were superseded before code execution completed.
 
 Authoritative docs:
 
-- Active spec: `docs/specs/2026-05-19-phase37-modern-architecture-consolidation.md`
-- Active plan: `docs/plans/2026-05-19-phase37-modern-architecture-consolidation.md`
+- Active spec: `docs/specs/2026-05-21-phase38-architecture-ssot-startup-performance.md`
+- Active plan: `docs/plans/2026-05-21-phase38-architecture-ssot-startup-performance.md`
+- Superseded spec: `docs/specs/archive/2026-05-19-phase37-modern-architecture-consolidation.superseded.md`
+- Superseded plan: `docs/plans/archive/2026-05-19-phase37-modern-architecture-consolidation.superseded.md`
 - Superseded spec: `docs/specs/archive/2026-05-18-phase36-aggressive-architecture-cleanup.superseded.md`
 - Superseded plan: `docs/plans/archive/2026-05-18-phase36-aggressive-architecture-cleanup.superseded.md`
 - Superseded spec: `docs/specs/archive/2026-05-16-phase32-source-of-truth-consolidation.superseded.md`
@@ -36,7 +38,7 @@ Authoritative docs:
 
 `lib/shared/` is retired and must not return.
 
-Phase 37 may aggressively reorganize directories inside a feature. It must keep
+Phase 38 may aggressively reorganize directories inside a feature. It must keep
 the top-level `app/`, `core/`, `features/`, and `ui/` boundary intact.
 
 ## Hard Rules
@@ -100,6 +102,17 @@ concrete runtime composition seam.
 - `NotificationMessagePersistence` extracted as shared persistence service.
 - `notification_repository_impl.message_send_helpers.dart` mixin deleted.
 - Circular dependency in notification data layer broken via callback injection (`SyncMessagesHeadFn`).
+
+### Phase 38 Planning Baseline
+
+- `lib/` source Dart files: 642.
+- `lib/` generated Dart files: 235.
+- `lib/` total Dart files: 877.
+- cross-feature private `data/**` or `presentation/**` imports: 0.
+- cross-feature `domain/**` or `application/**` imports found by planning audit: 34.
+- non-data imports of feature `data/dtos`: 77.
+- Phase 30 cross-feature application/domain inventory remains guard evidence: `docs/architecture/phase30-application-seam-inventory.md`.
+- Phase 30 presentation data/proto inventory remains baseline evidence: `docs/architecture/phase30-presentation-data-inventory.md`.
 
 ### Phase 30 Completion Baseline
 

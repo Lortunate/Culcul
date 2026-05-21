@@ -1,3 +1,4 @@
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 
 class AppTag extends StatelessWidget {
@@ -14,8 +15,11 @@ class AppTag extends StatelessWidget {
     this.color,
     this.textColor,
     this.fontSize = 10,
-    this.padding = const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-    this.borderRadius = 4,
+    this.padding = const EdgeInsets.symmetric(
+      horizontal: CulculSpacing.xxs,
+      vertical: CulculSpacing.xxs / 2,
+    ),
+    this.borderRadius = CulculRadius.xs,
   });
 
   Color _backgroundColor(ColorScheme colorScheme) {

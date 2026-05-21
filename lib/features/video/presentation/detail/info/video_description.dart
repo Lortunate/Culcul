@@ -1,12 +1,13 @@
-import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
+import 'package:culcul/features/video/application/video_detail_models.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 class ExpandableDescriptionAndTags extends HookWidget {
   final String description;
-  final List<VideoTag> tags;
+  final List<VideoTagViewData> tags;
 
   const ExpandableDescriptionAndTags({
     super.key,
@@ -24,10 +25,13 @@ class ExpandableDescriptionAndTags extends HookWidget {
     return AppClickable(
       onTap: () => isExpanded.value = !isExpanded.value,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        padding: const EdgeInsets.symmetric(
+          horizontal: CulculSpacing.sm,
+          vertical: CulculSpacing.xs,
+        ),
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(CulculRadius.sm),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -40,13 +44,13 @@ class ExpandableDescriptionAndTags extends HookWidget {
                     description.isEmpty ? t.video.no_desc : description,
                     maxLines: isExpanded.value ? null : 1,
                     overflow: isExpanded.value ? null : TextOverflow.ellipsis,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      height: 1.6,
-                      color: colorScheme.onSurface,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontSize: 13,
+                      height: 1.45,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
                 Icon(
                   isExpanded.value
                       ? Icons.keyboard_arrow_up_rounded
@@ -57,10 +61,10 @@ class ExpandableDescriptionAndTags extends HookWidget {
               ],
             ),
             if (isExpanded.value && tags.isNotEmpty) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: CulculSpacing.xs),
               Wrap(
-                spacing: 8,
-                runSpacing: 8,
+                spacing: CulculSpacing.xs,
+                runSpacing: CulculSpacing.xs,
                 children: tags.take(12).map((tag) => CompactTag(tag: tag)).toList(),
               ),
             ],
@@ -72,7 +76,7 @@ class ExpandableDescriptionAndTags extends HookWidget {
 }
 
 class CompactTag extends StatelessWidget {
-  final VideoTag tag;
+  final VideoTagViewData tag;
 
   const CompactTag({super.key, required this.tag});
 
@@ -82,10 +86,13 @@ class CompactTag extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(
+        horizontal: CulculSpacing.sm,
+        vertical: CulculSpacing.xxs,
+      ),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(CulculRadius.lg),
       ),
       child: Text(
         tag.tagName,

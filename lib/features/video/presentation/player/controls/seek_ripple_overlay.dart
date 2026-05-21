@@ -1,3 +1,4 @@
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
@@ -30,7 +31,9 @@ class SeekRippleOverlay extends HookWidget {
         child: Container(
           color: colorScheme.onPrimary.withValues(alpha: 0.2),
           alignment: isForward ? Alignment.centerRight : Alignment.centerLeft,
-          padding: const EdgeInsets.symmetric(horizontal: 40),
+          padding: const EdgeInsets.symmetric(
+            horizontal: CulculSpacing.xl + CulculSpacing.xs,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -39,7 +42,7 @@ class SeekRippleOverlay extends HookWidget {
                 color: colorScheme.onPrimary,
                 size: 40,
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: CulculSpacing.xs),
               Text(
                 '10s',
                 style: TextStyle(

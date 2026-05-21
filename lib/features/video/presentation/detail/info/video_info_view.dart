@@ -1,6 +1,6 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
-import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/features/video/application/video_detail_models.dart';
 import 'package:culcul/features/video/presentation/detail/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/detail/info/uploader_section.dart';
 import 'package:culcul/features/video/presentation/detail/info/video_actions.dart';
@@ -34,7 +34,7 @@ class VideoInfoView extends HookConsumerWidget {
           isInitialLoading: state.videoDetail == null && state.isLoading,
           error: state.videoDetail == null ? state.error : null,
           detail: state.videoDetail,
-          isFollowed: state.videoDetail?.reqUser?.attention == 1,
+          isFollowed: state.videoDetail?.reqUser.attention == 1,
           currentCid: state.currentCid,
           relatedVideos: state.relatedVideos,
         ),

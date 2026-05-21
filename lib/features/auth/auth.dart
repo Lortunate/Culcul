@@ -2,7 +2,7 @@ import 'package:culcul/features/auth/presentation/widgets/login_dialog.dart';
 import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'login_dialog_action.g.dart';
+part 'auth.g.dart';
 
 typedef ShowLoginDialog = void Function(BuildContext context);
 

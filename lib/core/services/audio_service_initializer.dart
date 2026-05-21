@@ -1,5 +1,5 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:flutter/foundation.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 
 const String _audioNotificationChannelId = 'com.lortunate.culcul.channel.audio';
 const String _audioNotificationChannelName = 'Video Playback';
@@ -38,9 +38,9 @@ Future<void> _initializeCulculAudioService({
     );
     _audioServiceInitialized = true;
   } catch (error) {
-    if (kDebugMode) {
-      debugPrint('AudioService init failed: $error');
-    }
+    DevLogger.log('startup', 'audio_service.init_failed', <String, Object?>{
+      'error': error,
+    });
   } finally {
     _audioServiceInitFuture = null;
   }

@@ -211,4 +211,18 @@ class VideoRepositoryImpl {
       () => api.reportVideoProgress(aid, cid, progress, 'android', 3),
     );
   }
+
+  Future<Result<void, AppError>> setVideoLike({required int aid, required bool isLiked}) {
+    return _requestExecutor.runUnit(() => api.setVideoLike(aid, isLiked ? 1 : 2));
+  }
+
+  Future<Result<void, AppError>> addVideoCoin({
+    required int aid,
+    int count = 1,
+    bool alsoLike = false,
+  }) {
+    return _requestExecutor.runUnit(
+      () => api.addVideoCoin(aid, count, selectLike: alsoLike ? 1 : 0),
+    );
+  }
 }

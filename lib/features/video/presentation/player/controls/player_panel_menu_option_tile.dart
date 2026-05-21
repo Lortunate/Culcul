@@ -22,16 +22,19 @@ class PlayerMenuOptionTile extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(CulculRadius.lg),
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
+          duration: CulculMotion.fast,
           curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          padding: const EdgeInsets.symmetric(
+            horizontal: CulculSpacing.md,
+            vertical: CulculSpacing.md,
+          ),
           decoration: BoxDecoration(
             color: isSelected
                 ? colorScheme.primaryContainer.withValues(alpha: 0.95)
                 : VideoOverlayStyles.panelSurface(colorScheme, alpha: 0.48),
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(CulculRadius.lg),
             border: Border.all(
               color: isSelected
                   ? colorScheme.primary.withValues(alpha: 0.9)
@@ -55,7 +58,7 @@ class PlayerMenuOptionTile extends StatelessWidget {
                       ),
                     ),
                     if (subtitle != null) ...[
-                      const SizedBox(height: 4),
+                      const SizedBox(height: CulculSpacing.xxs),
                       Text(
                         subtitle!,
                         style: VideoOverlayStyles.bodyStyle(colorScheme).copyWith(
@@ -69,7 +72,7 @@ class PlayerMenuOptionTile extends StatelessWidget {
                 ),
               ),
               AnimatedSwitcher(
-                duration: const Duration(milliseconds: 180),
+                duration: CulculMotion.fast,
                 child: isSelected
                     ? Icon(
                         Icons.check_circle_rounded,

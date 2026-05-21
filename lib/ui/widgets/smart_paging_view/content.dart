@@ -1,6 +1,7 @@
 part of '../smart_paging_view.dart';
 
-class _PagingContent<T> extends StatelessWidget {
+/// EasyRefresh-free content layer for paging fallback rendering.
+class SmartPagingContent<T> extends StatelessWidget {
   final AsyncValue<List<T>> asyncValue;
   final List<T> items;
   final Widget Function(BuildContext context, List<T> items) builder;
@@ -10,7 +11,8 @@ class _PagingContent<T> extends StatelessWidget {
   final Widget Function(BuildContext context)? emptyBuilder;
   final String? emptyText;
 
-  const _PagingContent({
+  const SmartPagingContent({
+    super.key,
     required this.asyncValue,
     required this.items,
     required this.builder,

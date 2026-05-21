@@ -37,7 +37,7 @@ class _VideoCommentsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.separated(
       cacheExtent: 520,
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: CulculSpacing.xxs),
       itemCount: comments.length,
       separatorBuilder: (context, index) {
         return Divider(

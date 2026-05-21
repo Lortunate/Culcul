@@ -1,10 +1,10 @@
-import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
+import 'package:culcul/features/video/application/video_detail_models.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
 
 class VideoPartsSection extends StatelessWidget {
-  final List<VideoPage> pages;
+  final List<VideoPartViewData> pages;
   final int currentCid;
   final ValueChanged<int> onPartChanged;
 
@@ -30,52 +30,70 @@ class VideoPartsSection extends StatelessWidget {
             children: [
               Text(
                 '${t.video.parts} (${pages.length})',
-                style: theme.textTheme.labelLarge?.copyWith(fontWeight: FontWeight.bold),
+                style: theme.textTheme.labelLarge?.copyWith(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const Spacer(),
               Icon(
                 Icons.chevron_right_rounded,
-                size: 20,
+                size: 18,
                 color: colorScheme.onSurfaceVariant,
               ),
             ],
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         SizedBox(
-          height: 32,
+          height: 46,
           child: ListView.separated(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             scrollDirection: Axis.horizontal,
             itemCount: pages.length,
-            separatorBuilder: (context, index) => const SizedBox(width: 8),
+            separatorBuilder: (context, index) => const SizedBox(width: 6),
             itemBuilder: (context, index) {
               final page = pages[index];
               final isSelected = page.cid == currentCid;
               return ClipRRect(
-                borderRadius: BorderRadius.circular(6),
+                borderRadius: BorderRadius.circular(8),
                 child: Material(
                   color: isSelected
-                      ? colorScheme.primaryContainer.withValues(alpha: 0.5)
-                      : colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+                      ? colorScheme.primary.withValues(alpha: 0.08)
+                      : colorScheme.surfaceContainerHighest.withValues(alpha: 0.42),
                   child: AppClickable(
                     onTap: () => onPartChanged(page.cid),
                     child: Container(
-                      constraints: const BoxConstraints(minWidth: 80),
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(
-                          color: isSelected ? colorScheme.primary : Colors.transparent,
-                        ),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        'P${page.page} ${page.part}',
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          color: isSelected ? colorScheme.primary : colorScheme.onSurface,
-                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                        ),
+                      width: 112,
+                      padding: const EdgeInsets.symmetric(horizontal: 9),
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
+                      alignment: Alignment.centerLeft,
+                      child: Row(
+                        children: [
+                          if (isSelected) ...[
+                            Icon(
+                              Icons.graphic_eq_rounded,
+                              size: 14,
+                              color: colorScheme.primary,
+                            ),
+                            const SizedBox(width: 5),
+                          ],
+                          Expanded(
+                            child: Text(
+                              page.part.isEmpty
+                                  ? 'P${page.page}'
+                                  : '${page.part} ${page.page}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.labelLarge?.copyWith(
+                                color: isSelected
+                                    ? colorScheme.primary
+                                    : colorScheme.onSurface,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

@@ -5,6 +5,7 @@ import 'package:culcul/features/notification/route_entry.dart';
 import 'package:culcul/features/profile/application/profile_session_providers.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/feedback/app_shimmer.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -54,7 +55,7 @@ class PrivateSessionItem extends ConsumerWidget {
     if (isLoading) {
       return const AppShimmer(
         child: ListTile(
-          leading: AppShimmerBox(width: 48, height: 48, borderRadius: 24),
+          leading: AppShimmerBox(width: 48, height: 48, borderRadius: CulculRadius.xl),
           title: AppShimmerBox(width: 100, height: 16),
           subtitle: AppShimmerBox(width: 200, height: 14),
         ),
@@ -87,7 +88,7 @@ class PrivateSessionItem extends ConsumerWidget {
               style: theme.textTheme.titleMedium,
             ),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: CulculSpacing.xs),
           Text(
             DateTime.fromMicrosecondsSinceEpoch(session.sessionTs).toSimpleDate(),
             style: theme.textTheme.bodySmall?.copyWith(
@@ -140,7 +141,7 @@ class PrivateSessionItem extends ConsumerWidget {
   Widget _buildAvatar(String url, int mid, BuildContext context) {
     if (url.isEmpty) {
       return CircleAvatar(
-        radius: 24,
+        radius: CulculRadius.xl,
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         child: Icon(Icons.person, color: Theme.of(context).colorScheme.primary),
       );
@@ -167,10 +168,13 @@ class PrivateSessionItem extends ConsumerWidget {
   Widget? _buildUnreadBadge(BuildContext context, int count) {
     if (count <= 0) return null;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(
+        horizontal: CulculSpacing.xxs,
+        vertical: CulculSpacing.xxs,
+      ),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.error,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(CulculRadius.sm),
       ),
       child: Text(
         count > 99 ? '99+' : count.toString(),

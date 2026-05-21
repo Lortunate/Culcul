@@ -1,5 +1,6 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:culcul/ui/responsive/app_breakpoints.dart';
 import 'package:culcul/ui/responsive/app_responsive.dart';
@@ -24,10 +25,10 @@ class ProfileActionGrid extends StatelessWidget {
           maxWidth: AppBreakpoints.pageMaxWidth,
           horizontalPadding: 0,
           child: Container(
-            padding: EdgeInsets.symmetric(vertical: isDesktop ? 24 : 20),
+            padding: EdgeInsets.symmetric(vertical: isDesktop ? CulculSpacing.lg : 20),
             decoration: BoxDecoration(
               color: colorScheme.surface,
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: const BorderRadius.all(CulculRadius.radiusLg),
             ),
             child: isDesktop
                 ? _DesktopActionGrid(actions: actions)
@@ -141,18 +142,18 @@ class _GridItem extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: const BorderRadius.all(CulculRadius.radiusMd),
       child: AppClickable(
         onTap: onTap ?? () {},
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
+          padding: const EdgeInsets.symmetric(vertical: CulculSpacing.xs),
           child: SizedBox(
             width: width,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(icon, color: colorScheme.primary, size: 26),
-                const SizedBox(height: 8),
+                const SizedBox(height: CulculSpacing.xs),
                 Text(
                   label,
                   style: theme.textTheme.labelMedium?.copyWith(

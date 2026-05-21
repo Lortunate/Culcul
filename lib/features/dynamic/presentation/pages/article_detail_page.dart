@@ -1,3 +1,4 @@
+import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/core/utils/format_utils.dart';
@@ -13,6 +14,7 @@ import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
 import 'package:culcul/ui/widgets/feedback/app_empty_state_widget.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/media/app_image_preview.dart';
 import 'package:culcul/ui/widgets/media/app_network_image.dart';
 import 'package:culcul/ui/widgets/layout/refresh_header_footer.dart';

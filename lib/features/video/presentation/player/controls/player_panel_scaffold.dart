@@ -32,8 +32,8 @@ class PlayerPanelScaffold extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: isBottomSheet
-            ? const BorderRadius.vertical(top: Radius.circular(28))
-            : const BorderRadius.horizontal(left: Radius.circular(28)),
+            ? const BorderRadius.vertical(top: CulculRadius.radiusXl)
+            : const BorderRadius.horizontal(left: CulculRadius.radiusXl),
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: VideoOverlayStyles.panelBackground(colorScheme),

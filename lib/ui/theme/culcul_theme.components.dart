@@ -79,6 +79,11 @@ TabBarThemeData _tabBarTheme(ColorScheme colorScheme) {
     unselectedLabelStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
     indicatorSize: TabBarIndicatorSize.label,
     indicatorColor: colorScheme.primary,
+    indicator: UnderlineTabIndicator(
+      borderSide: BorderSide(width: 3, color: colorScheme.primary),
+      insets: const EdgeInsets.symmetric(horizontal: CulculSpacing.xs),
+      borderRadius: const BorderRadius.vertical(top: CulculRadius.radiusXs),
+    ),
     dividerColor: Colors.transparent,
     overlayColor: WidgetStatePropertyAll(colorScheme.primary.withValues(alpha: 0.08)),
   );
@@ -104,7 +109,7 @@ CardThemeData _cardTheme(ColorScheme colorScheme) {
     elevation: 0,
     margin: EdgeInsets.zero,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: const BorderRadius.all(CulculRadius.radiusLg),
       side: BorderSide(color: colorScheme.outlineVariant),
     ),
     clipBehavior: Clip.antiAlias,
@@ -118,7 +123,10 @@ FilledButtonThemeData _filledButtonTheme(ColorScheme colorScheme) {
       foregroundColor: colorScheme.onPrimary,
       elevation: 0,
       minimumSize: const Size.fromHeight(48),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      padding: const EdgeInsets.symmetric(horizontal: CulculSpacing.lg),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(CulculRadius.radiusLg),
+      ),
       textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
     ),
   );
@@ -128,7 +136,10 @@ TextButtonThemeData _textButtonTheme(ColorScheme colorScheme) {
   return TextButtonThemeData(
     style: TextButton.styleFrom(
       foregroundColor: colorScheme.onSurfaceVariant,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      padding: const EdgeInsets.symmetric(horizontal: CulculSpacing.md),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(CulculRadius.radiusMd),
+      ),
     ),
   );
 }
@@ -138,19 +149,25 @@ OutlinedButtonThemeData _outlinedButtonTheme(ColorScheme colorScheme) {
     style: OutlinedButton.styleFrom(
       foregroundColor: colorScheme.onSurface,
       side: BorderSide(color: colorScheme.outline),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      padding: const EdgeInsets.symmetric(horizontal: CulculSpacing.lg),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(CulculRadius.radiusLg),
+      ),
     ),
   );
 }
 
 InputDecorationTheme _inputDecorationTheme(ColorScheme colorScheme) {
-  final radius = BorderRadius.circular(16);
+  const radius = BorderRadius.all(CulculRadius.radiusLg);
 
   return InputDecorationTheme(
     filled: true,
     fillColor: colorScheme.surfaceContainerLow,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-    border: OutlineInputBorder(borderRadius: radius, borderSide: BorderSide.none),
+    contentPadding: const EdgeInsets.symmetric(
+      horizontal: CulculSpacing.md,
+      vertical: CulculSpacing.sm,
+    ),
+    border: const OutlineInputBorder(borderRadius: radius, borderSide: BorderSide.none),
     enabledBorder: OutlineInputBorder(
       borderRadius: radius,
       borderSide: BorderSide(color: colorScheme.outlineVariant),

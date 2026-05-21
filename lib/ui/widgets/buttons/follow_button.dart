@@ -1,3 +1,4 @@
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 
@@ -43,12 +44,12 @@ class FollowButton extends StatelessWidget {
           elevation: 0,
           minimumSize: Size(width ?? 56, height ?? 32),
           fixedSize: height != null ? Size.fromHeight(height!) : null,
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: const EdgeInsets.symmetric(horizontal: CulculSpacing.xs),
           shape: shape ?? const StadiumBorder(),
           visualDensity: VisualDensity.compact,
         ),
         child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
+          duration: CulculMotion.standard,
           transitionBuilder: (Widget child, Animation<double> animation) {
             return FadeTransition(
               opacity: animation,

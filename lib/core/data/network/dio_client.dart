@@ -31,8 +31,6 @@ Dio _createBaseDio(Ref ref, NetworkQualityPolicy networkPolicy) {
         'User-Agent': ApiConstants.userAgent,
         'Referer': ApiConstants.referer,
         'Accept': 'application/json, text/plain, */*',
-        'Accept-Encoding': 'gzip, deflate',
-        'Connection': 'keep-alive',
       },
     ),
   );
@@ -115,7 +113,6 @@ Dio dioClient(Ref ref) {
           ),
         ),
       ),
-      retryableExtraStatuses: {408, 429},
       retryEvaluator: (error, attempt) {
         if (error.requestOptions.extra['disable_retry'] == true) {
           return false;

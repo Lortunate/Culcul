@@ -1,11 +1,15 @@
 import 'package:culcul/core/session/session_lifecycle_providers.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
+import 'package:culcul/features/profile/application/profile_session_cleanup.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod/misc.dart' show Override;
 
 List<Override> createRootOverrides() {
-  return [sessionCookieRefresherProvider.overrideWith(createAuthSessionCookieRefresher)];
+  return [
+    sessionCookieRefresherProvider.overrideWith(createAuthSessionCookieRefresher),
+    sessionLogoutCleanerProvider.overrideWith(createProfileSessionLogoutCleaner),
+  ];
 }
 
 void verifyRootOverrides(List<Override> overrides) {
@@ -13,6 +17,7 @@ void verifyRootOverrides(List<Override> overrides) {
   final container = ProviderContainer(overrides: overrides);
   try {
     container.read(sessionCookieRefresherProvider);
+    container.read(sessionLogoutCleanerProvider);
   } finally {
     container.dispose();
   }

@@ -6,6 +6,7 @@ import 'package:culcul/features/notification/presentation/view_models/notificati
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -109,7 +110,11 @@ class NotificationLifecycleSync extends _$NotificationLifecycleSync
   Future<void> _runSyncTask(Future<Result<void, AppError>> future) async {
     final result = await future;
     if (result.errorOrNull case final error?) {
-      debugPrint('NotificationLifecycleSync ignored error: ${error.message}');
+      DevLogger.log(
+        'feature',
+        'notification.lifecycle_sync.ignored_error',
+        <String, Object?>{'error': error.message},
+      );
     }
   }
 

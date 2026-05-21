@@ -3,6 +3,7 @@ import 'package:culcul/features/video/presentation/player/listen_sleep_timer_vie
 import 'package:culcul/features/video/presentation/player/controls/player_panel.dart';
 import 'package:culcul/features/video/presentation/player/controls/video_overlay_styles.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -62,7 +63,7 @@ class ListenSettingsSheet extends HookConsumerWidget {
       isBottomSheet: isBottomSheet,
       maxHeightFactor: 0.62,
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+        padding: const EdgeInsets.all(CulculSpacing.md),
         child: PlayerPanelSection(
           title: t.video.listen_settings.sleep_timer,
           subtitle: timerStatus,
@@ -76,7 +77,7 @@ class ListenSettingsSheet extends HookConsumerWidget {
                   colorScheme,
                 ).copyWith(fontSize: 12, fontWeight: FontWeight.w600),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: CulculSpacing.sm),
               Wrap(
                 spacing: 6,
                 runSpacing: 6,
@@ -89,7 +90,7 @@ class ListenSettingsSheet extends HookConsumerWidget {
                     ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: CulculSpacing.sm),
               TextField(
                 controller: customInputController,
                 keyboardType: TextInputType.number,
@@ -119,7 +120,7 @@ class ListenSettingsSheet extends HookConsumerWidget {
                     ),
                     child: Text(t.video.listen_settings.set_custom),
                   ),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: CulculSpacing.xxs),
                   TextButton(
                     onPressed: timerController.clearTimer,
                     style: TextButton.styleFrom(
@@ -168,7 +169,10 @@ class _PresetMinuteTextButton extends StatelessWidget {
             fontSize: 13,
             fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          padding: const EdgeInsets.symmetric(
+            horizontal: CulculSpacing.xs,
+            vertical: CulculSpacing.xxs,
+          ),
           minimumSize: Size.zero,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         ),

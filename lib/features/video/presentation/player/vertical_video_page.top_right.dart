@@ -37,7 +37,7 @@ class _TopBar extends StatelessWidget {
 class _RightBar extends StatelessWidget {
   const _RightBar({required this.videoDetail});
 
-  final VideoDetail videoDetail;
+  final VideoDetailViewData videoDetail;
 
   @override
   Widget build(BuildContext context) {

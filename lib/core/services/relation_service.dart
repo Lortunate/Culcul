@@ -1,5 +1,6 @@
 import 'package:culcul/core/contracts/relation_port.dart';
 import 'package:culcul/core/contracts/relation_user_contract.dart';
+import 'package:culcul/core/data/network/api_response_decoder.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
@@ -16,7 +17,7 @@ RelationPort relationPort(Ref ref) {
 }
 
 class RelationService implements RelationPort {
-  static const int _defaultPageSize = 50;
+  static const int defaultPageSize = 50;
 
   final Dio _dio;
   final RequestExecutor _requestExecutor;
@@ -68,7 +69,7 @@ class RelationService implements RelationPort {
         queryParameters: <String, dynamic>{
           'vmid': vmid,
           'pn': page,
-          'ps': _defaultPageSize,
+          'ps': defaultPageSize,
         },
       ),
       transform: _parseRelationUsers,
@@ -83,7 +84,7 @@ class RelationService implements RelationPort {
       path,
       queryParameters: queryParameters,
     );
-    return ApiResponse.fromJson(response.data ?? const <String, dynamic>{}, _asMap);
+    return decodeApiResponse(response, _asMap, nullBody: const <String, dynamic>{});
   }
 
   Future<ApiResponse<dynamic>> _postApiResponse(
@@ -96,9 +97,10 @@ class RelationService implements RelationPort {
       data: data,
       options: Options(headers: headers),
     );
-    return ApiResponse.fromJson(
-      response.data ?? const <String, dynamic>{},
+    return decodeApiResponse(
+      response,
       (json) => json,
+      nullBody: const <String, dynamic>{},
     );
   }
 

@@ -30,8 +30,8 @@ class PlayerPanelSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final contentPadding = dense ? 14.0 : 18.0;
-    final subtitleSpacing = dense ? 4.0 : 6.0;
-    final sectionSpacing = dense ? 12.0 : 16.0;
+    final subtitleSpacing = dense ? CulculSpacing.xxs : 6.0;
+    final sectionSpacing = dense ? CulculSpacing.sm : CulculSpacing.md;
     final titleSize = dense ? 14.0 : 15.0;
     final bodyStyle = VideoOverlayStyles.bodyStyle(
       colorScheme,

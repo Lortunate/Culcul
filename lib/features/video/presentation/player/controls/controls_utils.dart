@@ -1,3 +1,4 @@
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 
 bool isPlayerBottomSheetLayout(BuildContext context) =>
@@ -12,7 +13,7 @@ void showSidePanel(BuildContext context, Widget child) {
       barrierDismissible: true,
       barrierLabel: 'Selection',
       barrierColor: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.45),
-      transitionDuration: const Duration(milliseconds: 250),
+      transitionDuration: CulculMotion.standard,
       pageBuilder: (context, animation, secondaryAnimation) {
         return Align(alignment: Alignment.centerRight, child: child);
       },

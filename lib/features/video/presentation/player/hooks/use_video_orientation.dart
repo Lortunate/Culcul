@@ -1,5 +1,5 @@
 import 'package:culcul/features/video/application/video_entry_layout.dart';
-import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
+import 'package:culcul/features/video/application/video_detail_models.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
@@ -7,7 +7,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 VoidCallback useVideoOrientation(
   WidgetRef ref, {
-  required VideoDetail? videoDetail,
+  required VideoDetailViewData? videoDetail,
   required int currentCid,
 }) {
   final playerController = ref.read(playerControllerProvider.notifier);
@@ -60,7 +60,7 @@ VoidCallback useVideoOrientation(
 }
 
 ({int width, int height}) _getVideoDimensions(
-  VideoDetail? videoDetail,
+  VideoDetailViewData? videoDetail,
   int currentCid,
   int? playerWidth,
   int? playerHeight,
@@ -70,7 +70,7 @@ VoidCallback useVideoOrientation(
   int rotate = 0;
 
   if (videoDetail != null) {
-    VideoPage? currentPage;
+    VideoPartViewData? currentPage;
     for (final page in videoDetail.pages) {
       if (page.cid == currentCid) {
         currentPage = page;

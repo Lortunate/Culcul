@@ -1,4 +1,5 @@
 import 'package:culcul/ui/widgets/media/app_image_preview.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +24,7 @@ class ChatImageMessage extends StatelessWidget {
         fit: BoxFit.cover,
         cacheWidth: cacheSize,
         cacheHeight: cacheSize,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: const BorderRadius.all(CulculRadius.radiusSm),
         loadStateChanged: (state) {
           if (state.extendedImageLoadState == LoadState.loading) {
             return Container(

@@ -19,10 +19,10 @@ class _ImageBlockView extends StatelessWidget {
             child: GestureDetector(
               onTap: () => onTap(i),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(CulculRadius.lg),
                 child: AppNetworkImage(
                   url: urls[i],
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(CulculRadius.lg),
                 ),
               ),
             ),
@@ -57,13 +57,13 @@ class _LinkCardView extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(CulculRadius.lg),
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(CulculSpacing.md),
           decoration: BoxDecoration(
             color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(CulculRadius.lg),
             border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.35)),
           ),
           child: Row(
@@ -73,11 +73,11 @@ class _LinkCardView extends StatelessWidget {
                 height: 44,
                 decoration: BoxDecoration(
                   color: colorScheme.primaryContainer.withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(CulculRadius.md),
                 ),
                 child: Icon(Icons.link_rounded, color: colorScheme.primary),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: CulculSpacing.sm),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,10 +126,10 @@ class _QuoteBlockView extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(CulculSpacing.md),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(CulculRadius.lg),
         border: Border(left: BorderSide(color: colorScheme.primary, width: 3)),
       ),
       child: Text.rich(

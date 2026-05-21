@@ -237,11 +237,11 @@ class _OptionTextChip<T> extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () => onSelected(item),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(CulculRadius.sm),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 3),
             child: AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 180),
+              duration: CulculMotion.fast,
               curve: Curves.easeOutCubic,
               style: TextStyle(
                 color: isSelected

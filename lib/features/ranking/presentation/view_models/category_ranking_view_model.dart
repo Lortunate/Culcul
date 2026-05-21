@@ -1,6 +1,6 @@
 import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/features/ranking/data/ranking_repository_impl.dart';
-import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'category_ranking_view_model.g.dart';
@@ -11,7 +11,10 @@ Future<List<VideoModel>> categoryRankingList(Ref ref, {int? rid}) async {
   return result.when(
     success: (data) => data,
     failure: (error) {
-      debugPrint('Error loading ranking: $error');
+      DevLogger.log('feature', 'ranking.category.load_error', <String, Object?>{
+        'rid': rid,
+        'error': error,
+      });
       return const <VideoModel>[];
     },
   );

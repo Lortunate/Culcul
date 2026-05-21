@@ -1,3 +1,4 @@
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 
 Future<T?> showAppModalBottomSheet<T>({
@@ -15,7 +16,7 @@ Future<T?> showAppModalBottomSheet<T>({
     useRootNavigator: useRootNavigator,
     backgroundColor: colorScheme.surface,
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      borderRadius: BorderRadius.vertical(top: CulculRadius.radiusLg),
     ),
     clipBehavior: Clip.antiAlias,
   );

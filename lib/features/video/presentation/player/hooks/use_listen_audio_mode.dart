@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:culcul/core/constants/api_constants.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/features/video/data/dtos/play_url_dto.dart' as domain;
 import 'package:culcul/features/video/data/video_repository_impl.dart';
 import 'package:culcul/features/video/presentation/player/playable_urls.dart';
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -89,7 +89,13 @@ void useListenAudioMode(WidgetRef ref, ListenAudioModeInput input) {
             switchedToAudioRef.value = true;
           }
         } catch (error, stackTrace) {
-          debugPrint('Failed to switch listen audio source: $error\n$stackTrace');
+          DevLogger.log('video', 'listen_audio.switch_failed', <String, Object?>{
+            'aid': aid,
+            'cid': input.currentCid,
+            'quality': input.selectedQuality,
+            'error': error,
+            'stack': stackTrace,
+          });
         }
       }),
     );

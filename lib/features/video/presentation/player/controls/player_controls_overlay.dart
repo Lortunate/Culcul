@@ -6,6 +6,7 @@ import 'package:culcul/features/video/presentation/player/controls/player_settin
 import 'package:culcul/features/video/presentation/player/controls/player_theme.dart';
 import 'package:culcul/features/video/presentation/player/controls/player_top_bar.dart';
 import 'package:culcul/features/video/presentation/player/controls/video_overlay_styles.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -53,7 +54,7 @@ class PlayerControlsOverlay extends HookConsumerWidget {
     return RepaintBoundary(
       child: AnimatedOpacity(
         opacity: showControls ? 1.0 : 0.0,
-        duration: const Duration(milliseconds: 200),
+        duration: CulculMotion.standard,
         child: Stack(
           children: [
             if (!isLocked) ...[
@@ -148,9 +149,9 @@ class _LockButton extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(CulculRadius.xl),
         child: Container(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(CulculSpacing.xs),
           decoration: BoxDecoration(
             color: VideoOverlayStyles.panelBackground(colorScheme).withValues(alpha: 0.4),
             shape: BoxShape.circle,

@@ -1,10 +1,10 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
+import 'package:culcul/core/session/session_lifecycle_providers.dart';
 import 'package:culcul/features/auth/data/auth_repository_impl.dart';
 import 'package:culcul/features/auth/domain/entities/auth_captcha_challenge.dart';
 import 'package:culcul/features/auth/domain/entities/country_code.dart';
 import 'package:culcul/features/auth/domain/entities/user_entity.dart';
-import 'package:culcul/features/profile/application/profile_cache_actions.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -96,7 +96,7 @@ class Auth extends _$Auth {
     final result = await ref.read(authRepositoryProvider).logout();
     await result.when(
       success: (_) async {
-        await ref.read(profileCacheActionsProvider).clearAll();
+        await ref.read(sessionLogoutCleanerProvider).clearAfterLogout();
         state = state.copyWith(isLoggedIn: false, user: null, error: null);
       },
       failure: (error) async => _storeFailure(error),

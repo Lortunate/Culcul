@@ -1,8 +1,10 @@
-import 'package:culcul/features/dynamic/data/dtos/dynamic_item_extensions.dart';
+import 'package:culcul/features/dynamic/application/dynamic_post_card_view_data.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/topic_dynamic_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/feedback/app_empty_state_widget.dart';
-import 'package:culcul/features/dynamic/dynamic_post_card.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_post_header.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/dynamic_content_widget.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_card.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/layout/refresh_header_footer.dart';
 import 'package:culcul/ui/assemblies/feed_cards/video_list_skeleton.dart';
@@ -83,11 +85,15 @@ class TopicDetailPage extends HookConsumerWidget {
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       final post = items[index];
+                      final cardPost = post.toDynamicPostCardViewData();
                       return KeyedSubtree(
-                        key: ValueKey('topic_post_${post.idStr}_$index'),
+                        key: ValueKey('topic_post_${cardPost.id}_$index'),
                         child: DynamicPostCard(
-                          post: post,
-                          onLike: (post) => notifier.toggleLike(post.id, post.isLiked),
+                          post: cardPost,
+                          header: DynamicPostHeader(post: post),
+                          content: DynamicContentWidget(post: post),
+                          onLike: () =>
+                              notifier.toggleLike(cardPost.id, cardPost.isLiked),
                         ),
                       );
                     },

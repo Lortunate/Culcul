@@ -6,6 +6,7 @@ import 'package:culcul/features/notification/domain/entities/notification_entry.
 import 'package:culcul/features/notification/presentation/widgets/notification_navigation.dart';
 import 'package:culcul/ui/widgets/users/app_avatar.dart';
 import 'package:culcul/ui/widgets/media/app_network_image.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
 

@@ -1,10 +1,10 @@
 part of 'video_info_view.dart';
 
 class _VideoInfoLoadedContent extends StatelessWidget {
-  final VideoDetail detail;
+  final VideoDetailViewData detail;
   final bool isFollowed;
   final int currentCid;
-  final List<RelatedVideo> relatedVideos;
+  final List<VideoModel> relatedVideos;
   final ValueNotifier<bool> isExpanded;
   final VoidCallback onToggleFollow;
   final VoidCallback onLike;

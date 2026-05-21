@@ -1,5 +1,6 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/auth/application/auth_controller.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
 import 'package:culcul/ui/responsive/app_breakpoints.dart';
@@ -26,7 +27,7 @@ class ProfileMenu extends ConsumerWidget {
             child: Container(
               decoration: BoxDecoration(
                 color: colorScheme.surface,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: const BorderRadius.all(CulculRadius.radiusLg),
               ),
               clipBehavior: Clip.antiAlias,
               child: _MenuItem(
@@ -62,7 +63,7 @@ class ProfileMenu extends ConsumerWidget {
               ),
             ),
           ),
-          SizedBox(height: context.isDesktopLayout ? 40 : 32),
+          SizedBox(height: context.isDesktopLayout ? 40 : CulculSpacing.xl),
         ]),
       ),
     );
@@ -92,11 +93,14 @@ class _MenuItem extends StatelessWidget {
     return AppClickable(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: const EdgeInsets.symmetric(
+          horizontal: CulculSpacing.md,
+          vertical: CulculSpacing.md,
+        ),
         child: Row(
           children: [
             Icon(icon, color: iconColor ?? colorScheme.onSurfaceVariant, size: 24),
-            const SizedBox(width: 16),
+            const SizedBox(width: CulculSpacing.md),
             Expanded(
               child: Text(
                 label,

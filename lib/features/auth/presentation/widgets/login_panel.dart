@@ -3,6 +3,7 @@ import 'package:culcul/features/auth/application/auth_controller.dart';
 import 'package:culcul/features/auth/presentation/widgets/password_login_view.dart';
 import 'package:culcul/features/auth/presentation/widgets/qr_login_view.dart';
 import 'package:culcul/features/auth/presentation/widgets/sms_login_view.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -57,10 +58,13 @@ class LoginPanel extends HookConsumerWidget {
 
     return Container(
       constraints: const BoxConstraints(maxWidth: 400, maxHeight: 600),
-      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
+      margin: const EdgeInsets.symmetric(
+        horizontal: CulculSpacing.lg,
+        vertical: CulculSpacing.xl + CulculSpacing.md,
+      ),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: const BorderRadius.all(CulculRadius.radiusXl),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -75,7 +79,12 @@ class LoginPanel extends HookConsumerWidget {
         children: [
           // Header
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 24, 12, 8),
+            padding: const EdgeInsets.fromLTRB(
+              CulculSpacing.lg,
+              CulculSpacing.lg,
+              CulculSpacing.sm,
+              CulculSpacing.xs,
+            ),
             child: _LoginPanelHeader(
               title: t.auth.login,
               subtitle: t.auth.welcome_back,
@@ -85,7 +94,10 @@ class LoginPanel extends HookConsumerWidget {
 
           // Tabs
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            padding: const EdgeInsets.symmetric(
+              horizontal: CulculSpacing.lg,
+              vertical: CulculSpacing.md,
+            ),
             child: _LoginMethodTabs(
               tabs: tabs,
               selectedIndex: selectedTab.value,
@@ -99,12 +111,12 @@ class LoginPanel extends HookConsumerWidget {
           // Content
           Flexible(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: CulculSpacing.lg),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 180),
+                    duration: CulculMotion.fast,
                     switchInCurve: Curves.easeOutCubic,
                     switchOutCurve: Curves.easeInCubic,
                     child: feedback.value == null
@@ -113,7 +125,7 @@ class LoginPanel extends HookConsumerWidget {
                             key: ValueKey(
                               '${feedback.value!.message}-${feedback.value!.isSuccess}',
                             ),
-                            padding: const EdgeInsets.only(bottom: 12),
+                            padding: const EdgeInsets.only(bottom: CulculSpacing.sm),
                             child: _AuthInlineFeedback(
                               message: feedback.value!.message,
                               isSuccess: feedback.value!.isSuccess,
@@ -132,7 +144,7 @@ class LoginPanel extends HookConsumerWidget {
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: CulculSpacing.lg),
         ],
       ),
     );

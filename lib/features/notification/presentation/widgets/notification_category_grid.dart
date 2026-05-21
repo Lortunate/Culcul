@@ -2,6 +2,7 @@ import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/notification/presentation/view_models/unread_count_view_model.dart';
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/ui/theme/culcul_colors.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -17,7 +18,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
 
     return unreadCount.when(
       data: (data) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: const EdgeInsets.symmetric(vertical: CulculSpacing.md),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -73,9 +74,12 @@ class NotificationCategoryGrid extends ConsumerWidget {
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(CulculRadius.sm),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        padding: const EdgeInsets.symmetric(
+          horizontal: CulculSpacing.xs,
+          vertical: CulculSpacing.xxs,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -93,13 +97,18 @@ class NotificationCategoryGrid extends ConsumerWidget {
                 ),
                 if (count > 0)
                   Positioned(
-                    top: -4,
-                    right: -4,
+                    top: -CulculSpacing.xxs,
+                    right: -CulculSpacing.xxs,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: CulculSpacing.xxs + CulculSpacing.xxs / 2,
+                        vertical: CulculSpacing.xxs / 2,
+                      ),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.error,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(
+                          CulculRadius.sm + CulculSpacing.xxs / 2,
+                        ),
                         border: Border.all(color: theme.colorScheme.surface, width: 2),
                       ),
                       child: Text(
@@ -114,7 +123,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
                   ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: CulculSpacing.xs),
             Text(label, style: theme.textTheme.bodyMedium),
           ],
         ),

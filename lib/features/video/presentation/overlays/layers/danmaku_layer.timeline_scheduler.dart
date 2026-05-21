@@ -50,7 +50,10 @@ void useDanmakuPlaybackScheduler({
           })
           .catchError((e) {
             timeline.markSegmentLoadFailed(segmentIndex);
-            debugPrint('Failed to load danmaku segment $segmentIndex: $e');
+            DevLogger.log('video', 'danmaku.segment_load_failed', <String, Object?>{
+              'segment': segmentIndex,
+              'error': e,
+            });
           });
     }
 

@@ -1,3 +1,4 @@
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 
 class VideoOverlayStyles {
@@ -18,12 +19,12 @@ class VideoOverlayStyles {
   static Widget dragHandle(ColorScheme colorScheme) {
     return Center(
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 16),
-        width: 36,
-        height: 4,
+        margin: const EdgeInsets.symmetric(vertical: CulculSpacing.md),
+        width: CulculSpacing.xl + CulculSpacing.xxs,
+        height: CulculSpacing.xxs,
         decoration: BoxDecoration(
           color: foreground(colorScheme, alpha: 0.2),
-          borderRadius: BorderRadius.circular(2),
+          borderRadius: BorderRadius.circular(CulculRadius.xs / 2),
         ),
       ),
     );

@@ -45,3 +45,6 @@
 
 # Keep generated Riverpod providers
 -keep class **$Impl { *; }
+
+# Ignore missing Play Core classes referenced by Flutter embedding
+-dontwarn com.google.android.play.core.**

@@ -21,20 +21,23 @@ class PlayerOptionCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final selectedColor = colorScheme.primaryContainer;
     final unselectedColor = VideoOverlayStyles.panelSurface(colorScheme, alpha: 0.52);
+    const cardRadius = BorderRadius.all(
+      Radius.circular(CulculRadius.lg + CulculSpacing.xxs / 2),
+    );
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: isEnabled ? onTap : null,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: cardRadius,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
+          duration: CulculMotion.fast,
           curve: Curves.easeOutCubic,
           constraints: const BoxConstraints(minWidth: 104, maxWidth: 180),
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(CulculSpacing.sm + CulculSpacing.xxs / 2),
           decoration: BoxDecoration(
             color: isSelected ? selectedColor : unselectedColor,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: cardRadius,
             border: Border.all(
               color: isSelected
                   ? colorScheme.primary.withValues(alpha: 0.9)
@@ -75,7 +78,7 @@ class PlayerOptionCard extends StatelessWidget {
                 ],
               ),
               if (subtitle != null) ...[
-                const SizedBox(height: 6),
+                const SizedBox(height: CulculSpacing.sm / 2),
                 Text(
                   subtitle!,
                   maxLines: 2,

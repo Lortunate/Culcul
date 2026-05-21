@@ -1,7 +1,8 @@
-import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
-import 'package:culcul/features/dynamic/data/dtos/dynamic_item_extensions.dart';
+import 'package:culcul/features/dynamic/application/dynamic_post_card_view_data.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_view_model.dart';
-import 'package:culcul/features/dynamic/dynamic_post_card.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_post_header.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/dynamic_content_widget.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_card.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/recently_followed_widget.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/assemblies/feed_cards/video_list_skeleton.dart';
@@ -28,7 +29,7 @@ class DynamicListView extends HookConsumerWidget {
 
     return ResponsiveContentContainer(
       maxWidth: AppBreakpoints.pageMaxWidth,
-      child: SmartPagingView<DynamicItem>(
+      child: SmartPagingView(
         asyncValue: state,
         onRefresh: notifier.refresh,
         onLoadMore: notifier.loadMore,
@@ -46,11 +47,14 @@ class DynamicListView extends HookConsumerWidget {
                     SizedBox(height: context.isDesktopLayout ? 10 : 8),
                 itemBuilder: (context, index) {
                   final post = items[index];
+                  final cardPost = post.toDynamicPostCardViewData();
                   return KeyedSubtree(
-                    key: ValueKey(post.id),
+                    key: ValueKey(cardPost.id),
                     child: DynamicPostCard(
-                      post: post,
-                      onLike: (post) => notifier.toggleLike(post.id, post.isLiked),
+                      post: cardPost,
+                      header: DynamicPostHeader(post: post),
+                      content: DynamicContentWidget(post: post),
+                      onLike: () => notifier.toggleLike(cardPost.id, cardPost.isLiked),
                     ),
                   );
                 },

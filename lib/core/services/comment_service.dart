@@ -1,5 +1,6 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
+import 'package:culcul/core/data/network/api_response_decoder.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:dio/dio.dart';
@@ -39,7 +40,7 @@ class CommentService {
       options: _options(wbi: true, referer: referer, origin: origin),
       cancelToken: cancelToken,
     );
-    return _decodeResponse(response, CommentResponse.fromJson);
+    return decodeObjectApiResponse(response, CommentResponse.fromJson);
   }
 
   Future<ApiResponse<CommentResponse>> fetchReply({
@@ -64,7 +65,7 @@ class CommentService {
       options: _options(wbi: true, referer: referer, origin: origin),
       cancelToken: cancelToken,
     );
-    return _decodeResponse(response, CommentResponse.fromJson);
+    return decodeObjectApiResponse(response, CommentResponse.fromJson);
   }
 
   Future<ApiResponse<void>> actionComment({
@@ -85,7 +86,7 @@ class CommentService {
         contentType: Headers.formUrlEncodedContentType,
       ),
     );
-    return _decodeVoidResponse(response);
+    return decodeApiResponse<void>(response, (_) {});
   }
 
   Future<ApiResponse<void>> hateComment({
@@ -106,7 +107,7 @@ class CommentService {
         contentType: Headers.formUrlEncodedContentType,
       ),
     );
-    return _decodeVoidResponse(response);
+    return decodeApiResponse<void>(response, (_) {});
   }
 
   Future<ApiResponse<CommentItem>> addReply({
@@ -134,7 +135,7 @@ class CommentService {
         contentType: Headers.formUrlEncodedContentType,
       ),
     );
-    return _decodeResponse(response, CommentItem.fromJson);
+    return decodeObjectApiResponse(response, CommentItem.fromJson);
   }
 
   Options _options({
@@ -155,27 +156,5 @@ class CommentService {
       headers['Origin'] = origin;
     }
     return Options(headers: headers, contentType: contentType);
-  }
-
-  ApiResponse<T> _decodeResponse<T>(
-    Response<Map<String, dynamic>> response,
-    T Function(Map<String, dynamic> json) fromJson,
-  ) {
-    final body = response.data;
-    if (body == null) {
-      throw StateError('Response data is null');
-    }
-    return ApiResponse<T>.fromJson(
-      body,
-      (json) => fromJson(Map<String, dynamic>.from(json as Map)),
-    );
-  }
-
-  ApiResponse<void> _decodeVoidResponse(Response<Map<String, dynamic>> response) {
-    final body = response.data;
-    if (body == null) {
-      throw StateError('Response data is null');
-    }
-    return ApiResponse<void>.fromJson(body, (_) {});
   }
 }

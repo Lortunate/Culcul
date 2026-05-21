@@ -13,7 +13,12 @@ part of 'runtime_performance_policy_provider.dart';
 final renderPerformancePolicyProvider = RenderPerformancePolicyProvider._();
 
 final class RenderPerformancePolicyProvider
-    extends $FunctionalProvider<PerformancePolicy, PerformancePolicy, PerformancePolicy>
+    extends
+        $FunctionalProvider<
+          PerformancePolicy,
+          PerformancePolicy,
+          PerformancePolicy
+        >
     with $Provider<PerformancePolicy> {
   RenderPerformancePolicyProvider._()
     : super(
@@ -31,8 +36,9 @@ final class RenderPerformancePolicyProvider
 
   @$internal
   @override
-  $ProviderElement<PerformancePolicy> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<PerformancePolicy> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   PerformancePolicy create(Ref ref) {
@@ -48,7 +54,8 @@ final class RenderPerformancePolicyProvider
   }
 }
 
-String _$renderPerformancePolicyHash() => r'559967d7422b0125dafc55b957b7987b827103ae';
+String _$renderPerformancePolicyHash() =>
+    r'559967d7422b0125dafc55b957b7987b827103ae';
 
 @ProviderFor(runtimePerformancePolicy)
 final runtimePerformancePolicyProvider = RuntimePerformancePolicyProvider._();
@@ -77,8 +84,9 @@ final class RuntimePerformancePolicyProvider
 
   @$internal
   @override
-  $ProviderElement<RuntimePerformancePolicy> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
+  $ProviderElement<RuntimePerformancePolicy> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
   RuntimePerformancePolicy create(Ref ref) {
@@ -94,4 +102,5 @@ final class RuntimePerformancePolicyProvider
   }
 }
 
-String _$runtimePerformancePolicyHash() => r'ad7b85b3c769a43aad9efb2c47ccf7e25418de56';
+String _$runtimePerformancePolicyHash() =>
+    r'ad7b85b3c769a43aad9efb2c47ccf7e25418de56';

@@ -1,5 +1,6 @@
 import 'package:culcul/core/errors/error_handler.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/inputs/app_selectable_text.dart';
 import 'package:flutter/material.dart';
 
@@ -62,7 +63,7 @@ class AppErrorWidget extends StatelessWidget {
 
     return Center(
       child: SingleChildScrollView(
-        padding: EdgeInsets.all(isCompact ? 16.0 : 32.0),
+        padding: EdgeInsets.all(isCompact ? CulculSpacing.md : CulculSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -71,7 +72,7 @@ class AppErrorWidget extends StatelessWidget {
               size: isCompact ? 32 : 56,
               color: colorScheme.error.withValues(alpha: 0.7),
             ),
-            SizedBox(height: isCompact ? 12 : 16),
+            SizedBox(height: isCompact ? CulculSpacing.sm : CulculSpacing.md),
             Text(
               displayMessage,
               textAlign: TextAlign.center,
@@ -81,11 +82,11 @@ class AppErrorWidget extends StatelessWidget {
                 color: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
               ),
             ),
-            SizedBox(height: isCompact ? 12 : 16),
+            SizedBox(height: isCompact ? CulculSpacing.sm : CulculSpacing.md),
             Wrap(
               alignment: WrapAlignment.center,
-              spacing: isCompact ? 8 : 12,
-              runSpacing: 8,
+              spacing: isCompact ? CulculSpacing.xs : CulculSpacing.sm,
+              runSpacing: CulculSpacing.xs,
               children: [
                 _ErrorDetailsButton(
                   onPressed: () => _showErrorDetails(context),
@@ -121,7 +122,9 @@ class _ErrorDetailsButton extends StatelessWidget {
       label: Text(t.error.view_details, style: TextStyle(fontSize: compact ? 11 : 13)),
       style: OutlinedButton.styleFrom(
         visualDensity: compact ? VisualDensity.compact : VisualDensity.standard,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(CulculRadius.lg),
+        ),
       ),
     );
   }
@@ -149,10 +152,12 @@ class _RetryButton extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         visualDensity: compact ? VisualDensity.compact : VisualDensity.standard,
         side: BorderSide(color: borderColor),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(CulculRadius.lg),
+        ),
         padding: EdgeInsets.symmetric(
-          horizontal: compact ? 12 : 24,
-          vertical: compact ? 8 : 12,
+          horizontal: compact ? CulculSpacing.sm : CulculSpacing.lg,
+          vertical: compact ? CulculSpacing.xs : CulculSpacing.sm,
         ),
       ),
     );

@@ -17,7 +17,7 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
     with OffsetPagedAsyncNotifier<ProfileVideo> {
   int _mid = 0;
   String _order = 'pubdate';
-  static const _pageSize = 30;
+  static const _userSpaceVideoPageSize = 30;
   CancelToken? _activePageCancelToken;
   CancelToken? _silentRefreshCancelToken;
 
@@ -33,7 +33,7 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
     final items = await buildFirstPage();
     final cacheKey = EndpointCacheOptionsInterceptor.buildCacheKey(
       ApiConstants.profileSpaceVideos,
-      {'mid': mid, 'pn': 1, 'ps': _pageSize, 'order': order},
+      {'mid': mid, 'pn': 1, 'ps': _userSpaceVideoPageSize, 'order': order},
     );
     final hasCachedValue = await ref.read(cacheStoreProvider).exists(cacheKey);
     DevLogger.log('feature', 'profile.space_videos initial_data', <String, Object?>{
@@ -64,7 +64,8 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
   Object itemId(ProfileVideo item) => item.bvid;
 
   @override
-  bool hasMoreAfterPage(List<ProfileVideo> items) => items.length >= _pageSize;
+  bool hasMoreAfterPage(List<ProfileVideo> items) =>
+      items.length >= _userSpaceVideoPageSize;
 
   Future<void> loadMore() {
     return loadNextPage();

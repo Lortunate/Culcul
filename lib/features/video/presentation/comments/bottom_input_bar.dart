@@ -1,4 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
 
@@ -28,7 +29,10 @@ class BottomInputBar extends StatelessWidget {
     final t = Translations.of(context);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(
+        horizontal: CulculSpacing.sm,
+        vertical: CulculSpacing.xs,
+      ),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         border: Border(
@@ -51,7 +55,7 @@ class BottomInputBar extends StatelessWidget {
                     onTap: onTapInput,
                     child: Container(
                       height: 40,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.symmetric(horizontal: CulculSpacing.md),
                       alignment: Alignment.centerLeft,
                       child: Row(
                         children: [
@@ -75,7 +79,7 @@ class BottomInputBar extends StatelessWidget {
               ),
             ),
             if (!simpleMode) ...[
-              const SizedBox(width: 8),
+              const SizedBox(width: CulculSpacing.xs),
               _ActionIcon(icon: Icons.thumb_up_outlined, onTap: onTapLike),
               _ActionIcon(icon: Icons.star_outline_rounded, onTap: onTapStar),
               _ActionIcon(icon: Icons.share_outlined, onTap: onTapShare),

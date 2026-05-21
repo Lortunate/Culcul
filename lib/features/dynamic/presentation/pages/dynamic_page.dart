@@ -21,12 +21,7 @@ class DynamicPage extends HookConsumerWidget {
     final isLoggedIn = ref.watch(
       currentUserProvider.select((s) => s?.isLoggedIn ?? false),
     );
-    final tabs = [
-      t.moments.tabs.all,
-      t.moments.tabs.video,
-      t.moments.tabs.pgc,
-      t.search.tabs.article,
-    ];
+    final tabs = [t.moments.tabs.all, t.moments.tabs.video, t.search.tabs.article];
     final tabController = useTabController(initialLength: tabs.length);
 
     return Scaffold(
@@ -67,7 +62,6 @@ class DynamicPage extends HookConsumerWidget {
               children: const [
                 DynamicListView(type: 'all'),
                 DynamicListView(type: 'video'),
-                DynamicListView(type: 'pgc'),
                 DynamicListView(type: 'article'),
               ],
             )

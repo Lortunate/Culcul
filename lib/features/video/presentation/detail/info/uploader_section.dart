@@ -23,11 +23,13 @@ class UploaderSection extends ConsumerWidget {
     return UserListTile(
       avatarUrl: owner.face,
       name: owner.name,
-      avatarSize: 34,
+      avatarSize: 30,
       padding: EdgeInsets.zero,
       onTap: () => UserProfileRoute(mid: owner.mid).push(context),
       trailing: FollowButton(
         isFollowed: isFollowed,
+        width: 72,
+        height: 28,
         onTap: () {
           final session = ref.read(currentUserProvider);
           if (!(session?.isLoggedIn ?? false)) {

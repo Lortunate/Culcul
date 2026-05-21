@@ -1,4 +1,5 @@
 import 'package:culcul/features/video/presentation/player/controls/player_theme.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 
 class PlayerTopBar extends StatelessWidget {
@@ -34,7 +35,7 @@ class PlayerTopBar extends StatelessWidget {
           if (title != null)
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                padding: const EdgeInsets.symmetric(horizontal: CulculSpacing.xs),
                 child: Text(
                   title!,
                   style: TextStyle(

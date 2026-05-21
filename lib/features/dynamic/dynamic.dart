@@ -1,7 +1,10 @@
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
+import 'package:culcul/features/dynamic/application/dynamic_post_card_view_data.dart';
 import 'package:culcul/features/dynamic/application/user_dynamic_provider.dart';
-import 'package:culcul/features/dynamic/dynamic_post_card.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_post_header.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/dynamic_content_widget.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_card.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/skeletons/dynamic_skeleton.dart';
@@ -88,13 +91,13 @@ class _UserDynamicFeedState extends ConsumerState<UserDynamicFeed>
                       return const SizedBox(height: 16);
                     }
                     final item = items[index ~/ 2];
+                    final cardPost = item.toDynamicPostCardViewData();
                     return DynamicPostCard(
-                      key: ValueKey('user_dynamic_${item.idStr}_$index'),
-                      post: item,
-                      onLike: (post) => notifier.toggleLike(
-                        post.idStr,
-                        post.modules.moduleStat?.like.status ?? false,
-                      ),
+                      key: ValueKey('user_dynamic_${cardPost.id}_$index'),
+                      post: cardPost,
+                      header: DynamicPostHeader(post: item),
+                      content: DynamicContentWidget(post: item),
+                      onLike: () => notifier.toggleLike(cardPost.id, cardPost.isLiked),
                     );
                   }, childCount: totalCount),
                 ),

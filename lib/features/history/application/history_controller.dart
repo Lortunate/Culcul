@@ -1,6 +1,6 @@
 import 'package:culcul/features/history/data/history_repository_impl.dart';
 import 'package:culcul/features/history/domain/entities/history_entry.dart';
-import 'package:flutter/foundation.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'history_controller.g.dart';
@@ -17,7 +17,7 @@ class HistoryList extends _$HistoryList {
     return result.when(
       success: (data) => data,
       failure: (error) {
-        debugPrint('Error loading history: $error');
+        DevLogger.log('feature', 'history.load_error', <String, Object?>{'error': error});
         return const <HistoryEntry>[];
       },
     );

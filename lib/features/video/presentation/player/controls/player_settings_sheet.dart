@@ -4,6 +4,7 @@ import 'package:culcul/features/video/presentation/player/controls/player_consta
 import 'package:culcul/features/video/presentation/player/controls/player_panel.dart';
 import 'package:culcul/features/video/presentation/player/controls/video_overlay_styles.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -69,7 +70,12 @@ class PlayerSettingsSheet extends ConsumerWidget {
       maxHeightFactor: 0.82,
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.fromLTRB(16, 16, 16, isBottomSheet ? bottomPadding + 16 : 16),
+        padding: EdgeInsets.fromLTRB(
+          CulculSpacing.md,
+          CulculSpacing.md,
+          CulculSpacing.md,
+          isBottomSheet ? bottomPadding + CulculSpacing.md : CulculSpacing.md,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -80,7 +86,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
               labelBuilder: formatPlaybackSpeedLabel,
               onSelected: videoDetailNotifier.setPlaybackSpeed,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: CulculSpacing.sm),
             _InlineTextOptionSection<int>(
               title: t.video.player.choose_quality,
               items: availableQualities,
@@ -89,7 +95,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
               onSelected: videoDetailNotifier.switchQuality,
               emptyLabel: t.video.player.quality_unavailable,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: CulculSpacing.sm),
             PlayerPanelSection(
               title: t.video.player.danmaku_settings,
               subtitle: t.video.player.danmaku_section_hint,
@@ -128,7 +134,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
                       divisions: 9,
                       onChanged: danmakuNotifier.setOpacity,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: CulculSpacing.xs),
                     _DanmakuSliderRow(
                       label: t.video.player.danmaku_scale,
                       value: danmakuSettings.fontSizeScale,
@@ -137,7 +143,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
                       divisions: 15,
                       onChanged: danmakuNotifier.setFontSizeScale,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: CulculSpacing.xs),
                     _DanmakuSliderRow(
                       label: t.video.player.danmaku_area,
                       value: danmakuSettings.area,
@@ -146,7 +152,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
                       divisions: 3,
                       onChanged: danmakuNotifier.setArea,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: CulculSpacing.xs),
                     _DanmakuSliderRow(
                       label: t.video.player.danmaku_speed,
                       value: danmakuSettings.speed,
@@ -155,7 +161,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
                       divisions: 6,
                       onChanged: danmakuNotifier.setSpeed,
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: CulculSpacing.sm),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: SingleChildScrollView(
@@ -170,7 +176,7 @@ class PlayerSettingsSheet extends ConsumerWidget {
                                 onTap: danmakuFilters[i].$3,
                               ),
                               if (i != danmakuFilters.length - 1)
-                                const SizedBox(width: 8),
+                                const SizedBox(width: CulculSpacing.xs),
                             ],
                           ],
                         ),

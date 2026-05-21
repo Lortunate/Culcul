@@ -4,7 +4,6 @@ import 'architecture_guard_utils.dart';
 
 const _phase31AllowedPresentationDataImports = <String>{
   'lib/features/auth/presentation/view_models/auth_qr_login_view_model.dart -> lib/features/auth/data/auth_repository_impl.dart',
-  'lib/features/dynamic/presentation/pages/topic_detail_page.dart -> lib/features/dynamic/data/dtos/dynamic_item_extensions.dart',
   'lib/features/dynamic/presentation/view_models/article_detail_view_model.dart -> lib/features/dynamic/data/dynamic_repository_impl.dart',
   'lib/features/dynamic/presentation/view_models/dynamic_comment_view_model.dart -> lib/features/dynamic/data/dtos/dynamic_response.dart',
   'lib/features/dynamic/presentation/view_models/dynamic_comment_view_model.dart -> lib/features/dynamic/data/dynamic_repository_impl.dart',
@@ -27,8 +26,6 @@ const _phase31AllowedPresentationDataImports = <String>{
   'lib/features/dynamic/presentation/widgets/dynamic_content_widget.dart -> lib/features/dynamic/data/dtos/dynamic_response.dart',
   'lib/features/dynamic/presentation/widgets/dynamic_forward_widget.dart -> lib/features/dynamic/data/dtos/dynamic_item_extensions.dart',
   'lib/features/dynamic/presentation/widgets/dynamic_forward_widget.dart -> lib/features/dynamic/data/dtos/dynamic_response.dart',
-  'lib/features/dynamic/presentation/widgets/dynamic_list_view.dart -> lib/features/dynamic/data/dtos/dynamic_item_extensions.dart',
-  'lib/features/dynamic/presentation/widgets/dynamic_list_view.dart -> lib/features/dynamic/data/dtos/dynamic_response.dart',
   'lib/features/dynamic/presentation/widgets/dynamic_post_actions.dart -> lib/features/dynamic/data/dtos/dynamic_item_extensions.dart',
   'lib/features/dynamic/presentation/widgets/dynamic_post_actions.dart -> lib/features/dynamic/data/dtos/dynamic_response.dart',
   'lib/features/dynamic/presentation/widgets/emoji_picker.dart -> lib/features/dynamic/data/dtos/emote_response.dart',
@@ -91,16 +88,8 @@ const _phase31AllowedPresentationDataImports = <String>{
   'lib/features/search/presentation/view_models/search_view_model.dart -> lib/features/search/data/search_repository_impl.dart',
   'lib/features/video/presentation/comments/comment_reply_view_model.dart -> lib/features/video/data/video_repository_impl.dart',
   'lib/features/video/presentation/comments/video_comments_view_model.dart -> lib/features/video/data/video_repository_impl.dart',
-  'lib/features/video/presentation/detail/info/video_actions.dart -> lib/features/video/data/dtos/video_detail_dto.dart',
-  'lib/features/video/presentation/detail/info/video_description.dart -> lib/features/video/data/dtos/video_detail_dto.dart',
-  'lib/features/video/presentation/detail/info/video_parts.dart -> lib/features/video/data/dtos/video_detail_dto.dart',
-  'lib/features/video/presentation/detail/info/video_recommendation.dart -> lib/features/video/data/dtos/related_video_dto.dart',
-  'lib/features/video/presentation/detail/info/video_stats.dart -> lib/features/video/data/dtos/video_detail_dto.dart',
   'lib/features/video/presentation/detail/video_detail_state.dart -> lib/features/video/data/dtos/play_url_dto.dart',
-  'lib/features/video/presentation/detail/video_detail_state.dart -> lib/features/video/data/dtos/related_video_dto.dart',
-  'lib/features/video/presentation/detail/video_detail_state.dart -> lib/features/video/data/dtos/video_detail_dto.dart',
   'lib/features/video/presentation/detail/video_detail_view_model.dart -> lib/features/video/data/dtos/play_url_dto.dart',
-  'lib/features/video/presentation/detail/video_detail_view_model.dart -> lib/features/video/data/dtos/video_detail_dto.dart',
   'lib/features/video/presentation/detail/video_detail_view_model.dart -> lib/features/video/data/video_repository_impl.dart',
   'lib/features/video/presentation/overlays/danmaku_view_model.dart -> lib/features/video/data/danmaku_repository_impl.dart',
   'lib/features/video/presentation/overlays/danmaku_view_model.dart -> lib/features/video/data/dtos/danmaku_model.dart',
@@ -111,9 +100,7 @@ const _phase31AllowedPresentationDataImports = <String>{
   'lib/features/video/presentation/player/hooks/use_listen_audio_mode.dart -> lib/features/video/data/dtos/play_url_dto.dart',
   'lib/features/video/presentation/player/hooks/use_listen_audio_mode.dart -> lib/features/video/data/video_repository_impl.dart',
   'lib/features/video/presentation/player/hooks/use_video_loader.dart -> lib/features/video/data/dtos/play_url_dto.dart',
-  'lib/features/video/presentation/player/hooks/use_video_orientation.dart -> lib/features/video/data/dtos/video_detail_dto.dart',
   'lib/features/video/presentation/player/playable_urls.dart -> lib/features/video/data/dtos/play_url_dto.dart',
-  'lib/features/video/presentation/player/vertical_video_page.dart -> lib/features/video/data/dtos/video_detail_dto.dart',
 };
 
 void main() {

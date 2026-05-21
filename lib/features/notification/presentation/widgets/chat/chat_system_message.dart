@@ -1,3 +1,4 @@
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 
 class ChatSystemMessage extends StatelessWidget {
@@ -11,10 +12,13 @@ class ChatSystemMessage extends StatelessWidget {
 
     return Center(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        padding: const EdgeInsets.symmetric(
+          horizontal: CulculSpacing.md,
+          vertical: CulculSpacing.xxs + CulculSpacing.xxs / 2,
+        ),
         decoration: BoxDecoration(
           color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(CulculRadius.lg),
         ),
         child: Text(
           content,

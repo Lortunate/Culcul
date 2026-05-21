@@ -163,10 +163,10 @@ class _NotificationSourcePreview extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(CulculSpacing.xs),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(CulculRadius.xs),
       ),
       child: Row(
         children: [
@@ -181,12 +181,12 @@ class _NotificationSourcePreview extends StatelessWidget {
             ),
           ),
           if (imageUrl.isNotEmpty) ...[
-            const SizedBox(width: 8),
+            const SizedBox(width: CulculSpacing.xs),
             AppNetworkImage(
               url: imageUrl,
               width: 40,
               height: 40,
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(CulculRadius.xs),
             ),
           ],
         ],

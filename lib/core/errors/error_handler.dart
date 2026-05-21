@@ -1,3 +1,4 @@
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
@@ -68,9 +69,15 @@ class ErrorHandler {
     final signature = '${error.runtimeType}|$error';
     if (!_loggedErrorSignatures.add(signature)) return;
 
-    debugPrint('[$source] $signature');
+    DevLogger.log('error', 'app_error', <String, Object?>{
+      'source': source,
+      'signature': signature,
+    });
     if (stackTrace != null) {
-      debugPrint('[$source][stack]\n$stackTrace');
+      DevLogger.log('error', 'app_error.stack', <String, Object?>{
+        'source': source,
+        'stack': stackTrace,
+      });
     }
   }
 

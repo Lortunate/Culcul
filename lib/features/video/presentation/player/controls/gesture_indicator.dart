@@ -1,10 +1,11 @@
 import 'dart:ui';
 
 import 'package:culcul/core/perf/performance_policy.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 
 class GestureIndicator extends StatelessWidget {
-  static const _borderRadius = BorderRadius.all(Radius.circular(20));
+  static const _borderRadius = BorderRadius.all(CulculRadius.radiusLg);
   static final _blurFilter = ImageFilter.blur(sigmaX: 32, sigmaY: 32);
 
   final IconData icon;
@@ -26,7 +27,10 @@ class GestureIndicator extends StatelessWidget {
     final blurEnabled = PerformancePolicyController.notifier.value.blurEnabled;
 
     final content = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
+      padding: const EdgeInsets.symmetric(
+        horizontal: CulculSpacing.xl,
+        vertical: CulculSpacing.lg,
+      ),
       decoration: BoxDecoration(
         color: colorScheme.scrim.withValues(alpha: blurEnabled ? 0.5 : 0.7),
         borderRadius: _borderRadius,
@@ -85,7 +89,7 @@ class GestureIndicator extends StatelessWidget {
               width: 80,
               height: 6,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(3),
+                borderRadius: BorderRadius.circular(CulculRadius.xs),
                 child: LinearProgressIndicator(
                   value: value,
                   backgroundColor: colorScheme.onPrimary.withValues(alpha: 0.15),

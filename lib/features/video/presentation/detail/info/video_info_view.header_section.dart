@@ -1,7 +1,7 @@
 part of 'video_info_view.dart';
 
 class _VideoInfoHeaderSection extends StatelessWidget {
-  final VideoDetail detail;
+  final VideoDetailViewData detail;
   final bool isFollowed;
   final ValueNotifier<bool> isExpanded;
   final VoidCallback onToggleFollow;
@@ -73,7 +73,7 @@ class _VideoInfoHeaderSection extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: ExpandableDescriptionAndTags(
               description: detail.desc,
-              tags: detail.tag,
+              tags: detail.tags,
             ),
           ),
         ],

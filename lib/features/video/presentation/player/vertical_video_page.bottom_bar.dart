@@ -1,7 +1,7 @@
 part of 'vertical_video_page.dart';
 
 class _BottomBar extends ConsumerWidget {
-  final VideoDetail videoDetail;
+  final VideoDetailViewData videoDetail;
   final PlayerController playerController;
 
   const _BottomBar({required this.videoDetail, required this.playerController});

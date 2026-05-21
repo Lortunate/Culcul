@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:culcul/core/constants/api_constants.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/features/video/data/dtos/play_url_dto.dart' as domain;
 import 'package:culcul/features/video/presentation/player/playable_urls.dart';
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
@@ -69,9 +70,9 @@ void useVideoLoader(
       }
       final url = urls.first;
       if (kDebugMode) {
-        debugPrint(
-          'Video loader candidates=${urls.map((e) => Uri.tryParse(e)?.host ?? e).toList()}',
-        );
+        DevLogger.log('video', 'player.loader_candidates', <String, Object?>{
+          'hosts': urls.map((e) => Uri.tryParse(e)?.host ?? e).toList(),
+        });
       }
 
       final reactivated =
@@ -123,9 +124,11 @@ void useVideoLoader(
             lastPlayUrl.value = url;
             lastActivationVersion.value = activationVersion;
           } catch (error, stackTrace) {
-            debugPrint(
-              'useVideoLoader failed for session=$sessionId: $error\n$stackTrace',
-            );
+            DevLogger.log('video', 'player.load_retry_failed', <String, Object?>{
+              'session': sessionId,
+              'error': error,
+              'stack': stackTrace,
+            });
           }
         }),
       );

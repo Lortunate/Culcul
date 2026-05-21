@@ -67,4 +67,18 @@ abstract class VideoApi {
     @Field('platform') String platform,
     @Field('type') int type,
   );
+
+  @POST('/x/web-interface/archive/like')
+  @FormUrlEncoded()
+  @Headers({'x-bili-csrf': 'true'})
+  Future<ApiResponse<void>> setVideoLike(@Field('aid') int aid, @Field('like') int like);
+
+  @POST('/x/web-interface/coin/add')
+  @FormUrlEncoded()
+  @Headers({'x-bili-csrf': 'true'})
+  Future<ApiResponse<void>> addVideoCoin(
+    @Field('aid') int aid,
+    @Field('multiply') int multiply, {
+    @Field('select_like') int selectLike = 0,
+  });
 }

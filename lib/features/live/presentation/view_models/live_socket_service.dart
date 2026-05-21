@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/runtime/runtime_performance_policy.dart';
 import 'package:culcul/features/live/data/dtos/live_danmu_info_model.dart';
 import 'package:culcul/features/live/data/dtos/live_history_danmaku_model.dart';
 import 'package:culcul/features/live/presentation/view_models/live_danmaku_event_parser.dart';
 import 'package:culcul/features/live/presentation/view_models/live_socket_packet_codec.dart';
-import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -80,11 +80,15 @@ class LiveSocketService {
 
       _channelSubscription = _channel!.stream.listen(
         _handleMessage,
-        onError: (error) => debugPrint('Live WebSocket Error: $error'),
+        onError: (Object error, StackTrace stackTrace) => DevLogger.log(
+          'live',
+          'socket.error',
+          <String, Object?>{'error': error, 'stack': stackTrace},
+        ),
         onDone: () {
           _heartbeatTimer?.cancel();
           _channel = null;
-          debugPrint('Live WebSocket Closed');
+          DevLogger.log('live', 'socket.closed');
         },
       );
 
@@ -101,8 +105,11 @@ class LiveSocketService {
 
       // Start heartbeat
       _startHeartbeat();
-    } catch (e) {
-      debugPrint('Failed to connect to Live WebSocket: $e');
+    } catch (error, stackTrace) {
+      DevLogger.log('live', 'socket.connect_failed', <String, Object?>{
+        'error': error,
+        'stack': stackTrace,
+      });
     }
   }
 
@@ -140,8 +147,11 @@ class LiveSocketService {
             try {
               final uncompressed = zlib.decode(packet.body);
               _handleMessage(uncompressed); // Recursive for uncompressed batch
-            } catch (e) {
-              debugPrint('Failed to decompress zlib body: $e');
+            } catch (error, stackTrace) {
+              DevLogger.log('live', 'socket.zlib_failed', <String, Object?>{
+                'error': error,
+                'stack': stackTrace,
+              });
             }
           } else if (packet.protocolVersion == 0) {
             // JSON
@@ -152,20 +162,22 @@ class LiveSocketService {
               // isolate spawn overhead exceeding the decode cost itself.
               final json = jsonDecode(jsonStr) as Map<String, dynamic>;
               _parseNotification(json);
-            } catch (e) {
-              debugPrint('Failed to parse notification JSON: $e');
+            } catch (error, stackTrace) {
+              DevLogger.log('live', 'socket.notification_parse_failed', <String, Object?>{
+                'error': error,
+                'stack': stackTrace,
+              });
             }
           } else if (packet.protocolVersion == 3) {
             // Brotli compressed - not supported natively in standard dart:io without plugins usually,
             // but let's assume zlib is used mostly for protover 2.
             // If protover 3 is used, we might need 'brotli' package or skip.
             // Bilibili usually negotiates protover. We sent 2 in auth.
-            debugPrint('Brotli compression (ver 3) not supported yet');
+            DevLogger.log('live', 'socket.brotli_unsupported');
           }
         case 8: // Auth Reply
-          debugPrint('Live WebSocket Authenticated');
+          DevLogger.log('live', 'socket.authenticated');
         case 3: // Heartbeat Reply
-        // debugPrint('Heartbeat reply: ${ByteData.sublistView(body).getUint32(0)} popularity');
       }
     }
   }

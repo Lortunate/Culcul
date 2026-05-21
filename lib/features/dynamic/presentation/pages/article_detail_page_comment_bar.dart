@@ -66,6 +66,7 @@ List<Widget> buildArticleCommentSlivers({
               CommentItemWidget(
                 item: item,
                 upperMid: data.authorMid,
+                onTapUser: (mid) => UserProfileRoute(mid: mid).push(context),
                 onLike: () => onToggleCommentLike(item),
                 onReply: () => CommentReplySheet.show(
                   context,

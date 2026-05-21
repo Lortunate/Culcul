@@ -37,7 +37,7 @@ mixin _VideoDetailControllerHelpersMixin on _$VideoDetailController {
     }
 
     state = state.copyWith(
-      videoDetail: detail.copyWith(tag: auxiliary.tags),
+      videoDetail: detail.copyWith(tags: auxiliary.tags),
       relatedVideos: auxiliary.relatedVideos,
     );
     assert(() {

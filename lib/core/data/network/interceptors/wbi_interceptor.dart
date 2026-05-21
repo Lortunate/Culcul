@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:culcul/core/data/network/providers/wbi_helper_provider.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class WbiInterceptor extends Interceptor {
@@ -39,9 +39,10 @@ class WbiInterceptor extends Interceptor {
 
       options.queryParameters = wbiHelper.sign(options.queryParameters);
     } catch (e, stack) {
-      if (kDebugMode) {
-        debugPrint('WbiInterceptor signing failed: $e\n$stack');
-      }
+      DevLogger.log('network', 'wbi.sign_failed', <String, Object?>{
+        'error': e,
+        'stack': stack,
+      });
       return handler.reject(
         DioException(requestOptions: options, error: 'Wbi signing failed: $e'),
       );

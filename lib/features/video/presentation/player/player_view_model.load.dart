@@ -115,9 +115,9 @@ mixin _PlayerControllerLoadMixin on _$PlayerController, _PlayerControllerControl
         .toList(growable: false);
     if (candidates.isEmpty) {
       _loadRequestTimings.remove(requestToken);
-      debugPrint(
-        'PlayerController.loadVideo ignored empty playable urls for session=$sessionId',
-      );
+      DevLogger.log('video', 'player.load_empty_urls', <String, Object?>{
+        'session': sessionId,
+      });
       return;
     }
 
@@ -171,18 +171,23 @@ mixin _PlayerControllerLoadMixin on _$PlayerController, _PlayerControllerControl
           return;
         }
         lastError = error;
-        debugPrint(
-          'PlayerController.loadVideo failed for candidate ${i + 1}/${candidates.length}: $error',
-        );
+        DevLogger.log('video', 'player.load_open_failed', <String, Object?>{
+          'session': sessionId,
+          'candidate': i + 1,
+          'candidateCount': candidates.length,
+          'error': error,
+        });
         await _stopPlaybackSilently();
       }
     }
 
     final errorToThrow = lastError;
     if (errorToThrow != null && _isLoadRequestActive(sessionId, requestToken)) {
-      debugPrint(
-        'PlayerController.loadVideo exhausted candidates for session=$sessionId: $errorToThrow',
-      );
+      DevLogger.log('video', 'player.load_retry_failed', <String, Object?>{
+        'session': sessionId,
+        'candidateCount': candidates.length,
+        'error': errorToThrow,
+      });
     }
     _loadRequestTimings.remove(requestToken);
   }

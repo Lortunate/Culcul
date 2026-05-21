@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/video/data/danmaku_repository_impl.dart';
 import 'package:culcul/features/video/data/video_repository_impl.dart';
@@ -129,7 +130,9 @@ Path? _parsePath(String base64Svg) {
       return parseSvgPathData(match.group(1)!);
     }
   } catch (error) {
-    debugPrint('Error parsing SVG path: $error');
+    DevLogger.log('video', 'danmaku.mask_svg_parse_failed', <String, Object?>{
+      'error': error,
+    });
   }
   return null;
 }

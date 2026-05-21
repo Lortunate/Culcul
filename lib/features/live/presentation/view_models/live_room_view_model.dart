@@ -14,7 +14,6 @@ import 'package:culcul/features/live/presentation/view_models/live_room_state.da
 import 'package:culcul/features/live/presentation/view_models/live_socket_service.dart';
 import 'package:culcul/features/profile/application/profile_session_providers.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'live_room_view_model.g.dart';

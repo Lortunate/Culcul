@@ -1,3 +1,4 @@
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +25,7 @@ class AppSearchBar extends StatelessWidget {
       color:
           theme.inputDecorationTheme.fillColor ??
           theme.colorScheme.surfaceContainerHighest,
-      borderRadius: BorderRadius.circular(22),
+      borderRadius: BorderRadius.circular(CulculRadius.lg),
     );
   }
 
@@ -67,7 +68,10 @@ class AppSearchBar extends StatelessWidget {
           hintText: hintText,
           hintStyle: _buildHintStyle(theme),
           prefixIcon: Padding(
-            padding: const EdgeInsets.only(left: 14, right: 8),
+            padding: const EdgeInsets.only(
+              left: CulculSpacing.md,
+              right: CulculSpacing.xs,
+            ),
             child: _buildSearchIcon(colorScheme.onSurfaceVariant),
           ),
           prefixIconConstraints: const BoxConstraints(),
@@ -76,7 +80,7 @@ class AppSearchBar extends StatelessWidget {
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
-          contentPadding: const EdgeInsets.only(right: 14),
+          contentPadding: const EdgeInsets.only(right: CulculSpacing.md),
         ),
         cursorColor: colorScheme.primary,
       ),
@@ -87,12 +91,12 @@ class AppSearchBar extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(22),
+      borderRadius: BorderRadius.circular(CulculRadius.lg),
       child: AppClickable(
         onTap: onTap,
         child: Container(
           height: 40,
-          padding: const EdgeInsets.symmetric(horizontal: 14),
+          padding: const EdgeInsets.symmetric(horizontal: CulculSpacing.md),
           decoration: _buildDecoration(theme),
           child: Row(
             children: [

@@ -4,7 +4,7 @@ import 'package:culcul/core/data/network/resource_api.dart';
 import 'package:culcul/core/data/network/resource_api_provider.dart';
 import 'package:culcul/core/data/network/providers/wbi_signer.dart';
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:flutter/foundation.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'wbi_helper_provider.g.dart';
@@ -41,9 +41,10 @@ class WbiHelper {
       final data = Map<String, dynamic>.from(response as Map);
 
       if (data['code'] != 0) {
-        if (kDebugMode) {
-          debugPrint('Nav API error: code=${data['code']}, message=${data['message']}');
-        }
+        DevLogger.log('network', 'wbi.nav_error', <String, Object?>{
+          'code': data['code'],
+          'message': data['message'],
+        });
         if (data['code'] == -352) {
           throw const AppError.data('Nav API risk control (-352)', code: -352);
         }
@@ -69,14 +70,9 @@ class WbiHelper {
       _imgKey = imgUrl.split('/').last.split('.').first;
       _subKey = subUrl.split('/').last.split('.').first;
       _lastUpdate = DateTime.now();
-      if (kDebugMode) {
-        debugPrint('Wbi keys updated: $_imgKey, $_subKey');
-      }
       _updateCompleter?.complete();
     } catch (e) {
-      if (kDebugMode) {
-        debugPrint('Wbi updateKeys failed: $e');
-      }
+      DevLogger.log('network', 'wbi.update_keys_failed', <String, Object?>{'error': e});
       _imgKey = null;
       _subKey = null;
       _updateCompleter?.completeError(e);

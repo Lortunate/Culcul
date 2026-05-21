@@ -10,6 +10,7 @@ import 'package:culcul/features/video/presentation/detail/video_detail_view_mode
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
 import 'package:culcul/ui/widgets/layout/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
@@ -134,7 +135,7 @@ class VideoCommentsEmptyState extends StatelessWidget {
                 color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: CulculSpacing.xs),
             Icon(Icons.refresh, color: colorScheme.primary),
           ],
         ),

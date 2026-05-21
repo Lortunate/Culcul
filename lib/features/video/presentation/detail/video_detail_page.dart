@@ -67,7 +67,10 @@ class VideoDetailPage extends HookConsumerWidget {
                 sessionId: sessionId,
               ),
               if (!isFullscreen) ...[
-                VideoTabBar(controller: tabController),
+                VideoTabBar(
+                  controller: tabController,
+                  commentCount: videoDetail?.stat.reply,
+                ),
                 Expanded(
                   child: TabBarView(
                     controller: tabController,

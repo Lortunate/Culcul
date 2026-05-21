@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 
 class AppEmptyStateWidget extends StatelessWidget {
   final String message;
@@ -23,12 +24,12 @@ class AppEmptyStateWidget extends StatelessWidget {
 
     return Center(
       child: SingleChildScrollView(
-        padding: EdgeInsets.all(compact ? 16 : 32),
+        padding: EdgeInsets.all(compact ? CulculSpacing.md : CulculSpacing.xl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, size: compact ? 36 : 56, color: colorScheme.outline),
-            SizedBox(height: compact ? 10 : 16),
+            SizedBox(height: compact ? CulculSpacing.sm : CulculSpacing.md),
             Text(
               message,
               textAlign: TextAlign.center,
@@ -39,12 +40,14 @@ class AppEmptyStateWidget extends StatelessWidget {
               ),
             ),
             if (onAction != null && actionLabel != null) ...[
-              SizedBox(height: compact ? 10 : 16),
+              SizedBox(height: compact ? CulculSpacing.sm : CulculSpacing.md),
               OutlinedButton(
                 onPressed: onAction,
                 style: OutlinedButton.styleFrom(
                   visualDensity: compact ? VisualDensity.compact : VisualDensity.standard,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(CulculRadius.lg),
+                  ),
                 ),
                 child: Text(actionLabel!),
               ),

@@ -1,4 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 
 class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -31,18 +32,18 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       title: Container(
         height: 36,
-        margin: const EdgeInsets.only(left: 8, right: 4),
+        margin: const EdgeInsets.only(left: CulculSpacing.xs, right: CulculSpacing.xxs),
         decoration: BoxDecoration(
           color:
               theme.inputDecorationTheme.fillColor ?? colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(CulculRadius.lg),
           border: Border.all(color: Colors.transparent, width: 0.0),
         ),
         child: Row(
           children: [
             const SizedBox(width: 14),
             Icon(Icons.search_rounded, size: 18, color: colorScheme.onSurfaceVariant),
-            const SizedBox(width: 8),
+            const SizedBox(width: CulculSpacing.xs),
             Expanded(
               child: TextField(
                 controller: controller,
@@ -84,7 +85,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 onPressed: onClear,
               ),
-              const SizedBox(width: 4),
+              const SizedBox(width: CulculSpacing.xxs),
             ] else
               const SizedBox(width: 14),
           ],
@@ -92,12 +93,15 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         Padding(
-          padding: const EdgeInsets.only(right: 8),
+          padding: const EdgeInsets.only(right: CulculSpacing.xs),
           child: TextButton(
             onPressed: () => onSearch(controller.text),
             style: TextButton.styleFrom(
               minimumSize: Size.zero,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(
+                horizontal: CulculSpacing.md,
+                vertical: CulculSpacing.xs,
+              ),
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               foregroundColor: colorScheme.primary,
             ),

@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:developer' as developer;
 
 import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
-import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
 import 'package:culcul/core/services/relation_service.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/features/video/application/video_detail_workflows.dart';
+import 'package:culcul/features/video/application/video_detail_interactions.dart';
 import 'package:culcul/features/video/data/video_repository_impl.dart';
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -158,21 +158,48 @@ class VideoDetailController extends _$VideoDetailController
     final detail = state.videoDetail;
     if (detail == null) return;
 
-    final wasFollowed = detail.reqUser?.attention == 1;
+    final wasFollowed = detail.reqUser.attention == 1;
     final nextAttention = wasFollowed ? 0 : 1;
     final previousDetail = detail;
 
     state = state.copyWith(
       videoDetail: detail.copyWith(
-        reqUser:
-            detail.reqUser?.copyWith(attention: nextAttention) ??
-            ReqUser(attention: nextAttention),
+        reqUser: detail.reqUser.copyWith(attention: nextAttention),
       ),
     );
 
     final result = await ref
         .read(relationPortProvider)
         .modifyRelation(mid: detail.owner.mid, isFollow: !wasFollowed);
+    if (result.isFailure) {
+      state = state.copyWith(videoDetail: previousDetail);
+    }
+  }
+
+  Future<void> toggleVideoLike() async {
+    final detail = state.videoDetail;
+    if (detail == null) return;
+
+    final nextLiked = detail.reqUser.like != 1;
+    final previousDetail = detail;
+    state = state.copyWith(videoDetail: applyVideoLikeState(detail, isLiked: nextLiked));
+
+    final result = await ref
+        .read(videoRepositoryProvider)
+        .setVideoLike(aid: detail.aid, isLiked: nextLiked);
+    if (result.isFailure) {
+      state = state.copyWith(videoDetail: previousDetail);
+    }
+  }
+
+  Future<void> addVideoCoin() async {
+    final detail = state.videoDetail;
+    if (detail == null) return;
+
+    final previousDetail = detail;
+    state = state.copyWith(videoDetail: applyVideoCoinState(detail));
+
+    final result = await ref.read(videoRepositoryProvider).addVideoCoin(aid: detail.aid);
     if (result.isFailure) {
       state = state.copyWith(videoDetail: previousDetail);
     }

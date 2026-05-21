@@ -42,7 +42,7 @@ class _DanmakuSliderRow extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: CulculSpacing.xs),
         Slider(
           value: value,
           min: min,

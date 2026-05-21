@@ -20,16 +20,19 @@ class PlayerFilterChip extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(CulculRadius.xl),
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
+          duration: CulculMotion.fast,
           curve: Curves.easeOutCubic,
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          padding: const EdgeInsets.symmetric(
+            horizontal: CulculSpacing.md,
+            vertical: CulculSpacing.xs,
+          ),
           decoration: BoxDecoration(
             color: isSelected
                 ? colorScheme.primaryContainer.withValues(alpha: 0.9)
                 : VideoOverlayStyles.panelSurface(colorScheme, alpha: 0.44),
-            borderRadius: BorderRadius.circular(999),
+            borderRadius: BorderRadius.circular(CulculRadius.xl),
             border: Border.all(
               color: isSelected
                   ? colorScheme.primary.withValues(alpha: 0.9)

@@ -3,8 +3,9 @@ part of 'comment_item.dart';
 class _Header extends StatelessWidget {
   final CommentMember member;
   final int? upperMid;
+  final VoidCallback? onTapUser;
 
-  const _Header({required this.member, this.upperMid});
+  const _Header({required this.member, this.upperMid, this.onTapUser});
 
   @override
   Widget build(BuildContext context) {
@@ -18,13 +19,16 @@ class _Header extends StatelessWidget {
     return Row(
       children: [
         Flexible(
-          child: Text(
-            member.uname,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: isVip ? colorScheme.primary : colorScheme.onSurface,
+          child: AppClickable(
+            onTap: onTapUser,
+            child: Text(
+              member.uname,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: isVip ? colorScheme.primary : colorScheme.onSurface,
+              ),
             ),
           ),
         ),

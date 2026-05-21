@@ -1,6 +1,6 @@
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/features/live/data/dtos/live_history_danmaku_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:flutter/foundation.dart';
 
 class LiveDanmakuEventParser {
   const LiveDanmakuEventParser();
@@ -49,7 +49,11 @@ class LiveDanmakuEventParser {
         userLevel: userLevel,
       );
     } catch (error, stackTrace) {
-      debugPrint('LiveDanmakuEventParser::DANMU_MSG parse failed: $error\n$stackTrace');
+      DevLogger.log('live', 'danmaku.parse_failed', <String, Object?>{
+        'cmd': 'DANMU_MSG',
+        'error': error,
+        'stack': stackTrace,
+      });
       return null;
     }
   }
@@ -78,9 +82,11 @@ class LiveDanmakuEventParser {
         medal: medal,
       );
     } catch (error, stackTrace) {
-      debugPrint(
-        'LiveDanmakuEventParser::INTERACT_WORD parse failed: $error\n$stackTrace',
-      );
+      DevLogger.log('live', 'danmaku.parse_failed', <String, Object?>{
+        'cmd': 'INTERACT_WORD',
+        'error': error,
+        'stack': stackTrace,
+      });
       return null;
     }
   }
@@ -99,7 +105,11 @@ class LiveDanmakuEventParser {
         dmType: 3,
       );
     } catch (error, stackTrace) {
-      debugPrint('LiveDanmakuEventParser::NOTICE_MSG parse failed: $error\n$stackTrace');
+      DevLogger.log('live', 'danmaku.parse_failed', <String, Object?>{
+        'cmd': 'NOTICE_MSG',
+        'error': error,
+        'stack': stackTrace,
+      });
       return null;
     }
   }
@@ -125,7 +135,11 @@ class LiveDanmakuEventParser {
         medal: medal,
       );
     } catch (error, stackTrace) {
-      debugPrint('LiveDanmakuEventParser::SEND_GIFT parse failed: $error\n$stackTrace');
+      DevLogger.log('live', 'danmaku.parse_failed', <String, Object?>{
+        'cmd': 'SEND_GIFT',
+        'error': error,
+        'stack': stackTrace,
+      });
       return null;
     }
   }

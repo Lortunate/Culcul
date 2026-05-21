@@ -1,3 +1,4 @@
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:culcul/core/perf/performance_policy.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ class AppCardContainer extends StatelessWidget {
     required this.child,
     this.onTap,
     this.onLongPress,
-    this.borderRadius = 8,
+    this.borderRadius = CulculRadius.lg,
     this.padding,
     this.color,
   });

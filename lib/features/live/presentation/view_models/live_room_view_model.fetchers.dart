@@ -136,7 +136,11 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
   }
 
   void _logIgnoredError(String scope, Object error, StackTrace stackTrace) {
-    debugPrint('LiveRoomController::$scope ignored error: $error\n$stackTrace');
+    DevLogger.log('live', 'room.fetch_ignored_error', <String, Object?>{
+      'scope': scope,
+      'error': error,
+      'stack': stackTrace,
+    });
   }
 
   LiveDanmakuFeedController _danmakuFeed(int roomId) {

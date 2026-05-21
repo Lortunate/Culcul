@@ -4,7 +4,6 @@ import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
-import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_recommend_view_model.g.dart';
@@ -38,14 +37,16 @@ class HomeRecommend extends _$HomeRecommend
     if (forceRefresh) {
       DevLogger.log(
         'feature',
-        'home.recommend_feed silent_refresh_result',
+        'home.recommend_feed.silent_refresh_result',
         <String, Object?>{'success': result.isSuccess},
       );
     }
     return result.when(
       success: (data) => data,
       failure: (error) {
-        debugPrint('Error loading recommend feed: $error');
+        DevLogger.log('feature', 'home.recommend_feed.load_error', <String, Object?>{
+          'error': error,
+        });
         return const <VideoModel>[];
       },
     );

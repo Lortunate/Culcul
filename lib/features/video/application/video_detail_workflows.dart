@@ -1,9 +1,11 @@
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/result/result.dart';
+import 'package:culcul/features/video/application/video_detail_models.dart';
 import 'package:culcul/features/video/data/dtos/play_url_dto.dart';
 import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
@@ -13,7 +15,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'video_detail_workflows.g.dart';
 
 class VideoInitialData {
-  final VideoDetail detail;
+  final VideoDetailViewData detail;
   final int currentCid;
   final PlayUrl? playUrl;
   final List<int> availableQualities;
@@ -29,8 +31,8 @@ class VideoInitialData {
 }
 
 class VideoAuxiliaryData {
-  final List<RelatedVideo> relatedVideos;
-  final List<VideoTag> tags;
+  final List<VideoModel> relatedVideos;
+  final List<VideoTagViewData> tags;
 
   const VideoAuxiliaryData({required this.relatedVideos, required this.tags});
 }
@@ -93,7 +95,7 @@ class LoadVideoDetailWorkflow {
 
         return Success(
           VideoInitialData(
-            detail: detail,
+            detail: detail.toVideoDetailViewData(),
             currentCid: cid,
             playUrl: playUrl,
             availableQualities: playUrl?.acceptQuality.toList() ?? const [],
@@ -140,11 +142,16 @@ class LoadVideoDetailWorkflow {
       scope: 'video_detail_load_auxiliary',
     );
 
+    final relatedVideos =
+        responses['related'] as List<RelatedVideo>? ?? const <RelatedVideo>[];
+    final tags = responses['tags'] as List<VideoTag>? ?? const <VideoTag>[];
+
     return Success(
       VideoAuxiliaryData(
-        relatedVideos:
-            responses['related'] as List<RelatedVideo>? ?? const <RelatedVideo>[],
-        tags: responses['tags'] as List<VideoTag>? ?? const <VideoTag>[],
+        relatedVideos: relatedVideos
+            .map((video) => video.toVideoModel())
+            .toList(growable: false),
+        tags: tags.map((tag) => tag.toVideoTagViewData()).toList(growable: false),
       ),
     );
   }

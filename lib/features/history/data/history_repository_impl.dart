@@ -16,7 +16,7 @@ HistoryRepositoryImpl historyRepository(Ref ref) {
 }
 
 class HistoryRepositoryImpl {
-  static const int _defaultPageSize = 20;
+  static const int _historyPageSize = 20;
   final HistoryApi _api;
   final RequestExecutor _requestExecutor;
 
@@ -26,7 +26,7 @@ class HistoryRepositoryImpl {
   Future<Result<HistoryResponseDataDto, AppError>> getHistoryCursor({
     int max = 0,
     int viewAt = 0,
-    int ps = _defaultPageSize,
+    int ps = _historyPageSize,
   }) {
     return _requestExecutor.runApiDirect(
       () => _api.getHistoryCursor(max, viewAt, '', ps),

@@ -1,4 +1,5 @@
 import 'package:culcul/core/utils/format_extensions.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 
 class ChatTimeDivider extends StatelessWidget {
@@ -12,7 +13,7 @@ class ChatTimeDivider extends StatelessWidget {
     final timeStr = date.toChatTime();
 
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.symmetric(vertical: CulculSpacing.md),
       child: Text(
         timeStr,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(

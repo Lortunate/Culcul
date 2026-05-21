@@ -48,7 +48,7 @@ class ControlButton extends StatelessWidget {
         },
         borderRadius: BorderRadius.circular(size),
         child: Padding(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(CulculSpacing.xs),
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
             child: Icon(
@@ -87,7 +87,7 @@ class PlayerCapsuleButton extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(999),
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
+          duration: CulculMotion.fast,
           curve: Curves.easeOutCubic,
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(

@@ -34,5 +34,5 @@ abstract final class CulculMotion {
 
   static const Curve fadeScaleCurve = Curves.easeInOut;
   static const Curve routeSlideCurve = Curves.easeInOut;
-  static const Curve modalSlideCurve = Curves.easeOut;
+  static const Curve modalSlideCurve = routeSlideCurve;
 }

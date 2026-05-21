@@ -11,10 +11,13 @@ class PlayerPanelEmptyState extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+      padding: const EdgeInsets.symmetric(
+        horizontal: CulculSpacing.md,
+        vertical: CulculSpacing.lg,
+      ),
       decoration: BoxDecoration(
         color: VideoOverlayStyles.panelSurface(colorScheme, alpha: 0.42),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(CulculRadius.lg),
         border: Border.all(
           color: VideoOverlayStyles.panelOutline(colorScheme, alpha: 0.08),
         ),

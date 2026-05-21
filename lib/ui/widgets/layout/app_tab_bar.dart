@@ -1,3 +1,4 @@
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 
 class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
@@ -29,8 +30,8 @@ class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
   UnderlineTabIndicator _buildIndicator(Color color) {
     return UnderlineTabIndicator(
       borderSide: BorderSide(width: 3, color: color),
-      insets: const EdgeInsets.symmetric(horizontal: 8),
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
+      insets: const EdgeInsets.symmetric(horizontal: CulculSpacing.xs),
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(CulculRadius.xs)),
     );
   }
 
@@ -46,7 +47,7 @@ class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
         controller: controller,
         isScrollable: isScrollable,
         onTap: onTap,
-        padding: const EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.symmetric(horizontal: CulculSpacing.xxs),
         tabAlignment: isScrollable ? TabAlignment.start : null,
         labelColor: colorScheme.primary,
         unselectedLabelColor: colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
@@ -57,7 +58,7 @@ class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         indicatorSize: TabBarIndicatorSize.label,
         indicator: _buildIndicator(colorScheme.primary),
-        labelPadding: const EdgeInsets.symmetric(horizontal: 14),
+        labelPadding: const EdgeInsets.symmetric(horizontal: CulculSpacing.md),
         splashFactory: NoSplash.splashFactory,
         overlayColor: WidgetStateProperty.all(Colors.transparent),
         dividerColor: Colors.transparent,

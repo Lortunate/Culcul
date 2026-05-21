@@ -3,6 +3,7 @@ import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:culcul/ui/responsive/app_breakpoints.dart';
 import 'package:culcul/ui/responsive/app_responsive.dart';
@@ -43,9 +44,14 @@ class ProfileStats extends ConsumerWidget {
         child: Container(
           decoration: BoxDecoration(
             color: colorScheme.surface,
-            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(24)),
+            borderRadius: const BorderRadius.vertical(bottom: CulculRadius.radiusXl),
           ),
-          padding: EdgeInsets.fromLTRB(16, 0, 16, context.isDesktopLayout ? 24 : 20),
+          padding: EdgeInsets.fromLTRB(
+            CulculSpacing.md,
+            0,
+            CulculSpacing.md,
+            context.isDesktopLayout ? CulculSpacing.lg : 20,
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -107,11 +113,14 @@ class _StatItem extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: const BorderRadius.all(CulculRadius.radiusSm),
       child: AppClickable(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+          padding: const EdgeInsets.symmetric(
+            horizontal: CulculSpacing.lg,
+            vertical: CulculSpacing.xs,
+          ),
           child: Column(
             children: [
               Text(

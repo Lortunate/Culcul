@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/search/application/search_application_providers.dart';
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/media/app_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -38,12 +39,12 @@ class TopicPicker extends HookConsumerWidget {
       height: MediaQuery.sizeOf(context).height * 0.7,
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        borderRadius: const BorderRadius.vertical(top: CulculRadius.radiusLg),
       ),
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(CulculSpacing.md),
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
@@ -64,17 +65,19 @@ class TopicPicker extends HookConsumerWidget {
                         alpha: 0.5,
                       ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(CulculRadius.lg),
                         borderSide: BorderSide.none,
                       ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: CulculSpacing.md,
+                      ),
                       isDense: true,
                     ),
                     onChanged: onSearchChanged,
                     autofocus: true,
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: CulculSpacing.sm),
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: Text(t.common.cancel),
@@ -104,14 +107,14 @@ class TopicPicker extends HookConsumerWidget {
                                 url: topic.coverUrl!,
                                 width: 40,
                                 height: 40,
-                                borderRadius: BorderRadius.circular(4),
+                                borderRadius: BorderRadius.circular(CulculRadius.xs),
                               )
                             : Container(
                                 width: 40,
                                 height: 40,
                                 decoration: BoxDecoration(
                                   color: colorScheme.primaryContainer,
-                                  borderRadius: BorderRadius.circular(4),
+                                  borderRadius: BorderRadius.circular(CulculRadius.xs),
                                 ),
                                 child: Icon(
                                   Icons.tag,

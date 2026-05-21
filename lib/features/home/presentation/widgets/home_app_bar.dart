@@ -1,4 +1,4 @@
-import 'package:culcul/features/auth/login_dialog_action.dart';
+import 'package:culcul/features/auth/auth.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/users/app_avatar.dart';

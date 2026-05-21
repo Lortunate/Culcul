@@ -1,19 +1,24 @@
-import 'package:culcul/features/dynamic/data/dtos/dynamic_response.dart';
-import 'package:culcul/features/dynamic/data/dtos/dynamic_item_extensions.dart';
 import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/utils/share_utils.dart';
-import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_post_header.dart';
-import 'package:culcul/features/dynamic/presentation/widgets/dynamic_content_widget.dart';
+import 'package:culcul/features/dynamic/application/dynamic_post_card_view_data.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 
 class DynamicPostCard extends StatelessWidget {
-  final DynamicItem post;
-  final Function(DynamicItem)? onLike;
+  final DynamicPostCardViewData post;
+  final Widget header;
+  final Widget content;
+  final VoidCallback? onLike;
 
-  const DynamicPostCard({super.key, required this.post, this.onLike});
+  const DynamicPostCard({
+    super.key,
+    required this.post,
+    required this.header,
+    required this.content,
+    this.onLike,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +36,7 @@ class DynamicPostCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DynamicPostHeader(post: post),
+            header,
             const SizedBox(height: 12),
             _buildContentSection(context),
             const SizedBox(height: 12),
@@ -53,10 +58,7 @@ class DynamicPostCard extends StatelessWidget {
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
         onTap: () => DynamicDetailRoute(id: post.id).push(context),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 2),
-          child: DynamicContentWidget(post: post),
-        ),
+        child: Padding(padding: const EdgeInsets.symmetric(vertical: 2), child: content),
       ),
     );
   }
@@ -100,7 +102,7 @@ class DynamicPostCard extends StatelessWidget {
                 context.showAppFeedback(t.moments.like_coming_soon);
                 return;
               }
-              likeHandler(post);
+              likeHandler();
             },
             color: post.isLiked ? Theme.of(context).colorScheme.primary : null,
           ),

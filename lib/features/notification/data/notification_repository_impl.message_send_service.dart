@@ -157,7 +157,7 @@ class NotificationMessageSendService {
 
     await responseResult.when(
       success: (responseJson) async {
-        final response = sendMessageResultFromJson(responseJson);
+        final response = sendMessageResultFromJson(responseJson as Map<String, dynamic>);
         await persistence.markOutboxAndTempMessage(
           ownerUid: ownerUid,
           localMsgSeqno: localMsgSeqno,
@@ -182,7 +182,9 @@ class NotificationMessageSendService {
       },
     );
 
-    return responseResult.map(sendMessageResultFromJson);
+    return responseResult.map(
+      (json) => sendMessageResultFromJson(json as Map<String, dynamic>),
+    );
   }
 
   Future<Result<ReplyResponse, AppError>> fetchReplyLikeAtResponse({

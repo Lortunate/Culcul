@@ -12,7 +12,7 @@ abstract class NotificationApi {
   factory NotificationApi(Dio dio) = _NotificationApi;
 
   @GET('https://api.bilibili.com/x/msgfeed/unread')
-  Future<ApiResponse<Map<String, dynamic>>> getUnreadCount();
+  Future<ApiResponse<dynamic>> getUnreadCount();
 
   @GET('https://api.bilibili.com/x/msgfeed/reply')
   Future<ApiResponse<ReplyResponse>> getReplyList({
@@ -54,7 +54,7 @@ abstract class NotificationApi {
   @POST('https://api.vc.bilibili.com/web_im/v1/web_im/send_msg')
   @FormUrlEncoded()
   @Headers({'x-bili-wbi': 'true', 'x-bili-csrf': 'true'})
-  Future<ApiResponse<Map<String, dynamic>>> sendPrivateMessage({
+  Future<ApiResponse<dynamic>> sendPrivateMessage({
     @Query('w_sender_uid') required int wSenderUid,
     @Query('w_receiver_id') required int wReceiverId,
     @Query('w_dev_id') required String wDevId,

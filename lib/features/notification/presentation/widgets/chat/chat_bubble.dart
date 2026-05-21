@@ -1,3 +1,4 @@
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 
 class ChatBubble extends StatelessWidget {
@@ -15,14 +16,14 @@ class ChatBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: CulculSpacing.sm, vertical: 10),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.only(
-          topLeft: const Radius.circular(16),
-          topRight: const Radius.circular(16),
-          bottomLeft: Radius.circular(isSelf ? 16 : 4),
-          bottomRight: Radius.circular(isSelf ? 4 : 16),
+          topLeft: CulculRadius.radiusLg,
+          topRight: CulculRadius.radiusLg,
+          bottomLeft: isSelf ? CulculRadius.radiusLg : CulculRadius.radiusXs,
+          bottomRight: isSelf ? CulculRadius.radiusXs : CulculRadius.radiusLg,
         ),
       ),
       child: child,
