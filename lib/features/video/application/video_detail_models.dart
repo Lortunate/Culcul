@@ -13,7 +13,7 @@ class VideoDetailViewData {
   final VideoOwner owner;
   final VideoStat stat;
   final VideoDimensionViewData dimension;
-  final VideoSubtitleDto? subtitle;
+  final VideoSubtitles? subtitle;
   final List<VideoPartViewData> pages;
   final List<VideoTagViewData> tags;
   final VideoRequestUserState reqUser;
@@ -44,7 +44,7 @@ class VideoDetailViewData {
     VideoOwner? owner,
     VideoStat? stat,
     VideoDimensionViewData? dimension,
-    VideoSubtitleDto? subtitle,
+    VideoSubtitles? subtitle,
     List<VideoPartViewData>? pages,
     List<VideoTagViewData>? tags,
     VideoRequestUserState? reqUser,

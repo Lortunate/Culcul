@@ -100,6 +100,40 @@ void main() {
     );
   });
 
+  test('application models must not expose DTO suffixes', () {
+    final offenders = <String>[];
+    final dtoClassPattern = RegExp(
+      r'\b(?:class|sealed class|abstract class)\s+([A-Za-z0-9_]*Dto[A-Za-z0-9_]*)\b',
+    );
+
+    for (final file in sourceDartFiles('lib/features')) {
+      final path = normalizePath(file.path);
+      if (!path.contains('/application/models/') ||
+          path.endsWith('.freezed.dart') ||
+          path.endsWith('.g.dart')) {
+        continue;
+      }
+
+      for (final line in authoredDartCodeLines(file)) {
+        final match = dtoClassPattern.firstMatch(line.text);
+        if (match == null) {
+          continue;
+        }
+
+        offenders.add('${formatLocation(path, line.lineNumber)} ${match.group(1)}');
+      }
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'Transport DTO class names belong in data/dtos. Application models '
+          'must use feature/runtime vocabulary instead:\n'
+          '${offenders.join('\n')}',
+    );
+  });
+
   test('feature presentation to same-feature data imports are allowlisted', () {
     final observedDebt = <String>{};
     final newDebt = <String>[];
