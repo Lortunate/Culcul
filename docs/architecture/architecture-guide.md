@@ -1,11 +1,15 @@
 # Culcul Architecture Guide
 
-Active phase: Phase 38 Architecture SSOT And Startup Performance. Last completed phase: Phase 34 Architecture Modernization. Phase 35, Phase 36, and Phase 37 were superseded before code execution completed.
+Active phase: Phase 40 Architecture SSOT Modernization.
 
 Authoritative docs:
 
-- Active spec: `docs/specs/2026-05-21-phase38-architecture-ssot-startup-performance.md`
-- Active plan: `docs/plans/2026-05-21-phase38-architecture-ssot-startup-performance.md`
+- Active spec: `docs/specs/2026-05-22-phase40-architecture-ssot-modernization.md`
+- Active plan: `docs/plans/2026-05-22-phase40-architecture-ssot-modernization.md`
+- Superseded spec: `docs/specs/archive/2026-05-21-phase39-architecture-modernization.superseded.md`
+- Superseded plan: `docs/plans/archive/2026-05-21-phase39-architecture-modernization.superseded.md`
+- Superseded spec: `docs/specs/archive/2026-05-21-phase38-architecture-ssot-startup-performance.superseded.md`
+- Superseded plan: `docs/plans/archive/2026-05-21-phase38-architecture-ssot-startup-performance.superseded.md`
 - Superseded spec: `docs/specs/archive/2026-05-19-phase37-modern-architecture-consolidation.superseded.md`
 - Superseded plan: `docs/plans/archive/2026-05-19-phase37-modern-architecture-consolidation.superseded.md`
 - Superseded spec: `docs/specs/archive/2026-05-18-phase36-aggressive-architecture-cleanup.superseded.md`
@@ -38,7 +42,7 @@ Authoritative docs:
 
 `lib/shared/` is retired and must not return.
 
-Phase 38 may aggressively reorganize directories inside a feature. It must keep
+Phase 40 may aggressively reorganize directories inside a feature. It must keep
 the top-level `app/`, `core/`, `features/`, and `ui/` boundary intact.
 
 ## Hard Rules

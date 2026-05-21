@@ -2,6 +2,11 @@
 
 Tracking issue: `culcul-o9u`
 
+## Status
+
+Superseded architecture plan retained as the Phase 39 historical record.
+Phase 40 is the active architecture execution plan.
+
 ## Current Baseline
 
 - `flutter analyze --no-pub`: no issues.

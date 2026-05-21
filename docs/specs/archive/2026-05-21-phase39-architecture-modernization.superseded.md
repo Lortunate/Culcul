@@ -4,8 +4,8 @@ Tracking issue: `culcul-o9u`
 
 ## Status
 
-Active architecture spec for the current refactor. Phase 38 and earlier phase
-documents are archived and must not be treated as competing current plans.
+Superseded architecture spec retained as the Phase 39 historical record.
+Phase 40 is the active architecture decision record.
 
 Current verification baseline:
 

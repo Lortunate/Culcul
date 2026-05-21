@@ -6,6 +6,11 @@ import 'architecture_guard_utils.dart';
 
 const _phase30InventoryPath =
     'docs/architecture/archive/2026-05-21-phase30-application-seam-inventory.superseded.md';
+const _activeArchitectureGuidePath = 'docs/architecture/architecture-guide.md';
+const _activeArchitectureSpecPath =
+    'docs/specs/2026-05-22-phase40-architecture-ssot-modernization.md';
+const _activeArchitecturePlanPath =
+    'docs/plans/2026-05-22-phase40-architecture-ssot-modernization.md';
 
 const _phase30AllowedInventoryCategories = {
   'approved-session-seam',
@@ -18,6 +23,63 @@ const _phase30AllowedInventoryCategories = {
 };
 
 void main() {
+  test('active architecture guide points at the current phase documents', () {
+    final guide = File(_activeArchitectureGuidePath).readAsStringSync();
+
+    expect(guide, contains('Active phase: Phase 40 Architecture SSOT Modernization.'));
+
+    final activeLinks = RegExp(
+      r'- Active (?:spec|plan): `([^`]+)`',
+    ).allMatches(guide).map((match) => match.group(1)).toList();
+
+    expect(
+      activeLinks,
+      unorderedEquals([_activeArchitectureSpecPath, _activeArchitecturePlanPath]),
+      reason:
+          'The architecture guide must expose exactly one active spec and one '
+          'active plan for the current phase.',
+    );
+
+    for (final path in activeLinks) {
+      expect(
+        File(path!).existsSync(),
+        isTrue,
+        reason: 'Active architecture document does not exist: $path',
+      );
+      expect(
+        path.contains('/archive/'),
+        isFalse,
+        reason: 'Archived documents cannot be linked as active work: $path',
+      );
+    }
+  });
+
+  test('active architecture docs do not present archived or older phases as current', () {
+    final offenders = <String>[];
+
+    for (final path in [
+      _activeArchitectureGuidePath,
+      _activeArchitectureSpecPath,
+      _activeArchitecturePlanPath,
+    ]) {
+      final markdown = File(path).readAsStringSync();
+      for (final block in _markdownBlocks(markdown)) {
+        if (_presentsArchivedOrOlderPhaseAsCurrent(block.text)) {
+          offenders.add('$path:${block.startLine}: ${block.text}');
+        }
+      }
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'Active architecture docs must clearly mark archived and older phase '
+          'references as superseded, archived, completed, or historical:\n'
+          '${offenders.join('\n\n')}',
+    );
+  });
+
   test('feature presentation code must not import other presentation features', () {
     final offenders = <String>[];
 
@@ -481,6 +543,66 @@ String _phase30InventoryKey(String importerPath, String targetPath) {
 
 String _stripBackticks(String value) {
   return value.trim().replaceAll('`', '');
+}
+
+class _MarkdownBlock {
+  const _MarkdownBlock({required this.startLine, required this.text});
+
+  final int startLine;
+  final String text;
+}
+
+List<_MarkdownBlock> _markdownBlocks(String markdown) {
+  final blocks = <_MarkdownBlock>[];
+  final current = <String>[];
+  var startLine = 1;
+
+  final lines = markdown.split(RegExp(r'\r?\n'));
+  for (var index = 0; index < lines.length; index += 1) {
+    final line = lines[index];
+    if (line.trim().isEmpty) {
+      if (current.isNotEmpty) {
+        blocks.add(_MarkdownBlock(startLine: startLine, text: current.join(' ').trim()));
+        current.clear();
+      }
+      startLine = index + 2;
+      continue;
+    }
+
+    if (current.isEmpty) {
+      startLine = index + 1;
+    }
+    current.add(line.trim());
+  }
+
+  if (current.isNotEmpty) {
+    blocks.add(_MarkdownBlock(startLine: startLine, text: current.join(' ').trim()));
+  }
+
+  return blocks;
+}
+
+bool _presentsArchivedOrOlderPhaseAsCurrent(String block) {
+  final currentLanguage = RegExp(
+    r'\b(active|current|latest|authoritative)\b|source[- ]of[- ]truth',
+    caseSensitive: false,
+  );
+  final staleTarget = RegExp(
+    r'docs/(specs|plans|architecture)/archive/|'
+    r'Phase\s*(38|39)\b|'
+    r'phase(38|39)\b|'
+    r'2026-05-21-phase(38|39)',
+    caseSensitive: false,
+  );
+  final archivalStatus = RegExp(
+    r'\b(supersedes|superseded|archive|archived|completed|previous|earlier|'
+    r'historical|history|baseline|retired)\b',
+    caseSensitive: false,
+  );
+
+  return currentLanguage.hasMatch(block) &&
+      staleTarget.hasMatch(block) &&
+      !archivalStatus.hasMatch(block);
 }
 
 class _Phase30ApplicationSeamInventory {

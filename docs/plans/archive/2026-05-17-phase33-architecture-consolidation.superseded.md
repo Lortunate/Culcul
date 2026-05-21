@@ -20,8 +20,8 @@
 ## File Map
 
 - Archived:
-  - `docs/specs/archive/2026-05-16-phase32-source-of-truth-consolidation.completed.md`
-  - `docs/plans/archive/2026-05-16-phase32-source-of-truth-consolidation.completed.md`
+  - `docs/specs/archive/2026-05-16-phase32-source-of-truth-consolidation.superseded.md`
+  - `docs/plans/archive/2026-05-16-phase32-source-of-truth-consolidation.superseded.md`
 - Active docs:
   - `docs/specs/phase33-architecture-consolidation.md`
   - `docs/plans/phase33-architecture-consolidation.md`
