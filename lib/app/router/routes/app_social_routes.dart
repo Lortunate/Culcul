@@ -19,11 +19,8 @@ class FollowingsRoute extends AppRouteData with $FollowingsRoute {
       onOpenFollowers: (vmid) => FollowersRoute(vmid: vmid).push(context),
       onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
       onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
-      onOpenLiveRoom: (roomId) => LiveRoomRoute(roomId: roomId).push(context),
-      onOpenDynamicDetail: (id) => DynamicDetailRoute(id: id).push(context),
-      onOpenArticle: (url, title) => _pushArticleDetail(context, url: url, title: title),
-      onOpenTopic: (topicId, topicName) =>
-          _pushTopicDetail(context, topicId: topicId, topicName: topicName),
+      wrapDynamicNavigation: ({required child}) =>
+          _wrapDynamicNavigation(context, child: child),
       onOpenChat: ({required talkerId, required name, avatarUrl}) {
         ChatRoute(
           talkerId: talkerId,
@@ -53,11 +50,8 @@ class FollowersRoute extends AppRouteData with $FollowersRoute {
       onOpenFollowers: (vmid) => FollowersRoute(vmid: vmid).push(context),
       onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
       onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
-      onOpenLiveRoom: (roomId) => LiveRoomRoute(roomId: roomId).push(context),
-      onOpenDynamicDetail: (id) => DynamicDetailRoute(id: id).push(context),
-      onOpenArticle: (url, title) => _pushArticleDetail(context, url: url, title: title),
-      onOpenTopic: (topicId, topicName) =>
-          _pushTopicDetail(context, topicId: topicId, topicName: topicName),
+      wrapDynamicNavigation: ({required child}) =>
+          _wrapDynamicNavigation(context, child: child),
       onOpenChat: ({required talkerId, required name, avatarUrl}) {
         ChatRoute(
           talkerId: talkerId,
@@ -87,11 +81,8 @@ class UserProfileRoute extends AppRouteData with $UserProfileRoute {
       onOpenFollowers: (vmid) => FollowersRoute(vmid: vmid).push(context),
       onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
       onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
-      onOpenLiveRoom: (roomId) => LiveRoomRoute(roomId: roomId).push(context),
-      onOpenDynamicDetail: (id) => DynamicDetailRoute(id: id).push(context),
-      onOpenArticle: (url, title) => _pushArticleDetail(context, url: url, title: title),
-      onOpenTopic: (topicId, topicName) =>
-          _pushTopicDetail(context, topicId: topicId, topicName: topicName),
+      wrapDynamicNavigation: ({required child}) =>
+          _wrapDynamicNavigation(context, child: child),
       onOpenChat: ({required talkerId, required name, avatarUrl}) {
         ChatRoute(
           talkerId: talkerId,

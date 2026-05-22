@@ -21,6 +21,19 @@ class DynamicDetailRoute extends AppRouteData with $DynamicDetailRoute {
   }
 }
 
+Widget _wrapDynamicNavigation(BuildContext context, {required Widget child}) {
+  return buildDynamicNavigationScope(
+    onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
+    onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
+    onOpenLiveRoom: (roomId) => LiveRoomRoute(roomId: roomId).push(context),
+    onOpenDynamicDetail: (id) => DynamicDetailRoute(id: id).push(context),
+    onOpenArticle: (url, title) => _pushArticleDetail(context, url: url, title: title),
+    onOpenTopic: (topicId, topicName) =>
+        _pushTopicDetail(context, topicId: topicId, topicName: topicName),
+    child: child,
+  );
+}
+
 void _pushArticleDetail(BuildContext context, {required String url, String? title}) {
   Navigator.of(context, rootNavigator: true).push(
     MaterialPageRoute(

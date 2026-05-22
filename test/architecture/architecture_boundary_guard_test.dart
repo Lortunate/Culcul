@@ -118,6 +118,47 @@ void main() {
     );
   });
 
+  test('feature route entries must not import other feature private layers', () {
+    final offenders = <String>[];
+
+    for (final file in sourceDartFiles('lib/features')) {
+      final importerPath = normalizePath(file.path);
+      final importerFeature = featureNameFromPath(importerPath);
+      if (importerFeature == null || !importerPath.endsWith('/route_entry.dart')) {
+        continue;
+      }
+
+      for (final import in dartImports(file)) {
+        final targetPath = import.resolvedPath;
+        final targetFeature = targetPath == null ? null : featureNameFromPath(targetPath);
+        if (targetPath == null ||
+            targetFeature == null ||
+            targetFeature == importerFeature) {
+          continue;
+        }
+
+        final importsPrivateLayer =
+            targetPath.startsWith('lib/features/$targetFeature/data/') ||
+            targetPath.startsWith('lib/features/$targetFeature/presentation/');
+        if (importsPrivateLayer) {
+          offenders.add(
+            '${formatLocation(import.importerPath, import.lineNumber)} '
+            'imports ${import.uri} -> $targetPath',
+          );
+        }
+      }
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'Feature route entries may depend only on another feature public seam, '
+          'not data/ or presentation/ internals:\n'
+          '${offenders.join('\n')}',
+    );
+  });
+
   test('phase 36 presentation contract shims stay deleted', () {
     final offenders = <String>[];
 

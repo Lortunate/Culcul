@@ -3,8 +3,9 @@ import 'package:culcul/features/profile/presentation/pages/followers_page.dart';
 import 'package:culcul/features/profile/presentation/pages/followings_page.dart';
 import 'package:culcul/features/profile/presentation/pages/user_profile_page.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
-import 'package:culcul/features/dynamic/presentation/widgets/dynamic_navigation_scope.dart';
 import 'package:flutter/widgets.dart';
+
+typedef ProfileDynamicNavigationWrapper = Widget Function({required Widget child});
 
 Widget buildProfileRoutePage({
   required VoidCallback onLogin,
@@ -16,10 +17,7 @@ Widget buildProfileRoutePage({
   required ValueChanged<int> onOpenFollowers,
   required ValueChanged<int> onOpenUser,
   required ValueChanged<String> onOpenVideo,
-  required ValueChanged<int> onOpenLiveRoom,
-  required ValueChanged<String> onOpenDynamicDetail,
-  required void Function(String url, String? title) onOpenArticle,
-  required void Function(int topicId, String topicName) onOpenTopic,
+  required ProfileDynamicNavigationWrapper wrapDynamicNavigation,
   required OpenProfileChat onOpenChat,
 }) {
   return _buildProfileNavigationScope(
@@ -32,10 +30,7 @@ Widget buildProfileRoutePage({
     onOpenFollowers: onOpenFollowers,
     onOpenUser: onOpenUser,
     onOpenVideo: onOpenVideo,
-    onOpenLiveRoom: onOpenLiveRoom,
-    onOpenDynamicDetail: onOpenDynamicDetail,
-    onOpenArticle: onOpenArticle,
-    onOpenTopic: onOpenTopic,
+    wrapDynamicNavigation: wrapDynamicNavigation,
     onOpenChat: onOpenChat,
     child: const ProfilePage(),
   );
@@ -52,10 +47,7 @@ Widget buildFollowingsRoutePage(
   required ValueChanged<int> onOpenFollowers,
   required ValueChanged<int> onOpenUser,
   required ValueChanged<String> onOpenVideo,
-  required ValueChanged<int> onOpenLiveRoom,
-  required ValueChanged<String> onOpenDynamicDetail,
-  required void Function(String url, String? title) onOpenArticle,
-  required void Function(int topicId, String topicName) onOpenTopic,
+  required ProfileDynamicNavigationWrapper wrapDynamicNavigation,
   required OpenProfileChat onOpenChat,
 }) {
   return _buildProfileNavigationScope(
@@ -68,10 +60,7 @@ Widget buildFollowingsRoutePage(
     onOpenFollowers: onOpenFollowers,
     onOpenUser: onOpenUser,
     onOpenVideo: onOpenVideo,
-    onOpenLiveRoom: onOpenLiveRoom,
-    onOpenDynamicDetail: onOpenDynamicDetail,
-    onOpenArticle: onOpenArticle,
-    onOpenTopic: onOpenTopic,
+    wrapDynamicNavigation: wrapDynamicNavigation,
     onOpenChat: onOpenChat,
     child: FollowingsPage(vmid: vmid),
   );
@@ -88,10 +77,7 @@ Widget buildFollowersRoutePage(
   required ValueChanged<int> onOpenFollowers,
   required ValueChanged<int> onOpenUser,
   required ValueChanged<String> onOpenVideo,
-  required ValueChanged<int> onOpenLiveRoom,
-  required ValueChanged<String> onOpenDynamicDetail,
-  required void Function(String url, String? title) onOpenArticle,
-  required void Function(int topicId, String topicName) onOpenTopic,
+  required ProfileDynamicNavigationWrapper wrapDynamicNavigation,
   required OpenProfileChat onOpenChat,
 }) {
   return _buildProfileNavigationScope(
@@ -104,10 +90,7 @@ Widget buildFollowersRoutePage(
     onOpenFollowers: onOpenFollowers,
     onOpenUser: onOpenUser,
     onOpenVideo: onOpenVideo,
-    onOpenLiveRoom: onOpenLiveRoom,
-    onOpenDynamicDetail: onOpenDynamicDetail,
-    onOpenArticle: onOpenArticle,
-    onOpenTopic: onOpenTopic,
+    wrapDynamicNavigation: wrapDynamicNavigation,
     onOpenChat: onOpenChat,
     child: FollowersPage(vmid: vmid),
   );
@@ -124,10 +107,7 @@ Widget buildUserProfileRoutePage(
   required ValueChanged<int> onOpenFollowers,
   required ValueChanged<int> onOpenUser,
   required ValueChanged<String> onOpenVideo,
-  required ValueChanged<int> onOpenLiveRoom,
-  required ValueChanged<String> onOpenDynamicDetail,
-  required void Function(String url, String? title) onOpenArticle,
-  required void Function(int topicId, String topicName) onOpenTopic,
+  required ProfileDynamicNavigationWrapper wrapDynamicNavigation,
   required OpenProfileChat onOpenChat,
 }) {
   return _buildProfileNavigationScope(
@@ -140,10 +120,7 @@ Widget buildUserProfileRoutePage(
     onOpenFollowers: onOpenFollowers,
     onOpenUser: onOpenUser,
     onOpenVideo: onOpenVideo,
-    onOpenLiveRoom: onOpenLiveRoom,
-    onOpenDynamicDetail: onOpenDynamicDetail,
-    onOpenArticle: onOpenArticle,
-    onOpenTopic: onOpenTopic,
+    wrapDynamicNavigation: wrapDynamicNavigation,
     onOpenChat: onOpenChat,
     child: UserProfilePage(mid: mid),
   );
@@ -159,10 +136,7 @@ Widget _buildProfileNavigationScope({
   required ValueChanged<int> onOpenFollowers,
   required ValueChanged<int> onOpenUser,
   required ValueChanged<String> onOpenVideo,
-  required ValueChanged<int> onOpenLiveRoom,
-  required ValueChanged<String> onOpenDynamicDetail,
-  required void Function(String url, String? title) onOpenArticle,
-  required void Function(int topicId, String topicName) onOpenTopic,
+  required ProfileDynamicNavigationWrapper wrapDynamicNavigation,
   required OpenProfileChat onOpenChat,
   required Widget child,
 }) {
@@ -177,14 +151,6 @@ Widget _buildProfileNavigationScope({
     onOpenUser: onOpenUser,
     onOpenVideo: onOpenVideo,
     onOpenChat: onOpenChat,
-    child: DynamicNavigationScope(
-      onOpenUser: onOpenUser,
-      onOpenVideo: onOpenVideo,
-      onOpenLiveRoom: onOpenLiveRoom,
-      onOpenDynamicDetail: onOpenDynamicDetail,
-      onOpenArticle: onOpenArticle,
-      onOpenTopic: onOpenTopic,
-      child: child,
-    ),
+    child: wrapDynamicNavigation(child: child),
   );
 }
