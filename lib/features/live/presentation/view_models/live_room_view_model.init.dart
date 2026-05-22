@@ -2,7 +2,12 @@ part of 'live_room_view_model.dart';
 
 mixin _LiveRoomControllerInitMixin
     on _$LiveRoomController, _LiveRoomControllerFetchersMixin {
+  int _beginLiveRoomRequest();
+  @override
+  bool _isActiveLiveRoomRequest(int requestToken);
+
   Future<void> _init(int roomId) async {
+    final requestToken = _beginLiveRoomRequest();
     final firstInteractiveStopwatch = Stopwatch()..start();
     state = state.copyWith(isLoading: true, error: null);
 
@@ -26,6 +31,9 @@ mixin _LiveRoomControllerInitMixin
     });
 
     final info = infoResult.dataOrNull;
+    if (!_isActiveLiveRoomRequest(requestToken)) {
+      return;
+    }
     if (info == null) {
       state = state.copyWith(
         isLoading: false,
@@ -48,13 +56,18 @@ mixin _LiveRoomControllerInitMixin
           label: 'play_url',
           critical: false,
           fallback: (error) => error,
-          task: () => _fetchPlayUrl(info.roomId, critical: true),
+          task: () =>
+              _fetchPlayUrl(info.roomId, critical: true, requestToken: requestToken),
         ),
         ConcurrentTask<AppError?>(
           label: 'danmaku_config',
           critical: false,
           fallback: (error) => error,
-          task: () => _fetchDanmakuConfig(info.roomId, critical: true),
+          task: () => _fetchDanmakuConfig(
+            info.roomId,
+            critical: true,
+            requestToken: requestToken,
+          ),
         ),
       ],
       profile: NetworkConcurrencyProfile.enrich,
@@ -63,6 +76,9 @@ mixin _LiveRoomControllerInitMixin
     final criticalError =
         criticalResults['play_url'] as AppError? ??
         criticalResults['danmaku_config'] as AppError?;
+    if (!_isActiveLiveRoomRequest(requestToken)) {
+      return;
+    }
     if (criticalError != null) {
       DevLogger.log('feature', 'live.room_init request', <String, Object?>{
         'segment': 'critical_group',
@@ -90,10 +106,13 @@ mixin _LiveRoomControllerInitMixin
       'roomId': roomId,
       'ms': firstInteractiveStopwatch.elapsedMilliseconds,
     });
-    unawaited(_loadOptionalRoomData(info));
+    unawaited(_loadOptionalRoomData(info, requestToken: requestToken));
   }
 
-  Future<void> _loadOptionalRoomData(LiveRoomDetailModel info) async {
+  Future<void> _loadOptionalRoomData(
+    LiveRoomDetailModel info, {
+    required int requestToken,
+  }) async {
     final optionalRequestStopwatch = Stopwatch()..start();
     await _concurrencyExecutor.runConcurrent(
       tasks: <ConcurrentTask<dynamic>>[
@@ -102,7 +121,7 @@ mixin _LiveRoomControllerInitMixin
           critical: false,
           fallback: _ignoreOptionalFailure,
           task: () async {
-            await _fetchHistoryDanmaku(info.roomId);
+            await _fetchHistoryDanmaku(info.roomId, requestToken: requestToken);
             return null;
           },
         ),
@@ -111,7 +130,7 @@ mixin _LiveRoomControllerInitMixin
           critical: false,
           fallback: _ignoreOptionalFailure,
           task: () async {
-            await _fetchAnchorInfo(info.uid);
+            await _fetchAnchorInfo(info.uid, requestToken: requestToken);
             return null;
           },
         ),
@@ -120,7 +139,7 @@ mixin _LiveRoomControllerInitMixin
           critical: false,
           fallback: _ignoreOptionalFailure,
           task: () async {
-            await _fetchLiveAnchorInfo(info.uid);
+            await _fetchLiveAnchorInfo(info.uid, requestToken: requestToken);
             return null;
           },
         ),
@@ -129,7 +148,7 @@ mixin _LiveRoomControllerInitMixin
           critical: false,
           fallback: _ignoreOptionalFailure,
           task: () async {
-            await _fetchGoldRank(info.roomId, info.uid);
+            await _fetchGoldRank(info.roomId, info.uid, requestToken: requestToken);
             return null;
           },
         ),
@@ -138,7 +157,7 @@ mixin _LiveRoomControllerInitMixin
           critical: false,
           fallback: _ignoreOptionalFailure,
           task: () async {
-            await _fetchGuardList(info.roomId, info.uid);
+            await _fetchGuardList(info.roomId, info.uid, requestToken: requestToken);
             return null;
           },
         ),
@@ -147,7 +166,7 @@ mixin _LiveRoomControllerInitMixin
           critical: false,
           fallback: _ignoreOptionalFailure,
           task: () async {
-            await _connectDanmaku(info.roomId);
+            await _connectDanmaku(info.roomId, requestToken: requestToken);
             return null;
           },
         ),
@@ -155,6 +174,9 @@ mixin _LiveRoomControllerInitMixin
       profile: NetworkConcurrencyProfile.backgroundSync,
       scope: 'live_room_init_optional',
     );
+    if (!_isActiveLiveRoomRequest(requestToken)) {
+      return;
+    }
     DevLogger.log('feature', 'live.room_init request', <String, Object?>{
       'segment': 'optional_group',
       'roomId': info.roomId,

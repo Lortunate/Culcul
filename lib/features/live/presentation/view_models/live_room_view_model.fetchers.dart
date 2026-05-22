@@ -5,10 +5,14 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
   NetworkConcurrencyExecutor get _concurrencyExecutor;
   StreamSubscription<LiveDanmakuItem>? get _danmakuSubscription;
   set _danmakuSubscription(StreamSubscription<LiveDanmakuItem>? value);
+  bool _isActiveLiveRoomRequest(int requestToken);
 
-  Future<void> _connectDanmaku(int roomId) async {
+  Future<void> _connectDanmaku(int roomId, {required int requestToken}) async {
     final danmakuFeed = _danmakuFeed(roomId);
     final infoResult = await ref.read(liveRepositoryProvider).getDanmuInfo(roomId);
+    if (!_isActiveLiveRoomRequest(requestToken)) {
+      return;
+    }
     final info = infoResult.dataOrNull;
     if (info == null) {
       danmakuFeed.setConnected(false);
@@ -19,9 +23,18 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
       );
       return;
     }
+    if (!_isActiveLiveRoomRequest(requestToken)) {
+      return;
+    }
     await _socketService.connect(info: info, roomId: roomId);
+    if (!_isActiveLiveRoomRequest(requestToken)) {
+      return;
+    }
     danmakuFeed.setConnected(true);
     await _danmakuSubscription?.cancel();
+    if (!_isActiveLiveRoomRequest(requestToken)) {
+      return;
+    }
     _danmakuSubscription = _socketService.danmakuStream.listen(
       danmakuFeed.enqueue,
       onError: (_, _) => danmakuFeed.setConnected(false),
@@ -29,10 +42,18 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
     );
   }
 
-  Future<AppError?> _fetchPlayUrl(int roomId, {int? qn, bool critical = false}) async {
+  Future<AppError?> _fetchPlayUrl(
+    int roomId, {
+    int? qn,
+    bool critical = false,
+    int? requestToken,
+  }) async {
     final result = await ref
         .read(liveRepositoryProvider)
         .getPlayUrl(roomId: roomId, qn: qn);
+    if (requestToken != null && !_isActiveLiveRoomRequest(requestToken)) {
+      return null;
+    }
     if (result.dataOrNull case final url?) {
       state = state.copyWith(playUrl: url);
       return null;
@@ -48,8 +69,11 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
     return null;
   }
 
-  Future<void> _fetchAnchorInfo(int uid) async {
+  Future<void> _fetchAnchorInfo(int uid, {required int requestToken}) async {
     final result = await ref.read(userProfileCardProvider('$uid').future);
+    if (!_isActiveLiveRoomRequest(requestToken)) {
+      return;
+    }
     if (result.dataOrNull case final card?) {
       state = state.copyWith(anchorInfo: card);
       return;
@@ -61,8 +85,11 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
     );
   }
 
-  Future<void> _fetchLiveAnchorInfo(int uid) async {
+  Future<void> _fetchLiveAnchorInfo(int uid, {required int requestToken}) async {
     final result = await ref.read(liveRepositoryProvider).getAnchorInfo(uid);
+    if (!_isActiveLiveRoomRequest(requestToken)) {
+      return;
+    }
     if (result.dataOrNull case final info?) {
       state = state.copyWith(liveAnchorInfo: info);
       return;
@@ -74,10 +101,13 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
     );
   }
 
-  Future<void> _fetchGoldRank(int roomId, int ruid) async {
+  Future<void> _fetchGoldRank(int roomId, int ruid, {required int requestToken}) async {
     final result = await ref
         .read(liveRepositoryProvider)
         .getOnlineGoldRank(roomId: roomId, ruid: ruid);
+    if (!_isActiveLiveRoomRequest(requestToken)) {
+      return;
+    }
     if (result.dataOrNull case final rank?) {
       state = state.copyWith(goldRank: rank);
       return;
@@ -89,10 +119,13 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
     );
   }
 
-  Future<void> _fetchGuardList(int roomId, int ruid) async {
+  Future<void> _fetchGuardList(int roomId, int ruid, {required int requestToken}) async {
     final result = await ref
         .read(liveRepositoryProvider)
         .getGuardList(roomId: roomId, ruid: ruid);
+    if (!_isActiveLiveRoomRequest(requestToken)) {
+      return;
+    }
     if (result.dataOrNull case final list?) {
       state = state.copyWith(guardList: list);
       return;
@@ -104,8 +137,15 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
     );
   }
 
-  Future<AppError?> _fetchDanmakuConfig(int roomId, {bool critical = false}) async {
+  Future<AppError?> _fetchDanmakuConfig(
+    int roomId, {
+    bool critical = false,
+    int? requestToken,
+  }) async {
     final result = await ref.read(liveRepositoryProvider).getDanmakuConfig(roomId);
+    if (requestToken != null && !_isActiveLiveRoomRequest(requestToken)) {
+      return null;
+    }
     if (result.dataOrNull case final config?) {
       state = state.copyWith(danmakuConfig: config);
       return null;
@@ -122,8 +162,11 @@ mixin _LiveRoomControllerFetchersMixin on _$LiveRoomController {
     return null;
   }
 
-  Future<void> _fetchHistoryDanmaku(int roomId) async {
+  Future<void> _fetchHistoryDanmaku(int roomId, {required int requestToken}) async {
     final result = await ref.read(liveRepositoryProvider).getHistoryDanmaku(roomId);
+    if (!_isActiveLiveRoomRequest(requestToken)) {
+      return;
+    }
     if (result.dataOrNull case final history?) {
       _danmakuFeed(roomId).seed(history.room.reversed);
       return;

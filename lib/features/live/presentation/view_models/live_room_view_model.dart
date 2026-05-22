@@ -34,16 +34,29 @@ class LiveRoomController extends _$LiveRoomController
       const NetworkConcurrencyExecutor();
   @override
   StreamSubscription<LiveDanmakuItem>? _danmakuSubscription;
+  int _loadRequestToken = 0;
+  bool _isDisposed = false;
 
   @override
   LiveRoomState build(int roomId) {
+    _isDisposed = false;
     final runtimePolicy = ref.watch(runtimePerformancePolicyProvider);
     _socketService.applyRuntimePolicy(runtimePolicy);
     ref.onDispose(() {
+      _isDisposed = true;
+      _loadRequestToken++;
       _danmakuSubscription?.cancel();
       _socketService.dispose();
     });
     unawaited(Future<void>.microtask(() => _init(roomId)));
     return LiveRoomState(roomId: roomId);
+  }
+
+  @override
+  int _beginLiveRoomRequest() => ++_loadRequestToken;
+
+  @override
+  bool _isActiveLiveRoomRequest(int requestToken) {
+    return ref.mounted && !_isDisposed && requestToken == _loadRequestToken;
   }
 }
