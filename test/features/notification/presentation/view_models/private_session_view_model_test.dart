@@ -8,6 +8,9 @@ void main() {
       'lib/features/notification/presentation/view_models/private_session_view_model.dart',
     ).readAsStringSync();
 
-    expect(source, contains('@Riverpod(keepAlive: true)\nclass PrivateSessionList'));
+    expect(
+      source,
+      contains(RegExp(r'@Riverpod\(keepAlive: true\)\r?\nclass PrivateSessionList')),
+    );
   });
 }
