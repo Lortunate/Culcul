@@ -348,6 +348,48 @@ void main() {
     );
   });
 
+  test('app shell imports feature code only through public seams', () {
+    final offenders = <String>[];
+    final appShellFiles = <File>[
+      File('lib/main.dart'),
+      File('lib/app/app.dart'),
+      ...sourceDartFiles('lib/app/shell'),
+    ];
+
+    for (final file in appShellFiles) {
+      if (!file.existsSync()) {
+        continue;
+      }
+
+      for (final import in dartImports(file)) {
+        final targetPath = import.resolvedPath;
+        if (targetPath == null || !targetPath.startsWith('lib/features/')) {
+          continue;
+        }
+
+        final isRouteEntry = targetPath.endsWith('/route_entry.dart');
+        final isFeaturePublicApi =
+            RegExp(r'^lib/features/[^/]+/[^/]+\.dart$').hasMatch(targetPath) &&
+            !targetPath.endsWith('/route_entry.dart');
+        if (!isRouteEntry && !isFeaturePublicApi) {
+          offenders.add(
+            '${formatLocation(import.importerPath, import.lineNumber)} '
+            'imports ${import.uri} -> $targetPath',
+          );
+        }
+      }
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'App shell code must depend on feature route entries or concrete '
+          'feature public APIs, not application/data/presentation internals:\n'
+          '${offenders.join('\n')}',
+    );
+  });
+
   test('AppException must not appear in lib', () {
     final offenders = <String>[];
 

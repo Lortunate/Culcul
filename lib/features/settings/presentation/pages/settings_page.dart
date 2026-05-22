@@ -1,5 +1,6 @@
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/settings/application/settings_controller.dart';
+import 'package:culcul/features/settings/settings.dart';
 import 'package:culcul/features/settings/presentation/widgets/settings_group.dart';
 import 'package:culcul/features/settings/presentation/widgets/settings_selection_item.dart';
 import 'package:culcul/features/settings/presentation/widgets/settings_selection_sheet.dart';
