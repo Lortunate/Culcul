@@ -10,26 +10,57 @@ class _ParagraphBlockView extends StatefulWidget {
 }
 
 class _ParagraphBlockViewState extends State<_ParagraphBlockView> {
-  final List<TapGestureRecognizer> _recognizers = [];
+  final Map<int, TapGestureRecognizer> _recognizers = <int, TapGestureRecognizer>{};
+
+  @override
+  void initState() {
+    super.initState();
+    _syncRecognizers();
+  }
+
+  @override
+  void didUpdateWidget(covariant _ParagraphBlockView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _syncRecognizers();
+  }
 
   @override
   void dispose() {
-    for (final recognizer in _recognizers) {
+    for (final recognizer in _recognizers.values) {
       recognizer.dispose();
     }
     super.dispose();
+  }
+
+  void _syncRecognizers() {
+    final activeIndexes = <int>{};
+
+    for (var index = 0; index < widget.block.nodes.length; index++) {
+      final node = widget.block.nodes[index];
+      final linkUrl = node.linkUrl;
+      if (linkUrl == null || linkUrl.isEmpty) {
+        continue;
+      }
+
+      activeIndexes.add(index);
+      final recognizer = _recognizers[index] ??= TapGestureRecognizer(debugOwner: this);
+      recognizer.onTap = () => DynamicNavigation.open(context, url: linkUrl);
+    }
+
+    final removedIndexes = _recognizers.keys
+        .where((index) => !activeIndexes.contains(index))
+        .toList();
+    for (final index in removedIndexes) {
+      _recognizers.remove(index)?.dispose();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    for (final recognizer in _recognizers) {
-      recognizer.dispose();
-    }
-    _recognizers.clear();
-
-    final spans = widget.block.nodes.map((node) {
+    final spans = widget.block.nodes.indexed.map((entry) {
+      final (index, node) = entry;
       final style =
           theme.textTheme.bodyMedium?.copyWith(
             height: 1.6,
@@ -61,9 +92,7 @@ class _ParagraphBlockViewState extends State<_ParagraphBlockView> {
         return TextSpan(text: normalizedText, style: style);
       }
 
-      final recognizer = TapGestureRecognizer()
-        ..onTap = () => DynamicNavigation.open(context, url: node.linkUrl!);
-      _recognizers.add(recognizer);
+      final recognizer = _recognizers[index];
       return TextSpan(text: normalizedText, style: style, recognizer: recognizer);
     }).toList();
 
