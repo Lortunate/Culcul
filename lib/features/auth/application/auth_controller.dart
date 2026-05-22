@@ -40,12 +40,24 @@ class Auth extends _$Auth {
 
   Future<List<CountryCode>> getCountryList() async {
     final result = await ref.read(authRepositoryProvider).getCountryList();
-    return _unwrapOrDefault(result, const <CountryCode>[]);
+    return result.when(
+      success: (value) => value,
+      failure: (error) {
+        _storeFailure(error);
+        return const <CountryCode>[];
+      },
+    );
   }
 
   Future<AuthCaptchaChallenge?> getCaptcha() async {
     final result = await ref.read(authRepositoryProvider).getCaptchaChallenge();
-    return _unwrapOrNull(result);
+    return result.when(
+      success: (value) => value,
+      failure: (error) {
+        _storeFailure(error);
+        return null;
+      },
+    );
   }
 
   Future<String?> sendSms(
@@ -59,7 +71,13 @@ class Auth extends _$Auth {
     final result = await ref
         .read(authRepositoryProvider)
         .sendSms(cid, phone, token, challenge, validate, seccode);
-    return _unwrapOrNull(result);
+    return result.when(
+      success: (value) => value,
+      failure: (error) {
+        _storeFailure(error);
+        return null;
+      },
+    );
   }
 
   Future<void> loginWithPassword(
@@ -117,26 +135,6 @@ class Auth extends _$Auth {
     if (state.error != null) {
       state = state.copyWith(error: null);
     }
-  }
-
-  T _unwrapOrDefault<T>(Result<T, AppError> result, T fallback) {
-    return result.when(
-      success: (value) => value,
-      failure: (error) {
-        _storeFailure(error);
-        return fallback;
-      },
-    );
-  }
-
-  T? _unwrapOrNull<T>(Result<T, AppError> result) {
-    return result.when(
-      success: (value) => value,
-      failure: (error) {
-        _storeFailure(error);
-        return null;
-      },
-    );
   }
 
   void _handleUserResult(Result<UserEntity, AppError> result) {
