@@ -21,12 +21,12 @@ class RankingRepositoryImpl {
   RankingRepositoryImpl(this._api, {RequestExecutor? requestExecutor})
     : _requestExecutor = requestExecutor ?? const RequestExecutor();
 
-  Future<Result<RankingResponseDto, AppError>> getRankingResponseDto({int? rid}) {
+  Future<Result<RankingResponseDto, AppError>> _getRankingResponseDto({int? rid}) {
     return _requestExecutor.runApiDirect(() => _api.fetchRanking(rid: rid));
   }
 
   Future<Result<List<VideoModel>, AppError>> getRanking({int? rid}) async {
-    final result = await getRankingResponseDto(rid: rid);
+    final result = await _getRankingResponseDto(rid: rid);
     return result.map((data) => data.list);
   }
 }

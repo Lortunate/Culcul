@@ -25,13 +25,13 @@ class FavRepositoryImpl {
   FavRepositoryImpl(this._api, {RequestExecutor? requestExecutor})
     : _requestExecutor = requestExecutor ?? const RequestExecutor();
 
-  Future<Result<FavFolderListResponse, AppError>> getCreatedFoldersModel({
+  Future<Result<FavFolderListResponse, AppError>> _getCreatedFoldersModel({
     required int upMid,
   }) {
     return _requestExecutor.runApiDirect(() => _api.getCreatedFolders(upMid));
   }
 
-  Future<Result<FavFolderListResponse, AppError>> getCollectedFoldersModel({
+  Future<Result<FavFolderListResponse, AppError>> _getCollectedFoldersModel({
     required int upMid,
     required int pn,
     int ps = _favoritePageSize,
@@ -39,7 +39,7 @@ class FavRepositoryImpl {
     return _requestExecutor.runApiDirect(() => _api.getCollectedFolders(upMid, pn, ps));
   }
 
-  Future<Result<FavResourceListResponse, AppError>> getFolderResourcesModel({
+  Future<Result<FavResourceListResponse, AppError>> _getFolderResourcesModel({
     required int mediaId,
     required int pn,
     int ps = _favoritePageSize,
@@ -61,7 +61,7 @@ class FavRepositoryImpl {
     );
   }
 
-  Future<Result<FavFolderModel, AppError>> addFolderModel({
+  Future<Result<FavFolderModel, AppError>> _addFolderModel({
     required String title,
     String? intro,
     int? privacy,
@@ -72,7 +72,7 @@ class FavRepositoryImpl {
     );
   }
 
-  Future<Result<FavFolderModel, AppError>> editFolderModel({
+  Future<Result<FavFolderModel, AppError>> _editFolderModel({
     required int mediaId,
     required String title,
     String? intro,
@@ -84,25 +84,10 @@ class FavRepositoryImpl {
     );
   }
 
-  Future<Result<void, AppError>> delFolder({required String mediaIds}) {
-    return _requestExecutor.runUnit(() => _api.delFolder(mediaIds));
-  }
-
-  Future<Result<void, AppError>> batchDelResource({
-    required String resources,
-    required int mediaId,
-  }) {
-    return _requestExecutor.runUnit(() => _api.batchDelResource(resources, mediaId));
-  }
-
-  Future<Result<void, AppError>> cleanInvalidResources({required int mediaId}) {
-    return _requestExecutor.runUnit(() => _api.cleanInvalidResources(mediaId));
-  }
-
   Future<Result<FavoriteFolderPage, AppError>> getCreatedFolders({
     required int upMid,
   }) async {
-    final result = await getCreatedFoldersModel(upMid: upMid);
+    final result = await _getCreatedFoldersModel(upMid: upMid);
     return result.map((data) => data.toDomain());
   }
 
@@ -110,7 +95,7 @@ class FavRepositoryImpl {
     required int upMid,
     required int page,
   }) async {
-    final result = await getCollectedFoldersModel(upMid: upMid, pn: page);
+    final result = await _getCollectedFoldersModel(upMid: upMid, pn: page);
     return result.map((data) => data.toDomain());
   }
 
@@ -122,7 +107,7 @@ class FavRepositoryImpl {
     int? type,
     int? tid,
   }) async {
-    final result = await getFolderResourcesModel(
+    final result = await _getFolderResourcesModel(
       mediaId: mediaId,
       pn: page,
       keyword: keyword,
@@ -139,7 +124,7 @@ class FavRepositoryImpl {
     int? privacy,
     String? cover,
   }) async {
-    final result = await addFolderModel(
+    final result = await _addFolderModel(
       title: title,
       intro: intro,
       privacy: privacy,
@@ -155,7 +140,7 @@ class FavRepositoryImpl {
     int? privacy,
     String? cover,
   }) async {
-    final result = await editFolderModel(
+    final result = await _editFolderModel(
       mediaId: mediaId,
       title: title,
       intro: intro,
@@ -166,13 +151,13 @@ class FavRepositoryImpl {
   }
 
   Future<Result<void, AppError>> deleteFolder({required String mediaIds}) {
-    return delFolder(mediaIds: mediaIds);
+    return _requestExecutor.runUnit(() => _api.delFolder(mediaIds));
   }
 
   Future<Result<void, AppError>> deleteResources({
     required String resources,
     required int mediaId,
   }) {
-    return batchDelResource(resources: resources, mediaId: mediaId);
+    return _requestExecutor.runUnit(() => _api.batchDelResource(resources, mediaId));
   }
 }

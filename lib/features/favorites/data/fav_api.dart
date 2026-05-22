@@ -71,11 +71,4 @@ abstract class FavApi {
     @Field('platform') String platform = 'web',
     @Field('csrf') String? csrf,
   });
-
-  @POST(ApiConstants.favResourceClean)
-  @Headers({'content-type': 'application/x-www-form-urlencoded'})
-  Future<ApiResponse<dynamic>> cleanInvalidResources(
-    @Field('media_id') int mediaId, {
-    @Field('csrf') String? csrf,
-  });
 }

@@ -29,7 +29,7 @@ class ToViewRepositoryImpl {
     : _api = null,
       _requestExecutor = requestExecutor ?? const RequestExecutor();
 
-  Future<Result<ToViewListResponseDto, AppError>> getToViewList() async {
+  Future<Result<ToViewListResponseDto, AppError>> _getToViewList() async {
     final result = await _requestExecutor.runApiDirect(() => _api!.getToViewList());
     return result.when(
       success: Success.new,
@@ -42,32 +42,20 @@ class ToViewRepositoryImpl {
     );
   }
 
-  Future<Result<void, AppError>> addToView({required int aid}) {
-    return _requestExecutor.run(() => _api!.addToView(aid));
-  }
-
-  Future<Result<void, AppError>> deleteToView({required int aid}) {
-    return _requestExecutor.run(() => _api!.deleteToView(aid));
-  }
-
-  Future<Result<void, AppError>> clearToView() {
-    return _requestExecutor.run(() => _api!.clearToView());
-  }
-
   Future<Result<List<ToViewEntry>, AppError>> getList() async {
-    final result = await getToViewList();
+    final result = await _getToViewList();
     return result.map((data) => data.list.map((item) => item.toDomain()).toList());
   }
 
   Future<Result<void, AppError>> add({required int aid}) {
-    return addToView(aid: aid);
+    return _requestExecutor.run(() => _api!.addToView(aid));
   }
 
   Future<Result<void, AppError>> delete({required int aid}) {
-    return deleteToView(aid: aid);
+    return _requestExecutor.run(() => _api!.deleteToView(aid));
   }
 
   Future<Result<void, AppError>> clear() {
-    return clearToView();
+    return _requestExecutor.run(() => _api!.clearToView());
   }
 }

@@ -23,7 +23,7 @@ class HistoryRepositoryImpl {
   HistoryRepositoryImpl(this._api, {RequestExecutor? requestExecutor})
     : _requestExecutor = requestExecutor ?? const RequestExecutor();
 
-  Future<Result<HistoryResponseDataDto, AppError>> getHistoryCursor({
+  Future<Result<HistoryResponseDataDto, AppError>> _getHistoryCursor({
     int max = 0,
     int viewAt = 0,
     int ps = _historyPageSize,
@@ -37,7 +37,7 @@ class HistoryRepositoryImpl {
     int max = 0,
     int viewAt = 0,
   }) async {
-    final result = await getHistoryCursor(max: max, viewAt: viewAt);
+    final result = await _getHistoryCursor(max: max, viewAt: viewAt);
     return result.map((data) => data.list.map((item) => item.toDomain()).toList());
   }
 }
