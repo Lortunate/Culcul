@@ -20,15 +20,24 @@ not replace bd issues.
 
 ## Current Baseline
 
-- Branch: `codex/phase40-architecture-ssot`.
-- Current working tree already contains many uncommitted routing and feature UI
-  changes. They are treated as in-progress Phase 40 work, not reverted.
+- Branch: `codex/phase40-route-entry-seams`.
+- Current working tree has user-owned instruction-file edits (`AGENTS.md` and
+  `CLAUDE.md`) plus this Phase 40 work. User-owned edits are preserved and not
+  reverted.
+- Current `lib` baseline: 898 Dart files, 657 authored source files, and 241
+  generated outputs.
 - Main dependencies to keep: hooks_riverpod/Riverpod codegen, go_router builder,
   Dio/Retrofit, Freezed/json_serializable, Drift, Slang, media_kit.
 - Active bd issues aligned with this plan include:
-  - `culcul-ory`: Consolidate DTO and application model ownership.
-  - `culcul-5t8`: Remove feature dependencies on app routing.
-  - `culcul-38k`: Remove app bootstrap dependency from feature UI.
+  - `culcul-ory`: Consolidate DTO and application model ownership; partially
+    complete for video subtitles, several live side-data DTO patterns, and
+    dynamic publish response DTO ownership.
+  - `culcul-5t8`: Remove feature dependencies on app routing; route-entry guard
+    and multiple route seam slices are in progress.
+  - `culcul-38k`: Remove app bootstrap dependency from feature UI; closed after
+    media runtime moved behind `core/runtime`.
+  - `culcul-9py`: Split Profile route callback consolidation into a dedicated
+    test-backed slice because Profile route impact is high.
   - `culcul-ann`: Consolidate network decoding and error conversion.
   - `culcul-ep5`: Trim startup and global cache lifetime.
   - `culcul-3hh`: Consolidate app-feature runtime seams.
@@ -42,23 +51,22 @@ not replace bd issues.
 Goal: make the active architecture target and safety rails unambiguous before
 larger code movement.
 
-Execution:
+Execution status:
 
-1. Update the active Phase 40 spec and plan with current audit findings.
-2. Keep Phase 39 and older records archived; do not resurrect superseded docs as
+1. Active Phase 40 spec and plan exist and are the only current spec/plan files.
+2. Phase 39 and older records remain archived; none should be resurrected as
    current guidance.
-3. Inspect existing architecture tests and guards under `test/architecture` and
-   `tool/architecture`.
-4. Add or tighten guard coverage for:
-   - feature presentation importing feature data;
-   - feature data importing feature application;
-   - feature internals imported by another feature;
-   - feature UI importing `app/router/app_routes.dart`.
-5. Record the Phase 40 audit cleanup targets in the spec before code movement:
-   search result DTO/domain duplication, Bilibili link parsing duplication,
-   parallel pagination/comment controller state, and live/player lifecycle risks.
-6. Keep any migration allowlist explicit, narrow, and connected to bd work.
-7. Treat generated Dart files as outputs; edit source and regenerate.
+3. Existing architecture tests and guards under `test/architecture` and
+   `tool/architecture` are in place.
+4. Guard coverage already includes active-doc SSOT, app-router route-entry-only
+   imports, feature UI not importing `app/router/app_routes.dart`, and feature
+   or core code not importing `app/bootstrap`.
+5. Remaining cleanup targets stay tracked in this plan and bd: search result
+   DTO/domain duplication, Bilibili link parsing duplication, parallel
+   pagination/comment state, network response/error consolidation, endpoint
+   source-of-truth drift, and live/player lifecycle risks.
+6. Migration allowlists stay explicit, narrow, and connected to bd work.
+7. Generated Dart files remain outputs; edit source and regenerate.
 
 Validation:
 
@@ -234,22 +242,36 @@ Keep current main stack. Candidate follow-ups:
 
 ## First Directly Executable Refactor Steps
 
-Immediate execution order:
+Completed boundary baseline:
 
-1. Update Phase 40 documentation.
-2. Inspect current architecture guards and route ownership tests.
-3. Add red architecture guards for two low-risk boundary leaks:
-   `core/features -> app/bootstrap` and `app/router -> feature internals`.
-4. Move media runtime initialization to `lib/core/runtime` while leaving
-   first-frame scheduling in `lib/app/bootstrap`.
-5. Move notification navigation parsing/target ownership to
-   `lib/features/notification/application` and keep app router consumption
-   through `notification/route_entry.dart`.
-6. Defer Profile route callback consolidation because `UserProfileRoute` has a
-   CRITICAL GitNexus impact report; plan it as a separate test-backed slice.
-7. Run the focused architecture and notification/media tests.
-8. Run format cleanup, then architecture guards and `flutter analyze --no-pub`.
-9. Run GitNexus `detect_changes(scope: "all", repo: "Culcul")`.
-10. Update/close bd issues that this slice completes.
-11. Use `culcul-ory` for the next DTO/model ownership slice only after this
-    boundary baseline is green.
+1. Phase 40 documentation exists and points to one active spec and one active
+   plan.
+2. Architecture guard and route ownership tests cover the first route-entry seam
+   rules.
+3. Media runtime initialization moved to `lib/core/runtime` while first-frame
+   scheduling stays in `lib/app/bootstrap`.
+4. Notification navigation parsing/target ownership moved to
+   `lib/features/notification/application`; app router consumption stays behind
+   `notification/route_entry.dart`.
+5. Profile route callback consolidation remains deferred because
+   `UserProfileRoute` has CRITICAL GitNexus impact and needs a dedicated slice.
+
+Next immediate execution order:
+
+1. Refresh docs and bd notes to remove completed items from the active immediate
+   list.
+2. Pick exactly one low-risk seam for code movement:
+   - `culcul-9py` Profile route callbacks, if focused route tests are expanded
+     first;
+   - `culcul-ory` DTO/application ownership continuation, if the chosen model is
+     a small mirror;
+   - `culcul-ann` network response/error consolidation, if the first repository
+     path can be covered by existing `RequestExecutor` tests.
+3. Run GitNexus impact analysis for every production symbol touched.
+4. Add or tighten the focused failing test/architecture guard for that seam.
+5. Implement the seam, delete obsolete wrappers/shims immediately, and regenerate
+   code only when source annotations change.
+6. Run focused tests, `bash tool/architecture/run_architecture_guards.sh`,
+   `flutter analyze --no-pub`, and GitNexus
+   `detect_changes(scope: "all", repo: "Culcul")`.
+7. Update/close bd issues that the selected slice completes.

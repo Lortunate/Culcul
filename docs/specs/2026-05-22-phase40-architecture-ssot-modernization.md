@@ -15,15 +15,20 @@ is making ownership and dependency direction consistent.
 
 Current problems found in the Phase 40 audit:
 
-Current inventory baseline:
+Current inventory baseline, refreshed on 2026-05-22 after the route-entry seam
+slice:
 
-- `lib` has 886 Dart files; 233 are generated outputs.
+- `lib` has 898 Dart files; 241 are generated outputs and 657 are authored
+  source files.
 - Feature size hotspots are `video`, `dynamic`, `notification`, `profile`, and
   `live`.
-- Path/name smell scan found 200 model-shaped files, 60 DTO files, 120 view-model
-  files, 51 repository files, 31 provider files, and 18 contract files.
-- 175 authored files still contain JSON transport markers such as `fromJson`,
+- Current path/name scan found 108 model/entity/domain-shaped files, 42 DTO
+  files, 87 view-model files, 35 repository files, 16 provider files, and 9
+  contract files.
+- 84 authored files still contain JSON transport markers such as `fromJson`,
   `toJson`, or `Map<String, dynamic>`.
+- 32 authored files still import another feature directly; remaining cases must
+  move behind `route_entry.dart`, narrow contracts, or app-level composition.
 - Exact duplicate class names are not the main risk; semantic duplication and
   transport ownership leakage are.
 
@@ -36,9 +41,9 @@ Current inventory baseline:
    live room detail models, and video subtitle models.
 3. Routing is moving in the right direction but is not fully sealed. `app/router`
    should own typed route construction, while feature pages receive callbacks.
-   Existing dirty worktree changes already implement much of this and must be
-   preserved. `app/router` still imports some presentation navigation/link
-   adapters, so feature public seams are not fully explicit.
+   The first route-entry guard slice is complete, but Profile callback
+   consolidation remains a separate test-backed slice because `UserProfileRoute`
+   has CRITICAL GitNexus blast radius.
 4. Session/auth state fans out through auth-specific providers. Features should
    depend on narrow session contracts or app composition rather than importing
    auth internals directly.
@@ -71,9 +76,9 @@ Current inventory baseline:
     alone. Deletion must be based on ownership migration, not filename guesses.
 14. Core contracts currently include JSON-enabled shared shapes. They have high
     blast radius and are not a first-slice migration target.
-15. `live` presentation currently reaches into `app/bootstrap` for media init,
-    which reverses the intended dependency direction. Move this behind core
-    runtime/media composition or app-owned route/bootstrap wiring.
+15. The previous `live` presentation dependency on `app/bootstrap` has been
+    retired through the media runtime move into `core/runtime`; guards must keep
+    feature and core code from reintroducing app-bootstrap imports.
 
 ## Recommended Directory Structure
 
@@ -250,6 +255,10 @@ examples:
 - Live gold rank and guard list transport parsing live in `features/live/data/dtos`,
   while their application models remain the JSON-free read models used by live
   room state and header rendering.
+- Dynamic publish response and image upload transport parsing live in
+  `features/dynamic/data/dtos/dynamic_publish_response_dto.dart`, and the old
+  `DynamicPublishData`/`DynamicUploadImageData` application response shapes are
+  retired.
 - `LiveApi.getDanmuInfo` returns a DTO; `LiveRepositoryImpl.getDanmuInfo` is the
   single mapper from DTO to application model.
 - `LiveApi.getOnlineGoldRank` and `LiveApi.getGuardList` also return DTOs; their
@@ -311,7 +320,7 @@ Do not delete yet:
 
 ## First Phase Direct Execution
 
-First executable slice:
+Completed first executable boundary slice:
 
 1. Update active Phase 40 docs with the current audit findings.
 2. Cut the low-risk app bootstrap leak first: move media runtime initialization
@@ -323,6 +332,22 @@ First executable slice:
 4. Defer Profile callback consolidation because GitNexus reports
    `UserProfileRoute` as CRITICAL blast radius; split it into a dedicated test
    slice before editing.
+
+Next executable slice:
+
+1. Refresh Phase 40 docs and bd notes so completed work is not listed as
+   immediate work.
+2. Choose one remaining low-risk ownership seam:
+   - Profile route callback consolidation under `culcul-9py`, after impact
+     review and focused route tests;
+   - DTO/application model continuation under `culcul-ory`, starting with the
+     smallest mirror model still carrying transport ownership;
+   - network response/error consolidation under `culcul-ann`, starting with a
+     single repository path and `RequestExecutor` tests.
+3. Add or tighten a failing architecture/unit test for the selected seam before
+   editing production code.
+4. Run focused tests, architecture guards, `flutter analyze --no-pub`, and
+   GitNexus `detect_changes(scope: "all", repo: "Culcul")`.
 5. Fix format/codegen drift after the boundary moves, then run focused
    architecture tests.
 6. Use `culcul-ory` for the next owned data slice after the boundary work is

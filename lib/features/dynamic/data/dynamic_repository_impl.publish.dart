@@ -36,37 +36,38 @@ mixin _DynamicRepositoryPublishApis on _DynamicRepositoryAccess {
     });
   }
 
-  Future<Result<List<DynamicUploadImageData>, AppError>> uploadImagesWithCsrf({
+  Future<Result<List<DynamicUploadImageResponseDto>, AppError>> uploadImagesWithCsrf({
     required List<PublishMediaAsset> files,
     required String csrf,
   }) async {
     if (files.isEmpty) {
-      return const Success(<DynamicUploadImageData>[]);
+      return const Success(<DynamicUploadImageResponseDto>[]);
     }
 
     return _requestExecutor.run(() async {
-      return concurrencyExecutor.mapConcurrent<PublishMediaAsset, DynamicUploadImageData>(
-        items: files,
-        profile: NetworkConcurrencyProfile.upload,
-        scope: 'dynamic_publish_upload',
-        mapper: (asset) async {
-          final file = File(asset.path);
-          final uploadResult = await _requestExecutor.runApiDirect(
-            () => api.uploadImage(file: file, csrf: csrf),
+      return concurrencyExecutor
+          .mapConcurrent<PublishMediaAsset, DynamicUploadImageResponseDto>(
+            items: files,
+            profile: NetworkConcurrencyProfile.upload,
+            scope: 'dynamic_publish_upload',
+            mapper: (asset) async {
+              final file = File(asset.path);
+              final uploadResult = await _requestExecutor.runApiDirect(
+                () => api.uploadImage(file: file, csrf: csrf),
+              );
+              return uploadResult.when(
+                success: (data) => data,
+                failure: (error) => throw error,
+              );
+            },
           );
-          return uploadResult.when(
-            success: (data) => data,
-            failure: (error) => throw error,
-          );
-        },
-      );
     });
   }
 
   Future<Result<void, AppError>> publishDynamic({
     required String content,
     required String csrf,
-    List<DynamicUploadImageData> images = const [],
+    List<DynamicUploadImageResponseDto> images = const [],
   }) async {
     return _requestExecutor.run(() async {
       final pics = images

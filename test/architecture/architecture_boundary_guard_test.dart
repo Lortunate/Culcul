@@ -402,7 +402,12 @@ void main() {
 
   test('retired architecture symbols must stay deleted', () {
     final offenders = <String>[];
-    const retiredSymbols = {'PageQuery', 'rankingCategoriesV2'};
+    const retiredSymbols = {
+      'DynamicPublishData',
+      'DynamicUploadImageData',
+      'PageQuery',
+      'rankingCategoriesV2',
+    };
 
     for (final file in sourceDartFiles('lib')) {
       final path = normalizePath(file.path);

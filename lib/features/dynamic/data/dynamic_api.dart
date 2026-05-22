@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/features/dynamic/application/models/dynamic_response.dart';
+import 'package:culcul/features/dynamic/data/dtos/dynamic_publish_response_dto.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
@@ -82,14 +83,14 @@ abstract class DynamicApi {
   });
 
   @POST('/x/dynamic/feed/create/dyn')
-  Future<ApiResponse<DynamicPublishData>> createDynamic({
+  Future<ApiResponse<DynamicPublishResponseDto>> createDynamic({
     @Query('csrf') required String csrf,
     @Body() required Map<String, dynamic> body,
   });
 
   @POST('/x/dynamic/feed/draw/upload_bfs')
   @MultiPart()
-  Future<ApiResponse<DynamicUploadImageData>> uploadImage({
+  Future<ApiResponse<DynamicUploadImageResponseDto>> uploadImage({
     @Part(name: 'file_up') required File file,
     @Part(name: 'category') String category = 'daily',
     @Part(name: 'csrf') required String csrf,

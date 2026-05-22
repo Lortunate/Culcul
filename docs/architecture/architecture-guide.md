@@ -139,6 +139,25 @@ concrete runtime composition seam.
 - `feature_scope.dart` files: 0.
 - Completed focus: semantic seam cleanup, domain/data leak cleanup, presentation data/proto classification, app runtime seam alignment, codegen source-of-truth cleanup, large-file decomposition, no-op workflow cleanup.
 
+### Phase 40 Current Baseline
+
+- Active branch: `codex/phase40-route-entry-seams`.
+- `lib/` source Dart files: 657.
+- `lib/` generated Dart files: 241.
+- `lib/` total Dart files: 898.
+- Current source-shape scan: 108 model/entity/domain-shaped files, 42 DTO files,
+  87 view-model files, 35 repository files, 16 provider files, and 9 contract
+  files.
+- Authored files with JSON transport markers: 84.
+- Cross-feature direct imports found by the current audit: 32.
+- Completed focus so far: media runtime moved behind `core/runtime`,
+  route-entry guard baseline added, notification navigation ownership moved to
+  feature application, and several DTO ownership patterns migrated under
+  `culcul-ory`, including dynamic publish responses.
+- Remaining focus: Profile route callback slice, DTO/domain mirror
+  consolidation, network response/error consolidation, endpoint policy SSOT,
+  and startup/runtime retention cleanup.
+
 ### Phase 27 Baseline (archived)
 
 - `lib/` source Dart files: 644.

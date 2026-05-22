@@ -11,6 +11,7 @@ import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/bootstrap/providers/cookie_jar_provider.dart';
 import 'package:culcul/core/services/comment_service.dart';
 import 'package:culcul/features/dynamic/data/article_parsing/article_detail_parser.dart';
+import 'package:culcul/features/dynamic/data/dtos/dynamic_publish_response_dto.dart';
 import 'package:culcul/features/dynamic/data/dynamic_api.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/features/dynamic/application/models/dynamic_response.dart';
