@@ -41,6 +41,40 @@ double resolveHomeFeedCacheExtent(
   return value.clamp(tuning.minExtent, base);
 }
 
+List<NetworkImagePrefetchSpec> buildHomeFeedImagePrefetchSpecs<T>(
+  List<T> items, {
+  required int startIndex,
+  required int count,
+  required double logicalWidth,
+  required double pixelRatio,
+  required double aspectRatio,
+  required String Function(T item) imageUrl,
+}) {
+  if (count <= 0 || items.isEmpty) {
+    return const <NetworkImagePrefetchSpec>[];
+  }
+
+  final start = startIndex.clamp(0, items.length);
+  if (start >= items.length) {
+    return const <NetworkImagePrefetchSpec>[];
+  }
+
+  final end = (start + count).clamp(0, items.length);
+  final memCacheWidth = (logicalWidth * pixelRatio).round();
+  final memCacheHeight = (logicalWidth / aspectRatio * pixelRatio).round();
+
+  return items
+      .sublist(start, end)
+      .map(
+        (item) => NetworkImagePrefetchSpec(
+          url: imageUrl(item),
+          memCacheWidth: memCacheWidth,
+          memCacheHeight: memCacheHeight,
+        ),
+      )
+      .toList(growable: false);
+}
+
 void prefetchHomeFeedImages(
   BuildContext context, {
   required List<NetworkImagePrefetchSpec> specs,

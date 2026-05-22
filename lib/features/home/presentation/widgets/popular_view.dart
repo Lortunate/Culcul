@@ -12,7 +12,6 @@ import 'package:culcul/core/runtime/runtime_performance_policy.dart';
 import 'package:culcul/core/runtime/runtime_performance_policy_provider.dart';
 import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';
 import 'package:culcul/features/home/presentation/widgets/popular_video_card.dart';
-import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
 import 'package:culcul/ui/widgets/skeletons/page_skeletons.dart';
 import 'package:culcul/ui/assemblies/feed_cards/video_list_skeleton.dart';
 import 'package:culcul/features/home/presentation/home_breakpoints.dart';
@@ -105,16 +104,15 @@ class _PopularVideoList extends HookWidget {
       const prefetchLimit = 6;
       prefetchHomeFeedImages(
         context,
-        specs: items
-            .take(prefetchLimit)
-            .map(
-              (video) => NetworkImagePrefetchSpec(
-                url: video.pic,
-                memCacheWidth: (layout.thumbnailWidth * pixelRatio).round(),
-                memCacheHeight: (layout.thumbnailWidth / (16 / 10) * pixelRatio).round(),
-              ),
-            )
-            .toList(growable: false),
+        specs: buildHomeFeedImagePrefetchSpecs(
+          items,
+          startIndex: 0,
+          count: prefetchLimit,
+          logicalWidth: layout.thumbnailWidth,
+          pixelRatio: pixelRatio,
+          aspectRatio: 16 / 10,
+          imageUrl: (video) => video.pic,
+        ),
         networkPolicy: networkPolicy,
         limit: prefetchLimit,
       );
@@ -126,21 +124,15 @@ class _PopularVideoList extends HookWidget {
       runtimePolicy: runtimePolicy,
       getUpcomingSpecs: (firstIndex, count) {
         final pixelRatio = MediaQuery.devicePixelRatioOf(context);
-        final memW = (layout.thumbnailWidth * pixelRatio).round();
-        final memH = (layout.thumbnailWidth / (16 / 10) * pixelRatio).round();
-        final start = firstIndex + 1;
-        final end = (start + count).clamp(0, items.length);
-        if (start >= items.length) return <NetworkImagePrefetchSpec>[];
-        return items
-            .sublist(start, end)
-            .map(
-              (v) => NetworkImagePrefetchSpec(
-                url: v.pic,
-                memCacheWidth: memW,
-                memCacheHeight: memH,
-              ),
-            )
-            .toList(growable: false);
+        return buildHomeFeedImagePrefetchSpecs(
+          items,
+          startIndex: firstIndex + 1,
+          count: count,
+          logicalWidth: layout.thumbnailWidth,
+          pixelRatio: pixelRatio,
+          aspectRatio: 16 / 10,
+          imageUrl: (video) => video.pic,
+        );
       },
     );
 
