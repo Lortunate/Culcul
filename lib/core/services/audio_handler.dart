@@ -17,7 +17,7 @@ CilixiliAudioHandler audioHandler(Ref ref) {
   MediaRuntimeInitializer.instance.ensureInitialized();
   final handler = CilixiliAudioHandler.shared;
   unawaited(initializeCulculAudioService(builder: () => handler));
-  ref.onDispose(handler.dispose);
+  ref.onDispose(() => unawaited(handler.dispose()));
   return handler;
 }
 
@@ -25,17 +25,20 @@ class CilixiliAudioHandler extends BaseAudioHandler {
   static const String _loggerName = 'audio.performance';
   static const Duration _broadcastReportInterval = Duration(seconds: 10);
 
-  static final CilixiliAudioHandler _shared = CilixiliAudioHandler._();
+  static CilixiliAudioHandler? _shared;
+  static Player Function() _createPlayer = Player.new;
 
-  final Player player = Player();
+  final Player player;
   final AudioPlaybackStateGate _playbackStateGate = AudioPlaybackStateGate();
   final List<StreamSubscription<dynamic>> _subscriptions = [];
 
   DateTime _broadcastWindowStart = DateTime.now();
   int _broadcastWindowCount = 0;
+  bool _isDisposed = false;
+  Future<void>? _disposeFuture;
 
-  CilixiliAudioHandler._() {
-    _initSession();
+  CilixiliAudioHandler._() : player = _createPlayer() {
+    unawaited(_initSession());
     // Propagate player events to AudioService
     _subscriptions.add(
       player.stream.playing.listen((playing) {
@@ -84,21 +87,81 @@ class CilixiliAudioHandler extends BaseAudioHandler {
     );
   }
 
-  static CilixiliAudioHandler get shared => _shared;
-
-  void dispose() {
-    for (final sub in _subscriptions) {
-      sub.cancel();
+  static CilixiliAudioHandler get shared {
+    final current = _shared;
+    if (current != null && !current._isDisposed) {
+      return current;
     }
+    return _shared = CilixiliAudioHandler._();
+  }
+
+  @visibleForTesting
+  static void debugSetPlayerFactory(Player Function() createPlayer) {
+    _createPlayer = createPlayer;
+  }
+
+  @visibleForTesting
+  static Future<void> debugResetShared() async {
+    final current = _shared;
+    _shared = null;
+    _createPlayer = Player.new;
+    if (current != null && !current._isDisposed) {
+      await current.dispose();
+    }
+  }
+
+  @visibleForTesting
+  bool get isDisposed => _isDisposed;
+
+  Future<void> dispose() {
+    if (_isDisposed) {
+      return _disposeFuture ?? Future<void>.value();
+    }
+    _isDisposed = true;
+    final subscriptions = List<StreamSubscription<dynamic>>.of(_subscriptions);
     _subscriptions.clear();
+    _disposeFuture = _disposeResources(subscriptions);
+    return _disposeFuture!;
+  }
+
+  Future<void> _disposeResources(List<StreamSubscription<dynamic>> subscriptions) async {
+    try {
+      await Future.wait<void>([
+        for (final sub in subscriptions) sub.cancel(),
+        player.dispose(),
+      ]);
+    } catch (error, stackTrace) {
+      developer.log(
+        'audio_handler_dispose_failed',
+        name: _loggerName,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    } finally {
+      if (identical(_shared, this)) {
+        _shared = null;
+      }
+    }
   }
 
   Future<void> _initSession() async {
-    final session = await AudioSession.instance;
-    await session.configure(const AudioSessionConfiguration.music());
+    try {
+      final session = await AudioSession.instance;
+      await session.configure(const AudioSessionConfiguration.music());
+    } catch (error, stackTrace) {
+      developer.log(
+        'audio_session_init_failed',
+        name: _loggerName,
+        error: error,
+        stackTrace: stackTrace,
+      );
+    }
   }
 
   void _broadcastState({required bool isCriticalEvent, required String reason}) {
+    if (_isDisposed) {
+      return;
+    }
     final snapshot = _playbackStateGate.nextSnapshotIfShouldEmit(
       isCriticalEvent: isCriticalEvent,
       playing: player.state.playing,
@@ -149,19 +212,23 @@ class CilixiliAudioHandler extends BaseAudioHandler {
   }
 
   @override
-  Future<void> play() => player.play();
+  Future<void> play() => _isDisposed ? Future<void>.value() : player.play();
 
   @override
-  Future<void> pause() => player.pause();
+  Future<void> pause() => _isDisposed ? Future<void>.value() : player.pause();
 
   @override
-  Future<void> seek(Duration position) => player.seek(position);
+  Future<void> seek(Duration position) =>
+      _isDisposed ? Future<void>.value() : player.seek(position);
 
   @override
-  Future<void> stop() => player.stop();
+  Future<void> stop() => _isDisposed ? Future<void>.value() : player.stop();
 
   @override
   Future<void> updateMediaItem(MediaItem mediaItem) async {
+    if (_isDisposed) {
+      return;
+    }
     this.mediaItem.add(mediaItem);
   }
 
