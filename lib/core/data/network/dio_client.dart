@@ -62,7 +62,9 @@ void _applyNetworkPolicy(Dio dio, NetworkQualityPolicy networkPolicy) {
   dio.options.connectTimeout = networkPolicy.connectTimeout;
   dio.options.receiveTimeout = networkPolicy.receiveTimeout;
   dio.options.sendTimeout = networkPolicy.sendTimeout;
+  final previousAdapter = dio.httpClientAdapter;
   dio.httpClientAdapter = _createHttpClientAdapter(networkPolicy);
+  previousAdapter.close(force: true);
 }
 
 List<Duration> _retryDelays(NetworkQualityPolicy networkPolicy) {
@@ -139,6 +141,7 @@ void _addLogInterceptor(Dio dio) {
 Dio basicDio(Ref ref) {
   final networkPolicy = ref.read(networkQualityPolicyProvider);
   final dio = _createBaseDio(ref, networkPolicy);
+  ref.onDispose(() => dio.close(force: true));
   ref.listen(networkQualityPolicyProvider, (previous, next) {
     _applyNetworkPolicy(dio, next);
   });
@@ -150,6 +153,7 @@ Dio basicDio(Ref ref) {
 Dio dioClient(Ref ref) {
   final networkPolicy = ref.read(networkQualityPolicyProvider);
   final dio = _createBaseDio(ref, networkPolicy);
+  ref.onDispose(() => dio.close(force: true));
   final cacheStore = ref.read(cacheStoreProvider);
 
   final networkQualityInterceptor = NetworkQualityInterceptor(ref);

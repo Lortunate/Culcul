@@ -1,6 +1,7 @@
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
+import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/features/profile/presentation/view_models/user_space_videos_view_model.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
@@ -26,6 +27,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
     with AutomaticKeepAliveClientMixin {
   String _order = 'pubdate'; // pubdate (latest), click (popular), stow (most fav)
   final PaginationLoadGate _loadGate = PaginationLoadGate();
+  String? _lastPrefetchKey;
 
   @override
   bool get wantKeepAlive => true;
@@ -35,6 +37,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
     super.didUpdateWidget(oldWidget);
     if (oldWidget.mid != widget.mid) {
       _loadGate.reset();
+      _lastPrefetchKey = null;
     }
   }
 
@@ -119,20 +122,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
                   child: Center(child: Text(t.common.no_content)),
                 );
               }
-              final pixelRatio = MediaQuery.devicePixelRatioOf(context);
-              AppNetworkImagePrefetcher.prefetch(
-                context,
-                specs: videos
-                    .map(
-                      (video) => NetworkImagePrefetchSpec(
-                        url: video.pic,
-                        memCacheWidth: (160 * pixelRatio).round(),
-                        memCacheHeight: (100 * pixelRatio).round(),
-                      ),
-                    )
-                    .toList(growable: false),
-                limit: 8,
-              );
+              _scheduleCoverPrefetch(context, videos);
               final showLoadingFooter = videosAsync.isLoading && videos.isNotEmpty;
               return SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
@@ -206,5 +196,36 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
         ],
       ),
     );
+  }
+
+  void _scheduleCoverPrefetch(BuildContext context, List<ProfileVideo> videos) {
+    final pixelRatio = MediaQuery.devicePixelRatioOf(context);
+    final specs = videos
+        .take(8)
+        .map(
+          (video) => NetworkImagePrefetchSpec(
+            url: video.pic,
+            memCacheWidth: (160 * pixelRatio).round(),
+            memCacheHeight: (100 * pixelRatio).round(),
+          ),
+        )
+        .toList(growable: false);
+    final prefetchKey = [
+      widget.mid,
+      _order,
+      pixelRatio.toStringAsFixed(2),
+      for (final spec in specs) spec.url,
+    ].join('|');
+    if (_lastPrefetchKey == prefetchKey) {
+      return;
+    }
+    _lastPrefetchKey = prefetchKey;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _lastPrefetchKey != prefetchKey) {
+        return;
+      }
+      AppNetworkImagePrefetcher.prefetch(context, specs: specs, limit: specs.length);
+    });
   }
 }

@@ -8,9 +8,9 @@ const _phase30InventoryPath =
     'docs/architecture/archive/2026-05-21-phase30-application-seam-inventory.superseded.md';
 const _activeArchitectureGuidePath = 'docs/architecture/architecture-guide.md';
 const _activeArchitectureSpecPath =
-    'docs/specs/2026-05-22-phase40-architecture-ssot-modernization.md';
+    'docs/specs/2026-05-22-phase41-architecture-structure-consolidation.md';
 const _activeArchitecturePlanPath =
-    'docs/plans/2026-05-22-phase40-architecture-ssot-modernization.md';
+    'docs/plans/2026-05-22-phase41-architecture-structure-consolidation.md';
 
 const _phase30AllowedInventoryCategories = {
   'approved-session-seam',
@@ -26,7 +26,10 @@ void main() {
   test('active architecture guide points at the current phase documents', () {
     final guide = File(_activeArchitectureGuidePath).readAsStringSync();
 
-    expect(guide, contains('Active phase: Phase 40 Architecture SSOT Modernization.'));
+    expect(
+      guide,
+      contains('Active phase: Phase 41 Architecture Structure Consolidation.'),
+    );
 
     final activeLinks = RegExp(
       r'- Active (?:spec|plan): `([^`]+)`',
