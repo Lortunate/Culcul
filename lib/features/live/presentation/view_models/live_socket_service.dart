@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/runtime/runtime_performance_policy.dart';
@@ -144,15 +143,7 @@ class LiveSocketService {
         case 5: // Notification
           if (packet.protocolVersion == 2) {
             // Zlib compressed
-            try {
-              final uncompressed = zlib.decode(packet.body);
-              _handleMessage(uncompressed); // Recursive for uncompressed batch
-            } catch (error, stackTrace) {
-              DevLogger.log('live', 'socket.zlib_failed', <String, Object?>{
-                'error': error,
-                'stack': stackTrace,
-              });
-            }
+            unawaited(_handleCompressedNotifications(packet.body));
           } else if (packet.protocolVersion == 0) {
             // JSON
             try {
@@ -182,7 +173,29 @@ class LiveSocketService {
     }
   }
 
+  Future<void> _handleCompressedNotifications(List<int> compressedBody) async {
+    try {
+      final events = await LiveSocketPacketCodec.decodeCompressedNotificationEvents(
+        compressedBody,
+      );
+      if (_isDisposed) {
+        return;
+      }
+      for (final event in events) {
+        _parseNotification(event);
+      }
+    } catch (error, stackTrace) {
+      DevLogger.log('live', 'socket.compressed_parse_failed', <String, Object?>{
+        'error': error,
+        'stack': stackTrace,
+      });
+    }
+  }
+
   void _parseNotification(Map<String, dynamic> json) {
+    if (_isDisposed || _danmakuController.isClosed) {
+      return;
+    }
     final item = _eventParser.parse(json);
     if (item != null) {
       _danmakuController.add(item);

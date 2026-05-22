@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:culcul/features/live/presentation/view_models/live_socket_packet_codec.dart';
@@ -30,6 +32,29 @@ void main() {
       expect(packets[0].body, [1]);
       expect(packets[1].operation, 8);
       expect(packets[1].body, [2, 3]);
+    });
+
+    test('decodes compressed batched notification payloads off the UI path', () async {
+      final first = LiveSocketPacketCodec.encode(
+        operation: 5,
+        protocolVersion: 0,
+        body: utf8.encode(jsonEncode({'cmd': 'DANMU_MSG', 'text': 'first'})),
+      );
+      final second = LiveSocketPacketCodec.encode(
+        operation: 5,
+        protocolVersion: 0,
+        body: utf8.encode(jsonEncode({'cmd': 'INTERACT_WORD', 'text': 'second'})),
+      );
+      final compressedBody = zlib.encode([...first, ...second]);
+
+      final events = await LiveSocketPacketCodec.decodeCompressedNotificationEvents(
+        compressedBody,
+        offloadThresholdBytes: 1,
+      );
+
+      expect(events, hasLength(2));
+      expect(events[0]['cmd'], 'DANMU_MSG');
+      expect(events[1]['cmd'], 'INTERACT_WORD');
     });
   });
 }
