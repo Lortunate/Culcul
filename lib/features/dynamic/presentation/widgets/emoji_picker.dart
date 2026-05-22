@@ -1,4 +1,4 @@
-import 'package:culcul/features/dynamic/application/models/emote_response.dart';
+import 'package:culcul/features/dynamic/application/models/emote_catalog.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/emote_view_model.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
@@ -84,7 +84,7 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderSt
     );
   }
 
-  Widget _buildEmojiGrid(EmotePackage package) {
+  Widget _buildEmojiGrid(EmotePackageViewData package) {
     return GridView.builder(
       padding: const EdgeInsets.all(8),
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -92,9 +92,9 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderSt
         crossAxisSpacing: 8,
         mainAxisSpacing: 8,
       ),
-      itemCount: package.emote.length,
+      itemCount: package.emotes.length,
       itemBuilder: (context, index) {
-        final emote = package.emote[index];
+        final emote = package.emotes[index];
         return InkWell(
           onTap: () => widget.onEmojiSelected(emote.text),
           child: ExtendedImage.network(

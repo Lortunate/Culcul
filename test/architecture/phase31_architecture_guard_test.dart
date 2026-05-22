@@ -50,8 +50,6 @@ const _phase40AllowedDataApplicationImports = <String>{
   'lib/features/dynamic/data/dynamic_api.dart -> lib/features/dynamic/application/models/dynamic_response.dart',
   'lib/features/dynamic/data/dynamic_repository_impl.dart -> lib/features/dynamic/application/models/dynamic_item_extensions.dart',
   'lib/features/dynamic/data/dynamic_repository_impl.dart -> lib/features/dynamic/application/models/dynamic_response.dart',
-  'lib/features/dynamic/data/emote_api.dart -> lib/features/dynamic/application/models/emote_response.dart',
-  'lib/features/dynamic/data/emote_repository_impl.dart -> lib/features/dynamic/application/models/emote_response.dart',
   'lib/features/live/data/live_api.dart -> lib/features/live/application/models/live_anchor_info_model.dart',
   'lib/features/live/data/live_api.dart -> lib/features/live/application/models/live_danmaku_model.dart',
   'lib/features/live/data/live_api.dart -> lib/features/live/application/models/live_history_danmaku_model.dart',
