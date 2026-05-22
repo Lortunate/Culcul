@@ -2,7 +2,8 @@ part of 'danmaku_layer.dart';
 
 void useDanmakuPlaybackScheduler({
   required WidgetRef ref,
-  required Player player,
+  required Player? player,
+  required bool isActive,
   required int currentCid,
   required int? aid,
   required ObjectRef<DanmakuController?> controllerRef,
@@ -15,6 +16,14 @@ void useDanmakuPlaybackScheduler({
     final timeline = timelineRef.value;
     timeline.reset();
     controllerRef.value?.clear();
+    maskPathNotifier.value.value = null;
+    final activeAid = aid;
+    final activePlayer = player;
+    if (!isActive || activePlayer == null || activeAid == null || currentCid == 0) {
+      return null;
+    }
+
+    var disposed = false;
     var lastSegmentLoadCheckMs = -_segmentLoadCheckIntervalMs;
     var lastMaskRefreshMs = -_maskRefreshIntervalMs;
     var lastSegmentIndex = 0;
@@ -22,7 +31,7 @@ void useDanmakuPlaybackScheduler({
     Path? cachedMaskPath;
 
     void loadSegmentIfNeeded(int segmentIndex, int currentPosMs) {
-      if (segmentIndex < 1 || aid == null || currentCid == 0) {
+      if (segmentIndex < 1) {
         return;
       }
       if (!timeline.tryMarkSegmentLoading(segmentIndex)) {
@@ -31,8 +40,11 @@ void useDanmakuPlaybackScheduler({
 
       ref
           .read(danmakuProviderProvider.notifier)
-          .loadSegment(oid: currentCid, pid: aid, segmentIndex: segmentIndex)
+          .loadSegment(oid: currentCid, pid: activeAid, segmentIndex: segmentIndex)
           .then((result) {
+            if (disposed) {
+              return;
+            }
             final elems = result.dataOrNull;
             if (elems == null) {
               timeline.markSegmentLoadFailed(segmentIndex);
@@ -49,6 +61,9 @@ void useDanmakuPlaybackScheduler({
             timeline.appendItems(newItems, currentPosMs);
           })
           .catchError((e) {
+            if (disposed) {
+              return;
+            }
             timeline.markSegmentLoadFailed(segmentIndex);
             DevLogger.log('video', 'danmaku.segment_load_failed', <String, Object?>{
               'segment': segmentIndex,
@@ -57,7 +72,7 @@ void useDanmakuPlaybackScheduler({
           });
     }
 
-    final subPosition = player.stream.position.listen((pos) {
+    final subPosition = activePlayer.stream.position.listen((pos) {
       final currentPosMs = pos.inMilliseconds;
       final segmentIndex = (currentPosMs / _segmentDurationMs).ceil();
       final index = segmentIndex < 1 ? 1 : segmentIndex;
@@ -79,7 +94,7 @@ void useDanmakuPlaybackScheduler({
         timeline.seek(currentPosMs);
       }
 
-      if (player.state.playing) {
+      if (activePlayer.state.playing) {
         final itemsToAdd = timeline.collectDueItems(currentPosMs);
         if (itemsToAdd.isNotEmpty) {
           controllerRef.value?.addItems(itemsToAdd);
@@ -119,7 +134,7 @@ void useDanmakuPlaybackScheduler({
       timeline.updateLastPosition(currentPosMs);
     });
 
-    final subPlaying = player.stream.playing.listen((isPlaying) {
+    final subPlaying = activePlayer.stream.playing.listen((isPlaying) {
       if (isPlaying) {
         controllerRef.value?.resume();
       } else {
@@ -128,8 +143,9 @@ void useDanmakuPlaybackScheduler({
     });
 
     return () {
+      disposed = true;
       subPosition.cancel();
       subPlaying.cancel();
     };
-  }, [currentCid, aid]);
+  }, [currentCid, aid, isActive, player]);
 }

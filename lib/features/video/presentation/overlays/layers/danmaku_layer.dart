@@ -1,3 +1,4 @@
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/features/video/application/video_extra_workflows.dart';
@@ -44,16 +45,22 @@ class DanmakuLayer extends HookConsumerWidget {
 
     final settings = ref.watch(danmakuSettingsControllerProvider);
     final isEnabled = settings.isEnabled;
-    final maskResultProvider = ref.watch(
-      danmakuMaskProvider(oid: currentCid, pid: aid ?? 0),
-    );
+    final canRunDanmaku = isEnabled && aid != null && currentCid != 0;
+    final shouldLoadMask = canRunDanmaku && settings.enableAiMask;
+    final maskResultProvider = shouldLoadMask
+        ? ref.watch(danmakuMaskProvider(oid: currentCid, pid: aid))
+        : const AsyncData<Result<DanmakuMasks?, AppError>>(
+            Success<DanmakuMasks?, AppError>(null),
+          );
     final settingsRef = useRef(settings);
     settingsRef.value = settings;
     final maskResultRef = useRef(maskResultProvider);
     maskResultRef.value = maskResultProvider;
     final danmakuOption = _buildDanmakuOption(settings);
 
-    final player = ref.read(playerControllerProvider.notifier).player;
+    final player = canRunDanmaku
+        ? ref.read(playerControllerProvider.notifier).player
+        : null;
 
     final timelineRef = useRef<DanmakuTimelineBuffer>(DanmakuTimelineBuffer());
     final maskPathNotifier = useRef<ValueNotifier<Path?>>(ValueNotifier(null));
@@ -63,6 +70,7 @@ class DanmakuLayer extends HookConsumerWidget {
     useDanmakuPlaybackScheduler(
       ref: ref,
       player: player,
+      isActive: canRunDanmaku,
       currentCid: currentCid,
       aid: aid,
       controllerRef: controllerRef,
@@ -74,12 +82,13 @@ class DanmakuLayer extends HookConsumerWidget {
 
     useEffect(() {
       final controller = controllerRef.value;
-      if (controller == null || !isEnabled) return;
+      if (controller == null || !canRunDanmaku) return;
       controller.updateOption(danmakuOption);
       return null;
-    }, [settings]);
+    }, [settings, canRunDanmaku]);
 
-    if (!isEnabled) {
+    final activePlayer = player;
+    if (!canRunDanmaku || activePlayer == null) {
       controllerRef.value = null;
       return const SizedBox();
     }
@@ -105,7 +114,7 @@ class DanmakuLayer extends HookConsumerWidget {
             child: DanmakuView(
               createdController: (controller) {
                 controllerRef.value = controller;
-                if (player.state.playing) controller.resume();
+                if (activePlayer.state.playing) controller.resume();
               },
               option: danmakuOption,
             ),
