@@ -41,10 +41,25 @@ class PlayerController extends _$PlayerController
         _PlayerControllerLoadMixin,
         _PlayerControllerLoadHelpersMixin {
   @override
-  late final Player player;
-  @override
-  late final VideoController videoController;
+  Player get player {
+    final current = _player;
+    if (current == null) {
+      throw StateError('PlayerController player is not initialized');
+    }
+    return current;
+  }
 
+  @override
+  VideoController get videoController {
+    final current = _videoController;
+    if (current == null) {
+      throw StateError('PlayerController videoController is not initialized');
+    }
+    return current;
+  }
+
+  Player? _player;
+  VideoController? _videoController;
   @override
   Timer? _controlsTimer;
   final List<StreamSubscription<dynamic>> _subscriptions = [];
@@ -58,38 +73,19 @@ class PlayerController extends _$PlayerController
   bool _mounted = true;
   @override
   bool _controlsInteractionLogged = false;
+  bool _disposeRegistered = false;
+
+  @visibleForTesting
+  int get debugActiveMediaSubscriptionCount => _subscriptions.length;
+
+  @visibleForTesting
+  bool get debugHasActiveControlsTimer => _controlsTimer?.isActive ?? false;
 
   @override
   PlayerUiState build() {
     _mounted = true;
     final audioHandler = ref.watch(audioHandlerProvider);
-    player = audioHandler.player;
-    videoController = VideoController(player);
-    ref.onDispose(() {
-      _mounted = false;
-      _controlsTimer?.cancel();
-      for (final s in _subscriptions) {
-        s.cancel();
-      }
-      unawaited(_stopPlaybackSilently());
-    });
-
-    _startHideTimer();
-
-    if (_mounted) {
-      _subscriptions.addAll([
-        player.stream.playing.listen((p) {
-          if (_mounted) {
-            state = state.copyWith(isPlaying: p);
-          }
-        }),
-        player.stream.buffering.listen((b) {
-          if (_mounted) {
-            state = state.copyWith(isBuffering: b);
-          }
-        }),
-      ]);
-    }
+    _ensurePlayerLifecycle(audioHandler.player);
 
     return PlayerUiState(
       isPlaying: player.state.playing,
@@ -98,5 +94,53 @@ class PlayerController extends _$PlayerController
       activeSessionId: _sessionCoordinator.activeSessionId,
       activationVersion: _sessionCoordinator.activationVersion,
     );
+  }
+
+  void _ensurePlayerLifecycle(Player nextPlayer) {
+    if (!_disposeRegistered) {
+      _disposeRegistered = true;
+      ref.onDispose(_disposePlayerLifecycle);
+    }
+
+    if (identical(_player, nextPlayer) && _videoController != null) {
+      return;
+    }
+
+    _releasePlayerLifecycle();
+    _player = nextPlayer;
+    _videoController = VideoController(nextPlayer);
+    _startHideTimer();
+    _subscriptions.addAll([
+      nextPlayer.stream.playing.listen((p) {
+        if (_mounted) {
+          state = state.copyWith(isPlaying: p);
+        }
+      }),
+      nextPlayer.stream.buffering.listen((b) {
+        if (_mounted) {
+          state = state.copyWith(isBuffering: b);
+        }
+      }),
+    ]);
+  }
+
+  void _disposePlayerLifecycle() {
+    _mounted = false;
+    if (_player != null) {
+      unawaited(_stopPlaybackSilently());
+    }
+    _releasePlayerLifecycle();
+  }
+
+  void _releasePlayerLifecycle() {
+    _controlsTimer?.cancel();
+    _controlsTimer = null;
+    final subscriptions = List<StreamSubscription<dynamic>>.of(_subscriptions);
+    _subscriptions.clear();
+    _player = null;
+    _videoController = null;
+    for (final subscription in subscriptions) {
+      unawaited(subscription.cancel());
+    }
   }
 }
