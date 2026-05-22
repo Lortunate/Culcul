@@ -72,24 +72,6 @@ class ProfileRoute extends AppRouteData with $ProfileRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildProfileRoutePage(
-      onLogin: () => const LoginRoute().push(context),
-      onOpenSettings: () => const SettingsRoute().push(context),
-      onOpenHistory: () => const HistoryRoute().push(context),
-      onOpenFavorites: () => const FavoritesRoute().push(context),
-      onOpenToView: () => const ToViewRoute().push(context),
-      onOpenFollowings: (vmid) => FollowingsRoute(vmid: vmid).push(context),
-      onOpenFollowers: (vmid) => FollowersRoute(vmid: vmid).push(context),
-      onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
-      onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
-      wrapDynamicNavigation: ({required child}) =>
-          _wrapDynamicNavigation(context, child: child),
-      onOpenChat: ({required talkerId, required name, avatarUrl}) {
-        ChatRoute(
-          talkerId: talkerId,
-          $extra: ChatRouteInput(name: name, avatarUrl: avatarUrl),
-        ).push(context);
-      },
-    );
+    return buildProfileRoutePage(navigation: _profileRouteNavigation(context));
   }
 }

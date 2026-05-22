@@ -8,26 +8,7 @@ class FollowingsRoute extends AppRouteData with $FollowingsRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildFollowingsRoutePage(
-      vmid,
-      onLogin: () => const LoginRoute().push(context),
-      onOpenSettings: () => const SettingsRoute().push(context),
-      onOpenHistory: () => const HistoryRoute().push(context),
-      onOpenFavorites: () => const FavoritesRoute().push(context),
-      onOpenToView: () => const ToViewRoute().push(context),
-      onOpenFollowings: (vmid) => FollowingsRoute(vmid: vmid).push(context),
-      onOpenFollowers: (vmid) => FollowersRoute(vmid: vmid).push(context),
-      onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
-      onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
-      wrapDynamicNavigation: ({required child}) =>
-          _wrapDynamicNavigation(context, child: child),
-      onOpenChat: ({required talkerId, required name, avatarUrl}) {
-        ChatRoute(
-          talkerId: talkerId,
-          $extra: ChatRouteInput(name: name, avatarUrl: avatarUrl),
-        ).push(context);
-      },
-    );
+    return buildFollowingsRoutePage(vmid, navigation: _profileRouteNavigation(context));
   }
 }
 
@@ -39,26 +20,7 @@ class FollowersRoute extends AppRouteData with $FollowersRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildFollowersRoutePage(
-      vmid,
-      onLogin: () => const LoginRoute().push(context),
-      onOpenSettings: () => const SettingsRoute().push(context),
-      onOpenHistory: () => const HistoryRoute().push(context),
-      onOpenFavorites: () => const FavoritesRoute().push(context),
-      onOpenToView: () => const ToViewRoute().push(context),
-      onOpenFollowings: (vmid) => FollowingsRoute(vmid: vmid).push(context),
-      onOpenFollowers: (vmid) => FollowersRoute(vmid: vmid).push(context),
-      onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
-      onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
-      wrapDynamicNavigation: ({required child}) =>
-          _wrapDynamicNavigation(context, child: child),
-      onOpenChat: ({required talkerId, required name, avatarUrl}) {
-        ChatRoute(
-          talkerId: talkerId,
-          $extra: ChatRouteInput(name: name, avatarUrl: avatarUrl),
-        ).push(context);
-      },
-    );
+    return buildFollowersRoutePage(vmid, navigation: _profileRouteNavigation(context));
   }
 }
 
@@ -70,27 +32,30 @@ class UserProfileRoute extends AppRouteData with $UserProfileRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildUserProfileRoutePage(
-      mid,
-      onLogin: () => const LoginRoute().push(context),
-      onOpenSettings: () => const SettingsRoute().push(context),
-      onOpenHistory: () => const HistoryRoute().push(context),
-      onOpenFavorites: () => const FavoritesRoute().push(context),
-      onOpenToView: () => const ToViewRoute().push(context),
-      onOpenFollowings: (vmid) => FollowingsRoute(vmid: vmid).push(context),
-      onOpenFollowers: (vmid) => FollowersRoute(vmid: vmid).push(context),
-      onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
-      onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
-      wrapDynamicNavigation: ({required child}) =>
-          _wrapDynamicNavigation(context, child: child),
-      onOpenChat: ({required talkerId, required name, avatarUrl}) {
-        ChatRoute(
-          talkerId: talkerId,
-          $extra: ChatRouteInput(name: name, avatarUrl: avatarUrl),
-        ).push(context);
-      },
-    );
+    return buildUserProfileRoutePage(mid, navigation: _profileRouteNavigation(context));
   }
+}
+
+ProfileRouteNavigation _profileRouteNavigation(BuildContext context) {
+  return ProfileRouteNavigation(
+    onLogin: () => const LoginRoute().push(context),
+    onOpenSettings: () => const SettingsRoute().push(context),
+    onOpenHistory: () => const HistoryRoute().push(context),
+    onOpenFavorites: () => const FavoritesRoute().push(context),
+    onOpenToView: () => const ToViewRoute().push(context),
+    onOpenFollowings: (vmid) => FollowingsRoute(vmid: vmid).push(context),
+    onOpenFollowers: (vmid) => FollowersRoute(vmid: vmid).push(context),
+    onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
+    onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
+    wrapDynamicNavigation: ({required child}) =>
+        _wrapDynamicNavigation(context, child: child),
+    onOpenChat: ({required talkerId, required name, avatarUrl}) {
+      ChatRoute(
+        talkerId: talkerId,
+        $extra: ChatRouteInput(name: name, avatarUrl: avatarUrl),
+      ).push(context);
+    },
+  );
 }
 
 @TypedGoRoute<LoginRoute>(path: '/login')
