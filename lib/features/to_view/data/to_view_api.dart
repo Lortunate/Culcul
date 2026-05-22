@@ -1,3 +1,4 @@
+import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/features/to_view/data/dtos/to_view_model_dto.dart';
 import 'package:dio/dio.dart' hide Headers;
@@ -9,20 +10,20 @@ part 'to_view_api.g.dart';
 abstract class ToViewApi {
   factory ToViewApi(Dio dio, {String baseUrl}) = _ToViewApi;
 
-  @GET('/x/v2/history/toview')
+  @GET(ApiConstants.toView)
   Future<ApiResponse<ToViewListResponseDto>> getToViewList();
 
-  @POST('/x/v2/history/toview/add')
+  @POST(ApiConstants.toViewAdd)
   @FormUrlEncoded()
   @Headers({'x-bili-csrf': 'true'})
   Future<void> addToView(@Field('aid') int aid);
 
-  @POST('/x/v2/history/toview/del')
+  @POST(ApiConstants.toViewDel)
   @FormUrlEncoded()
   @Headers({'x-bili-csrf': 'true'})
   Future<void> deleteToView(@Field('aid') int aid);
 
-  @POST('/x/v2/history/toview/clear')
+  @POST(ApiConstants.toViewClear)
   @Headers({'x-bili-csrf': 'true'})
   Future<void> clearToView();
 }

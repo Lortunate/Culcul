@@ -31,6 +31,10 @@ class ApiConstants {
   static const String replyAdd = '/x/v2/reply/add';
   static const String historyReport = '/x/v2/history/report';
   static const String historyCursor = '/x/web-interface/history/cursor';
+  static const String toView = '/x/v2/history/toview';
+  static const String toViewAdd = '/x/v2/history/toview/add';
+  static const String toViewDel = '/x/v2/history/toview/del';
+  static const String toViewClear = '/x/v2/history/toview/clear';
 
   // Favorite List API
   static const String favCreatedList = '/x/v3/fav/folder/created/list-all';
