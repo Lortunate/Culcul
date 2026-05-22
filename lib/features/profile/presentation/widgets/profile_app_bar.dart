@@ -1,8 +1,8 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/contracts/user_session_contract.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
+import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
 import 'package:culcul/ui/widgets/users/app_avatar.dart';
 import 'package:culcul/ui/assemblies/users/user_tags.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +39,7 @@ class ProfileAppBar extends ConsumerWidget {
     return [
       IconButton(
         icon: const Icon(Icons.settings_outlined, size: 22),
-        onPressed: () => const SettingsRoute().push(context),
+        onPressed: ProfileNavigationScope.of(context).onOpenSettings,
       ),
       const SizedBox(width: 8),
     ];

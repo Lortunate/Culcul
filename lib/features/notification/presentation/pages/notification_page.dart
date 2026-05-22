@@ -1,16 +1,36 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
-import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/presentation/view_models/notification_lifecycle_sync_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_category_grid.dart';
 import 'package:culcul/features/notification/presentation/widgets/private_session_list.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/users/guest_view.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class NotificationPage extends ConsumerWidget {
-  const NotificationPage({super.key});
+  final VoidCallback onLogin;
+  final VoidCallback onOpenReply;
+  final VoidCallback onOpenAt;
+  final VoidCallback onOpenLike;
+  final VoidCallback onOpenSystem;
+  final void Function(
+    PrivateSession session, {
+    required String name,
+    required String avatarUrl,
+  })
+  onOpenChat;
+
+  const NotificationPage({
+    super.key,
+    required this.onLogin,
+    required this.onOpenReply,
+    required this.onOpenAt,
+    required this.onOpenLike,
+    required this.onOpenSystem,
+    required this.onOpenChat,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,17 +56,22 @@ class NotificationPage extends ConsumerWidget {
         ],
       ),
       body: session?.isLoggedIn ?? false
-          ? const Column(
+          ? Column(
               children: [
-                NotificationCategoryGrid(),
-                Divider(height: 1),
-                Expanded(child: PrivateSessionListView()),
+                NotificationCategoryGrid(
+                  onOpenReply: onOpenReply,
+                  onOpenAt: onOpenAt,
+                  onOpenLike: onOpenLike,
+                  onOpenSystem: onOpenSystem,
+                ),
+                const Divider(height: 1),
+                Expanded(child: PrivateSessionListView(onOpenChat: onOpenChat)),
               ],
             )
           : GuestView(
               title: t.profile.not_logged_in,
               message: t.profile.login_hint,
-              onLogin: () => const LoginRoute().push(context),
+              onLogin: onLogin,
             ),
     );
   }

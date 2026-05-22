@@ -1,8 +1,8 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/features/dynamic/application/dynamic_post_card_view_data.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/dynamic_navigation_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 
@@ -57,7 +57,7 @@ class DynamicPostCard extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(8),
-        onTap: () => DynamicDetailRoute(id: post.id).push(context),
+        onTap: () => DynamicNavigationScope.of(context).onOpenDynamicDetail(post.id),
         child: Padding(padding: const EdgeInsets.symmetric(vertical: 2), child: content),
       ),
     );
@@ -86,7 +86,7 @@ class DynamicPostCard extends StatelessWidget {
             post.commentCount,
             t.actions.comment,
             () {
-              DynamicDetailRoute(id: post.id).push(context);
+              DynamicNavigationScope.of(context).onOpenDynamicDetail(post.id);
             },
           ),
         ),

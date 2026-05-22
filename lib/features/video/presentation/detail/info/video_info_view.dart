@@ -22,8 +22,17 @@ part 'video_info_view.loaded_content.dart';
 
 class VideoInfoView extends HookConsumerWidget {
   final String bvid;
+  final VoidCallback onLogin;
+  final ValueChanged<int> onOpenUser;
+  final ValueChanged<String> onOpenVideo;
 
-  const VideoInfoView({super.key, required this.bvid});
+  const VideoInfoView({
+    super.key,
+    required this.bvid,
+    required this.onLogin,
+    required this.onOpenUser,
+    required this.onOpenVideo,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -94,6 +103,9 @@ class VideoInfoView extends HookConsumerWidget {
       relatedVideos: relatedVideos,
       isExpanded: isExpanded,
       onToggleFollow: notifier.toggleFollow,
+      onLogin: onLogin,
+      onOpenUser: onOpenUser,
+      onOpenVideo: onOpenVideo,
       onLike: notifier.toggleVideoLike,
       onCoin: notifier.addVideoCoin,
       onPartChanged: notifier.switchPart,

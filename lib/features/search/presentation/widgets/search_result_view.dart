@@ -20,8 +20,17 @@ const _searchTypeConfigs = <SearchType>[
 
 class SearchResultView extends HookConsumerWidget {
   final String keyword;
+  final ValueChanged<String> onOpenVideo;
+  final ValueChanged<int> onOpenUser;
+  final void Function(int topicId, String topicName) onOpenTopic;
 
-  const SearchResultView({super.key, required this.keyword});
+  const SearchResultView({
+    super.key,
+    required this.keyword,
+    required this.onOpenVideo,
+    required this.onOpenUser,
+    required this.onOpenTopic,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,7 +52,13 @@ class SearchResultView extends HookConsumerWidget {
             child: TabBarView(
               children: [
                 for (final searchType in _searchTypeConfigs)
-                  SearchResultTab(keyword: keyword, searchType: searchType),
+                  SearchResultTab(
+                    keyword: keyword,
+                    searchType: searchType,
+                    onOpenVideo: onOpenVideo,
+                    onOpenUser: onOpenUser,
+                    onOpenTopic: onOpenTopic,
+                  ),
               ],
             ),
           ),
@@ -56,10 +71,16 @@ class SearchResultView extends HookConsumerWidget {
 class SearchResultTab extends HookConsumerWidget {
   final String keyword;
   final SearchType searchType;
+  final ValueChanged<String> onOpenVideo;
+  final ValueChanged<int> onOpenUser;
+  final void Function(int topicId, String topicName) onOpenTopic;
 
   const SearchResultTab({
     super.key,
     required this.keyword,
+    required this.onOpenVideo,
+    required this.onOpenUser,
+    required this.onOpenTopic,
     this.searchType = SearchType.all,
   });
 
@@ -87,7 +108,14 @@ class SearchResultTab extends HookConsumerWidget {
             onDurationChanged: (v) => duration.value = v,
             showDuration: searchType.supportsDuration,
           ),
-        Expanded(child: _SearchResultPane(query: query)),
+        Expanded(
+          child: _SearchResultPane(
+            query: query,
+            onOpenVideo: onOpenVideo,
+            onOpenUser: onOpenUser,
+            onOpenTopic: onOpenTopic,
+          ),
+        ),
       ],
     );
   }
@@ -95,8 +123,16 @@ class SearchResultTab extends HookConsumerWidget {
 
 class _SearchResultPane extends ConsumerWidget {
   final SearchQuery query;
+  final ValueChanged<String> onOpenVideo;
+  final ValueChanged<int> onOpenUser;
+  final void Function(int topicId, String topicName) onOpenTopic;
 
-  const _SearchResultPane({required this.query});
+  const _SearchResultPane({
+    required this.query,
+    required this.onOpenVideo,
+    required this.onOpenUser,
+    required this.onOpenTopic,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -115,6 +151,9 @@ class _SearchResultPane extends ConsumerWidget {
           isLoadingMore: searchResultAsync.isLoading && !searchResultAsync.isRefreshing,
           onLoadMore: notifier.fetchMore,
           onRetry: () => ref.refresh(provider),
+          onOpenVideo: onOpenVideo,
+          onOpenUser: onOpenUser,
+          onOpenTopic: onOpenTopic,
         );
       },
       loading: () => const SearchResultSkeleton(),

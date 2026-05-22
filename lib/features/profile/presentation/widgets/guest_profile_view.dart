@@ -1,4 +1,4 @@
-import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -11,6 +11,7 @@ class GuestProfileView extends ConsumerWidget {
     final t = Translations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final navigation = ProfileNavigationScope.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -19,7 +20,7 @@ class GuestProfileView extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings_outlined),
-            onPressed: () => const SettingsRoute().push(context),
+            onPressed: navigation.onOpenSettings,
           ),
           const SizedBox(width: 8),
         ],
@@ -53,7 +54,7 @@ class GuestProfileView extends ConsumerWidget {
               ),
               const SizedBox(height: 32),
               FilledButton(
-                onPressed: () => const LoginRoute().push(context),
+                onPressed: navigation.onLogin,
                 style: FilledButton.styleFrom(
                   minimumSize: const Size(200, 48),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),

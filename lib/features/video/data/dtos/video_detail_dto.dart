@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import 'package:culcul/features/video/application/models/subtitle.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/features/video/data/dtos/subtitle_dto.dart';
 
 part 'video_detail_dto.freezed.dart';
 part 'video_detail_dto.g.dart';
@@ -24,7 +24,7 @@ sealed class VideoDetail with _$VideoDetail {
     required VideoStat stat,
     @Default(VideoDimension()) VideoDimension dimension,
     @Default([]) List<VideoPage> pages,
-    VideoSubtitles? subtitle,
+    VideoSubtitlesDto? subtitle,
     @Default([]) List<VideoTag> tag,
     @JsonKey(name: 'req_user') ReqUser? reqUser,
   }) = _VideoDetail;

@@ -1,3 +1,4 @@
+import 'package:culcul/features/notification/application/notification_navigation.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/presentation/pages/chat_page.dart';
@@ -5,6 +6,12 @@ import 'package:culcul/features/notification/presentation/pages/notification_lis
 import 'package:culcul/features/notification/presentation/pages/notification_page.dart';
 import 'package:culcul/features/notification/presentation/pages/system_notification_page.dart';
 import 'package:flutter/widgets.dart';
+
+export 'package:culcul/features/notification/application/notification_navigation.dart'
+    show
+        NotificationNavigationTarget,
+        NotificationTargetOpener,
+        openNotificationNavigationTarget;
 
 class ChatRouteInput {
   final String? name;
@@ -18,21 +25,67 @@ class ChatRouteInput {
   });
 }
 
-Widget buildNotificationRoutePage() => const NotificationPage();
-
-Widget buildReplyNotificationRoutePage() {
-  return const NotificationListPage(type: NotificationFeedType.reply);
+Widget buildNotificationRoutePage({
+  required VoidCallback onLogin,
+  required VoidCallback onOpenReply,
+  required VoidCallback onOpenAt,
+  required VoidCallback onOpenLike,
+  required VoidCallback onOpenSystem,
+  required void Function(
+    PrivateSession session, {
+    required String name,
+    required String avatarUrl,
+  })
+  onOpenChat,
+}) {
+  return NotificationPage(
+    onLogin: onLogin,
+    onOpenReply: onOpenReply,
+    onOpenAt: onOpenAt,
+    onOpenLike: onOpenLike,
+    onOpenSystem: onOpenSystem,
+    onOpenChat: onOpenChat,
+  );
 }
 
-Widget buildAtNotificationRoutePage() {
-  return const NotificationListPage(type: NotificationFeedType.at);
+Widget buildReplyNotificationRoutePage({
+  required NotificationTargetOpener onOpenTarget,
+  required ValueChanged<int> onOpenUser,
+}) {
+  return NotificationListPage(
+    type: NotificationFeedType.reply,
+    onOpenTarget: onOpenTarget,
+    onOpenUser: onOpenUser,
+  );
 }
 
-Widget buildLikeNotificationRoutePage() {
-  return const NotificationListPage(type: NotificationFeedType.like);
+Widget buildAtNotificationRoutePage({
+  required NotificationTargetOpener onOpenTarget,
+  required ValueChanged<int> onOpenUser,
+}) {
+  return NotificationListPage(
+    type: NotificationFeedType.at,
+    onOpenTarget: onOpenTarget,
+    onOpenUser: onOpenUser,
+  );
 }
 
-Widget buildSystemNotificationRoutePage() => const SystemNotificationPage();
+Widget buildLikeNotificationRoutePage({
+  required NotificationTargetOpener onOpenTarget,
+  required ValueChanged<int> onOpenUser,
+}) {
+  return NotificationListPage(
+    type: NotificationFeedType.like,
+    onOpenTarget: onOpenTarget,
+    onOpenUser: onOpenUser,
+  );
+}
+
+Widget buildSystemNotificationRoutePage({
+  required NotificationTargetOpener onOpenTarget,
+}) {
+  return SystemNotificationPage(onOpenTarget: onOpenTarget);
+}
 
 Widget buildChatRoutePage({required int talkerId, required ChatRouteInput input}) {
   return ChatPage(

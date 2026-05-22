@@ -26,7 +26,7 @@ LiveDanmakuFeedState liveDanmakuFeed(Ref ref, int roomId) {
   return ref.watch(liveDanmakuFeedControllerProvider(roomId));
 }
 
-@Riverpod(keepAlive: true)
+@riverpod
 class LiveDanmakuFeedController extends _$LiveDanmakuFeedController {
   final ListQueue<LiveDanmakuItem> _buffer = ListQueue<LiveDanmakuItem>();
   final List<LiveDanmakuItem> _pending = <LiveDanmakuItem>[];

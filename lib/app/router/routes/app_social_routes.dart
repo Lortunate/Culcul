@@ -7,8 +7,31 @@ class FollowingsRoute extends AppRouteData with $FollowingsRoute {
   const FollowingsRoute({required this.vmid});
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      buildFollowingsRoutePage(vmid);
+  Widget build(BuildContext context, GoRouterState state) {
+    return buildFollowingsRoutePage(
+      vmid,
+      onLogin: () => const LoginRoute().push(context),
+      onOpenSettings: () => const SettingsRoute().push(context),
+      onOpenHistory: () => const HistoryRoute().push(context),
+      onOpenFavorites: () => const FavoritesRoute().push(context),
+      onOpenToView: () => const ToViewRoute().push(context),
+      onOpenFollowings: (vmid) => FollowingsRoute(vmid: vmid).push(context),
+      onOpenFollowers: (vmid) => FollowersRoute(vmid: vmid).push(context),
+      onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
+      onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
+      onOpenLiveRoom: (roomId) => LiveRoomRoute(roomId: roomId).push(context),
+      onOpenDynamicDetail: (id) => DynamicDetailRoute(id: id).push(context),
+      onOpenArticle: (url, title) => _pushArticleDetail(context, url: url, title: title),
+      onOpenTopic: (topicId, topicName) =>
+          _pushTopicDetail(context, topicId: topicId, topicName: topicName),
+      onOpenChat: ({required talkerId, required name, avatarUrl}) {
+        ChatRoute(
+          talkerId: talkerId,
+          $extra: ChatRouteInput(name: name, avatarUrl: avatarUrl),
+        ).push(context);
+      },
+    );
+  }
 }
 
 @TypedGoRoute<FollowersRoute>(path: '/followers/:vmid')
@@ -18,8 +41,31 @@ class FollowersRoute extends AppRouteData with $FollowersRoute {
   const FollowersRoute({required this.vmid});
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      buildFollowersRoutePage(vmid);
+  Widget build(BuildContext context, GoRouterState state) {
+    return buildFollowersRoutePage(
+      vmid,
+      onLogin: () => const LoginRoute().push(context),
+      onOpenSettings: () => const SettingsRoute().push(context),
+      onOpenHistory: () => const HistoryRoute().push(context),
+      onOpenFavorites: () => const FavoritesRoute().push(context),
+      onOpenToView: () => const ToViewRoute().push(context),
+      onOpenFollowings: (vmid) => FollowingsRoute(vmid: vmid).push(context),
+      onOpenFollowers: (vmid) => FollowersRoute(vmid: vmid).push(context),
+      onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
+      onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
+      onOpenLiveRoom: (roomId) => LiveRoomRoute(roomId: roomId).push(context),
+      onOpenDynamicDetail: (id) => DynamicDetailRoute(id: id).push(context),
+      onOpenArticle: (url, title) => _pushArticleDetail(context, url: url, title: title),
+      onOpenTopic: (topicId, topicName) =>
+          _pushTopicDetail(context, topicId: topicId, topicName: topicName),
+      onOpenChat: ({required talkerId, required name, avatarUrl}) {
+        ChatRoute(
+          talkerId: talkerId,
+          $extra: ChatRouteInput(name: name, avatarUrl: avatarUrl),
+        ).push(context);
+      },
+    );
+  }
 }
 
 @TypedGoRoute<UserProfileRoute>(path: '/user/:mid')
@@ -29,8 +75,31 @@ class UserProfileRoute extends AppRouteData with $UserProfileRoute {
   const UserProfileRoute({required this.mid});
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      buildUserProfileRoutePage(mid);
+  Widget build(BuildContext context, GoRouterState state) {
+    return buildUserProfileRoutePage(
+      mid,
+      onLogin: () => const LoginRoute().push(context),
+      onOpenSettings: () => const SettingsRoute().push(context),
+      onOpenHistory: () => const HistoryRoute().push(context),
+      onOpenFavorites: () => const FavoritesRoute().push(context),
+      onOpenToView: () => const ToViewRoute().push(context),
+      onOpenFollowings: (vmid) => FollowingsRoute(vmid: vmid).push(context),
+      onOpenFollowers: (vmid) => FollowersRoute(vmid: vmid).push(context),
+      onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
+      onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
+      onOpenLiveRoom: (roomId) => LiveRoomRoute(roomId: roomId).push(context),
+      onOpenDynamicDetail: (id) => DynamicDetailRoute(id: id).push(context),
+      onOpenArticle: (url, title) => _pushArticleDetail(context, url: url, title: title),
+      onOpenTopic: (topicId, topicName) =>
+          _pushTopicDetail(context, topicId: topicId, topicName: topicName),
+      onOpenChat: ({required talkerId, required name, avatarUrl}) {
+        ChatRoute(
+          talkerId: talkerId,
+          $extra: ChatRouteInput(name: name, avatarUrl: avatarUrl),
+        ).push(context);
+      },
+    );
+  }
 }
 
 @TypedGoRoute<LoginRoute>(path: '/login')
@@ -54,7 +123,9 @@ class SettingsRoute extends AppRouteData with $SettingsRoute {
   const SettingsRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => buildSettingsRoutePage();
+  Widget build(BuildContext context, GoRouterState state) {
+    return buildSettingsRoutePage(onOpenAbout: () => const AboutRoute().push(context));
+  }
 }
 
 class AboutRoute extends AppRouteData with $AboutRoute {
@@ -69,7 +140,12 @@ class ToViewRoute extends AppRouteData with $ToViewRoute {
   const ToViewRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => buildToViewRoutePage();
+  Widget build(BuildContext context, GoRouterState state) {
+    return buildToViewRoutePage(
+      onLogin: () => const LoginRoute().push(context),
+      onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
+    );
+  }
 }
 
 @TypedGoRoute<HistoryRoute>(path: '/history')
@@ -77,5 +153,10 @@ class HistoryRoute extends AppRouteData with $HistoryRoute {
   const HistoryRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => buildHistoryRoutePage();
+  Widget build(BuildContext context, GoRouterState state) {
+    return buildHistoryRoutePage(
+      onLogin: () => const LoginRoute().push(context),
+      onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
+    );
+  }
 }

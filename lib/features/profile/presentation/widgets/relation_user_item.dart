@@ -1,8 +1,8 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/core/contracts/relation_user_contract.dart';
 import 'package:culcul/features/profile/presentation/view_models/relation_user_action_view_model.dart';
+import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/buttons/follow_button.dart';
 import 'package:culcul/ui/widgets/users/user_list_tile.dart';
@@ -42,7 +42,7 @@ class _RelationUserItemState extends ConsumerState<RelationUserItem> {
       onTap:
           widget.onTap ??
           () {
-            UserProfileRoute(mid: widget.user.mid).push(context);
+            ProfileNavigationScope.of(context).onOpenUser(widget.user.mid);
           },
       avatarUrl: widget.user.face,
       name: widget.user.uname,
@@ -79,7 +79,7 @@ class _RelationUserItemState extends ConsumerState<RelationUserItem> {
   void _handleFollowPressed() {
     final session = ref.read(currentUserProvider);
     if (!(session?.isLoggedIn ?? false)) {
-      const LoginRoute().push(context);
+      ProfileNavigationScope.of(context).onLogin();
       return;
     }
     _handleFollow();

@@ -1,7 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
-import 'package:culcul/features/dynamic/presentation/pages/publish_dynamic_page.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_list_view.dart';
 import 'package:culcul/ui/widgets/layout/app_tab_bar.dart';
 import 'package:culcul/ui/widgets/users/guest_view.dart';
@@ -11,7 +9,16 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class DynamicPage extends HookConsumerWidget {
-  const DynamicPage({super.key});
+  final VoidCallback onLogin;
+  final VoidCallback onOpenSearch;
+  final VoidCallback onOpenPublish;
+
+  const DynamicPage({
+    super.key,
+    required this.onLogin,
+    required this.onOpenSearch,
+    required this.onOpenPublish,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -37,18 +44,11 @@ class DynamicPage extends HookConsumerWidget {
           if (isLoggedIn)
             IconButton(
               icon: const Icon(Icons.edit_note_rounded, size: 24),
-              onPressed: () {
-                Navigator.of(context, rootNavigator: true).push(
-                  MaterialPageRoute(
-                    builder: (context) => const PublishDynamicPage(),
-                    fullscreenDialog: true,
-                  ),
-                );
-              },
+              onPressed: onOpenPublish,
             ),
           IconButton(
             icon: const Icon(Icons.search_rounded, size: 24),
-            onPressed: () => const SearchRoute().push(context),
+            onPressed: onOpenSearch,
           ),
           const SizedBox(width: 8),
         ],
@@ -70,7 +70,7 @@ class DynamicPage extends HookConsumerWidget {
               child: GuestView(
                 title: t.profile.not_logged_in,
                 message: t.profile.login_hint,
-                onLogin: () => const LoginRoute().push(context),
+                onLogin: onLogin,
               ),
             ),
     );

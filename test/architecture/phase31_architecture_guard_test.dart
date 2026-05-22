@@ -39,7 +39,41 @@ const _phase31AllowedPresentationDataImports = <String>{
 };
 
 const _jsonFreeApplicationModelFiles = <String>{
+  'lib/features/live/application/models/live_danmu_info_model.dart',
+  'lib/features/live/application/models/live_gold_rank_model.dart',
+  'lib/features/live/application/models/live_guard_list_model.dart',
   'lib/features/video/application/models/play_url.dart',
+  'lib/features/video/application/models/subtitle.dart',
+};
+
+const _phase40AllowedDataApplicationImports = <String>{
+  'lib/features/dynamic/data/dynamic_api.dart -> lib/features/dynamic/application/models/dynamic_response.dart',
+  'lib/features/dynamic/data/dynamic_repository_impl.dart -> lib/features/dynamic/application/models/dynamic_item_extensions.dart',
+  'lib/features/dynamic/data/dynamic_repository_impl.dart -> lib/features/dynamic/application/models/dynamic_response.dart',
+  'lib/features/dynamic/data/emote_api.dart -> lib/features/dynamic/application/models/emote_response.dart',
+  'lib/features/dynamic/data/emote_repository_impl.dart -> lib/features/dynamic/application/models/emote_response.dart',
+  'lib/features/live/data/live_api.dart -> lib/features/live/application/models/live_anchor_info_model.dart',
+  'lib/features/live/data/live_api.dart -> lib/features/live/application/models/live_danmaku_model.dart',
+  'lib/features/live/data/live_api.dart -> lib/features/live/application/models/live_history_danmaku_model.dart',
+  'lib/features/live/data/live_api.dart -> lib/features/live/application/models/live_play_url_model.dart',
+  'lib/features/live/data/live_api.dart -> lib/features/live/application/models/live_room_detail_model.dart',
+  'lib/features/live/data/live_repository_impl.dart -> lib/features/live/application/models/live_anchor_info_model.dart',
+  'lib/features/live/data/live_repository_impl.dart -> lib/features/live/application/models/live_danmaku_model.dart',
+  'lib/features/live/data/live_repository_impl.dart -> lib/features/live/application/models/live_danmu_info_model.dart',
+  'lib/features/live/data/live_repository_impl.dart -> lib/features/live/application/models/live_gold_rank_model.dart',
+  'lib/features/live/data/live_repository_impl.dart -> lib/features/live/application/models/live_guard_list_model.dart',
+  'lib/features/live/data/live_repository_impl.dart -> lib/features/live/application/models/live_history_danmaku_model.dart',
+  'lib/features/live/data/live_repository_impl.dart -> lib/features/live/application/models/live_play_url_model.dart',
+  'lib/features/live/data/live_repository_impl.dart -> lib/features/live/application/models/live_room_detail_model.dart',
+  'lib/features/search/data/search_mapper.dart -> lib/features/search/application/search_result.dart',
+  'lib/features/search/data/search_mapper.dart -> lib/features/search/application/search_trending_item.dart',
+  'lib/features/search/data/search_repository_impl.dart -> lib/features/search/application/search_port.dart',
+  'lib/features/search/data/search_repository_impl.dart -> lib/features/search/application/search_query.dart',
+  'lib/features/search/data/search_repository_impl.dart -> lib/features/search/application/search_result.dart',
+  'lib/features/search/data/search_repository_impl.dart -> lib/features/search/application/search_trending_item.dart',
+  'lib/features/video/data/danmaku_repository_impl.dart -> lib/features/video/application/models/danmaku.dart',
+  'lib/features/video/data/video_repository_impl.dart -> lib/features/video/application/models/play_url.dart',
+  'lib/features/video/data/video_repository_impl.dart -> lib/features/video/application/models/subtitle.dart',
 };
 
 void main() {
@@ -215,6 +249,58 @@ void main() {
       isEmpty,
       reason:
           'Remove migrated presentation -> data entries from the Phase 31 '
+          'temporary allowlist:\n'
+          '${staleAllowlistEntries.join('\n')}',
+    );
+  });
+
+  test('feature data to same-feature application imports are allowlisted', () {
+    final observedDebt = <String>{};
+    final newDebt = <String>[];
+
+    for (final file in sourceDartFiles('lib')) {
+      final importerPath = normalizePath(file.path);
+      final importerFeature = featureNameFromPath(importerPath);
+      if (importerFeature == null ||
+          !importerPath.startsWith('lib/features/$importerFeature/data/')) {
+        continue;
+      }
+
+      for (final import in dartImports(file)) {
+        final targetPath = import.resolvedPath;
+        if (targetPath == null ||
+            !targetPath.startsWith('lib/features/$importerFeature/application/')) {
+          continue;
+        }
+
+        final key = '$importerPath -> $targetPath';
+        observedDebt.add(key);
+        if (!_phase40AllowedDataApplicationImports.contains(key)) {
+          newDebt.add(
+            '${formatLocation(import.importerPath, import.lineNumber)} '
+            'imports ${import.uri} -> $targetPath',
+          );
+        }
+      }
+    }
+
+    final staleAllowlistEntries = _phase40AllowedDataApplicationImports.difference(
+      observedDebt,
+    );
+
+    expect(
+      newDebt,
+      isEmpty,
+      reason:
+          'Same-feature data -> application imports must be migrated or '
+          'explicitly added to the Phase 40 temporary allowlist:\n'
+          '${newDebt.join('\n')}',
+    );
+    expect(
+      staleAllowlistEntries,
+      isEmpty,
+      reason:
+          'Remove migrated data -> application entries from the Phase 40 '
           'temporary allowlist:\n'
           '${staleAllowlistEntries.join('\n')}',
     );

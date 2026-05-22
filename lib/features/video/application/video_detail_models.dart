@@ -1,7 +1,8 @@
 import 'package:culcul/core/contracts/video_model_contract.dart';
-import 'package:culcul/features/video/data/dtos/related_video_dto.dart' as related_dto;
-import 'package:culcul/features/video/data/dtos/video_detail_dto.dart' as detail_dto;
 import 'package:culcul/features/video/application/models/subtitle.dart';
+import 'package:culcul/features/video/data/dtos/related_video_dto.dart' as related_dto;
+import 'package:culcul/features/video/data/dtos/subtitle_dto.dart' as subtitle_dto;
+import 'package:culcul/features/video/data/dtos/video_detail_dto.dart' as detail_dto;
 
 class VideoDetailViewData {
   final String bvid;
@@ -141,7 +142,7 @@ extension VideoDetailViewDataMapper on detail_dto.VideoDetail {
       owner: owner,
       stat: stat,
       dimension: dimension.toVideoDimensionViewData(),
-      subtitle: subtitle,
+      subtitle: subtitle?.toVideoSubtitles(),
       pages: pages.map((page) => page.toVideoPartViewData()).toList(growable: false),
       tags: (tags ?? tag).map((tag) => tag.toVideoTagViewData()).toList(growable: false),
       reqUser: reqUser.toVideoRequestUserState(),
@@ -201,6 +202,28 @@ extension VideoRequestUserStateMapper on detail_dto.ReqUser? {
       like: user.like,
       coin: user.coin,
       favorite: user.favorite,
+    );
+  }
+}
+
+extension VideoSubtitlesMapper on subtitle_dto.VideoSubtitlesDto {
+  VideoSubtitles toVideoSubtitles() {
+    return VideoSubtitles(
+      list: list.map((item) => item.toSubtitleInfo()).toList(growable: false),
+    );
+  }
+}
+
+extension SubtitleInfoMapper on subtitle_dto.SubtitleInfoDto {
+  SubtitleInfo toSubtitleInfo() {
+    return SubtitleInfo(
+      id: id,
+      lan: lan,
+      lanDoc: lanDoc,
+      subtitleUrl: subtitleUrl,
+      isLock: isLock,
+      idStr: idStr,
+      type: type,
     );
   }
 }

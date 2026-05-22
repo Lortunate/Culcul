@@ -1,6 +1,5 @@
 import 'package:culcul/features/dynamic/application/dynamic_post_card_view_data.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_content_entities.dart';
-import 'package:culcul/features/dynamic/presentation/pages/topic_detail_page.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_common_widget.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_goods_widget.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_images_widget.dart';
@@ -10,6 +9,7 @@ import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_ugc
 import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_video_widget.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_vote_widget.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_forward_widget.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/dynamic_navigation_scope.dart';
 import 'package:culcul/ui/assemblies/text/bilibili_emoji_text.dart';
 import 'package:flutter/material.dart';
 
@@ -63,14 +63,8 @@ class DynamicContentWidget extends StatelessWidget {
             onTap: post.topicId == null
                 ? null
                 : () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => TopicDetailPage(
-                          topicId: post.topicId!,
-                          topicName: post.topicName!,
-                        ),
-                      ),
-                    );
+                    final navigation = DynamicNavigationScope.of(context);
+                    navigation.onOpenTopic(post.topicId!, post.topicName!);
                   },
           ),
         ],

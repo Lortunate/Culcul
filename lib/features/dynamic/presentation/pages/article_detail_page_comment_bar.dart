@@ -66,7 +66,7 @@ List<Widget> buildArticleCommentSlivers({
               CommentItemWidget(
                 item: item,
                 upperMid: data.authorMid,
-                onTapUser: (mid) => UserProfileRoute(mid: mid).push(context),
+                onTapUser: (mid) => DynamicNavigationScope.of(context).onOpenUser(mid),
                 onLike: () => onToggleCommentLike(item),
                 onReply: () => CommentReplySheet.show(
                   context,

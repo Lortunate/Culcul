@@ -1,7 +1,5 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
-import 'package:culcul/features/notification/route_entry.dart';
 import 'package:culcul/features/profile/application/profile_session_providers.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/i18n/strings.g.dart';
@@ -13,8 +11,14 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class PrivateSessionItem extends ConsumerWidget {
   final PrivateSession session;
+  final void Function(
+    PrivateSession session, {
+    required String name,
+    required String avatarUrl,
+  })
+  onOpenChat;
 
-  const PrivateSessionItem({super.key, required this.session});
+  const PrivateSessionItem({super.key, required this.session, required this.onOpenChat});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -67,14 +71,7 @@ class PrivateSessionItem extends ConsumerWidget {
 
     return ListTile(
       onTap: () {
-        ChatRoute(
-          talkerId: session.talkerId,
-          $extra: ChatRouteInput(
-            name: title,
-            sessionType: session.sessionType,
-            avatarUrl: avatarUrl,
-          ),
-        ).push(context);
+        onOpenChat(session, name: title, avatarUrl: avatarUrl);
       },
       leading: _buildAvatar(avatarUrl, session.talkerId, context),
       title: Row(

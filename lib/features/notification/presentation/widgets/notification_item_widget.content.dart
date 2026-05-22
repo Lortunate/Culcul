@@ -4,11 +4,15 @@ class _NotificationItemContent extends StatelessWidget {
   final NotificationEntry item;
   final NotificationFeedType type;
   final NotificationNavigationParser navigationParser;
+  final NotificationTargetOpener onOpenTarget;
+  final ValueChanged<int> onOpenUser;
 
   const _NotificationItemContent({
     required this.item,
     required this.type,
     required this.navigationParser,
+    required this.onOpenTarget,
+    required this.onOpenUser,
   });
 
   @override
@@ -30,7 +34,7 @@ class _NotificationItemContent extends StatelessWidget {
           GestureDetector(
             onTap: () {
               if (user.mid != 0) {
-                UserProfileRoute(mid: user.mid).push(context);
+                onOpenUser(user.mid);
               }
             },
             child: AppAvatar(url: user.avatar, size: 40),
@@ -74,7 +78,7 @@ class _NotificationItemContent extends StatelessWidget {
 
   Future<void> _handleTap(BuildContext context, NotificationEntryDetail detail) async {
     final target = navigationParser.fromNotificationDetail(detail);
-    final handled = await openNotificationNavigationTarget(context, target);
+    final handled = await onOpenTarget(target);
     if (handled || !context.mounted) return;
 
     context.showAppFeedback(

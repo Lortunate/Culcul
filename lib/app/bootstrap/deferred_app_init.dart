@@ -1,24 +1,23 @@
 import 'package:culcul/core/perf/dev_logger.dart';
+import 'package:culcul/core/runtime/media_runtime_initializer.dart';
 import 'package:flutter/widgets.dart';
-import 'package:media_kit/media_kit.dart';
 
 class DeferredAppInitController {
-  DeferredAppInitController._() : _initializeMediaKit = MediaKit.ensureInitialized;
+  DeferredAppInitController._()
+    : _mediaRuntimeInitializer = MediaRuntimeInitializer.instance;
 
   @visibleForTesting
   DeferredAppInitController.testing({required void Function() initializeMediaKit})
-    : _initializeMediaKit = initializeMediaKit;
+    : _mediaRuntimeInitializer = MediaRuntimeInitializer.testing(
+        initializeMediaKit: initializeMediaKit,
+      );
 
   static final DeferredAppInitController instance = DeferredAppInitController._();
 
-  final void Function() _initializeMediaKit;
-
-  bool _mediaKitReady = false;
+  final MediaRuntimeInitializer _mediaRuntimeInitializer;
 
   void ensureMediaKitInitialized() {
-    if (_mediaKitReady) return;
-    _initializeMediaKit();
-    _mediaKitReady = true;
+    _mediaRuntimeInitializer.ensureInitialized();
   }
 
   void scheduleAfterFirstFrame() {

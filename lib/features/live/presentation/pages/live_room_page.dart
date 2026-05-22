@@ -1,4 +1,3 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/live/application/live_room_page_commands.dart';
 import 'package:culcul/features/live/presentation/view_models/live_room_view_model.dart';
 import 'package:culcul/features/live/presentation/widgets/live_bottom_bar.dart';
@@ -12,8 +11,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class LiveRoomPage extends HookConsumerWidget {
   final int roomId;
+  final VoidCallback onLogin;
 
-  const LiveRoomPage({super.key, required this.roomId});
+  const LiveRoomPage({super.key, required this.roomId, required this.onLogin});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -45,11 +45,12 @@ class LiveRoomPage extends HookConsumerWidget {
                 liveAnchorInfo: headerData.liveAnchorInfo,
                 guardList: headerData.guardList,
                 goldRank: headerData.goldRank,
+                onLogin: onLogin,
                 onFollow: () async {
                   final result = await pageCommands.handleFollowTap(roomId);
                   if (!context.mounted) return;
                   if (result == LiveRoomFollowCommandResult.requiresLogin) {
-                    const LoginRoute().push(context);
+                    onLogin();
                   }
                 },
               ),

@@ -1,4 +1,3 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/search/application/search_result.dart';
 import 'package:culcul/i18n/strings.g.dart';
@@ -7,8 +6,9 @@ import 'package:flutter/material.dart';
 
 class SearchUserItem extends StatelessWidget {
   final SearchUserEntry item;
+  final ValueChanged<int> onOpenUser;
 
-  const SearchUserItem({super.key, required this.item});
+  const SearchUserItem({super.key, required this.item, required this.onOpenUser});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +19,7 @@ class SearchUserItem extends StatelessWidget {
     return UserListTile(
       onTap: () {
         if (item.mid != 0) {
-          UserProfileRoute(mid: item.mid).push(context);
+          onOpenUser(item.mid);
         }
       },
       avatarUrl: item.avatarUrl,

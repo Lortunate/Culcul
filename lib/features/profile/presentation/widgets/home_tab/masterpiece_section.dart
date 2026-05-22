@@ -1,7 +1,7 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/presentation/view_models/user_space_extras_view_model.dart';
 import 'package:culcul/features/profile/presentation/widgets/home_tab/section_header.dart';
+import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
 import 'package:culcul/ui/assemblies/feed_cards/video_thumbnail.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -35,7 +35,8 @@ class MasterpieceSection extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     final video = videos[index];
                     return GestureDetector(
-                      onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
+                      onTap: () =>
+                          ProfileNavigationScope.of(context).onOpenVideo(video.bvid),
                       child: SizedBox(
                         width: 160,
                         child: Column(

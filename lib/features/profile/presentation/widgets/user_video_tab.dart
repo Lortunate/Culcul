@@ -1,8 +1,8 @@
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
 import 'package:culcul/features/profile/presentation/view_models/user_space_videos_view_model.dart';
+import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
@@ -171,7 +171,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
                           ),
                         ],
                         onTap: () {
-                          VideoDetailRoute(bvid: spaceVideo.bvid).push(context);
+                          ProfileNavigationScope.of(context).onOpenVideo(spaceVideo.bvid);
                         },
                       ),
                       if (index < videos.length - 1)

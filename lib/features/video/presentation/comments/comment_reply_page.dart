@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/video/application/comment_reply_commands.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/features/video/presentation/comments/comment_reply_view_model.dart';
@@ -78,12 +77,14 @@ class CommentReplyPage extends HookConsumerWidget {
   final int rootId;
   final CommentItem comment;
   final int? upperMid;
+  final ValueChanged<int> onOpenUser;
 
   const CommentReplyPage({
     super.key,
     required this.oid,
     required this.rootId,
     required this.comment,
+    required this.onOpenUser,
     this.upperMid,
   });
 
@@ -164,7 +165,7 @@ class CommentReplyPage extends HookConsumerWidget {
                           item: rootComment,
                           showRepliesPreview: false,
                           upperMid: upperMid,
-                          onTapUser: (mid) => UserProfileRoute(mid: mid).push(context),
+                          onTapUser: onOpenUser,
                           onLike: () => controller.toggleCommentLike(
                             rootComment.oid,
                             rootComment.rpid,
@@ -213,7 +214,7 @@ class CommentReplyPage extends HookConsumerWidget {
                           item: reply,
                           showRepliesPreview: false,
                           upperMid: upperMid,
-                          onTapUser: (mid) => UserProfileRoute(mid: mid).push(context),
+                          onTapUser: onOpenUser,
                           onLike: () => controller.toggleCommentLike(
                             reply.oid,
                             reply.rpid,

@@ -12,6 +12,7 @@ import 'package:culcul/features/video/application/models/play_url.dart';
 import 'package:culcul/features/video/data/dtos/player_info_dto.dart';
 import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
 import 'package:culcul/features/video/application/models/subtitle.dart';
+import 'package:culcul/features/video/data/dtos/subtitle_dto.dart';
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
 import 'package:culcul/features/video/data/dtos/video_play_url_dto.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -198,10 +199,10 @@ class VideoRepositoryImpl {
     return _requestExecutor.run(() async {
       final fullUrl = url.startsWith('http') ? url : 'https:$url';
       final response = await resourceApi.fetchJson(fullUrl);
-      final subtitleContent = SubtitleContent.fromJson(
+      final subtitleContent = SubtitleContentDto.fromJson(
         Map<String, dynamic>.from(response as Map),
       );
-      return subtitleContent;
+      return _mapSubtitleContent(subtitleContent);
     });
   }
 
@@ -276,5 +277,24 @@ SupportFormat _mapSupportFormat(SupportFormatDto dto) {
     displayDesc: dto.displayDesc,
     superscript: dto.superscript,
     codecs: dto.codecs,
+  );
+}
+
+SubtitleContent _mapSubtitleContent(SubtitleContentDto dto) {
+  return SubtitleContent(
+    fontSize: dto.fontSize,
+    fontColor: dto.fontColor,
+    backgroundAlpha: dto.backgroundAlpha,
+    backgroundColor: dto.backgroundColor,
+    body: dto.body.map(_mapSubtitleItem).toList(growable: false),
+  );
+}
+
+SubtitleItem _mapSubtitleItem(SubtitleItemDto dto) {
+  return SubtitleItem(
+    from: dto.from,
+    to: dto.to,
+    location: dto.location,
+    content: dto.content,
   );
 }

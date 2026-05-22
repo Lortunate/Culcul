@@ -1,13 +1,13 @@
 import 'package:culcul/core/contracts/video_model_contract.dart';
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/ui/assemblies/feed_cards/video_list_card.dart';
 import 'package:culcul/ui/widgets/buttons/app_tag.dart';
 import 'package:flutter/material.dart';
 
 class RecommendationItem extends StatelessWidget {
   final VideoModel video;
+  final ValueChanged<String> onOpenVideo;
 
-  const RecommendationItem({super.key, required this.video});
+  const RecommendationItem({super.key, required this.video, required this.onOpenVideo});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class RecommendationItem extends StatelessWidget {
           context,
         ).textTheme.labelSmall?.copyWith(color: colorScheme.onSurfaceVariant),
       ),
-      onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
+      onTap: () => onOpenVideo(video.bvid),
     );
   }
 }

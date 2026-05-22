@@ -1,14 +1,10 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'subtitle.freezed.dart';
-part 'subtitle.g.dart';
 
 @freezed
 sealed class VideoSubtitles with _$VideoSubtitles {
   const factory VideoSubtitles({@Default([]) List<SubtitleInfo> list}) = _VideoSubtitles;
-
-  factory VideoSubtitles.fromJson(Map<String, dynamic> json) =>
-      _$VideoSubtitlesFromJson(json);
 }
 
 @freezed
@@ -16,29 +12,23 @@ sealed class SubtitleInfo with _$SubtitleInfo {
   const factory SubtitleInfo({
     required int id,
     required String lan,
-    @JsonKey(name: 'lan_doc') required String lanDoc,
-    @JsonKey(name: 'subtitle_url') required String subtitleUrl,
-    @JsonKey(name: 'is_lock') @Default(false) bool isLock,
-    @JsonKey(name: 'id_str') String? idStr,
+    required String lanDoc,
+    required String subtitleUrl,
+    @Default(false) bool isLock,
+    String? idStr,
     @Default(0) int type,
   }) = _SubtitleInfo;
-
-  factory SubtitleInfo.fromJson(Map<String, dynamic> json) =>
-      _$SubtitleInfoFromJson(json);
 }
 
 @freezed
 sealed class SubtitleContent with _$SubtitleContent {
   const factory SubtitleContent({
-    @JsonKey(name: 'font_size') double? fontSize,
-    @JsonKey(name: 'font_color') String? fontColor,
-    @JsonKey(name: 'background_alpha') double? backgroundAlpha,
-    @JsonKey(name: 'background_color') String? backgroundColor,
+    double? fontSize,
+    String? fontColor,
+    double? backgroundAlpha,
+    String? backgroundColor,
     @Default([]) List<SubtitleItem> body,
   }) = _SubtitleContent;
-
-  factory SubtitleContent.fromJson(Map<String, dynamic> json) =>
-      _$SubtitleContentFromJson(json);
 }
 
 @freezed
@@ -49,7 +39,4 @@ sealed class SubtitleItem with _$SubtitleItem {
     required int location,
     required String content,
   }) = _SubtitleItem;
-
-  factory SubtitleItem.fromJson(Map<String, dynamic> json) =>
-      _$SubtitleItemFromJson(json);
 }

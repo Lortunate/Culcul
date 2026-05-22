@@ -1,8 +1,7 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/presentation/view_models/user_space_view_model.dart';
-import 'package:culcul/features/notification/route_entry.dart';
+import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_action_button.dart';
 import 'package:culcul/ui/widgets/buttons/follow_button.dart';
@@ -27,13 +26,14 @@ class UserProfileButtons extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     final t = Translations.of(context);
+    final navigation = ProfileNavigationScope.of(context);
 
     if (isSelf) {
       return Row(
         children: [
           Expanded(
             child: OutlinedButton(
-              onPressed: () => const SettingsRoute().push(context),
+              onPressed: navigation.onOpenSettings,
               style: OutlinedButton.styleFrom(
                 padding: EdgeInsets.zero,
                 minimumSize: Size(double.infinity, height),
@@ -64,7 +64,7 @@ class UserProfileButtons extends ConsumerWidget {
             onTap: () {
               final session = ref.read(currentUserProvider);
               if (!(session?.isLoggedIn ?? false)) {
-                const LoginRoute().push(context);
+                navigation.onLogin();
                 return;
               }
               ref.read(userSpaceProvider(profile.id).notifier).toggleFollow();
@@ -78,13 +78,11 @@ class UserProfileButtons extends ConsumerWidget {
         UserProfileActionButton(
           icon: Icons.mail_outline_rounded,
           onTap: () {
-            ChatRoute(
+            navigation.onOpenChat(
               talkerId: int.parse(profile.id),
-              $extra: ChatRouteInput(
-                name: profile.username,
-                avatarUrl: profile.avatarUrl,
-              ),
-            ).push(context);
+              name: profile.username,
+              avatarUrl: profile.avatarUrl,
+            );
           },
           size: height,
         ),

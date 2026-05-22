@@ -1,12 +1,12 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
+import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
 import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:culcul/ui/responsive/app_breakpoints.dart';
 import 'package:culcul/ui/responsive/app_responsive.dart';
 import 'package:culcul/ui/responsive/responsive_container.dart';
 import 'package:flutter/material.dart';
-import 'package:culcul/app/router/app_routes.dart';
 
 class ProfileActionGrid extends StatelessWidget {
   const ProfileActionGrid({super.key});
@@ -16,7 +16,8 @@ class ProfileActionGrid extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final t = Translations.of(context);
     final isDesktop = context.isDesktopLayout;
-    final actions = _buildActions(context, t, isDesktop);
+    final navigation = ProfileNavigationScope.of(context);
+    final actions = _buildActions(context, t, isDesktop, navigation);
 
     return SliverToBoxAdapter(
       child: Padding(
@@ -54,23 +55,24 @@ class ProfileActionGrid extends StatelessWidget {
     BuildContext context,
     Translations t,
     bool isDesktop,
+    ProfileNavigationScope navigation,
   ) {
     final actions = <({IconData icon, String label, VoidCallback? onTap})>[
       (icon: Icons.cloud_download_outlined, label: t.profile.menu.download, onTap: null),
       (
         icon: Icons.history_rounded,
         label: t.profile.menu.history,
-        onTap: () => const HistoryRoute().push(context),
+        onTap: navigation.onOpenHistory,
       ),
       (
         icon: Icons.star_outline_rounded,
         label: t.profile.menu.favorites,
-        onTap: () => const FavoritesRoute().push(context),
+        onTap: navigation.onOpenFavorites,
       ),
       (
         icon: Icons.play_circle_outline_rounded,
         label: t.profile.menu.watch_later,
-        onTap: () => const ToViewRoute().push(context),
+        onTap: navigation.onOpenToView,
       ),
     ];
     if (!isDesktop) {
@@ -81,7 +83,7 @@ class ProfileActionGrid extends StatelessWidget {
       (
         icon: Icons.palette_outlined,
         label: t.profile.menu.appearance,
-        onTap: () => const SettingsRoute().push(context),
+        onTap: navigation.onOpenSettings,
       ),
       (
         icon: Icons.support_agent_outlined,

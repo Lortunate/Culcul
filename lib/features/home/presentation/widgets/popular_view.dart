@@ -1,4 +1,3 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
 import 'package:culcul/features/home/presentation/view_models/home_popular_view_model.dart';
 import 'package:culcul/features/home/presentation/widgets/home_feed_paging_shell.dart';
@@ -22,7 +21,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class PopularView extends HookConsumerWidget {
-  const PopularView({super.key});
+  final ValueChanged<String> onOpenVideo;
+
+  const PopularView({super.key, required this.onOpenVideo});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -64,6 +65,7 @@ class PopularView extends HookConsumerWidget {
       ),
       builder: (context, items) => _PopularVideoList(
         items: items,
+        onOpenVideo: onOpenVideo,
         ref: ref,
         scrollController: scrollController,
         layout: layout,
@@ -78,6 +80,7 @@ class PopularView extends HookConsumerWidget {
 class _PopularVideoList extends HookWidget {
   const _PopularVideoList({
     required this.items,
+    required this.onOpenVideo,
     required this.ref,
     required this.scrollController,
     required this.layout,
@@ -87,6 +90,7 @@ class _PopularVideoList extends HookWidget {
   });
 
   final List<VideoModel> items;
+  final ValueChanged<String> onOpenVideo;
   final WidgetRef ref;
   final ScrollController scrollController;
   final HomePopularLayoutSpec layout;
@@ -155,7 +159,7 @@ class _PopularVideoList extends HookWidget {
                 video: video,
                 cardHeight: layout.cardHeight,
                 thumbnailWidth: layout.thumbnailWidth,
-                onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
+                onTap: () => onOpenVideo(video.bvid),
                 onLongPress: () => showHomeVideoActionsBottomSheet(
                   context,
                   ref,

@@ -272,6 +272,38 @@ void main() {
     );
   });
 
+  test('core and feature code must not import app bootstrap internals', () {
+    final offenders = <String>[];
+
+    for (final file in sourceDartFiles('lib')) {
+      final importerPath = normalizePath(file.path);
+      if (!importerPath.startsWith('lib/core/') &&
+          !importerPath.startsWith('lib/features/')) {
+        continue;
+      }
+
+      for (final import in dartImports(file)) {
+        final targetPath = import.resolvedPath;
+        if (targetPath == null || !targetPath.startsWith('lib/app/bootstrap/')) {
+          continue;
+        }
+
+        offenders.add(
+          '${formatLocation(import.importerPath, import.lineNumber)} '
+          'imports ${import.uri} -> $targetPath',
+        );
+      }
+    }
+
+    expect(
+      offenders,
+      isEmpty,
+      reason:
+          'App bootstrap is composition-root code and must not be imported by '
+          'core or features:\n${offenders.join('\n')}',
+    );
+  });
+
   test('AppException must not appear in lib', () {
     final offenders = <String>[];
 

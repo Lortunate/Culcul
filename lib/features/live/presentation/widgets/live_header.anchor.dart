@@ -115,9 +115,7 @@ extension _LiveHeaderAnchorParts on LiveHeader {
       padding: const EdgeInsets.only(right: 8),
       child: FollowButton(
         isFollowed: false,
-        onTap: (session?.isLoggedIn ?? false)
-            ? (onFollow ?? () {})
-            : () => const LoginRoute().push(context),
+        onTap: (session?.isLoggedIn ?? false) ? (onFollow ?? () {}) : onLogin,
         height: 32,
         text: '+ ${t.actions.follow}',
       ),

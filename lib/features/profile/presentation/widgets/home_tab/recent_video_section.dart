@@ -1,6 +1,6 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/profile/presentation/view_models/user_space_view_model.dart';
 import 'package:culcul/features/profile/presentation/view_models/user_space_videos_view_model.dart';
+import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
@@ -169,7 +169,7 @@ class _VideoGrid extends StatelessWidget {
             viewCount: spaceVideo.stats.view,
             danmakuCount: spaceVideo.stats.danmaku,
             reason: spaceVideo.reason,
-            onTap: () => VideoDetailRoute(bvid: spaceVideo.bvid).push(context),
+            onTap: () => ProfileNavigationScope.of(context).onOpenVideo(spaceVideo.bvid),
             showAuthor: false,
           );
         }, childCount: displayCount),

@@ -3,7 +3,7 @@ import 'dart:developer' as developer;
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
-import 'package:culcul/app/bootstrap/deferred_app_init.dart';
+import 'package:culcul/core/runtime/media_runtime_initializer.dart';
 import 'package:culcul/core/services/audio_playback_state_gate.dart';
 import 'package:culcul/core/services/audio_service_initializer.dart';
 import 'package:flutter/foundation.dart';
@@ -14,7 +14,7 @@ part 'audio_handler.g.dart';
 
 @Riverpod(keepAlive: true)
 CilixiliAudioHandler audioHandler(Ref ref) {
-  DeferredAppInitController.instance.ensureMediaKitInitialized();
+  MediaRuntimeInitializer.instance.ensureInitialized();
   final handler = CilixiliAudioHandler.shared;
   unawaited(initializeCulculAudioService(builder: () => handler));
   ref.onDispose(handler.dispose);

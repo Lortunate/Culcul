@@ -19,6 +19,9 @@ class SearchResultList extends HookWidget {
   final bool isLoadingMore;
   final Future<void> Function() onLoadMore;
   final VoidCallback onRetry;
+  final ValueChanged<String> onOpenVideo;
+  final ValueChanged<int> onOpenUser;
+  final void Function(int topicId, String topicName) onOpenTopic;
   final Object? error;
   final StackTrace? stackTrace;
 
@@ -29,6 +32,9 @@ class SearchResultList extends HookWidget {
     required this.isLoadingMore,
     required this.onLoadMore,
     required this.onRetry,
+    required this.onOpenVideo,
+    required this.onOpenUser,
+    required this.onOpenTopic,
     this.error,
     this.stackTrace,
   });
@@ -147,11 +153,17 @@ class SearchResultList extends HookWidget {
 
           final item = items[index];
           return switch (item) {
-            final SearchVideoEntry v => SearchVideoItem(item: v),
-            final SearchUserEntry u => SearchUserItem(item: u),
+            final SearchVideoEntry v => SearchVideoItem(
+              item: v,
+              onOpenVideo: onOpenVideo,
+            ),
+            final SearchUserEntry u => SearchUserItem(item: u, onOpenUser: onOpenUser),
             final SearchBangumiEntry b => SearchBangumiItem(item: b),
             final SearchArticleEntry a => SearchArticleItem(item: a),
-            final SearchTopicEntry t => SearchTopicItem(item: t),
+            final SearchTopicEntry t => SearchTopicItem(
+              item: t,
+              onOpenTopic: onOpenTopic,
+            ),
           };
         },
       ),

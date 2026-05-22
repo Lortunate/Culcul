@@ -1,7 +1,7 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/dynamic/application/dynamic_post_card_view_data.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/content/dynamic_content_surface.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_content_widget.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/dynamic_navigation_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
@@ -54,6 +54,6 @@ class DynamicForwardWidget extends StatelessWidget {
   }
 
   void _openUserProfile(BuildContext context) {
-    UserProfileRoute(mid: post.authorMid).push(context);
+    DynamicNavigationScope.of(context).onOpenUser(post.authorMid);
   }
 }

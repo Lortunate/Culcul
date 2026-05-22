@@ -1,5 +1,4 @@
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/features/dynamic/route_entry.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/search/application/search_result.dart';
 import 'package:culcul/ui/widgets/media/app_network_image.dart';
@@ -7,8 +6,9 @@ import 'package:flutter/material.dart';
 
 class SearchTopicItem extends StatelessWidget {
   final SearchTopicEntry item;
+  final void Function(int topicId, String topicName) onOpenTopic;
 
-  const SearchTopicItem({super.key, required this.item});
+  const SearchTopicItem({super.key, required this.item, required this.onOpenTopic});
 
   @override
   Widget build(BuildContext context) {
@@ -19,14 +19,7 @@ class SearchTopicItem extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         if (item.topicId != 0) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => buildTopicDetailRoutePage(
-                topicId: item.topicId,
-                topicName: FormatUtils.stripHtmlTags(item.title),
-              ),
-            ),
-          );
+          onOpenTopic(item.topicId, FormatUtils.stripHtmlTags(item.title));
         }
       },
       child: Container(

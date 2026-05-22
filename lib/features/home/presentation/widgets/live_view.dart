@@ -1,6 +1,5 @@
 import 'dart:math' as math;
 
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
 import 'package:culcul/core/hooks/use_scroll_precache.dart';
 import 'package:culcul/core/data/network/network_quality_policy.dart';
@@ -22,7 +21,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class LiveView extends HookConsumerWidget {
-  const LiveView({super.key});
+  final ValueChanged<int> onOpenRoom;
+
+  const LiveView({super.key, required this.onOpenRoom});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -66,6 +67,7 @@ class LiveView extends HookConsumerWidget {
       ),
       builder: (context, items) => _LiveGrid(
         items: items,
+        onOpenRoom: onOpenRoom,
         scrollController: scrollController,
         layout: layout,
         cacheExtent: cacheExtent,
@@ -109,6 +111,7 @@ class _LiveGridSkeleton extends StatelessWidget {
 class _LiveGrid extends HookWidget {
   const _LiveGrid({
     required this.items,
+    required this.onOpenRoom,
     required this.scrollController,
     required this.layout,
     required this.cacheExtent,
@@ -117,6 +120,7 @@ class _LiveGrid extends HookWidget {
   });
 
   final List<LiveRoomSummary> items;
+  final ValueChanged<int> onOpenRoom;
   final ScrollController scrollController;
   final HomeGridLayoutSpec layout;
   final double cacheExtent;
@@ -186,7 +190,7 @@ class _LiveGrid extends HookWidget {
               return LiveRoomCard(
                 key: ValueKey('live_room_${room.roomId}'),
                 room: room,
-                onTap: () => LiveRoomRoute(roomId: room.roomId).push(context),
+                onTap: () => onOpenRoom(room.roomId),
               );
             },
           ),

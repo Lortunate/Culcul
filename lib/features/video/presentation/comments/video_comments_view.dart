@@ -1,12 +1,11 @@
 import 'dart:async';
 
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
-import 'package:culcul/features/video/route_entry.dart';
 import 'package:culcul/features/video/presentation/comments/video_comments_view_model.dart';
 import 'package:culcul/ui/assemblies/comments/comment_item.dart';
 import 'package:culcul/ui/assemblies/comments/comment_reply_sheet.dart';
 import 'package:culcul/features/video/presentation/detail/video_detail_view_model.dart';
+import 'package:culcul/features/video/presentation/video_navigation_callbacks.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
@@ -22,8 +21,15 @@ part 'video_comments_view.list.dart';
 
 class VideoCommentsView extends HookConsumerWidget {
   final String bvid;
+  final ValueChanged<int> onOpenUser;
+  final OpenVideoCommentReplies onOpenCommentReplies;
 
-  const VideoCommentsView({super.key, required this.bvid});
+  const VideoCommentsView({
+    super.key,
+    required this.bvid,
+    required this.onOpenUser,
+    required this.onOpenCommentReplies,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -100,11 +106,12 @@ class VideoCommentsView extends HookConsumerWidget {
       itemBuilder: (context, comment, index) {
         return _VideoCommentListItem(
           key: ValueKey('video_comment_${comment.rpid}_$index'),
-          bvid: bvid,
           aid: aid,
           upperMid: upperMid,
           comment: comment,
           notifier: notifier,
+          onOpenUser: onOpenUser,
+          onOpenCommentReplies: onOpenCommentReplies,
         );
       },
     );

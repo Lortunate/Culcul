@@ -2,13 +2,13 @@ import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/features/live/application/models/live_anchor_info_model.dart';
 import 'package:culcul/features/live/application/models/live_danmaku_model.dart';
-import 'package:culcul/features/live/application/models/live_danmu_info_model.dart';
-import 'package:culcul/features/live/application/models/live_gold_rank_model.dart';
-import 'package:culcul/features/live/application/models/live_guard_list_model.dart';
-import 'package:culcul/features/live/application/models/live_play_url_model.dart';
-import 'package:culcul/features/live/data/dtos/live_recommend_response.dart';
-import 'package:culcul/features/live/application/models/live_room_detail_model.dart';
 import 'package:culcul/features/live/application/models/live_history_danmaku_model.dart';
+import 'package:culcul/features/live/application/models/live_play_url_model.dart';
+import 'package:culcul/features/live/application/models/live_room_detail_model.dart';
+import 'package:culcul/features/live/data/dtos/live_danmu_info_dto.dart';
+import 'package:culcul/features/live/data/dtos/live_gold_rank_dto.dart';
+import 'package:culcul/features/live/data/dtos/live_guard_list_dto.dart';
+import 'package:culcul/features/live/data/dtos/live_recommend_response.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
@@ -39,7 +39,7 @@ abstract class LiveApi {
   );
 
   @GET('/xlive/web-room/v1/index/getDanmuInfo')
-  Future<ApiResponse<LiveDanmuInfoModel>> getDanmuInfo(
+  Future<ApiResponse<LiveDanmuInfoDto>> getDanmuInfo(
     @Query('id') int roomId,
     @Query('type') int type,
   );
@@ -56,7 +56,7 @@ abstract class LiveApi {
   Future<ApiResponse<LiveAnchorInfoModel>> getAnchorInfo(@Query('uid') int uid);
 
   @GET('/xlive/general-interface/v1/rank/getOnlineGoldRank')
-  Future<ApiResponse<LiveGoldRankModel>> getOnlineGoldRank({
+  Future<ApiResponse<LiveGoldRankDto>> getOnlineGoldRank({
     @Query('ruid') required int ruid,
     @Query('roomId') required int roomId,
     @Query('page') int page = 1,
@@ -64,7 +64,7 @@ abstract class LiveApi {
   });
 
   @GET('/xlive/app-room/v2/guardTab/topListNew')
-  Future<ApiResponse<LiveGuardListModel>> getGuardList({
+  Future<ApiResponse<LiveGuardListDto>> getGuardList({
     @Query('ruid') required int ruid,
     @Query('roomid') required int roomId,
     @Query('page') int page = 1,

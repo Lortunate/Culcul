@@ -14,7 +14,25 @@ class NotificationRoute extends AppRouteData with $NotificationRoute {
   const NotificationRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => buildNotificationRoutePage();
+  Widget build(BuildContext context, GoRouterState state) {
+    return buildNotificationRoutePage(
+      onLogin: () => const LoginRoute().push(context),
+      onOpenReply: () => const ReplyNotificationRoute().push(context),
+      onOpenAt: () => const AtNotificationRoute().push(context),
+      onOpenLike: () => const LikeNotificationRoute().push(context),
+      onOpenSystem: () => const SystemNotificationRoute().push(context),
+      onOpenChat: (session, {required name, required avatarUrl}) {
+        ChatRoute(
+          talkerId: session.talkerId,
+          $extra: ChatRouteInput(
+            name: name,
+            sessionType: session.sessionType,
+            avatarUrl: avatarUrl,
+          ),
+        ).push(context);
+      },
+    );
+  }
 }
 
 class ReplyNotificationRoute extends AppRouteData with $ReplyNotificationRoute {
@@ -22,7 +40,10 @@ class ReplyNotificationRoute extends AppRouteData with $ReplyNotificationRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildReplyNotificationRoutePage();
+    return buildReplyNotificationRoutePage(
+      onOpenTarget: (target) => _openNotificationTarget(context, target),
+      onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
+    );
   }
 }
 
@@ -31,7 +52,10 @@ class AtNotificationRoute extends AppRouteData with $AtNotificationRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildAtNotificationRoutePage();
+    return buildAtNotificationRoutePage(
+      onOpenTarget: (target) => _openNotificationTarget(context, target),
+      onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
+    );
   }
 }
 
@@ -40,7 +64,10 @@ class LikeNotificationRoute extends AppRouteData with $LikeNotificationRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildLikeNotificationRoutePage();
+    return buildLikeNotificationRoutePage(
+      onOpenTarget: (target) => _openNotificationTarget(context, target),
+      onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
+    );
   }
 }
 
@@ -48,8 +75,11 @@ class SystemNotificationRoute extends AppRouteData with $SystemNotificationRoute
   const SystemNotificationRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      buildSystemNotificationRoutePage();
+  Widget build(BuildContext context, GoRouterState state) {
+    return buildSystemNotificationRoutePage(
+      onOpenTarget: (target) => _openNotificationTarget(context, target),
+    );
+  }
 }
 
 class ChatRoute extends AppRouteData with $ChatRoute {
@@ -70,4 +100,15 @@ class ChatRoute extends AppRouteData with $ChatRoute {
       child: build(context, state),
     );
   }
+}
+
+Future<bool> _openNotificationTarget(
+  BuildContext context,
+  NotificationNavigationTarget target,
+) {
+  return openNotificationNavigationTarget(
+    target,
+    onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
+    onOpenDynamic: (id) => DynamicDetailRoute(id: id).push(context),
+  );
 }

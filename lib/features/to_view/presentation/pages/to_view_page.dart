@@ -1,4 +1,3 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/to_view/application/to_view_commands.dart';
 import 'package:culcul/features/to_view/application/to_view_list_controller.dart';
@@ -12,7 +11,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:culcul/i18n/strings.g.dart';
 
 class ToViewPage extends ConsumerWidget {
-  const ToViewPage({super.key});
+  final VoidCallback onLogin;
+  final ValueChanged<String> onOpenVideo;
+
+  const ToViewPage({required this.onLogin, required this.onOpenVideo, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -36,12 +38,12 @@ class ToViewPage extends ConsumerWidget {
           ? _ToViewBody(
               onRefresh: () => _refreshList(ref),
               onDelete: (aid) => ref.read(toViewListProvider.notifier).delete(aid),
-              onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
+              onOpenVideo: onOpenVideo,
             )
           : GuestView(
               title: t.profile.not_logged_in,
               message: t.profile.login_hint,
-              onLogin: () => const LoginRoute().push(context),
+              onLogin: onLogin,
             ),
     );
   }

@@ -6,14 +6,26 @@ import 'package:culcul/features/video/presentation/comments/video_comments_view.
 import 'package:culcul/features/video/presentation/detail/info/video_info_view.dart';
 import 'package:culcul/features/video/presentation/detail/info/video_tab_bar.dart';
 import 'package:culcul/features/video/presentation/player/video_player_view.dart';
+import 'package:culcul/features/video/presentation/video_navigation_callbacks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class VideoDetailPage extends HookConsumerWidget {
   final String bvid;
+  final VoidCallback onLogin;
+  final ValueChanged<int> onOpenUser;
+  final ValueChanged<String> onOpenVideo;
+  final OpenVideoCommentReplies onOpenCommentReplies;
 
-  const VideoDetailPage({super.key, required this.bvid});
+  const VideoDetailPage({
+    super.key,
+    required this.bvid,
+    required this.onLogin,
+    required this.onOpenUser,
+    required this.onOpenVideo,
+    required this.onOpenCommentReplies,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -75,9 +87,18 @@ class VideoDetailPage extends HookConsumerWidget {
                   child: TabBarView(
                     controller: tabController,
                     children: [
-                      VideoInfoView(bvid: bvid),
+                      VideoInfoView(
+                        bvid: bvid,
+                        onLogin: onLogin,
+                        onOpenUser: onOpenUser,
+                        onOpenVideo: onOpenVideo,
+                      ),
                       hasVisitedComments.value
-                          ? VideoCommentsView(bvid: bvid)
+                          ? VideoCommentsView(
+                              bvid: bvid,
+                              onOpenUser: onOpenUser,
+                              onOpenCommentReplies: onOpenCommentReplies,
+                            )
                           : const SizedBox.expand(),
                     ],
                   ),

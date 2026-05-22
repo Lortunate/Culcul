@@ -1,6 +1,6 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
 import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
+import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
@@ -13,7 +13,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class FavoritesPage extends HookConsumerWidget {
-  const FavoritesPage({super.key});
+  final VoidCallback onLogin;
+  final ValueChanged<FavoriteFolder> onOpenFolder;
+
+  const FavoritesPage({super.key, required this.onLogin, required this.onOpenFolder});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -42,11 +45,11 @@ class FavoritesPage extends HookConsumerWidget {
             : null,
       ),
       body: isLoggedIn
-          ? _FavoritesTabView(controller: tabController)
+          ? _FavoritesTabView(controller: tabController, onOpenFolder: onOpenFolder)
           : GuestView(
               title: t.profile.not_logged_in,
               message: t.profile.login_hint,
-              onLogin: () => const LoginRoute().push(context),
+              onLogin: onLogin,
             ),
     );
   }
@@ -54,16 +57,17 @@ class FavoritesPage extends HookConsumerWidget {
 
 class _FavoritesTabView extends StatelessWidget {
   final TabController controller;
+  final ValueChanged<FavoriteFolder> onOpenFolder;
 
-  const _FavoritesTabView({required this.controller});
+  const _FavoritesTabView({required this.controller, required this.onOpenFolder});
 
   @override
   Widget build(BuildContext context) {
     return TabBarView(
       controller: controller,
-      children: const [
-        FavFolderList(type: FavFolderType.created),
-        FavFolderList(type: FavFolderType.collected),
+      children: [
+        FavFolderList(type: FavFolderType.created, onOpenFolder: onOpenFolder),
+        FavFolderList(type: FavFolderType.collected, onOpenFolder: onOpenFolder),
       ],
     );
   }

@@ -1,13 +1,23 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/notification/presentation/view_models/unread_count_view_model.dart';
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/ui/theme/culcul_colors.dart';
 import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class NotificationCategoryGrid extends ConsumerWidget {
-  const NotificationCategoryGrid({super.key});
+  final VoidCallback onOpenReply;
+  final VoidCallback onOpenAt;
+  final VoidCallback onOpenLike;
+  final VoidCallback onOpenSystem;
+
+  const NotificationCategoryGrid({
+    super.key,
+    required this.onOpenReply,
+    required this.onOpenAt,
+    required this.onOpenLike,
+    required this.onOpenSystem,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,7 +37,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
               label: t.notification.types.reply,
               count: data.reply,
               color: semanticColors.success,
-              onTap: () => const ReplyNotificationRoute().push(context),
+              onTap: onOpenReply,
             ),
             _buildCategoryItem(
               context,
@@ -35,7 +45,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
               label: t.notification.types.at,
               count: data.at,
               color: semanticColors.warning,
-              onTap: () => const AtNotificationRoute().push(context),
+              onTap: onOpenAt,
             ),
             _buildCategoryItem(
               context,
@@ -43,7 +53,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
               label: t.notification.types.like,
               count: data.like,
               color: Theme.of(context).colorScheme.primary,
-              onTap: () => const LikeNotificationRoute().push(context),
+              onTap: onOpenLike,
             ),
             _buildCategoryItem(
               context,
@@ -51,7 +61,7 @@ class NotificationCategoryGrid extends ConsumerWidget {
               label: t.notification.types.system,
               count: data.system,
               color: semanticColors.info,
-              onTap: () => const SystemNotificationRoute().push(context),
+              onTap: onOpenSystem,
             ),
           ],
         ),

@@ -1,4 +1,3 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/features/search/application/search_result.dart';
@@ -9,8 +8,9 @@ import 'package:flutter/material.dart';
 
 class SearchVideoItem extends StatelessWidget {
   final SearchVideoEntry item;
+  final ValueChanged<String> onOpenVideo;
 
-  const SearchVideoItem({super.key, required this.item});
+  const SearchVideoItem({super.key, required this.item, required this.onOpenVideo});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class SearchVideoItem extends StatelessWidget {
       flat: true,
       onTap: () {
         if (item.bvid.isNotEmpty) {
-          VideoDetailRoute(bvid: item.bvid).push(context);
+          onOpenVideo(item.bvid);
         }
       },
       padding: EdgeInsets.zero,

@@ -9,6 +9,8 @@ class _StatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final navigation = ProfileNavigationScope.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -23,13 +25,12 @@ class _StatsRow extends StatelessWidget {
                     UserProfileStatItem(
                       count: user.followingCount,
                       label: t.profile.stats.following,
-                      onTap: () =>
-                          FollowingsRoute(vmid: int.parse(user.id)).push(context),
+                      onTap: () => navigation.onOpenFollowings(int.parse(user.id)),
                     ),
                     UserProfileStatItem(
                       count: user.followersCount,
                       label: t.profile.stats.followers,
-                      onTap: () => FollowersRoute(vmid: int.parse(user.id)).push(context),
+                      onTap: () => navigation.onOpenFollowers(int.parse(user.id)),
                     ),
                     UserProfileStatItem(
                       count: user.likesCount,

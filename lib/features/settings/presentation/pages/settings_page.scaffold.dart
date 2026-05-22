@@ -1,7 +1,9 @@
 part of 'settings_page.dart';
 
 class _SettingsPageScaffold extends ConsumerWidget {
-  const _SettingsPageScaffold();
+  final VoidCallback onOpenAbout;
+
+  const _SettingsPageScaffold({required this.onOpenAbout});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -73,7 +75,7 @@ class _SettingsPageScaffold extends ConsumerWidget {
                 key: const ValueKey('about'),
                 title: t.settings.sections.about,
                 icon: Icons.info_outline_rounded,
-                onTap: () => const AboutRoute().push(context),
+                onTap: onOpenAbout,
               ),
             ],
           ),

@@ -56,19 +56,21 @@ class _VideoCommentsList extends StatelessWidget {
 }
 
 class _VideoCommentListItem extends StatelessWidget {
-  final String bvid;
   final int? aid;
   final int? upperMid;
   final CommentItem comment;
   final VideoCommentsController notifier;
+  final ValueChanged<int> onOpenUser;
+  final OpenVideoCommentReplies onOpenCommentReplies;
 
   const _VideoCommentListItem({
     super.key,
-    required this.bvid,
     required this.aid,
     required this.upperMid,
     required this.comment,
     required this.notifier,
+    required this.onOpenUser,
+    required this.onOpenCommentReplies,
   });
 
   @override
@@ -76,7 +78,7 @@ class _VideoCommentListItem extends StatelessWidget {
     return CommentItemWidget(
       item: comment,
       upperMid: upperMid,
-      onTapUser: (mid) => UserProfileRoute(mid: mid).push(context),
+      onTapUser: onOpenUser,
       onLike: () {
         notifier.toggleCommentLike(comment.oid, comment.rpid, comment.action == 1);
       },
@@ -99,12 +101,12 @@ class _VideoCommentListItem extends StatelessWidget {
       },
       onTapReplies: () {
         if (aid != null) {
-          CommentReplyRoute(
-            bvid: bvid,
+          onOpenCommentReplies(
             oid: aid!,
             rootId: comment.rpid,
-            $extra: CommentReplyRouteInput(comment: comment, upperMid: upperMid),
-          ).push(context);
+            comment: comment,
+            upperMid: upperMid,
+          );
         }
       },
     );

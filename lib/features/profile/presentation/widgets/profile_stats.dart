@@ -1,7 +1,7 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/profile/presentation/view_models/profile_view_model.dart';
+import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
@@ -20,6 +20,7 @@ class ProfileStats extends ConsumerWidget {
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
     final profileAsync = ref.watch(myProfileProvider);
+    final navigation = ProfileNavigationScope.of(context);
 
     final postsCount = profileAsync.maybeWhen(
       data: (profile) => FormatUtils.formatNumber(profile.dynamicCount),
@@ -74,7 +75,7 @@ class ProfileStats extends ConsumerWidget {
                 label: t.profile.stats.following,
                 onTap: () {
                   if (vmid != 0) {
-                    FollowingsRoute(vmid: vmid).push(context);
+                    navigation.onOpenFollowings(vmid);
                   }
                 },
               ),
@@ -88,7 +89,7 @@ class ProfileStats extends ConsumerWidget {
                 label: t.profile.stats.followers,
                 onTap: () {
                   if (vmid != 0) {
-                    FollowersRoute(vmid: vmid).push(context);
+                    navigation.onOpenFollowers(vmid);
                   }
                 },
               ),

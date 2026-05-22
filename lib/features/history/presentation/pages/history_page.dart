@@ -1,4 +1,3 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/history/application/history_controller.dart';
@@ -10,7 +9,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:culcul/features/history/presentation/widgets/history_item_widget.dart';
 
 class HistoryPage extends ConsumerWidget {
-  const HistoryPage({super.key});
+  final VoidCallback onLogin;
+  final ValueChanged<String> onOpenVideo;
+
+  const HistoryPage({required this.onLogin, required this.onOpenVideo, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,11 +25,11 @@ class HistoryPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(t.profile.menu.history), centerTitle: true),
       body: isLoggedIn
-          ? _HistoryContent(historyListAsync: historyListAsync)
+          ? _HistoryContent(historyListAsync: historyListAsync, onOpenVideo: onOpenVideo)
           : GuestView(
               title: t.profile.not_logged_in,
               message: t.profile.login_hint,
-              onLogin: () => const LoginRoute().push(context),
+              onLogin: onLogin,
             ),
     );
   }
@@ -35,8 +37,9 @@ class HistoryPage extends ConsumerWidget {
 
 class _HistoryContent extends ConsumerWidget {
   final AsyncValue<List<HistoryEntry>> historyListAsync;
+  final ValueChanged<String> onOpenVideo;
 
-  const _HistoryContent({required this.historyListAsync});
+  const _HistoryContent({required this.historyListAsync, required this.onOpenVideo});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -57,7 +60,7 @@ class _HistoryContent extends ConsumerWidget {
                 onTap: () {
                   final bvid = item.bvid;
                   if (item.business == 'archive' && bvid.isNotEmpty) {
-                    VideoDetailRoute(bvid: bvid).push(context);
+                    onOpenVideo(bvid);
                   }
                 },
               ),

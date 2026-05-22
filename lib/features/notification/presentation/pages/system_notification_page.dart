@@ -1,15 +1,18 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
+import 'package:culcul/features/notification/application/notification_navigation.dart';
 import 'package:culcul/features/notification/presentation/view_models/system_notification_view_model.dart';
 import 'package:culcul/features/notification/domain/entities/system_notice.dart';
-import 'package:culcul/features/notification/presentation/widgets/notification_navigation.dart';
 import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class SystemNotificationPage extends ConsumerWidget {
-  const SystemNotificationPage({super.key});
+  final NotificationTargetOpener onOpenTarget;
+
+  const SystemNotificationPage({super.key, required this.onOpenTarget});
+
   static const NotificationNavigationParser _navigationParser =
       NotificationNavigationParser();
 
@@ -46,6 +49,7 @@ class SystemNotificationPage extends ConsumerWidget {
                     return _SystemNotificationCard(
                       item: item,
                       navigationParser: _navigationParser,
+                      onOpenTarget: onOpenTarget,
                     );
                   },
                 );
@@ -63,8 +67,13 @@ class SystemNotificationPage extends ConsumerWidget {
 class _SystemNotificationCard extends StatelessWidget {
   final SystemNotice item;
   final NotificationNavigationParser navigationParser;
+  final NotificationTargetOpener onOpenTarget;
 
-  const _SystemNotificationCard({required this.item, required this.navigationParser});
+  const _SystemNotificationCard({
+    required this.item,
+    required this.navigationParser,
+    required this.onOpenTarget,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +91,7 @@ class _SystemNotificationCard extends StatelessWidget {
       child: InkWell(
         onTap: () async {
           final target = navigationParser.fromSystemNotice(item);
-          final handled = await openNotificationNavigationTarget(context, target);
+          final handled = await onOpenTarget(target);
           if (handled || !context.mounted) return;
 
           context.showAppFeedback(

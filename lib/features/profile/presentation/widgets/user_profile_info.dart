@@ -1,8 +1,8 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_banner.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_buttons.dart';
+import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_stat_item.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/users/app_avatar.dart';

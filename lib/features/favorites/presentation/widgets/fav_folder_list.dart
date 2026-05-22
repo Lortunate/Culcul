@@ -1,4 +1,3 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_item.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
@@ -12,8 +11,9 @@ enum FavFolderType { created, collected }
 
 class FavFolderList extends HookConsumerWidget {
   final FavFolderType type;
+  final ValueChanged<FavoriteFolder> onOpenFolder;
 
-  const FavFolderList({super.key, required this.type});
+  const FavFolderList({super.key, required this.type, required this.onOpenFolder});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -42,16 +42,7 @@ class FavFolderList extends HookConsumerWidget {
             final item = list[index];
             return KeyedSubtree(
               key: ValueKey('fav_folder_${item.id}_$index'),
-              child: FavFolderItem(
-                item: item,
-                onTap: () {
-                  FavoriteDetailRoute(
-                    mediaId: item.id,
-                    title: item.title,
-                    mid: item.mid,
-                  ).push(context);
-                },
-              ),
+              child: FavFolderItem(item: item, onTap: () => onOpenFolder(item)),
             );
           },
         );

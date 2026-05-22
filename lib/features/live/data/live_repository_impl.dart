@@ -12,6 +12,9 @@ import 'package:culcul/features/live/application/models/live_guard_list_model.da
 import 'package:culcul/features/live/application/models/live_play_url_model.dart';
 import 'package:culcul/features/live/application/models/live_room_detail_model.dart';
 import 'package:culcul/features/live/application/models/live_history_danmaku_model.dart';
+import 'package:culcul/features/live/data/dtos/live_danmu_info_dto.dart';
+import 'package:culcul/features/live/data/dtos/live_gold_rank_dto.dart';
+import 'package:culcul/features/live/data/dtos/live_guard_list_dto.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'live_repository_impl.g.dart';
@@ -44,8 +47,11 @@ class LiveRepositoryImpl {
     return _requestExecutor.runApiDirect(() => _api.getHistoryDanmaku(roomId));
   }
 
-  Future<Result<LiveDanmuInfoModel, AppError>> getDanmuInfo(int roomId) {
-    return _requestExecutor.runApiDirect(() => _api.getDanmuInfo(roomId, 0));
+  Future<Result<LiveDanmuInfoModel, AppError>> getDanmuInfo(int roomId) async {
+    final result = await _requestExecutor.runApiDirect(
+      () => _api.getDanmuInfo(roomId, 0),
+    );
+    return result.map(_mapLiveDanmuInfo);
   }
 
   Future<Result<List<LiveRoomSummary>, AppError>> fetchRecommendListModels({
@@ -66,20 +72,22 @@ class LiveRepositoryImpl {
     required int ruid,
     required int roomId,
     int page = 1,
-  }) {
-    return _requestExecutor.runApiDirect(
+  }) async {
+    final result = await _requestExecutor.runApiDirect(
       () => _api.getOnlineGoldRank(ruid: ruid, roomId: roomId, page: page),
     );
+    return result.map(_mapLiveGoldRank);
   }
 
   Future<Result<LiveGuardListModel, AppError>> getGuardList({
     required int ruid,
     required int roomId,
     int page = 1,
-  }) {
-    return _requestExecutor.runApiDirect(
+  }) async {
+    final result = await _requestExecutor.runApiDirect(
       () => _api.getGuardList(ruid: ruid, roomId: roomId, page: page),
     );
+    return result.map(_mapLiveGuardList);
   }
 
   Future<Result<void, AppError>> sendDanmaku({required int roomId, required String msg}) {
@@ -98,4 +106,76 @@ class LiveRepositoryImpl {
   }) {
     return fetchRecommendListModels(page: page, pageSize: pageSize);
   }
+}
+
+LiveDanmuInfoModel _mapLiveDanmuInfo(LiveDanmuInfoDto dto) {
+  return LiveDanmuInfoModel(
+    token: dto.token,
+    hostList: dto.hostList.map(_mapLiveDanmuHost).toList(growable: false),
+  );
+}
+
+LiveDanmuHost _mapLiveDanmuHost(LiveDanmuHostDto dto) {
+  return LiveDanmuHost(host: dto.host, wssPort: dto.wssPort, wsPort: dto.wsPort);
+}
+
+LiveGoldRankModel _mapLiveGoldRank(LiveGoldRankDto dto) {
+  return LiveGoldRankModel(
+    onlineNum: dto.onlineNum,
+    list: dto.list.map(_mapLiveRankItem).toList(growable: false),
+  );
+}
+
+LiveRankItem _mapLiveRankItem(LiveRankItemDto dto) {
+  return LiveRankItem(
+    userRank: dto.userRank,
+    uid: dto.uid,
+    name: dto.name,
+    face: dto.face,
+    score: dto.score,
+    medalInfo: _mapLiveRankMedalInfo(dto.medalInfo),
+    guardLevel: dto.guardLevel,
+    wealthLevel: dto.wealthLevel,
+  );
+}
+
+LiveRankMedalInfo _mapLiveRankMedalInfo(LiveRankMedalInfoDto dto) {
+  return LiveRankMedalInfo(
+    guardLevel: dto.guardLevel,
+    medalColorStart: dto.medalColorStart,
+    medalColorEnd: dto.medalColorEnd,
+    medalColorBorder: dto.medalColorBorder,
+    medalName: dto.medalName,
+    level: dto.level,
+    targetId: dto.targetId,
+    isLight: dto.isLight,
+  );
+}
+
+LiveGuardListModel _mapLiveGuardList(LiveGuardListDto dto) {
+  return LiveGuardListModel(
+    info: _mapLiveGuardInfo(dto.info),
+    top3: dto.top3.map(_mapLiveGuardItem).toList(growable: false),
+    list: dto.list.map(_mapLiveGuardItem).toList(growable: false),
+  );
+}
+
+LiveGuardInfo _mapLiveGuardInfo(LiveGuardInfoDto dto) {
+  return LiveGuardInfo(num: dto.num, page: dto.page, now: dto.now);
+}
+
+LiveGuardItem _mapLiveGuardItem(LiveGuardItemDto dto) {
+  return LiveGuardItem(
+    ruid: dto.ruid,
+    rank: dto.rank,
+    userInfo: _mapLiveGuardUserInfo(dto.userInfo),
+    guardLevel: dto.guardLevel,
+  );
+}
+
+LiveGuardUserInfo _mapLiveGuardUserInfo(LiveGuardUserInfoDto dto) {
+  return LiveGuardUserInfo(
+    uid: dto.uid,
+    base: LiveGuardUserBase(name: dto.base.name, face: dto.base.face),
+  );
 }

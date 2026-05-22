@@ -1,4 +1,3 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/live/application/models/live_anchor_info_model.dart';
@@ -21,6 +20,7 @@ class LiveHeader extends ConsumerWidget {
   final LiveAnchorInfoModel? liveAnchorInfo;
   final LiveGuardListModel? guardList;
   final LiveGoldRankModel? goldRank;
+  final VoidCallback onLogin;
   final VoidCallback? onFollow;
   final VoidCallback? onBack;
 
@@ -31,6 +31,7 @@ class LiveHeader extends ConsumerWidget {
     this.liveAnchorInfo,
     this.guardList,
     this.goldRank,
+    required this.onLogin,
     this.onFollow,
     this.onBack,
   });

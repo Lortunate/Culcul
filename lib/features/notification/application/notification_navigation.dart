@@ -1,4 +1,4 @@
-import 'package:culcul/app/router/app_routes.dart';
+import 'package:culcul/core/contracts/bilibili_link_contract.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/system_notice.dart';
 import 'package:flutter/material.dart';
@@ -34,17 +34,21 @@ class NotificationNavigationTarget {
   final Uri? externalUri;
 }
 
+typedef NotificationTargetOpener =
+    Future<bool> Function(NotificationNavigationTarget target);
+
 Future<bool> openNotificationNavigationTarget(
-  BuildContext context,
   NotificationNavigationTarget target, {
+  required ValueChanged<String> onOpenVideo,
+  required ValueChanged<String> onOpenDynamic,
   Future<bool> Function(Uri uri)? launchExternal,
 }) async {
   switch (target.kind) {
     case NotificationNavigationKind.video:
-      VideoDetailRoute(bvid: target.videoId!).push(context);
+      onOpenVideo(target.videoId!);
       return true;
     case NotificationNavigationKind.dynamicDetail:
-      DynamicDetailRoute(id: target.dynamicId!).push(context);
+      onOpenDynamic(target.dynamicId!);
       return true;
     case NotificationNavigationKind.external:
       final launcher = launchExternal ?? launchUrl;

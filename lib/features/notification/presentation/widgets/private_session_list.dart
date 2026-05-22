@@ -1,4 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
 import 'package:culcul/features/notification/presentation/view_models/private_session_view_model.dart';
 import 'package:culcul/features/notification/presentation/widgets/notification_skeletons.dart';
 import 'package:culcul/features/notification/presentation/widgets/private_session_item.dart';
@@ -11,7 +12,14 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class PrivateSessionListView extends HookConsumerWidget {
-  const PrivateSessionListView({super.key});
+  final void Function(
+    PrivateSession session, {
+    required String name,
+    required String avatarUrl,
+  })
+  onOpenChat;
+
+  const PrivateSessionListView({super.key, required this.onOpenChat});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -57,7 +65,7 @@ class PrivateSessionListView extends HookConsumerWidget {
                     final session = sessions[index];
                     return KeyedSubtree(
                       key: ValueKey('private_session_${session.talkerId}_$index'),
-                      child: PrivateSessionItem(session: session),
+                      child: PrivateSessionItem(session: session, onOpenChat: onOpenChat),
                     );
                   },
                 ),

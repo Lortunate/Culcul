@@ -48,9 +48,9 @@ void main() {
 
   testWidgets('RecommendationItem keeps recommendation reason badge', (tester) async {
     await tester.pumpWidget(
-      const _TestApp(
+      _TestApp(
         child: RecommendationItem(
-          video: VideoModel(
+          video: const VideoModel(
             bvid: 'BV1xx411c7mD',
             title: 'Recommended video',
             pic: '',
@@ -60,6 +60,7 @@ void main() {
             pubDate: 0,
             rcmdReason: 'Because you watched Flutter',
           ),
+          onOpenVideo: (_) {},
         ),
       ),
     );

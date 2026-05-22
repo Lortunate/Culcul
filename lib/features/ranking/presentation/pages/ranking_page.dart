@@ -5,7 +5,9 @@ import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 
 class RankingPage extends StatelessWidget {
-  const RankingPage({super.key});
+  final ValueChanged<String> onOpenVideo;
+
+  const RankingPage({required this.onOpenVideo, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +27,10 @@ class RankingPage extends StatelessWidget {
           ],
           body: TabBarView(
             children: rankingCategories
-                .map((category) => RankingListView(category: category))
+                .map(
+                  (category) =>
+                      RankingListView(category: category, onOpenVideo: onOpenVideo),
+                )
                 .toList(),
           ),
         ),

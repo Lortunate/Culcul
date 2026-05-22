@@ -5,12 +5,16 @@ class _VideoInfoHeaderSection extends StatelessWidget {
   final bool isFollowed;
   final ValueNotifier<bool> isExpanded;
   final VoidCallback onToggleFollow;
+  final VoidCallback onLogin;
+  final ValueChanged<int> onOpenUser;
 
   const _VideoInfoHeaderSection({
     required this.detail,
     required this.isFollowed,
     required this.isExpanded,
     required this.onToggleFollow,
+    required this.onLogin,
+    required this.onOpenUser,
   });
 
   @override
@@ -27,6 +31,8 @@ class _VideoInfoHeaderSection extends StatelessWidget {
             owner: detail.owner,
             isFollowed: isFollowed,
             onToggleFollow: onToggleFollow,
+            onLogin: onLogin,
+            onOpenUser: onOpenUser,
           ),
         ),
         const SizedBox(height: 8),

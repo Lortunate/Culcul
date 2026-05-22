@@ -1,7 +1,7 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/dynamic/application/models/dynamic_response.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/features/dynamic/presentation/view_models/dynamic_comment_view_model.dart';
+import 'package:culcul/features/dynamic/presentation/widgets/dynamic_navigation_scope.dart';
 import 'package:culcul/ui/assemblies/comments/comment_item.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
@@ -43,7 +43,7 @@ class DynamicCommentsSliver extends ConsumerWidget {
 
     return _DynamicCommentsList(
       comments: paging.items,
-      onTapUser: (context, mid) => UserProfileRoute(mid: mid).push(context),
+      onTapUser: (context, mid) => DynamicNavigationScope.of(context).onOpenUser(mid),
       onLike: controller.toggleLike,
       onReply: (context, comment) => _showReplySheet(context, ref, comment),
     );

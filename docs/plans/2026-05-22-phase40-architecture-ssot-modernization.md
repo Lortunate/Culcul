@@ -1,170 +1,255 @@
 # Phase 40 Architecture SSOT Modernization Plan
 
-Date: 2026-05-22
+Status: Active execution plan for Phase 40.
 
-Tracking issue: `culcul-pe9`
-
-This plan executes the Phase 40 spec in bounded, reviewable slices. `bd`
-remains the issue tracker; this document describes execution order, verification
-gates, and ownership boundaries.
+Issue tracking remains in `bd`; this plan is the execution narrative and does
+not replace bd issues.
 
 ## Execution Principles
 
-- Make one source of truth before moving callers.
-- Delete dead compatibility paths as soon as callers migrate.
-- Do not add a facade, service, manager, helper, or utility unless it removes a
-  verified duplicate policy or cycle.
-- Before editing any Dart symbol, run GitNexus upstream impact analysis for the
-  symbol and report the blast radius.
-- Stop before edits if GitNexus reports HIGH or CRITICAL risk.
-- Prefer existing modern stack: generated Riverpod, typed go_router routes,
-  Dio/Retrofit, Freezed/JSON, Drift, Slang.
-- Avoid adding dependencies unless an existing implementation is materially
-  worse than a mature, popular package.
+- Preserve the existing dirty worktree route/feature UI decoupling changes.
+- Prefer tightening current architecture over adding new abstractions.
+- Run GitNexus impact analysis before editing any function, class, or method.
+- Warn before modifying HIGH or CRITICAL risk symbols.
+- Delete migrated compatibility paths immediately.
+- Do not introduce empty services, managers, helpers, facades, or future-proof
+  extension points.
+- Use Riverpod generated providers for new or rewritten provider state.
+- Use Context7 for library/framework/API documentation when a library decision
+  is needed.
 
-## Phase 1: Active Documentation And Guard Baseline
+## Current Baseline
 
-Goal: make architecture intent match the verified repository state before code
-moves start.
+- Branch: `codex/phase40-architecture-ssot`.
+- Current working tree already contains many uncommitted routing and feature UI
+  changes. They are treated as in-progress Phase 40 work, not reverted.
+- Main dependencies to keep: hooks_riverpod/Riverpod codegen, go_router builder,
+  Dio/Retrofit, Freezed/json_serializable, Drift, Slang, media_kit.
+- Active bd issues aligned with this plan include:
+  - `culcul-ory`: Consolidate DTO and application model ownership.
+  - `culcul-5t8`: Remove feature dependencies on app routing.
+  - `culcul-38k`: Remove app bootstrap dependency from feature UI.
+  - `culcul-ann`: Consolidate network decoding and error conversion.
+  - `culcul-ep5`: Trim startup and global cache lifetime.
+  - `culcul-3hh`: Consolidate app-feature runtime seams.
+  - `culcul-6r8`: Normalize endpoint source of truth.
+- Baseline architecture tests pass with `flutter test test/architecture
+  --reporter compact` on 2026-05-22.
+- `culcul-ory` is claimed for the first implementation slice.
 
-Steps:
+## Phase 1: Documentation And Guard Baseline
 
-1. Create or claim a `bd` parent issue for Phase 40 execution, with child issues
-   for routing, data/model ownership, network/error consolidation, and startup
-   performance.
-2. Update `docs/architecture/architecture-guide.md` so Phase 40 is the only
-   active architecture source.
-3. Mark Phase 39 docs superseded after this spec/plan is accepted.
-4. Reconcile duplicate archive artifacts for Phase 30 and Phase 32.
-5. Add or update documentation guard coverage for stale active phase links.
-6. Re-run:
-   `flutter analyze`
-   `bash tool/architecture/run_architecture_guards.sh`
+Goal: make the active architecture target and safety rails unambiguous before
+larger code movement.
 
-First-phase output:
+Execution:
 
-- Active guide points to Phase 40 spec and plan.
-- No active doc points to archived phase files as current work.
-- Guard baseline remains green.
+1. Update the active Phase 40 spec and plan with current audit findings.
+2. Keep Phase 39 and older records archived; do not resurrect superseded docs as
+   current guidance.
+3. Inspect existing architecture tests and guards under `test/architecture` and
+   `tool/architecture`.
+4. Add or tighten guard coverage for:
+   - feature presentation importing feature data;
+   - feature data importing feature application;
+   - feature internals imported by another feature;
+   - feature UI importing `app/router/app_routes.dart`.
+5. Record the Phase 40 audit cleanup targets in the spec before code movement:
+   search result DTO/domain duplication, Bilibili link parsing duplication,
+   parallel pagination/comment controller state, and live/player lifecycle risks.
+6. Keep any migration allowlist explicit, narrow, and connected to bd work.
+7. Treat generated Dart files as outputs; edit source and regenerate.
+
+Validation:
+
+```bash
+flutter test test/architecture
+flutter analyze --no-pub
+```
 
 ## Phase 2: Routing And Feature Boundary Cleanup
 
-Goal: remove app-route coupling from feature internals.
+Goal: finish the app-owned routing model already started in the worktree.
 
-Steps:
+Execution:
 
-1. Run GitNexus impact analysis on selected route symbols before edits.
-2. Convert `SearchTopicItem` away from raw `MaterialPageRoute`.
-3. Remove feature imports of `app/router/app_routes.dart` feature by feature.
-4. For same-feature routes, expose route locations through that feature's
-   `route_entry.dart`.
-5. For cross-feature routes, push route decisions up to app composition or use a
-   narrow feature public route contract.
-6. Tighten route ownership guard after each converted slice.
+1. Review route builder signatures in every `lib/features/*/route_entry.dart`.
+2. Keep callback injection in `lib/app/router/routes/*.dart`.
+3. Remove remaining feature UI imports of `app/router/app_routes.dart`.
+4. Remove remaining direct `MaterialPageRoute` pushes from feature widgets when
+   app-owned typed routes can provide callbacks.
+5. Prefer simple typed callbacks over a new navigation service.
 
-Verification:
+High-risk impact targets before edits:
 
-- Feature imports of `app/router/app_routes.dart`: 0.
-- Raw `MaterialPageRoute` in features: 0.
-- Route ownership guard passes.
-- Focused navigation/widget tests pass for changed features.
+- `router` in `lib/app/router/app_routes.dart` is CRITICAL risk.
+- Route data classes in `lib/app/router/routes/*.dart` may have wide generated
+  route impact.
+- Large page/view-model edits in video, dynamic, notification, and profile need
+  focused tests.
+
+Validation:
+
+```bash
+flutter test test/architecture/architecture_route_ownership_guard_test.dart
+flutter test test/features/video/presentation/detail/video_info_view_test.dart
+flutter analyze --no-pub
+```
 
 ## Phase 3: Session And Cross-Feature Access
 
-Goal: stop using auth internals as a shared state bus.
+Goal: reduce broad imports of auth/session internals and make cross-feature
+runtime access explicit.
 
-Steps:
+Execution:
 
-1. Analyze `auth_session_providers.dart` with GitNexus before edits.
-2. Decide whether shared session state belongs in `core/session` or a narrow
-   `features/auth/auth.dart` public API based on actual callers.
-3. Move only product-real session concepts: current user, auth status, and
-   session refresh policy.
-4. Replace broad `features/** -> auth/application/**` imports with the chosen
-   public source.
-5. Delete obsolete auth application re-export paths.
+1. Use `SearchPort` as the local template for narrow feature ports.
+2. Start with smaller features before touching video/dynamic/notification.
+3. Replace auth-internal feature imports with a narrow session contract where
+   consumers only need current user/session facts.
+4. Keep app-level composition responsible for wiring concrete implementations.
+5. Delete temporary providers or shims after consumers move.
 
-Verification:
+Impact targets before edits:
 
-- Cross-feature imports into auth internals are removed.
-- No new generic service shell is introduced.
-- Auth/session tests and analyzer pass.
+- `Auth` / `authControllerProvider` in `auth_controller.dart`.
+- `currentUserProvider` and related session providers.
+- Any contract in `core/contracts` that is consumed by many features.
+
+Validation:
+
+```bash
+flutter test test/architecture
+flutter analyze --no-pub
+```
 
 ## Phase 4: Model And DTO Ownership
 
-Goal: keep API shapes in data and application state JSON-free.
+Goal: each business concept has one source of truth.
 
-Steps:
+Execution:
 
-1. Start with video, dynamic, and live because the audit found DTO leaks there.
-2. Move JSON DTO families from `application/models` to `data/dtos`.
-3. Keep mapping in `data/mappers` or repository implementations when it is
-   feature-local.
-4. Return application-ready models from repository/application boundaries.
-5. Delete generated JSON surfaces from application models after callers move.
+1. Inventory `application/models` that are actually API response shapes.
+2. Move API-shaped types to `data/dtos` with mappers to domain only when the
+   domain type adds real value.
+3. Merge DTO/domain mirror pairs where domain entities have no behavior.
+4. Keep high-blast-radius shared contracts stable until small features prove the
+   migration pattern.
+5. Regenerate code when Freezed/json_serializable source changes.
 
-Verification:
+Initial lower-risk candidates:
 
-- Application imports of `data/dtos`: 0, unless explicitly documented.
-- DTOs with `fromJson`/`toJson` live under `data/dtos`.
-- Build runner output is regenerated and inspected.
-- Focused feature tests pass.
+- video subtitle transport model migration from `application/models` to
+  `data/dtos` is complete and guarded;
+- live danmu info transport model migration from `application/models` to
+  `data/dtos` is complete and guarded;
+- live gold rank and live guard list are the next low-risk live DTO ownership
+  candidates; both are complete and guarded;
+- favorites folder DTO/entity duplication;
+- history entry DTO/entity duplication;
+- to_view DTO/entity duplication.
 
-## Phase 5: Network, Error, And Config Consolidation
+High-risk targets to defer until guards are stable:
 
-Goal: one execution path for network results and error conversion.
+- `VideoModel` and comment contracts under `core/contracts`;
+- dynamic response models;
+- video detail models.
+- live room detail models.
 
-Steps:
+Validation:
 
-1. Analyze `RequestExecutor`, `ApiResponseDecoder`, `AppError`, and
-   `ErrorHandler` with GitNexus before edits.
-2. Merge `ApiResponseDecoder` behavior into `RequestExecutor` or a private
-   manual-Dio adapter.
-3. Add one `Result` unwrap or async adapter and replace repeated
-   failure-throw conversions.
-4. Move shared API base URLs and endpoint ownership into `ApiConstants` or the
-   existing endpoint policy provider.
-5. Delete `ErrorHandler` if the UI widget remains its only caller.
+```bash
+dart run build_runner build --delete-conflicting-outputs
+flutter test test/architecture
+flutter analyze --no-pub
+```
 
-Verification:
+## Phase 5: Network, Error, And Endpoint Consolidation
 
-- Generic network decoding has one owner.
-- Generic error conversion has one owner.
-- Endpoint constants are not duplicated.
-- Existing network/repository tests pass or are added where missing.
+Goal: one network policy path and one endpoint source of truth.
+
+Execution:
+
+1. Impact-check `DioClient`, `RequestExecutor`, and endpoint constants before
+   edits.
+2. Keep generic Dio failure conversion in `RequestExecutor`/`AppError`.
+3. Move repeated response decoding/error conversion out of repositories.
+4. Normalize endpoint constants and Retrofit annotations so cache policy and path
+   strings cannot drift.
+5. Delete duplicate/unused endpoint constants after all references move.
+
+High-risk targets:
+
+- `DioClient` is HIGH risk.
+- `RequestExecutor` is HIGH risk.
+- endpoint policy providers may affect cache/network behavior globally.
+
+Validation:
+
+```bash
+flutter test test/architecture
+flutter analyze --no-pub
+```
 
 ## Phase 6: Startup And Runtime Performance
 
-Goal: remove feature UI dependency on app bootstrap and trim long-lived runtime
-state.
+Goal: reduce retained memory and long-lived global work without changing product
+behavior.
 
-Steps:
+Execution:
 
-1. Analyze `DeferredAppInitController`, media service/provider symbols, and
-   live player widget dependencies with GitNexus before edits.
-2. Move media readiness behind a core media provider or app-owned bootstrap
-   policy.
-3. Remove `app/bootstrap` imports from feature code.
-4. Review `keepAlive` providers and mutable global caches; keep only those with
-   clear runtime value.
-5. Move expensive synchronous parsing or repeated computation away from widget
-   builds.
+1. Review `@Riverpod(keepAlive: true)` family providers and remove keepAlive when
+   there is no product reason for retaining keyed data.
+2. Start with room-scoped live danmaku feed retention and live room/player
+   lifecycle idempotency before touching global network or media policy.
+3. Add lifecycle cleanup or documented app-wide lifetime for static queues and
+   listeners.
+4. Keep synchronous live socket JSON decode only if profiling confirms it is the
+   better hot-path tradeoff.
+5. Move article paragraph recognizer churn behind stable widget lifecycle if the
+   first performance slice reaches dynamic article rendering.
+6. Clean local ignored artifacts only as workspace hygiene, not as source changes.
+7. Avoid replacing mature dependencies just for novelty.
 
-Verification:
+Validation:
 
-- Feature imports of `app/bootstrap/**`: 0.
-- Startup guard or focused startup tests pass where available.
-- Analyzer, architecture guards, and focused live/media tests pass.
+```bash
+flutter analyze --no-pub
+flutter test
+```
+
+## Dependency And Tooling Follow-Up
+
+Keep current main stack. Candidate follow-ups:
+
+- Add `riverpod_lint` and `custom_lint` after current architecture changes are
+  stable.
+- Consider low-risk package upgrades: `connectivity_plus`, `easy_refresh`,
+  `image_picker`.
+- Defer `dio_cache_interceptor` v4 migration because it likely changes file-store
+  ownership.
+- Defer `pointycastle` major upgrade until auth crypto tests exist.
+- Simplify Slang codegen only after confirming `build_runner` fully covers the
+  current translation workflow.
 
 ## First Directly Executable Refactor Steps
 
-These are the first steps to run after design approval:
+Immediate execution order:
 
-1. Create or claim the Phase 40 `bd` issue.
-2. Update `docs/architecture/architecture-guide.md` to point at Phase 40.
-3. Mark Phase 39 spec/plan superseded or archive them.
-4. Add documentation guard coverage for active phase links.
-5. Run analyzer and architecture guards.
-6. Run GitNexus `detect_changes(scope: "all", repo: "Culcul")`.
-7. Then start the routing slice with `SearchTopicItem` because it is concrete,
-   visible, and lower risk than a broad app-router migration.
+1. Update Phase 40 documentation.
+2. Inspect current architecture guards and route ownership tests.
+3. Add red architecture guards for two low-risk boundary leaks:
+   `core/features -> app/bootstrap` and `app/router -> feature internals`.
+4. Move media runtime initialization to `lib/core/runtime` while leaving
+   first-frame scheduling in `lib/app/bootstrap`.
+5. Move notification navigation parsing/target ownership to
+   `lib/features/notification/application` and keep app router consumption
+   through `notification/route_entry.dart`.
+6. Defer Profile route callback consolidation because `UserProfileRoute` has a
+   CRITICAL GitNexus impact report; plan it as a separate test-backed slice.
+7. Run the focused architecture and notification/media tests.
+8. Run format cleanup, then architecture guards and `flutter analyze --no-pub`.
+9. Run GitNexus `detect_changes(scope: "all", repo: "Culcul")`.
+10. Update/close bd issues that this slice completes.
+11. Use `culcul-ory` for the next DTO/model ownership slice only after this
+    boundary baseline is green.

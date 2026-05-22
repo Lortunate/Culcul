@@ -1,4 +1,5 @@
 import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/features/notification/application/notification_navigation.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/presentation/pages/notification_list_page_helpers.dart';
@@ -12,8 +13,15 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class NotificationListPage extends ConsumerStatefulWidget {
   final NotificationFeedType type;
+  final NotificationTargetOpener onOpenTarget;
+  final ValueChanged<int> onOpenUser;
 
-  const NotificationListPage({super.key, required this.type});
+  const NotificationListPage({
+    super.key,
+    required this.type,
+    required this.onOpenTarget,
+    required this.onOpenUser,
+  });
 
   @override
   ConsumerState<NotificationListPage> createState() => _NotificationListPageState();
@@ -97,7 +105,12 @@ class _NotificationListPageState extends ConsumerState<NotificationListPage> {
   }
 
   Widget _buildItem(BuildContext context, NotificationEntry item) {
-    return NotificationItemWidget(item: item, type: widget.type);
+    return NotificationItemWidget(
+      item: item,
+      type: widget.type,
+      onOpenTarget: widget.onOpenTarget,
+      onOpenUser: widget.onOpenUser,
+    );
   }
 }
 

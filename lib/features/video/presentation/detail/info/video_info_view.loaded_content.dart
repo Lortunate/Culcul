@@ -7,6 +7,9 @@ class _VideoInfoLoadedContent extends StatelessWidget {
   final List<VideoModel> relatedVideos;
   final ValueNotifier<bool> isExpanded;
   final VoidCallback onToggleFollow;
+  final VoidCallback onLogin;
+  final ValueChanged<int> onOpenUser;
+  final ValueChanged<String> onOpenVideo;
   final VoidCallback onLike;
   final VoidCallback onCoin;
   final ValueChanged<int> onPartChanged;
@@ -18,6 +21,9 @@ class _VideoInfoLoadedContent extends StatelessWidget {
     required this.relatedVideos,
     required this.isExpanded,
     required this.onToggleFollow,
+    required this.onLogin,
+    required this.onOpenUser,
+    required this.onOpenVideo,
     required this.onLike,
     required this.onCoin,
     required this.onPartChanged,
@@ -36,6 +42,8 @@ class _VideoInfoLoadedContent extends StatelessWidget {
               isFollowed: isFollowed,
               isExpanded: isExpanded,
               onToggleFollow: onToggleFollow,
+              onLogin: onLogin,
+              onOpenUser: onOpenUser,
             ),
             _VideoInfoEngagementSection(
               detail: detail,
@@ -59,7 +67,10 @@ class _VideoInfoLoadedContent extends StatelessWidget {
                     color: colorScheme.outlineVariant.withValues(alpha: 0.45),
                   );
                 }
-                return RecommendationItem(video: relatedVideos[index ~/ 2]);
+                return RecommendationItem(
+                  video: relatedVideos[index ~/ 2],
+                  onOpenVideo: onOpenVideo,
+                );
               }, childCount: relatedVideos.length * 2 - 1),
             ),
           ),

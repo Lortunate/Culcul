@@ -11,7 +11,16 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 const _searchPagePadding = EdgeInsets.symmetric(horizontal: 16, vertical: 12);
 
 class SearchPage extends HookConsumerWidget {
-  const SearchPage({super.key});
+  final ValueChanged<String> onOpenVideo;
+  final ValueChanged<int> onOpenUser;
+  final void Function(int topicId, String topicName) onOpenTopic;
+
+  const SearchPage({
+    super.key,
+    required this.onOpenVideo,
+    required this.onOpenUser,
+    required this.onOpenTopic,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,18 +35,35 @@ class SearchPage extends HookConsumerWidget {
         onClear: search.onClear,
         onSearch: onSearch,
       ),
-      body: _buildSearchBody(search, onSearch),
+      body: _buildSearchBody(
+        search,
+        onSearch,
+        onOpenVideo: onOpenVideo,
+        onOpenUser: onOpenUser,
+        onOpenTopic: onOpenTopic,
+      ),
     );
   }
 }
 
-Widget _buildSearchBody(SearchPageState search, ValueChanged<String> onSearch) {
+Widget _buildSearchBody(
+  SearchPageState search,
+  ValueChanged<String> onSearch, {
+  required ValueChanged<String> onOpenVideo,
+  required ValueChanged<int> onOpenUser,
+  required void Function(int topicId, String topicName) onOpenTopic,
+}) {
   return switch (search.mode) {
     SearchPageMode.suggestion => SearchSuggestionView(
       term: search.suggestionTerm,
       onSuggestionTap: onSearch,
     ),
-    SearchPageMode.result => SearchResultView(keyword: search.confirmedKeyword!),
+    SearchPageMode.result => SearchResultView(
+      keyword: search.confirmedKeyword!,
+      onOpenVideo: onOpenVideo,
+      onOpenUser: onOpenUser,
+      onOpenTopic: onOpenTopic,
+    ),
     SearchPageMode.landing => _SearchLandingContent(onTap: onSearch),
   };
 }

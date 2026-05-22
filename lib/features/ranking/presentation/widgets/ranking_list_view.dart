@@ -16,8 +16,9 @@ import 'package:culcul/i18n/strings.g.dart';
 
 class RankingListView extends ConsumerStatefulWidget {
   final RankingCategory category;
+  final ValueChanged<String> onOpenVideo;
 
-  const RankingListView({required this.category, super.key});
+  const RankingListView({required this.category, required this.onOpenVideo, super.key});
 
   @override
   ConsumerState<RankingListView> createState() => _RankingListViewState();
@@ -39,7 +40,10 @@ class _RankingListViewState extends ConsumerState<RankingListView>
       AsyncData(:final value) when value.isEmpty => AppEmptyStateWidget(
         message: t.common.no_content,
       ),
-      AsyncData(:final value) => _RankingItemsList(items: value),
+      AsyncData(:final value) => _RankingItemsList(
+        items: value,
+        onOpenVideo: widget.onOpenVideo,
+      ),
       AsyncError(:final error, :final stackTrace) => AppErrorWidget(
         error: error,
         stackTrace: stackTrace,
@@ -64,8 +68,9 @@ class _RankingListViewState extends ConsumerState<RankingListView>
 
 class _RankingItemsList extends StatelessWidget {
   final List<VideoModel> items;
+  final ValueChanged<String> onOpenVideo;
 
-  const _RankingItemsList({required this.items});
+  const _RankingItemsList({required this.items, required this.onOpenVideo});
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +80,7 @@ class _RankingItemsList extends StatelessWidget {
       itemCount: items.length,
       separatorBuilder: (_, _) => SizedBox(height: isDesktop ? 6 : 2),
       itemBuilder: (context, index) =>
-          RankingItemCard(video: items[index], rank: index + 1),
+          RankingItemCard(video: items[index], rank: index + 1, onOpenVideo: onOpenVideo),
     );
   }
 }

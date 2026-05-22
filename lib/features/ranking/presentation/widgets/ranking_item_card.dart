@@ -1,4 +1,3 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/ranking/presentation/widgets/rank_badge.dart';
@@ -9,8 +8,14 @@ import 'package:flutter/material.dart';
 class RankingItemCard extends StatelessWidget {
   final VideoModel video;
   final int rank;
+  final ValueChanged<String> onOpenVideo;
 
-  const RankingItemCard({required this.video, required this.rank, super.key});
+  const RankingItemCard({
+    required this.video,
+    required this.rank,
+    required this.onOpenVideo,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +25,7 @@ class RankingItemCard extends StatelessWidget {
     return VideoListCard(
       // Standard list item padding
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      onTap: () => VideoDetailRoute(bvid: video.bvid).push(context),
+      onTap: () => onOpenVideo(video.bvid),
       coverUrl: video.pic,
       title: video.title,
       duration: video.duration,

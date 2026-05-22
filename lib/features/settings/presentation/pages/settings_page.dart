@@ -1,4 +1,3 @@
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/settings/application/settings_controller.dart';
 import 'package:culcul/features/settings/presentation/widgets/settings_group.dart';
@@ -13,10 +12,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 part 'settings_page.scaffold.dart';
 
 class SettingsPage extends ConsumerWidget {
-  const SettingsPage({super.key});
+  final VoidCallback onOpenAbout;
+
+  const SettingsPage({required this.onOpenAbout, super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const _SettingsPageScaffold();
+    return _SettingsPageScaffold(onOpenAbout: onOpenAbout);
   }
 }

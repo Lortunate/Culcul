@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:culcul/app/router/app_routes.dart';
 import 'package:culcul/features/home/presentation/view_models/home_tab_sync_controller.dart';
 import 'package:culcul/features/home/presentation/widgets/home_app_bar.dart';
 import 'package:culcul/features/home/presentation/widgets/live_view.dart';
@@ -16,7 +15,20 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 typedef _HomeTabItem = ({String title, Widget Function() buildView});
 
 class HomePage extends HookConsumerWidget {
-  const HomePage({super.key});
+  final VoidCallback onOpenSearch;
+  final VoidCallback onOpenProfile;
+  final VoidCallback onOpenNotification;
+  final ValueChanged<int> onOpenLiveRoom;
+  final ValueChanged<String> onOpenVideo;
+
+  const HomePage({
+    super.key,
+    required this.onOpenSearch,
+    required this.onOpenProfile,
+    required this.onOpenNotification,
+    required this.onOpenLiveRoom,
+    required this.onOpenVideo,
+  });
 
   static const int _recommendTabIndex = 1;
 
@@ -25,7 +37,7 @@ class HomePage extends HookConsumerWidget {
     final t = Translations.of(context);
     final hintText = useState<String?>(null);
     final visitedTabs = useState<Set<int>>(<int>{_recommendTabIndex});
-    final tabs = useMemoized(() => _buildTabs(t), [t]);
+    final tabs = useMemoized(() => _buildTabs(t), [t, onOpenLiveRoom, onOpenVideo]);
     final tabController = useTabController(initialLength: tabs.length, initialIndex: 1);
 
     useEffect(() {
@@ -61,10 +73,10 @@ class HomePage extends HookConsumerWidget {
               .read(homeTabSyncControllerProvider.notifier)
               .onTabTapped(index, isChanging: tabController.indexIsChanging);
         },
-        onSearchTap: () => const SearchRoute().push(context),
+        onSearchTap: onOpenSearch,
         hintText: hintText.value,
-        onAvatarTap: () => const ProfileRoute().go(context),
-        onMessageTap: () => const NotificationRoute().push(context),
+        onAvatarTap: onOpenProfile,
+        onMessageTap: onOpenNotification,
       ),
       body: TabBarView(
         controller: tabController,
@@ -93,8 +105,11 @@ class HomePage extends HookConsumerWidget {
   }
 
   List<_HomeTabItem> _buildTabs(Translations t) => [
-    (title: t.home.tabs.live, buildView: () => const LiveView()),
-    (title: t.home.tabs.recommend, buildView: () => const RecommendView()),
-    (title: t.home.tabs.hot, buildView: () => const PopularView()),
+    (title: t.home.tabs.live, buildView: () => LiveView(onOpenRoom: onOpenLiveRoom)),
+    (
+      title: t.home.tabs.recommend,
+      buildView: () => RecommendView(onOpenVideo: onOpenVideo),
+    ),
+    (title: t.home.tabs.hot, buildView: () => PopularView(onOpenVideo: onOpenVideo)),
   ];
 }
