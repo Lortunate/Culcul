@@ -6,6 +6,7 @@ import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/features/notification/application/notification_feed_port.dart';
+import 'package:culcul/features/notification/application/notification_unread_count_port.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
 import 'package:culcul/features/notification/data/notification_api.dart';
 import 'package:culcul/features/notification/data/notification_message_persistence.dart';
@@ -40,7 +41,8 @@ NotificationRepositoryImpl notificationRepository(Ref ref) {
   );
 }
 
-class NotificationRepositoryImpl implements NotificationFeedPort {
+class NotificationRepositoryImpl
+    implements NotificationFeedPort, NotificationUnreadCountPort {
   NotificationRepositoryImpl(
     this._api,
     this._database,
@@ -203,6 +205,7 @@ class NotificationRepositoryImpl implements NotificationFeedPort {
     );
   }
 
+  @override
   Stream<NotificationSummary> watchUnreadCount({required int ownerUid}) {
     return _streamWatchers.watchUnreadCount(ownerUid: ownerUid);
   }
@@ -211,6 +214,7 @@ class NotificationRepositoryImpl implements NotificationFeedPort {
     return _streamWatchers.watchSystemNotices(ownerUid: ownerUid);
   }
 
+  @override
   Future<Result<void, AppError>> syncUnreadCount({
     required int ownerUid,
     bool force = false,

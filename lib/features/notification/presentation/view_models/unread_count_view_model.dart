@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:culcul/features/notification/application/notification_unread_count_application_providers.dart';
 import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
-import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -18,14 +18,14 @@ class UnreadCount extends _$UnreadCount {
       return const NotificationSummary();
     }
 
-    final repository = ref.read(notificationRepositoryProvider);
-    final stream = repository.watchUnreadCount(ownerUid: ownerUid);
+    final unreadCountPort = ref.read(notificationUnreadCountPortProvider);
+    final stream = unreadCountPort.watchUnreadCount(ownerUid: ownerUid);
     _subscription = stream.listen((summary) {
       state = AsyncData(summary);
     });
     ref.onDispose(() => _subscription?.cancel());
 
-    unawaited(repository.syncUnreadCount(ownerUid: ownerUid));
+    unawaited(unreadCountPort.syncUnreadCount(ownerUid: ownerUid));
     return stream.first;
   }
 
@@ -33,7 +33,7 @@ class UnreadCount extends _$UnreadCount {
     final ownerUid = ref.read(notificationOwnerUidProvider);
     if (ownerUid == null) return;
     await ref
-        .read(notificationRepositoryProvider)
+        .read(notificationUnreadCountPortProvider)
         .syncUnreadCount(ownerUid: ownerUid, force: true);
   }
 }
