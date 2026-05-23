@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:culcul/features/video/data/video_repository_impl.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
-import 'package:culcul/core/errors/app_error.dart';
-import 'package:dio/dio.dart';
 import 'package:culcul/core/data/pagination/paged_list_state_transitions.dart';
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/features/video/application/video_comment_application_providers.dart';
+import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:culcul/features/video/presentation/comments/comment_reply_state.dart';
@@ -37,7 +37,7 @@ class CommentReplyController extends _$CommentReplyController {
     _activeLoadCancelToken = cancelToken;
 
     final result = await ref
-        .read(videoRepositoryProvider)
+        .read(videoCommentPortProvider)
         .fetchReply(oid: oid, root: rootId, cancelToken: cancelToken);
     if (!ref.mounted || requestToken != _loadRequestToken) {
       return;
@@ -75,7 +75,7 @@ class CommentReplyController extends _$CommentReplyController {
     _activeLoadCancelToken = cancelToken;
 
     final result = await ref
-        .read(videoRepositoryProvider)
+        .read(videoCommentPortProvider)
         .fetchReply(
           oid: oid,
           root: rootId,
@@ -109,7 +109,7 @@ class CommentReplyController extends _$CommentReplyController {
     _updateCommentLikeStatus(rpid, !isLiked);
 
     final result = await ref
-        .read(videoRepositoryProvider)
+        .read(videoCommentPortProvider)
         .setCommentLike(oid: oid, rpid: rpid, isLiked: !isLiked);
     if (result.isFailure) {
       _updateCommentLikeStatus(rpid, isLiked);
@@ -117,7 +117,7 @@ class CommentReplyController extends _$CommentReplyController {
   }
 
   Future<void> toggleCommentDislike(int oid, int rpid) async {
-    await ref.read(videoRepositoryProvider).setCommentDislike(oid: oid, rpid: rpid);
+    await ref.read(videoCommentPortProvider).setCommentDislike(oid: oid, rpid: rpid);
   }
 
   void _updateCommentLikeStatus(int rpid, bool liked) {
@@ -143,7 +143,7 @@ class CommentReplyController extends _$CommentReplyController {
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
     final result = await ref
-        .read(videoRepositoryProvider)
+        .read(videoCommentPortProvider)
         .replyToComment(oid: oid, root: root, parent: parent, message: message);
     if (result.isSuccess) {
       await refresh();

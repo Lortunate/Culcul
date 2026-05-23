@@ -13,6 +13,7 @@ import 'package:culcul/features/video/data/dtos/player_info_dto.dart';
 import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
 import 'package:culcul/features/video/application/models/subtitle.dart';
 import 'package:culcul/features/video/application/subtitle_port.dart';
+import 'package:culcul/features/video/application/video_comment_port.dart';
 import 'package:culcul/features/video/data/dtos/subtitle_dto.dart';
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
 import 'package:culcul/features/video/data/dtos/video_play_url_dto.dart';
@@ -29,7 +30,7 @@ VideoRepositoryImpl videoRepository(Ref ref) {
   );
 }
 
-class VideoRepositoryImpl implements SubtitlePort {
+class VideoRepositoryImpl implements SubtitlePort, VideoCommentPort {
   static const _videoCommentType = 1;
 
   final VideoApi api;
@@ -44,6 +45,7 @@ class VideoRepositoryImpl implements SubtitlePort {
     RequestExecutor? requestExecutor,
   }) : _requestExecutor = requestExecutor ?? const RequestExecutor();
 
+  @override
   Future<Result<void, AppError>> setCommentLike({
     required int oid,
     required int rpid,
@@ -59,6 +61,7 @@ class VideoRepositoryImpl implements SubtitlePort {
     );
   }
 
+  @override
   Future<Result<void, AppError>> setCommentDislike({
     required int oid,
     required int rpid,
@@ -74,6 +77,7 @@ class VideoRepositoryImpl implements SubtitlePort {
     );
   }
 
+  @override
   Future<Result<CommentItem, AppError>> replyToComment({
     required int oid,
     required int root,
@@ -162,6 +166,7 @@ class VideoRepositoryImpl implements SubtitlePort {
     );
   }
 
+  @override
   Future<Result<CommentResponse, AppError>> fetchComments({
     required int oid,
     CommentSort sort = CommentSort.hot,
@@ -179,6 +184,7 @@ class VideoRepositoryImpl implements SubtitlePort {
     );
   }
 
+  @override
   Future<Result<CommentResponse, AppError>> fetchReply({
     required int oid,
     required int root,

@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:culcul/features/video/data/video_repository_impl.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
-import 'package:culcul/core/errors/app_error.dart';
-import 'package:dio/dio.dart';
 import 'package:culcul/core/data/pagination/paged_list_state.dart';
 import 'package:culcul/core/data/pagination/paged_list_state_transitions.dart';
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/features/video/application/video_comment_application_providers.dart';
 import 'package:culcul/ui/assemblies/comments/comment_list_state.dart';
+import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:culcul/features/video/presentation/detail/video_detail_view_model.dart';
@@ -87,7 +87,7 @@ class VideoCommentsController extends _$VideoCommentsController {
     state = state.copyWith(paging: state.paging.copyWith(items: nextComments));
 
     final result = await ref
-        .read(videoRepositoryProvider)
+        .read(videoCommentPortProvider)
         .setCommentLike(oid: oid, rpid: rpid, isLiked: !isLiked);
     if (result.isFailure) {
       state = state.copyWith(paging: state.paging.copyWith(items: previousComments));
@@ -95,12 +95,12 @@ class VideoCommentsController extends _$VideoCommentsController {
   }
 
   Future<void> toggleCommentDislike(int oid, int rpid) async {
-    await ref.read(videoRepositoryProvider).setCommentDislike(oid: oid, rpid: rpid);
+    await ref.read(videoCommentPortProvider).setCommentDislike(oid: oid, rpid: rpid);
   }
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
     final result = await ref
-        .read(videoRepositoryProvider)
+        .read(videoCommentPortProvider)
         .replyToComment(oid: oid, root: root, parent: parent, message: message);
     if (result.isSuccess) {
       await refresh();
@@ -128,7 +128,7 @@ class VideoCommentsController extends _$VideoCommentsController {
     }
 
     final result = await ref
-        .read(videoRepositoryProvider)
+        .read(videoCommentPortProvider)
         .fetchComments(oid: aid, sort: state.sort, page: page, cancelToken: cancelToken);
     if (!ref.mounted || requestToken != _loadRequestToken) {
       return;
