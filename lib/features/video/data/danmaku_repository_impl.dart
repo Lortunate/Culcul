@@ -4,6 +4,7 @@ import 'package:culcul/core/data/network/resource_api.dart';
 import 'package:culcul/core/data/network/resource_api_provider.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
+import 'package:culcul/features/video/application/danmaku_port.dart';
 import 'package:culcul/features/video/application/models/danmaku.dart';
 import 'package:culcul/features/video/data/danmaku_api.dart';
 import 'package:culcul/protos/dm.pb.dart';
@@ -19,7 +20,7 @@ DanmakuRepositoryImpl danmakuRepository(Ref ref) {
   );
 }
 
-class DanmakuRepositoryImpl {
+class DanmakuRepositoryImpl implements DanmakuPort {
   final DanmakuApi _api;
   final ResourceApi _resourceApi;
   final RequestExecutor _requestExecutor;
@@ -27,6 +28,7 @@ class DanmakuRepositoryImpl {
   DanmakuRepositoryImpl(this._api, this._resourceApi, {RequestExecutor? requestExecutor})
     : _requestExecutor = requestExecutor ?? const RequestExecutor();
 
+  @override
   Future<Result<DanmakuSegment, AppError>> fetchDanmakuSegment({
     required int oid,
     required int pid,

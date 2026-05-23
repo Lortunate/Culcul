@@ -24,7 +24,6 @@ const _phase31AllowedPresentationDataImports = <String>{
   'lib/features/video/presentation/comments/comment_reply_view_model.dart -> lib/features/video/data/video_repository_impl.dart',
   'lib/features/video/presentation/comments/video_comments_view_model.dart -> lib/features/video/data/video_repository_impl.dart',
   'lib/features/video/presentation/detail/video_detail_view_model.dart -> lib/features/video/data/video_repository_impl.dart',
-  'lib/features/video/presentation/overlays/danmaku_view_model.dart -> lib/features/video/data/danmaku_repository_impl.dart',
   'lib/features/video/presentation/overlays/subtitle_view_model.dart -> lib/features/video/data/video_repository_impl.dart',
   'lib/features/video/presentation/player/hooks/use_listen_audio_mode.dart -> lib/features/video/data/video_repository_impl.dart',
 };
@@ -66,6 +65,7 @@ const _phase40AllowedDataApplicationImports = <String>{
   'lib/features/search/data/search_repository_impl.dart -> lib/features/search/application/search_query.dart',
   'lib/features/search/data/search_repository_impl.dart -> lib/features/search/application/search_result.dart',
   'lib/features/search/data/search_repository_impl.dart -> lib/features/search/application/search_trending_item.dart',
+  'lib/features/video/data/danmaku_repository_impl.dart -> lib/features/video/application/danmaku_port.dart',
   'lib/features/video/data/danmaku_repository_impl.dart -> lib/features/video/application/models/danmaku.dart',
   'lib/features/video/data/video_repository_impl.dart -> lib/features/video/application/models/play_url.dart',
   'lib/features/video/data/video_repository_impl.dart -> lib/features/video/application/models/subtitle.dart',

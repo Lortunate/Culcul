@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/video/data/danmaku_repository_impl.dart';
+import 'package:culcul/features/video/application/danmaku_application_providers.dart';
 import 'package:culcul/features/video/application/models/danmaku.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -19,7 +19,7 @@ class DanmakuProvider extends _$DanmakuProvider {
     required int segmentIndex,
   }) async {
     final result = await ref
-        .read(danmakuRepositoryProvider)
+        .read(danmakuPortProvider)
         .fetchDanmakuSegment(oid: oid, pid: pid, segmentIndex: segmentIndex);
     return result.map((value) => value.entries);
   }
