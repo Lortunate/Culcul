@@ -84,7 +84,7 @@ class _EmojiPickerState extends ConsumerState<EmojiPicker> with TickerProviderSt
     );
   }
 
-  Widget _buildEmojiGrid(EmotePackageViewData package) {
+  Widget _buildEmojiGrid(EmoteCatalogPackage package) {
     return GridView.builder(
       padding: const EdgeInsets.all(8),
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(

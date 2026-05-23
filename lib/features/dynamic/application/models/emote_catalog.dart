@@ -1,10 +1,10 @@
-class EmotePackageViewData {
+class EmoteCatalogPackage {
   final int id;
   final String text;
   final String url;
-  final List<EmoteViewData> emotes;
+  final List<EmoteCatalogItem> emotes;
 
-  const EmotePackageViewData({
+  const EmoteCatalogPackage({
     required this.id,
     required this.text,
     required this.url,
@@ -12,10 +12,10 @@ class EmotePackageViewData {
   });
 }
 
-class EmoteViewData {
+class EmoteCatalogItem {
   final int id;
   final String text;
   final String url;
 
-  const EmoteViewData({required this.id, required this.text, required this.url});
+  const EmoteCatalogItem({required this.id, required this.text, required this.url});
 }
