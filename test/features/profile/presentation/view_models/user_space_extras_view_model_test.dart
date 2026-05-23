@@ -1,66 +1,73 @@
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/profile/application/user_space_extras_application_providers.dart';
-import 'package:culcul/features/profile/application/user_space_extras_port.dart';
+import 'package:culcul/features/profile/application/user_space_application_providers.dart';
+import 'package:culcul/features/profile/application/user_space_port.dart';
 import 'package:culcul/features/profile/data/profile_repository_impl.dart';
+import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/features/profile/presentation/view_models/user_space_extras_view_model.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 void main() {
-  test('user sticky video reads through the profile extras application port', () async {
-    final sticky = _profileVideo(aid: 1, bvid: 'BV1xx411c7mD');
-    final port = _FakeUserSpaceExtrasPort(stickyVideo: Success(sticky));
-    final container = ProviderContainer(
-      retry: (_, _) => null,
-      overrides: [
-        userSpaceExtrasPortProvider.overrideWithValue(port),
-        profileRepositoryProvider.overrideWith(
-          (ref) => throw StateError(
-            'profileRepositoryProvider should not be read by UI state',
+  test(
+    'user sticky video reads through the profile user-space application port',
+    () async {
+      final sticky = _profileVideo(aid: 1, bvid: 'BV1xx411c7mD');
+      final port = _FakeUserSpacePort(stickyVideo: Success(sticky));
+      final container = ProviderContainer(
+        retry: (_, _) => null,
+        overrides: [
+          userSpacePortProvider.overrideWithValue(port),
+          profileRepositoryProvider.overrideWith(
+            (ref) => throw StateError(
+              'profileRepositoryProvider should not be read by UI state',
+            ),
           ),
-        ),
-      ],
-    );
-    addTearDown(container.dispose);
+        ],
+      );
+      addTearDown(container.dispose);
 
-    final result = await container.read(userStickyVideoProvider(42).future);
+      final result = await container.read(userStickyVideoProvider(42).future);
 
-    expect(result, sticky);
-    expect(port.stickyRequests, const [42]);
-  });
+      expect(result, sticky);
+      expect(port.stickyRequests, const [42]);
+    },
+  );
 
-  test('user masterpieces read through the profile extras application port', () async {
-    final video = _profileVideo(aid: 2, bvid: 'BV1xx411c7mE');
-    final port = _FakeUserSpaceExtrasPort(masterpieces: Success([video]));
-    final container = ProviderContainer(
-      retry: (_, _) => null,
-      overrides: [
-        userSpaceExtrasPortProvider.overrideWithValue(port),
-        profileRepositoryProvider.overrideWith(
-          (ref) => throw StateError(
-            'profileRepositoryProvider should not be read by UI state',
+  test(
+    'user masterpieces read through the profile user-space application port',
+    () async {
+      final video = _profileVideo(aid: 2, bvid: 'BV1xx411c7mE');
+      final port = _FakeUserSpacePort(masterpieces: Success([video]));
+      final container = ProviderContainer(
+        retry: (_, _) => null,
+        overrides: [
+          userSpacePortProvider.overrideWithValue(port),
+          profileRepositoryProvider.overrideWith(
+            (ref) => throw StateError(
+              'profileRepositoryProvider should not be read by UI state',
+            ),
           ),
-        ),
-      ],
-    );
-    addTearDown(container.dispose);
+        ],
+      );
+      addTearDown(container.dispose);
 
-    final result = await container.read(userMasterpiecesProvider(43).future);
+      final result = await container.read(userMasterpiecesProvider(43).future);
 
-    expect(result, [video]);
-    expect(port.masterpieceRequests, const [43]);
-  });
+      expect(result, [video]);
+      expect(port.masterpieceRequests, const [43]);
+    },
+  );
 
   test('user masterpieces propagates application port failures', () async {
     const error = AppError.server('masterpiece failed');
-    final port = _FakeUserSpaceExtrasPort(masterpieces: const Failure(error));
+    final port = _FakeUserSpacePort(masterpieces: const Failure(error));
     final container = ProviderContainer(
       retry: (_, _) => null,
       overrides: [
-        userSpaceExtrasPortProvider.overrideWithValue(port),
+        userSpacePortProvider.overrideWithValue(port),
         profileRepositoryProvider.overrideWith(
           (ref) => throw StateError(
             'profileRepositoryProvider should not be read by UI state',
@@ -78,8 +85,8 @@ void main() {
   });
 }
 
-final class _FakeUserSpaceExtrasPort implements UserSpaceExtrasPort {
-  _FakeUserSpaceExtrasPort({
+final class _FakeUserSpacePort implements UserSpacePort {
+  _FakeUserSpacePort({
     this.stickyVideo = const Success(null),
     this.masterpieces = const Success(<ProfileVideo>[]),
   });
@@ -88,6 +95,11 @@ final class _FakeUserSpaceExtrasPort implements UserSpaceExtrasPort {
   final Result<List<ProfileVideo>, AppError> masterpieces;
   final stickyRequests = <int>[];
   final masterpieceRequests = <int>[];
+
+  @override
+  Future<Result<ProfileUser, AppError>> getProfile(int userId) async {
+    return const Failure(AppError.data('profile not configured'));
+  }
 
   @override
   Future<Result<ProfileVideo?, AppError>> getStickyVideo(int vmid) async {

@@ -6,7 +6,7 @@ import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/profile/application/user_space_extras_port.dart';
+import 'package:culcul/features/profile/application/user_space_port.dart';
 import 'package:culcul/features/profile/data/dtos/user_space_video_model.dart';
 import 'package:culcul/features/profile/data/profile_mapper.dart';
 import 'package:culcul/features/profile/data/profile_api.dart';
@@ -29,7 +29,7 @@ ProfileRepositoryImpl profileRepository(Ref ref) {
 
 class ProfileRepositoryImpl
     with _ProfileRepositoryImplFlowsMixin
-    implements UserSpaceExtrasPort {
+    implements UserSpacePort {
   @override
   final ProfileApi api;
   @override
