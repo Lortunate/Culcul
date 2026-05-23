@@ -6,9 +6,9 @@ import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/data/pagination/paged_list_state.dart';
 import 'package:culcul/core/data/pagination/page_merge.dart';
+import 'package:culcul/features/notification/application/notification_chat_application_providers.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
-import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -82,8 +82,8 @@ class Chat extends _$Chat with _ChatHelpersMixin, _ChatSendMixin {
     );
 
     try {
-      final repository = ref.read(notificationRepositoryProvider);
-      await repository.syncMessagesOlder(
+      final chatPort = ref.read(notificationChatPortProvider);
+      await chatPort.syncMessagesOlder(
         ownerUid: ownerUid,
         talkerId: talkerId,
         sessionType: sessionType,

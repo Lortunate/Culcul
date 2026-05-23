@@ -8,7 +8,7 @@ mixin _ChatHelpersMixin on _$Chat {
   Future<void> _syncHeadAndRefresh(int ownerUid) async {
     try {
       await ref
-          .read(notificationRepositoryProvider)
+          .read(notificationChatPortProvider)
           .syncMessagesHead(
             ownerUid: ownerUid,
             talkerId: talkerId,
@@ -48,12 +48,12 @@ mixin _ChatHelpersMixin on _$Chat {
 
   Future<({List<PrivateMessage> messages, Map<String, String> emojiMap})>
   _loadLocalSnapshot({required int ownerUid, int? endSeqno}) async {
-    final repository = ref.read(notificationRepositoryProvider);
+    final chatPort = ref.read(notificationChatPortProvider);
     final results = await _concurrencyExecutor.runConcurrent(
       tasks: <ConcurrentTask<dynamic>>[
         ConcurrentTask<List<PrivateMessage>>(
           label: 'messages',
-          task: () => repository.pageMessagesFromLocal(
+          task: () => chatPort.pageMessagesFromLocal(
             ownerUid: ownerUid,
             talkerId: talkerId,
             sessionType: sessionType,
@@ -64,7 +64,7 @@ mixin _ChatHelpersMixin on _$Chat {
           label: 'emoji_map',
           critical: false,
           fallback: (_) => const <String, String>{},
-          task: () => repository.getMessageEmojiMapFromLocal(
+          task: () => chatPort.getMessageEmojiMapFromLocal(
             ownerUid: ownerUid,
             talkerId: talkerId,
             sessionType: sessionType,

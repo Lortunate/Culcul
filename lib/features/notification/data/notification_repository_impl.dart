@@ -6,6 +6,7 @@ import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/features/notification/application/notification_feed_port.dart';
+import 'package:culcul/features/notification/application/notification_chat_port.dart';
 import 'package:culcul/features/notification/application/notification_private_session_port.dart';
 import 'package:culcul/features/notification/application/notification_system_notice_port.dart';
 import 'package:culcul/features/notification/application/notification_unread_count_port.dart';
@@ -45,6 +46,7 @@ NotificationRepositoryImpl notificationRepository(Ref ref) {
 
 class NotificationRepositoryImpl
     implements
+        NotificationChatPort,
         NotificationFeedPort,
         NotificationPrivateSessionPort,
         NotificationSystemNoticePort,
@@ -173,6 +175,7 @@ class NotificationRepositoryImpl
     );
   }
 
+  @override
   Future<List<PrivateMessage>> pageMessagesFromLocal({
     required int ownerUid,
     required int talkerId,
@@ -187,6 +190,7 @@ class NotificationRepositoryImpl
     );
   }
 
+  @override
   Future<Map<String, String>> getMessageEmojiMapFromLocal({
     required int ownerUid,
     required int talkerId,
@@ -256,6 +260,7 @@ class NotificationRepositoryImpl
     );
   }
 
+  @override
   Future<Result<void, AppError>> syncMessagesHead({
     required int ownerUid,
     required int talkerId,
@@ -268,6 +273,7 @@ class NotificationRepositoryImpl
     );
   }
 
+  @override
   Future<Result<void, AppError>> syncMessagesOlder({
     required int ownerUid,
     required int talkerId,
@@ -299,6 +305,7 @@ class NotificationRepositoryImpl
     return _feedSync.syncFeedOlder(ownerUid: ownerUid, type: type, cursor: cursor);
   }
 
+  @override
   Future<Result<ImageUploadResult, AppError>> uploadImage(
     Uint8List bytes,
     String filename,
@@ -306,6 +313,7 @@ class NotificationRepositoryImpl
     return _messageSendService.uploadImage(bytes, filename);
   }
 
+  @override
   Future<Result<SendMessageResult, AppError>> sendPrivateMessage({
     required int ownerUid,
     required int receiverId,
