@@ -8,6 +8,7 @@ import 'package:culcul/features/profile/data/profile_repository_impl.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/features/profile/presentation/view_models/user_space_extras_view_model.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -122,6 +123,17 @@ final class _FakeUserSpacePort implements UserSpacePort {
   Future<Result<List<ProfileVideo>, AppError>> getMasterpiece(int vmid) async {
     masterpieceRequests.add(vmid);
     return masterpieces;
+  }
+
+  @override
+  Future<Result<List<ProfileVideo>, AppError>> getSpaceVideos({
+    required int mid,
+    int page = 1,
+    String order = 'pubdate',
+    bool forceRefresh = false,
+    CancelToken? cancelToken,
+  }) async {
+    return const Success(<ProfileVideo>[]);
   }
 }
 

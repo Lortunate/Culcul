@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/data/network/interceptors/endpoint_cache_options_interceptor.dart';
+import 'package:culcul/features/profile/application/user_space_application_providers.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
-import 'package:culcul/features/profile/data/profile_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_space_videos_view_model.g.dart';
@@ -55,7 +55,7 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
     final cancelToken = CancelToken();
     _activePageCancelToken = cancelToken;
     final result = await ref
-        .read(profileRepositoryProvider)
+        .read(userSpacePortProvider)
         .getSpaceVideos(mid: _mid, page: page, order: _order, cancelToken: cancelToken);
     return result.when(success: (data) => data, failure: (error) => throw error);
   }
@@ -89,7 +89,7 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
     final cancelToken = CancelToken();
     _silentRefreshCancelToken = cancelToken;
     final result = await ref
-        .read(profileRepositoryProvider)
+        .read(userSpacePortProvider)
         .getSpaceVideos(
           mid: _mid,
           order: _order,
