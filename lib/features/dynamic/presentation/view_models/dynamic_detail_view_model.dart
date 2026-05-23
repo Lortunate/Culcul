@@ -2,7 +2,7 @@ import 'package:culcul/features/dynamic/application/models/dynamic_response.dart
 import 'package:culcul/features/dynamic/application/models/dynamic_item_extensions.dart';
 import 'dart:async';
 
-import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
+import 'package:culcul/features/dynamic/application/dynamic_detail_application_providers.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -32,7 +32,7 @@ class DynamicDetailViewModel extends _$DynamicDetailViewModel {
 
   Future<void> loadDetail() async {
     state = state.copyWith(isLoading: true, error: null);
-    final result = await ref.read(dynamicRepositoryProvider).getDetail(_dynamicId);
+    final result = await ref.read(dynamicDetailPortProvider).getDetail(_dynamicId);
     state = result.when(
       success: (data) => state.copyWith(post: data, isLoading: false, error: null),
       failure: (error) => state.copyWith(isLoading: false, error: error),
@@ -60,7 +60,7 @@ class DynamicDetailViewModel extends _$DynamicDetailViewModel {
 
     state = state.copyWith(post: nextItem);
     final result = await ref
-        .read(dynamicRepositoryProvider)
+        .read(dynamicDetailPortProvider)
         .likeDynamic(item.id, newStatus);
     if (result.isFailure) {
       state = state.copyWith(post: item);
