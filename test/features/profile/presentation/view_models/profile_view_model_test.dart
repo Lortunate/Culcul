@@ -3,6 +3,8 @@ import 'package:culcul/core/contracts/user_session_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
+import 'package:culcul/features/profile/application/profile_cache_application_providers.dart';
+import 'package:culcul/features/profile/application/profile_cache_port.dart';
 import 'package:culcul/features/profile/application/profile_read_application_providers.dart';
 import 'package:culcul/features/profile/application/profile_read_port.dart';
 import 'package:culcul/features/profile/data/profile_cache_repository.dart';
@@ -38,35 +40,38 @@ void main() {
     expect(port.userCardRequests, isEmpty);
   });
 
-  test(
-    'user profile notifier reads through the profile read application provider',
-    () async {
-      final profile = _profileUser('43', username: 'bob');
-      final port = _FakeProfileReadPort(profile: Success(profile));
-      final container = ProviderContainer(
-        retry: (_, _) => null,
-        overrides: [
-          profileReadPortProvider.overrideWithValue(port),
-          profileCacheRepositoryProvider.overrideWith(
-            (ref) => _FakeProfileCacheRepository(),
+  test('user profile notifier reads through profile application providers', () async {
+    final profile = _profileUser('43', username: 'bob');
+    final port = _FakeProfileReadPort(profile: Success(profile));
+    final cache = _FakeProfileCachePort();
+    final container = ProviderContainer(
+      retry: (_, _) => null,
+      overrides: [
+        profileReadPortProvider.overrideWithValue(port),
+        profileCachePortProvider.overrideWithValue(cache),
+        profileCacheRepositoryProvider.overrideWith(
+          (ref) => throw StateError(
+            'profileCacheRepositoryProvider should not be read by UI state',
           ),
-          profileRepositoryProvider.overrideWith(
-            (ref) => throw StateError(
-              'profileRepositoryProvider should not be read by UI state',
-            ),
+        ),
+        profileRepositoryProvider.overrideWith(
+          (ref) => throw StateError(
+            'profileRepositoryProvider should not be read by UI state',
           ),
-        ],
-      );
-      addTearDown(container.dispose);
+        ),
+      ],
+    );
+    addTearDown(container.dispose);
 
-      final result = await container.read(userProfileProvider('43').future);
+    final result = await container.read(userProfileProvider('43').future);
 
-      expect(result, profile);
-      expect(port.profileRequests, const [43]);
-      expect(port.profileModelRequests, isEmpty);
-      expect(port.userCardRequests, isEmpty);
-    },
-  );
+    expect(result, profile);
+    expect(port.profileRequests, const [43]);
+    expect(port.profileModelRequests, isEmpty);
+    expect(port.userCardRequests, isEmpty);
+    expect(cache.readProfileRequests, const ['43']);
+    expect(cache.writtenProfiles, [profile]);
+  });
 }
 
 final class _FakeProfileReadPort implements ProfileReadPort {
@@ -114,11 +119,13 @@ final class _FakeUserSession implements UserSession {
   String? get nickname => null;
 }
 
-final class _FakeProfileCacheRepository implements ProfileCacheRepositoryImpl {
+final class _FakeProfileCachePort implements ProfileCachePort {
+  final readProfileRequests = <String>[];
   final writtenProfiles = <ProfileUser>[];
 
   @override
   Future<ProfileUser?> readProfile(String userId) async {
+    readProfileRequests.add(userId);
     return null;
   }
 

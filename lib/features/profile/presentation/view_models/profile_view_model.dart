@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/profile/application/profile_actions.dart';
+import 'package:culcul/features/profile/application/profile_cache_application_providers.dart';
 import 'package:culcul/features/profile/application/profile_read_application_providers.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
-import 'package:culcul/features/profile/data/profile_cache_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'profile_view_model.g.dart';
@@ -27,7 +27,7 @@ class UserProfileNotifier extends _$UserProfileNotifier {
   Future<ProfileUser> build(String userId) async {
     final result = await loadUserProfileAction(
       userId: userId,
-      readCachedProfile: ref.read(profileCacheRepositoryProvider).readProfile,
+      readCachedProfile: ref.read(profileCachePortProvider).readProfile,
       loadFreshProfile: _loadFreshProfile,
     );
     if (result.shouldRefreshInBackground) {
@@ -50,7 +50,7 @@ class UserProfileNotifier extends _$UserProfileNotifier {
     final result = await ref.read(profileReadPortProvider).getProfile(int.parse(userId));
     return result.when(
       success: (data) async {
-        await ref.read(profileCacheRepositoryProvider).writeProfile(data);
+        await ref.read(profileCachePortProvider).writeProfile(data);
         return data;
       },
       failure: (error) => throw error,
