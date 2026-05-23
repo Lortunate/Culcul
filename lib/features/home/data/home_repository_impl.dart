@@ -3,6 +3,7 @@ import 'package:culcul/features/home/data/weekly_api.dart';
 import 'package:culcul/features/home/data/dtos/feed_response_dto.dart';
 import 'package:culcul/features/home/data/dtos/popular_response_dto.dart';
 import 'package:culcul/features/home/data/dtos/weekly_model_dto.dart';
+import 'package:culcul/features/home/application/home_port.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
@@ -19,7 +20,7 @@ HomeRepositoryImpl homeRepositoryImpl(Ref ref) {
   return HomeRepositoryImpl(homeApi: HomeApi(dio), weeklyApi: WeeklyApi(dio));
 }
 
-class HomeRepositoryImpl {
+class HomeRepositoryImpl implements HomePort {
   final HomeApi? _homeApi;
   final WeeklyApi? _weeklyApi;
   final RequestExecutor _requestExecutor;
@@ -38,6 +39,7 @@ class HomeRepositoryImpl {
       _weeklyApi = null,
       _requestExecutor = requestExecutor ?? const RequestExecutor();
 
+  @override
   Future<Result<List<VideoModel>, AppError>> fetchRecommendPage({
     required int page,
     bool forceRefresh = false,
@@ -52,6 +54,7 @@ class HomeRepositoryImpl {
     );
   }
 
+  @override
   Future<Result<List<VideoModel>, AppError>> fetchPopularPage({
     required int page,
     bool forceRefresh = false,
@@ -65,6 +68,7 @@ class HomeRepositoryImpl {
     );
   }
 
+  @override
   Future<Result<List<VideoModel>, AppError>> fetchWeeklyList() {
     return _requestExecutor.runApi<List<VideoModel>, WeeklyModelDto>(
       () async => _requireWeeklyApi().getWeeklyList(),

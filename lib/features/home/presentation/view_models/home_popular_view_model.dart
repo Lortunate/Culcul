@@ -1,4 +1,4 @@
-import 'package:culcul/features/home/data/home_repository_impl.dart';
+import 'package:culcul/features/home/application/home_application_providers.dart';
 import 'package:culcul/features/home/presentation/view_models/home_feed_paging_mixin.dart';
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
@@ -27,7 +27,7 @@ class HomePopular extends _$HomePopular
 
   Future<List<VideoModel>> _loadPage(int page, {required bool forceRefresh}) async {
     final result = await ref
-        .read(homeRepositoryImplProvider)
+        .read(homePortProvider)
         .fetchPopularPage(page: page, forceRefresh: forceRefresh);
     if (forceRefresh) {
       DevLogger.log(
