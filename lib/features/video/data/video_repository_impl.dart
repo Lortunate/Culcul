@@ -12,6 +12,7 @@ import 'package:culcul/features/video/application/models/play_url.dart';
 import 'package:culcul/features/video/data/dtos/player_info_dto.dart';
 import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
 import 'package:culcul/features/video/application/models/subtitle.dart';
+import 'package:culcul/features/video/application/subtitle_port.dart';
 import 'package:culcul/features/video/data/dtos/subtitle_dto.dart';
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
 import 'package:culcul/features/video/data/dtos/video_play_url_dto.dart';
@@ -28,7 +29,7 @@ VideoRepositoryImpl videoRepository(Ref ref) {
   );
 }
 
-class VideoRepositoryImpl {
+class VideoRepositoryImpl implements SubtitlePort {
   static const _videoCommentType = 1;
 
   final VideoApi api;
@@ -195,6 +196,7 @@ class VideoRepositoryImpl {
     );
   }
 
+  @override
   Future<Result<SubtitleContent, AppError>> fetchSubtitleContent(String url) {
     return _requestExecutor.run(() async {
       final fullUrl = url.startsWith('http') ? url : 'https:$url';

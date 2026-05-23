@@ -1,5 +1,5 @@
-import 'package:culcul/features/video/data/video_repository_impl.dart';
 import 'package:culcul/features/video/application/models/subtitle.dart';
+import 'package:culcul/features/video/application/subtitle_application_providers.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -62,7 +62,7 @@ class SubtitleController extends _$SubtitleController {
 
   Future<void> _loadSubtitleContent(SubtitleInfo info) async {
     final result = await ref
-        .read(videoRepositoryProvider)
+        .read(subtitlePortProvider)
         .fetchSubtitleContent(info.subtitleUrl);
     state = result.when(
       success: (content) => state.copyWith(content: content.body, isLoading: false),
