@@ -11,7 +11,6 @@ const _phase31AllowedPresentationDataImports = <String>{
   'lib/features/favorites/presentation/view_models/favorites_view_model.dart -> lib/features/favorites/data/fav_repository_impl.dart',
   'lib/features/live/presentation/view_models/live_room_view_model.dart -> lib/features/live/data/live_repository_impl.dart',
   'lib/features/notification/presentation/view_models/chat_view_model.dart -> lib/features/notification/data/notification_repository_impl.dart',
-  'lib/features/notification/presentation/view_models/notification_lifecycle_sync_view_model.dart -> lib/features/notification/data/notification_repository_impl.dart',
   'lib/features/video/presentation/comments/comment_reply_view_model.dart -> lib/features/video/data/video_repository_impl.dart',
   'lib/features/video/presentation/comments/video_comments_view_model.dart -> lib/features/video/data/video_repository_impl.dart',
   'lib/features/video/presentation/detail/video_detail_view_model.dart -> lib/features/video/data/video_repository_impl.dart',
