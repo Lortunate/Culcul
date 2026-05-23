@@ -29,7 +29,6 @@ const _phase31AllowedPresentationDataImports = <String>{
   'lib/features/profile/presentation/view_models/user_space_videos_view_model.dart -> lib/features/profile/data/profile_repository_impl.dart',
   'lib/features/profile/presentation/view_models/user_space_view_model.dart -> lib/features/profile/data/profile_repository_impl.dart',
   'lib/features/ranking/presentation/view_models/category_ranking_view_model.dart -> lib/features/ranking/data/ranking_repository_impl.dart',
-  'lib/features/search/presentation/view_models/search_view_model.dart -> lib/features/search/data/search_repository_impl.dart',
   'lib/features/video/presentation/comments/comment_reply_view_model.dart -> lib/features/video/data/video_repository_impl.dart',
   'lib/features/video/presentation/comments/video_comments_view_model.dart -> lib/features/video/data/video_repository_impl.dart',
   'lib/features/video/presentation/detail/video_detail_view_model.dart -> lib/features/video/data/video_repository_impl.dart',

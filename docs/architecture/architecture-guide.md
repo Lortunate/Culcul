@@ -141,24 +141,33 @@ concrete runtime composition seam.
 - `feature_scope.dart` files: 0.
 - Completed focus: semantic seam cleanup, domain/data leak cleanup, presentation data/proto classification, app runtime seam alignment, codegen source-of-truth cleanup, large-file decomposition, no-op workflow cleanup.
 
-### Phase 40 Current Baseline
+### Phase 41 Current Baseline
 
-- Active branch: `codex/phase40-route-entry-seams`.
+- Active branch: `codex/phase41-architecture-structure-consolidation`.
+- Tracking issue: `culcul-rqb`.
+- `lib/` source Dart files: 660.
+- `lib/` generated Dart files: 243.
+- `lib/` total Dart files: 903.
+- Current source-shape scan: 32 feature presentation files still import
+  same-feature data implementations; 29 cross-feature application/domain import
+  edges remain classified debt or approved runtime seams.
+- Completed inherited focus: Phase 40 route-entry and DTO ownership slices are
+  archived; Phase 41 is the active architecture source.
+- Remaining focus: remove low-value presentation/data coupling, consolidate
+  DTO/read-model ownership, keep network response/error behavior in the core
+  request path, and trim startup/runtime retention only where measured or
+  lifecycle risk is clear.
+
+### Phase 40 Baseline (archived)
+
+- Archived branch: `codex/phase40-route-entry-seams`.
 - `lib/` source Dart files: 657.
 - `lib/` generated Dart files: 241.
 - `lib/` total Dart files: 898.
-- Current source-shape scan: 108 model/entity/domain-shaped files, 42 DTO files,
-  87 view-model files, 35 repository files, 16 provider files, and 9 contract
-  files.
-- Authored files with JSON transport markers: 84.
-- Cross-feature direct imports found by the current audit: 32.
-- Completed focus so far: media runtime moved behind `core/runtime`,
-  route-entry guard baseline added, notification navigation ownership moved to
-  feature application, and several DTO ownership patterns migrated under
-  `culcul-ory`, including dynamic publish responses.
-- Remaining focus: Profile route callback slice, DTO/domain mirror
-  consolidation, network response/error consolidation, endpoint policy SSOT,
-  and startup/runtime retention cleanup.
+- Completed focus: media runtime moved behind `core/runtime`, route-entry guard
+  baseline added, notification navigation ownership moved to feature
+  application, and several DTO ownership patterns migrated under `culcul-ory`,
+  including dynamic publish responses.
 
 ### Phase 27 Baseline (archived)
 

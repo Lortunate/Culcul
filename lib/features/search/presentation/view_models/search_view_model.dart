@@ -4,9 +4,9 @@ import 'package:culcul/core/constants/api_constants.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
+import 'package:culcul/features/search/application/search_application_providers.dart';
 import 'package:culcul/features/search/application/search_result.dart';
 import 'package:culcul/features/search/application/search_trending_item.dart';
-import 'package:culcul/features/search/data/search_repository_impl.dart';
 import 'package:culcul/features/search/application/search_query.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -18,7 +18,7 @@ Future<List<String>> searchSuggestions(Ref ref, String term) async {
   final cancelToken = CancelToken();
   ref.onDispose(() => cancelToken.cancel('search_suggestions_disposed'));
   final result = await ref
-      .watch(searchRepositoryProvider)
+      .watch(searchPortProvider)
       .getSuggestions(term, cancelToken: cancelToken);
   return result.when(success: (data) => data, failure: (error) => throw error);
 }
@@ -29,7 +29,7 @@ class TrendingRanking extends _$TrendingRanking {
   Future<List<SearchTrendingItem>> build() async {
     final stopwatch = Stopwatch()..start();
     final hasCachedValue = await _hasCachedValue(ApiConstants.searchTrendingRanking);
-    final result = await ref.watch(searchRepositoryProvider).getTrendingRanking();
+    final result = await ref.watch(searchPortProvider).getTrendingRanking();
     final value = result.when(success: (data) => data, failure: (error) => throw error);
     DevLogger.log('feature', 'search.hot_ranking initial_data', <String, Object?>{
       'cache_present': hasCachedValue,
@@ -50,7 +50,7 @@ class TrendingRanking extends _$TrendingRanking {
 
     final stopwatch = Stopwatch()..start();
     final result = await ref
-        .read(searchRepositoryProvider)
+        .read(searchPortProvider)
         .getTrendingRanking(forceRefresh: true);
     if (!ref.mounted) {
       return;
@@ -111,7 +111,7 @@ class SearchResult extends _$SearchResult {
     final cancelToken = CancelToken();
     _activeCancelToken = cancelToken;
     final result = await ref
-        .watch(searchRepositoryProvider)
+        .watch(searchPortProvider)
         .search(query: query, cancelToken: cancelToken);
     return result.dataOrNull;
   }
@@ -129,7 +129,7 @@ class SearchResult extends _$SearchResult {
     state = await AsyncValue.guard(() async {
       final nextQuery = query.copyWith(page: oldState.page + 1);
       final result = await ref
-          .read(searchRepositoryProvider)
+          .read(searchPortProvider)
           .search(query: nextQuery, cancelToken: cancelToken);
       return result.when(
         success: (newData) =>

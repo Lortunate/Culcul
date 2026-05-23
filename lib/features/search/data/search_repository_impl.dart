@@ -141,6 +141,7 @@ class SearchRepositoryImpl implements SearchPort {
     return forceRefresh ? true : null;
   }
 
+  @override
   Future<Result<List<String>, AppError>> getSuggestions(
     String term, {
     CancelToken? cancelToken,
@@ -161,6 +162,7 @@ class SearchRepositoryImpl implements SearchPort {
     return result.map((data) => data.toDomain());
   }
 
+  @override
   Future<Result<List<SearchTrendingItem>, AppError>> getTrendingRanking({
     bool forceRefresh = false,
   }) async {
