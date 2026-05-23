@@ -1,8 +1,7 @@
 import 'dart:async';
 
-import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
+import 'package:culcul/features/notification/application/notification_system_notice_application_providers.dart';
 import 'package:culcul/features/notification/domain/entities/system_notice.dart';
-import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -17,16 +16,14 @@ class SystemNotificationList extends _$SystemNotificationList {
     final ownerUid = ref.watch(notificationOwnerUidProvider);
     if (ownerUid == null) return const <SystemNotice>[];
 
-    final repository = ref.read(notificationRepositoryProvider);
-    final stream = repository.watchSystemNotices(ownerUid: ownerUid);
+    final systemNoticePort = ref.read(notificationSystemNoticePortProvider);
+    final stream = systemNoticePort.watchSystemNotices(ownerUid: ownerUid);
     _subscription = stream.listen((items) {
       state = AsyncData(items);
     });
     ref.onDispose(() => _subscription?.cancel());
 
-    unawaited(
-      repository.syncFeedHead(ownerUid: ownerUid, type: NotificationFeedType.system),
-    );
+    unawaited(systemNoticePort.syncSystemNotices(ownerUid: ownerUid));
     return stream.first;
   }
 
@@ -34,7 +31,7 @@ class SystemNotificationList extends _$SystemNotificationList {
     final ownerUid = ref.read(notificationOwnerUidProvider);
     if (ownerUid == null) return;
     await ref
-        .read(notificationRepositoryProvider)
-        .syncFeedHead(ownerUid: ownerUid, type: NotificationFeedType.system);
+        .read(notificationSystemNoticePortProvider)
+        .syncSystemNotices(ownerUid: ownerUid);
   }
 }
