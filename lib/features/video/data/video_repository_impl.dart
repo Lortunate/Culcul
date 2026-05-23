@@ -14,6 +14,7 @@ import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
 import 'package:culcul/features/video/application/models/subtitle.dart';
 import 'package:culcul/features/video/application/subtitle_port.dart';
 import 'package:culcul/features/video/application/video_comment_port.dart';
+import 'package:culcul/features/video/application/video_detail_port.dart';
 import 'package:culcul/features/video/data/dtos/subtitle_dto.dart';
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
 import 'package:culcul/features/video/data/dtos/video_play_url_dto.dart';
@@ -30,7 +31,7 @@ VideoRepositoryImpl videoRepository(Ref ref) {
   );
 }
 
-class VideoRepositoryImpl implements SubtitlePort, VideoCommentPort {
+class VideoRepositoryImpl implements SubtitlePort, VideoCommentPort, VideoDetailPort {
   static const _videoCommentType = 1;
 
   final VideoApi api;
@@ -126,6 +127,7 @@ class VideoRepositoryImpl implements SubtitlePort, VideoCommentPort {
     );
   }
 
+  @override
   Future<Result<PlayUrl, AppError>> fetchVideoPlayUrl({
     required int aid,
     required int cid,
@@ -214,6 +216,7 @@ class VideoRepositoryImpl implements SubtitlePort, VideoCommentPort {
     });
   }
 
+  @override
   Future<Result<void, AppError>> reportVideoProgress({
     required int aid,
     required int cid,
@@ -224,10 +227,12 @@ class VideoRepositoryImpl implements SubtitlePort, VideoCommentPort {
     );
   }
 
+  @override
   Future<Result<void, AppError>> setVideoLike({required int aid, required bool isLiked}) {
     return _requestExecutor.runUnit(() => api.setVideoLike(aid, isLiked ? 1 : 2));
   }
 
+  @override
   Future<Result<void, AppError>> addVideoCoin({
     required int aid,
     int count = 1,

@@ -12,7 +12,7 @@ mixin _VideoDetailControllerHelpersMixin on _$VideoDetailController {
     if (detail == null) return;
 
     await ref
-        .read(videoRepositoryProvider)
+        .read(videoDetailPortProvider)
         .reportVideoProgress(aid: detail.aid, cid: state.currentCid, progress: progress);
   }
 

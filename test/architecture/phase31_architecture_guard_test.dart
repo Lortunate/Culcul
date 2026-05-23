@@ -7,8 +7,6 @@ const _phase31AllowedPresentationDataImports = <String>{
   'lib/features/dynamic/presentation/view_models/dynamic_comment_view_model.dart -> lib/features/dynamic/data/dynamic_repository_impl.dart',
   'lib/features/dynamic/presentation/view_models/dynamic_detail_view_model.dart -> lib/features/dynamic/data/dynamic_repository_impl.dart',
   'lib/features/live/presentation/view_models/live_room_view_model.dart -> lib/features/live/data/live_repository_impl.dart',
-  'lib/features/video/presentation/detail/video_detail_view_model.dart -> lib/features/video/data/video_repository_impl.dart',
-  'lib/features/video/presentation/player/hooks/use_listen_audio_mode.dart -> lib/features/video/data/video_repository_impl.dart',
 };
 
 const _jsonFreeApplicationModelFiles = <String>{
@@ -62,6 +60,7 @@ const _phase40AllowedDataApplicationImports = <String>{
   'lib/features/video/data/video_repository_impl.dart -> lib/features/video/application/models/subtitle.dart',
   'lib/features/video/data/video_repository_impl.dart -> lib/features/video/application/subtitle_port.dart',
   'lib/features/video/data/video_repository_impl.dart -> lib/features/video/application/video_comment_port.dart',
+  'lib/features/video/data/video_repository_impl.dart -> lib/features/video/application/video_detail_port.dart',
 };
 
 void main() {

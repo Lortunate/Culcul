@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:developer' as developer;
 
-import 'package:culcul/features/video/application/models/play_url.dart';
 import 'package:culcul/core/services/relation_service.dart';
-import 'package:dio/dio.dart';
-import 'package:culcul/features/video/application/video_detail_workflows.dart';
+import 'package:culcul/features/video/application/models/play_url.dart';
+import 'package:culcul/features/video/application/video_detail_application_providers.dart';
 import 'package:culcul/features/video/application/video_detail_interactions.dart';
-import 'package:culcul/features/video/data/video_repository_impl.dart';
+import 'package:culcul/features/video/application/video_detail_workflows.dart';
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
+import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:culcul/features/video/presentation/detail/video_detail_state.dart';
 
@@ -185,7 +185,7 @@ class VideoDetailController extends _$VideoDetailController
     state = state.copyWith(videoDetail: applyVideoLikeState(detail, isLiked: nextLiked));
 
     final result = await ref
-        .read(videoRepositoryProvider)
+        .read(videoDetailPortProvider)
         .setVideoLike(aid: detail.aid, isLiked: nextLiked);
     if (result.isFailure) {
       state = state.copyWith(videoDetail: previousDetail);
@@ -199,7 +199,7 @@ class VideoDetailController extends _$VideoDetailController
     final previousDetail = detail;
     state = state.copyWith(videoDetail: applyVideoCoinState(detail));
 
-    final result = await ref.read(videoRepositoryProvider).addVideoCoin(aid: detail.aid);
+    final result = await ref.read(videoDetailPortProvider).addVideoCoin(aid: detail.aid);
     if (result.isFailure) {
       state = state.copyWith(videoDetail: previousDetail);
     }
@@ -232,7 +232,7 @@ class VideoDetailController extends _$VideoDetailController
     final cancelToken = CancelToken();
     _playUrlLoadCancelToken = cancelToken;
     final result = await ref
-        .read(videoRepositoryProvider)
+        .read(videoDetailPortProvider)
         .fetchVideoPlayUrl(aid: aid, cid: cid, quality: qn, cancelToken: cancelToken);
     if (!ref.mounted || !_isCurrentPlayUrlRequest(requestToken)) {
       return;
