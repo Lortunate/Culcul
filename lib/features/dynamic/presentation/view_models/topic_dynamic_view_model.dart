@@ -1,16 +1,12 @@
 import 'package:culcul/features/dynamic/application/models/dynamic_response.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_queries.dart';
-import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
+import 'package:culcul/features/dynamic/application/dynamic_feed_application_providers.dart';
 import 'package:culcul/features/dynamic/application/dynamic_feed_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'topic_dynamic_view_model.g.dart';
 
-// Architecture note: This view model reads the domain repository directly
-// instead of routing through dynamic_workflows.dart. The dynamic application
-// layer is reserved for multi-step orchestration, while this is a simple
-// single-call feed query kept local for readability.
 @riverpod
 class TopicDynamicNotifier extends _$TopicDynamicNotifier
     with CursorPagedAsyncNotifier<DynamicItem, String>, DynamicFeedController {
@@ -25,7 +21,7 @@ class TopicDynamicNotifier extends _$TopicDynamicNotifier
   @override
   Future<CursorPage<DynamicItem, String>> fetchPage(String? currentCursor) async {
     final result = await ref
-        .read(dynamicRepositoryProvider)
+        .read(dynamicFeedPortProvider)
         .getTopicFeed(TopicDynamicFeedQuery(topicId: _topicId, offset: currentCursor));
     return result.when(
       success: (feed) =>
