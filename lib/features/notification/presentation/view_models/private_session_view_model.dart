@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:culcul/features/notification/application/notification_private_session_application_providers.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
-import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -28,18 +28,18 @@ class PrivateSessionList extends _$PrivateSessionList
       return const CursorPage(items: [], nextCursor: null, hasMore: false);
     }
 
-    final repository = ref.read(notificationRepositoryProvider);
+    final privateSessionPort = ref.read(notificationPrivateSessionPortProvider);
     if (isRefreshing || currentCursor == null) {
-      await repository.syncSessions(ownerUid: ownerUid, force: true);
+      await privateSessionPort.syncSessions(ownerUid: ownerUid, force: true);
     } else {
-      await repository.syncSessionsOlder(
+      await privateSessionPort.syncSessionsOlder(
         ownerUid: ownerUid,
         sessionType: PrivateSessionType.user,
         endTs: currentCursor,
       );
     }
 
-    final sessions = await repository.pageSessionsFromLocal(
+    final sessions = await privateSessionPort.pageSessionsFromLocal(
       ownerUid: ownerUid,
       sessionType: PrivateSessionType.user,
       endTs: currentCursor,
@@ -61,7 +61,9 @@ class PrivateSessionList extends _$PrivateSessionList
 
   Future<void> _syncHeadAndRefresh(int ownerUid) async {
     try {
-      await ref.read(notificationRepositoryProvider).syncSessions(ownerUid: ownerUid);
+      await ref
+          .read(notificationPrivateSessionPortProvider)
+          .syncSessions(ownerUid: ownerUid);
       await refreshPage();
     } catch (_) {}
   }

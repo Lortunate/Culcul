@@ -6,6 +6,7 @@ import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/features/notification/application/notification_feed_port.dart';
+import 'package:culcul/features/notification/application/notification_private_session_port.dart';
 import 'package:culcul/features/notification/application/notification_system_notice_port.dart';
 import 'package:culcul/features/notification/application/notification_unread_count_port.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
@@ -45,6 +46,7 @@ NotificationRepositoryImpl notificationRepository(Ref ref) {
 class NotificationRepositoryImpl
     implements
         NotificationFeedPort,
+        NotificationPrivateSessionPort,
         NotificationSystemNoticePort,
         NotificationUnreadCountPort {
   NotificationRepositoryImpl(
@@ -158,6 +160,7 @@ class NotificationRepositoryImpl
     return _localReadStore.getUnreadCountFromLocal(ownerUid: ownerUid);
   }
 
+  @override
   Future<List<PrivateSession>> pageSessionsFromLocal({
     required int ownerUid,
     required PrivateSessionType sessionType,
@@ -232,6 +235,7 @@ class NotificationRepositoryImpl
     return _sessionSync.syncUnreadCount(ownerUid: ownerUid, force: force);
   }
 
+  @override
   Future<Result<void, AppError>> syncSessions({
     required int ownerUid,
     bool force = false,
@@ -239,6 +243,7 @@ class NotificationRepositoryImpl
     return _sessionSync.syncSessions(ownerUid: ownerUid, force: force);
   }
 
+  @override
   Future<Result<void, AppError>> syncSessionsOlder({
     required int ownerUid,
     required PrivateSessionType sessionType,
