@@ -1,10 +1,10 @@
-import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
-import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
-import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
-import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
-import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
+import 'package:culcul/features/favorites/application/favorites_application_providers.dart';
+import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
+import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
+import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
+import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/layout/app_tab_bar.dart';
 import 'package:culcul/ui/widgets/users/guest_view.dart';
@@ -105,7 +105,7 @@ Future<bool> _handleCreateFolder({
   }
 
   final result = await ref
-      .read(favRepositoryProvider)
+      .read(favoritesPortProvider)
       .createFolder(title: data.title, intro: data.intro, privacy: data.privacy);
   final error = result.errorOrNull;
   if (error == null) {

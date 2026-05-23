@@ -52,7 +52,7 @@ class FavFolderResources extends _$FavFolderResources {
   Future<FavoriteResourcePage?> _fetchItems(int mediaId, int page) async {
     final requestStopwatch = Stopwatch()..start();
     final result = await ref
-        .read(favRepositoryProvider)
+        .read(favoritesPortProvider)
         .getFolderResources(mediaId: mediaId, page: page);
     DevLogger.log('feature', 'favorites.detail request', <String, Object?>{
       'mediaId': mediaId,
@@ -77,7 +77,7 @@ class FavFolderResources extends _$FavFolderResources {
     );
     try {
       final result = await ref
-          .read(favRepositoryProvider)
+          .read(favoritesPortProvider)
           .getFolderResources(mediaId: mediaId, page: current.paging.nextPage);
       final nextPageData = result.dataOrNull;
       if (nextPageData == null) {

@@ -5,11 +5,11 @@ import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
-import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
+import 'package:culcul/features/favorites/application/favorites_application_providers.dart';
+import 'package:culcul/features/favorites/application/favorites_port.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
-import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -30,8 +30,8 @@ class FavCreatedFolders extends _$FavCreatedFolders {
       return [];
     }
     final mid = int.parse(session.uid);
-    final repository = ref.read(favRepositoryProvider);
-    final result = await repository.getCreatedFolders(upMid: mid);
+    final favoritesPort = ref.read(favoritesPortProvider);
+    final result = await favoritesPort.getCreatedFolders(upMid: mid);
     final response = result.dataOrNull;
     if (response == null) return <FavoriteFolder>[];
     final folders = response.folders;
@@ -48,7 +48,7 @@ class FavCreatedFolders extends _$FavCreatedFolders {
             }
 
             try {
-              final resourcesResult = await repository.getFolderResources(
+              final resourcesResult = await favoritesPort.getFolderResources(
                 mediaId: folder.id,
                 page: 1,
               );
@@ -90,31 +90,13 @@ Future<List<FavoriteFolder>> videoFavoriteFolders(Ref ref, int aid) async {
   }
 
   final result = await ref
-      .read(favRepositoryProvider)
+      .read(favoritesPortProvider)
       .getCreatedFolders(upMid: mid, rid: aid, type: 2);
 
   return result.when(success: (page) => page.folders, failure: (error) => throw error);
 }
 
 @riverpod
-VideoFavoriteCommands videoFavoriteCommands(Ref ref) {
-  return VideoFavoriteCommands(ref.watch(favRepositoryProvider));
-}
-
-class VideoFavoriteCommands {
-  const VideoFavoriteCommands(this._repository);
-
-  final FavRepositoryImpl _repository;
-
-  Future<Result<void, AppError>> dealVideoFavorite({
-    required int aid,
-    required Iterable<int> addMediaIds,
-    required Iterable<int> delMediaIds,
-  }) {
-    return _repository.dealVideoFavorite(
-      aid: aid,
-      addMediaIds: addMediaIds,
-      delMediaIds: delMediaIds,
-    );
-  }
+FavoritesPort videoFavoriteCommands(Ref ref) {
+  return ref.watch(favoritesPortProvider);
 }

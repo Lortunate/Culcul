@@ -6,6 +6,7 @@ import 'package:culcul/features/favorites/data/fav_api.dart';
 import 'package:culcul/features/favorites/data/dtos/fav_folder_model.dart';
 import 'package:culcul/features/favorites/data/dtos/fav_resource_model.dart';
 import 'package:culcul/features/favorites/data/favorite_mapper.dart';
+import 'package:culcul/features/favorites/application/favorites_port.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -17,7 +18,7 @@ FavRepositoryImpl favRepository(Ref ref) {
   return FavRepositoryImpl(FavApi(ref.watch(dioClientProvider)));
 }
 
-class FavRepositoryImpl {
+class FavRepositoryImpl implements FavoritesPort {
   static const int _favoritePageSize = 20;
   final FavApi _api;
   final RequestExecutor _requestExecutor;
@@ -88,6 +89,7 @@ class FavRepositoryImpl {
     );
   }
 
+  @override
   Future<Result<FavoriteFolderPage, AppError>> getCreatedFolders({
     required int upMid,
     int? rid,
@@ -97,6 +99,7 @@ class FavRepositoryImpl {
     return result.map((data) => data.toDomain());
   }
 
+  @override
   Future<Result<FavoriteFolderPage, AppError>> getCollectedFolders({
     required int upMid,
     required int page,
@@ -105,6 +108,7 @@ class FavRepositoryImpl {
     return result.map((data) => data.toDomain());
   }
 
+  @override
   Future<Result<FavoriteResourcePage, AppError>> getFolderResources({
     required int mediaId,
     required int page,
@@ -124,6 +128,7 @@ class FavRepositoryImpl {
     return result.map((data) => data.toDomain());
   }
 
+  @override
   Future<Result<FavoriteFolder, AppError>> createFolder({
     required String title,
     String? intro,
@@ -139,6 +144,7 @@ class FavRepositoryImpl {
     return result.map((data) => data.toDomain());
   }
 
+  @override
   Future<Result<FavoriteFolder, AppError>> updateFolder({
     required int mediaId,
     required String title,
@@ -156,10 +162,12 @@ class FavRepositoryImpl {
     return result.map((data) => data.toDomain());
   }
 
+  @override
   Future<Result<void, AppError>> deleteFolder({required String mediaIds}) {
     return _requestExecutor.runUnit(() => _api.delFolder(mediaIds));
   }
 
+  @override
   Future<Result<void, AppError>> deleteResources({
     required String resources,
     required int mediaId,
@@ -167,6 +175,7 @@ class FavRepositoryImpl {
     return _requestExecutor.runUnit(() => _api.batchDelResource(resources, mediaId));
   }
 
+  @override
   Future<Result<void, AppError>> dealVideoFavorite({
     required int aid,
     required Iterable<int> addMediaIds,

@@ -92,7 +92,7 @@ Future<bool> _handleEditFolder({
   }
 
   final result = await ref
-      .read(favRepositoryProvider)
+      .read(favoritesPortProvider)
       .updateFolder(
         mediaId: mediaId,
         title: data.title,
@@ -143,7 +143,7 @@ Future<bool> _handleDeleteFolder({
   }
 
   final result = await ref
-      .read(favRepositoryProvider)
+      .read(favoritesPortProvider)
       .deleteFolder(mediaIds: mediaId.toString());
   final error = result.errorOrNull;
   if (error == null) {
@@ -171,7 +171,7 @@ Future<bool> _handleDeleteResources({
   required Set<int> resourceIds,
 }) async {
   final result = await ref
-      .read(favRepositoryProvider)
+      .read(favoritesPortProvider)
       .deleteResources(mediaId: mediaId, resources: resourceIds.join(','));
   final error = result.errorOrNull;
   if (error == null) {
