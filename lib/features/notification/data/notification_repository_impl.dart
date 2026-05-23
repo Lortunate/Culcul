@@ -5,6 +5,7 @@ import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:dio/dio.dart';
+import 'package:culcul/features/notification/application/notification_feed_port.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
 import 'package:culcul/features/notification/data/notification_api.dart';
 import 'package:culcul/features/notification/data/notification_message_persistence.dart';
@@ -39,7 +40,7 @@ NotificationRepositoryImpl notificationRepository(Ref ref) {
   );
 }
 
-class NotificationRepositoryImpl {
+class NotificationRepositoryImpl implements NotificationFeedPort {
   NotificationRepositoryImpl(
     this._api,
     this._database,
@@ -189,6 +190,7 @@ class NotificationRepositoryImpl {
     );
   }
 
+  @override
   Future<List<NotificationEntry>> pageFeedFromLocal({
     required int ownerUid,
     required NotificationFeedType type,
@@ -261,6 +263,7 @@ class NotificationRepositoryImpl {
     );
   }
 
+  @override
   Future<Result<void, AppError>> syncFeedHead({
     required int ownerUid,
     required NotificationFeedType type,
@@ -268,6 +271,7 @@ class NotificationRepositoryImpl {
     return _feedSync.syncFeedHead(ownerUid: ownerUid, type: type);
   }
 
+  @override
   Future<Result<void, AppError>> syncFeedOlder({
     required int ownerUid,
     required NotificationFeedType type,

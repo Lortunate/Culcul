@@ -1,9 +1,9 @@
 import 'dart:async';
 
+import 'package:culcul/features/notification/application/notification_feed_application_providers.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_cursor.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
-import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/presentation/view_models/notification_owner_uid_provider.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -32,14 +32,14 @@ class NotificationFeedList extends _$NotificationFeedList
       return const CursorPage(items: [], nextCursor: null, hasMore: false);
     }
 
-    final repository = ref.read(notificationRepositoryProvider);
+    final feedPort = ref.read(notificationFeedPortProvider);
     if (isRefreshing || cursor == null) {
-      await repository.syncFeedHead(ownerUid: ownerUid, type: type);
+      await feedPort.syncFeedHead(ownerUid: ownerUid, type: type);
     } else {
-      await repository.syncFeedOlder(ownerUid: ownerUid, type: type, cursor: cursor);
+      await feedPort.syncFeedOlder(ownerUid: ownerUid, type: type, cursor: cursor);
     }
 
-    final data = await repository.pageFeedFromLocal(
+    final data = await feedPort.pageFeedFromLocal(
       ownerUid: ownerUid,
       type: type,
       cursor: cursor,
@@ -65,7 +65,7 @@ class NotificationFeedList extends _$NotificationFeedList
     if (type == NotificationFeedType.system) return;
     try {
       await ref
-          .read(notificationRepositoryProvider)
+          .read(notificationFeedPortProvider)
           .syncFeedHead(ownerUid: ownerUid, type: type);
       await refreshPage();
     } catch (_) {}
