@@ -13,8 +13,10 @@ abstract class FavApi {
 
   @GET(ApiConstants.favCreatedList)
   Future<ApiResponse<FavFolderListResponse>> getCreatedFolders(
-    @Query('up_mid') int upMid,
-  );
+    @Query('up_mid') int upMid, {
+    @Query('rid') int? rid,
+    @Query('type') int? type,
+  });
 
   @GET(ApiConstants.favCollectedList)
   Future<ApiResponse<FavFolderListResponse>> getCollectedFolders(
@@ -61,6 +63,17 @@ abstract class FavApi {
   Future<ApiResponse<dynamic>> delFolder(
     @Field('media_ids') String mediaIds, {
     @Field('csrf') String? csrf,
+  });
+
+  @POST(ApiConstants.favResourceDeal)
+  @FormUrlEncoded()
+  @Headers({'x-bili-csrf': 'true'})
+  Future<ApiResponse<dynamic>> dealResource(
+    @Field('rid') int rid,
+    @Field('type') int type, {
+    @Field('add_media_ids') String? addMediaIds,
+    @Field('del_media_ids') String? delMediaIds,
+    @Field('platform') String platform = 'web',
   });
 
   @POST(ApiConstants.favResourceBatchDel)

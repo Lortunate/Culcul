@@ -1,5 +1,6 @@
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/features/video/application/video_detail_models.dart';
+import 'package:culcul/features/video/presentation/detail/info/video_actions.dart';
 import 'package:culcul/features/video/presentation/detail/info/video_description.dart';
 import 'package:culcul/features/video/presentation/detail/info/video_info_view.dart';
 import 'package:culcul/features/video/presentation/detail/info/video_recommendation.dart';
@@ -67,6 +68,39 @@ void main() {
 
     expect(find.text('Because you watched Flutter'), findsOneWidget);
   });
+
+  testWidgets('VideoActionsRow invokes favorite callback', (tester) async {
+    var favoriteTaps = 0;
+
+    await tester.pumpWidget(
+      _TestApp(
+        child: VideoActionsRow(
+          detail: _detail(),
+          onFavorite: () {
+            favoriteTaps++;
+          },
+        ),
+      ),
+    );
+
+    await tester.tap(find.byIcon(Icons.star_rounded));
+    await tester.pump();
+
+    expect(favoriteTaps, 1);
+  });
+}
+
+VideoDetailViewData _detail() {
+  return const VideoDetailViewData(
+    bvid: 'BV1xx411c7mD',
+    aid: 100,
+    pic: '',
+    title: 'Demo',
+    pubDate: 0,
+    desc: '',
+    owner: VideoOwner(mid: 1, name: 'owner'),
+    stat: VideoStat(favorite: 4),
+  );
 }
 
 class _TestApp extends StatelessWidget {

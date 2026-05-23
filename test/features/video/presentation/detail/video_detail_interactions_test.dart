@@ -29,11 +29,31 @@ void main() {
     expect(updated.reqUser.coin, 1);
     expect(updated.stat.coin, 4);
   });
+
+  group('applyVideoFavoriteState', () {
+    test('marks an unfavorited video as favorite and increments the favorite count', () {
+      final updated = applyVideoFavoriteState(_detail(favorite: 4), isFavorite: true);
+
+      expect(updated.reqUser.favorite, 1);
+      expect(updated.stat.favorite, 5);
+    });
+
+    test('unmarks a favorited video and does not decrement below zero', () {
+      final updated = applyVideoFavoriteState(
+        _detail(reqUser: const VideoRequestUserState(favorite: 1)),
+        isFavorite: false,
+      );
+
+      expect(updated.reqUser.favorite, 0);
+      expect(updated.stat.favorite, 0);
+    });
+  });
 }
 
 VideoDetailViewData _detail({
   int like = 0,
   int coin = 0,
+  int favorite = 0,
   VideoRequestUserState reqUser = const VideoRequestUserState(),
 }) {
   return VideoDetailViewData(
@@ -44,7 +64,7 @@ VideoDetailViewData _detail({
     pubDate: 0,
     desc: '',
     owner: const VideoOwner(mid: 1, name: 'owner'),
-    stat: VideoStat(like: like, coin: coin),
+    stat: VideoStat(like: like, coin: coin, favorite: favorite),
     reqUser: reqUser,
   );
 }

@@ -5,6 +5,7 @@ import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
@@ -71,5 +72,49 @@ class FavCreatedFolders extends _$FavCreatedFolders {
         );
 
     return foldersWithCovers;
+  }
+}
+
+@riverpod
+bool videoFavoriteUserLoggedIn(Ref ref) {
+  final session = ref.watch(currentUserProvider);
+  return session != null && session.isLoggedIn;
+}
+
+@riverpod
+Future<List<FavoriteFolder>> videoFavoriteFolders(Ref ref, int aid) async {
+  final session = ref.watch(currentUserProvider);
+  final mid = int.tryParse(session?.uid ?? '');
+  if (session == null || !session.isLoggedIn || mid == null) {
+    return const <FavoriteFolder>[];
+  }
+
+  final result = await ref
+      .read(favRepositoryProvider)
+      .getCreatedFolders(upMid: mid, rid: aid, type: 2);
+
+  return result.when(success: (page) => page.folders, failure: (error) => throw error);
+}
+
+@riverpod
+VideoFavoriteCommands videoFavoriteCommands(Ref ref) {
+  return VideoFavoriteCommands(ref.watch(favRepositoryProvider));
+}
+
+class VideoFavoriteCommands {
+  const VideoFavoriteCommands(this._repository);
+
+  final FavRepositoryImpl _repository;
+
+  Future<Result<void, AppError>> dealVideoFavorite({
+    required int aid,
+    required Iterable<int> addMediaIds,
+    required Iterable<int> delMediaIds,
+  }) {
+    return _repository.dealVideoFavorite(
+      aid: aid,
+      addMediaIds: addMediaIds,
+      delMediaIds: delMediaIds,
+    );
   }
 }

@@ -43,6 +43,7 @@ class ApiConstants {
   static const String favFolderAdd = '/x/v3/fav/folder/add';
   static const String favFolderEdit = '/x/v3/fav/folder/edit';
   static const String favFolderDel = '/x/v3/fav/folder/del';
+  static const String favResourceDeal = '/x/v3/fav/resource/deal';
   static const String favResourceBatchDel = '/x/v3/fav/resource/batch-del';
   static const String favResourceClean = '/x/v3/fav/resource/clean';
 

@@ -9,8 +9,15 @@ class VideoActionsRow extends StatelessWidget {
   final VideoDetailViewData detail;
   final VoidCallback? onLike;
   final VoidCallback? onCoin;
+  final VoidCallback? onFavorite;
 
-  const VideoActionsRow({super.key, required this.detail, this.onLike, this.onCoin});
+  const VideoActionsRow({
+    super.key,
+    required this.detail,
+    this.onLike,
+    this.onCoin,
+    this.onFavorite,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +55,7 @@ class VideoActionsRow extends StatelessWidget {
               icon: Icons.star_rounded,
               label: detail.stat.favorite.formatNumber,
               isSelected: detail.reqUser.favorite == 1,
+              onTap: onFavorite,
             ),
           ),
           Expanded(

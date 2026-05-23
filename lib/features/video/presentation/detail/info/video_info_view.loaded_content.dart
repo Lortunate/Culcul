@@ -12,6 +12,7 @@ class _VideoInfoLoadedContent extends StatelessWidget {
   final ValueChanged<String> onOpenVideo;
   final VoidCallback onLike;
   final VoidCallback onCoin;
+  final VoidCallback onFavorite;
   final ValueChanged<int> onPartChanged;
 
   const _VideoInfoLoadedContent({
@@ -26,6 +27,7 @@ class _VideoInfoLoadedContent extends StatelessWidget {
     required this.onOpenVideo,
     required this.onLike,
     required this.onCoin,
+    required this.onFavorite,
     required this.onPartChanged,
   });
 
@@ -51,6 +53,7 @@ class _VideoInfoLoadedContent extends StatelessWidget {
               hasRecommendations: relatedVideos.isNotEmpty,
               onLike: onLike,
               onCoin: onCoin,
+              onFavorite: onFavorite,
               onPartChanged: onPartChanged,
             ),
           ]),

@@ -6,6 +6,7 @@ class _VideoInfoEngagementSection extends StatelessWidget {
   final bool hasRecommendations;
   final VoidCallback onLike;
   final VoidCallback onCoin;
+  final VoidCallback onFavorite;
   final ValueChanged<int> onPartChanged;
 
   const _VideoInfoEngagementSection({
@@ -14,6 +15,7 @@ class _VideoInfoEngagementSection extends StatelessWidget {
     required this.hasRecommendations,
     required this.onLike,
     required this.onCoin,
+    required this.onFavorite,
     required this.onPartChanged,
   });
 
@@ -27,7 +29,12 @@ class _VideoInfoEngagementSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 8),
-        VideoActionsRow(detail: detail, onLike: onLike, onCoin: onCoin),
+        VideoActionsRow(
+          detail: detail,
+          onLike: onLike,
+          onCoin: onCoin,
+          onFavorite: onFavorite,
+        ),
         const SizedBox(height: 8),
         if (detail.pages.length > 1) ...[
           VideoPartsSection(

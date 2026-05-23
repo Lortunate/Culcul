@@ -205,6 +205,15 @@ class VideoDetailController extends _$VideoDetailController
     }
   }
 
+  void setVideoFavoriteState({required bool isFavorite}) {
+    final detail = state.videoDetail;
+    if (detail == null) return;
+
+    state = state.copyWith(
+      videoDetail: applyVideoFavoriteState(detail, isFavorite: isFavorite),
+    );
+  }
+
   Future<void> _loadPlayUrl({required int aid, required int cid, required int qn}) async {
     final cached = _readCachedPlayUrl(aid: aid, cid: cid, qn: qn);
     if (cached != null) {

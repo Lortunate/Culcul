@@ -1,5 +1,6 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/features/favorites/route_entry.dart';
 import 'package:culcul/features/video/application/video_detail_models.dart';
 import 'package:culcul/features/video/presentation/detail/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/detail/info/uploader_section.dart';
@@ -69,6 +70,18 @@ class VideoInfoView extends HookConsumerWidget {
     final relatedVideos = state.relatedVideos;
     final isExpanded = useState(false);
 
+    Future<void> openFavoritePicker() async {
+      final isFavorite = await showVideoFavoritePicker(
+        context: context,
+        aid: detail.aid,
+        onLogin: onLogin,
+      );
+      if (isFavorite == null || !context.mounted) {
+        return;
+      }
+      notifier.setVideoFavoriteState(isFavorite: isFavorite);
+    }
+
     useEffect(() {
       if (relatedVideos.isEmpty) {
         return null;
@@ -108,6 +121,7 @@ class VideoInfoView extends HookConsumerWidget {
       onOpenVideo: onOpenVideo,
       onLike: notifier.toggleVideoLike,
       onCoin: notifier.addVideoCoin,
+      onFavorite: openFavoritePicker,
       onPartChanged: notifier.switchPart,
     );
   }

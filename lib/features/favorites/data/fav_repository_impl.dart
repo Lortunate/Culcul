@@ -27,8 +27,12 @@ class FavRepositoryImpl {
 
   Future<Result<FavFolderListResponse, AppError>> _getCreatedFoldersModel({
     required int upMid,
+    int? rid,
+    int? type,
   }) {
-    return _requestExecutor.runApiDirect(() => _api.getCreatedFolders(upMid));
+    return _requestExecutor.runApiDirect(
+      () => _api.getCreatedFolders(upMid, rid: rid, type: type),
+    );
   }
 
   Future<Result<FavFolderListResponse, AppError>> _getCollectedFoldersModel({
@@ -86,8 +90,10 @@ class FavRepositoryImpl {
 
   Future<Result<FavoriteFolderPage, AppError>> getCreatedFolders({
     required int upMid,
+    int? rid,
+    int? type,
   }) async {
-    final result = await _getCreatedFoldersModel(upMid: upMid);
+    final result = await _getCreatedFoldersModel(upMid: upMid, rid: rid, type: type);
     return result.map((data) => data.toDomain());
   }
 
@@ -159,5 +165,29 @@ class FavRepositoryImpl {
     required int mediaId,
   }) {
     return _requestExecutor.runUnit(() => _api.batchDelResource(resources, mediaId));
+  }
+
+  Future<Result<void, AppError>> dealVideoFavorite({
+    required int aid,
+    required Iterable<int> addMediaIds,
+    required Iterable<int> delMediaIds,
+  }) {
+    final addIds = _joinMediaIds(addMediaIds);
+    final delIds = _joinMediaIds(delMediaIds);
+    if (addIds == null && delIds == null) {
+      return Future.value(const Success(null));
+    }
+
+    return _requestExecutor.runUnit(
+      () => _api.dealResource(aid, 2, addMediaIds: addIds, delMediaIds: delIds),
+    );
+  }
+
+  String? _joinMediaIds(Iterable<int> ids) {
+    final normalized = ids.where((id) => id > 0).toSet().toList()..sort();
+    if (normalized.isEmpty) {
+      return null;
+    }
+    return normalized.join(',');
   }
 }
