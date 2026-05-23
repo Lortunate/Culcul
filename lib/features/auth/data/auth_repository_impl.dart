@@ -8,6 +8,7 @@ import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/bootstrap/providers/storage_provider.dart';
 import 'package:culcul/core/storage/storage_keys.dart';
+import 'package:culcul/features/auth/application/auth_qr_login_port.dart';
 import 'package:culcul/features/auth/data/auth_api.dart';
 import 'package:culcul/features/auth/domain/entities/country_code.dart';
 import 'package:culcul/features/auth/domain/entities/user_entity.dart';
@@ -36,7 +37,8 @@ class AuthRepositoryImpl
     with
         _AuthRepositoryHelpersMixin,
         _AuthRepositorySessionMixin,
-        _AuthRepositoryFlowsMixin {
+        _AuthRepositoryFlowsMixin
+    implements AuthQrLoginPort {
   @override
   final AuthApi _api;
   @override

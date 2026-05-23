@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:culcul/features/auth/data/auth_repository_impl.dart';
 import 'package:culcul/features/auth/application/auth_controller.dart';
+import 'package:culcul/features/auth/application/auth_qr_login_providers.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -34,7 +34,7 @@ class AuthQrLoginController extends _$AuthQrLoginController {
     _pollTimer?.cancel();
     state = const AuthQrLoginState();
 
-    final result = await ref.read(authRepositoryProvider).getQrCode();
+    final result = await ref.read(authQrLoginPortProvider).getQrCode();
     result.when(
       success: (data) {
         state = AuthQrLoginState(qrUrl: data.url);
@@ -49,7 +49,7 @@ class AuthQrLoginController extends _$AuthQrLoginController {
   void _startPolling(String key) {
     _pollTimer?.cancel();
     _pollTimer = Timer.periodic(const Duration(seconds: 3), (_) async {
-      final result = await ref.read(authRepositoryProvider).pollQrCode(key);
+      final result = await ref.read(authQrLoginPortProvider).pollQrCode(key);
       result.when(
         success: (poll) {
           _updateStatus(poll.code);
