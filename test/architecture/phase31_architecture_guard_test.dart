@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'architecture_guard_utils.dart';
 
 const _phase31AllowedPresentationDataImports = <String>{
-  'lib/features/dynamic/presentation/view_models/article_detail_view_model.dart -> lib/features/dynamic/data/dynamic_repository_impl.dart',
   'lib/features/dynamic/presentation/view_models/dynamic_comment_view_model.dart -> lib/features/dynamic/data/dynamic_repository_impl.dart',
   'lib/features/live/presentation/view_models/live_room_view_model.dart -> lib/features/live/data/live_repository_impl.dart',
 };
@@ -19,6 +18,7 @@ const _jsonFreeApplicationModelFiles = <String>{
 const _phase40AllowedDataApplicationImports = <String>{
   'lib/features/auth/data/auth_repository_impl.dart -> lib/features/auth/application/auth_qr_login_port.dart',
   'lib/features/dynamic/data/dynamic_api.dart -> lib/features/dynamic/application/models/dynamic_response.dart',
+  'lib/features/dynamic/data/dynamic_repository_impl.dart -> lib/features/dynamic/application/article_detail_port.dart',
   'lib/features/dynamic/data/dynamic_repository_impl.dart -> lib/features/dynamic/application/dynamic_detail_port.dart',
   'lib/features/dynamic/data/dynamic_repository_impl.dart -> lib/features/dynamic/application/models/dynamic_item_extensions.dart',
   'lib/features/dynamic/data/dynamic_repository_impl.dart -> lib/features/dynamic/application/models/dynamic_response.dart',

@@ -4,12 +4,12 @@ mixin _ArticleDetailViewModelActions on _$ArticleDetailViewModel {
   String get _url;
 
   ArticleDetailCommentWorkflow get _commentWorkflow {
-    return ArticleDetailCommentWorkflow(ref.read(dynamicRepositoryProvider));
+    return ArticleDetailCommentWorkflow(ref.read(articleDetailPortProvider));
   }
 
   Future<void> loadDetail() async {
     state = state.copyWith(isLoading: true, error: null);
-    final result = await ref.read(dynamicRepositoryProvider).getArticleDetail(_url);
+    final result = await ref.read(articleDetailPortProvider).getArticleDetail(_url);
     state = result.when(
       success: (detail) => state.copyWith(detail: detail, isLoading: false, error: null),
       failure: (error) => state.copyWith(isLoading: false, error: error),
@@ -63,7 +63,7 @@ mixin _ArticleDetailViewModelActions on _$ArticleDetailViewModel {
     );
 
     final result = await ref
-        .read(dynamicRepositoryProvider)
+        .read(articleDetailPortProvider)
         .getArticleCommentList(
           article: detail,
           next: refresh ? null : state.commentsNext,
@@ -155,7 +155,7 @@ mixin _ArticleDetailViewModelActions on _$ArticleDetailViewModel {
     );
 
     final result = await ref
-        .read(dynamicRepositoryProvider)
+        .read(articleDetailPortProvider)
         .likeArticleComment(article: detail, rpid: item.rpid, isLiked: !isLiked);
     if (result.isFailure) {
       state = state.copyWith(comments: previous);

@@ -1,10 +1,10 @@
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
-import 'package:culcul/features/dynamic/application/dynamic_workflows.dart';
+import 'package:culcul/features/dynamic/application/article_detail_application_providers.dart';
+import 'package:culcul/features/dynamic/application/article_detail_workflows.dart';
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
