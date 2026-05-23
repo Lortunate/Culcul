@@ -47,6 +47,7 @@ class ProfileRepositoryImpl
     return null;
   }
 
+  @override
   Future<Result<UserCardModel, AppError>> getUserCard(int mid) async {
     final result = await _requestExecutor.runApiDirect(() => api.getCard(mid));
     return result.when(

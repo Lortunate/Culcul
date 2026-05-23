@@ -1,3 +1,4 @@
+import 'package:culcul/core/contracts/user_card_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/profile/application/user_space_application_providers.dart';
@@ -79,6 +80,16 @@ final class _FakeUserSpacePort implements UserSpacePort {
   Future<Result<ProfileUser, AppError>> getProfile(int userId) async {
     profileRequests.add(userId);
     return profile;
+  }
+
+  @override
+  Future<Result<ProfileUser, AppError>> getProfileModel(int userId) async {
+    return const Failure(AppError.data('profile model not configured'));
+  }
+
+  @override
+  Future<Result<UserCardModel, AppError>> getUserCard(int mid) async {
+    return const Failure(AppError.data('user card not configured'));
   }
 
   @override
