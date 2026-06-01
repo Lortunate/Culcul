@@ -87,7 +87,7 @@ class _ParagraphBlockViewState extends State<_ParagraphBlockView> {
                 : TextDecoration.none,
           );
 
-      final normalizedText = _normalizeBlockText(node.text);
+      final normalizedText = node.text.replaceAll(RegExp(r'\n{3,}'), '\n\n');
       if (node.linkUrl == null || node.linkUrl!.isEmpty) {
         return TextSpan(text: normalizedText, style: style);
       }
@@ -128,10 +128,6 @@ class _ParagraphBlockViewState extends State<_ParagraphBlockView> {
 
 bool _hasVisibleText(String value) {
   return value.replaceAll(RegExp(r'\s+'), '').isNotEmpty;
-}
-
-String _normalizeBlockText(String value) {
-  return value.replaceAll(RegExp(r'\n{3,}'), '\n\n');
 }
 
 Color? _parseColor(String? color) {

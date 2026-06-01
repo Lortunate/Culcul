@@ -5,6 +5,8 @@ import 'package:culcul/core/data/network/interceptors/endpoint_cache_options_int
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
+import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/result/result.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 mixin HomeFeedPagingMixin on OffsetPagedAsyncNotifier<VideoModel> {
@@ -19,6 +21,33 @@ mixin HomeFeedPagingMixin on OffsetPagedAsyncNotifier<VideoModel> {
   Future<void> refresh() => refreshPage();
 
   Future<void> loadMore() => loadNextPage();
+
+  Future<List<VideoModel>> loadFeedPage({
+    required String perfChain,
+    required int page,
+    required bool forceRefresh,
+    required Future<Result<List<VideoModel>, AppError>> Function({
+      required int page,
+      required bool forceRefresh,
+    })
+    fetchPage,
+  }) async {
+    final result = await fetchPage(page: page, forceRefresh: forceRefresh);
+    if (forceRefresh) {
+      DevLogger.log('feature', '$perfChain.silent_refresh_result', <String, Object?>{
+        'success': result.isSuccess,
+      });
+    }
+    return result.when(
+      success: (data) => data,
+      failure: (error) {
+        DevLogger.log('feature', '$perfChain.load_error', <String, Object?>{
+          'error': error,
+        });
+        return const <VideoModel>[];
+      },
+    );
+  }
 
   Future<List<VideoModel>> buildFirstPageWithSilentRefresh({
     required String perfChain,

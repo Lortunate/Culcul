@@ -1,22 +1,75 @@
-import 'package:culcul/features/favorites/application/video_favorite_selection.dart';
+import 'package:culcul/features/auth/application/auth_session_providers.dart';
+import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
-import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
+import 'package:culcul/features/favorites/state/favorites_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class VideoFavoritePickerSheet extends ConsumerStatefulWidget {
-  const VideoFavoritePickerSheet({super.key, required this.aid});
+Future<bool?> showVideoFavoritePicker({
+  required BuildContext context,
+  required int aid,
+  required VoidCallback onLogin,
+}) {
+  final container = ProviderScope.containerOf(context, listen: false);
+  final session = container.read(currentUserProvider);
+  if (session == null || !session.isLoggedIn) {
+    onLogin();
+    return Future<bool?>.value();
+  }
+
+  return showModalBottomSheet<bool>(
+    context: context,
+    isScrollControlled: true,
+    showDragHandle: true,
+    builder: (context) => _VideoFavoritePickerSheet(aid: aid),
+  );
+}
+
+class _VideoFavoriteFolderDelta {
+  const _VideoFavoriteFolderDelta({
+    required this.addMediaIds,
+    required this.delMediaIds,
+    required this.isFavorite,
+  });
+
+  final Set<int> addMediaIds;
+  final Set<int> delMediaIds;
+  final bool isFavorite;
+
+  bool get hasChanges => addMediaIds.isNotEmpty || delMediaIds.isNotEmpty;
+}
+
+Set<int> _selectedVideoFavoriteFolderIds(Iterable<FavoriteFolder> folders) {
+  return folders
+      .where((folder) => folder.favState == 1)
+      .map((folder) => folder.id)
+      .toSet();
+}
+
+_VideoFavoriteFolderDelta _buildVideoFavoriteFolderDelta({
+  required Set<int> initialIds,
+  required Set<int> selectedIds,
+}) {
+  return _VideoFavoriteFolderDelta(
+    addMediaIds: selectedIds.difference(initialIds),
+    delMediaIds: initialIds.difference(selectedIds),
+    isFavorite: selectedIds.isNotEmpty,
+  );
+}
+
+class _VideoFavoritePickerSheet extends ConsumerStatefulWidget {
+  const _VideoFavoritePickerSheet({required this.aid});
 
   final int aid;
 
   @override
-  ConsumerState<VideoFavoritePickerSheet> createState() =>
+  ConsumerState<_VideoFavoritePickerSheet> createState() =>
       _VideoFavoritePickerSheetState();
 }
 
-class _VideoFavoritePickerSheetState extends ConsumerState<VideoFavoritePickerSheet> {
+class _VideoFavoritePickerSheetState extends ConsumerState<_VideoFavoritePickerSheet> {
   Set<int> _initialSelectedIds = <int>{};
   Set<int> _selectedIds = <int>{};
   Object? _submitError;
@@ -37,7 +90,7 @@ class _VideoFavoritePickerSheetState extends ConsumerState<VideoFavoritePickerSh
     if (_selectionInitialized) {
       return;
     }
-    _initialSelectedIds = selectedVideoFavoriteFolderIds(folders);
+    _initialSelectedIds = _selectedVideoFavoriteFolderIds(folders);
     _selectedIds = Set<int>.of(_initialSelectedIds);
     _selectionInitialized = true;
   }
@@ -56,7 +109,7 @@ class _VideoFavoritePickerSheetState extends ConsumerState<VideoFavoritePickerSh
   }
 
   Future<void> _submit() async {
-    final delta = buildVideoFavoriteFolderDelta(
+    final delta = _buildVideoFavoriteFolderDelta(
       initialIds: _initialSelectedIds,
       selectedIds: _selectedIds,
     );
@@ -71,7 +124,7 @@ class _VideoFavoritePickerSheetState extends ConsumerState<VideoFavoritePickerSh
     });
 
     final result = await ref
-        .read(videoFavoriteCommandsProvider)
+        .read(favRepositoryProvider)
         .dealVideoFavorite(
           aid: widget.aid,
           addMediaIds: delta.addMediaIds,

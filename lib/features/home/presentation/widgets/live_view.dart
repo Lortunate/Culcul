@@ -1,24 +1,67 @@
-import 'dart:math' as math;
-
+import 'package:culcul/core/contracts/live_room_summary_contract.dart';
+import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
 import 'package:culcul/core/hooks/use_scroll_precache.dart';
 import 'package:culcul/core/data/network/network_quality_policy.dart';
+import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/perf/performance_policy.dart';
-import 'package:culcul/core/runtime/runtime_performance_policy.dart';
 import 'package:culcul/core/runtime/runtime_performance_policy_provider.dart';
-import 'package:culcul/core/contracts/live_room_summary_contract.dart';
-import 'package:culcul/features/live/application/live_recommend_provider.dart';
-import 'package:culcul/features/home/presentation/widgets/live_card_skeleton.dart';
 import 'package:culcul/features/home/presentation/widgets/home_feed_paging_shell.dart';
 import 'package:culcul/features/home/presentation/widgets/home_feed_view_utils.dart';
 import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';
 import 'package:culcul/features/home/presentation/widgets/live_room_card.dart';
 import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
-import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
-import 'package:culcul/features/home/presentation/home_breakpoints.dart';
+import 'package:culcul/features/live/data/live_paging_constants.dart';
+import 'package:culcul/features/live/data/live_repository_impl.dart';
+import 'package:culcul/ui/widgets/cards/app_card_container.dart';
+import 'package:culcul/ui/widgets/feedback/app_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+final _liveRecommendProvider =
+    AsyncNotifierProvider.autoDispose<_LiveRecommend, List<LiveRoomSummary>>(
+      _LiveRecommend.new,
+    );
+
+class _LiveRecommend extends AsyncNotifier<List<LiveRoomSummary>>
+    with OffsetPagedAsyncNotifier<LiveRoomSummary> {
+  @override
+  Future<List<LiveRoomSummary>> build() async {
+    return buildFirstPage();
+  }
+
+  @override
+  Future<List<LiveRoomSummary>> fetchPage(int page) async {
+    final result = await ref
+        .read(liveRepositoryProvider)
+        .getRecommendList(page: page, pageSize: liveRecommendPageSize);
+    return result.when(
+      success: (data) => data,
+      failure: (error) {
+        DevLogger.log('feature', 'live.recommend_feed.load_error', <String, Object?>{
+          'error': error,
+        });
+        return const <LiveRoomSummary>[];
+      },
+    );
+  }
+
+  @override
+  Object itemId(LiveRoomSummary item) => item.roomId;
+
+  @override
+  bool hasMoreAfterPage(List<LiveRoomSummary> items) =>
+      items.length >= liveRecommendPageSize;
+
+  Future<void> refresh() {
+    return refreshPage();
+  }
+
+  Future<void> loadMore() {
+    return loadNextPage();
+  }
+}
 
 class LiveView extends HookConsumerWidget {
   final ValueChanged<int> onOpenRoom;
@@ -33,177 +76,144 @@ class LiveView extends HookConsumerWidget {
     final networkPolicy = ref.watch(networkQualityPolicyProvider);
     final runtimePolicy = ref.watch(runtimePerformancePolicyProvider);
     final perfPolicy = useValueListenable(PerformancePolicyController.notifier);
-    final liveAsync = ref.watch(liveRecommendProvider);
+    final liveAsync = ref.watch(_liveRecommendProvider);
+    final liveItems = liveAsync.value ?? const [];
     final scrollController = useScrollController();
     final refreshController = useManagedEasyRefreshController();
     final cacheExtent = resolveHomeFeedCacheExtent(
       layout.cacheExtent,
       networkPolicy: networkPolicy,
       perfPolicy: perfPolicy,
-      tuning: const HomeFeedCacheTuning(
-        constrainedNetworkFactor: 0.72,
-        normalNetworkFactor: 0.88,
-        minimalEffectsFactor: 0.78,
-        reducedEffectsFactor: 0.9,
-        minExtent: 360,
-      ),
+      tuning: homeGridFeedCacheTuning,
     );
 
     useHomeScrollSync(ref, scrollController, refreshController, 0);
 
-    return HomeFeedPagingShell(
-      maxWidth: HomeBreakpoints.feedMaxWidth,
-      asyncValue: liveAsync,
-      controller: refreshController,
-      onRefresh: ref.read(liveRecommendProvider.notifier).refresh,
-      onLoadMore: ref.read(liveRecommendProvider.notifier).loadMore,
-      itemCount: () => ref.read(liveRecommendProvider).value?.length ?? 0,
-      hasMoreAfterLoad: ({required currentCount, required previousCount}) =>
-          ref.read(liveRecommendProvider.notifier).hasMore,
-      skeleton: _LiveGridSkeleton(
-        scrollController: scrollController,
-        layout: layout,
-        cacheExtent: cacheExtent,
-      ),
-      builder: (context, items) => _LiveGrid(
-        items: items,
-        onOpenRoom: onOpenRoom,
-        scrollController: scrollController,
-        layout: layout,
-        cacheExtent: cacheExtent,
-        networkPolicy: networkPolicy,
-        runtimePolicy: runtimePolicy,
-      ),
-    );
-  }
-}
-
-class _LiveGridSkeleton extends StatelessWidget {
-  const _LiveGridSkeleton({
-    required this.scrollController,
-    required this.layout,
-    required this.cacheExtent,
-  });
-
-  final ScrollController scrollController;
-  final HomeGridLayoutSpec layout;
-  final double cacheExtent;
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomScrollView(
-      cacheExtent: cacheExtent,
-      controller: scrollController,
-      slivers: [
-        SliverPadding(
-          padding: layout.padding,
-          sliver: SliverGrid.builder(
-            gridDelegate: layout.gridDelegate,
-            itemCount: layout.skeletonCount,
-            itemBuilder: (_, _) => const LiveCardSkeleton(),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _LiveGrid extends HookWidget {
-  const _LiveGrid({
-    required this.items,
-    required this.onOpenRoom,
-    required this.scrollController,
-    required this.layout,
-    required this.cacheExtent,
-    required this.networkPolicy,
-    required this.runtimePolicy,
-  });
-
-  final List<LiveRoomSummary> items;
-  final ValueChanged<int> onOpenRoom;
-  final ScrollController scrollController;
-  final HomeGridLayoutSpec layout;
-  final double cacheExtent;
-  final NetworkQualityPolicy networkPolicy;
-  final RuntimePerformancePolicy runtimePolicy;
-
-  @override
-  Widget build(BuildContext context) {
     useEffect(() {
-      final width = _estimateGridItemWidth(context);
+      if (liveItems.isEmpty) {
+        return null;
+      }
+
+      final width = estimateHomeGridItemWidth(context, layout);
       final pixelRatio = MediaQuery.devicePixelRatioOf(context);
-      final prefetchLimit = layout.gridDelegate.crossAxisCount * 2;
+      final prefetchLimit = resolveHomeGridPrefetchLimit(
+        layout.gridDelegate.crossAxisCount,
+      );
       prefetchHomeFeedImages(
         context,
-        specs: items
-            .take(prefetchLimit)
-            .map(
-              (room) => NetworkImagePrefetchSpec(
-                url: room.cover,
-                memCacheWidth: (width * pixelRatio).round(),
-                memCacheHeight: (width / (16 / 9) * pixelRatio).round(),
-              ),
-            )
-            .toList(growable: false),
+        specs: buildHomeFeedImagePrefetchSpecs(
+          liveItems,
+          startIndex: 0,
+          count: prefetchLimit,
+          logicalWidth: width,
+          pixelRatio: pixelRatio,
+          aspectRatio: homeLiveFeedImageAspectRatio,
+          imageUrl: (room) => room.cover,
+        ),
         networkPolicy: networkPolicy,
         limit: prefetchLimit,
       );
       return null;
-    }, [items, networkPolicy]);
+    }, [liveItems, networkPolicy]);
 
     useScrollPrecache(
       scrollController: scrollController,
-      prefetchCount: layout.gridDelegate.crossAxisCount * 2,
+      prefetchCount: resolveHomeGridPrefetchLimit(layout.gridDelegate.crossAxisCount),
       runtimePolicy: runtimePolicy,
       getUpcomingSpecs: (firstIndex, count) {
-        final width = _estimateGridItemWidth(context);
+        if (liveItems.isEmpty) {
+          return const [];
+        }
+
+        final width = estimateHomeGridItemWidth(context, layout);
         final pixelRatio = MediaQuery.devicePixelRatioOf(context);
-        final memW = (width * pixelRatio).round();
-        final memH = (width / (16 / 9) * pixelRatio).round();
-        final start = firstIndex + 1;
-        final end = (start + count).clamp(0, items.length);
-        if (start >= items.length) return <NetworkImagePrefetchSpec>[];
-        return items
-            .sublist(start, end)
-            .map(
-              (v) => NetworkImagePrefetchSpec(
-                url: v.cover,
-                memCacheWidth: memW,
-                memCacheHeight: memH,
-              ),
-            )
-            .toList(growable: false);
+        return buildHomeFeedImagePrefetchSpecs(
+          liveItems,
+          startIndex: firstIndex + 1,
+          count: count,
+          logicalWidth: width,
+          pixelRatio: pixelRatio,
+          aspectRatio: homeLiveFeedImageAspectRatio,
+          imageUrl: (room) => room.cover,
+        );
       },
     );
 
-    return CustomScrollView(
-      cacheExtent: cacheExtent,
-      controller: scrollController,
-      slivers: [
-        SliverPadding(
-          padding: layout.padding,
-          sliver: SliverGrid.builder(
-            gridDelegate: layout.gridDelegate,
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              final room = items[index];
-              return LiveRoomCard(
-                key: ValueKey('live_room_${room.roomId}'),
-                room: room,
-                onTap: () => onOpenRoom(room.roomId),
-              );
-            },
+    return HomeFeedPagingShell(
+      maxWidth: homeFeedMaxWidth,
+      asyncValue: liveAsync,
+      controller: refreshController,
+      onRefresh: ref.read(_liveRecommendProvider.notifier).refresh,
+      onLoadMore: ref.read(_liveRecommendProvider.notifier).loadMore,
+      itemCount: () => ref.read(_liveRecommendProvider).value?.length ?? 0,
+      hasMoreAfterLoad: ({required currentCount, required previousCount}) =>
+          ref.read(_liveRecommendProvider.notifier).hasMore,
+      skeleton: CustomScrollView(
+        cacheExtent: cacheExtent,
+        controller: scrollController,
+        slivers: [
+          SliverPadding(
+            padding: layout.padding,
+            sliver: SliverGrid.builder(
+              gridDelegate: layout.gridDelegate,
+              itemCount: layout.skeletonCount,
+              itemBuilder: (_, _) => const AppCardContainer(
+                child: AppShimmer(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AspectRatio(
+                        aspectRatio: homeLiveFeedImageAspectRatio,
+                        child: AppShimmerBox(borderRadius: 12),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppShimmerBox(height: 14, width: double.infinity),
+                            SizedBox(height: 6),
+                            AppShimmerBox(height: 14, width: 80),
+                            SizedBox(height: 10),
+                            Row(
+                              children: [
+                                AppShimmerBox(width: 20, height: 20, borderRadius: 10),
+                                SizedBox(width: 6),
+                                Expanded(child: AppShimmerBox(height: 12)),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
+      builder: (context, items) => CustomScrollView(
+        cacheExtent: cacheExtent,
+        controller: scrollController,
+        slivers: [
+          SliverPadding(
+            padding: layout.padding,
+            sliver: SliverGrid.builder(
+              gridDelegate: layout.gridDelegate,
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                final room = items[index];
+                return LiveRoomCard(
+                  key: ValueKey('live_room_${room.roomId}'),
+                  room: room,
+                  onTap: () => onOpenRoom(room.roomId),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
-  }
-
-  double _estimateGridItemWidth(BuildContext context) {
-    final screenWidth = MediaQuery.sizeOf(context).width;
-    final containerWidth = math.min(screenWidth, HomeBreakpoints.feedMaxWidth);
-    final columns = layout.gridDelegate.crossAxisCount;
-    final spacing = layout.gridDelegate.crossAxisSpacing * (columns - 1);
-    return (containerWidth - layout.padding.horizontal - spacing) / columns;
   }
 }

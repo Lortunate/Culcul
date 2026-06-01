@@ -7,7 +7,7 @@ List<ArticleBlock> _parseOpusBlocks(Map<String, dynamic>? moduleContent) {
   final blocks = <ArticleBlock>[];
 
   for (final paragraph in paragraphs) {
-    final paraType = _int(paragraph['para_type']) ?? 0;
+    final paraType = JsonUtils.parseInt(paragraph['para_type']) ?? 0;
     switch (paraType) {
       case 1:
         final nodes = (paragraph['text'] as Map?)?.cast<String, dynamic>() ?? const {};
@@ -36,7 +36,7 @@ List<ArticleBlock> _parseOpusBlocks(Map<String, dynamic>? moduleContent) {
         final card = _asMap(paragraph['link_card'])['card'];
         final cardMap = _asMap(card);
         final bizId = _string(cardMap['biz_id']) ?? '';
-        final linkType = _int(cardMap['link_type']);
+        final linkType = JsonUtils.parseInt(cardMap['link_type']);
         blocks.add(
           ArticleBlock.linkCard(
             title: bizId.isNotEmpty ? '链接卡片 #$bizId' : '链接卡片',
@@ -53,7 +53,8 @@ List<ArticleBlock> _parseOpusBlocks(Map<String, dynamic>? moduleContent) {
 List<ArticleInlineNode> _parseOpusInlineNodes(List<Map<String, dynamic>> nodes) {
   final spans = <ArticleInlineNode>[];
   for (final node in nodes) {
-    final type = _int(node['node_type']) ?? _int(node['type']) ?? 0;
+    final type =
+        JsonUtils.parseInt(node['node_type']) ?? JsonUtils.parseInt(node['type']) ?? 0;
     switch (type) {
       case 1:
         final word = _asMap(node['word']);

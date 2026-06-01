@@ -6,14 +6,12 @@ import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
-import 'package:culcul/features/favorites/application/favorites_application_providers.dart';
-import 'package:culcul/features/favorites/application/favorites_port.dart';
+import 'package:culcul/features/favorites/data/favorite_paging_constants.dart';
+import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'favorites_view_model.freezed.dart';
 part 'favorites_view_model.g.dart';
 part 'favorites_view_model.collected.dart';
 part 'favorites_view_model.folder_resources.dart';
@@ -30,11 +28,10 @@ class FavCreatedFolders extends _$FavCreatedFolders {
       return [];
     }
     final mid = int.parse(session.uid);
-    final favoritesPort = ref.read(favoritesPortProvider);
-    final result = await favoritesPort.getCreatedFolders(upMid: mid);
-    final response = result.dataOrNull;
-    if (response == null) return <FavoriteFolder>[];
-    final folders = response.folders;
+    final favoritesRepository = ref.read(favRepositoryProvider);
+    final result = await favoritesRepository.getCreatedFolders(upMid: mid);
+    final folders = result.dataOrNull;
+    if (folders == null) return <FavoriteFolder>[];
     if (folders.isEmpty) return <FavoriteFolder>[];
 
     final foldersWithCovers = await _concurrencyExecutor
@@ -48,7 +45,7 @@ class FavCreatedFolders extends _$FavCreatedFolders {
             }
 
             try {
-              final resourcesResult = await favoritesPort.getFolderResources(
+              final resourcesResult = await favoritesRepository.getFolderResources(
                 mediaId: folder.id,
                 page: 1,
               );
@@ -58,10 +55,10 @@ class FavCreatedFolders extends _$FavCreatedFolders {
               }
 
               var cover = resources.info.cover;
-              if (cover.isEmpty && resources.medias.isNotEmpty) {
+              if ((cover == null || cover.isEmpty) && resources.medias.isNotEmpty) {
                 cover = resources.medias.first.cover;
               }
-              if (cover.isEmpty) {
+              if (cover == null || cover.isEmpty) {
                 return folder;
               }
               return folder.copyWith(cover: cover);
@@ -76,12 +73,6 @@ class FavCreatedFolders extends _$FavCreatedFolders {
 }
 
 @riverpod
-bool videoFavoriteUserLoggedIn(Ref ref) {
-  final session = ref.watch(currentUserProvider);
-  return session != null && session.isLoggedIn;
-}
-
-@riverpod
 Future<List<FavoriteFolder>> videoFavoriteFolders(Ref ref, int aid) async {
   final session = ref.watch(currentUserProvider);
   final mid = int.tryParse(session?.uid ?? '');
@@ -90,13 +81,8 @@ Future<List<FavoriteFolder>> videoFavoriteFolders(Ref ref, int aid) async {
   }
 
   final result = await ref
-      .read(favoritesPortProvider)
+      .read(favRepositoryProvider)
       .getCreatedFolders(upMid: mid, rid: aid, type: 2);
 
-  return result.when(success: (page) => page.folders, failure: (error) => throw error);
-}
-
-@riverpod
-FavoritesPort videoFavoriteCommands(Ref ref) {
-  return ref.watch(favoritesPortProvider);
+  return result.when(success: (folders) => folders, failure: (error) => throw error);
 }

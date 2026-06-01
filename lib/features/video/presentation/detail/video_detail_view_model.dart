@@ -1,45 +1,44 @@
 import 'dart:async';
 import 'dart:developer' as developer;
 
+import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/services/relation_service.dart';
 import 'package:culcul/features/video/application/models/play_url.dart';
-import 'package:culcul/features/video/application/video_detail_application_providers.dart';
-import 'package:culcul/features/video/application/video_detail_interactions.dart';
+import 'package:culcul/features/video/application/video_detail_models.dart';
+import 'package:culcul/features/video/data/video_repository_impl.dart';
 import 'package:culcul/features/video/application/video_detail_workflows.dart';
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
 import 'package:dio/dio.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:culcul/features/video/presentation/detail/video_detail_state.dart';
 
+part 'video_detail_view_model.freezed.dart';
 part 'video_detail_view_model.g.dart';
-part 'video_detail_view_model.helpers.dart';
+
+@freezed
+sealed class VideoDetailState with _$VideoDetailState {
+  const factory VideoDetailState({
+    @Default(true) bool isLoading,
+    VideoDetailViewData? videoDetail,
+    PlayUrl? playUrl,
+    AppError? error,
+    @Default(0) int currentCid,
+    @Default([]) List<VideoModel> relatedVideos,
+    @Default(80) int selectedQuality,
+    @Default(1.0) double playbackSpeed,
+    @Default([]) List<int> availableQualities,
+  }) = _VideoDetailState;
+}
 
 @riverpod
-class VideoDetailController extends _$VideoDetailController
-    with _VideoDetailControllerHelpersMixin {
+class VideoDetailController extends _$VideoDetailController {
   int _loadToken = 0;
   int _playUrlRequestToken = 0;
   final Map<String, PlayUrl> _playUrlSessionCache = <String, PlayUrl>{};
   CancelToken? _criticalLoadCancelToken;
   CancelToken? _playUrlLoadCancelToken;
   CancelToken? _auxiliaryLoadCancelToken;
-
-  @override
-  int get loadToken => _loadToken;
-
-  @override
-  int get playUrlRequestToken => _playUrlRequestToken;
-
-  @override
-  Map<String, PlayUrl> get playUrlSessionCache => _playUrlSessionCache;
-
-  @override
-  CancelToken? get auxiliaryLoadCancelToken => _auxiliaryLoadCancelToken;
-
-  @override
-  set auxiliaryLoadCancelToken(CancelToken? value) {
-    _auxiliaryLoadCancelToken = value;
-  }
 
   @override
   VideoDetailState build(String bvid) {
@@ -103,11 +102,12 @@ class VideoDetailController extends _$VideoDetailController
 
     if (state.currentCid == cid && state.playUrl != null) return;
 
-    final cached = _readCachedPlayUrl(
-      aid: detail.aid,
-      cid: cid,
-      qn: state.selectedQuality,
-    );
+    final cached =
+        _playUrlSessionCache[_buildPlayUrlCacheKey(
+          aid: detail.aid,
+          cid: cid,
+          qn: state.selectedQuality,
+        )];
     if (cached != null) {
       state = state.copyWith(
         isLoading: false,
@@ -130,7 +130,12 @@ class VideoDetailController extends _$VideoDetailController
     final detail = state.videoDetail;
     if (detail == null) return;
 
-    final cached = _readCachedPlayUrl(aid: detail.aid, cid: state.currentCid, qn: qn);
+    final cached =
+        _playUrlSessionCache[_buildPlayUrlCacheKey(
+          aid: detail.aid,
+          cid: state.currentCid,
+          qn: qn,
+        )];
     if (cached != null) {
       state = state.copyWith(
         isLoading: false,
@@ -169,7 +174,7 @@ class VideoDetailController extends _$VideoDetailController
     );
 
     final result = await ref
-        .read(relationPortProvider)
+        .read(relationServiceProvider)
         .modifyRelation(mid: detail.owner.mid, isFollow: !wasFollowed);
     if (result.isFailure) {
       state = state.copyWith(videoDetail: previousDetail);
@@ -182,10 +187,10 @@ class VideoDetailController extends _$VideoDetailController
 
     final nextLiked = detail.reqUser.like != 1;
     final previousDetail = detail;
-    state = state.copyWith(videoDetail: applyVideoLikeState(detail, isLiked: nextLiked));
+    state = state.copyWith(videoDetail: _applyVideoLikeState(detail, isLiked: nextLiked));
 
     final result = await ref
-        .read(videoDetailPortProvider)
+        .read(videoRepositoryProvider)
         .setVideoLike(aid: detail.aid, isLiked: nextLiked);
     if (result.isFailure) {
       state = state.copyWith(videoDetail: previousDetail);
@@ -197,9 +202,9 @@ class VideoDetailController extends _$VideoDetailController
     if (detail == null) return;
 
     final previousDetail = detail;
-    state = state.copyWith(videoDetail: applyVideoCoinState(detail));
+    state = state.copyWith(videoDetail: _applyVideoCoinState(detail));
 
-    final result = await ref.read(videoDetailPortProvider).addVideoCoin(aid: detail.aid);
+    final result = await ref.read(videoRepositoryProvider).addVideoCoin(aid: detail.aid);
     if (result.isFailure) {
       state = state.copyWith(videoDetail: previousDetail);
     }
@@ -210,12 +215,22 @@ class VideoDetailController extends _$VideoDetailController
     if (detail == null) return;
 
     state = state.copyWith(
-      videoDetail: applyVideoFavoriteState(detail, isFavorite: isFavorite),
+      videoDetail: _applyVideoFavoriteState(detail, isFavorite: isFavorite),
     );
   }
 
+  Future<void> reportProgress(int progress) async {
+    final detail = state.videoDetail;
+    if (detail == null) return;
+
+    await ref
+        .read(videoRepositoryProvider)
+        .reportVideoProgress(aid: detail.aid, cid: state.currentCid, progress: progress);
+  }
+
   Future<void> _loadPlayUrl({required int aid, required int cid, required int qn}) async {
-    final cached = _readCachedPlayUrl(aid: aid, cid: cid, qn: qn);
+    final cached =
+        _playUrlSessionCache[_buildPlayUrlCacheKey(aid: aid, cid: cid, qn: qn)];
     if (cached != null) {
       state = state.copyWith(
         playUrl: cached,
@@ -232,7 +247,7 @@ class VideoDetailController extends _$VideoDetailController
     final cancelToken = CancelToken();
     _playUrlLoadCancelToken = cancelToken;
     final result = await ref
-        .read(videoDetailPortProvider)
+        .read(videoRepositoryProvider)
         .fetchVideoPlayUrl(aid: aid, cid: cid, quality: qn, cancelToken: cancelToken);
     if (!ref.mounted || !_isCurrentPlayUrlRequest(requestToken)) {
       return;
@@ -252,4 +267,97 @@ class VideoDetailController extends _$VideoDetailController
       failure: (error) => state.copyWith(isLoading: false, error: error),
     );
   }
+
+  Future<void> _loadAuxiliaryData({required int requestToken}) async {
+    _auxiliaryLoadCancelToken?.cancel('video_auxiliary_replaced');
+    final cancelToken = CancelToken();
+    _auxiliaryLoadCancelToken = cancelToken;
+    final result = await ref
+        .read(loadVideoDetailWorkflowProvider)
+        .loadAuxiliary(bvid, cancelToken: cancelToken);
+    if (!ref.mounted || !_isCurrentLoadRequest(requestToken)) {
+      return;
+    }
+
+    final auxiliary = result.dataOrNull;
+    if (auxiliary == null) {
+      return;
+    }
+    final detail = state.videoDetail;
+    if (detail == null) {
+      return;
+    }
+
+    state = state.copyWith(
+      videoDetail: detail.copyWith(tags: auxiliary.tags),
+      relatedVideos: auxiliary.relatedVideos,
+    );
+    assert(() {
+      developer.log(
+        'video_perf auxiliary_loaded bvid=$bvid related=${auxiliary.relatedVideos.length} tags=${auxiliary.tags.length}',
+        name: 'video.performance',
+      );
+      return true;
+    }());
+  }
+
+  String _buildPlayUrlCacheKey({required int aid, required int cid, required int qn}) {
+    return '$aid:$cid:$qn';
+  }
+
+  void _cachePlayUrl({
+    required int aid,
+    required int cid,
+    required int qn,
+    required PlayUrl playUrl,
+  }) {
+    _playUrlSessionCache[_buildPlayUrlCacheKey(aid: aid, cid: cid, qn: qn)] = playUrl;
+  }
+
+  bool _isCurrentLoadRequest(int requestToken) {
+    return requestToken == _loadToken;
+  }
+
+  bool _isCurrentPlayUrlRequest(int requestToken) {
+    return requestToken == _playUrlRequestToken;
+  }
+}
+
+VideoDetailViewData _applyVideoLikeState(
+  VideoDetailViewData detail, {
+  required bool isLiked,
+}) {
+  final wasLiked = detail.reqUser.like == 1;
+  final delta = isLiked == wasLiked ? 0 : (isLiked ? 1 : -1);
+  final nextLike = (detail.stat.like + delta).clamp(0, 1 << 31);
+
+  return detail.copyWith(
+    reqUser: detail.reqUser.copyWith(like: isLiked ? 1 : 0),
+    stat: detail.stat.copyWith(like: nextLike),
+  );
+}
+
+VideoDetailViewData _applyVideoCoinState(VideoDetailViewData detail, {int count = 1}) {
+  if (count <= 0) {
+    return detail;
+  }
+
+  return detail.copyWith(
+    reqUser: detail.reqUser.copyWith(coin: detail.reqUser.coin + count),
+    stat: detail.stat.copyWith(coin: detail.stat.coin + count),
+  );
+}
+
+VideoDetailViewData _applyVideoFavoriteState(
+  VideoDetailViewData detail, {
+  required bool isFavorite,
+}) {
+  final wasFavorite = detail.reqUser.favorite == 1;
+  final delta = isFavorite == wasFavorite ? 0 : (isFavorite ? 1 : -1);
+  final nextFavorite = (detail.stat.favorite + delta).clamp(0, 1 << 31);
+
+  return detail.copyWith(
+    reqUser: detail.reqUser.copyWith(favorite: isFavorite ? 1 : 0),
+    stat: detail.stat.copyWith(favorite: nextFavorite),
+  );
 }

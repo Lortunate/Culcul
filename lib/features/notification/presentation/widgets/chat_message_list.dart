@@ -3,9 +3,10 @@ import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/paged_list_state.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
+import 'package:culcul/core/utils/format_extensions.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_message_item.dart';
-import 'package:culcul/features/notification/presentation/widgets/chat_time_divider.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/layout/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
@@ -97,7 +98,18 @@ class ChatMessageList extends HookWidget {
             key: ValueKey(message.msgKey ?? message.msgSeqno),
             child: Column(
               children: [
-                if (showTime) ChatTimeDivider(timestamp: message.timestamp),
+                if (showTime)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: CulculSpacing.md),
+                    child: Text(
+                      DateTime.fromMillisecondsSinceEpoch(
+                        message.timestamp * 1000,
+                      ).toChatTime(),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
                 ChatMessageItem(
                   message: message,
                   isSelf: isSelf,

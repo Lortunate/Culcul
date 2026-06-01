@@ -22,29 +22,24 @@ class AppTag extends StatelessWidget {
     this.borderRadius = CulculRadius.xs,
   });
 
-  Color _backgroundColor(ColorScheme colorScheme) {
-    return color ?? colorScheme.surfaceContainerHighest.withValues(alpha: 0.5);
-  }
-
-  Color _foregroundColor(ColorScheme colorScheme) {
-    return textColor ?? colorScheme.onSurfaceVariant;
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final backgroundColor =
+        color ?? colorScheme.surfaceContainerHighest.withValues(alpha: 0.5);
+    final foregroundColor = textColor ?? colorScheme.onSurfaceVariant;
 
     return Container(
       padding: padding,
       decoration: BoxDecoration(
-        color: _backgroundColor(colorScheme),
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(borderRadius),
       ),
       child: Text(
         text,
         style: theme.textTheme.labelSmall?.copyWith(
-          color: _foregroundColor(colorScheme),
+          color: foregroundColor,
           fontSize: fontSize,
           fontWeight: FontWeight.w500,
         ),

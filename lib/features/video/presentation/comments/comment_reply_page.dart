@@ -1,13 +1,12 @@
 import 'dart:async';
 
-import 'package:culcul/features/video/application/comment_reply_commands.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
+import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
+import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/features/video/presentation/comments/comment_reply_view_model.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/assemblies/comments/comment_item.dart';
 import 'package:culcul/ui/assemblies/comments/comment_reply_sheet.dart';
-import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/video/presentation/comments/bottom_input_bar.dart';
-import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/ui/widgets/layout/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
@@ -15,62 +14,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-typedef PresentCommentReplySheet =
-    void Function({
-      required CommentItem comment,
-      required Future<void> Function(String text) onSend,
-    });
-
-class CommentReplyPageSheetActions {
-  CommentReplyPageSheetActions({
-    required this.presentReplySheet,
-    required this.createOnSend,
-  });
-
-  final PresentCommentReplySheet presentReplySheet;
-  final Future<void> Function(String text) Function(CommentItem item) createOnSend;
-
-  void showReplySheet(CommentItem item) {
-    presentReplySheet(comment: item, onSend: createOnSend(item));
-  }
-}
-
-CommentReplyCommands _buildCommentReplyCommands({
-  required PaginationLoadGate loadGate,
-  required Future<void> Function(int oid, int root, int parent, String text) addReply,
-  required bool Function() hasMoreReplies,
-  required bool Function() isLoadingMoreReplies,
-  required Future<void> Function() loadMoreRepliesFromController,
-  required int Function() currentReplyCount,
-}) {
-  return CommentReplyCommands(
-    loadGate: loadGate,
-    addReply: addReply,
-    hasMoreReplies: hasMoreReplies,
-    isLoadingMoreReplies: isLoadingMoreReplies,
-    loadMoreRepliesFromController: loadMoreRepliesFromController,
-    currentReplyCount: currentReplyCount,
-  );
-}
-
-CommentReplyPageSheetActions _buildCommentReplySheetActions(
-  BuildContext context,
-  CommentReplyCommands commands,
-) {
-  return CommentReplyPageSheetActions(
-    createOnSend: (item) =>
-        (text) => commands.submitReply(item, text),
-    presentReplySheet: ({required comment, required onSend}) {
-      CommentReplySheet.show(
-        context,
-        comment: comment,
-        onSend: (text) {
-          unawaited(onSend(text));
-        },
-      );
-    },
-  );
-}
+const double _commentReplyListCacheExtent = 520;
 
 class CommentReplyPage extends HookConsumerWidget {
   final int oid;
@@ -96,21 +40,28 @@ class CommentReplyPage extends HookConsumerWidget {
     final controller = ref.read(provider.notifier);
     final hasMore = paging.hasMore;
     final loadGate = useMemoized(PaginationLoadGate.new, [oid, rootId]);
-    final commands = useMemoized(
-      () => _buildCommentReplyCommands(
-        loadGate: loadGate,
-        addReply: controller.addReply,
-        hasMoreReplies: () => ref.read(provider).paging.hasMore,
-        isLoadingMoreReplies: () => ref.read(provider).paging.isLoadingMore,
-        loadMoreRepliesFromController: controller.loadMore,
-        currentReplyCount: () => ref.read(provider).paging.items.length,
-      ),
-      [ref, provider, controller, loadGate],
-    );
-    final sheetActions = useMemoized(
-      () => _buildCommentReplySheetActions(context, commands),
-      [context, commands],
-    );
+    Future<void> loadMoreReplies() {
+      return ScrollLoadTrigger.runWithNotifier(
+        gate: loadGate,
+        hasMore: () => ref.read(provider).paging.hasMore,
+        isLoadingMore: () => ref.read(provider).paging.isLoadingMore,
+        loadMore: controller.loadMore,
+        itemCount: () => ref.read(provider).paging.items.length,
+        source: 'video.comment_reply',
+      );
+    }
+
+    void showReplySheet(CommentItem item) {
+      final root = item.root == 0 ? item.rpid : item.root;
+      CommentReplySheet.show(
+        context,
+        comment: item,
+        onSend: (text) {
+          unawaited(controller.addReply(item.oid, root, item.rpid, text));
+        },
+      );
+    }
+
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
@@ -152,11 +103,11 @@ class CommentReplyPage extends HookConsumerWidget {
           Expanded(
             child: EasyRefresh(
               onRefresh: controller.refresh,
-              onLoad: !hasMore ? null : commands.loadMoreReplies,
+              onLoad: !hasMore ? null : loadMoreReplies,
               header: const AppRefreshHeader(),
               footer: hasMore ? const AppLoadFooter() : null,
               child: CustomScrollView(
-                cacheExtent: 520,
+                cacheExtent: _commentReplyListCacheExtent,
                 slivers: [
                   SliverToBoxAdapter(
                     child: Column(
@@ -175,7 +126,7 @@ class CommentReplyPage extends HookConsumerWidget {
                             rootComment.oid,
                             rootComment.rpid,
                           ),
-                          onReply: () => sheetActions.showReplySheet(rootComment),
+                          onReply: () => showReplySheet(rootComment),
                         ),
                         Divider(
                           height: 1,
@@ -222,7 +173,7 @@ class CommentReplyPage extends HookConsumerWidget {
                           ),
                           onDislike: () =>
                               controller.toggleCommentDislike(reply.oid, reply.rpid),
-                          onReply: () => sheetActions.showReplySheet(reply),
+                          onReply: () => showReplySheet(reply),
                         );
                       }, childCount: paging.items.length),
                     ),
@@ -231,7 +182,6 @@ class CommentReplyPage extends HookConsumerWidget {
               ),
             ),
           ),
-          const BottomInputBar(simpleMode: true),
         ],
       ),
     );

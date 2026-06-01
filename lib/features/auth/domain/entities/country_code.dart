@@ -1,14 +1,25 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+final class CountryCode {
+  const CountryCode({required this.id, required this.name, required this.code});
 
-part 'country_code.freezed.dart';
+  final int id;
+  final String name;
+  final String code;
 
-@freezed
-sealed class CountryCode with _$CountryCode {
-  const factory CountryCode({
-    required int id,
-    required String name,
-    required String code,
-  }) = _CountryCode;
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other.runtimeType == runtimeType &&
+            other is CountryCode &&
+            other.id == id &&
+            other.name == name &&
+            other.code == code;
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, id, name, code);
+
+  @override
+  String toString() => 'CountryCode(id: $id, name: $name, code: $code)';
 }
 
 const List<CountryCode> defaultCountryCodes = [

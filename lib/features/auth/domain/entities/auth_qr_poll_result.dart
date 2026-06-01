@@ -1,9 +1,23 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+final class AuthQrPollResult {
+  const AuthQrPollResult({required this.code, this.message});
 
-part 'auth_qr_poll_result.freezed.dart';
+  final int code;
+  final String? message;
 
-@freezed
-sealed class AuthQrPollResult with _$AuthQrPollResult {
-  const factory AuthQrPollResult({required int code, String? message}) =
-      _AuthQrPollResult;
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other.runtimeType == runtimeType &&
+            other is AuthQrPollResult &&
+            other.code == code &&
+            other.message == message;
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, code, message);
+
+  @override
+  String toString() {
+    return 'AuthQrPollResult(code: $code, message: $message)';
+  }
 }

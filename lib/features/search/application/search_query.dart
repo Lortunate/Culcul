@@ -1,7 +1,3 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-
-part 'search_query.freezed.dart';
-
 enum SearchType {
   all('all'),
   video('video'),
@@ -41,13 +37,39 @@ enum SearchDuration {
   final int apiValue;
 }
 
-@freezed
-sealed class SearchQuery with _$SearchQuery {
-  const factory SearchQuery({
-    required String keyword,
-    @Default(SearchType.all) SearchType type,
-    @Default(SearchOrder.totalrank) SearchOrder order,
-    @Default(SearchDuration.all) SearchDuration duration,
-    @Default(1) int page,
-  }) = _SearchQuery;
+final class SearchQuery {
+  const SearchQuery({
+    required this.keyword,
+    this.type = SearchType.all,
+    this.order = SearchOrder.totalrank,
+    this.duration = SearchDuration.all,
+    this.page = 1,
+  });
+
+  final String keyword;
+  final SearchType type;
+  final SearchOrder order;
+  final SearchDuration duration;
+  final int page;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other.runtimeType == runtimeType &&
+            other is SearchQuery &&
+            other.keyword == keyword &&
+            other.type == type &&
+            other.order == order &&
+            other.duration == duration &&
+            other.page == page;
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, keyword, type, order, duration, page);
+
+  @override
+  String toString() {
+    return 'SearchQuery(keyword: $keyword, type: $type, order: $order, '
+        'duration: $duration, page: $page)';
+  }
 }

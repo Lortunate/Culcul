@@ -2,13 +2,10 @@ import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/data/network/semaphore.dart';
 
-typedef AsyncMapper<T, R> = Future<R> Function(T item);
-typedef AsyncTask<T> = Future<T> Function();
-
 class ConcurrentTask<T> {
   final String label;
   final bool critical;
-  final AsyncTask<T> task;
+  final Future<T> Function() task;
   final T Function(AppError error)? fallback;
 
   const ConcurrentTask({
@@ -26,7 +23,7 @@ class NetworkConcurrencyExecutor {
     required List<T> items,
     required NetworkConcurrencyProfile profile,
     required String scope,
-    required AsyncMapper<T, R> mapper,
+    required Future<R> Function(T item) mapper,
   }) async {
     if (items.isEmpty) return <R>[];
 

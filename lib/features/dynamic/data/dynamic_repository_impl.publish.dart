@@ -36,38 +36,37 @@ mixin _DynamicRepositoryPublishApis on _DynamicRepositoryAccess {
     });
   }
 
-  Future<Result<List<DynamicUploadImageResponseDto>, AppError>> uploadImagesWithCsrf({
+  Future<Result<List<UploadedImage>, AppError>> uploadImagesWithCsrf({
     required List<PublishMediaAsset> files,
     required String csrf,
   }) async {
     if (files.isEmpty) {
-      return const Success(<DynamicUploadImageResponseDto>[]);
+      return const Success(<UploadedImage>[]);
     }
 
     return _requestExecutor.run(() async {
-      return concurrencyExecutor
-          .mapConcurrent<PublishMediaAsset, DynamicUploadImageResponseDto>(
-            items: files,
-            profile: NetworkConcurrencyProfile.upload,
-            scope: 'dynamic_publish_upload',
-            mapper: (asset) async {
-              final file = File(asset.path);
-              final uploadResult = await _requestExecutor.runApiDirect(
-                () => api.uploadImage(file: file, csrf: csrf),
-              );
-              return uploadResult.when(
-                success: (data) => data,
-                failure: (error) => throw error,
-              );
-            },
+      return concurrencyExecutor.mapConcurrent<PublishMediaAsset, UploadedImage>(
+        items: files,
+        profile: NetworkConcurrencyProfile.upload,
+        scope: 'dynamic_publish_upload',
+        mapper: (asset) async {
+          final file = File(asset.path);
+          final uploadResult = await _requestExecutor.runApiDirect(
+            () => api.uploadImage(file: file, csrf: csrf),
           );
+          return uploadResult.when(
+            success: (data) => data,
+            failure: (error) => throw error,
+          );
+        },
+      );
     });
   }
 
   Future<Result<void, AppError>> publishDynamic({
     required String content,
     required String csrf,
-    List<DynamicUploadImageResponseDto> images = const [],
+    List<UploadedImage> images = const [],
   }) async {
     return _requestExecutor.run(() async {
       final pics = images

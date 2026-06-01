@@ -20,17 +20,14 @@ class FollowButton extends StatelessWidget {
     this.shape,
   });
 
-  String _resolveLabel(Translations t) {
-    return text ?? (isFollowed ? t.actions.followed : '+ ${t.actions.follow}');
-  }
-
   @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);
     final colorScheme = Theme.of(context).colorScheme;
+    final label = text ?? (isFollowed ? t.actions.followed : '+ ${t.actions.follow}');
 
     return Semantics(
-      label: _resolveLabel(t),
+      label: label,
       button: true,
       child: FilledButton(
         onPressed: onTap,
@@ -57,7 +54,7 @@ class FollowButton extends StatelessWidget {
             );
           },
           child: Text(
-            _resolveLabel(t),
+            label,
             key: ValueKey<bool>(isFollowed),
             style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
           ),

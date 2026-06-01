@@ -1,20 +1,48 @@
 import 'dart:async';
 
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'playback_snapshot_view_model.freezed.dart';
 part 'playback_snapshot_view_model.g.dart';
 
-@freezed
-sealed class PlaybackSnapshot with _$PlaybackSnapshot {
-  const factory PlaybackSnapshot({
-    @Default(Duration.zero) Duration position,
-    @Default(Duration.zero) Duration duration,
-    @Default(Duration.zero) Duration buffer,
-  }) = _PlaybackSnapshot;
+final class PlaybackSnapshot {
+  const PlaybackSnapshot({
+    this.position = Duration.zero,
+    this.duration = Duration.zero,
+    this.buffer = Duration.zero,
+  });
+
+  final Duration position;
+  final Duration duration;
+  final Duration buffer;
+
+  PlaybackSnapshot copyWith({Duration? position, Duration? duration, Duration? buffer}) {
+    return PlaybackSnapshot(
+      position: position ?? this.position,
+      duration: duration ?? this.duration,
+      buffer: buffer ?? this.buffer,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other.runtimeType == runtimeType &&
+            other is PlaybackSnapshot &&
+            other.position == position &&
+            other.duration == duration &&
+            other.buffer == buffer;
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, position, duration, buffer);
+
+  @override
+  String toString() {
+    return 'PlaybackSnapshot(position: $position, duration: $duration, '
+        'buffer: $buffer)';
+  }
 }
 
 class _PlaybackSnapshotQuantizer {

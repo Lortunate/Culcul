@@ -1,8 +1,4 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
-
-part 'private_session.freezed.dart';
 
 enum PrivateSessionType {
   unknown(0),
@@ -29,25 +25,95 @@ enum PrivateSessionType {
   }
 }
 
-@freezed
-sealed class PrivateSessionAccountInfo with _$PrivateSessionAccountInfo {
-  const factory PrivateSessionAccountInfo({
-    required String name,
-    required String picUrl,
-  }) = _PrivateSessionAccountInfo;
+final class PrivateSessionAccountInfo {
+  const PrivateSessionAccountInfo({required this.name, required this.picUrl});
+
+  final String name;
+  final String picUrl;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is PrivateSessionAccountInfo &&
+            runtimeType == other.runtimeType &&
+            name == other.name &&
+            picUrl == other.picUrl;
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, name, picUrl);
+
+  @override
+  String toString() => 'PrivateSessionAccountInfo(name: $name, picUrl: $picUrl)';
 }
 
-@freezed
-sealed class PrivateSession with _$PrivateSession {
-  const factory PrivateSession({
-    required int talkerId,
-    required PrivateSessionType sessionType,
-    required int unreadCount,
-    PrivateMessage? lastMessage,
-    String? groupName,
-    String? groupCover,
-    required int isFollow,
-    required int sessionTs,
-    PrivateSessionAccountInfo? accountInfo,
-  }) = _PrivateSession;
+final class PrivateSession {
+  const PrivateSession({
+    required this.talkerId,
+    required this.sessionType,
+    required this.unreadCount,
+    this.lastMessage,
+    this.groupName,
+    this.groupCover,
+    required this.isFollow,
+    required this.sessionTs,
+    this.accountInfo,
+  });
+
+  final int talkerId;
+  final PrivateSessionType sessionType;
+  final int unreadCount;
+  final PrivateMessage? lastMessage;
+  final String? groupName;
+  final String? groupCover;
+  final int isFollow;
+  final int sessionTs;
+  final PrivateSessionAccountInfo? accountInfo;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is PrivateSession &&
+            runtimeType == other.runtimeType &&
+            talkerId == other.talkerId &&
+            sessionType == other.sessionType &&
+            unreadCount == other.unreadCount &&
+            lastMessage == other.lastMessage &&
+            groupName == other.groupName &&
+            groupCover == other.groupCover &&
+            isFollow == other.isFollow &&
+            sessionTs == other.sessionTs &&
+            accountInfo == other.accountInfo;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      runtimeType,
+      talkerId,
+      sessionType,
+      unreadCount,
+      lastMessage,
+      groupName,
+      groupCover,
+      isFollow,
+      sessionTs,
+      accountInfo,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'PrivateSession('
+        'talkerId: $talkerId, '
+        'sessionType: $sessionType, '
+        'unreadCount: $unreadCount, '
+        'lastMessage: $lastMessage, '
+        'groupName: $groupName, '
+        'groupCover: $groupCover, '
+        'isFollow: $isFollow, '
+        'sessionTs: $sessionTs, '
+        'accountInfo: $accountInfo'
+        ')';
+  }
 }

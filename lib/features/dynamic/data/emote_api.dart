@@ -1,6 +1,5 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
-import 'package:culcul/features/dynamic/data/dtos/emote_response.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -11,7 +10,7 @@ abstract class EmoteApi {
   factory EmoteApi(Dio dio, {String baseUrl}) = _EmoteApi;
 
   @GET('/x/emote/user/panel/web')
-  Future<ApiResponse<EmoteResponse>> getUserEmotes({
+  Future<ApiResponse<Object>> getUserEmotes({
     @Query('business') String business = 'dynamic',
   });
 }

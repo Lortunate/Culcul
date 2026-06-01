@@ -23,6 +23,8 @@ class PopularVideoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final rcmdReason = video.rcmdReason;
+    final isMillion = rcmdReason.contains('M');
 
     return RepaintBoundary(
       child: VideoListCard(
@@ -36,7 +38,17 @@ class PopularVideoCard extends StatelessWidget {
         duration: video.duration,
         viewCount: video.stat.view,
         danmakuCount: video.stat.danmaku,
-        badge: video.rcmdReason.isNotEmpty ? _PopularTag(text: video.rcmdReason) : null,
+        badge: rcmdReason.isNotEmpty
+            ? AppTag(
+                text: rcmdReason,
+                color: isMillion
+                    ? colorScheme.primary.withValues(alpha: 0.1)
+                    : colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                textColor: isMillion ? colorScheme.primary : colorScheme.onSurfaceVariant,
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                borderRadius: 6,
+              )
+            : null,
         author: Row(
           children: [
             Icon(
@@ -59,29 +71,6 @@ class PopularVideoCard extends StatelessWidget {
         ),
         showDefaultStats: true,
       ),
-    );
-  }
-}
-
-class _PopularTag extends StatelessWidget {
-  final String text;
-
-  const _PopularTag({required this.text});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final isMillion = text.contains('M');
-
-    return AppTag(
-      text: text,
-      color: isMillion
-          ? colorScheme.primary.withValues(alpha: 0.1)
-          : colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-      textColor: isMillion ? colorScheme.primary : colorScheme.onSurfaceVariant,
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-      borderRadius: 6,
     );
   }
 }

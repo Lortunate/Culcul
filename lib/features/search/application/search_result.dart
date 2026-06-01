@@ -1,6 +1,4 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-
-part 'search_result.freezed.dart';
+import 'dart:collection';
 
 sealed class SearchResultEntry {
   const SearchResultEntry();
@@ -100,11 +98,36 @@ class SearchTopicEntry extends SearchResultEntry {
   });
 }
 
-@freezed
-sealed class SearchResultPage with _$SearchResultPage {
-  const factory SearchResultPage({
-    required int page,
-    required int numPages,
+final class SearchResultPage {
+  SearchResultPage({
+    required this.page,
+    required this.numPages,
     required List<SearchResultEntry> items,
-  }) = _SearchResultPage;
+  }) : _items = List<SearchResultEntry>.unmodifiable(items);
+
+  final int page;
+  final int numPages;
+  final List<SearchResultEntry> _items;
+
+  List<SearchResultEntry> get items => UnmodifiableListView(_items);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other.runtimeType == runtimeType &&
+            other is SearchResultPage &&
+            other.page == page &&
+            other.numPages == numPages &&
+            _items.length == other._items.length &&
+            _items.asMap().entries.every(
+              (entry) => entry.value == other._items[entry.key],
+            );
+  }
+
+  @override
+  int get hashCode => Object.hash(page, numPages, Object.hashAll(_items));
+
+  @override
+  String toString() =>
+      'SearchResultPage(page: $page, numPages: $numPages, items: $items)';
 }

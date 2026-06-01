@@ -26,7 +26,7 @@ class HomeRoute extends AppRouteData with $HomeRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildHomePage(
+    return HomePage(
       onOpenSearch: () => const SearchRoute().push(context),
       onOpenProfile: () => const ProfileRoute().go(context),
       onOpenNotification: () => const NotificationRoute().push(context),
@@ -41,10 +41,7 @@ class DynamicRoute extends AppRouteData with $DynamicRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildDynamicRoutePage(
-      onLogin: () => const LoginRoute().push(context),
-      onOpenSearch: () => const SearchRoute().push(context),
-      onOpenPublish: () => const PublishDynamicRoute().push(context),
+    return buildDynamicNavigationScope(
       onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
       onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
       onOpenLiveRoom: (roomId) => LiveRoomRoute(roomId: roomId).push(context),
@@ -52,6 +49,11 @@ class DynamicRoute extends AppRouteData with $DynamicRoute {
       onOpenArticle: (url, title) => _pushArticleDetail(context, url: url, title: title),
       onOpenTopic: (topicId, topicName) =>
           _pushTopicDetail(context, topicId: topicId, topicName: topicName),
+      child: DynamicPage(
+        onLogin: () => const LoginRoute().push(context),
+        onOpenSearch: () => const SearchRoute().push(context),
+        onOpenPublish: () => const PublishDynamicRoute().push(context),
+      ),
     );
   }
 }
@@ -61,9 +63,7 @@ class RankingRoute extends AppRouteData with $RankingRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildRankingRoutePage(
-      onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
-    );
+    return RankingPage(onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context));
   }
 }
 

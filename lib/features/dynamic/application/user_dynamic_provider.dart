@@ -5,19 +5,15 @@ import 'package:culcul/core/data/network/interceptors/endpoint_cache_options_int
 import 'package:dio/dio.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
-import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
 import 'package:culcul/features/dynamic/application/models/dynamic_response.dart';
-import 'package:culcul/features/dynamic/domain/entities/dynamic_queries.dart';
+import 'package:culcul/features/dynamic/data/dynamic_api.dart';
+import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:culcul/features/dynamic/application/dynamic_feed_controller.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_dynamic_provider.g.dart';
 
-// Architecture note: This view model reads the domain repository directly
-// instead of routing through dynamic_workflows.dart. The dynamic application
-// layer is reserved for multi-step orchestration, while this is a simple
-// single-call feed query kept local for readability.
 @Riverpod(keepAlive: true)
 class UserDynamicNotifier extends _$UserDynamicNotifier
     with CursorPagedAsyncNotifier<DynamicItem, String>, DynamicFeedController {
@@ -34,15 +30,12 @@ class UserDynamicNotifier extends _$UserDynamicNotifier
     });
     final stopwatch = Stopwatch()..start();
     final items = await buildFirstPage();
-    final cacheKey = EndpointCacheOptionsInterceptor.buildCacheKey(
-      ApiConstants.dynamicSpaceFeed,
-      {
-        'host_mid': hostMid,
-        'timezone_offset': -480,
-        'features':
-            'itemOpusStyle,listOnlyfans,opusBigCover,onlyfansVote,decorationCard,onlyfansAssetsV2,forwardListHidden,ugcDelete',
-      },
-    );
+    final cacheKey =
+        EndpointCacheOptionsInterceptor.buildCacheKey(ApiConstants.dynamicSpaceFeed, {
+          'host_mid': hostMid,
+          'timezone_offset': dynamicWebTimezoneOffset,
+          'features': dynamicFeedFeatureFlags,
+        });
     final hasCachedValue = await ref.read(cacheStoreProvider).exists(cacheKey);
     DevLogger.log('feature', 'dynamic.user_space_feed initial_data', <String, Object?>{
       'hostMid': hostMid,
@@ -64,11 +57,9 @@ class UserDynamicNotifier extends _$UserDynamicNotifier
     final result = await ref
         .read(dynamicRepositoryProvider)
         .getSpaceDynamicFeed(
-          SpaceDynamicFeedQuery(
-            hostMid: _hostMid,
-            offset: currentCursor,
-            cancelToken: cancelToken,
-          ),
+          hostMid: _hostMid,
+          offset: currentCursor,
+          cancelToken: cancelToken,
         );
     return result.when(
       success: (feed) =>
@@ -101,11 +92,9 @@ class UserDynamicNotifier extends _$UserDynamicNotifier
     final result = await ref
         .read(dynamicRepositoryProvider)
         .getSpaceDynamicFeed(
-          SpaceDynamicFeedQuery(
-            hostMid: _hostMid,
-            forceRefresh: true,
-            cancelToken: cancelToken,
-          ),
+          hostMid: _hostMid,
+          forceRefresh: true,
+          cancelToken: cancelToken,
         );
     if (!ref.mounted || state.isLoading) {
       return;

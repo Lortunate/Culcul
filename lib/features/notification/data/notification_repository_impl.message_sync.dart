@@ -6,7 +6,6 @@ import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/notification/data/dtos/private_message_model.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
 import 'package:culcul/features/notification/data/notification_api.dart';
-import 'package:culcul/features/notification/data/notification_mapper.dart';
 import 'package:culcul/features/notification/data/notification_message_persistence.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.cleanup_policy.dart';
 import 'package:culcul/features/notification/domain/entities/private_message.dart';
@@ -100,11 +99,7 @@ class NotificationMessageSync {
             ownerUid: ownerUid,
             talkerId: talkerId,
             sessionType: sessionType,
-            emojis:
-                response.emojiInfos
-                    ?.map((emoji) => emoji.toDomain())
-                    .toList(growable: false) ??
-                const <PrivateMessageEmoji>[],
+            emojis: response.emojiInfos ?? const <PrivateMessageEmoji>[],
             now: now,
           );
           await persistence.reconcileTemporaryMessages(

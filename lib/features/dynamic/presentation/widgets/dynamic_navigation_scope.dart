@@ -25,18 +25,6 @@ class DynamicNavigationScope extends InheritedWidget {
     return scope!;
   }
 
-  Widget wrap({required Widget child}) {
-    return DynamicNavigationScope(
-      onOpenUser: onOpenUser,
-      onOpenVideo: onOpenVideo,
-      onOpenLiveRoom: onOpenLiveRoom,
-      onOpenDynamicDetail: onOpenDynamicDetail,
-      onOpenArticle: onOpenArticle,
-      onOpenTopic: onOpenTopic,
-      child: child,
-    );
-  }
-
   @override
   bool updateShouldNotify(DynamicNavigationScope oldWidget) {
     return onOpenUser != oldWidget.onOpenUser ||

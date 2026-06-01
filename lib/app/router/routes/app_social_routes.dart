@@ -63,11 +63,29 @@ class LoginRoute extends AppRouteData with $LoginRoute {
   const LoginRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => buildLoginRoutePage();
+  Widget build(BuildContext context, GoRouterState state) => const LoginPage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return FadeTransitionPage(key: state.pageKey, child: build(context, state));
+    return CustomTransitionPage<void>(
+      key: state.pageKey,
+      child: build(context, state),
+      transitionDuration: CulculMotion.routeModal,
+      reverseTransitionDuration: CulculMotion.routeReverse,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        final curvedAnimation = CurvedAnimation(
+          parent: animation,
+          curve: CulculMotion.fadeScaleCurve,
+        );
+        return FadeTransition(
+          opacity: curvedAnimation,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.98, end: 1.0).animate(curvedAnimation),
+            child: child,
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -80,7 +98,7 @@ class SettingsRoute extends AppRouteData with $SettingsRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildSettingsRoutePage(onOpenAbout: () => const AboutRoute().push(context));
+    return SettingsPage(onOpenAbout: () => const AboutRoute().push(context));
   }
 }
 
@@ -88,7 +106,7 @@ class AboutRoute extends AppRouteData with $AboutRoute {
   const AboutRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) => buildAboutRoutePage();
+  Widget build(BuildContext context, GoRouterState state) => const AboutPage();
 }
 
 @TypedGoRoute<ToViewRoute>(path: '/to-view')
@@ -97,7 +115,7 @@ class ToViewRoute extends AppRouteData with $ToViewRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildToViewRoutePage(
+    return ToViewPage(
       onLogin: () => const LoginRoute().push(context),
       onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
     );
@@ -110,7 +128,7 @@ class HistoryRoute extends AppRouteData with $HistoryRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildHistoryRoutePage(
+    return HistoryPage(
       onLogin: () => const LoginRoute().push(context),
       onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
     );

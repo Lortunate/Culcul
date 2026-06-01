@@ -17,37 +17,28 @@ class AppClickable extends StatelessWidget {
     this.semanticsLabel,
   });
 
-  VoidCallback? _buildTapHandler() {
-    if (onTap == null) {
-      return null;
-    }
-
-    return () {
-      if (haptic) {
-        HapticFeedback.lightImpact();
-      }
-      onTap?.call();
-    };
-  }
-
-  VoidCallback? _buildLongPressHandler() {
-    if (onLongPress == null) {
-      return null;
-    }
-
-    return () {
-      if (haptic) {
-        HapticFeedback.mediumImpact();
-      }
-      onLongPress?.call();
-    };
-  }
-
   @override
   Widget build(BuildContext context) {
+    final tapHandler = onTap == null
+        ? null
+        : () {
+            if (haptic) {
+              HapticFeedback.lightImpact();
+            }
+            onTap?.call();
+          };
+    final longPressHandler = onLongPress == null
+        ? null
+        : () {
+            if (haptic) {
+              HapticFeedback.mediumImpact();
+            }
+            onLongPress?.call();
+          };
+
     final widget = InkWell(
-      onTap: _buildTapHandler(),
-      onLongPress: _buildLongPressHandler(),
+      onTap: tapHandler,
+      onLongPress: longPressHandler,
       child: child,
     );
 

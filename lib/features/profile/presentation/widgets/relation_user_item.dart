@@ -1,7 +1,7 @@
 import 'package:culcul/core/feedback/app_feedback.dart';
+import 'package:culcul/core/services/relation_service.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/core/contracts/relation_user_contract.dart';
-import 'package:culcul/features/profile/presentation/view_models/relation_user_action_view_model.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/buttons/follow_button.dart';
@@ -98,9 +98,10 @@ class _RelationUserItemState extends ConsumerState<RelationUserItem> {
       }
     });
 
-    final error = await ref
-        .read(relationUserActionViewModelProvider.notifier)
-        .toggleFollow(mid: widget.user.mid, isFollow: newStatus);
+    final result = await ref
+        .read(relationServiceProvider)
+        .modifyRelation(mid: widget.user.mid, isFollow: newStatus);
+    final error = result.errorOrNull;
     if (error != null) {
       // Revert on error
       if (mounted) {

@@ -1,15 +1,9 @@
-class SearchSubmission {
-  const SearchSubmission(this.term);
-
-  final String term;
-}
-
-SearchSubmission? prepareSearchSubmission(String rawTerm) {
+String? normalizeSearchTerm(String rawTerm) {
   final normalizedTerm = rawTerm.trim();
   if (normalizedTerm.isEmpty) {
     return null;
   }
-  return SearchSubmission(normalizedTerm);
+  return normalizedTerm;
 }
 
 List<String> addSearchHistoryEntry(
@@ -17,14 +11,14 @@ List<String> addSearchHistoryEntry(
   String rawTerm, {
   int maxHistory = 15,
 }) {
-  final submission = prepareSearchSubmission(rawTerm);
-  if (submission == null) {
+  final normalizedTerm = normalizeSearchTerm(rawTerm);
+  if (normalizedTerm == null) {
     return List<String>.from(currentHistory);
   }
 
   final nextHistory = List<String>.from(currentHistory);
-  nextHistory.remove(submission.term);
-  nextHistory.insert(0, submission.term);
+  nextHistory.remove(normalizedTerm);
+  nextHistory.insert(0, normalizedTerm);
   if (nextHistory.length > maxHistory) {
     nextHistory.removeRange(maxHistory, nextHistory.length);
   }

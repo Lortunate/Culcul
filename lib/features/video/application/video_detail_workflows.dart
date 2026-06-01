@@ -6,7 +6,6 @@ import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/video/application/video_detail_models.dart';
-import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
 import 'package:culcul/features/video/data/video_repository_impl.dart';
 import 'package:culcul/features/video/application/models/play_url.dart';
@@ -32,7 +31,7 @@ class VideoInitialData {
 
 class VideoAuxiliaryData {
   final List<VideoModel> relatedVideos;
-  final List<VideoTagViewData> tags;
+  final List<String> tags;
 
   const VideoAuxiliaryData({required this.relatedVideos, required this.tags});
 }
@@ -95,7 +94,7 @@ class LoadVideoDetailWorkflow {
 
         return Success(
           VideoInitialData(
-            detail: detail.toVideoDetailViewData(),
+            detail: _videoDetailToViewData(detail),
             currentCid: cid,
             playUrl: playUrl,
             availableQualities: playUrl?.acceptQuality.toList() ?? const [],
@@ -113,10 +112,10 @@ class LoadVideoDetailWorkflow {
   }) async {
     final responses = await _concurrencyExecutor.runConcurrent(
       tasks: <ConcurrentTask<dynamic>>[
-        ConcurrentTask<List<RelatedVideo>>(
+        ConcurrentTask<List<VideoModel>>(
           label: 'related',
           critical: false,
-          fallback: (_) => const <RelatedVideo>[],
+          fallback: (_) => const <VideoModel>[],
           task: () async {
             final result = await _repository.fetchRelatedVideos(
               bvid,
@@ -143,16 +142,55 @@ class LoadVideoDetailWorkflow {
     );
 
     final relatedVideos =
-        responses['related'] as List<RelatedVideo>? ?? const <RelatedVideo>[];
+        responses['related'] as List<VideoModel>? ?? const <VideoModel>[];
     final tags = responses['tags'] as List<VideoTag>? ?? const <VideoTag>[];
 
     return Success(
       VideoAuxiliaryData(
-        relatedVideos: relatedVideos
-            .map((video) => video.toVideoModel())
-            .toList(growable: false),
-        tags: tags.map((tag) => tag.toVideoTagViewData()).toList(growable: false),
+        relatedVideos: relatedVideos.toList(growable: false),
+        tags: tags.map((tag) => tag.tagName).toList(growable: false),
       ),
     );
   }
+}
+
+VideoDetailViewData _videoDetailToViewData(VideoDetail detail, {List<VideoTag>? tags}) {
+  return VideoDetailViewData(
+    bvid: detail.bvid,
+    aid: detail.aid,
+    title: detail.title,
+    pic: detail.pic,
+    pubDate: detail.pubDate,
+    desc: detail.desc,
+    owner: detail.owner,
+    stat: detail.stat,
+    dimension: detail.dimension,
+    subtitle: detail.subtitle,
+    pages: detail.pages.map(_videoPageToViewData).toList(growable: false),
+    tags: (tags ?? detail.tag).map((tag) => tag.tagName).toList(growable: false),
+    reqUser: _reqUserToState(detail.reqUser),
+  );
+}
+
+VideoPartViewData _videoPageToViewData(VideoPage page) {
+  return VideoPartViewData(
+    cid: page.cid,
+    page: page.page,
+    part: page.part,
+    duration: page.duration,
+    dimension: page.dimension,
+  );
+}
+
+VideoRequestUserState _reqUserToState(ReqUser? user) {
+  if (user == null) {
+    return const VideoRequestUserState();
+  }
+  return VideoRequestUserState(
+    attention: user.attention,
+    guestAttention: user.guestAttention,
+    like: user.like,
+    coin: user.coin,
+    favorite: user.favorite,
+  );
 }

@@ -1,14 +1,17 @@
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
-import 'package:culcul/features/to_view/application/to_view_commands.dart';
 import 'package:culcul/features/to_view/application/to_view_list_controller.dart';
-import 'package:culcul/features/to_view/presentation/widgets/to_view_list.dart';
-import 'package:culcul/features/to_view/presentation/widgets/to_view_page_app_bar.dart';
+import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
+import 'package:culcul/i18n/strings.g.dart';
+import 'package:culcul/ui/assemblies/feed_cards/video_list_card.dart';
+import 'package:culcul/ui/assemblies/feed_cards/video_list_card_dimensions.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
+import 'package:culcul/ui/widgets/layout/refresh_header_footer.dart';
+import 'package:culcul/ui/widgets/text/icon_text.dart';
 import 'package:culcul/ui/widgets/users/guest_view.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:culcul/i18n/strings.g.dart';
 
 class ToViewPage extends ConsumerWidget {
   final VoidCallback onLogin;
@@ -24,19 +27,30 @@ class ToViewPage extends ConsumerWidget {
     final currentItemCount = ref.watch(
       toViewListProvider.select((value) => value.asData?.value.length ?? 0),
     );
-    final clearAllAction = planToViewClearAll(
-      isLoggedIn: isLoggedIn,
-      itemCount: currentItemCount,
-    );
+    final canClearAll = isLoggedIn && currentItemCount > 0;
 
     return Scaffold(
-      appBar: ToViewPageAppBar(
-        isLoggedIn: isLoggedIn,
-        onClearAll: () => _handleClearAll(context, ref, clearAllAction),
+      appBar: AppBar(
+        title: Text(t.watch_later.title),
+        actions: [
+          if (isLoggedIn)
+            IconButton(
+              icon: const Icon(Icons.delete_sweep_outlined),
+              onPressed: () => _handleClearAll(context, ref, canClearAll),
+            ),
+        ],
       ),
       body: isLoggedIn
           ? _ToViewBody(
-              onRefresh: () => _refreshList(ref),
+              onRefresh: () async {
+                try {
+                  ref.invalidate(toViewListProvider);
+                  await ref.read(toViewListProvider.future);
+                  return IndicatorResult.success;
+                } catch (_) {
+                  return IndicatorResult.fail;
+                }
+              },
               onDelete: (aid) => ref.read(toViewListProvider.notifier).delete(aid),
               onOpenVideo: onOpenVideo,
             )
@@ -51,9 +65,9 @@ class ToViewPage extends ConsumerWidget {
   Future<void> _handleClearAll(
     BuildContext context,
     WidgetRef ref,
-    ToViewClearAllAction action,
+    bool canClearAll,
   ) async {
-    if (action == ToViewClearAllAction.unavailable) {
+    if (!canClearAll) {
       return;
     }
 
@@ -70,10 +84,7 @@ class ToViewPage extends ConsumerWidget {
             ),
             TextButton(
               onPressed: () async {
-                await executeConfirmedToViewClearAll(
-                  action: action,
-                  clearAll: ref.read(toViewListProvider.notifier).clear,
-                );
+                await ref.read(toViewListProvider.notifier).clear();
                 if (!dialogContext.mounted) {
                   return;
                 }
@@ -85,10 +96,6 @@ class ToViewPage extends ConsumerWidget {
         );
       },
     );
-  }
-
-  Future<IndicatorResult> _refreshList(WidgetRef ref) async {
-    return refreshToViewWorkflow(refresh: () => ref.refresh(toViewListProvider.future));
   }
 }
 
@@ -110,11 +117,40 @@ class _ToViewBody extends ConsumerWidget {
       AsyncData(:final value) when value.isEmpty => Center(
         child: Text(t.common.no_content),
       ),
-      AsyncData(:final value) => ToViewListView(
-        items: value,
+      AsyncData(:final value) => EasyRefresh(
+        header: const AppRefreshHeader(),
         onRefresh: onRefresh,
-        onDelete: onDelete,
-        onOpenVideo: onOpenVideo,
+        child: ListView.builder(
+          itemCount: value.length,
+          itemBuilder: (context, index) {
+            final item = value[index];
+            final aid = item.aid;
+            final bvid = item.bvid;
+            if (bvid.isEmpty) {
+              return const SizedBox.shrink();
+            }
+
+            return Dismissible(
+              key: ValueKey(aid),
+              direction: DismissDirection.endToStart,
+              background: ColoredBox(
+                color: Theme.of(context).colorScheme.error,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 20),
+                    child: Icon(
+                      Icons.delete_outline,
+                      color: Theme.of(context).colorScheme.onError,
+                    ),
+                  ),
+                ),
+              ),
+              onDismissed: (_) => onDelete(aid),
+              child: _ToViewItem(item: item, onTap: () => onOpenVideo(bvid)),
+            );
+          },
+        ),
       ),
       AsyncError(:final error, :final stackTrace) => AppErrorWidget(
         error: error,
@@ -123,5 +159,84 @@ class _ToViewBody extends ConsumerWidget {
       ),
       _ => const Center(child: CircularProgressIndicator()),
     };
+  }
+}
+
+class _ToViewItem extends StatelessWidget {
+  const _ToViewItem({required this.item, this.onTap});
+
+  final ToViewEntry item;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final translations = Translations.of(context);
+
+    return VideoListCard(
+      onTap: onTap,
+      coverUrl: item.coverUrl,
+      title: item.title,
+      duration: item.hasProgress ? 0 : item.duration,
+      thumbnailWidth: compactVideoListCardThumbnailWidth,
+      aspectRatio: compactVideoListCardThumbnailAspectRatio,
+      height: compactVideoListCardThumbnailHeight,
+      middleContent: Row(
+        children: [
+          if (item.hasProgress) ...[
+            Icon(Icons.history, size: 14, color: colorScheme.onSurfaceVariant),
+            const SizedBox(width: 4),
+            Expanded(
+              child: Text(
+                translations.watch_later.watch_to(
+                  progress: FormatUtils.formatDuration(item.progress),
+                ),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                  fontSize: 12,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ] else ...[
+            Icon(Icons.person_outline, size: 14, color: colorScheme.onSurfaceVariant),
+            const SizedBox(width: 4),
+            Expanded(
+              child: Text(
+                item.ownerName,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                  fontSize: 12,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ],
+      ),
+      stats: [
+        IconText(
+          icon: Icons.play_circle_outline,
+          text: FormatUtils.formatNumber(item.viewCount),
+          iconSize: 12,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+            fontSize: 11,
+          ),
+        ),
+        IconText(
+          icon: Icons.comment_outlined,
+          text: FormatUtils.formatNumber(item.danmakuCount),
+          iconSize: 12,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+            fontSize: 11,
+          ),
+        ),
+      ],
+    );
   }
 }

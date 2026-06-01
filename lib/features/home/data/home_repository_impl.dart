@@ -1,15 +1,10 @@
 import 'package:culcul/features/home/data/home_api.dart';
-import 'package:culcul/features/home/data/weekly_api.dart';
-import 'package:culcul/features/home/data/dtos/feed_response_dto.dart';
-import 'package:culcul/features/home/data/dtos/popular_response_dto.dart';
-import 'package:culcul/features/home/data/dtos/weekly_model_dto.dart';
-import 'package:culcul/features/home/application/home_port.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:flutter/foundation.dart';
+import 'package:culcul/core/utils/json_utils.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'home_repository_impl.g.dart';
@@ -17,87 +12,60 @@ part 'home_repository_impl.g.dart';
 @riverpod
 HomeRepositoryImpl homeRepositoryImpl(Ref ref) {
   final dio = ref.watch(dioClientProvider);
-  return HomeRepositoryImpl(homeApi: HomeApi(dio), weeklyApi: WeeklyApi(dio));
+  return HomeRepositoryImpl(homeApi: HomeApi(dio));
 }
 
-class HomeRepositoryImpl implements HomePort {
-  final HomeApi? _homeApi;
-  final WeeklyApi? _weeklyApi;
+class HomeRepositoryImpl {
+  final HomeApi _homeApi;
   final RequestExecutor _requestExecutor;
 
-  HomeRepositoryImpl({
-    required HomeApi homeApi,
-    required WeeklyApi weeklyApi,
-    RequestExecutor? requestExecutor,
-  }) : _homeApi = homeApi,
-       _weeklyApi = weeklyApi,
-       _requestExecutor = requestExecutor ?? const RequestExecutor();
-
-  @visibleForTesting
-  HomeRepositoryImpl.test({RequestExecutor? requestExecutor})
-    : _homeApi = null,
-      _weeklyApi = null,
+  HomeRepositoryImpl({required HomeApi homeApi, RequestExecutor? requestExecutor})
+    : _homeApi = homeApi,
       _requestExecutor = requestExecutor ?? const RequestExecutor();
 
-  @override
   Future<Result<List<VideoModel>, AppError>> fetchRecommendPage({
     required int page,
     bool forceRefresh = false,
   }) {
-    return _requestExecutor.runApi<List<VideoModel>, FeedResponseDto>(
-      () async => _requireHomeApi().fetchRecommend(
+    return _requestExecutor.runApi<List<VideoModel>, Object>(
+      () async => _homeApi.fetchRecommend(
         freshIdx: page,
         freshIdx1h: page,
         forceRefresh: forceRefresh ? true : null,
       ),
-      transform: (data) => _parseRecommendItems(data.item),
+      transform: (data) {
+        final root = JsonUtils.asStringKeyedMap(data);
+        final videos = <VideoModel>[];
+        for (final item in JsonUtils.parseObjectList(root?['item'])) {
+          if (item['goto'] != 'av') {
+            continue;
+          }
+          try {
+            videos.add(VideoModel.fromJson(item));
+          } catch (_) {
+            // Skip malformed entries instead of failing the whole page.
+          }
+        }
+        return videos;
+      },
     );
   }
 
-  @override
   Future<Result<List<VideoModel>, AppError>> fetchPopularPage({
     required int page,
     bool forceRefresh = false,
   }) {
-    return _requestExecutor.runApi<List<VideoModel>, PopularResponseDto>(
-      () async => _requireHomeApi().fetchPopular(
-        pn: page,
-        forceRefresh: forceRefresh ? true : null,
-      ),
-      transform: (data) => data.list,
+    return _requestExecutor.runApi<List<VideoModel>, Object>(
+      () async =>
+          _homeApi.fetchPopular(pn: page, forceRefresh: forceRefresh ? true : null),
+      transform: parseVideoModelListEnvelope,
     );
   }
 
-  @override
   Future<Result<List<VideoModel>, AppError>> fetchWeeklyList() {
-    return _requestExecutor.runApi<List<VideoModel>, WeeklyModelDto>(
-      () async => _requireWeeklyApi().getWeeklyList(),
-      transform: (data) => data.list,
+    return _requestExecutor.runApi<List<VideoModel>, Object>(
+      () async => _homeApi.fetchWeeklyList(),
+      transform: parseVideoModelListEnvelope,
     );
-  }
-
-  HomeApi _requireHomeApi() {
-    assert(_homeApi != null, 'HomeRepositoryImpl.test() requires overridden methods.');
-    return _homeApi!;
-  }
-
-  WeeklyApi _requireWeeklyApi() {
-    assert(_weeklyApi != null, 'HomeRepositoryImpl.test() requires overridden methods.');
-    return _weeklyApi!;
-  }
-
-  static List<VideoModel> _parseRecommendItems(List<Map<String, dynamic>> items) {
-    final videos = <VideoModel>[];
-    for (final item in items) {
-      if (item['goto'] != 'av') {
-        continue;
-      }
-      try {
-        videos.add(VideoModel.fromJson(item));
-      } catch (_) {
-        // Skip malformed entries instead of failing the whole page.
-      }
-    }
-    return videos;
   }
 }

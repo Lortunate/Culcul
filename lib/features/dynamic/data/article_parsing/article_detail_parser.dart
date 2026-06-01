@@ -1,3 +1,4 @@
+import 'package:culcul/core/utils/json_utils.dart';
 import 'package:culcul/core/utils/json_compute.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:html/dom.dart' as html_dom;
@@ -28,10 +29,10 @@ class ArticleDetailParser {
     try {
       final data = match.group(1);
       if (data == null || data.isEmpty) return null;
-      // Use import if needed, but since we are in a subagent's mess,
-      // let's check what's available.
-      // Actually, let's just use the logic from the old one.
-      return _parseInitialState(data);
+      final decoded = await jsonDecodeCompute(data);
+      if (decoded is Map<String, dynamic>) return decoded;
+      if (decoded is Map) return decoded.cast<String, dynamic>();
+      return null;
     } catch (_) {
       return null;
     }
@@ -54,18 +55,19 @@ class ArticleDetailParser {
       summary: _string(data['summary']) ?? '',
       bannerUrl: _string(data['banner_url']),
       authorName: _string(author['name']) ?? _string(data['author_name']) ?? '',
-      authorMid: _int(author['mid']) ?? _int(data['mid']) ?? 0,
+      authorMid:
+          JsonUtils.parseInt(author['mid']) ?? JsonUtils.parseInt(data['mid']) ?? 0,
       authorAvatar: _string(author['face']) ?? '',
-      publishTime: _int(data['publish_time']) ?? 0,
+      publishTime: JsonUtils.parseInt(data['publish_time']) ?? 0,
       stats: ArticleStats(
-        view: _int(stats['view']) ?? 0,
-        favorite: _int(stats['favorite']) ?? 0,
-        like: _int(stats['like']) ?? 0,
-        dislike: _int(stats['dislike']) ?? 0,
-        reply: _int(stats['reply']) ?? 0,
-        share: _int(stats['share']) ?? 0,
-        coin: _int(stats['coin']) ?? 0,
-        dynamicCount: _int(stats['dynamic']) ?? 0,
+        view: JsonUtils.parseInt(stats['view']) ?? 0,
+        favorite: JsonUtils.parseInt(stats['favorite']) ?? 0,
+        like: JsonUtils.parseInt(stats['like']) ?? 0,
+        dislike: JsonUtils.parseInt(stats['dislike']) ?? 0,
+        reply: JsonUtils.parseInt(stats['reply']) ?? 0,
+        share: JsonUtils.parseInt(stats['share']) ?? 0,
+        coin: JsonUtils.parseInt(stats['coin']) ?? 0,
+        dynamicCount: JsonUtils.parseInt(stats['dynamic']) ?? 0,
       ),
       blocks: _parseHtmlContent(content),
     );
@@ -110,22 +112,52 @@ class ArticleDetailParser {
         _string(authorData['name']),
         _string(basic['author_name']),
       ]),
-      authorMid: _int(authorData['mid']) ?? _int(basic['uid']) ?? 0,
+      authorMid:
+          JsonUtils.parseInt(authorData['mid']) ?? JsonUtils.parseInt(basic['uid']) ?? 0,
       authorAvatar: _firstNonEmptyString([
         _string(authorData['face']),
         _string(_asMap(authorData['avatar'])['face']),
       ]),
       publishTime:
-          _int(authorData['pub_ts']) ?? _int(_asMap(detail['pub_info'])['pub_time']) ?? 0,
+          JsonUtils.parseInt(authorData['pub_ts']) ??
+          JsonUtils.parseInt(_asMap(detail['pub_info'])['pub_time']) ??
+          0,
       stats: ArticleStats(
-        view: _int(_asMap(_asMap(statModule['module_stat'])['view'])['count']) ?? 0,
+        view:
+            JsonUtils.parseInt(
+              _asMap(_asMap(statModule['module_stat'])['view'])['count'],
+            ) ??
+            0,
         favorite:
-            _int(_asMap(_asMap(statModule['module_stat'])['favorite'])['count']) ?? 0,
-        like: _int(_asMap(_asMap(statModule['module_stat'])['like'])['count']) ?? 0,
-        dislike: _int(_asMap(_asMap(statModule['module_stat'])['dislike'])['count']) ?? 0,
-        reply: _int(_asMap(_asMap(statModule['module_stat'])['comment'])['count']) ?? 0,
-        share: _int(_asMap(_asMap(statModule['module_stat'])['forward'])['count']) ?? 0,
-        coin: _int(_asMap(_asMap(statModule['module_stat'])['coin'])['count']) ?? 0,
+            JsonUtils.parseInt(
+              _asMap(_asMap(statModule['module_stat'])['favorite'])['count'],
+            ) ??
+            0,
+        like:
+            JsonUtils.parseInt(
+              _asMap(_asMap(statModule['module_stat'])['like'])['count'],
+            ) ??
+            0,
+        dislike:
+            JsonUtils.parseInt(
+              _asMap(_asMap(statModule['module_stat'])['dislike'])['count'],
+            ) ??
+            0,
+        reply:
+            JsonUtils.parseInt(
+              _asMap(_asMap(statModule['module_stat'])['comment'])['count'],
+            ) ??
+            0,
+        share:
+            JsonUtils.parseInt(
+              _asMap(_asMap(statModule['module_stat'])['forward'])['count'],
+            ) ??
+            0,
+        coin:
+            JsonUtils.parseInt(
+              _asMap(_asMap(statModule['module_stat'])['coin'])['count'],
+            ) ??
+            0,
         dynamicCount: 0,
       ),
       blocks: _parseOpusBlocks(

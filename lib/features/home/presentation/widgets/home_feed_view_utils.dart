@@ -1,6 +1,10 @@
+import 'dart:math' as math;
+
 import 'package:culcul/core/data/network/network_quality_policy.dart';
 import 'package:culcul/core/perf/performance_policy.dart';
+import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
+import 'package:culcul/ui/widgets/media/network_image_prefetch_specs.dart';
 import 'package:flutter/material.dart';
 
 class HomeFeedCacheTuning {
@@ -17,6 +21,37 @@ class HomeFeedCacheTuning {
     required this.reducedEffectsFactor,
     required this.minExtent,
   });
+}
+
+const HomeFeedCacheTuning homeGridFeedCacheTuning = HomeFeedCacheTuning(
+  constrainedNetworkFactor: 0.72,
+  normalNetworkFactor: 0.88,
+  minimalEffectsFactor: 0.78,
+  reducedEffectsFactor: 0.9,
+  minExtent: 360,
+);
+
+const HomeFeedCacheTuning homePopularFeedCacheTuning = HomeFeedCacheTuning(
+  constrainedNetworkFactor: 0.75,
+  normalNetworkFactor: 0.9,
+  minimalEffectsFactor: 0.8,
+  reducedEffectsFactor: 0.92,
+  minExtent: 320,
+);
+
+const int homePopularInitialPrefetchLimit = 6;
+
+const double homeVideoFeedImageAspectRatio = 16 / 10;
+const double homeLiveFeedImageAspectRatio = 16 / 9;
+
+int resolveHomeGridPrefetchLimit(int crossAxisCount) => crossAxisCount * 2;
+
+double estimateHomeGridItemWidth(BuildContext context, HomeGridLayoutSpec layout) {
+  final screenWidth = MediaQuery.sizeOf(context).width;
+  final containerWidth = math.min(screenWidth, homeFeedMaxWidth);
+  final columns = layout.gridDelegate.crossAxisCount;
+  final spacing = layout.gridDelegate.crossAxisSpacing * (columns - 1);
+  return (containerWidth - layout.padding.horizontal - spacing) / columns;
 }
 
 double resolveHomeFeedCacheExtent(
@@ -50,29 +85,15 @@ List<NetworkImagePrefetchSpec> buildHomeFeedImagePrefetchSpecs<T>(
   required double aspectRatio,
   required String Function(T item) imageUrl,
 }) {
-  if (count <= 0 || items.isEmpty) {
-    return const <NetworkImagePrefetchSpec>[];
-  }
-
-  final start = startIndex.clamp(0, items.length);
-  if (start >= items.length) {
-    return const <NetworkImagePrefetchSpec>[];
-  }
-
-  final end = (start + count).clamp(0, items.length);
-  final memCacheWidth = (logicalWidth * pixelRatio).round();
-  final memCacheHeight = (logicalWidth / aspectRatio * pixelRatio).round();
-
-  return items
-      .sublist(start, end)
-      .map(
-        (item) => NetworkImagePrefetchSpec(
-          url: imageUrl(item),
-          memCacheWidth: memCacheWidth,
-          memCacheHeight: memCacheHeight,
-        ),
-      )
-      .toList(growable: false);
+  return buildNetworkImagePrefetchSpecs(
+    items,
+    startIndex: startIndex,
+    count: count,
+    logicalWidth: logicalWidth,
+    aspectRatio: aspectRatio,
+    pixelRatio: pixelRatio,
+    imageUrl: imageUrl,
+  );
 }
 
 void prefetchHomeFeedImages(

@@ -18,18 +18,19 @@ class FavCollectedFolders extends _$FavCollectedFolders
   @override
   Future<List<FavoriteFolder>> fetchPage(int page) async {
     final result = await ref
-        .read(favoritesPortProvider)
+        .read(favRepositoryProvider)
         .getCollectedFolders(upMid: _mid, page: page);
-    return result.dataOrNull?.folders ?? const <FavoriteFolder>[];
+    return result.dataOrNull ?? const <FavoriteFolder>[];
   }
 
   @override
   Object itemId(FavoriteFolder item) => item.id;
 
   @override
-  bool hasMoreAfterPage(List<FavoriteFolder> items) => items.isNotEmpty;
+  bool hasMoreAfterPage(List<FavoriteFolder> items) =>
+      items.length >= favoriteFolderPageSize;
 
-  Future<void> loadMore() {
+  Future<void> loadNextCollectedPage() {
     return loadNextPage();
   }
 }

@@ -1,8 +1,8 @@
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
-import 'package:culcul/features/favorites/application/favorites_application_providers.dart';
+import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
 import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
-import 'package:culcul/features/favorites/presentation/view_models/favorites_view_model.dart';
+import 'package:culcul/features/favorites/state/favorites_view_model.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
 import 'package:culcul/i18n/strings.g.dart';
@@ -36,7 +36,13 @@ class FavoritesPage extends HookConsumerWidget {
         elevation: 0,
         backgroundColor: colorScheme.surface,
         surfaceTintColor: Colors.transparent,
-        actions: [_AddFolderAction(isVisible: isLoggedIn && tabController.index == 0)],
+        actions: [
+          if (isLoggedIn && tabController.index == 0)
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () => _handleCreateFolder(context: context, ref: ref),
+            ),
+        ],
         bottom: isLoggedIn
             ? AppTabBar(
                 controller: tabController,
@@ -45,7 +51,13 @@ class FavoritesPage extends HookConsumerWidget {
             : null,
       ),
       body: isLoggedIn
-          ? _FavoritesTabView(controller: tabController, onOpenFolder: onOpenFolder)
+          ? TabBarView(
+              controller: tabController,
+              children: [
+                FavFolderList(type: FavFolderType.created, onOpenFolder: onOpenFolder),
+                FavFolderList(type: FavFolderType.collected, onOpenFolder: onOpenFolder),
+              ],
+            )
           : GuestView(
               title: t.profile.not_logged_in,
               message: t.profile.login_hint,
@@ -55,48 +67,12 @@ class FavoritesPage extends HookConsumerWidget {
   }
 }
 
-class _FavoritesTabView extends StatelessWidget {
-  final TabController controller;
-  final ValueChanged<FavoriteFolder> onOpenFolder;
-
-  const _FavoritesTabView({required this.controller, required this.onOpenFolder});
-
-  @override
-  Widget build(BuildContext context) {
-    return TabBarView(
-      controller: controller,
-      children: [
-        FavFolderList(type: FavFolderType.created, onOpenFolder: onOpenFolder),
-        FavFolderList(type: FavFolderType.collected, onOpenFolder: onOpenFolder),
-      ],
-    );
-  }
-}
-
-class _AddFolderAction extends ConsumerWidget {
-  final bool isVisible;
-
-  const _AddFolderAction({required this.isVisible});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    if (!isVisible) {
-      return const SizedBox.shrink();
-    }
-
-    return IconButton(
-      icon: const Icon(Icons.add),
-      onPressed: () => _handleCreateFolder(context: context, ref: ref),
-    );
-  }
-}
-
 Future<bool> _handleCreateFolder({
   required BuildContext context,
   required WidgetRef ref,
 }) async {
   final t = Translations.of(context);
-  final data = await showDialog<FavFolderFormData>(
+  final data = await showDialog<({String title, String? intro, int privacy})>(
     context: context,
     builder: (_) => const FavFolderDialog(),
   );
@@ -105,7 +81,7 @@ Future<bool> _handleCreateFolder({
   }
 
   final result = await ref
-      .read(favoritesPortProvider)
+      .read(favRepositoryProvider)
       .createFolder(title: data.title, intro: data.intro, privacy: data.privacy);
   final error = result.errorOrNull;
   if (error == null) {

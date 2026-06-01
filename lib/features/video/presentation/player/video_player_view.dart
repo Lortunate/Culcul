@@ -1,8 +1,9 @@
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
+import 'package:culcul/features/video/presentation/player/controls/player_controls_overlay.dart';
 import 'package:culcul/features/video/presentation/player/hooks/use_player_system_settings.dart';
 import 'package:culcul/features/video/presentation/player/hooks/use_video_loader.dart';
 import 'package:culcul/features/video/presentation/player/hooks/use_video_progress.dart';
-import 'package:culcul/features/video/presentation/overlays/layers/controls_layer.dart';
+import 'package:culcul/features/video/presentation/player/video_listen_page.dart';
 import 'package:culcul/features/video/presentation/overlays/layers/danmaku_layer.dart';
 import 'package:culcul/features/video/presentation/overlays/layers/interaction_layer.dart';
 import 'package:culcul/features/video/presentation/overlays/layers/subtitle_layer.dart';
@@ -27,7 +28,6 @@ class VideoPlayerView extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final colorScheme = Theme.of(context).colorScheme;
     final playerController = ref.read(playerControllerProvider.notifier);
-    final loaderInput = watchVideoLoaderInput(ref, bvid);
     final isFullscreen = ref.watch(
       playerControllerProvider.select((s) => s.isFullscreen),
     );
@@ -35,7 +35,7 @@ class VideoPlayerView extends HookConsumerWidget {
 
     final player = playerController.player;
 
-    useVideoLoader(ref, player, loaderInput, sessionId: sessionId);
+    useVideoLoader(ref, player, bvid, sessionId: sessionId);
     final brightness = usePlayerSystemSettings(player);
     useVideoProgressReport(ref, bvid, player, isPlaying);
 
@@ -61,10 +61,26 @@ class VideoPlayerView extends HookConsumerWidget {
                 ],
               ),
             ),
-            ControlsLayer(
-              bvid: bvid,
-              onToggleFullscreen: onToggleFullscreen,
-              isFullscreen: isFullscreen,
+            Positioned.fill(
+              child: PlayerControlsOverlay(
+                bvid: bvid,
+                onToggleFullscreen: onToggleFullscreen,
+                onListen: () {
+                  if (isFullscreen) {
+                    onToggleFullscreen();
+                  }
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(builder: (_) => VideoListenPage(bvid: bvid)),
+                  );
+                },
+                onClose: () {
+                  if (isFullscreen) {
+                    onToggleFullscreen();
+                  } else {
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
             ),
           ],
         ),

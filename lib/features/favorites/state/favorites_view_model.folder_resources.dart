@@ -1,12 +1,39 @@
 part of 'favorites_view_model.dart';
 
-@freezed
-sealed class FavFolderDetailState with _$FavFolderDetailState {
-  const factory FavFolderDetailState({
-    FavoriteFolderInfo? info,
-    @Default(PagedListState<FavoriteResource>(isInitialLoading: false))
-    PagedListState<FavoriteResource> paging,
-  }) = _FavFolderDetailState;
+final class FavFolderDetailState {
+  const FavFolderDetailState({
+    this.info,
+    this.paging = const PagedListState<FavoriteResource>(isInitialLoading: false),
+  });
+
+  static const Object _unset = Object();
+
+  final FavoriteFolder? info;
+  final PagedListState<FavoriteResource> paging;
+
+  FavFolderDetailState copyWith({
+    Object? info = _unset,
+    PagedListState<FavoriteResource>? paging,
+  }) {
+    return FavFolderDetailState(
+      info: identical(info, _unset) ? this.info : info as FavoriteFolder?,
+      paging: paging ?? this.paging,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is FavFolderDetailState && other.info == info && other.paging == paging;
+  }
+
+  @override
+  int get hashCode => Object.hash(info, paging);
+
+  @override
+  String toString() {
+    return 'FavFolderDetailState(info: $info, paging: $paging)';
+  }
 }
 
 @riverpod
@@ -52,7 +79,7 @@ class FavFolderResources extends _$FavFolderResources {
   Future<FavoriteResourcePage?> _fetchItems(int mediaId, int page) async {
     final requestStopwatch = Stopwatch()..start();
     final result = await ref
-        .read(favoritesPortProvider)
+        .read(favRepositoryProvider)
         .getFolderResources(mediaId: mediaId, page: page);
     DevLogger.log('feature', 'favorites.detail request', <String, Object?>{
       'mediaId': mediaId,
@@ -77,7 +104,7 @@ class FavFolderResources extends _$FavFolderResources {
     );
     try {
       final result = await ref
-          .read(favoritesPortProvider)
+          .read(favRepositoryProvider)
           .getFolderResources(mediaId: mediaId, page: current.paging.nextPage);
       final nextPageData = result.dataOrNull;
       if (nextPageData == null) {

@@ -24,34 +24,6 @@ class AppErrorWidget extends StatelessWidget {
     this.variant = AppErrorWidgetVariant.regular,
   });
 
-  Future<void> _showErrorDetails(BuildContext context) {
-    final t = Translations.of(context);
-    final details = ErrorHandler.buildErrorDetails(
-      context,
-      error,
-      stackTrace: stackTrace,
-    );
-
-    return showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(t.error.details),
-        content: SingleChildScrollView(
-          child: AppSelectableText(
-            details,
-            style: const TextStyle(fontSize: 12, fontFamily: 'Courier'),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(t.common.confirm),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -88,76 +60,68 @@ class AppErrorWidget extends StatelessWidget {
               spacing: isCompact ? CulculSpacing.xs : CulculSpacing.sm,
               runSpacing: CulculSpacing.xs,
               children: [
-                _ErrorDetailsButton(
-                  onPressed: () => _showErrorDetails(context),
-                  compact: isCompact,
+                OutlinedButton.icon(
+                  onPressed: () {
+                    final details = ErrorHandler.buildErrorDetails(
+                      context,
+                      error,
+                      stackTrace: stackTrace,
+                    );
+
+                    showDialog<void>(
+                      context: context,
+                      builder: (dialogContext) => AlertDialog(
+                        title: Text(t.error.details),
+                        content: SingleChildScrollView(
+                          child: AppSelectableText(
+                            details,
+                            style: const TextStyle(fontSize: 12, fontFamily: 'Courier'),
+                          ),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(dialogContext).pop(),
+                            child: Text(t.common.confirm),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.info_outline_rounded, size: 16),
+                  label: Text(
+                    t.error.view_details,
+                    style: TextStyle(fontSize: isCompact ? 11 : 13),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    visualDensity: isCompact
+                        ? VisualDensity.compact
+                        : VisualDensity.standard,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(CulculRadius.lg),
+                    ),
+                  ),
                 ),
-                _RetryButton(
-                  label: t.common.retry,
+                OutlinedButton.icon(
                   onPressed: onRetry,
-                  borderColor: colorScheme.outlineVariant,
-                  compact: isCompact,
+                  icon: Icon(Icons.refresh_rounded, size: isCompact ? 16 : 18),
+                  label: Text(t.common.retry),
+                  style: OutlinedButton.styleFrom(
+                    visualDensity: isCompact
+                        ? VisualDensity.compact
+                        : VisualDensity.standard,
+                    side: BorderSide(color: colorScheme.outlineVariant),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(CulculRadius.lg),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isCompact ? CulculSpacing.sm : CulculSpacing.lg,
+                      vertical: isCompact ? CulculSpacing.xs : CulculSpacing.sm,
+                    ),
+                  ),
                 ),
               ],
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ErrorDetailsButton extends StatelessWidget {
-  final VoidCallback onPressed;
-  final bool compact;
-
-  const _ErrorDetailsButton({required this.onPressed, required this.compact});
-
-  @override
-  Widget build(BuildContext context) {
-    final t = Translations.of(context);
-    return OutlinedButton.icon(
-      onPressed: onPressed,
-      icon: const Icon(Icons.info_outline_rounded, size: 16),
-      label: Text(t.error.view_details, style: TextStyle(fontSize: compact ? 11 : 13)),
-      style: OutlinedButton.styleFrom(
-        visualDensity: compact ? VisualDensity.compact : VisualDensity.standard,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(CulculRadius.lg),
-        ),
-      ),
-    );
-  }
-}
-
-class _RetryButton extends StatelessWidget {
-  final String label;
-  final VoidCallback onPressed;
-  final Color borderColor;
-  final bool compact;
-
-  const _RetryButton({
-    required this.label,
-    required this.onPressed,
-    required this.borderColor,
-    required this.compact,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return OutlinedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(Icons.refresh_rounded, size: compact ? 16 : 18),
-      label: Text(label),
-      style: OutlinedButton.styleFrom(
-        visualDensity: compact ? VisualDensity.compact : VisualDensity.standard,
-        side: BorderSide(color: borderColor),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(CulculRadius.lg),
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: compact ? CulculSpacing.sm : CulculSpacing.lg,
-          vertical: compact ? CulculSpacing.xs : CulculSpacing.sm,
         ),
       ),
     );

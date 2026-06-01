@@ -21,6 +21,15 @@ VideoExtraWorkflows videoExtraWorkflows(Ref ref) {
   );
 }
 
+@riverpod
+Future<Result<DanmakuMasks?, AppError>> loadDanmakuMask(
+  Ref ref, {
+  required int oid,
+  required int pid,
+}) async {
+  return ref.read(videoExtraWorkflowsProvider).loadDanmakuMask(oid: oid, pid: pid);
+}
+
 class VideoExtraWorkflows {
   final VideoRepositoryImpl videoRepository;
   final DanmakuRepositoryImpl danmakuRepository;
@@ -38,27 +47,22 @@ class VideoExtraWorkflows {
       return const Success(null);
     }
 
-    final playerInfoResult = await videoRepository.fetchPlayerInfo(aid: pid, cid: oid);
-    if (playerInfoResult.errorOrNull case final error?) {
+    final maskInfoResult = await videoRepository.fetchDanmakuMaskInfo(aid: pid, cid: oid);
+    if (maskInfoResult.errorOrNull case final error?) {
       return Failure(error);
     }
-    final playerInfo = playerInfoResult.dataOrNull;
-    if (playerInfo == null) {
+    final maskInfo = maskInfoResult.dataOrNull;
+    if (maskInfo == null) {
       return const Success(null);
     }
 
-    final dmMask = playerInfo.dmMask;
-    if (dmMask == null) {
-      return const Success(null);
-    }
-
-    return (await danmakuRepository.fetchMaskData(dmMask.maskUrl)).when(
+    return (await danmakuRepository.fetchMaskData(maskInfo.maskUrl)).when(
       success: (bytes) async {
         final paths = await compute(
           _parseMaskData,
-          _ParseDanmakuMaskData(bytes, dmMask.fps),
+          _ParseDanmakuMaskData(bytes, maskInfo.fps),
         );
-        return Success(DanmakuMasks(paths, dmMask.fps));
+        return Success(DanmakuMasks(paths, maskInfo.fps));
       },
       failure: (error) async => Failure(error),
     );

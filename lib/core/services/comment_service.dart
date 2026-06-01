@@ -14,6 +14,8 @@ CommentService commentService(Ref ref) {
 }
 
 class CommentService {
+  static const int defaultPageSize = 20;
+
   final Dio _dio;
 
   CommentService(this._dio);
@@ -23,7 +25,7 @@ class CommentService {
     required int type,
     CommentSort sort = CommentSort.hot,
     int page = 1,
-    int pageSize = 20,
+    int pageSize = defaultPageSize,
     String? referer,
     String? origin,
     CancelToken? cancelToken,
@@ -48,7 +50,7 @@ class CommentService {
     required int root,
     required int type,
     int page = 1,
-    int pageSize = 20,
+    int pageSize = defaultPageSize,
     String? referer,
     String? origin,
     CancelToken? cancelToken,

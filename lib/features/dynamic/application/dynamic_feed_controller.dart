@@ -1,6 +1,6 @@
-import 'package:culcul/features/dynamic/application/dynamic_feed_application_providers.dart';
 import 'package:culcul/features/dynamic/application/models/dynamic_response.dart';
 import 'package:culcul/features/dynamic/application/models/dynamic_item_extensions.dart';
+import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
 import 'package:riverpod/riverpod.dart';
 
 mixin DynamicFeedController {
@@ -29,7 +29,7 @@ mixin DynamicFeedController {
     nextItems[index] = updatedItem;
     state = AsyncData(nextItems);
 
-    final result = await ref.read(dynamicFeedPortProvider).likeDynamic(id, !isLiked);
+    final result = await ref.read(dynamicRepositoryProvider).likeDynamic(id, !isLiked);
     if (result.isFailure) {
       state = previousState;
     }

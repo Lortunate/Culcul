@@ -10,6 +10,13 @@ abstract interface class SessionLogoutCleaner {
   Future<void> clearAfterLogout();
 }
 
+final class _NoopSessionLogoutCleaner implements SessionLogoutCleaner {
+  const _NoopSessionLogoutCleaner();
+
+  @override
+  Future<void> clearAfterLogout() async {}
+}
+
 @Riverpod(keepAlive: true)
 SessionCookieRefresher sessionCookieRefresher(Ref ref) {
   throw StateError('sessionCookieRefresherProvider not initialized');
@@ -17,5 +24,5 @@ SessionCookieRefresher sessionCookieRefresher(Ref ref) {
 
 @Riverpod(keepAlive: true)
 SessionLogoutCleaner sessionLogoutCleaner(Ref ref) {
-  throw StateError('sessionLogoutCleanerProvider not initialized');
+  return const _NoopSessionLogoutCleaner();
 }

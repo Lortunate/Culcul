@@ -1,8 +1,21 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+final class AuthQrCode {
+  const AuthQrCode({required this.url, required this.key});
 
-part 'auth_qr_code.freezed.dart';
+  final String url;
+  final String key;
 
-@freezed
-sealed class AuthQrCode with _$AuthQrCode {
-  const factory AuthQrCode({required String url, required String key}) = _AuthQrCode;
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other.runtimeType == runtimeType &&
+            other is AuthQrCode &&
+            other.url == url &&
+            other.key == key;
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, url, key);
+
+  @override
+  String toString() => 'AuthQrCode(url: $url, key: $key)';
 }

@@ -3,24 +3,20 @@ import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/data/network/resource_api.dart';
-import 'package:culcul/core/data/network/resource_api_provider.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
+import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/services/comment_service.dart';
+import 'package:culcul/core/utils/json_utils.dart';
 import 'package:culcul/features/video/data/video_api.dart';
 import 'package:culcul/features/video/application/models/play_url.dart';
-import 'package:culcul/features/video/data/dtos/player_info_dto.dart';
-import 'package:culcul/features/video/data/dtos/related_video_dto.dart';
 import 'package:culcul/features/video/application/models/subtitle.dart';
-import 'package:culcul/features/video/application/subtitle_port.dart';
-import 'package:culcul/features/video/application/video_comment_port.dart';
-import 'package:culcul/features/video/application/video_detail_port.dart';
-import 'package:culcul/features/video/data/dtos/subtitle_dto.dart';
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';
-import 'package:culcul/features/video/data/dtos/video_play_url_dto.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'video_repository_impl.g.dart';
+
+typedef DanmakuMaskInfo = ({String maskUrl, int fps});
 
 @riverpod
 VideoRepositoryImpl videoRepository(Ref ref) {
@@ -31,7 +27,7 @@ VideoRepositoryImpl videoRepository(Ref ref) {
   );
 }
 
-class VideoRepositoryImpl implements SubtitlePort, VideoCommentPort, VideoDetailPort {
+class VideoRepositoryImpl {
   static const _videoCommentType = 1;
 
   final VideoApi api;
@@ -46,7 +42,6 @@ class VideoRepositoryImpl implements SubtitlePort, VideoCommentPort, VideoDetail
     RequestExecutor? requestExecutor,
   }) : _requestExecutor = requestExecutor ?? const RequestExecutor();
 
-  @override
   Future<Result<void, AppError>> setCommentLike({
     required int oid,
     required int rpid,
@@ -62,7 +57,6 @@ class VideoRepositoryImpl implements SubtitlePort, VideoCommentPort, VideoDetail
     );
   }
 
-  @override
   Future<Result<void, AppError>> setCommentDislike({
     required int oid,
     required int rpid,
@@ -78,7 +72,6 @@ class VideoRepositoryImpl implements SubtitlePort, VideoCommentPort, VideoDetail
     );
   }
 
-  @override
   Future<Result<CommentItem, AppError>> replyToComment({
     required int oid,
     required int root,
@@ -127,7 +120,6 @@ class VideoRepositoryImpl implements SubtitlePort, VideoCommentPort, VideoDetail
     );
   }
 
-  @override
   Future<Result<PlayUrl, AppError>> fetchVideoPlayUrl({
     required int aid,
     required int cid,
@@ -137,29 +129,47 @@ class VideoRepositoryImpl implements SubtitlePort, VideoCommentPort, VideoDetail
     int fourk = 1,
     CancelToken? cancelToken,
   }) {
-    return _requestExecutor
-        .runApiDirect(
-          () => api.fetchVideoPlayUrl(
-            aid,
-            cid,
-            quality,
-            fnval: fnval,
-            fnver: fnver,
-            fourk: fourk,
-            cancelToken: cancelToken,
-          ),
-        )
-        .then((result) => result.map(_mapPlayUrl));
+    return _requestExecutor.runApiDirect(
+      () => api.fetchVideoPlayUrl(
+        aid,
+        cid,
+        quality,
+        fnval: fnval,
+        fnver: fnver,
+        fourk: fourk,
+        cancelToken: cancelToken,
+      ),
+    );
   }
 
-  Future<Result<PlayerInfo, AppError>> fetchPlayerInfo({
+  Future<Result<DanmakuMaskInfo?, AppError>> fetchDanmakuMaskInfo({
     required int aid,
     required int cid,
   }) {
-    return _requestExecutor.runApiDirect(() => api.fetchPlayerInfo(aid, cid));
+    return _requestExecutor.runApi<DanmakuMaskInfo?, Object>(
+      () => api.fetchPlayerInfo(aid, cid),
+      transform: (data) {
+        final root = JsonUtils.asStringKeyedMap(data);
+        if (root == null) {
+          throw const FormatException('Player info response is not a JSON object');
+        }
+
+        final dmMask = JsonUtils.asStringKeyedMap(root['dm_mask']);
+        if (dmMask == null) {
+          return null;
+        }
+
+        final maskUrl = JsonUtils.parseStringWithDefault(dmMask['mask_url']);
+        final fps = JsonUtils.parseInt(dmMask['fps']);
+        if (maskUrl.isEmpty || fps == null || fps <= 0) {
+          throw const FormatException('Invalid danmaku mask metadata');
+        }
+        return (maskUrl: maskUrl, fps: fps);
+      },
+    );
   }
 
-  Future<Result<List<RelatedVideo>, AppError>> fetchRelatedVideos(
+  Future<Result<List<VideoModel>, AppError>> fetchRelatedVideos(
     String bvid, {
     CancelToken? cancelToken,
   }) {
@@ -168,7 +178,6 @@ class VideoRepositoryImpl implements SubtitlePort, VideoCommentPort, VideoDetail
     );
   }
 
-  @override
   Future<Result<CommentResponse, AppError>> fetchComments({
     required int oid,
     CommentSort sort = CommentSort.hot,
@@ -186,7 +195,6 @@ class VideoRepositoryImpl implements SubtitlePort, VideoCommentPort, VideoDetail
     );
   }
 
-  @override
   Future<Result<CommentResponse, AppError>> fetchReply({
     required int oid,
     required int root,
@@ -204,19 +212,14 @@ class VideoRepositoryImpl implements SubtitlePort, VideoCommentPort, VideoDetail
     );
   }
 
-  @override
   Future<Result<SubtitleContent, AppError>> fetchSubtitleContent(String url) {
     return _requestExecutor.run(() async {
       final fullUrl = url.startsWith('http') ? url : 'https:$url';
       final response = await resourceApi.fetchJson(fullUrl);
-      final subtitleContent = SubtitleContentDto.fromJson(
-        Map<String, dynamic>.from(response as Map),
-      );
-      return _mapSubtitleContent(subtitleContent);
+      return SubtitleContent.fromJson(Map<String, dynamic>.from(response as Map));
     });
   }
 
-  @override
   Future<Result<void, AppError>> reportVideoProgress({
     required int aid,
     required int cid,
@@ -227,12 +230,10 @@ class VideoRepositoryImpl implements SubtitlePort, VideoCommentPort, VideoDetail
     );
   }
 
-  @override
   Future<Result<void, AppError>> setVideoLike({required int aid, required bool isLiked}) {
     return _requestExecutor.runUnit(() => api.setVideoLike(aid, isLiked ? 1 : 2));
   }
 
-  @override
   Future<Result<void, AppError>> addVideoCoin({
     required int aid,
     int count = 1,
@@ -242,72 +243,4 @@ class VideoRepositoryImpl implements SubtitlePort, VideoCommentPort, VideoDetail
       () => api.addVideoCoin(aid, count, selectLike: alsoLike ? 1 : 0),
     );
   }
-}
-
-PlayUrl _mapPlayUrl(VideoPlayUrlDto dto) {
-  return PlayUrl(
-    format: dto.format,
-    quality: dto.quality,
-    timeLength: dto.timeLength,
-    acceptFormat: dto.acceptFormat,
-    acceptDescription: dto.acceptDescription,
-    acceptQuality: dto.acceptQuality,
-    videoCodecId: dto.videoCodecId,
-    durl: dto.durl.map(_mapDurl).toList(growable: false),
-    dash: dto.dash == null ? null : _mapDashInfo(dto.dash!),
-    supportFormats: dto.supportFormats.map(_mapSupportFormat).toList(growable: false),
-  );
-}
-
-DashInfo _mapDashInfo(DashInfoDto dto) {
-  return DashInfo(audio: dto.audio.map(_mapDashStream).toList(growable: false));
-}
-
-DashStream _mapDashStream(DashStreamDto dto) {
-  return DashStream(
-    id: dto.id,
-    baseUrl: dto.baseUrl,
-    backupUrl: dto.backupUrl,
-    bandwidth: dto.bandwidth,
-  );
-}
-
-Durl _mapDurl(DurlDto dto) {
-  return Durl(
-    order: dto.order,
-    length: dto.length,
-    size: dto.size,
-    url: dto.url,
-    backupUrl: dto.backupUrl,
-  );
-}
-
-SupportFormat _mapSupportFormat(SupportFormatDto dto) {
-  return SupportFormat(
-    quality: dto.quality,
-    format: dto.format,
-    newDescription: dto.newDescription,
-    displayDesc: dto.displayDesc,
-    superscript: dto.superscript,
-    codecs: dto.codecs,
-  );
-}
-
-SubtitleContent _mapSubtitleContent(SubtitleContentDto dto) {
-  return SubtitleContent(
-    fontSize: dto.fontSize,
-    fontColor: dto.fontColor,
-    backgroundAlpha: dto.backgroundAlpha,
-    backgroundColor: dto.backgroundColor,
-    body: dto.body.map(_mapSubtitleItem).toList(growable: false),
-  );
-}
-
-SubtitleItem _mapSubtitleItem(SubtitleItemDto dto) {
-  return SubtitleItem(
-    from: dto.from,
-    to: dto.to,
-    location: dto.location,
-    content: dto.content,
-  );
 }

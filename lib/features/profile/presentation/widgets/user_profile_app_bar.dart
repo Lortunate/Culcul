@@ -102,7 +102,47 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                   icon: Icons.more_vert,
                   color: contentColor,
                   backgroundColor: iconBackgroundColor,
-                  onPressed: () => _showMoreMenu(context),
+                  onPressed: () {
+                    showAppModalBottomSheet(
+                      context: context,
+                      builder: (context) => Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            leading: const Icon(Icons.share_outlined),
+                            title: Text(t.actions.share),
+                            onTap: () {
+                              Navigator.pop(context);
+                              if (profile != null) {
+                                shareUser(profile!.id, profile!.username);
+                              }
+                            },
+                          ),
+                          ListTile(
+                            leading: const Icon(Icons.block_outlined),
+                            title: Text(t.profile.menu.blacklist),
+                            onTap: () {
+                              Navigator.pop(context);
+                              context.showAppFeedback(
+                                t.common.coming_soon(tab: t.profile.menu.blacklist),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            leading: const Icon(Icons.report_gmailerrorred_outlined),
+                            title: Text(t.profile.menu.report),
+                            onTap: () {
+                              Navigator.pop(context);
+                              context.showAppFeedback(
+                                t.common.coming_soon(tab: t.profile.menu.report),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(width: 4),
               ],
@@ -110,46 +150,6 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         );
       },
-    );
-  }
-
-  void _showMoreMenu(BuildContext context) {
-    showAppModalBottomSheet(
-      context: context,
-      builder: (context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.share_outlined),
-            title: Text(t.actions.share),
-            onTap: () {
-              Navigator.pop(context);
-              if (profile != null) {
-                shareUser(profile!.id, profile!.username);
-              }
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.block_outlined),
-            title: Text(t.profile.menu.blacklist),
-            onTap: () {
-              Navigator.pop(context);
-              context.showAppFeedback(
-                t.common.coming_soon(tab: t.profile.menu.blacklist),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.report_gmailerrorred_outlined),
-            title: Text(t.profile.menu.report),
-            onTap: () {
-              Navigator.pop(context);
-              context.showAppFeedback(t.common.coming_soon(tab: t.profile.menu.report));
-            },
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
     );
   }
 

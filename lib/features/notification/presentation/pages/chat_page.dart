@@ -1,14 +1,14 @@
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/profile/application/profile_session_providers.dart';
-import 'package:culcul/features/notification/application/chat_page_commands.dart';
 import 'package:culcul/features/notification/domain/entities/private_session.dart';
-import 'package:culcul/features/notification/presentation/view_models/chat_view_model.dart';
+import 'package:culcul/features/notification/state/chat_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_input.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_message_list.dart';
-import 'package:culcul/features/notification/presentation/widgets/notification_skeletons.dart';
+import 'package:culcul/ui/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
+import 'package:culcul/ui/widgets/feedback/app_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -39,7 +39,6 @@ class ChatPage extends HookConsumerWidget {
     final displayAvatarUrl = displayInfo.avatarUrl;
     final displayName = displayInfo.name;
 
-    final workflow = ref.read(chatPageCommandWorkflowProvider);
     final textController = useTextEditingController();
     final scrollController = useScrollController();
 
@@ -91,30 +90,78 @@ class ChatPage extends HookConsumerWidget {
                 stackTrace: stack,
                 onRetry: () => ref.refresh(provider),
               ),
-              loading: () => const ChatMessageSkeletonList(),
+              loading: () => ListView.separated(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: CulculSpacing.sm,
+                  vertical: CulculSpacing.md,
+                ),
+                itemCount: 10,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: CulculSpacing.lg),
+                itemBuilder: (context, index) {
+                  final isSelf = index.isEven;
+                  return AppShimmer(
+                    child: Row(
+                      mainAxisAlignment: isSelf
+                          ? MainAxisAlignment.end
+                          : MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (!isSelf) ...[
+                          const AppShimmerBox(width: 40, height: 40, borderRadius: 20),
+                          const SizedBox(width: CulculSpacing.xs),
+                        ],
+                        Container(
+                          width: 150 + (isSelf ? 30.0 : 0.0),
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainerHighest,
+                            borderRadius: BorderRadius.only(
+                              topLeft: CulculRadius.radiusMd,
+                              topRight: CulculRadius.radiusMd,
+                              bottomLeft: isSelf
+                                  ? CulculRadius.radiusMd
+                                  : CulculRadius.radiusXs,
+                              bottomRight: isSelf
+                                  ? CulculRadius.radiusXs
+                                  : CulculRadius.radiusMd,
+                            ),
+                          ),
+                        ),
+                        if (isSelf) ...[
+                          const SizedBox(width: CulculSpacing.xs),
+                          const AppShimmerBox(width: 40, height: 40, borderRadius: 20),
+                        ],
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           ),
           ChatInput(
             controller: textController,
             onSendImage: (image) async {
-              final result = await workflow.sendImage(
-                image: image,
-                send: notifier.sendImage,
-                afterSuccess: scrollToBottom,
-              );
-              if (result.isFailure) {
-                showSendError(result.error ?? StateError('Unknown send failure'));
+              final result = await notifier.sendImage(image);
+              if (result.sent) {
+                await scrollToBottom();
+                return;
+              }
+              final error = result.error;
+              if (error != null) {
+                showSendError(error);
               }
             },
             onSend: () async {
-              final result = await workflow.sendText(
-                text: textController.text,
-                send: notifier.sendMessage,
-                clearInput: textController.clear,
-                afterSuccess: scrollToBottom,
-              );
-              if (result.isFailure) {
-                showSendError(result.error ?? StateError('Unknown send failure'));
+              final result = await notifier.sendMessage(textController.text);
+              if (result.sent) {
+                textController.clear();
+                await scrollToBottom();
+                return;
+              }
+              final error = result.error;
+              if (error != null) {
+                showSendError(error);
               }
             },
           ),
@@ -131,10 +178,10 @@ class ChatPage extends HookConsumerWidget {
       return (avatarUrl: displayAvatarUrl, name: displayName);
     }
 
-    final profileAsync = ref.watch(userProfileInfoProvider(talkerId.toString()));
+    final profileAsync = ref.watch(userProfileCardProvider(talkerId.toString()));
     if (!profileAsync.hasValue) return (avatarUrl: displayAvatarUrl, name: displayName);
 
-    final profile = profileAsync.value;
+    final profile = profileAsync.value?.dataOrNull;
     if (profile == null) return (avatarUrl: displayAvatarUrl, name: displayName);
     if (displayAvatarUrl.isEmpty) {
       displayAvatarUrl = profile.face;

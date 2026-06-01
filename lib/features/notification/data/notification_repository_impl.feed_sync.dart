@@ -3,13 +3,16 @@ import 'dart:convert';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
+import 'package:culcul/core/utils/json_utils.dart';
+import 'package:culcul/features/notification/data/dtos/private_message_model.dart';
+import 'package:culcul/features/notification/data/dtos/reply_model.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
 import 'package:culcul/features/notification/data/notification_api.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.cleanup_policy.dart';
-import 'package:culcul/features/notification/data/notification_repository_impl.message_support.dart';
-import 'package:culcul/features/notification/data/system_notice_mapper.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_cursor.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
+import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/domain/entities/system_notice.dart';
 
 class NotificationFeedSync {
   const NotificationFeedSync({
@@ -17,7 +20,7 @@ class NotificationFeedSync {
     required this.api,
     required this.requestExecutor,
     required this.cleanupPolicy,
-    required this.messageSupport,
+    required this.pageSize,
     required this.nowSeconds,
   });
 
@@ -25,7 +28,7 @@ class NotificationFeedSync {
   final NotificationApi api;
   final RequestExecutor requestExecutor;
   final NotificationCleanupPolicy cleanupPolicy;
-  final NotificationMessageSupport messageSupport;
+  final int pageSize;
   final int Function() nowSeconds;
 
   Future<Result<void, AppError>> syncFeedHead({
@@ -56,7 +59,7 @@ class NotificationFeedSync {
 
     final now = nowSeconds();
     if (type == NotificationFeedType.system) {
-      return (await messageSupport.fetchSystemNotifications()).when(
+      return (await _fetchSystemNotifications()).when(
         success: (items) async {
           await database.transaction(() async {
             for (final item in items) {
@@ -87,7 +90,7 @@ class NotificationFeedSync {
       );
     }
 
-    return (await messageSupport.fetchReplyLikeAtResponse(
+    return (await _fetchReplyLikeAtResponse(
       type: type,
       id: cursor?.id,
       time: cursor?.time,
@@ -129,5 +132,185 @@ class NotificationFeedSync {
       },
       failure: (error) async => Failure(error),
     );
+  }
+
+  Future<Result<ReplyResponse, AppError>> _fetchReplyLikeAtResponse({
+    required NotificationFeedType type,
+    int? id,
+    int? time,
+  }) async {
+    switch (type) {
+      case NotificationFeedType.reply:
+        return requestExecutor.runApiDirect(
+          () => api.getReplyList(id: id, replyTime: time),
+        );
+      case NotificationFeedType.at:
+        return requestExecutor.runApiDirect(() => api.getAtList(id: id, atTime: time));
+      case NotificationFeedType.like:
+        return requestExecutor.runApi<ReplyResponse, Object>(
+          () => api.getLikeList(id: id, likeTime: time),
+          transform: (data) {
+            final root = JsonUtils.asStringKeyedMap(data) ?? const <String, dynamic>{};
+            final total =
+                JsonUtils.asStringKeyedMap(root['total']) ?? const <String, dynamic>{};
+            final cursor = JsonUtils.asStringKeyedMap(total['cursor']);
+            return ReplyResponse(
+              cursor: ReplyCursor.fromJson(cursor ?? const <String, dynamic>{}),
+              items: JsonUtils.parseObjectList(
+                total['items'],
+              ).map(ReplyItem.fromJson).toList(growable: false),
+            );
+          },
+        );
+      case NotificationFeedType.system:
+        return const Failure(
+          AppError.data('System notifications use a dedicated API flow'),
+        );
+    }
+  }
+
+  Future<Result<List<SystemNotice>, AppError>> _fetchSystemNotifications() async {
+    final sessionResult = await requestExecutor.runApiDirect(
+      () => api.getPrivateSessions(
+        sessionType: PrivateSessionType.system.value,
+        size: pageSize,
+      ),
+    );
+    return sessionResult.when(
+      success: (sessionRes) async {
+        final talkerId = _resolveSystemTalkerId(sessionRes);
+        if (talkerId == null) {
+          return const Success(<SystemNotice>[]);
+        }
+
+        final msgsResult = await requestExecutor.runApiDirect(
+          () => api.getPrivateMessages(
+            talkerId: talkerId,
+            sessionType: PrivateSessionType.user.value,
+            size: pageSize,
+          ),
+        );
+        return msgsResult.map(
+          (msgsRes) =>
+              msgsRes.messages?.map((msg) {
+                final contentMap = msg.contentMap;
+                final nestedContentMap = _toJsonMap(contentMap?['content']);
+                return SystemNotice(
+                  id: msg.msgSeqno,
+                  title: _firstNonEmptyString([
+                    contentMap?['title'],
+                    nestedContentMap?['title'],
+                  ]),
+                  text: _extractSystemNoticeText(contentMap, nestedContentMap),
+                  time: msg.timestamp,
+                  uri: _extractSystemNoticeUri(contentMap, nestedContentMap),
+                  jumpText: _firstNonEmptyString([
+                    contentMap?['jump_text'],
+                    contentMap?['jumpText'],
+                    nestedContentMap?['jump_text'],
+                    nestedContentMap?['jumpText'],
+                  ]),
+                );
+              }).toList() ??
+              const <SystemNotice>[],
+        );
+      },
+      failure: (error) async => Failure(error),
+    );
+  }
+
+  int? _resolveSystemTalkerId(PrivateMessageSessionResponse response) {
+    final systemMsgMap = response.systemMsg;
+    if (systemMsgMap != null && systemMsgMap.isNotEmpty) {
+      var preferred = systemMsgMap['5'] ?? systemMsgMap['7'];
+      if (preferred == null || preferred <= 0) {
+        for (final item in systemMsgMap.values) {
+          if (item > 0) {
+            preferred = item;
+            break;
+          }
+        }
+      }
+      if (preferred != null && preferred > 0) {
+        return preferred;
+      }
+    }
+
+    final sessions = response.sessionList ?? const <PrivateMessageSession>[];
+    for (final session in sessions) {
+      if (session.sessionType == PrivateSessionType.system.value &&
+          session.talkerId > 0) {
+        return session.talkerId;
+      }
+    }
+    return null;
+  }
+
+  String? _extractSystemNoticeText(
+    Map<String, dynamic>? contentMap,
+    Map<String, dynamic>? nestedContentMap,
+  ) {
+    final contentString = _firstNonEmptyString([contentMap?['content']]);
+    final decodedContent = _toJsonMap(contentString);
+    return _firstNonEmptyString([
+      contentMap?['text'],
+      contentMap?['desc'],
+      contentMap?['message'],
+      decodedContent?['text'],
+      decodedContent?['content'],
+      nestedContentMap?['text'],
+      nestedContentMap?['content'],
+      contentString,
+    ]);
+  }
+
+  String? _extractSystemNoticeUri(
+    Map<String, dynamic>? contentMap,
+    Map<String, dynamic>? nestedContentMap,
+  ) {
+    final contentString = _firstNonEmptyString([contentMap?['content']]);
+    final decodedContent = _toJsonMap(contentString);
+    return _firstNonEmptyString([
+      contentMap?['url'],
+      contentMap?['uri'],
+      contentMap?['jump_uri'],
+      contentMap?['jumpUrl'],
+      nestedContentMap?['url'],
+      nestedContentMap?['uri'],
+      nestedContentMap?['jump_uri'],
+      nestedContentMap?['jumpUrl'],
+      decodedContent?['url'],
+      decodedContent?['uri'],
+      decodedContent?['jump_uri'],
+      decodedContent?['jumpUrl'],
+    ]);
+  }
+
+  String? _firstNonEmptyString(List<dynamic> values) {
+    for (final value in values) {
+      if (value is String) {
+        final trimmed = value.trim();
+        if (trimmed.isNotEmpty) {
+          return trimmed;
+        }
+      }
+    }
+    return null;
+  }
+
+  Map<String, dynamic>? _toJsonMap(dynamic raw) {
+    if (raw is Map<String, dynamic>) return raw;
+    if (raw is Map) {
+      return raw.map((key, value) => MapEntry(key.toString(), value));
+    }
+    if (raw is String) {
+      try {
+        final decoded = jsonDecode(raw);
+        if (decoded is Map<String, dynamic>) return decoded;
+      } catch (_) {
+        return null;
+      }
+    }
+    return null;
   }
 }

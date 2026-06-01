@@ -1,7 +1,7 @@
 import 'package:culcul/core/contracts/user_session_contract.dart';
 import 'package:culcul/core/session/session_lifecycle_providers.dart';
 import 'package:culcul/features/auth/application/auth_controller.dart';
-import 'package:culcul/features/auth/application/auth_session_cookie_refresher.dart';
+import 'package:culcul/features/auth/data/auth_repository_impl.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auth_session_providers.g.dart';
@@ -14,7 +14,23 @@ UserSession? currentUser(Ref ref) {
 }
 
 SessionCookieRefresher createAuthSessionCookieRefresher(Ref ref) {
-  return AuthSessionCookieRefresher(ref);
+  return _AuthSessionCookieRefresher(ref);
+}
+
+final class _AuthSessionCookieRefresher implements SessionCookieRefresher {
+  _AuthSessionCookieRefresher(this._ref);
+
+  final Ref _ref;
+
+  @override
+  Future<void> refreshCookies() async {
+    final authRepository = _ref.read(authRepositoryProvider);
+    final result = await authRepository.checkAndRefreshCookie();
+    final error = result.errorOrNull;
+    if (error != null) {
+      throw StateError('Cookie refresh failed: ${error.message}');
+    }
+  }
 }
 
 class _CurrentUserSession implements UserSession {

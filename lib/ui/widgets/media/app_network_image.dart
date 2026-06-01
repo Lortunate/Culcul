@@ -86,20 +86,6 @@ class AppNetworkImage extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadingPlaceholder(ColorScheme colorScheme) {
-    final placeholderChild = Container(
-      width: width,
-      height: height,
-      decoration: _buildDecoration(colorScheme),
-    );
-
-    if (!useShimmer) {
-      return placeholderChild;
-    }
-
-    return AppShimmer(child: placeholderChild);
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -130,7 +116,13 @@ class AppNetworkImage extends StatelessWidget {
         switch (state.extendedImageLoadState) {
           case LoadState.loading:
             if (placeholder != null) return placeholder;
-            return _buildLoadingPlaceholder(colorScheme);
+            final placeholderChild = Container(
+              width: width,
+              height: height,
+              decoration: _buildDecoration(colorScheme),
+            );
+            if (!useShimmer) return placeholderChild;
+            return AppShimmer(child: placeholderChild);
           case LoadState.failed:
             return _buildErrorWidget(colorScheme);
           case LoadState.completed:

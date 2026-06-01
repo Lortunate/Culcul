@@ -1,6 +1,6 @@
 part of 'article_detail_page.dart';
 
-List<Widget> buildArticleCommentSlivers({
+List<Widget> _buildArticleCommentSlivers({
   required BuildContext context,
   required ArticleDetailUiState state,
   required ArticleDetailViewModel notifier,

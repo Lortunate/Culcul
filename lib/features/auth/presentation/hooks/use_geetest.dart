@@ -4,24 +4,15 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:gt3_flutter_plugin/gt3_flutter_plugin.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-typedef GeetestSuccessCallback =
-    Future<void> Function(
-      String token,
-      String challenge,
-      String validate,
-      String seccode,
-    );
-
-class UseGeetestResult {
-  final Future<void> Function() start;
-  final bool isLoading;
-
-  UseGeetestResult({required this.start, required this.isLoading});
-}
-
-UseGeetestResult useGeetest({
+({Future<void> Function() start, bool isLoading}) useGeetest({
   required WidgetRef ref,
-  required GeetestSuccessCallback onSuccess,
+  required Future<void> Function(
+    String token,
+    String challenge,
+    String validate,
+    String seccode,
+  )
+  onSuccess,
   void Function(String error)? onError,
 }) {
   final context = useContext();
@@ -80,5 +71,5 @@ UseGeetestResult useGeetest({
     }
   }, [ref, onSuccess, onError]);
 
-  return UseGeetestResult(start: start, isLoading: isLoading.value);
+  return (start: start, isLoading: isLoading.value);
 }

@@ -1,23 +1,62 @@
 import 'package:culcul/features/video/application/models/subtitle.dart';
-import 'package:culcul/features/video/application/subtitle_application_providers.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:culcul/features/video/data/video_repository_impl.dart';
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:culcul/features/video/presentation/detail/video_detail_view_model.dart';
 
-part 'subtitle_view_model.freezed.dart';
 part 'subtitle_view_model.g.dart';
 
-@freezed
-sealed class SubtitleState with _$SubtitleState {
-  const factory SubtitleState({
-    @Default([]) List<SubtitleInfo> availableSubtitles,
-    SubtitleInfo? selectedSubtitle,
-    @Default([]) List<SubtitleItem> content,
-    @Default(false) bool isLoading,
-    @Default(false) bool isEnabled,
-    String? error,
-  }) = _SubtitleState;
+final class SubtitleState {
+  const SubtitleState({
+    this.availableSubtitles = const [],
+    this.selectedSubtitle,
+    this.content = const [],
+    this.isLoading = false,
+    this.isEnabled = false,
+    this.error,
+  });
+
+  final List<SubtitleInfo> availableSubtitles;
+  final SubtitleInfo? selectedSubtitle;
+  final List<SubtitleItem> content;
+  final bool isLoading;
+  final bool isEnabled;
+  final String? error;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is SubtitleState &&
+            listEquals(other.availableSubtitles, availableSubtitles) &&
+            other.selectedSubtitle == selectedSubtitle &&
+            listEquals(other.content, content) &&
+            other.isLoading == isLoading &&
+            other.isEnabled == isEnabled &&
+            other.error == error;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    Object.hashAll(availableSubtitles),
+    selectedSubtitle,
+    Object.hashAll(content),
+    isLoading,
+    isEnabled,
+    error,
+  );
+
+  @override
+  String toString() {
+    return 'SubtitleState('
+        'availableSubtitles: $availableSubtitles, '
+        'selectedSubtitle: $selectedSubtitle, '
+        'content: $content, '
+        'isLoading: $isLoading, '
+        'isEnabled: $isEnabled, '
+        'error: $error'
+        ')';
+  }
 }
 
 @riverpod
@@ -39,9 +78,22 @@ class SubtitleController extends _$SubtitleController {
 
   Future<void> toggleSubtitle() async {
     if (state.isEnabled) {
-      state = state.copyWith(isEnabled: false);
+      state = SubtitleState(
+        availableSubtitles: state.availableSubtitles,
+        selectedSubtitle: state.selectedSubtitle,
+        content: state.content,
+        isLoading: state.isLoading,
+        error: state.error,
+      );
     } else {
-      state = state.copyWith(isEnabled: true);
+      state = SubtitleState(
+        availableSubtitles: state.availableSubtitles,
+        selectedSubtitle: state.selectedSubtitle,
+        content: state.content,
+        isLoading: state.isLoading,
+        isEnabled: true,
+        error: state.error,
+      );
       if (state.selectedSubtitle == null && state.availableSubtitles.isNotEmpty) {
         // Select first by default
         await selectSubtitle(state.availableSubtitles.first);
@@ -55,18 +107,36 @@ class SubtitleController extends _$SubtitleController {
   Future<void> selectSubtitle(SubtitleInfo info) async {
     if (state.selectedSubtitle == info && state.content.isNotEmpty) return;
 
-    state = state.copyWith(selectedSubtitle: info, isLoading: true, error: null);
+    state = SubtitleState(
+      availableSubtitles: state.availableSubtitles,
+      selectedSubtitle: info,
+      content: state.content,
+      isLoading: true,
+      isEnabled: state.isEnabled,
+    );
 
     await _loadSubtitleContent(info);
   }
 
   Future<void> _loadSubtitleContent(SubtitleInfo info) async {
     final result = await ref
-        .read(subtitlePortProvider)
+        .read(videoRepositoryProvider)
         .fetchSubtitleContent(info.subtitleUrl);
     state = result.when(
-      success: (content) => state.copyWith(content: content.body, isLoading: false),
-      failure: (error) => state.copyWith(isLoading: false, error: error.message),
+      success: (content) => SubtitleState(
+        availableSubtitles: state.availableSubtitles,
+        selectedSubtitle: state.selectedSubtitle,
+        content: content.body,
+        isEnabled: state.isEnabled,
+        error: state.error,
+      ),
+      failure: (error) => SubtitleState(
+        availableSubtitles: state.availableSubtitles,
+        selectedSubtitle: state.selectedSubtitle,
+        content: state.content,
+        isEnabled: state.isEnabled,
+        error: error.message,
+      ),
     );
   }
 }

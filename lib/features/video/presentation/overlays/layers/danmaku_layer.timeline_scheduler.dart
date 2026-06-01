@@ -39,18 +39,22 @@ void useDanmakuPlaybackScheduler({
       }
 
       ref
-          .read(danmakuProviderProvider.notifier)
-          .loadSegment(oid: currentCid, pid: activeAid, segmentIndex: segmentIndex)
+          .read(danmakuRepositoryProvider)
+          .fetchDanmakuSegment(
+            oid: currentCid,
+            pid: activeAid,
+            segmentIndex: segmentIndex,
+          )
           .then((result) {
             if (disposed) {
               return;
             }
-            final elems = result.dataOrNull;
-            if (elems == null) {
+            final segment = result.dataOrNull;
+            if (segment == null) {
               timeline.markSegmentLoadFailed(segmentIndex);
               return;
             }
-            final newItems = elems.map((e) {
+            final newItems = segment.entries.map((e) {
               return DanmakuItem(
                 e.content,
                 time: e.progress,

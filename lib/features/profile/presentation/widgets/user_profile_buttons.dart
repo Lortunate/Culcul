@@ -1,9 +1,8 @@
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/profile/domain/entities/profile_user.dart';
-import 'package:culcul/features/profile/presentation/view_models/user_space_view_model.dart';
+import 'package:culcul/features/profile/state/user_space_view_model.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/features/profile/presentation/widgets/user_profile_action_button.dart';
 import 'package:culcul/ui/widgets/buttons/follow_button.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -75,16 +74,27 @@ class UserProfileButtons extends ConsumerWidget {
             ),
           ),
         ),
-        UserProfileActionButton(
-          icon: Icons.mail_outline_rounded,
-          onTap: () {
+        OutlinedButton(
+          onPressed: () {
             navigation.onOpenChat(
               talkerId: int.parse(profile.id),
               name: profile.username,
               avatarUrl: profile.avatarUrl,
             );
           },
-          size: height,
+          style: OutlinedButton.styleFrom(
+            padding: EdgeInsets.zero,
+            minimumSize: Size(height, height),
+            fixedSize: Size(height, height),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            side: BorderSide(color: colorScheme.outline.withValues(alpha: 0.2)),
+            backgroundColor: colorScheme.surface,
+          ),
+          child: Icon(
+            Icons.mail_outline_rounded,
+            size: height * 0.45,
+            color: colorScheme.onSurfaceVariant,
+          ),
         ),
       ],
     );

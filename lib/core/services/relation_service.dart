@@ -1,4 +1,3 @@
-import 'package:culcul/core/contracts/relation_port.dart';
 import 'package:culcul/core/contracts/relation_user_contract.dart';
 import 'package:culcul/core/data/network/api_response_decoder.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
@@ -6,17 +5,18 @@ import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
+import 'package:culcul/core/utils/json_utils.dart';
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'relation_service.g.dart';
 
 @Riverpod(keepAlive: true)
-RelationPort relationPort(Ref ref) {
+RelationService relationService(Ref ref) {
   return RelationService(ref.watch(dioClientProvider));
 }
 
-class RelationService implements RelationPort {
+class RelationService {
   static const int defaultPageSize = 50;
 
   final Dio _dio;
@@ -25,7 +25,6 @@ class RelationService implements RelationPort {
   RelationService(this._dio, {RequestExecutor? requestExecutor})
     : _requestExecutor = requestExecutor ?? const RequestExecutor();
 
-  @override
   Future<Result<List<ProfileRelationUser>, AppError>> getFollowings(
     int vmid, {
     int page = 1,
@@ -33,7 +32,6 @@ class RelationService implements RelationPort {
     return _getRelationUsers('/x/relation/followings', vmid: vmid, page: page);
   }
 
-  @override
   Future<Result<List<ProfileRelationUser>, AppError>> getFollowers(
     int vmid, {
     int page = 1,
@@ -41,7 +39,6 @@ class RelationService implements RelationPort {
     return _getRelationUsers('/x/relation/followers', vmid: vmid, page: page);
   }
 
-  @override
   Future<Result<void, AppError>> modifyRelation({
     required int mid,
     required bool isFollow,
@@ -84,7 +81,11 @@ class RelationService implements RelationPort {
       path,
       queryParameters: queryParameters,
     );
-    return decodeApiResponse(response, _asMap, nullBody: const <String, dynamic>{});
+    return decodeApiResponse(
+      response,
+      (json) => JsonUtils.asStringKeyedMap(json) ?? const <String, dynamic>{},
+      nullBody: const <String, dynamic>{},
+    );
   }
 
   Future<ApiResponse<dynamic>> _postApiResponse(
@@ -110,48 +111,33 @@ class RelationService implements RelationPort {
       return const <ProfileRelationUser>[];
     }
 
-    return list.map((item) => _parseRelationUser(_asMap(item))).toList(growable: false);
+    return list
+        .map((item) => JsonUtils.asStringKeyedMap(item) ?? const <String, dynamic>{})
+        .map(_parseRelationUser)
+        .toList(growable: false);
   }
 
   ProfileRelationUser _parseRelationUser(Map<String, dynamic> json) {
     final officialVerifyJson = json['official_verify'];
     final vipJson = json['vip'];
     return ProfileRelationUser(
-      mid: _readInt(json['mid']),
-      uname: _readString(json['uname']),
-      face: _readString(json['face']),
-      sign: _readString(json['sign']),
-      attribute: _readInt(json['attribute']),
+      mid: JsonUtils.parseIntWithDefault(json['mid']),
+      uname: JsonUtils.parseStringWithDefault(json['uname']),
+      face: JsonUtils.parseStringWithDefault(json['face']),
+      sign: JsonUtils.parseStringWithDefault(json['sign']),
+      attribute: JsonUtils.parseIntWithDefault(json['attribute']),
       officialVerify: officialVerifyJson is Map
-          ? OfficialVerify.fromJson(_asMap(officialVerifyJson))
+          ? OfficialVerify.fromJson(
+              JsonUtils.asStringKeyedMap(officialVerifyJson) ?? const <String, dynamic>{},
+            )
           : null,
-      vip: vipJson is Map ? VipInfo.fromJson(_asMap(vipJson)) : null,
-      mtime: _readInt(json['mtime']),
-      special: _readInt(json['special']),
+      vip: vipJson is Map
+          ? VipInfo.fromJson(
+              JsonUtils.asStringKeyedMap(vipJson) ?? const <String, dynamic>{},
+            )
+          : null,
+      mtime: JsonUtils.parseIntWithDefault(json['mtime']),
+      special: JsonUtils.parseIntWithDefault(json['special']),
     );
-  }
-
-  Map<String, dynamic> _asMap(Object? value) {
-    if (value is Map<String, dynamic>) {
-      return value;
-    }
-    if (value is Map) {
-      return Map<String, dynamic>.from(value);
-    }
-    return const <String, dynamic>{};
-  }
-
-  int _readInt(Object? value) {
-    if (value is int) {
-      return value;
-    }
-    if (value is num) {
-      return value.toInt();
-    }
-    return int.tryParse(value?.toString() ?? '') ?? 0;
-  }
-
-  String _readString(Object? value) {
-    return value?.toString() ?? '';
   }
 }

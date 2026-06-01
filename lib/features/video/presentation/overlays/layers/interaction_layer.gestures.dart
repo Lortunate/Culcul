@@ -161,22 +161,32 @@ class _InteractionGestureSurface extends HookConsumerWidget {
         children: [
           child,
           if (!isLocked)
-            _SeekDoubleTapOverlay(
-              onSeekBackward: () {
-                rippleSide.value = -1;
-                playerController.seek(player.state.position - const Duration(seconds: 5));
-              },
-              onSeekForward: () {
-                rippleSide.value = 1;
-                playerController.seek(player.state.position + const Duration(seconds: 5));
-              },
+            Positioned.fill(
+              child: GestureDetector(
+                onDoubleTapDown: (details) {
+                  final screenWidth = MediaQuery.sizeOf(context).width;
+                  if (details.globalPosition.dx < screenWidth * 0.2) {
+                    rippleSide.value = -1;
+                    playerController.seek(
+                      player.state.position - const Duration(seconds: 5),
+                    );
+                  } else if (details.globalPosition.dx > screenWidth * 0.8) {
+                    rippleSide.value = 1;
+                    playerController.seek(
+                      player.state.position + const Duration(seconds: 5),
+                    );
+                  }
+                },
+                behavior: HitTestBehavior.translucent,
+                child: const SizedBox.expand(),
+              ),
             ),
           if (rippleSide.value != 0)
-            SeekRippleOverlay(
+            _SeekRippleOverlay(
               isForward: rippleSide.value > 0,
               onAnimationComplete: () => rippleSide.value = 0,
             ),
-          GestureFeedbackOverlay(
+          _GestureFeedbackOverlay(
             showIndicator: showIndicator,
             indicatorIcon: indicatorIcon,
             indicatorLabel: indicatorLabel,
@@ -184,6 +194,237 @@ class _InteractionGestureSurface extends HookConsumerWidget {
             indicatorTextValue: indicatorTextValue,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _GestureFeedbackOverlay extends HookWidget {
+  const _GestureFeedbackOverlay({
+    required this.showIndicator,
+    required this.indicatorIcon,
+    required this.indicatorLabel,
+    required this.indicatorValue,
+    required this.indicatorTextValue,
+  });
+
+  final ValueNotifier<bool> showIndicator;
+  final ValueNotifier<IconData> indicatorIcon;
+  final ValueNotifier<String> indicatorLabel;
+  final ValueNotifier<double?> indicatorValue;
+  final ValueNotifier<String?> indicatorTextValue;
+
+  @override
+  Widget build(BuildContext context) {
+    final show = useValueListenable(showIndicator);
+    final icon = useValueListenable(indicatorIcon);
+    final label = useValueListenable(indicatorLabel);
+    final value = useValueListenable(indicatorValue);
+    final textValue = useValueListenable(indicatorTextValue);
+
+    if (!show) return const SizedBox();
+
+    return Center(
+      child: _GestureIndicator(
+        icon: icon,
+        label: label,
+        value: value,
+        textValue: textValue,
+      ),
+    );
+  }
+}
+
+class _SeekRippleOverlay extends HookWidget {
+  final bool isForward;
+  final VoidCallback onAnimationComplete;
+
+  const _SeekRippleOverlay({required this.isForward, required this.onAnimationComplete});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final controller = useAnimationController(
+      duration: const Duration(milliseconds: 600),
+    );
+
+    useEffect(() {
+      controller.forward().then((_) => onAnimationComplete());
+      return null;
+    }, const []);
+
+    return ClipPath(
+      clipper: _RippleClipper(isForward: isForward),
+      child: FadeTransition(
+        opacity: Tween<double>(begin: 1.0, end: 0.0).animate(controller),
+        child: Container(
+          color: colorScheme.onPrimary.withValues(alpha: 0.2),
+          alignment: isForward ? Alignment.centerRight : Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(
+            horizontal: CulculSpacing.xl + CulculSpacing.xs,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                isForward ? Icons.fast_forward_rounded : Icons.fast_rewind_rounded,
+                color: colorScheme.onPrimary,
+                size: 40,
+              ),
+              const SizedBox(height: CulculSpacing.xs),
+              Text(
+                '10s',
+                style: TextStyle(
+                  color: colorScheme.onPrimary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RippleClipper extends CustomClipper<Path> {
+  final bool isForward;
+
+  _RippleClipper({required this.isForward});
+
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    if (isForward) {
+      path.moveTo(size.width, 0);
+      path.lineTo(size.width, size.height);
+      path.quadraticBezierTo(size.width * 0.6, size.height / 2, size.width, 0);
+    } else {
+      path.moveTo(0, 0);
+      path.lineTo(0, size.height);
+      path.quadraticBezierTo(size.width * 0.4, size.height / 2, 0, 0);
+    }
+    return path;
+  }
+
+  @override
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
+}
+
+class _GestureIndicator extends StatelessWidget {
+  static const _borderRadius = BorderRadius.all(CulculRadius.radiusLg);
+  static final _blurFilter = ImageFilter.blur(sigmaX: 32, sigmaY: 32);
+
+  final IconData icon;
+  final String label;
+  final double? value;
+  final String? textValue;
+
+  const _GestureIndicator({
+    required this.icon,
+    required this.label,
+    this.value,
+    this.textValue,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final blurEnabled = PerformancePolicyController.notifier.value.blurEnabled;
+
+    final content = Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: CulculSpacing.xl,
+        vertical: CulculSpacing.lg,
+      ),
+      decoration: BoxDecoration(
+        color: colorScheme.scrim.withValues(alpha: blurEnabled ? 0.5 : 0.7),
+        borderRadius: _borderRadius,
+        border: Border.all(
+          color: colorScheme.onPrimary.withValues(alpha: 0.1),
+          width: 0.5,
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            color: colorScheme.onPrimary,
+            size: 36,
+            shadows: [
+              Shadow(
+                blurRadius: 8,
+                color: colorScheme.shadow.withValues(alpha: 0.26),
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            label,
+            style: TextStyle(
+              color: colorScheme.onPrimary,
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+              decoration: TextDecoration.none,
+              shadows: [
+                Shadow(
+                  blurRadius: 4,
+                  color: colorScheme.shadow.withValues(alpha: 0.45),
+                  offset: const Offset(0, 1),
+                ),
+              ],
+            ),
+          ),
+          if (textValue != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              textValue!,
+              style: TextStyle(
+                color: colorScheme.onPrimary.withValues(alpha: 0.7),
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+          if (value != null) ...[
+            const SizedBox(height: 16),
+            SizedBox(
+              width: 80,
+              height: 6,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(CulculRadius.xs),
+                child: LinearProgressIndicator(
+                  value: value,
+                  backgroundColor: colorScheme.onPrimary.withValues(alpha: 0.15),
+                  valueColor: AlwaysStoppedAnimation<Color>(colorScheme.onPrimary),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+
+    if (!blurEnabled) return content;
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: _borderRadius,
+        boxShadow: [
+          BoxShadow(
+            color: colorScheme.shadow.withValues(alpha: 0.3),
+            blurRadius: 32,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: _borderRadius,
+        child: BackdropFilter(filter: _blurFilter, child: content),
       ),
     );
   }

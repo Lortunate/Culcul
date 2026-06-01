@@ -1,12 +1,19 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-
-part 'send_message_result.freezed.dart';
-
-@freezed
-sealed class SendMessageResult with _$SendMessageResult {
-  const factory SendMessageResult({
-    required int msgKey,
-    String? msgContent,
+class SendMessageResult {
+  SendMessageResult({
+    required this.msgKey,
+    this.msgContent,
     Map<String, dynamic>? keyHitInfos,
-  }) = _SendMessageResult;
+  }) : _keyHitInfos = keyHitInfos == null ? null : Map.unmodifiable(keyHitInfos);
+
+  final int msgKey;
+  final String? msgContent;
+  final Map<String, dynamic>? _keyHitInfos;
+
+  Map<String, dynamic>? get keyHitInfos => _keyHitInfos;
+
+  @override
+  String toString() {
+    return 'SendMessageResult(msgKey: $msgKey, msgContent: $msgContent, '
+        'keyHitInfos: $keyHitInfos)';
+  }
 }

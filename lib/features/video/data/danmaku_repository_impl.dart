@@ -1,10 +1,8 @@
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/data/network/resource_api.dart';
-import 'package:culcul/core/data/network/resource_api_provider.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/features/video/application/danmaku_port.dart';
 import 'package:culcul/features/video/application/models/danmaku.dart';
 import 'package:culcul/features/video/data/danmaku_api.dart';
 import 'package:culcul/protos/dm.pb.dart';
@@ -20,7 +18,7 @@ DanmakuRepositoryImpl danmakuRepository(Ref ref) {
   );
 }
 
-class DanmakuRepositoryImpl implements DanmakuPort {
+class DanmakuRepositoryImpl {
   final DanmakuApi _api;
   final ResourceApi _resourceApi;
   final RequestExecutor _requestExecutor;
@@ -28,7 +26,6 @@ class DanmakuRepositoryImpl implements DanmakuPort {
   DanmakuRepositoryImpl(this._api, this._resourceApi, {RequestExecutor? requestExecutor})
     : _requestExecutor = requestExecutor ?? const RequestExecutor();
 
-  @override
   Future<Result<DanmakuSegment, AppError>> fetchDanmakuSegment({
     required int oid,
     required int pid,
@@ -53,24 +50,6 @@ class DanmakuRepositoryImpl implements DanmakuPort {
             )
             .toList(growable: false),
         state: payload.state,
-      );
-    });
-  }
-
-  Future<Result<DanmakuViewConfig, AppError>> fetchDanmakuView({
-    required int oid,
-    required int pid,
-  }) {
-    return _requestExecutor.run(() async {
-      final response = DmViewReply.fromBuffer(
-        await _api.fetchDanmakuView(oid: oid, pid: pid),
-      );
-      return DanmakuViewConfig(
-        closed: response.closed,
-        allow: response.allow,
-        sendBoxStyle: response.sendBoxStyle,
-        textPlaceholder: response.textPlaceholder,
-        inputPlaceholder: response.inputPlaceholder,
       );
     });
   }

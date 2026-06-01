@@ -1,23 +1,53 @@
-import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
-import 'package:culcul/features/home/presentation/view_models/home_popular_view_model.dart';
-import 'package:culcul/features/home/presentation/widgets/home_feed_paging_shell.dart';
-import 'package:culcul/features/home/presentation/widgets/home_feed_view_utils.dart';
-import 'package:culcul/features/home/presentation/widgets/home_video_actions.dart';
-import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
-import 'package:culcul/core/hooks/use_scroll_precache.dart';
+import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/core/data/network/network_quality_policy.dart';
+import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
+import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
+import 'package:culcul/core/hooks/use_scroll_precache.dart';
 import 'package:culcul/core/perf/performance_policy.dart';
-import 'package:culcul/core/runtime/runtime_performance_policy.dart';
 import 'package:culcul/core/runtime/runtime_performance_policy_provider.dart';
+import 'package:culcul/features/home/data/home_feed_paging_constants.dart';
+import 'package:culcul/features/home/data/home_repository_impl.dart';
+import 'package:culcul/features/home/presentation/hooks/use_home_scroll_sync.dart';
+import 'package:culcul/features/home/presentation/widgets/home_feed_paging_shell.dart';
+import 'package:culcul/features/home/presentation/widgets/home_feed_view_utils.dart';
 import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';
+import 'package:culcul/features/home/presentation/widgets/home_video_actions.dart';
 import 'package:culcul/features/home/presentation/widgets/popular_video_card.dart';
-import 'package:culcul/ui/widgets/skeletons/page_skeletons.dart';
+import 'package:culcul/features/home/state/home_feed_paging_mixin.dart';
 import 'package:culcul/ui/assemblies/feed_cards/video_list_skeleton.dart';
-import 'package:culcul/features/home/presentation/home_breakpoints.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+
+final _homePopularProvider = AsyncNotifierProvider<_HomePopular, List<VideoModel>>(
+  _HomePopular.new,
+);
+
+class _HomePopular extends AsyncNotifier<List<VideoModel>>
+    with OffsetPagedAsyncNotifier<VideoModel>, HomeFeedPagingMixin {
+  @override
+  Future<List<VideoModel>> build() {
+    return buildFirstPageWithSilentRefresh(
+      perfChain: 'home.popular_feed',
+      cachePath: ApiConstants.popular,
+      cacheQuery: const <String, Object?>{'pn': 1, 'ps': homeFeedPageSize},
+      loadPage: _loadPage,
+    );
+  }
+
+  @override
+  Future<List<VideoModel>> fetchPage(int page) =>
+      _loadPage(page, forceRefresh: isRefreshing);
+
+  Future<List<VideoModel>> _loadPage(int page, {required bool forceRefresh}) =>
+      loadFeedPage(
+        perfChain: 'home.popular_feed',
+        page: page,
+        forceRefresh: forceRefresh,
+        fetchPage: ref.read(homeRepositoryImplProvider).fetchPopularPage,
+      );
+}
 
 class PopularView extends HookConsumerWidget {
   final ValueChanged<String> onOpenVideo;
@@ -32,92 +62,42 @@ class PopularView extends HookConsumerWidget {
     final networkPolicy = ref.watch(networkQualityPolicyProvider);
     final runtimePolicy = ref.watch(runtimePerformancePolicyProvider);
     final perfPolicy = useValueListenable(PerformancePolicyController.notifier);
-    final popularAsync = ref.watch(homePopularProvider);
+    final popularAsync = ref.watch(_homePopularProvider);
+    final popularItems = popularAsync.value ?? const <VideoModel>[];
     final scrollController = useScrollController();
     final refreshController = useManagedEasyRefreshController();
+    final popularNotifier = ref.read(_homePopularProvider.notifier);
     final cacheExtent = resolveHomeFeedCacheExtent(
       layout.cacheExtent,
       networkPolicy: networkPolicy,
       perfPolicy: perfPolicy,
-      tuning: const HomeFeedCacheTuning(
-        constrainedNetworkFactor: 0.75,
-        normalNetworkFactor: 0.9,
-        minimalEffectsFactor: 0.8,
-        reducedEffectsFactor: 0.92,
-        minExtent: 320,
-      ),
+      tuning: homePopularFeedCacheTuning,
     );
 
     useHomeScrollSync(ref, scrollController, refreshController, 2);
 
-    return HomeFeedPagingShell(
-      maxWidth: HomeBreakpoints.popularMaxWidth,
-      asyncValue: popularAsync,
-      controller: refreshController,
-      onRefresh: ref.read(homePopularProvider.notifier).refresh,
-      onLoadMore: ref.read(homePopularProvider.notifier).loadMore,
-      itemCount: () => ref.read(homePopularProvider).value?.length ?? 0,
-      skeleton: ListSkeletonView(
-        itemSkeleton: const VideoListSkeleton(),
-        padding: layout.padding,
-        itemPadding: layout.skeletonItemPadding,
-      ),
-      builder: (context, items) => _PopularVideoList(
-        items: items,
-        onOpenVideo: onOpenVideo,
-        ref: ref,
-        scrollController: scrollController,
-        layout: layout,
-        cacheExtent: cacheExtent,
-        networkPolicy: networkPolicy,
-        runtimePolicy: runtimePolicy,
-      ),
-    );
-  }
-}
-
-class _PopularVideoList extends HookWidget {
-  const _PopularVideoList({
-    required this.items,
-    required this.onOpenVideo,
-    required this.ref,
-    required this.scrollController,
-    required this.layout,
-    required this.cacheExtent,
-    required this.networkPolicy,
-    required this.runtimePolicy,
-  });
-
-  final List<VideoModel> items;
-  final ValueChanged<String> onOpenVideo;
-  final WidgetRef ref;
-  final ScrollController scrollController;
-  final HomePopularLayoutSpec layout;
-  final double cacheExtent;
-  final NetworkQualityPolicy networkPolicy;
-  final RuntimePerformancePolicy runtimePolicy;
-
-  @override
-  Widget build(BuildContext context) {
     useEffect(() {
+      if (popularItems.isEmpty) {
+        return null;
+      }
+
       final pixelRatio = MediaQuery.devicePixelRatioOf(context);
-      const prefetchLimit = 6;
       prefetchHomeFeedImages(
         context,
         specs: buildHomeFeedImagePrefetchSpecs(
-          items,
+          popularItems,
           startIndex: 0,
-          count: prefetchLimit,
+          count: homePopularInitialPrefetchLimit,
           logicalWidth: layout.thumbnailWidth,
           pixelRatio: pixelRatio,
-          aspectRatio: 16 / 10,
+          aspectRatio: homeVideoFeedImageAspectRatio,
           imageUrl: (video) => video.pic,
         ),
         networkPolicy: networkPolicy,
-        limit: prefetchLimit,
+        limit: homePopularInitialPrefetchLimit,
       );
       return null;
-    }, [items, networkPolicy]);
+    }, [popularItems, networkPolicy]);
 
     useScrollPrecache(
       scrollController: scrollController,
@@ -125,45 +105,72 @@ class _PopularVideoList extends HookWidget {
       getUpcomingSpecs: (firstIndex, count) {
         final pixelRatio = MediaQuery.devicePixelRatioOf(context);
         return buildHomeFeedImagePrefetchSpecs(
-          items,
+          popularItems,
           startIndex: firstIndex + 1,
           count: count,
           logicalWidth: layout.thumbnailWidth,
           pixelRatio: pixelRatio,
-          aspectRatio: 16 / 10,
+          aspectRatio: homeVideoFeedImageAspectRatio,
           imageUrl: (video) => video.pic,
         );
       },
     );
 
-    return CustomScrollView(
-      cacheExtent: cacheExtent,
-      controller: scrollController,
-      slivers: [
-        SliverPadding(
-          padding: layout.padding,
-          sliver: SliverList.separated(
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              final video = items[index];
-              return PopularVideoCard(
-                key: ValueKey('popular_v_${video.bvid}'),
-                video: video,
-                cardHeight: layout.cardHeight,
-                thumbnailWidth: layout.thumbnailWidth,
-                onTap: () => onOpenVideo(video.bvid),
-                onLongPress: () => showHomeVideoActionsBottomSheet(
-                  context,
-                  ref,
-                  bvid: video.bvid,
-                  coverUrl: video.pic,
+    return HomeFeedPagingShell(
+      maxWidth: homePopularMaxWidth,
+      asyncValue: popularAsync,
+      controller: refreshController,
+      onRefresh: popularNotifier.refresh,
+      onLoadMore: popularNotifier.loadMore,
+      itemCount: () => ref.read(_homePopularProvider).value?.length ?? 0,
+      skeleton: CustomScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        slivers: [
+          SliverPadding(
+            padding: layout.padding,
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => Padding(
+                  padding: layout.skeletonItemPadding,
+                  child: const VideoListSkeleton(),
                 ),
-              );
-            },
-            separatorBuilder: (_, _) => SizedBox(height: layout.itemGap),
+                childCount: 10,
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
+      builder: (context, items) {
+        return CustomScrollView(
+          cacheExtent: cacheExtent,
+          controller: scrollController,
+          slivers: [
+            SliverPadding(
+              padding: layout.padding,
+              sliver: SliverList.separated(
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  final video = items[index];
+                  return PopularVideoCard(
+                    key: ValueKey('popular_v_${video.bvid}'),
+                    video: video,
+                    cardHeight: layout.cardHeight,
+                    thumbnailWidth: layout.thumbnailWidth,
+                    onTap: () => onOpenVideo(video.bvid),
+                    onLongPress: () => showHomeVideoActionsBottomSheet(
+                      context,
+                      ref,
+                      bvid: video.bvid,
+                      coverUrl: video.pic,
+                    ),
+                  );
+                },
+                separatorBuilder: (_, _) => SizedBox(height: layout.itemGap),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
