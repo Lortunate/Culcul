@@ -38,23 +38,32 @@ The script runs the repository's required code generation sequence:
 ```bash
 flutter pub get
 dart run slang
-dart run build_runner build --delete-conflicting-outputs
+dart run build_runner build
+```
+
+Launcher icons are regenerated separately when `assets/icon/icon.png` or
+`flutter_launcher_icons.yaml` changes:
+
+```bash
+dart run flutter_launcher_icons
 ```
 
 If `build_runner` reports `InvalidOutputException` for
 `lib/i18n/strings.g.dart`, verify the file exists before treating recovery as
 failed because `dart run slang` may already have restored it.
 
-After recovery, a focused validation command is:
+After recovery, run the active validation commands:
 
 ```bash
-flutter test test/app/shell/main_shell_responsive_test.dart --reporter compact
+bash tool/architecture/run_architecture_guards.sh
+bash tool/format_dart.sh --check
+flutter analyze --no-fatal-infos
 ```
 
-If you need a broader check, run:
+There are currently no checked-in tests. Once tests exist, run:
 
 ```bash
-flutter analyze --no-fatal-infos
+flutter test
 ```
 
 ## Architecture Guard
