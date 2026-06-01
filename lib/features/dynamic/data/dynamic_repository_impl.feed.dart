@@ -1,34 +1,51 @@
 part of 'dynamic_repository_impl.dart';
 
 mixin _DynamicRepositoryFeedApis on _DynamicRepositoryAccess {
-  Future<Result<DynamicData, AppError>> getFeed(DynamicFeedQuery query) {
+  Future<Result<DynamicData, AppError>> getFeed({String? type, String? offset}) {
     return _requestExecutor.runApiDirect(
-      () => api.getDynamicFeed(type: query.type, offset: query.offset),
+      () => api.getDynamicFeed(type: type, offset: offset),
     );
   }
 
-  Future<Result<DynamicData, AppError>> getSpaceDynamicFeed(SpaceDynamicFeedQuery query) {
+  Future<Result<DynamicData, AppError>> getSpaceDynamicFeed({
+    required int hostMid,
+    String? offset,
+    bool forceRefresh = false,
+    CancelToken? cancelToken,
+  }) {
     return _requestExecutor.runApiDirect(
       () => api.getSpaceDynamicFeed(
-        hostMid: query.hostMid,
-        offset: query.offset,
-        forceRefresh: query.forceRefresh ? true : null,
-        cancelToken: query.cancelToken,
+        hostMid: hostMid,
+        offset: offset,
+        forceRefresh: forceRefresh ? true : null,
+        cancelToken: cancelToken,
       ),
     );
   }
 
-  Future<Result<DynamicData, AppError>> getTopicFeed(TopicDynamicFeedQuery query) {
+  Future<Result<DynamicData, AppError>> getTopicFeed({
+    required int topicId,
+    String? offset,
+  }) {
     return _requestExecutor.runApiDirect(
-      () => api.getTopicFeed(topicId: query.topicId, offset: query.offset),
+      () => api.getTopicFeed(topicId: topicId, offset: offset),
     );
   }
 
   Future<Result<DynamicItem, AppError>> getDetail(String id) async {
-    final result = await _requestExecutor.runApiDirect(
+    return _requestExecutor.runApi<DynamicItem, Object>(
       () => api.getDynamicDetail(id: id),
+      transform: (data) {
+        if (data is! Map<String, dynamic>) {
+          throw const AppError.unknown('Invalid dynamic detail payload');
+        }
+        final item = data['item'];
+        if (item is! Map<String, dynamic>) {
+          throw const AppError.unknown('Invalid dynamic detail item');
+        }
+        return DynamicItem.fromJson(item);
+      },
     );
-    return result.map((data) => data.item);
   }
 
   Future<Result<ArticleDetailData, AppError>> getArticleDetail(String url) async {

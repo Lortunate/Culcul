@@ -5,22 +5,58 @@ import 'package:culcul/features/auth/data/auth_repository_impl.dart';
 import 'package:culcul/features/auth/domain/entities/auth_captcha_challenge.dart';
 import 'package:culcul/features/auth/domain/entities/country_code.dart';
 import 'package:culcul/features/auth/domain/entities/user_entity.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-part 'auth_controller.freezed.dart';
 
 part 'auth_controller.g.dart';
 
-@freezed
-sealed class AuthState with _$AuthState {
-  const factory AuthState({
-    @Default(false) bool isLoggedIn,
-    UserEntity? user,
-    @Default(false) bool isLoading,
-    String? error,
-  }) = _AuthState;
+class AuthState {
+  const AuthState({
+    this.isLoggedIn = false,
+    this.user,
+    this.isLoading = false,
+    this.error,
+  });
+
+  final bool isLoggedIn;
+  final UserEntity? user;
+  final bool isLoading;
+  final String? error;
+
+  AuthState copyWith({
+    bool? isLoggedIn,
+    Object? user = _undefined,
+    bool? isLoading,
+    Object? error = _undefined,
+  }) {
+    return AuthState(
+      isLoggedIn: isLoggedIn ?? this.isLoggedIn,
+      user: user == _undefined ? this.user : user as UserEntity?,
+      isLoading: isLoading ?? this.isLoading,
+      error: error == _undefined ? this.error : error as String?,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is AuthState &&
+            other.isLoggedIn == isLoggedIn &&
+            other.user == user &&
+            other.isLoading == isLoading &&
+            other.error == error;
+  }
+
+  @override
+  int get hashCode => Object.hash(isLoggedIn, user, isLoading, error);
+
+  @override
+  String toString() {
+    return 'AuthState(isLoggedIn: $isLoggedIn, user: $user, '
+        'isLoading: $isLoading, error: $error)';
+  }
 }
+
+const Object _undefined = Object();
 
 @Riverpod(keepAlive: true)
 class Auth extends _$Auth {

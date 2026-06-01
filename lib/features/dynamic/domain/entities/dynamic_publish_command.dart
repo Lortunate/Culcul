@@ -1,20 +1,19 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+final class PublishMediaAsset {
+  const PublishMediaAsset({required this.path});
 
-part 'dynamic_publish_command.freezed.dart';
+  final String path;
 
-@freezed
-sealed class PublishMediaAsset with _$PublishMediaAsset {
-  const factory PublishMediaAsset({
-    required String path,
-    required int width,
-    required int height,
-  }) = _PublishMediaAsset;
-}
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other.runtimeType == runtimeType &&
+            other is PublishMediaAsset &&
+            other.path == path;
+  }
 
-@freezed
-sealed class PublishDynamicCommand with _$PublishDynamicCommand {
-  const factory PublishDynamicCommand({
-    required String text,
-    required List<PublishMediaAsset> media,
-  }) = _PublishDynamicCommand;
+  @override
+  int get hashCode => Object.hash(runtimeType, path);
+
+  @override
+  String toString() => 'PublishMediaAsset(path: $path)';
 }

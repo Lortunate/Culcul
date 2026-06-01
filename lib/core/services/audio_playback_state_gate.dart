@@ -1,17 +1,54 @@
 import 'package:audio_service/audio_service.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'audio_playback_state_gate.freezed.dart';
+final class AudioPlaybackSnapshot {
+  const AudioPlaybackSnapshot({
+    required this.playing,
+    required this.processingState,
+    required this.position,
+    required this.bufferedPosition,
+    required this.speed,
+  });
 
-@freezed
-sealed class AudioPlaybackSnapshot with _$AudioPlaybackSnapshot {
-  const factory AudioPlaybackSnapshot({
-    required bool playing,
-    required AudioProcessingState processingState,
-    required Duration position,
-    required Duration bufferedPosition,
-    required double speed,
-  }) = _AudioPlaybackSnapshot;
+  final bool playing;
+  final AudioProcessingState processingState;
+  final Duration position;
+  final Duration bufferedPosition;
+  final double speed;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is AudioPlaybackSnapshot &&
+            runtimeType == other.runtimeType &&
+            playing == other.playing &&
+            processingState == other.processingState &&
+            position == other.position &&
+            bufferedPosition == other.bufferedPosition &&
+            speed == other.speed;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      runtimeType,
+      playing,
+      processingState,
+      position,
+      bufferedPosition,
+      speed,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'AudioPlaybackSnapshot('
+        'playing: $playing, '
+        'processingState: $processingState, '
+        'position: $position, '
+        'bufferedPosition: $bufferedPosition, '
+        'speed: $speed'
+        ')';
+  }
 }
 
 class AudioPlaybackStateGate {

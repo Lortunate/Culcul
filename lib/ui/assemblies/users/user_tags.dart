@@ -7,20 +7,6 @@ class VipTag extends StatelessWidget {
 
   const VipTag({super.key, required this.type, this.showShadow = false});
 
-  List<BoxShadow>? _buildShadow(Color color) {
-    if (!showShadow) {
-      return null;
-    }
-
-    return [
-      BoxShadow(
-        color: color.withValues(alpha: 0.3),
-        blurRadius: 4,
-        offset: const Offset(0, 2),
-      ),
-    ];
-  }
-
   @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);
@@ -33,7 +19,15 @@ class VipTag extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(4),
-        boxShadow: _buildShadow(color),
+        boxShadow: showShadow
+            ? [
+                BoxShadow(
+                  color: color.withValues(alpha: 0.3),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ]
+            : null,
       ),
       child: Text(
         isYear ? t.profile.vip.annual_premium : t.profile.vip.premium,

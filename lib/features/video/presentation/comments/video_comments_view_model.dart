@@ -4,15 +4,58 @@ import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/core/data/pagination/paged_list_state.dart';
 import 'package:culcul/core/data/pagination/paged_list_state_transitions.dart';
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/features/video/application/video_comment_application_providers.dart';
+import 'package:culcul/features/video/data/video_repository_impl.dart';
 import 'package:culcul/ui/assemblies/comments/comment_list_state.dart';
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import 'package:culcul/features/video/presentation/detail/video_detail_view_model.dart';
-import 'package:culcul/features/video/presentation/comments/video_comment_tree_update.dart';
 
 part 'video_comments_view_model.g.dart';
+
+List<CommentItem> _updateCommentLikeState(
+  List<CommentItem> comments,
+  int rpid, {
+  required bool isLiked,
+}) {
+  var changed = false;
+  final updated = <CommentItem>[];
+
+  for (final comment in comments) {
+    final nextComment = _updateCommentLikeStateItem(comment, rpid, isLiked: isLiked);
+    changed = changed || !identical(nextComment, comment);
+    updated.add(nextComment);
+  }
+
+  return changed ? updated : comments;
+}
+
+CommentItem _updateCommentLikeStateItem(
+  CommentItem comment,
+  int rpid, {
+  required bool isLiked,
+}) {
+  final replies = comment.replies;
+  final nextReplies = replies.isEmpty
+      ? replies
+      : _updateCommentLikeState(replies, rpid, isLiked: isLiked);
+  final repliesChanged = !identical(nextReplies, replies);
+
+  if (comment.rpid != rpid) {
+    return repliesChanged ? comment.copyWith(replies: nextReplies) : comment;
+  }
+
+  final nextLike = isLiked
+      ? comment.like + 1
+      : comment.like > 0
+      ? comment.like - 1
+      : 0;
+  return comment.copyWith(
+    like: nextLike,
+    action: isLiked ? 1 : 0,
+    replies: repliesChanged ? nextReplies : replies,
+  );
+}
 
 @riverpod
 class VideoCommentsController extends _$VideoCommentsController {
@@ -75,7 +118,7 @@ class VideoCommentsController extends _$VideoCommentsController {
 
   Future<void> toggleCommentLike(int oid, int rpid, bool isLiked) async {
     final previousComments = state.paging.items;
-    final nextComments = updateCommentLikeState(
+    final nextComments = _updateCommentLikeState(
       previousComments,
       rpid,
       isLiked: !isLiked,
@@ -87,7 +130,7 @@ class VideoCommentsController extends _$VideoCommentsController {
     state = state.copyWith(paging: state.paging.copyWith(items: nextComments));
 
     final result = await ref
-        .read(videoCommentPortProvider)
+        .read(videoRepositoryProvider)
         .setCommentLike(oid: oid, rpid: rpid, isLiked: !isLiked);
     if (result.isFailure) {
       state = state.copyWith(paging: state.paging.copyWith(items: previousComments));
@@ -95,12 +138,12 @@ class VideoCommentsController extends _$VideoCommentsController {
   }
 
   Future<void> toggleCommentDislike(int oid, int rpid) async {
-    await ref.read(videoCommentPortProvider).setCommentDislike(oid: oid, rpid: rpid);
+    await ref.read(videoRepositoryProvider).setCommentDislike(oid: oid, rpid: rpid);
   }
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
     final result = await ref
-        .read(videoCommentPortProvider)
+        .read(videoRepositoryProvider)
         .replyToComment(oid: oid, root: root, parent: parent, message: message);
     if (result.isSuccess) {
       await refresh();
@@ -128,7 +171,7 @@ class VideoCommentsController extends _$VideoCommentsController {
     }
 
     final result = await ref
-        .read(videoCommentPortProvider)
+        .read(videoRepositoryProvider)
         .fetchComments(oid: aid, sort: state.sort, page: page, cancelToken: cancelToken);
     if (!ref.mounted || requestToken != _loadRequestToken) {
       return;

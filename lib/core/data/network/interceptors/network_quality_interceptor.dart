@@ -1,6 +1,6 @@
 import 'package:culcul/core/data/network/network_quality_policy.dart';
 import 'package:culcul/core/data/network/endpoint_policy.dart';
-import 'package:culcul/core/data/network/endpoint_policy_provider.dart';
+import 'package:culcul/core/runtime/runtime_performance_policy_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -26,7 +26,9 @@ class NetworkQualityInterceptor extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    final endpointPolicy = _ref.read(endpointPolicyResolverProvider).resolve(options);
+    final endpointPolicy = EndpointPolicyResolver(
+      runtimePolicy: _ref.read(runtimePerformancePolicyProvider),
+    ).resolve(options);
     options.extra[EndpointPolicy.resolvedPolicyExtra] = endpointPolicy;
 
     if (options.extra[keepRequestTimeoutExtra] != true) {

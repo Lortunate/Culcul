@@ -2,9 +2,8 @@ import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
+import 'package:culcul/core/utils/json_utils.dart';
 import 'package:culcul/features/history/data/history_api.dart';
-import 'package:culcul/features/history/data/dtos/history_model_dto.dart';
-import 'package:culcul/features/history/data/history_mapper.dart';
 import 'package:culcul/features/history/domain/entities/history_entry.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -20,24 +19,31 @@ class HistoryRepositoryImpl {
   final HistoryApi _api;
   final RequestExecutor _requestExecutor;
 
-  HistoryRepositoryImpl(this._api, {RequestExecutor? requestExecutor})
-    : _requestExecutor = requestExecutor ?? const RequestExecutor();
-
-  Future<Result<HistoryResponseDataDto, AppError>> _getHistoryCursor({
-    int max = 0,
-    int viewAt = 0,
-    int ps = _historyPageSize,
-  }) {
-    return _requestExecutor.runApiDirect(
-      () => _api.getHistoryCursor(max, viewAt, '', ps),
-    );
-  }
+  HistoryRepositoryImpl(
+    this._api, {
+    RequestExecutor requestExecutor = const RequestExecutor(),
+  }) : _requestExecutor = requestExecutor;
 
   Future<Result<List<HistoryEntry>, AppError>> getHistory({
     int max = 0,
     int viewAt = 0,
   }) async {
-    final result = await _getHistoryCursor(max: max, viewAt: viewAt);
-    return result.map((data) => data.list.map((item) => item.toDomain()).toList());
+    return _requestExecutor.runApi<List<HistoryEntry>, Object>(
+      () => _api.getHistoryCursor(max, viewAt, '', _historyPageSize),
+      transform: (data) {
+        final map = JsonUtils.asStringKeyedMap(data);
+        final list = map?['list'];
+        if (list is! List) {
+          return const <HistoryEntry>[];
+        }
+        return [
+          for (final item in list)
+            if (item is Map<String, dynamic>)
+              HistoryEntry.fromJson(item)
+            else if (item is Map)
+              HistoryEntry.fromJson(Map<String, dynamic>.from(item)),
+        ];
+      },
+    );
   }
 }

@@ -1,19 +1,19 @@
 import 'package:culcul/core/utils/format_utils.dart';
+import 'package:culcul/core/data/pagination/nested_feed_paging_defaults.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
 import 'package:culcul/features/profile/domain/entities/profile_video.dart';
-import 'package:culcul/features/profile/presentation/view_models/user_space_videos_view_model.dart';
+import 'package:culcul/features/profile/state/user_space_videos_view_model.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
+import 'package:culcul/ui/widgets/media/network_image_prefetch_specs.dart';
 import 'package:culcul/ui/assemblies/feed_cards/video_list_card.dart';
 import 'package:culcul/ui/assemblies/feed_cards/video_list_skeleton.dart';
 import 'package:culcul/ui/widgets/text/icon_text.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-part 'user_video_tab.sort_chip.dart';
 
 class UserVideoTab extends ConsumerStatefulWidget {
   final int mid;
@@ -25,6 +25,10 @@ class UserVideoTab extends ConsumerStatefulWidget {
 
 class _UserVideoTabState extends ConsumerState<UserVideoTab>
     with AutomaticKeepAliveClientMixin {
+  static const int _imagePrefetchLimit = 8;
+  static const double _coverLogicalWidth = 160;
+  static const double _coverLogicalHeight = 100;
+
   String _order = 'pubdate'; // pubdate (latest), click (popular), stow (most fav)
   final PaginationLoadGate _loadGate = PaginationLoadGate();
   String? _lastPrefetchKey;
@@ -54,7 +58,7 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
         final notifier = ref.read(provider.notifier);
         return ScrollLoadTrigger.triggerOnScrollNotificationWithGate(
           notification: notification,
-          extentAfterThreshold: 360,
+          extentAfterThreshold: profileNestedFeedExtentAfterThreshold,
           viewportFactor: 1.15,
           maxThreshold: 840,
           gate: _loadGate,
@@ -63,11 +67,11 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
           itemCount: () => ref.read(provider).asData?.value.length ?? 0,
           hasMoreAfter: () => notifier.hasMore,
           source: 'profile.user_video_tab',
-          onlyOnScrollEnd: false,
+          onlyOnScrollEnd: profileNestedFeedOnlyOnScrollEnd,
         );
       },
       child: CustomScrollView(
-        cacheExtent: 560,
+        cacheExtent: profileNestedFeedCacheExtent,
         key: PageStorageKey<String>('user_video_tab_${widget.mid}'),
         slivers: [
           SliverOverlapInjector(
@@ -200,16 +204,14 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
 
   void _scheduleCoverPrefetch(BuildContext context, List<ProfileVideo> videos) {
     final pixelRatio = MediaQuery.devicePixelRatioOf(context);
-    final specs = videos
-        .take(8)
-        .map(
-          (video) => NetworkImagePrefetchSpec(
-            url: video.pic,
-            memCacheWidth: (160 * pixelRatio).round(),
-            memCacheHeight: (100 * pixelRatio).round(),
-          ),
-        )
-        .toList(growable: false);
+    final specs = buildNetworkImagePrefetchSpecs(
+      videos,
+      count: _imagePrefetchLimit,
+      logicalWidth: _coverLogicalWidth,
+      logicalHeight: _coverLogicalHeight,
+      pixelRatio: pixelRatio,
+      imageUrl: (video) => video.pic,
+    );
     final prefetchKey = [
       widget.mid,
       _order,
@@ -227,5 +229,50 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
       }
       AppNetworkImagePrefetcher.prefetch(context, specs: specs, limit: specs.length);
     });
+  }
+}
+
+class _SortChip extends StatelessWidget {
+  const _SortChip({
+    required this.label,
+    required this.selected,
+    required this.onSelected,
+  });
+
+  final String label;
+  final bool selected;
+  final ValueChanged<bool> onSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return GestureDetector(
+      onTap: () => onSelected(!selected),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          color: selected
+              ? colorScheme.primary.withValues(alpha: 0.1)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: selected
+                ? Colors.transparent
+                : colorScheme.outlineVariant.withValues(alpha: 0.5),
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            color: selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+            fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+          ),
+        ),
+      ),
+    );
   }
 }

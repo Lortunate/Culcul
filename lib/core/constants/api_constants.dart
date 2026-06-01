@@ -8,7 +8,7 @@ class ApiConstants {
 
   // API Endpoints
   static const String nav = '/x/web-interface/nav';
-  static const String userInfo = '/x/web-interface/nav';
+  static const String userInfo = nav;
   static const String feedRcmd = '/x/web-interface/wbi/index/top/feed/rcmd';
   static const String popular = '/x/web-interface/popular';
   static const String searchDefault = '/x/web-interface/wbi/search/default';

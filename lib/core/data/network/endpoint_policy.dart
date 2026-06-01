@@ -1,9 +1,6 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/runtime/runtime_performance_policy.dart';
 import 'package:dio/dio.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
-
-part 'endpoint_policy.freezed.dart';
 
 enum EndpointRequestClass {
   interactiveRead,
@@ -15,28 +12,60 @@ enum EndpointRequestClass {
   download,
 }
 
-@freezed
-sealed class EndpointPolicy with _$EndpointPolicy {
+final class EndpointPolicy {
   static const String requestClassExtra = 'endpoint_request_class';
   static const String resolvedPolicyExtra = 'resolved_endpoint_policy';
   static const String disableRetryExtra = 'disable_retry';
   static const String forceRetryableExtra = 'force_retryable';
   static const String cacheTtlOverrideExtra = 'cache_ttl_override';
 
-  const EndpointPolicy._();
+  static const Object _cacheTtlSentinel = Object();
 
-  const factory EndpointPolicy({
-    required EndpointRequestClass requestClass,
-    required Duration? cacheTtl,
-    required bool allowStaleCache,
-    required int retryMaxAttempts,
+  EndpointPolicy({
+    required this.requestClass,
+    required this.cacheTtl,
+    required this.allowStaleCache,
+    required this.retryMaxAttempts,
     required Set<int> retryableStatuses,
-    required bool dedupEnabled,
-    required bool retryUnsafeMethods,
-    required bool allowPrefetch,
-  }) = _EndpointPolicy;
+    required this.dedupEnabled,
+    required this.retryUnsafeMethods,
+    required this.allowPrefetch,
+  }) : retryableStatuses = Set.unmodifiable(retryableStatuses);
+
+  final EndpointRequestClass requestClass;
+  final Duration? cacheTtl;
+  final bool allowStaleCache;
+  final int retryMaxAttempts;
+  final Set<int> retryableStatuses;
+  final bool dedupEnabled;
+  final bool retryUnsafeMethods;
+  final bool allowPrefetch;
 
   bool get hasCache => cacheTtl != null;
+
+  EndpointPolicy copyWith({
+    EndpointRequestClass? requestClass,
+    Object? cacheTtl = _cacheTtlSentinel,
+    bool? allowStaleCache,
+    int? retryMaxAttempts,
+    Set<int>? retryableStatuses,
+    bool? dedupEnabled,
+    bool? retryUnsafeMethods,
+    bool? allowPrefetch,
+  }) {
+    return EndpointPolicy(
+      requestClass: requestClass ?? this.requestClass,
+      cacheTtl: identical(cacheTtl, _cacheTtlSentinel)
+          ? this.cacheTtl
+          : cacheTtl as Duration?,
+      allowStaleCache: allowStaleCache ?? this.allowStaleCache,
+      retryMaxAttempts: retryMaxAttempts ?? this.retryMaxAttempts,
+      retryableStatuses: retryableStatuses ?? this.retryableStatuses,
+      dedupEnabled: dedupEnabled ?? this.dedupEnabled,
+      retryUnsafeMethods: retryUnsafeMethods ?? this.retryUnsafeMethods,
+      allowPrefetch: allowPrefetch ?? this.allowPrefetch,
+    );
+  }
 
   bool canRetry(RequestOptions options, int attempt) {
     if (options.extra[disableRetryExtra] == true) {
@@ -58,6 +87,63 @@ sealed class EndpointPolicy with _$EndpointPolicy {
   static EndpointPolicy? fromOptions(RequestOptions options) {
     final value = options.extra[resolvedPolicyExtra];
     return value is EndpointPolicy ? value : null;
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is EndpointPolicy &&
+            other.requestClass == requestClass &&
+            other.cacheTtl == cacheTtl &&
+            other.allowStaleCache == allowStaleCache &&
+            other.retryMaxAttempts == retryMaxAttempts &&
+            _setEquals(other.retryableStatuses, retryableStatuses) &&
+            other.dedupEnabled == dedupEnabled &&
+            other.retryUnsafeMethods == retryUnsafeMethods &&
+            other.allowPrefetch == allowPrefetch;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      requestClass,
+      cacheTtl,
+      allowStaleCache,
+      retryMaxAttempts,
+      Object.hashAllUnordered(retryableStatuses),
+      dedupEnabled,
+      retryUnsafeMethods,
+      allowPrefetch,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'EndpointPolicy('
+        'requestClass: $requestClass, '
+        'cacheTtl: $cacheTtl, '
+        'allowStaleCache: $allowStaleCache, '
+        'retryMaxAttempts: $retryMaxAttempts, '
+        'retryableStatuses: $retryableStatuses, '
+        'dedupEnabled: $dedupEnabled, '
+        'retryUnsafeMethods: $retryUnsafeMethods, '
+        'allowPrefetch: $allowPrefetch'
+        ')';
+  }
+
+  static bool _setEquals(Set<int> left, Set<int> right) {
+    if (identical(left, right)) {
+      return true;
+    }
+    if (left.length != right.length) {
+      return false;
+    }
+    for (final value in left) {
+      if (!right.contains(value)) {
+        return false;
+      }
+    }
+    return true;
   }
 }
 

@@ -1,6 +1,24 @@
-import 'package:culcul/features/home/presentation/home_breakpoints.dart';
 import 'package:culcul/ui/responsive/app_responsive.dart';
+import 'package:culcul/ui/responsive/app_breakpoints.dart';
 import 'package:flutter/material.dart';
+
+const double homeFeedMaxWidth = 1280;
+const double homePopularMaxWidth = 980;
+
+extension HomeResponsive on BuildContext {
+  int get homeGridColumns {
+    if (screenWidth >= AppBreakpoints.xlStart) {
+      return 5;
+    }
+    if (screenWidth >= AppBreakpoints.desktopStart) {
+      return 4;
+    }
+    if (screenWidth >= AppBreakpoints.tabletStart) {
+      return 3;
+    }
+    return 2;
+  }
+}
 
 class HomeGridLayoutSpec {
   const HomeGridLayoutSpec({

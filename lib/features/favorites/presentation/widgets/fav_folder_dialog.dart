@@ -3,18 +3,6 @@ import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-class FavFolderFormData {
-  const FavFolderFormData({
-    required this.title,
-    required this.intro,
-    required this.privacy,
-  });
-
-  final String title;
-  final String? intro;
-  final int privacy;
-}
-
 class FavFolderDialog extends HookWidget {
   final FavoriteFolder? folder;
 
@@ -59,14 +47,11 @@ class FavFolderDialog extends HookWidget {
         TextButton(
           onPressed: () {
             if (titleController.text.isEmpty) return;
-            Navigator.pop(
-              context,
-              FavFolderFormData(
-                title: titleController.text,
-                intro: introController.text,
-                privacy: isPrivate.value ? 1 : 0,
-              ),
-            );
+            Navigator.pop(context, (
+              title: titleController.text,
+              intro: introController.text,
+              privacy: isPrivate.value ? 1 : 0,
+            ));
           },
           child: Text(t.common.confirm),
         ),

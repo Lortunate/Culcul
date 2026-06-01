@@ -1,7 +1,7 @@
 import 'package:culcul/core/data/network/models/api_response.dart';
-import 'package:culcul/features/notification/data/dtos/like_model.dart';
 import 'package:culcul/features/notification/data/dtos/private_message_model.dart';
 import 'package:culcul/features/notification/data/dtos/reply_model.dart';
+import 'package:culcul/features/notification/data/notification_paging_constants.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
@@ -27,7 +27,7 @@ abstract class NotificationApi {
   });
 
   @GET('https://api.bilibili.com/x/msgfeed/like')
-  Future<ApiResponse<LikeResponse>> getLikeList({
+  Future<ApiResponse<Object>> getLikeList({
     @Query('id') int? id,
     @Query('like_time') int? likeTime,
   });
@@ -35,7 +35,7 @@ abstract class NotificationApi {
   @GET('https://api.vc.bilibili.com/session_svr/v1/session_svr/get_sessions')
   Future<ApiResponse<PrivateMessageSessionResponse>> getPrivateSessions({
     @Query('session_type') int sessionType = 1,
-    @Query('size') int size = 20,
+    @Query('size') int size = notificationPrivateMessagePageSize,
     @Query('end_ts') int? endTs,
   });
 
@@ -43,7 +43,7 @@ abstract class NotificationApi {
   Future<ApiResponse<PrivateMessageListResponse>> getPrivateMessages({
     @Query('talker_id') required int talkerId,
     @Query('session_type') int sessionType = 1,
-    @Query('size') int size = 20,
+    @Query('size') int size = notificationPrivateMessagePageSize,
     @Query('begin_seqno') int? beginSeqno,
     @Query('end_seqno') int? endSeqno,
     @Query('sender_device_id') int senderDeviceId = 1,

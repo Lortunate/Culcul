@@ -1,15 +1,11 @@
 import 'dart:convert';
 
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/foundation.dart';
 
 part 'private_message.types.dart';
-part 'private_message.freezed.dart';
 
-@freezed
-sealed class PrivateMessage with _$PrivateMessage {
-  const PrivateMessage._();
-
-  const factory PrivateMessage({
+final class PrivateMessage {
+  PrivateMessage({
     required int senderUid,
     required PrivateMessageReceiverType receiverType,
     required int receiverId,
@@ -23,7 +19,53 @@ sealed class PrivateMessage with _$PrivateMessage {
     String? notifyCode,
     int? newFaceVersion,
     int? msgSource,
-  }) = _PrivateMessage;
+  }) : this._(
+         senderUid: senderUid,
+         receiverType: receiverType,
+         receiverId: receiverId,
+         type: type,
+         content: content,
+         msgSeqno: msgSeqno,
+         timestamp: timestamp,
+         atUids: atUids == null ? null : List<int>.unmodifiable(atUids),
+         msgKey: msgKey,
+         msgStatus: msgStatus,
+         notifyCode: notifyCode,
+         newFaceVersion: newFaceVersion,
+         msgSource: msgSource,
+       );
+
+  const PrivateMessage._({
+    required this.senderUid,
+    required this.receiverType,
+    required this.receiverId,
+    required this.type,
+    required this.content,
+    required this.msgSeqno,
+    required this.timestamp,
+    required List<int>? atUids,
+    this.msgKey,
+    this.msgStatus,
+    this.notifyCode,
+    this.newFaceVersion,
+    this.msgSource,
+  }) : _atUids = atUids;
+
+  final int senderUid;
+  final PrivateMessageReceiverType receiverType;
+  final int receiverId;
+  final PrivateMessageType type;
+  final PrivateMessageContent content;
+  final int msgSeqno;
+  final int timestamp;
+  final List<int>? _atUids;
+  final int? msgKey;
+  final int? msgStatus;
+  final String? notifyCode;
+  final int? newFaceVersion;
+  final int? msgSource;
+
+  List<int>? get atUids => _atUids;
 
   Map<String, dynamic>? get contentMap {
     final json = content.toRawMap();
@@ -81,5 +123,64 @@ sealed class PrivateMessage with _$PrivateMessage {
       PrivateMessageType.share => PrivateMessageSummaryKind.share,
       _ => PrivateMessageSummaryKind.unknown,
     };
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is PrivateMessage &&
+            runtimeType == other.runtimeType &&
+            senderUid == other.senderUid &&
+            receiverType == other.receiverType &&
+            receiverId == other.receiverId &&
+            type == other.type &&
+            content == other.content &&
+            msgSeqno == other.msgSeqno &&
+            timestamp == other.timestamp &&
+            listEquals(_atUids, other._atUids) &&
+            msgKey == other.msgKey &&
+            msgStatus == other.msgStatus &&
+            notifyCode == other.notifyCode &&
+            newFaceVersion == other.newFaceVersion &&
+            msgSource == other.msgSource;
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      runtimeType,
+      senderUid,
+      receiverType,
+      receiverId,
+      type,
+      content,
+      msgSeqno,
+      timestamp,
+      Object.hashAll(_atUids ?? const <int>[]),
+      msgKey,
+      msgStatus,
+      notifyCode,
+      newFaceVersion,
+      msgSource,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'PrivateMessage('
+        'senderUid: $senderUid, '
+        'receiverType: $receiverType, '
+        'receiverId: $receiverId, '
+        'type: $type, '
+        'content: $content, '
+        'msgSeqno: $msgSeqno, '
+        'timestamp: $timestamp, '
+        'atUids: $_atUids, '
+        'msgKey: $msgKey, '
+        'msgStatus: $msgStatus, '
+        'notifyCode: $notifyCode, '
+        'newFaceVersion: $newFaceVersion, '
+        'msgSource: $msgSource'
+        ')';
   }
 }

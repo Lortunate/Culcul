@@ -3,20 +3,16 @@ import 'dart:async';
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/features/video/application/models/play_url.dart' as domain;
-import 'package:culcul/features/video/application/video_detail_application_providers.dart';
+import 'package:culcul/features/video/data/video_repository_impl.dart';
 import 'package:culcul/features/video/presentation/player/playable_urls.dart';
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-typedef ListenAudioModeInput = ({
-  int? aid,
-  int currentCid,
-  int selectedQuality,
-  domain.PlayUrl? playUrl,
-});
-
-void useListenAudioMode(WidgetRef ref, ListenAudioModeInput input) {
+void useListenAudioMode(
+  WidgetRef ref,
+  ({int? aid, int currentCid, int selectedQuality, domain.PlayUrl? playUrl}) input,
+) {
   final playerController = ref.read(playerControllerProvider.notifier);
   final activeSessionId = ref.watch(
     playerControllerProvider.select((state) => state.activeSessionId),
@@ -49,7 +45,7 @@ void useListenAudioMode(WidgetRef ref, ListenAudioModeInput input) {
       }
       switchedTokenRef.value = switchToken;
 
-      final detailPort = ref.read(videoDetailPortProvider);
+      final detailPort = ref.read(videoRepositoryProvider);
       var disposed = false;
       unawaited(
         Future<void>(() async {

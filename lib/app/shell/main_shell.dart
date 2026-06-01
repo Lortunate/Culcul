@@ -1,9 +1,15 @@
-import 'package:culcul/app/shell/navigation_items.dart';
+import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/responsive/app_responsive.dart';
 import 'package:culcul/ui/widgets/media/adaptive_blur.dart';
-import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+const _navigationItems = [
+  (icon: Icons.home_outlined, selectedIcon: Icons.home_rounded),
+  (icon: Icons.explore_outlined, selectedIcon: Icons.explore_rounded),
+  (icon: Icons.leaderboard_outlined, selectedIcon: Icons.leaderboard_rounded),
+  (icon: Icons.person_outline_rounded, selectedIcon: Icons.person_rounded),
+];
 
 class MainShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -18,7 +24,7 @@ class MainShell extends StatelessWidget {
       currentIndex: navigationShell.currentIndex,
       onDestinationSelected: navigationShell.goBranch,
       labels: [t.nav.home, t.nav.moments, t.nav.ranking, t.nav.profile],
-      items: NavigationItems.items,
+      items: _navigationItems,
     );
   }
 }
@@ -31,13 +37,13 @@ class AdaptiveShellScaffold extends StatelessWidget {
     required this.onDestinationSelected,
     required this.labels,
     required this.items,
-  });
+  }) : assert(labels.length == items.length);
 
   final Widget body;
   final int currentIndex;
   final ValueChanged<int> onDestinationSelected;
   final List<String> labels;
-  final List<NavigationItem> items;
+  final List<({IconData icon, IconData selectedIcon})> items;
 
   @override
   Widget build(BuildContext context) {

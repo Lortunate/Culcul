@@ -34,34 +34,26 @@ sealed class AppError implements Exception {
   }
 
   static AppError _fromDioException(DioException error) {
-    return switch (error.type) {
-      DioExceptionType.connectionTimeout ||
-      DioExceptionType.sendTimeout ||
-      DioExceptionType.receiveTimeout ||
-      DioExceptionType.connectionError => AppError.network(
-        'Network error: ${error.message}',
-        cause: error,
-      ),
-      DioExceptionType.badResponse => _fromBadResponse(error),
-      DioExceptionType.cancel => AppError.cancel('Request cancelled', cause: error),
-      DioExceptionType.badCertificate => AppError.network(
-        'Bad certificate',
-        cause: error,
-      ),
-      DioExceptionType.unknown => AppError.unknown(
-        'Unknown error: ${error.message}',
-        cause: error,
-      ),
-    };
-  }
-
-  static AppError _fromBadResponse(DioException error) {
-    final statusCode = error.response?.statusCode;
-    final message = error.response?.statusMessage ?? 'Server error';
-    if (statusCode == 401 || statusCode == 403) {
-      return AppError.auth(message, code: statusCode, cause: error);
+    switch (error.type) {
+      case DioExceptionType.connectionTimeout:
+      case DioExceptionType.sendTimeout:
+      case DioExceptionType.receiveTimeout:
+      case DioExceptionType.connectionError:
+        return AppError.network('Network error: ${error.message}', cause: error);
+      case DioExceptionType.badResponse:
+        final statusCode = error.response?.statusCode;
+        final message = error.response?.statusMessage ?? 'Server error';
+        if (statusCode == 401 || statusCode == 403) {
+          return AppError.auth(message, code: statusCode, cause: error);
+        }
+        return AppError.server(message, code: statusCode, cause: error);
+      case DioExceptionType.cancel:
+        return AppError.cancel('Request cancelled', cause: error);
+      case DioExceptionType.badCertificate:
+        return AppError.network('Bad certificate', cause: error);
+      case DioExceptionType.unknown:
+        return AppError.unknown('Unknown error: ${error.message}', cause: error);
     }
-    return AppError.server(message, code: statusCode, cause: error);
   }
 
   @override

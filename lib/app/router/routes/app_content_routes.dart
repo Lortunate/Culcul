@@ -6,7 +6,7 @@ class WeeklyRoute extends AppRouteData with $WeeklyRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildWeeklyScreenPage(
+    return WeeklyScreen(
       onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
     );
   }
@@ -20,8 +20,8 @@ class VideoDetailRoute extends AppRouteData with $VideoDetailRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildVideoDetailRoutePage(
-      bvid,
+    return VideoEntryDecisionPage(
+      bvid: bvid,
       onLogin: () => const LoginRoute().push(context),
       onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
       onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
@@ -54,10 +54,7 @@ class LiveRoomRoute extends AppRouteData with $LiveRoomRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildLiveRoomRoutePage(
-      roomId: roomId,
-      onLogin: () => const LoginRoute().push(context),
-    );
+    return LiveRoomPage(roomId: roomId, onLogin: () => const LoginRoute().push(context));
   }
 
   @override
@@ -85,10 +82,11 @@ class CommentReplyRoute extends AppRouteData with $CommentReplyRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildCommentReplyRoutePage(
+    return CommentReplyPage(
       oid: oid,
       rootId: rootId,
-      input: $extra,
+      comment: $extra.comment,
+      upperMid: $extra.upperMid,
       onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
     );
   }
@@ -100,7 +98,7 @@ class SearchRoute extends AppRouteData with $SearchRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildSearchRoutePage(
+    return SearchPage(
       onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
       onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
       onOpenTopic: (topicId, topicName) =>
@@ -118,7 +116,7 @@ class FavoritesRoute extends AppRouteData with $FavoritesRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildFavoritesRoutePage(
+    return FavoritesPage(
       onLogin: () => const LoginRoute().push(context),
       onOpenFolder: (folder) {
         FavoriteDetailRoute(
@@ -144,6 +142,6 @@ class FavoriteDetailRoute extends AppRouteData with $FavoriteDetailRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildFavoriteDetailRoutePage(mediaId: mediaId, title: title, mid: mid);
+    return FavoriteDetailPage(mediaId: mediaId, title: title, mid: mid);
   }
 }

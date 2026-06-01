@@ -1,15 +1,57 @@
 import 'dart:async';
 
 import 'package:culcul/core/contracts/comment_contract.dart';
+import 'package:culcul/core/data/pagination/paged_list_state.dart';
 import 'package:culcul/core/data/pagination/paged_list_state_transitions.dart';
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/features/video/application/video_comment_application_providers.dart';
+import 'package:culcul/features/video/data/video_repository_impl.dart';
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'package:culcul/features/video/presentation/comments/comment_reply_state.dart';
-
 part 'comment_reply_view_model.g.dart';
+
+const _commentReplyStateUnset = Object();
+
+final class CommentReplyState {
+  const CommentReplyState({
+    this.rootComment,
+    this.paging = const PagedListState<CommentItem>(),
+  });
+
+  final CommentItem? rootComment;
+  final PagedListState<CommentItem> paging;
+
+  CommentReplyState copyWith({
+    Object? rootComment = _commentReplyStateUnset,
+    Object? paging = _commentReplyStateUnset,
+  }) {
+    return CommentReplyState(
+      rootComment: identical(rootComment, _commentReplyStateUnset)
+          ? this.rootComment
+          : rootComment as CommentItem?,
+      paging: identical(paging, _commentReplyStateUnset)
+          ? this.paging
+          : paging as PagedListState<CommentItem>,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other.runtimeType == runtimeType &&
+            other is CommentReplyState &&
+            other.rootComment == rootComment &&
+            other.paging == paging;
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, rootComment, paging);
+
+  @override
+  String toString() {
+    return 'CommentReplyState(rootComment: $rootComment, paging: $paging)';
+  }
+}
 
 @riverpod
 class CommentReplyController extends _$CommentReplyController {
@@ -37,7 +79,7 @@ class CommentReplyController extends _$CommentReplyController {
     _activeLoadCancelToken = cancelToken;
 
     final result = await ref
-        .read(videoCommentPortProvider)
+        .read(videoRepositoryProvider)
         .fetchReply(oid: oid, root: rootId, cancelToken: cancelToken);
     if (!ref.mounted || requestToken != _loadRequestToken) {
       return;
@@ -75,7 +117,7 @@ class CommentReplyController extends _$CommentReplyController {
     _activeLoadCancelToken = cancelToken;
 
     final result = await ref
-        .read(videoCommentPortProvider)
+        .read(videoRepositoryProvider)
         .fetchReply(
           oid: oid,
           root: rootId,
@@ -109,7 +151,7 @@ class CommentReplyController extends _$CommentReplyController {
     _updateCommentLikeStatus(rpid, !isLiked);
 
     final result = await ref
-        .read(videoCommentPortProvider)
+        .read(videoRepositoryProvider)
         .setCommentLike(oid: oid, rpid: rpid, isLiked: !isLiked);
     if (result.isFailure) {
       _updateCommentLikeStatus(rpid, isLiked);
@@ -117,7 +159,7 @@ class CommentReplyController extends _$CommentReplyController {
   }
 
   Future<void> toggleCommentDislike(int oid, int rpid) async {
-    await ref.read(videoCommentPortProvider).setCommentDislike(oid: oid, rpid: rpid);
+    await ref.read(videoRepositoryProvider).setCommentDislike(oid: oid, rpid: rpid);
   }
 
   void _updateCommentLikeStatus(int rpid, bool liked) {
@@ -143,7 +185,7 @@ class CommentReplyController extends _$CommentReplyController {
 
   Future<void> addReply(int oid, int root, int parent, String message) async {
     final result = await ref
-        .read(videoCommentPortProvider)
+        .read(videoRepositoryProvider)
         .replyToComment(oid: oid, root: root, parent: parent, message: message);
     if (result.isSuccess) {
       await refresh();

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
-import 'package:culcul/features/video/application/models/play_url.dart' as domain;
 import 'package:culcul/features/video/presentation/player/playable_urls.dart';
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
 import 'package:culcul/features/video/presentation/detail/video_detail_view_model.dart';
@@ -11,17 +10,13 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:media_kit/media_kit.dart';
 
-typedef VideoLoaderInput = ({
-  domain.PlayUrl? playUrl,
-  int currentCid,
-  double playbackSpeed,
-  String? title,
-  String? artist,
-  String? coverUrl,
-});
-
-VideoLoaderInput watchVideoLoaderInput(WidgetRef ref, String bvid) {
-  return ref.watch(
+void useVideoLoader(
+  WidgetRef ref,
+  Player player,
+  String bvid, {
+  required String sessionId,
+}) {
+  final input = ref.watch(
     videoDetailControllerProvider(bvid).select(
       (value) => (
         playUrl: value.playUrl,
@@ -33,14 +28,6 @@ VideoLoaderInput watchVideoLoaderInput(WidgetRef ref, String bvid) {
       ),
     ),
   );
-}
-
-void useVideoLoader(
-  WidgetRef ref,
-  Player player,
-  VideoLoaderInput input, {
-  required String sessionId,
-}) {
   final playerController = ref.read(playerControllerProvider.notifier);
   final sessionState = ref.watch(
     playerControllerProvider.select(

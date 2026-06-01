@@ -1,7 +1,6 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
-import 'package:culcul/features/favorites/data/dtos/fav_folder_model.dart';
-import 'package:culcul/features/favorites/data/dtos/fav_resource_model.dart';
+import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
@@ -12,21 +11,21 @@ abstract class FavApi {
   factory FavApi(Dio dio, {String baseUrl}) = _FavApi;
 
   @GET(ApiConstants.favCreatedList)
-  Future<ApiResponse<FavFolderListResponse>> getCreatedFolders(
+  Future<ApiResponse<Object>> getCreatedFolders(
     @Query('up_mid') int upMid, {
     @Query('rid') int? rid,
     @Query('type') int? type,
   });
 
   @GET(ApiConstants.favCollectedList)
-  Future<ApiResponse<FavFolderListResponse>> getCollectedFolders(
+  Future<ApiResponse<Object>> getCollectedFolders(
     @Query('up_mid') int upMid,
     @Query('pn') int pn,
     @Query('ps') int ps,
   );
 
   @GET(ApiConstants.favResourceList)
-  Future<ApiResponse<FavResourceListResponse>> getFolderResources(
+  Future<ApiResponse<Object>> getFolderResources(
     @Query('media_id') int mediaId,
     @Query('pn') int pn,
     @Query('ps') int ps, {
@@ -39,7 +38,7 @@ abstract class FavApi {
 
   @POST(ApiConstants.favFolderAdd)
   @Headers({'content-type': 'application/x-www-form-urlencoded'})
-  Future<ApiResponse<FavFolderModel>> addFolder(
+  Future<ApiResponse<FavoriteFolder>> addFolder(
     @Field('title') String title, {
     @Field('intro') String? intro,
     @Field('privacy') int? privacy,
@@ -49,7 +48,7 @@ abstract class FavApi {
 
   @POST(ApiConstants.favFolderEdit)
   @Headers({'content-type': 'application/x-www-form-urlencoded'})
-  Future<ApiResponse<FavFolderModel>> editFolder(
+  Future<ApiResponse<FavoriteFolder>> editFolder(
     @Field('media_id') int mediaId,
     @Field('title') String title, {
     @Field('intro') String? intro,

@@ -9,18 +9,15 @@ import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/bootstrap/providers/cookie_jar_provider.dart';
+import 'package:culcul/core/contracts/uploaded_image_contract.dart';
 import 'package:culcul/core/services/comment_service.dart';
-import 'package:culcul/features/dynamic/application/article_detail_port.dart';
-import 'package:culcul/features/dynamic/application/dynamic_detail_port.dart';
 import 'package:culcul/features/dynamic/data/article_parsing/article_detail_parser.dart';
-import 'package:culcul/features/dynamic/data/dtos/dynamic_publish_response_dto.dart';
 import 'package:culcul/features/dynamic/data/dynamic_api.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/features/dynamic/application/models/dynamic_response.dart';
 import 'package:culcul/features/dynamic/application/models/dynamic_item_extensions.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
 import 'package:culcul/features/dynamic/domain/entities/dynamic_publish_command.dart';
-import 'package:culcul/features/dynamic/domain/entities/dynamic_queries.dart';
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -45,8 +42,7 @@ class DynamicRepositoryImpl
         _DynamicRepositoryAccess,
         _DynamicRepositoryCommentApis,
         _DynamicRepositoryFeedApis,
-        _DynamicRepositoryPublishApis
-    implements DynamicDetailPort, ArticleDetailPort {
+        _DynamicRepositoryPublishApis {
   final DynamicApi _api;
   final Dio _dio;
   final CookieJar _cookieJar;

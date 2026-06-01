@@ -1,11 +1,12 @@
 import 'package:culcul/core/utils/share_utils.dart';
-import 'package:culcul/features/dynamic/application/dynamic_post_card_view_data.dart';
+import 'package:culcul/features/dynamic/application/models/dynamic_item_extensions.dart';
+import 'package:culcul/features/dynamic/application/models/dynamic_response.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_comment_composer.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 
 class DynamicDetailBottomBar extends StatelessWidget {
-  final DynamicPostCardViewData post;
+  final DynamicItem post;
   final VoidCallback onLike;
   final VoidCallback onSubmitComment;
   final TextEditingController commentController;

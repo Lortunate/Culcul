@@ -6,46 +6,6 @@ import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-class ScrollPrecacheBudget {
-  const ScrollPrecacheBudget({
-    required this.enabled,
-    required this.prefetchCount,
-    required this.maxConcurrency,
-  });
-
-  final bool enabled;
-  final int prefetchCount;
-  final int maxConcurrency;
-}
-
-ScrollPrecacheBudget resolveScrollPrecacheBudget({
-  required int requestedCount,
-  RuntimePerformancePolicy? runtimePolicy,
-  PerformancePolicy? renderPolicy,
-}) {
-  final policy =
-      runtimePolicy ??
-      RuntimePerformancePolicy.fromRenderPolicy(
-        renderPolicy ?? PerformancePolicyController.notifier.value,
-      );
-  if (!policy.allowImagePrefetch || !policy.allowsNonCriticalPrefetch) {
-    return const ScrollPrecacheBudget(
-      enabled: false,
-      prefetchCount: 0,
-      maxConcurrency: 0,
-    );
-  }
-
-  final adjustedCount = (requestedCount * policy.networkPrefetchLimitFactor).floor();
-  final prefetchCount = adjustedCount.clamp(1, requestedCount);
-  final maxConcurrency = policy.networkPrefetchMaxConcurrency.clamp(1, prefetchCount);
-  return ScrollPrecacheBudget(
-    enabled: true,
-    prefetchCount: prefetchCount,
-    maxConcurrency: maxConcurrency,
-  );
-}
-
 /// Precaches images for items that are about to scroll into view.
 ///
 /// Monitors scroll velocity and, when scrolling is stable (not flinging),
@@ -74,11 +34,21 @@ void useScrollPrecache({
       debounceTimer.value = Timer(debounce, () {
         if (!context.mounted) return;
 
-        final budget = resolveScrollPrecacheBudget(
-          requestedCount: prefetchCount,
-          runtimePolicy: runtimePolicy,
+        final policy =
+            runtimePolicy ??
+            RuntimePerformancePolicy.fromRenderPolicy(
+              PerformancePolicyController.notifier.value,
+            );
+        if (!policy.allowImagePrefetch || !policy.allowsNonCriticalPrefetch) {
+          return;
+        }
+
+        final adjustedCount = (prefetchCount * policy.networkPrefetchLimitFactor).floor();
+        final resolvedPrefetchCount = adjustedCount.clamp(1, prefetchCount);
+        final maxConcurrency = policy.networkPrefetchMaxConcurrency.clamp(
+          1,
+          resolvedPrefetchCount,
         );
-        if (!budget.enabled) return;
 
         // Estimate first visible index from scroll offset.
         // Use a rough estimate of 200px per item.
@@ -87,13 +57,13 @@ void useScrollPrecache({
         if (estimatedIndex == lastPrefetchedIndex.value) return;
         lastPrefetchedIndex.value = estimatedIndex;
 
-        final specs = getUpcomingSpecs(estimatedIndex, budget.prefetchCount);
+        final specs = getUpcomingSpecs(estimatedIndex, resolvedPrefetchCount);
         if (specs.isNotEmpty) {
           AppNetworkImagePrefetcher.prefetch(
             context,
             specs: specs,
-            limit: budget.prefetchCount,
-            maxConcurrency: budget.maxConcurrency,
+            limit: resolvedPrefetchCount,
+            maxConcurrency: maxConcurrency,
           );
         }
       });

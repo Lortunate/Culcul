@@ -1,12 +1,11 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
-import 'package:culcul/features/search/data/dtos/default_search.dart';
-import 'package:culcul/features/search/data/dtos/search_result.dart';
-import 'package:culcul/features/search/data/dtos/trending_ranking.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
 part 'search_api.g.dart';
+
+const int _searchResultPageSize = 20;
 
 @RestApi(baseUrl: 'https://s.search.bilibili.com')
 abstract class SearchApi {
@@ -22,23 +21,23 @@ abstract class SearchApi {
 
   @GET(ApiConstants.searchDefaultUrl)
   @Headers({'x-bili-wbi': 'true'})
-  Future<ApiResponse<DefaultSearchData>> fetchDefaultSearch({
+  Future<ApiResponse<Object>> fetchDefaultSearch({
     @Query('force_refresh') bool? forceRefresh,
     @Extras() Map<String, dynamic>? extras,
   });
 
   @GET(ApiConstants.searchTrendingRanking)
-  Future<TrendingRankingResponse> fetchTrendingRanking({
+  Future<ApiResponse<Object>> fetchTrendingRanking({
     @Query('force_refresh') bool? forceRefresh,
     @Extras() Map<String, dynamic>? extras,
   });
 
   @GET('https://api.bilibili.com/x/web-interface/wbi/search/all/v2')
   @Headers({'x-bili-wbi': 'true'})
-  Future<SearchResultResponse> fetchSearchAll({
+  Future<ApiResponse<Object>> fetchSearchAll({
     @Query('keyword') required String keyword,
     @Query('page') int page = 1,
-    @Query('page_size') int pageSize = 20,
+    @Query('page_size') int pageSize = _searchResultPageSize,
     @Query('search_type') String searchType = 'all',
     @Query('order') String order = 'totalrank',
     @Query('duration') int duration = 0,
@@ -49,10 +48,10 @@ abstract class SearchApi {
 
   @GET('https://api.bilibili.com/x/web-interface/wbi/search/type')
   @Headers({'x-bili-wbi': 'true'})
-  Future<SearchResultResponse> fetchSearchByType({
+  Future<ApiResponse<Object>> fetchSearchByType({
     @Query('keyword') required String keyword,
     @Query('page') int page = 1,
-    @Query('page_size') int pageSize = 20,
+    @Query('page_size') int pageSize = _searchResultPageSize,
     @Query('search_type') String searchType = 'video',
     @Query('order') String order = 'totalrank',
     @Query('duration') int duration = 0,

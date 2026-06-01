@@ -1,9 +1,18 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+final class NotificationFeedCursor {
+  const NotificationFeedCursor({required this.id, required this.time});
 
-part 'notification_feed_cursor.freezed.dart';
+  final int id;
+  final int time;
 
-@freezed
-sealed class NotificationFeedCursor with _$NotificationFeedCursor {
-  const factory NotificationFeedCursor({required int id, required int time}) =
-      _NotificationFeedCursor;
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is NotificationFeedCursor && other.id == id && other.time == time;
+  }
+
+  @override
+  int get hashCode => Object.hash(id, time);
+
+  @override
+  String toString() => 'NotificationFeedCursor(id: $id, time: $time)';
 }

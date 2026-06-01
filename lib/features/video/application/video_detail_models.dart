@@ -1,7 +1,5 @@
 import 'package:culcul/core/contracts/video_model_contract.dart';
 import 'package:culcul/features/video/application/models/subtitle.dart';
-import 'package:culcul/features/video/data/dtos/related_video_dto.dart' as related_dto;
-import 'package:culcul/features/video/data/dtos/subtitle_dto.dart' as subtitle_dto;
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart' as detail_dto;
 
 class VideoDetailViewData {
@@ -13,10 +11,10 @@ class VideoDetailViewData {
   final String desc;
   final VideoOwner owner;
   final VideoStat stat;
-  final VideoDimensionViewData dimension;
+  final detail_dto.VideoDimension dimension;
   final VideoSubtitles? subtitle;
   final List<VideoPartViewData> pages;
-  final List<VideoTagViewData> tags;
+  final List<String> tags;
   final VideoRequestUserState reqUser;
 
   const VideoDetailViewData({
@@ -28,7 +26,7 @@ class VideoDetailViewData {
     required this.desc,
     required this.owner,
     required this.stat,
-    this.dimension = const VideoDimensionViewData(),
+    this.dimension = const detail_dto.VideoDimension(),
     this.subtitle,
     this.pages = const [],
     this.tags = const [],
@@ -44,10 +42,10 @@ class VideoDetailViewData {
     String? desc,
     VideoOwner? owner,
     VideoStat? stat,
-    VideoDimensionViewData? dimension,
+    detail_dto.VideoDimension? dimension,
     VideoSubtitles? subtitle,
     List<VideoPartViewData>? pages,
-    List<VideoTagViewData>? tags,
+    List<String>? tags,
     VideoRequestUserState? reqUser,
   }) {
     return VideoDetailViewData(
@@ -105,125 +103,13 @@ class VideoPartViewData {
   final int page;
   final String part;
   final int duration;
-  final VideoDimensionViewData dimension;
+  final detail_dto.VideoDimension dimension;
 
   const VideoPartViewData({
     required this.cid,
     this.page = 0,
     this.part = '',
     this.duration = 0,
-    this.dimension = const VideoDimensionViewData(),
+    this.dimension = const detail_dto.VideoDimension(),
   });
-}
-
-class VideoDimensionViewData {
-  final int width;
-  final int height;
-  final int rotate;
-
-  const VideoDimensionViewData({this.width = 0, this.height = 0, this.rotate = 0});
-}
-
-class VideoTagViewData {
-  final String tagName;
-
-  const VideoTagViewData({this.tagName = ''});
-}
-
-extension VideoDetailViewDataMapper on detail_dto.VideoDetail {
-  VideoDetailViewData toVideoDetailViewData({List<detail_dto.VideoTag>? tags}) {
-    return VideoDetailViewData(
-      bvid: bvid,
-      aid: aid,
-      title: title,
-      pic: pic,
-      pubDate: pubDate,
-      desc: desc,
-      owner: owner,
-      stat: stat,
-      dimension: dimension.toVideoDimensionViewData(),
-      subtitle: subtitle?.toVideoSubtitles(),
-      pages: pages.map((page) => page.toVideoPartViewData()).toList(growable: false),
-      tags: (tags ?? tag).map((tag) => tag.toVideoTagViewData()).toList(growable: false),
-      reqUser: reqUser.toVideoRequestUserState(),
-    );
-  }
-}
-
-extension RelatedVideoViewDataMapper on related_dto.RelatedVideo {
-  VideoModel toVideoModel() {
-    return VideoModel(
-      bvid: bvid,
-      title: title,
-      pic: pic,
-      owner: owner,
-      stat: stat,
-      duration: duration,
-      pubDate: pubDate,
-      desc: desc,
-      rcmdReason: rcmdReason,
-    );
-  }
-}
-
-extension VideoPartViewDataMapper on detail_dto.VideoPage {
-  VideoPartViewData toVideoPartViewData() {
-    return VideoPartViewData(
-      cid: cid,
-      page: page,
-      part: part,
-      duration: duration,
-      dimension: dimension.toVideoDimensionViewData(),
-    );
-  }
-}
-
-extension VideoDimensionViewDataMapper on detail_dto.VideoDimension {
-  VideoDimensionViewData toVideoDimensionViewData() {
-    return VideoDimensionViewData(width: width, height: height, rotate: rotate);
-  }
-}
-
-extension VideoTagViewDataMapper on detail_dto.VideoTag {
-  VideoTagViewData toVideoTagViewData() {
-    return VideoTagViewData(tagName: tagName);
-  }
-}
-
-extension VideoRequestUserStateMapper on detail_dto.ReqUser? {
-  VideoRequestUserState toVideoRequestUserState() {
-    final user = this;
-    if (user == null) {
-      return const VideoRequestUserState();
-    }
-    return VideoRequestUserState(
-      attention: user.attention,
-      guestAttention: user.guestAttention,
-      like: user.like,
-      coin: user.coin,
-      favorite: user.favorite,
-    );
-  }
-}
-
-extension VideoSubtitlesMapper on subtitle_dto.VideoSubtitlesDto {
-  VideoSubtitles toVideoSubtitles() {
-    return VideoSubtitles(
-      list: list.map((item) => item.toSubtitleInfo()).toList(growable: false),
-    );
-  }
-}
-
-extension SubtitleInfoMapper on subtitle_dto.SubtitleInfoDto {
-  SubtitleInfo toSubtitleInfo() {
-    return SubtitleInfo(
-      id: id,
-      lan: lan,
-      lanDoc: lanDoc,
-      subtitleUrl: subtitleUrl,
-      isLock: isLock,
-      idStr: idStr,
-      type: type,
-    );
-  }
 }

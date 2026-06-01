@@ -1,70 +1,263 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter/foundation.dart' show listEquals;
 
-part 'live_history_danmaku_model.freezed.dart';
-part 'live_history_danmaku_model.g.dart';
-
-@freezed
-sealed class LiveHistoryDanmakuModel with _$LiveHistoryDanmakuModel {
-  const factory LiveHistoryDanmakuModel({
+final class LiveHistoryDanmakuModel {
+  LiveHistoryDanmakuModel({
     required List<LiveDanmakuItem> admin,
     required List<LiveDanmakuItem> room,
-  }) = _LiveHistoryDanmakuModel;
+  }) : admin = List<LiveDanmakuItem>.unmodifiable(admin),
+       room = List<LiveDanmakuItem>.unmodifiable(room);
 
-  factory LiveHistoryDanmakuModel.fromJson(Map<String, dynamic> json) =>
-      _$LiveHistoryDanmakuModelFromJson(json);
+  factory LiveHistoryDanmakuModel.fromJson(Map<String, dynamic> json) {
+    return LiveHistoryDanmakuModel(
+      admin: (json['admin'] as List<dynamic>)
+          .map((e) => LiveDanmakuItem.fromJson(e as Map<String, dynamic>))
+          .toList(growable: false),
+      room: (json['room'] as List<dynamic>)
+          .map((e) => LiveDanmakuItem.fromJson(e as Map<String, dynamic>))
+          .toList(growable: false),
+    );
+  }
+
+  final List<LiveDanmakuItem> admin;
+  final List<LiveDanmakuItem> room;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is LiveHistoryDanmakuModel &&
+            runtimeType == other.runtimeType &&
+            listEquals(admin, other.admin) &&
+            listEquals(room, other.room);
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, Object.hashAll(admin), Object.hashAll(room));
+
+  @override
+  String toString() => 'LiveHistoryDanmakuModel(admin: $admin, room: $room)';
 }
 
-@freezed
-sealed class LiveDanmakuItem with _$LiveDanmakuItem {
-  const factory LiveDanmakuItem({
-    required String text,
-    required String nickname,
-    required int uid,
-    @Default('') String timeline,
-    @Default(0) @JsonKey(name: 'dm_type') int dmType,
-    @Default(0) int isadmin,
-    @Default(0) int vip,
-    @Default(0) int svip,
-    @JsonKey(fromJson: _medalFromJson, toJson: _medalToJson) LiveDanmakuMedal? medal,
-    @JsonKey(fromJson: _titleFromJson, toJson: _titleToJson) LiveDanmakuTitle? title,
-    @JsonKey(name: 'user_level', fromJson: _userLevelFromJson, toJson: _userLevelToJson)
-    LiveDanmakuUserLevel? userLevel,
-    @Default(0) int rank,
-    @Default(0) int teamid,
-    @Default('') String rnd,
-    @Default('') @JsonKey(name: 'user_title') String userTitle,
-    @Default(0) @JsonKey(name: 'guard_level') int guardLevel,
-    @Default(0) int bubble,
-    @Default({}) @JsonKey(name: 'check_info') Map<String, dynamic> checkInfo,
-  }) = _LiveDanmakuItem;
+final class LiveDanmakuItem {
+  LiveDanmakuItem({
+    required this.text,
+    required this.nickname,
+    required this.uid,
+    this.timeline = '',
+    this.dmType = 0,
+    this.isadmin = 0,
+    this.vip = 0,
+    this.svip = 0,
+    this.medal,
+    this.title,
+    this.userLevel,
+    this.rank = 0,
+    this.teamid = 0,
+    this.rnd = '',
+    this.userTitle = '',
+    this.guardLevel = 0,
+    this.bubble = 0,
+    Map<String, dynamic> checkInfo = const {},
+  }) : checkInfo = Map<String, dynamic>.unmodifiable(checkInfo);
 
-  factory LiveDanmakuItem.fromJson(Map<String, dynamic> json) =>
-      _$LiveDanmakuItemFromJson(json);
+  factory LiveDanmakuItem.fromJson(Map<String, dynamic> json) {
+    return LiveDanmakuItem(
+      text: json['text'] as String,
+      nickname: json['nickname'] as String,
+      uid: (json['uid'] as num).toInt(),
+      timeline: json['timeline'] as String? ?? '',
+      dmType: (json['dm_type'] as num?)?.toInt() ?? 0,
+      isadmin: (json['isadmin'] as num?)?.toInt() ?? 0,
+      vip: (json['vip'] as num?)?.toInt() ?? 0,
+      svip: (json['svip'] as num?)?.toInt() ?? 0,
+      medal: _medalFromJson(json['medal']),
+      title: _titleFromJson(json['title']),
+      userLevel: _userLevelFromJson(json['user_level']),
+      rank: (json['rank'] as num?)?.toInt() ?? 0,
+      teamid: (json['teamid'] as num?)?.toInt() ?? 0,
+      rnd: json['rnd'] as String? ?? '',
+      userTitle: json['user_title'] as String? ?? '',
+      guardLevel: (json['guard_level'] as num?)?.toInt() ?? 0,
+      bubble: (json['bubble'] as num?)?.toInt() ?? 0,
+      checkInfo: json['check_info'] as Map<String, dynamic>? ?? const {},
+    );
+  }
+
+  final String text;
+  final String nickname;
+  final int uid;
+  final String timeline;
+  final int dmType;
+  final int isadmin;
+  final int vip;
+  final int svip;
+  final LiveDanmakuMedal? medal;
+  final LiveDanmakuTitle? title;
+  final LiveDanmakuUserLevel? userLevel;
+  final int rank;
+  final int teamid;
+  final String rnd;
+  final String userTitle;
+  final int guardLevel;
+  final int bubble;
+  final Map<String, dynamic> checkInfo;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is LiveDanmakuItem &&
+            runtimeType == other.runtimeType &&
+            text == other.text &&
+            nickname == other.nickname &&
+            uid == other.uid &&
+            timeline == other.timeline &&
+            dmType == other.dmType &&
+            isadmin == other.isadmin &&
+            vip == other.vip &&
+            svip == other.svip &&
+            medal == other.medal &&
+            title == other.title &&
+            userLevel == other.userLevel &&
+            rank == other.rank &&
+            teamid == other.teamid &&
+            rnd == other.rnd &&
+            userTitle == other.userTitle &&
+            guardLevel == other.guardLevel &&
+            bubble == other.bubble &&
+            _mapEquals(checkInfo, other.checkInfo);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+      runtimeType,
+      text,
+      nickname,
+      uid,
+      timeline,
+      dmType,
+      isadmin,
+      vip,
+      svip,
+      medal,
+      title,
+      userLevel,
+      rank,
+      teamid,
+      rnd,
+      userTitle,
+      guardLevel,
+      bubble,
+      _mapHash(checkInfo),
+    );
+  }
+
+  @override
+  String toString() {
+    return 'LiveDanmakuItem('
+        'text: $text, '
+        'nickname: $nickname, '
+        'uid: $uid, '
+        'timeline: $timeline, '
+        'dmType: $dmType, '
+        'isadmin: $isadmin, '
+        'vip: $vip, '
+        'svip: $svip, '
+        'medal: $medal, '
+        'title: $title, '
+        'userLevel: $userLevel, '
+        'rank: $rank, '
+        'teamid: $teamid, '
+        'rnd: $rnd, '
+        'userTitle: $userTitle, '
+        'guardLevel: $guardLevel, '
+        'bubble: $bubble, '
+        'checkInfo: $checkInfo'
+        ')';
+  }
 }
 
-@freezed
-sealed class LiveDanmakuMedal with _$LiveDanmakuMedal {
-  const factory LiveDanmakuMedal({
-    @Default(0) int level,
-    @Default('') String name,
-    @Default(0) int anchorRoomId,
-    @Default(0) int color,
-  }) = _LiveDanmakuMedal;
+final class LiveDanmakuMedal {
+  const LiveDanmakuMedal({
+    this.level = 0,
+    this.name = '',
+    this.anchorRoomId = 0,
+    this.color = 0,
+  });
+
+  final int level;
+  final String name;
+  final int anchorRoomId;
+  final int color;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is LiveDanmakuMedal &&
+            runtimeType == other.runtimeType &&
+            level == other.level &&
+            name == other.name &&
+            anchorRoomId == other.anchorRoomId &&
+            color == other.color;
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, level, name, anchorRoomId, color);
+
+  @override
+  String toString() {
+    return 'LiveDanmakuMedal('
+        'level: $level, '
+        'name: $name, '
+        'anchorRoomId: $anchorRoomId, '
+        'color: $color'
+        ')';
+  }
 }
 
-@freezed
-sealed class LiveDanmakuTitle with _$LiveDanmakuTitle {
-  const factory LiveDanmakuTitle({@Default('') String title, @Default('') String skin}) =
-      _LiveDanmakuTitle;
+final class LiveDanmakuTitle {
+  const LiveDanmakuTitle({this.title = '', this.skin = ''});
+
+  final String title;
+  final String skin;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is LiveDanmakuTitle &&
+            runtimeType == other.runtimeType &&
+            title == other.title &&
+            skin == other.skin;
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, title, skin);
+
+  @override
+  String toString() => 'LiveDanmakuTitle(title: $title, skin: $skin)';
 }
 
-@freezed
-sealed class LiveDanmakuUserLevel with _$LiveDanmakuUserLevel {
-  const factory LiveDanmakuUserLevel({@Default(0) int level, @Default(0) int rank}) =
-      _LiveDanmakuUserLevel;
-}
+final class LiveDanmakuUserLevel {
+  const LiveDanmakuUserLevel({this.level = 0, this.rank = 0});
 
-// -- JSON converters for array-encoded sub-models --
+  final int level;
+  final int rank;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is LiveDanmakuUserLevel &&
+            runtimeType == other.runtimeType &&
+            level == other.level &&
+            rank == other.rank;
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, level, rank);
+
+  @override
+  String toString() => 'LiveDanmakuUserLevel(level: $level, rank: $rank)';
+}
 
 LiveDanmakuMedal? _medalFromJson(dynamic raw) {
   if (raw is! List || raw.length < 2) return null;
@@ -76,22 +269,12 @@ LiveDanmakuMedal? _medalFromJson(dynamic raw) {
   );
 }
 
-List<dynamic>? _medalToJson(LiveDanmakuMedal? medal) {
-  if (medal == null) return null;
-  return [medal.level, medal.name, '', medal.anchorRoomId, medal.color];
-}
-
 LiveDanmakuTitle? _titleFromJson(dynamic raw) {
   if (raw is! List || raw.isEmpty) return null;
   return LiveDanmakuTitle(
     title: raw.first?.toString() ?? '',
     skin: raw.length > 1 ? raw[1]?.toString() ?? '' : '',
   );
-}
-
-List<dynamic>? _titleToJson(LiveDanmakuTitle? title) {
-  if (title == null) return null;
-  return [title.title, title.skin];
 }
 
 LiveDanmakuUserLevel? _userLevelFromJson(dynamic raw) {
@@ -102,7 +285,21 @@ LiveDanmakuUserLevel? _userLevelFromJson(dynamic raw) {
   );
 }
 
-List<dynamic>? _userLevelToJson(LiveDanmakuUserLevel? userLevel) {
-  if (userLevel == null) return null;
-  return [userLevel.level, userLevel.rank];
+bool _mapEquals<K, V>(Map<K, V> a, Map<K, V> b) {
+  if (identical(a, b)) return true;
+  if (a.length != b.length) return false;
+  for (final entry in a.entries) {
+    if (!b.containsKey(entry.key) || b[entry.key] != entry.value) {
+      return false;
+    }
+  }
+  return true;
+}
+
+int _mapHash<K, V>(Map<K, V> map) {
+  var hash = 0;
+  for (final entry in map.entries) {
+    hash ^= Object.hash(entry.key, entry.value);
+  }
+  return hash;
 }

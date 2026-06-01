@@ -1,6 +1,7 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
-import 'package:culcul/features/profile/data/dtos/user_space_video_model.dart';
+import 'package:culcul/features/profile/data/profile_paging_constants.dart';
+import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
@@ -16,10 +17,10 @@ abstract class ProfileApi {
 
   @GET('/x/space/wbi/arc/search')
   @Headers({'x-bili-wbi': 'true'})
-  Future<ApiResponse<UserSpaceVideoListResponse>> getSpaceVideos({
+  Future<ApiResponse<Object>> getSpaceVideos({
     @Query('mid') required int mid,
     @Query('pn') int page = 1,
-    @Query('ps') int pageSize = 30,
+    @Query('ps') int pageSize = profileUserSpaceVideoPageSize,
     @Query('order') String order = 'pubdate',
     @Query('keyword') String? keyword,
     @Query('force_refresh') bool? forceRefresh,
@@ -27,10 +28,10 @@ abstract class ProfileApi {
   });
 
   @GET('/x/space/top/arc')
-  Future<ApiResponse<UserSpaceVideoModel>> getStickyVideo(@Query('vmid') int vmid);
+  Future<ApiResponse<ProfileVideo>> getStickyVideo(@Query('vmid') int vmid);
 
   @GET('/x/space/masterpiece')
-  Future<ApiResponse<List<UserSpaceVideoModel>>> getMasterpiece(@Query('vmid') int vmid);
+  Future<ApiResponse<List<ProfileVideo>>> getMasterpiece(@Query('vmid') int vmid);
 
   @GET('/x/relation/stat')
   Future<ApiResponse<dynamic>> getRelationStat(@Query('vmid') int vmid);

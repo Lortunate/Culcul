@@ -9,7 +9,26 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-part 'login_panel.components.dart';
+Future<void> showLoginDialog(BuildContext context) {
+  final colorScheme = Theme.of(context).colorScheme;
+  return showGeneralDialog(
+    context: context,
+    barrierDismissible: true,
+    barrierLabel: 'Login',
+    barrierColor: colorScheme.scrim.withValues(alpha: 0.5),
+    pageBuilder: (context, animation, secondaryAnimation) {
+      return Center(
+        child: Material(
+          color: Colors.transparent,
+          child: LoginPanel(onClose: () => Navigator.of(context).pop()),
+        ),
+      );
+    },
+    transitionBuilder: (context, animation, secondaryAnimation, child) {
+      return FadeTransition(opacity: animation, child: child);
+    },
+  );
+}
 
 class LoginPanel extends HookConsumerWidget {
   const LoginPanel({super.key, this.onClose});
@@ -23,6 +42,17 @@ class LoginPanel extends HookConsumerWidget {
     final selectedTab = useState(0);
     final feedback = useState<({String message, bool isSuccess})?>(null);
     final feedbackVersion = useState(0);
+    final visibleFeedback = feedback.value;
+    final feedbackBackgroundColor = visibleFeedback == null
+        ? null
+        : visibleFeedback.isSuccess
+        ? theme.colorScheme.primaryContainer.withValues(alpha: 0.9)
+        : theme.colorScheme.errorContainer.withValues(alpha: 0.9);
+    final feedbackForegroundColor = visibleFeedback == null
+        ? null
+        : visibleFeedback.isSuccess
+        ? theme.colorScheme.onPrimaryContainer
+        : theme.colorScheme.onErrorContainer;
 
     void closePanel() {
       if (onClose != null) {
@@ -77,7 +107,6 @@ class LoginPanel extends HookConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Header
           Padding(
             padding: const EdgeInsets.fromLTRB(
               CulculSpacing.lg,
@@ -85,30 +114,88 @@ class LoginPanel extends HookConsumerWidget {
               CulculSpacing.sm,
               CulculSpacing.xs,
             ),
-            child: _LoginPanelHeader(
-              title: t.auth.login,
-              subtitle: t.auth.welcome_back,
-              onClose: closePanel,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        t.auth.login,
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.5,
+                          height: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        t.auth.welcome_back,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                IconButton(
+                  onPressed: closePanel,
+                  icon: const Icon(Icons.close_rounded),
+                  style: IconButton.styleFrom(
+                    backgroundColor: theme.colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.3,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
 
-          // Tabs
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: CulculSpacing.lg,
               vertical: CulculSpacing.md,
             ),
-            child: _LoginMethodTabs(
-              tabs: tabs,
-              selectedIndex: selectedTab.value,
-              onSelected: (index) {
-                selectedTab.value = index;
-                HapticFeedback.lightImpact();
-              },
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              clipBehavior: Clip.none,
+              child: Row(
+                children: List.generate(tabs.length, (index) {
+                  final isSelected = selectedTab.value == index;
+                  return GestureDetector(
+                    onTap: () {
+                      selectedTab.value = index;
+                      HapticFeedback.lightImpact();
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.surfaceContainerHighest.withValues(
+                                alpha: 0.3,
+                              ),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Text(
+                        tabs[index],
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: isSelected
+                              ? theme.colorScheme.onPrimary
+                              : theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+              ),
             ),
           ),
 
-          // Content
           Flexible(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: CulculSpacing.lg),
@@ -119,16 +206,49 @@ class LoginPanel extends HookConsumerWidget {
                     duration: CulculMotion.fast,
                     switchInCurve: Curves.easeOutCubic,
                     switchOutCurve: Curves.easeInCubic,
-                    child: feedback.value == null
+                    child: visibleFeedback == null
                         ? const SizedBox.shrink()
                         : Padding(
                             key: ValueKey(
-                              '${feedback.value!.message}-${feedback.value!.isSuccess}',
+                              '${visibleFeedback.message}-${visibleFeedback.isSuccess}',
                             ),
                             padding: const EdgeInsets.only(bottom: CulculSpacing.sm),
-                            child: _AuthInlineFeedback(
-                              message: feedback.value!.message,
-                              isSuccess: feedback.value!.isSuccess,
+                            child: Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 10,
+                              ),
+                              decoration: BoxDecoration(
+                                color: feedbackBackgroundColor,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: visibleFeedback.isSuccess
+                                      ? theme.colorScheme.primary.withValues(alpha: 0.2)
+                                      : theme.colorScheme.error.withValues(alpha: 0.25),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    visibleFeedback.isSuccess
+                                        ? Icons.check_circle_rounded
+                                        : Icons.error_outline_rounded,
+                                    size: 18,
+                                    color: feedbackForegroundColor,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      visibleFeedback.message,
+                                      style: theme.textTheme.bodyMedium?.copyWith(
+                                        color: feedbackForegroundColor,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                   ),

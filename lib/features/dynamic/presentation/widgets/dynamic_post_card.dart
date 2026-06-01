@@ -1,13 +1,14 @@
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/utils/share_utils.dart';
-import 'package:culcul/features/dynamic/application/dynamic_post_card_view_data.dart';
+import 'package:culcul/features/dynamic/application/models/dynamic_item_extensions.dart';
+import 'package:culcul/features/dynamic/application/models/dynamic_response.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_navigation_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 
 class DynamicPostCard extends StatelessWidget {
-  final DynamicPostCardViewData post;
+  final DynamicItem post;
   final Widget header;
   final Widget content;
   final VoidCallback? onLike;

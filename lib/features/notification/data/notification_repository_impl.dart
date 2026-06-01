@@ -1,27 +1,28 @@
+import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:culcul/core/contracts/uploaded_image_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
+import 'package:culcul/core/data/network/models/api_response.dart';
+import 'package:culcul/core/utils/json_compute.dart';
+import 'package:culcul/core/utils/json_utils.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:dio/dio.dart';
-import 'package:culcul/features/notification/application/notification_feed_port.dart';
-import 'package:culcul/features/notification/application/notification_chat_port.dart';
-import 'package:culcul/features/notification/application/notification_private_session_port.dart';
-import 'package:culcul/features/notification/application/notification_system_notice_port.dart';
-import 'package:culcul/features/notification/application/notification_unread_count_port.dart';
+import 'package:drift/drift.dart' hide Uint8List;
+import 'package:culcul/features/notification/data/dtos/private_message_model.dart';
+import 'package:culcul/features/notification/data/dtos/reply_model.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
 import 'package:culcul/features/notification/data/notification_api.dart';
+import 'package:culcul/features/notification/data/notification_mapper.dart';
 import 'package:culcul/features/notification/data/notification_message_persistence.dart';
+import 'package:culcul/features/notification/data/notification_paging_constants.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.cleanup_policy.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.feed_sync.dart';
-import 'package:culcul/features/notification/data/notification_repository_impl.local_read_store.dart';
-import 'package:culcul/features/notification/data/notification_repository_impl.message_send_service.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.message_sync.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.session_sync.dart';
-import 'package:culcul/features/notification/data/notification_repository_impl.stream_watchers.dart';
-import 'package:culcul/features/notification/data/notification_repository_impl.message_support.dart';
-import 'package:culcul/features/notification/domain/entities/image_upload_result.dart';
 import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_cursor.dart';
 import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
@@ -44,13 +45,7 @@ NotificationRepositoryImpl notificationRepository(Ref ref) {
   );
 }
 
-class NotificationRepositoryImpl
-    implements
-        NotificationChatPort,
-        NotificationFeedPort,
-        NotificationPrivateSessionPort,
-        NotificationSystemNoticePort,
-        NotificationUnreadCountPort {
+class NotificationRepositoryImpl {
   NotificationRepositoryImpl(
     this._api,
     this._database,
@@ -67,30 +62,13 @@ class NotificationRepositoryImpl
       nowSeconds: nowSeconds,
     );
 
-    _messageSupport = NotificationMessageSupport(
-      api: _api,
-      requestExecutor: _requestExecutor,
-      pageSize: pageSize,
-    );
-
-    _streamWatchers = NotificationStreamWatchers(
-      database: _database,
-      emptySummary: emptySummary,
-    );
-
-    _localReadStore = NotificationLocalReadStore(
-      database: _database,
-      persistence: _persistence,
-      pageSize: pageSize,
-    );
-
     _messageSync = NotificationMessageSync(
       database: _database,
       api: _api,
       requestExecutor: _requestExecutor,
       cleanupPolicy: _cleanupPolicy,
       persistence: _persistence,
-      pageSize: pageSize,
+      pageSize: notificationPrivateMessagePageSize,
       nowSeconds: nowSeconds,
     );
 
@@ -108,30 +86,8 @@ class NotificationRepositoryImpl
       api: _api,
       requestExecutor: _requestExecutor,
       cleanupPolicy: _cleanupPolicy,
-      messageSupport: _messageSupport,
+      pageSize: notificationPrivateMessagePageSize,
       nowSeconds: nowSeconds,
-    );
-
-    _messageSendService = NotificationMessageSendService(
-      database: _database,
-      api: _api,
-      dio: _dio,
-      requestExecutor: _requestExecutor,
-      persistence: _persistence,
-      messageSupport: _messageSupport,
-      nowSeconds: nowSeconds,
-      syncMessagesHead:
-          ({
-            required int ownerUid,
-            required int talkerId,
-            required PrivateSessionType sessionType,
-          }) async {
-            await _messageSync.syncMessagesHead(
-              ownerUid: ownerUid,
-              talkerId: talkerId,
-              sessionType: sessionType,
-            );
-          },
     );
   }
 
@@ -142,15 +98,10 @@ class NotificationRepositoryImpl
 
   late final NotificationMessagePersistence _persistence;
   late final NotificationCleanupPolicy _cleanupPolicy;
-  late final NotificationMessageSupport _messageSupport;
-  late final NotificationStreamWatchers _streamWatchers;
-  late final NotificationLocalReadStore _localReadStore;
   late final NotificationMessageSync _messageSync;
   late final NotificationSessionSync _sessionSync;
   late final NotificationFeedSync _feedSync;
-  late final NotificationMessageSendService _messageSendService;
 
-  static const int pageSize = 20;
   static const int syncThrottleSeconds = 60;
   static const int retentionDays = 90;
   static const String cleanupScope = '__cleanup__';
@@ -158,80 +109,172 @@ class NotificationRepositoryImpl
 
   int nowSeconds() => DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
-  Future<NotificationSummary?> getUnreadCountFromLocal({required int ownerUid}) {
-    return _localReadStore.getUnreadCountFromLocal(ownerUid: ownerUid);
-  }
-
-  @override
   Future<List<PrivateSession>> pageSessionsFromLocal({
     required int ownerUid,
     required PrivateSessionType sessionType,
     int? endTs,
-  }) {
-    return _localReadStore.pageSessionsFromLocal(
-      ownerUid: ownerUid,
-      sessionType: sessionType,
-      endTs: endTs,
-    );
+  }) async {
+    final query = _database.select(_database.notificationSessions)
+      ..where(
+        (t) =>
+            t.ownerUid.equals(ownerUid) &
+            t.sessionType.equals(sessionType.value) &
+            (endTs == null
+                ? const Constant(true)
+                : t.sessionTs.isSmallerThanValue(endTs)),
+      )
+      ..orderBy([(t) => OrderingTerm.desc(t.sessionTs)])
+      ..limit(notificationPrivateMessagePageSize);
+    final rows = await query.get();
+    final sessions = <PrivateSession>[];
+    for (final row in rows) {
+      final decoded = await jsonDecodeCompute(row.sessionJson);
+      sessions.add(
+        PrivateMessageSession.fromJson(decoded as Map<String, dynamic>).toDomain(),
+      );
+    }
+    return sessions;
   }
 
-  @override
   Future<List<PrivateMessage>> pageMessagesFromLocal({
     required int ownerUid,
     required int talkerId,
     required PrivateSessionType sessionType,
     int? endSeqno,
-  }) {
-    return _localReadStore.pageMessagesFromLocal(
-      ownerUid: ownerUid,
-      talkerId: talkerId,
-      sessionType: sessionType,
-      endSeqno: endSeqno,
-    );
+  }) async {
+    final query = _database.select(_database.notificationMessages)
+      ..where((t) {
+        final base =
+            t.ownerUid.equals(ownerUid) &
+            t.sessionType.equals(sessionType.value) &
+            t.talkerId.equals(talkerId);
+        if (endSeqno == null) return base;
+        return base & t.msgSeqno.isSmallerThanValue(endSeqno);
+      })
+      ..orderBy([
+        (t) => OrderingTerm.desc(t.timestamp),
+        (t) => OrderingTerm.desc(t.msgSeqno),
+      ])
+      ..limit(notificationPrivateMessagePageSize);
+    final rows = await query.get();
+    return rows.map(_persistence.rowToPrivateMessage).toList();
   }
 
-  @override
   Future<Map<String, String>> getMessageEmojiMapFromLocal({
     required int ownerUid,
     required int talkerId,
     required PrivateSessionType sessionType,
-  }) {
-    return _localReadStore.getMessageEmojiMapFromLocal(
-      ownerUid: ownerUid,
-      talkerId: talkerId,
-      sessionType: sessionType,
-    );
+  }) async {
+    final rows =
+        await (_database.select(_database.notificationMessageEmojis)
+              ..where(
+                (t) =>
+                    t.ownerUid.equals(ownerUid) &
+                    t.sessionType.equals(sessionType.value) &
+                    t.talkerId.equals(talkerId),
+              )
+              ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)]))
+            .get();
+
+    final map = <String, String>{};
+    for (final row in rows) {
+      _persistence.putEmojiVariants(
+        map: map,
+        rawKey: row.emojiText,
+        url: row.emojiUrl,
+        overwrite: false,
+      );
+    }
+    return map;
   }
 
-  @override
   Future<List<NotificationEntry>> pageFeedFromLocal({
     required int ownerUid,
     required NotificationFeedType type,
     NotificationFeedCursor? cursor,
-  }) {
-    return _localReadStore.pageFeedFromLocal(
-      ownerUid: ownerUid,
-      type: type,
-      cursor: cursor,
-    );
+  }) async {
+    if (type == NotificationFeedType.system) {
+      return const <NotificationEntry>[];
+    }
+
+    final query = _database.select(_database.notificationFeedItems)
+      ..where((t) {
+        final base = t.ownerUid.equals(ownerUid) & t.feedType.equals(type.value);
+        if (cursor == null) return base;
+        return base &
+            (t.eventTime.isSmallerThanValue(cursor.time) |
+                (t.eventTime.equals(cursor.time) &
+                    t.eventId.isSmallerThanValue(cursor.id)));
+      })
+      ..orderBy([
+        (t) => OrderingTerm.desc(t.eventTime),
+        (t) => OrderingTerm.desc(t.eventId),
+      ])
+      ..limit(notificationPrivateMessagePageSize);
+    final rows = await query.get();
+    final items = <NotificationEntry>[];
+    for (final row in rows) {
+      final decoded = await jsonDecodeCompute(row.itemJson);
+      items.add(ReplyItem.fromJson(decoded as Map<String, dynamic>).toDomain());
+    }
+    return items;
   }
 
-  @override
   Stream<NotificationSummary> watchUnreadCount({required int ownerUid}) {
-    return _streamWatchers.watchUnreadCount(ownerUid: ownerUid);
+    return (_database.select(_database.notificationUnreadSummaries)
+          ..where((t) => t.ownerUid.equals(ownerUid))
+          ..limit(1))
+        .watchSingleOrNull()
+        .asyncMap((row) async {
+          if (row == null) return emptySummary;
+          try {
+            final decoded = await jsonDecodeCompute(row.summaryJson);
+            final json = decoded as Map<String, dynamic>;
+            return NotificationSummary(
+              at: JsonUtils.parseIntWithDefault(json['at']),
+              chat: JsonUtils.parseIntWithDefault(json['chat']),
+              coin: JsonUtils.parseIntWithDefault(json['coin']),
+              danmu: JsonUtils.parseIntWithDefault(json['danmu']),
+              favorite: JsonUtils.parseIntWithDefault(json['favorite']),
+              like: JsonUtils.parseIntWithDefault(json['like']),
+              recvLike: JsonUtils.parseIntWithDefault(json['recv_like']),
+              recvReply: JsonUtils.parseIntWithDefault(json['recv_reply']),
+              reply: JsonUtils.parseIntWithDefault(json['reply']),
+              system: JsonUtils.parseIntWithDefault(json['sys_msg']),
+              up: JsonUtils.parseIntWithDefault(json['up']),
+            );
+          } catch (_) {
+            return emptySummary;
+          }
+        });
   }
 
-  @override
   Stream<List<SystemNotice>> watchSystemNotices({required int ownerUid}) {
-    return _streamWatchers.watchSystemNotices(ownerUid: ownerUid);
+    return (_database.select(_database.notificationFeedItems)
+          ..where(
+            (t) =>
+                t.ownerUid.equals(ownerUid) &
+                t.feedType.equals(NotificationFeedType.system.value),
+          )
+          ..orderBy([
+            (t) => OrderingTerm.desc(t.eventTime),
+            (t) => OrderingTerm.desc(t.eventId),
+          ]))
+        .watch()
+        .asyncMap((rows) async {
+          final notices = <SystemNotice>[];
+          for (final row in rows) {
+            final json = (await jsonDecodeCompute(row.itemJson)) as Map<String, dynamic>;
+            notices.add(systemNoticeFromJson(json));
+          }
+          return notices;
+        });
   }
 
-  @override
   Future<Result<void, AppError>> syncSystemNotices({required int ownerUid}) {
     return syncFeedHead(ownerUid: ownerUid, type: NotificationFeedType.system);
   }
 
-  @override
   Future<Result<void, AppError>> syncUnreadCount({
     required int ownerUid,
     bool force = false,
@@ -239,7 +282,6 @@ class NotificationRepositoryImpl
     return _sessionSync.syncUnreadCount(ownerUid: ownerUid, force: force);
   }
 
-  @override
   Future<Result<void, AppError>> syncSessions({
     required int ownerUid,
     bool force = false,
@@ -247,7 +289,6 @@ class NotificationRepositoryImpl
     return _sessionSync.syncSessions(ownerUid: ownerUid, force: force);
   }
 
-  @override
   Future<Result<void, AppError>> syncSessionsOlder({
     required int ownerUid,
     required PrivateSessionType sessionType,
@@ -260,7 +301,6 @@ class NotificationRepositoryImpl
     );
   }
 
-  @override
   Future<Result<void, AppError>> syncMessagesHead({
     required int ownerUid,
     required int talkerId,
@@ -273,7 +313,6 @@ class NotificationRepositoryImpl
     );
   }
 
-  @override
   Future<Result<void, AppError>> syncMessagesOlder({
     required int ownerUid,
     required int talkerId,
@@ -288,7 +327,6 @@ class NotificationRepositoryImpl
     );
   }
 
-  @override
   Future<Result<void, AppError>> syncFeedHead({
     required int ownerUid,
     required NotificationFeedType type,
@@ -296,7 +334,6 @@ class NotificationRepositoryImpl
     return _feedSync.syncFeedHead(ownerUid: ownerUid, type: type);
   }
 
-  @override
   Future<Result<void, AppError>> syncFeedOlder({
     required int ownerUid,
     required NotificationFeedType type,
@@ -305,28 +342,191 @@ class NotificationRepositoryImpl
     return _feedSync.syncFeedOlder(ownerUid: ownerUid, type: type, cursor: cursor);
   }
 
-  @override
-  Future<Result<ImageUploadResult, AppError>> uploadImage(
-    Uint8List bytes,
-    String filename,
-  ) {
-    return _messageSendService.uploadImage(bytes, filename);
+  PrivateSessionType _sessionTypeFromReceiver(PrivateMessageReceiverType type) {
+    return type == PrivateMessageReceiverType.group
+        ? PrivateSessionType.group
+        : PrivateSessionType.user;
   }
 
-  @override
+  Future<Result<UploadedImage, AppError>> uploadImage(
+    Uint8List bytes,
+    String filename,
+  ) async {
+    final result = await _requestExecutor.runApiDirect(() async {
+      final formData = FormData.fromMap({
+        'file_up': MultipartFile.fromBytes(bytes, filename: filename),
+        'biz': 'draw',
+        'category': 'daily',
+        'build': '0',
+        'mobi_app': 'web',
+      });
+      final response = await _dio.post<Map<String, dynamic>>(
+        'https://api.vc.bilibili.com/api/v1/drawImage/upload',
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+      return ApiResponse<Map<String, dynamic>>.fromJson(
+        response.data!,
+        (json) => Map<String, dynamic>.from(json as Map),
+      );
+    });
+    return result.map(UploadedImage.fromJson);
+  }
+
   Future<Result<SendMessageResult, AppError>> sendPrivateMessage({
     required int ownerUid,
     required int receiverId,
     required PrivateMessageReceiverType receiverType,
     required PrivateMessageType messageType,
     required PrivateMessageContent content,
-  }) {
-    return _messageSendService.sendPrivateMessage(
-      ownerUid: ownerUid,
-      receiverId: receiverId,
-      receiverType: receiverType,
-      messageType: messageType,
-      content: content,
+  }) async {
+    final now = nowSeconds();
+    final localMsgSeqno = -DateTime.now().microsecondsSinceEpoch;
+    final contentMap = content.toRawMap();
+    final contentRawJson = jsonEncode(contentMap);
+    final devId = _generateUuidV4();
+
+    SendMessageResult parseSendMessageResult(Map<String, dynamic> json) {
+      String? readNullableString(Object? value) {
+        if (value == null) {
+          return null;
+        }
+        final stringValue = value.toString();
+        return stringValue.isEmpty ? null : stringValue;
+      }
+
+      return SendMessageResult(
+        msgKey: JsonUtils.parseIntWithDefault(json['msg_key']),
+        msgContent: readNullableString(json['msg_content']),
+        keyHitInfos: JsonUtils.asStringKeyedMap(json['key_hit_infos']),
+      );
+    }
+
+    await _database.transaction(() async {
+      await _database
+          .into(_database.notificationMessages)
+          .insertOnConflictUpdate(
+            NotificationMessagesCompanion.insert(
+              ownerUid: ownerUid,
+              sessionType: _sessionTypeFromReceiver(receiverType).value,
+              talkerId: receiverId,
+              msgSeqno: localMsgSeqno,
+              senderUid: ownerUid,
+              receiverType: receiverType.value,
+              receiverId: receiverId,
+              msgType: messageType.value,
+              contentJson: contentRawJson,
+              timestamp: now,
+              atUidsJson: const Value(null),
+              msgKey: const Value(null),
+              msgStatus: const Value(0),
+              notifyCode: const Value(null),
+              newFaceVersion: const Value(null),
+              msgSource: const Value(null),
+              syncStatus: const Value('pending'),
+              createdAt: now,
+              updatedAt: now,
+            ),
+          );
+
+      await _database
+          .into(_database.notificationOutbox)
+          .insert(
+            NotificationOutboxCompanion.insert(
+              ownerUid: ownerUid,
+              sessionType: _sessionTypeFromReceiver(receiverType).value,
+              talkerId: receiverId,
+              localMsgSeqno: localMsgSeqno,
+              senderUid: ownerUid,
+              receiverType: receiverType.value,
+              receiverId: receiverId,
+              msgType: messageType.value,
+              contentJson: contentRawJson,
+              timestamp: now,
+              createdAt: now,
+              updatedAt: now,
+            ),
+          );
+    });
+
+    final responseResult = await _requestExecutor.runApiDirect(
+      () => _api.sendPrivateMessage(
+        wSenderUid: ownerUid,
+        wReceiverId: receiverId,
+        wDevId: devId,
+        senderUid: ownerUid,
+        receiverId: receiverId,
+        receiverType: receiverType.value,
+        msgType: messageType.value,
+        devId: devId,
+        timestamp: now,
+        content: contentRawJson,
+      ),
+    );
+
+    await responseResult.when(
+      success: (responseJson) async {
+        final response = parseSendMessageResult(responseJson as Map<String, dynamic>);
+        await _persistence.markOutboxAndTempMessage(
+          ownerUid: ownerUid,
+          localMsgSeqno: localMsgSeqno,
+          status: 'sent',
+          now: nowSeconds(),
+          msgKey: response.msgKey,
+        );
+        await _messageSync.syncMessagesHead(
+          ownerUid: ownerUid,
+          talkerId: receiverId,
+          sessionType: _sessionTypeFromReceiver(receiverType),
+        );
+      },
+      failure: (error) async {
+        await _persistence.markOutboxAndTempMessage(
+          ownerUid: ownerUid,
+          localMsgSeqno: localMsgSeqno,
+          status: 'failed',
+          now: nowSeconds(),
+          error: error.message,
+        );
+      },
+    );
+
+    return responseResult.map(
+      (json) => parseSendMessageResult(json as Map<String, dynamic>),
     );
   }
+}
+
+String _generateUuidV4() {
+  final random = Random.secure();
+  final bytes = List<int>.generate(16, (_) => random.nextInt(256));
+
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+
+  String hex(int byte) => byte.toRadixString(16).padLeft(2, '0');
+
+  final buffer = StringBuffer()
+    ..write(hex(bytes[0]))
+    ..write(hex(bytes[1]))
+    ..write(hex(bytes[2]))
+    ..write(hex(bytes[3]))
+    ..write('-')
+    ..write(hex(bytes[4]))
+    ..write(hex(bytes[5]))
+    ..write('-')
+    ..write(hex(bytes[6]))
+    ..write(hex(bytes[7]))
+    ..write('-')
+    ..write(hex(bytes[8]))
+    ..write(hex(bytes[9]))
+    ..write('-')
+    ..write(hex(bytes[10]))
+    ..write(hex(bytes[11]))
+    ..write(hex(bytes[12]))
+    ..write(hex(bytes[13]))
+    ..write(hex(bytes[14]))
+    ..write(hex(bytes[15]));
+
+  return buffer.toString().toUpperCase();
 }

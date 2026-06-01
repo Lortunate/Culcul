@@ -140,12 +140,56 @@ class PrivateMessageContent {
   String? _readString(String key) => _data[key]?.toString();
 }
 
-@freezed
-sealed class PrivateMessageEmoji with _$PrivateMessageEmoji {
-  const factory PrivateMessageEmoji({
+final class PrivateMessageEmoji {
+  const PrivateMessageEmoji({
     required String text,
     required String url,
-    @Default(1) int size,
+    int size = 1,
     String? gifUrl,
-  }) = _PrivateMessageEmoji;
+  }) : this._(text: text, url: url, size: size, gifUrl: gifUrl);
+
+  const PrivateMessageEmoji._({
+    required this.text,
+    required this.url,
+    required this.size,
+    this.gifUrl,
+  });
+
+  factory PrivateMessageEmoji.fromJson(Map<String, dynamic> json) {
+    return PrivateMessageEmoji(
+      text: json['text'] as String,
+      url: json['url'] as String,
+      size: (json['size'] as num?)?.toInt() ?? 1,
+      gifUrl: json['gif_url'] as String?,
+    );
+  }
+
+  final String text;
+  final String url;
+  final int size;
+  final String? gifUrl;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is PrivateMessageEmoji &&
+            runtimeType == other.runtimeType &&
+            text == other.text &&
+            url == other.url &&
+            size == other.size &&
+            gifUrl == other.gifUrl;
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, text, url, size, gifUrl);
+
+  @override
+  String toString() {
+    return 'PrivateMessageEmoji('
+        'text: $text, '
+        'url: $url, '
+        'size: $size, '
+        'gifUrl: $gifUrl'
+        ')';
+  }
 }

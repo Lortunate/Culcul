@@ -45,14 +45,6 @@ class AppCardContainer extends StatelessWidget {
     );
   }
 
-  BoxDecoration _buildDecoration(ThemeData theme, PerformancePolicy policy) {
-    return BoxDecoration(
-      color: color ?? theme.colorScheme.surface,
-      borderRadius: BorderRadius.circular(borderRadius),
-      boxShadow: [_buildShadow(theme, policy)],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -70,7 +62,14 @@ class AppCardContainer extends StatelessWidget {
       child: ValueListenableBuilder<PerformancePolicy>(
         valueListenable: PerformancePolicyController.notifier,
         builder: (context, policy, child) {
-          return DecoratedBox(decoration: _buildDecoration(theme, policy), child: child);
+          return DecoratedBox(
+            decoration: BoxDecoration(
+              color: color ?? theme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(borderRadius),
+              boxShadow: [_buildShadow(theme, policy)],
+            ),
+            child: child,
+          );
         },
         child: interactiveChild,
       ),

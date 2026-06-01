@@ -1,8 +1,103 @@
-import 'package:culcul/features/auth/presentation/view_models/auth_qr_login_view_model.dart';
+import 'dart:async';
+
+import 'package:culcul/features/auth/application/auth_controller.dart';
+import 'package:culcul/features/auth/data/auth_repository_impl.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+
+enum _AuthQrLoginStatus { loading, success, scanned, expired, error }
+
+final _authQrLoginControllerProvider =
+    NotifierProvider.autoDispose<_AuthQrLoginController, _AuthQrLoginState>(
+      _AuthQrLoginController.new,
+    );
+
+class _AuthQrLoginState {
+  const _AuthQrLoginState({
+    this.qrUrl,
+    this.status = _AuthQrLoginStatus.loading,
+    this.statusCode = 0,
+  });
+
+  final String? qrUrl;
+  final _AuthQrLoginStatus status;
+  final int statusCode;
+
+  _AuthQrLoginState copyWith({
+    String? qrUrl,
+    _AuthQrLoginStatus? status,
+    int? statusCode,
+  }) {
+    return _AuthQrLoginState(
+      qrUrl: qrUrl ?? this.qrUrl,
+      status: status ?? this.status,
+      statusCode: statusCode ?? this.statusCode,
+    );
+  }
+}
+
+class _AuthQrLoginController extends Notifier<_AuthQrLoginState> {
+  Timer? _pollTimer;
+
+  @override
+  _AuthQrLoginState build() {
+    ref.onDispose(() => _pollTimer?.cancel());
+    unawaited(refresh());
+    return const _AuthQrLoginState();
+  }
+
+  Future<void> refresh() async {
+    _pollTimer?.cancel();
+    state = const _AuthQrLoginState();
+
+    final result = await ref.read(authRepositoryProvider).getQrCode();
+    result.when(
+      success: (data) {
+        state = _AuthQrLoginState(qrUrl: data.url);
+        _startPolling(data.key);
+      },
+      failure: (_) {
+        state = const _AuthQrLoginState(status: _AuthQrLoginStatus.error, statusCode: -1);
+      },
+    );
+  }
+
+  void _startPolling(String key) {
+    _pollTimer?.cancel();
+    _pollTimer = Timer.periodic(const Duration(seconds: 3), (_) async {
+      final result = await ref.read(authRepositoryProvider).pollQrCode(key);
+      result.when(
+        success: (poll) {
+          _updateStatus(poll.code);
+        },
+        failure: (_) {
+          state = state.copyWith(status: _AuthQrLoginStatus.error, statusCode: -1);
+        },
+      );
+    });
+  }
+
+  void _updateStatus(int code) {
+    final status = switch (code) {
+      0 => _AuthQrLoginStatus.success,
+      86101 => _AuthQrLoginStatus.loading,
+      86090 => _AuthQrLoginStatus.scanned,
+      86038 => _AuthQrLoginStatus.expired,
+      _ => _AuthQrLoginStatus.error,
+    };
+
+    state = state.copyWith(status: status, statusCode: code);
+
+    if (code == 0) {
+      _pollTimer?.cancel();
+      unawaited(ref.read(authProvider.notifier).refreshUser());
+    } else if (code == 86038) {
+      _pollTimer?.cancel();
+    }
+  }
+}
 
 class QrLoginView extends ConsumerWidget {
   const QrLoginView({super.key});
@@ -12,8 +107,8 @@ class QrLoginView extends ConsumerWidget {
     final t = Translations.of(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final qrState = ref.watch(authQrLoginControllerProvider);
-    final qrController = ref.read(authQrLoginControllerProvider.notifier);
+    final qrState = ref.watch(_authQrLoginControllerProvider);
+    final qrController = ref.read(_authQrLoginControllerProvider.notifier);
 
     return SingleChildScrollView(
       child: Container(
@@ -58,11 +153,11 @@ class QrLoginView extends ConsumerWidget {
             const SizedBox(height: 20),
             Text(
               switch (qrState.status) {
-                AuthQrLoginStatus.loading => t.auth.qr_status.loading,
-                AuthQrLoginStatus.success => t.auth.qr_status.success,
-                AuthQrLoginStatus.scanned => t.auth.qr_status.scanned,
-                AuthQrLoginStatus.expired => t.auth.qr_status.expired,
-                AuthQrLoginStatus.error => t.auth.qr_status.error,
+                _AuthQrLoginStatus.loading => t.auth.qr_status.loading,
+                _AuthQrLoginStatus.success => t.auth.qr_status.success,
+                _AuthQrLoginStatus.scanned => t.auth.qr_status.scanned,
+                _AuthQrLoginStatus.expired => t.auth.qr_status.expired,
+                _AuthQrLoginStatus.error => t.auth.qr_status.error,
               },
               textAlign: TextAlign.center,
               style: theme.textTheme.labelLarge?.copyWith(
@@ -72,7 +167,7 @@ class QrLoginView extends ConsumerWidget {
               ),
             ),
             if (qrState.statusCode == 86038 ||
-                qrState.status == AuthQrLoginStatus.error) ...[
+                qrState.status == _AuthQrLoginStatus.error) ...[
               const SizedBox(height: 24),
               FilledButton.icon(
                 onPressed: qrController.refresh,

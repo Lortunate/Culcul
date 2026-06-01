@@ -58,8 +58,6 @@ class ListenSettingsSheet extends HookConsumerWidget {
     }
 
     return PlayerPanelScaffold(
-      title: t.video.listen_settings.title,
-      subtitle: t.video.listen_settings.sleep_timer,
       isBottomSheet: isBottomSheet,
       maxHeightFactor: 0.62,
       child: SingleChildScrollView(
@@ -82,12 +80,46 @@ class ListenSettingsSheet extends HookConsumerWidget {
                 spacing: 6,
                 runSpacing: 6,
                 children: [
-                  for (final minutes in presetMinutes)
-                    _PresetMinuteTextButton(
-                      minutes: minutes,
-                      isSelected: selectedPresetMinutes == minutes,
-                      onTap: () => timerController.setPresetMinutes(minutes),
+                  for (final minutes in presetMinutes) ...[
+                    Builder(
+                      builder: (context) {
+                        final isSelected = selectedPresetMinutes == minutes;
+                        final label = t.video.listen_settings.preset_minutes(
+                          minutes: minutes,
+                        );
+
+                        return Semantics(
+                          button: true,
+                          selected: isSelected,
+                          label: label,
+                          child: TextButton(
+                            onPressed: () => timerController.setPresetMinutes(minutes),
+                            style: TextButton.styleFrom(
+                              foregroundColor: isSelected
+                                  ? colorScheme.primary
+                                  : VideoOverlayStyles.foreground(
+                                      colorScheme,
+                                      alpha: 0.7,
+                                    ),
+                              textStyle: TextStyle(
+                                fontSize: 13,
+                                fontWeight: isSelected
+                                    ? FontWeight.w700
+                                    : FontWeight.w600,
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: CulculSpacing.xs,
+                                vertical: CulculSpacing.xxs,
+                              ),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: Text(label),
+                          ),
+                        );
+                      },
                     ),
+                  ],
                 ],
               ),
               const SizedBox(height: CulculSpacing.sm),
@@ -133,50 +165,6 @@ class ListenSettingsSheet extends HookConsumerWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _PresetMinuteTextButton extends StatelessWidget {
-  final int minutes;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _PresetMinuteTextButton({
-    required this.minutes,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final t = context.t;
-    final colorScheme = Theme.of(context).colorScheme;
-    final label = t.video.listen_settings.preset_minutes(minutes: minutes);
-
-    return Semantics(
-      button: true,
-      selected: isSelected,
-      label: label,
-      child: TextButton(
-        onPressed: onTap,
-        style: TextButton.styleFrom(
-          foregroundColor: isSelected
-              ? colorScheme.primary
-              : VideoOverlayStyles.foreground(colorScheme, alpha: 0.7),
-          textStyle: TextStyle(
-            fontSize: 13,
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-          ),
-          padding: const EdgeInsets.symmetric(
-            horizontal: CulculSpacing.xs,
-            vertical: CulculSpacing.xxs,
-          ),
-          minimumSize: Size.zero,
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        ),
-        child: Text(label),
       ),
     );
   }

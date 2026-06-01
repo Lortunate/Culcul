@@ -4,7 +4,7 @@ import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/services/media_service.dart';
 import 'package:culcul/features/to_view/application/to_view_list_controller.dart';
-import 'package:culcul/features/video/video_action_sheet_entry.dart';
+import 'package:culcul/ui/widgets/media/adaptive_blur.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -57,11 +57,123 @@ Future<void> showHomeVideoActionsBottomSheet(
     }
   }
 
-  return showVideoActionsBottomSheet(
-    context,
-    onWatchLater: addToWatchLater,
-    onDownloadCover: downloadCover,
+  return showModalBottomSheet<void>(
+    context: context,
+    backgroundColor: Colors.transparent,
+    barrierColor: Colors.transparent,
+    isScrollControlled: true,
+    builder: (sheetContext) => _HomeVideoActionsBottomSheet(
+      onWatchLater: () => addToWatchLater(sheetContext),
+      onDownloadCover: () => downloadCover(sheetContext),
+    ),
   );
+}
+
+class _HomeVideoActionsBottomSheet extends StatelessWidget {
+  final VoidCallback onWatchLater;
+  final VoidCallback onDownloadCover;
+
+  const _HomeVideoActionsBottomSheet({
+    required this.onWatchLater,
+    required this.onDownloadCover,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final t = Translations.of(context);
+
+    const topRadius = BorderRadius.vertical(top: Radius.circular(16));
+
+    return ClipRRect(
+      borderRadius: topRadius,
+      child: AdaptiveBlur(
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: colorScheme.surface.withValues(alpha: 0.8),
+            borderRadius: topRadius,
+            border: Border(
+              top: BorderSide(
+                color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+                width: 0.5,
+              ),
+            ),
+          ),
+          child: SafeArea(
+            child: Material(
+              color: Colors.transparent,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 16),
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: onWatchLater,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.watch_later_outlined,
+                            size: 24,
+                            color: colorScheme.onSurface,
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              t.home.video_more.watch_later,
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: colorScheme.onSurface,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: onDownloadCover,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.image_outlined,
+                            size: 24,
+                            color: colorScheme.onSurface,
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              t.home.video_more.download_cover,
+                              style: theme.textTheme.bodyLarge?.copyWith(
+                                color: colorScheme.onSurface,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 const _bvTable = 'fZodR9XQDSUm21yCkr6zBqiveYah8bt4xsWpHnJE7jL5VG3guMTKNPAwcF';

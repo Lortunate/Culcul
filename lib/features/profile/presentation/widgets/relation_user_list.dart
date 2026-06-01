@@ -4,7 +4,6 @@ import 'package:culcul/features/profile/presentation/widgets/relation_user_item.
 import 'package:culcul/core/contracts/relation_user_contract.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
-import 'package:culcul/ui/widgets/feedback/privacy_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -37,7 +36,36 @@ class RelationUserList extends StatelessWidget {
       skeleton: const Center(child: CircularProgressIndicator()),
       errorBuilder: (context, error, stack) {
         if (error is AppError && error.code == 22115) {
-          return const PrivacyErrorWidget();
+          final colorScheme = Theme.of(context).colorScheme;
+          final textTheme = Theme.of(context).textTheme;
+
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.lock_outline_rounded,
+                  size: 64.0,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(height: 16.0),
+                Text(
+                  t.profile.privacy_title,
+                  style: textTheme.titleMedium?.copyWith(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8.0),
+                Text(
+                  t.profile.privacy_message,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          );
         }
         return AppErrorWidget(error: error, stackTrace: stack, onRetry: onRefresh);
       },

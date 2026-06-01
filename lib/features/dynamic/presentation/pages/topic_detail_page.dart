@@ -1,5 +1,8 @@
-import 'package:culcul/features/dynamic/application/dynamic_post_card_view_data.dart';
-import 'package:culcul/features/dynamic/presentation/view_models/topic_dynamic_view_model.dart';
+import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
+import 'package:culcul/features/dynamic/application/dynamic_feed_controller.dart';
+import 'package:culcul/features/dynamic/application/models/dynamic_item_extensions.dart';
+import 'package:culcul/features/dynamic/application/models/dynamic_response.dart';
+import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/feedback/app_empty_state_widget.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_post_header.dart';
@@ -15,6 +18,44 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+final _topicDynamicProvider = AsyncNotifierProvider.autoDispose
+    .family<_TopicDynamicNotifier, List<DynamicItem>, int>(_TopicDynamicNotifier.new);
+
+class _TopicDynamicNotifier extends AsyncNotifier<List<DynamicItem>>
+    with CursorPagedAsyncNotifier<DynamicItem, String>, DynamicFeedController {
+  _TopicDynamicNotifier(this._topicId);
+
+  final int _topicId;
+
+  @override
+  Future<List<DynamicItem>> build() async {
+    return buildFirstPage();
+  }
+
+  @override
+  Future<CursorPage<DynamicItem, String>> fetchPage(String? currentCursor) async {
+    final result = await ref
+        .read(dynamicRepositoryProvider)
+        .getTopicFeed(topicId: _topicId, offset: currentCursor);
+    return result.when(
+      success: (feed) =>
+          CursorPage(items: feed.items, nextCursor: feed.offset, hasMore: feed.hasMore),
+      failure: (_) => const CursorPage(items: [], nextCursor: null, hasMore: false),
+    );
+  }
+
+  @override
+  Object itemId(DynamicItem item) => item.idStr;
+
+  Future<void> loadMore() {
+    return loadNextPage();
+  }
+
+  Future<void> refresh() {
+    return refreshPage();
+  }
+}
+
 class TopicDetailPage extends HookConsumerWidget {
   final int topicId;
   final String topicName;
@@ -24,7 +65,7 @@ class TopicDetailPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = Translations.of(context);
-    final provider = topicDynamicProvider(topicId: topicId);
+    final provider = _topicDynamicProvider(topicId);
     final state = ref.watch(provider);
     final notifier = ref.read(provider.notifier);
     final loadGate = useMemoized(PaginationLoadGate.new, [topicId]);
@@ -85,15 +126,13 @@ class TopicDetailPage extends HookConsumerWidget {
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       final post = items[index];
-                      final cardPost = post.toDynamicPostCardViewData();
                       return KeyedSubtree(
-                        key: ValueKey('topic_post_${cardPost.id}_$index'),
+                        key: ValueKey('topic_post_${post.id}_$index'),
                         child: DynamicPostCard(
-                          post: cardPost,
-                          header: DynamicPostHeader(post: cardPost),
-                          content: DynamicContentWidget(post: cardPost),
-                          onLike: () =>
-                              notifier.toggleLike(cardPost.id, cardPost.isLiked),
+                          post: post,
+                          header: DynamicPostHeader(post: post),
+                          content: DynamicContentWidget(post: post),
+                          onLike: () => notifier.toggleLike(post.id, post.isLiked),
                         ),
                       );
                     },

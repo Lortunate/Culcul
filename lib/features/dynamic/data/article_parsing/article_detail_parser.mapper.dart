@@ -1,12 +1,5 @@
 part of 'article_detail_parser.dart';
 
-Future<Map<String, dynamic>?> _parseInitialState(String data) async {
-  final decoded = await jsonDecodeCompute(data);
-  if (decoded is Map<String, dynamic>) return decoded;
-  if (decoded is Map) return decoded.cast<String, dynamic>();
-  return null;
-}
-
 Map<String, dynamic> _findModule(List<Map<String, dynamic>> modules, String type) {
   for (final module in modules) {
     if (module['module_type'] == type) {
@@ -38,12 +31,6 @@ String? _string(dynamic value) {
   final str = value.toString();
   if (str.isEmpty || str == 'null') return null;
   return str;
-}
-
-int? _int(dynamic value) {
-  if (value == null) return null;
-  if (value is int) return value;
-  return int.tryParse(value.toString());
 }
 
 double? _double(dynamic value) {

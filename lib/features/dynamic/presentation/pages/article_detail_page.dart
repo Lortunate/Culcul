@@ -2,7 +2,7 @@ import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
 import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/utils/share_utils.dart';
-import 'package:culcul/features/dynamic/presentation/view_models/article_detail_view_model.dart';
+import 'package:culcul/features/dynamic/state/article_detail_view_model.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_navigation.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_navigation_scope.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_comment_composer.dart';
@@ -27,11 +27,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 part 'article_detail_page_block_renderers.paragraph.dart';
-part 'article_detail_page_block_renderers.cards.dart';
-part 'article_detail_page_blocks.dart';
 part 'article_detail_page_comment_bar.dart';
-part 'article_detail_page_shell.dart';
-part 'article_detail_page_sections.dart';
 part 'article_detail_page_scaffold.dart';
 
 class ArticleDetailPage extends HookConsumerWidget {
@@ -50,24 +46,32 @@ class ArticleDetailPage extends HookConsumerWidget {
     final commentController = useTextEditingController();
 
     if (state.isLoading && state.detail == null) {
-      return buildArticleLoadingScaffold(context: context, title: title);
+      return Scaffold(
+        appBar: AppBar(title: Text(title ?? t.moments.detail_title)),
+        body: const Center(child: CircularProgressIndicator()),
+      );
     }
 
     if (state.error != null && state.detail == null) {
-      return buildArticleErrorScaffold(
-        context: context,
-        title: title,
-        error: state.error!,
-        onRetry: notifier.refreshAll,
+      return Scaffold(
+        appBar: AppBar(title: Text(title ?? t.moments.detail_title)),
+        body: Center(
+          child: AppErrorWidget(error: state.error!, onRetry: notifier.refreshAll),
+        ),
       );
     }
 
     final data = state.detail;
     if (data == null) {
-      return buildArticleEmptyScaffold(
-        context: context,
-        title: title,
-        onRetry: notifier.refreshAll,
+      return Scaffold(
+        appBar: AppBar(title: Text(title ?? t.moments.detail_title)),
+        body: Center(
+          child: AppEmptyStateWidget(
+            message: t.common.no_content,
+            onAction: notifier.refreshAll,
+            actionLabel: t.common.retry,
+          ),
+        ),
       );
     }
 
@@ -128,21 +132,49 @@ class ArticleDetailPage extends HookConsumerWidget {
       );
     }
 
-    return buildArticleDetailScaffold(
+    return _buildArticleDetailScaffold(
       context: context,
       t: t,
       data: data,
       title: title,
       state: state,
       notifier: notifier,
-      canLoadMore: canLoadMore,
       onRefresh: notifier.refreshAll,
       onLoadMore: canLoadMore ? loadMoreComments : null,
-      commentsEnabled: commentsEnabled,
       commentController: commentController,
       onSubmitComment: submitComment,
       onSubmitReply: submitReply,
       onToggleCommentLike: toggleCommentLike,
     );
   }
+}
+
+List<PopupMenuEntry<String>> buildArticleActionsMenuItems(BuildContext context) {
+  final t = Translations.of(context);
+  return [
+    PopupMenuItem<String>(
+      value: 'copy',
+      child: ListTile(
+        leading: const Icon(Icons.copy_all_rounded),
+        title: Text(t.moments.copy_link),
+        contentPadding: EdgeInsets.zero,
+      ),
+    ),
+    PopupMenuItem<String>(
+      value: 'share',
+      child: ListTile(
+        leading: const Icon(Icons.share_outlined),
+        title: Text(t.actions.share),
+        contentPadding: EdgeInsets.zero,
+      ),
+    ),
+    PopupMenuItem<String>(
+      value: 'open',
+      child: ListTile(
+        leading: const Icon(Icons.open_in_browser_rounded),
+        title: Text(t.moments.open_in_browser),
+        contentPadding: EdgeInsets.zero,
+      ),
+    ),
+  ];
 }

@@ -8,8 +8,7 @@ class DynamicDetailRoute extends AppRouteData with $DynamicDetailRoute {
 
   @override
   Widget build(BuildContext context, GoRouterState state) {
-    return buildDynamicDetailRoutePage(
-      id,
+    return buildDynamicNavigationScope(
       onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
       onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
       onOpenLiveRoom: (roomId) => LiveRoomRoute(roomId: roomId).push(context),
@@ -17,6 +16,7 @@ class DynamicDetailRoute extends AppRouteData with $DynamicDetailRoute {
       onOpenArticle: (url, title) => _pushArticleDetail(context, url: url, title: title),
       onOpenTopic: (topicId, topicName) =>
           _pushTopicDetail(context, topicId: topicId, topicName: topicName),
+      child: DynamicDetailPage(dynamicId: id),
     );
   }
 }
@@ -70,8 +70,7 @@ class PublishDynamicRoute extends AppRouteData with $PublishDynamicRoute {
   const PublishDynamicRoute();
 
   @override
-  Widget build(BuildContext context, GoRouterState state) =>
-      buildPublishDynamicRoutePage();
+  Widget build(BuildContext context, GoRouterState state) => const PublishDynamicPage();
 
   @override
   Page<void> buildPage(BuildContext context, GoRouterState state) {

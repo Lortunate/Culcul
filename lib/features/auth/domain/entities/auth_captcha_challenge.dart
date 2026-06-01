@@ -1,12 +1,28 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
+class AuthCaptchaChallenge {
+  const AuthCaptchaChallenge({
+    required this.token,
+    required this.gt,
+    required this.challenge,
+  });
 
-part 'auth_captcha_challenge.freezed.dart';
+  final String token;
+  final String gt;
+  final String challenge;
 
-@freezed
-sealed class AuthCaptchaChallenge with _$AuthCaptchaChallenge {
-  const factory AuthCaptchaChallenge({
-    required String token,
-    required String gt,
-    required String challenge,
-  }) = _AuthCaptchaChallenge;
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is AuthCaptchaChallenge &&
+            other.token == token &&
+            other.gt == gt &&
+            other.challenge == challenge;
+  }
+
+  @override
+  int get hashCode => Object.hash(token, gt, challenge);
+
+  @override
+  String toString() {
+    return 'AuthCaptchaChallenge(token: $token, gt: $gt, challenge: $challenge)';
+  }
 }

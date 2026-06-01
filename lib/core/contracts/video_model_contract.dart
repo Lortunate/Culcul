@@ -1,3 +1,4 @@
+import 'package:culcul/core/utils/json_utils.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'video_model_contract.freezed.dart';
@@ -59,4 +60,18 @@ class RcmdReasonConverter implements JsonConverter<String, dynamic> {
 
   @override
   dynamic toJson(String object) => object;
+}
+
+List<VideoModel> parseVideoModelListEnvelope(Object data) {
+  final root = JsonUtils.asStringKeyedMap(data);
+  if (root == null) {
+    throw const FormatException('Invalid video list payload');
+  }
+  final rawList = root['list'];
+  if (rawList == null) {
+    return const [];
+  }
+  return (rawList as List<dynamic>)
+      .map((item) => VideoModel.fromJson(item as Map<String, dynamic>))
+      .toList();
 }

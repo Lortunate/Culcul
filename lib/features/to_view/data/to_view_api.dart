@@ -1,6 +1,5 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
-import 'package:culcul/features/to_view/data/dtos/to_view_model_dto.dart';
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
 
@@ -11,7 +10,7 @@ abstract class ToViewApi {
   factory ToViewApi(Dio dio, {String baseUrl}) = _ToViewApi;
 
   @GET(ApiConstants.toView)
-  Future<ApiResponse<ToViewListResponseDto>> getToViewList();
+  Future<ApiResponse<Object>> getToViewList();
 
   @POST(ApiConstants.toViewAdd)
   @FormUrlEncoded()

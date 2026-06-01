@@ -1,7 +1,17 @@
+import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
+import 'package:riverpod/riverpod.dart';
 
 part 'resource_api.g.dart';
+
+final basicResourceApiProvider = Provider<ResourceApi>(
+  (ref) => ResourceApi(ref.watch(basicDioProvider)),
+);
+
+final resourceApiProvider = Provider<ResourceApi>(
+  (ref) => ResourceApi(ref.watch(dioClientProvider)),
+);
 
 @RestApi()
 abstract class ResourceApi {

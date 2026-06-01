@@ -1,6 +1,6 @@
 import 'package:culcul/features/dynamic/application/models/dynamic_response.dart';
 import 'package:culcul/core/contracts/comment_contract.dart';
-import 'package:culcul/features/dynamic/presentation/view_models/dynamic_comment_view_model.dart';
+import 'package:culcul/features/dynamic/application/dynamic_comment_controller.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_navigation_scope.dart';
 import 'package:culcul/ui/assemblies/comments/comment_item.dart';
 import 'package:culcul/i18n/strings.g.dart';
@@ -38,7 +38,7 @@ class DynamicCommentsSliver extends ConsumerWidget {
     }
 
     if (paging.items.isEmpty) {
-      return DynamicCommentsEmptyState(onRefresh: controller.refresh);
+      return _DynamicCommentsEmptyState(onRefresh: controller.refresh);
     }
 
     return _DynamicCommentsList(
@@ -74,10 +74,10 @@ class DynamicCommentsSliver extends ConsumerWidget {
   }
 }
 
-class DynamicCommentsEmptyState extends StatelessWidget {
+class _DynamicCommentsEmptyState extends StatelessWidget {
   final VoidCallback onRefresh;
 
-  const DynamicCommentsEmptyState({super.key, required this.onRefresh});
+  const _DynamicCommentsEmptyState({required this.onRefresh});
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +120,6 @@ class _DynamicCommentsList extends StatelessWidget {
             item: comment,
             onTapUser: (mid) => onTapUser(context, mid),
             onLike: () => onLike(comment.rpid, comment.action == 1),
-            onDislike: () {},
             onReply: () => onReply(context, comment),
           ),
         );

@@ -29,22 +29,11 @@ class AppSearchBar extends StatelessWidget {
     );
   }
 
-  TextStyle? _buildTextStyle(ThemeData theme) {
-    return theme.textTheme.bodyMedium?.copyWith(
-      fontSize: 15,
-      color: theme.colorScheme.onSurface,
-    );
-  }
-
   TextStyle? _buildHintStyle(ThemeData theme) {
     return theme.textTheme.bodyMedium?.copyWith(
       fontSize: 15,
       color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
     );
-  }
-
-  Widget _buildSearchIcon(Color color) {
-    return Icon(Icons.search_rounded, size: 20, color: color);
   }
 
   Widget _buildEditableSearchBar(BuildContext context, ThemeData theme) {
@@ -59,7 +48,10 @@ class AppSearchBar extends StatelessWidget {
         controller: controller,
         onChanged: onChanged,
         autofocus: autofocus,
-        style: _buildTextStyle(theme),
+        style: theme.textTheme.bodyMedium?.copyWith(
+          fontSize: 15,
+          color: colorScheme.onSurface,
+        ),
         textAlignVertical: TextAlignVertical.center,
         decoration: InputDecoration(
           isDense: true,
@@ -72,7 +64,11 @@ class AppSearchBar extends StatelessWidget {
               left: CulculSpacing.md,
               right: CulculSpacing.xs,
             ),
-            child: _buildSearchIcon(colorScheme.onSurfaceVariant),
+            child: Icon(
+              Icons.search_rounded,
+              size: 20,
+              color: colorScheme.onSurfaceVariant,
+            ),
           ),
           prefixIconConstraints: const BoxConstraints(),
           suffixIcon: suffixIcon,
@@ -87,8 +83,14 @@ class AppSearchBar extends StatelessWidget {
     );
   }
 
-  Widget _buildReadonlySearchBar(BuildContext context, ThemeData theme) {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+
+    if (controller != null) {
+      return _buildEditableSearchBar(context, theme);
+    }
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(CulculRadius.lg),
@@ -100,7 +102,7 @@ class AppSearchBar extends StatelessWidget {
           decoration: _buildDecoration(theme),
           child: Row(
             children: [
-              _buildSearchIcon(colorScheme.onSurfaceVariant),
+              Icon(Icons.search_rounded, size: 20, color: colorScheme.onSurfaceVariant),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -115,16 +117,5 @@ class AppSearchBar extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    if (controller != null) {
-      return _buildEditableSearchBar(context, theme);
-    }
-
-    return _buildReadonlySearchBar(context, theme);
   }
 }

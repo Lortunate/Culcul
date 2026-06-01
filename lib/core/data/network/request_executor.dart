@@ -4,15 +4,12 @@ import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:dio/dio.dart';
 
-typedef AppErrorMapper = AppError Function(Object error);
-typedef StaleCacheFallback = Future<Object?> Function(AppError error);
-
 class RequestExecutionOptions {
   final EndpointRequestClass? requestClass;
   final CancelToken? cancelToken;
   final Duration? cacheTtlOverride;
-  final AppErrorMapper? errorMapper;
-  final StaleCacheFallback? staleCacheFallback;
+  final AppError Function(Object error)? errorMapper;
+  final Future<Object?> Function(AppError error)? staleCacheFallback;
 
   const RequestExecutionOptions({
     this.requestClass,
@@ -123,14 +120,6 @@ class RequestExecutor {
       },
       failure: Failure.new,
     );
-  }
-
-  Future<Result<void, AppError>> runVoid(
-    Future<void> Function() action, {
-    RequestExecutionOptions? options,
-  }) async {
-    final result = await run(action, options: options);
-    return result.when(success: (_) => const Success(null), failure: Failure.new);
   }
 
   Future<Result<T, AppError>> runApiDirect<T>(

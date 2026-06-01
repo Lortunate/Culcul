@@ -1,29 +1,40 @@
 import 'dart:async';
 
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'listen_sleep_timer_view_model.freezed.dart';
 part 'listen_sleep_timer_view_model.g.dart';
 
 const int minListenSleepMinutes = 1;
 const int maxListenSleepMinutes = 720;
 
-@freezed
-sealed class ListenSleepTimerState with _$ListenSleepTimerState {
-  const ListenSleepTimerState._();
+final class ListenSleepTimerState {
+  const ListenSleepTimerState({this.remaining, this.total});
 
-  const factory ListenSleepTimerState({Duration? remaining, Duration? total}) =
-      _ListenSleepTimerState;
+  final Duration? remaining;
+  final Duration? total;
 
   bool get isActive => remaining != null && remaining! > Duration.zero;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is ListenSleepTimerState &&
+            other.remaining == remaining &&
+            other.total == total;
+  }
+
+  @override
+  int get hashCode => Object.hash(remaining, total);
+
+  @override
+  String toString() {
+    return 'ListenSleepTimerState(remaining: $remaining, total: $total)';
+  }
 }
 
-typedef ListenSleepTimerOnExpire = Future<void> Function();
-
 @Riverpod(keepAlive: true)
-ListenSleepTimerOnExpire listenSleepTimerOnExpire(Ref ref) {
+Future<void> Function() listenSleepTimerOnExpire(Ref ref) {
   return () async {
     await ref.read(playerControllerProvider.notifier).player.stop();
   };
@@ -87,7 +98,7 @@ class ListenSleepTimerController extends _$ListenSleepTimerController {
       return;
     }
 
-    state = state.copyWith(remaining: remaining, total: total);
+    state = ListenSleepTimerState(remaining: remaining, total: total);
   }
 
   void _expire() {

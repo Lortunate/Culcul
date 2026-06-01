@@ -4,11 +4,6 @@ Future<void> shareUri(Uri uri) async {
   await SharePlus.instance.share(ShareParams(uri: uri));
 }
 
-Future<void> shareVideo(String bvid, String title, String coverUrl) async {
-  final String url = 'https://www.bilibili.com/video/$bvid';
-  await SharePlus.instance.share(ShareParams(text: '$title\n$url', subject: title));
-}
-
 Future<void> shareDynamic(String dynamicId, String content) async {
   final String url = 'https://t.bilibili.com/$dynamicId';
   await SharePlus.instance.share(ShareParams(text: '$content\n$url'));

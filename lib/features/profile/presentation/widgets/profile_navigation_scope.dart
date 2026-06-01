@@ -1,8 +1,5 @@
 import 'package:flutter/widgets.dart';
 
-typedef OpenProfileChat =
-    void Function({required int talkerId, required String name, String? avatarUrl});
-
 class ProfileNavigationScope extends InheritedWidget {
   final VoidCallback onLogin;
   final VoidCallback onOpenSettings;
@@ -13,7 +10,8 @@ class ProfileNavigationScope extends InheritedWidget {
   final ValueChanged<int> onOpenFollowers;
   final ValueChanged<int> onOpenUser;
   final ValueChanged<String> onOpenVideo;
-  final OpenProfileChat onOpenChat;
+  final void Function({required int talkerId, required String name, String? avatarUrl})
+  onOpenChat;
 
   const ProfileNavigationScope({
     super.key,

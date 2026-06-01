@@ -15,26 +15,6 @@ class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
     this.onTap,
   });
 
-  BoxDecoration _buildDecoration(ColorScheme colorScheme) {
-    return BoxDecoration(
-      color: colorScheme.surface,
-      border: Border(
-        bottom: BorderSide(
-          color: colorScheme.outlineVariant.withValues(alpha: 0.5),
-          width: 0.5,
-        ),
-      ),
-    );
-  }
-
-  UnderlineTabIndicator _buildIndicator(Color color) {
-    return UnderlineTabIndicator(
-      borderSide: BorderSide(width: 3, color: color),
-      insets: const EdgeInsets.symmetric(horizontal: CulculSpacing.xs),
-      borderRadius: const BorderRadius.vertical(top: Radius.circular(CulculRadius.xs)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -42,7 +22,15 @@ class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
 
     return Container(
       height: 44,
-      decoration: _buildDecoration(colorScheme),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        border: Border(
+          bottom: BorderSide(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+            width: 0.5,
+          ),
+        ),
+      ),
       child: TabBar(
         controller: controller,
         isScrollable: isScrollable,
@@ -57,7 +45,13 @@ class AppTabBar extends StatelessWidget implements PreferredSizeWidget {
           fontWeight: FontWeight.normal,
         ),
         indicatorSize: TabBarIndicatorSize.label,
-        indicator: _buildIndicator(colorScheme.primary),
+        indicator: UnderlineTabIndicator(
+          borderSide: BorderSide(width: 3, color: colorScheme.primary),
+          insets: const EdgeInsets.symmetric(horizontal: CulculSpacing.xs),
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(CulculRadius.xs),
+          ),
+        ),
         labelPadding: const EdgeInsets.symmetric(horizontal: CulculSpacing.md),
         splashFactory: NoSplash.splashFactory,
         overlayColor: WidgetStateProperty.all(Colors.transparent),

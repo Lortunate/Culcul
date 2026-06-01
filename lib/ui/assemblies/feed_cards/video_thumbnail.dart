@@ -28,16 +28,6 @@ class VideoThumbnail extends StatelessWidget {
     this.aspectRatio = 16 / 10,
   });
 
-  int? _resolveCacheSize(int? explicitSize, double constraintSize, double pixelRatio) {
-    if (explicitSize != null) {
-      return explicitSize;
-    }
-    if (constraintSize.isFinite) {
-      return (constraintSize * pixelRatio).toInt();
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     final pixelRatio = MediaQuery.devicePixelRatioOf(context);
@@ -52,6 +42,17 @@ class VideoThumbnail extends StatelessWidget {
       aspectRatio: aspectRatio,
       child: LayoutBuilder(
         builder: (context, constraints) {
+          final resolvedMemCacheWidth =
+              memCacheWidth ??
+              (constraints.maxWidth.isFinite
+                  ? (constraints.maxWidth * pixelRatio).toInt()
+                  : null);
+          final resolvedMemCacheHeight =
+              memCacheHeight ??
+              (constraints.maxHeight.isFinite
+                  ? (constraints.maxHeight * pixelRatio).toInt()
+                  : null);
+
           return Stack(
             fit: StackFit.expand,
             children: [
@@ -59,27 +60,53 @@ class VideoThumbnail extends StatelessWidget {
                 url: url,
                 width: width,
                 height: height,
-                memCacheWidth: _resolveCacheSize(
-                  memCacheWidth,
-                  constraints.maxWidth,
-                  pixelRatio,
-                ),
-                memCacheHeight: _resolveCacheSize(
-                  memCacheHeight,
-                  constraints.maxHeight,
-                  pixelRatio,
-                ),
+                memCacheWidth: resolvedMemCacheWidth,
+                memCacheHeight: resolvedMemCacheHeight,
                 borderRadius: BorderRadius.circular(borderRadius),
               ),
-              _ThumbnailBottomOverlay(borderRadius: borderRadius),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: 48,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(borderRadius),
+                    ),
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        colorScheme.scrim.withValues(alpha: 0.5),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
               if (viewCount != null || danmakuCount != null)
                 Positioned(
                   left: 8,
                   bottom: 8,
-                  child: _VideoThumbnailStats(
-                    viewCount: viewCount,
-                    danmakuCount: danmakuCount,
-                    textStyle: overlayTextStyle,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (viewCount != null)
+                        _ThumbnailStatItem(
+                          icon: Icons.play_circle_outline_rounded,
+                          text: viewCount!.formatNumber,
+                          textStyle: overlayTextStyle,
+                        ),
+                      if (danmakuCount != null) ...[
+                        if (viewCount != null) const SizedBox(width: 8),
+                        _ThumbnailStatItem(
+                          icon: Icons.list_alt_rounded,
+                          text: danmakuCount!.formatNumber,
+                          textStyle: overlayTextStyle,
+                        ),
+                      ],
+                    ],
                   ),
                 ),
               Positioned(
@@ -91,71 +118,6 @@ class VideoThumbnail extends StatelessWidget {
           );
         },
       ),
-    );
-  }
-}
-
-class _ThumbnailBottomOverlay extends StatelessWidget {
-  final double borderRadius;
-
-  const _ThumbnailBottomOverlay({required this.borderRadius});
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned(
-      left: 0,
-      right: 0,
-      bottom: 0,
-      height: 48,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(borderRadius)),
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.transparent,
-              Theme.of(context).colorScheme.scrim.withValues(alpha: 0.5),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _VideoThumbnailStats extends StatelessWidget {
-  final int? viewCount;
-  final int? danmakuCount;
-  final TextStyle? textStyle;
-
-  const _VideoThumbnailStats({
-    this.viewCount,
-    this.danmakuCount,
-    required this.textStyle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (viewCount != null) ...[
-          _ThumbnailStatItem(
-            icon: Icons.play_circle_outline_rounded,
-            text: viewCount!.formatNumber,
-            textStyle: textStyle,
-          ),
-        ],
-        if (danmakuCount != null) ...[
-          if (viewCount != null) const SizedBox(width: 8),
-          _ThumbnailStatItem(
-            icon: Icons.list_alt_rounded,
-            text: danmakuCount!.formatNumber,
-            textStyle: textStyle,
-          ),
-        ],
-      ],
     );
   }
 }
