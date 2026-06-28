@@ -1,4 +1,4 @@
-import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/core/models/video_model_contract.dart';
 import 'package:culcul/features/video/application/models/subtitle.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart' show listEquals;

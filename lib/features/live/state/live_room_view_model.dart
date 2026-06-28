@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:culcul/core/contracts/user_card_contract.dart';
+import 'package:culcul/core/models/user_card_contract.dart';
 import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/runtime/runtime_performance_policy_provider.dart';
-import 'package:culcul/core/services/relation_service.dart';
+import 'package:culcul/features/profile/relation_api.dart';
 import 'package:culcul/features/live/application/danmaku/live_socket_service.dart';
 import 'package:culcul/features/live/application/models/live_gold_rank_model.dart';
 import 'package:culcul/features/live/application/models/live_guard_list_model.dart';
@@ -147,14 +147,12 @@ class LiveRoomController extends _$LiveRoomController {
     return LiveRoomState(roomId: roomId);
   }
 
-  int _beginLiveRoomRequest() => ++_loadRequestToken;
-
   bool _isActiveLiveRoomRequest(int requestToken) {
     return ref.mounted && !_isDisposed && requestToken == _loadRequestToken;
   }
 
   Future<void> _init(int roomId) async {
-    final requestToken = _beginLiveRoomRequest();
+    final requestToken = ++_loadRequestToken;
     final firstInteractiveStopwatch = Stopwatch()..start();
     state = state.copyWith(isLoading: true, error: null);
 
@@ -208,7 +206,6 @@ class LiveRoomController extends _$LiveRoomController {
         ),
       ],
       profile: NetworkConcurrencyProfile.enrich,
-      scope: 'live_room_init_critical',
     );
     final criticalError = criticalResults['play_url'] as AppError?;
     if (!_isActiveLiveRoomRequest(requestToken)) {
@@ -306,7 +303,6 @@ class LiveRoomController extends _$LiveRoomController {
         ),
       ],
       profile: NetworkConcurrencyProfile.backgroundSync,
-      scope: 'live_room_init_optional',
     );
     if (!_isActiveLiveRoomRequest(requestToken)) {
       return;

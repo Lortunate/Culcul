@@ -1,4 +1,4 @@
-import 'package:culcul/core/contracts/live_room_summary_contract.dart';
+import 'package:culcul/core/models/live_room_summary_contract.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
 import 'package:culcul/core/hooks/use_scroll_precache.dart';

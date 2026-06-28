@@ -1,22 +1,12 @@
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-/// Internal utility class for formatting.
-/// Use the extensions in `format_extensions.dart` for a more idiomatic way to format data.
+/// Formatting utilities for numbers, durations, dates, and strings.
 class FormatUtils {
   FormatUtils._();
 
   static final _htmlTagRegex = RegExp(r'<[^>]*>');
-  static final _camelCaseRegex = RegExp(r'([A-Z])');
   static bool _timeagoInitialized = false;
-
-  static void _ensureTimeagoInitialized() {
-    if (_timeagoInitialized) return;
-    timeago.setLocaleMessages('zh_CN', timeago.ZhCnMessages());
-    timeago.setLocaleMessages('zh_TW', timeago.ZhMessages());
-    timeago.setLocaleMessages('en_short', timeago.EnShortMessages());
-    _timeagoInitialized = true;
-  }
 
   // String utilities
   static String stripHtmlTags(String htmlString) {
@@ -94,24 +84,37 @@ class FormatUtils {
 
   // Date/time formatting
   static String formatTimeAgo(int timestamp, {String? locale}) {
-    _ensureTimeagoInitialized();
-    final date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
-    return formatDateTime(date, locale: locale);
-  }
-
-  static String formatDateTime(DateTime dateTime, {String? locale}) {
-    _ensureTimeagoInitialized();
-    final effectiveLocale = locale ?? _getAppLocale();
+    if (!_timeagoInitialized) {
+      timeago.setLocaleMessages('zh_CN', timeago.ZhCnMessages());
+      timeago.setLocaleMessages('zh_TW', timeago.ZhMessages());
+      timeago.setLocaleMessages('en_short', timeago.EnShortMessages());
+      _timeagoInitialized = true;
+    }
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
+    final effectiveLocale =
+        locale ??
+        switch (LocaleSettings.currentLocale) {
+          AppLocale.zh => 'zh_CN',
+          AppLocale.zhHant => 'zh_TW',
+          AppLocale.en => 'en_short',
+        };
     return timeago.format(dateTime, locale: effectiveLocale);
   }
 
-  static String _getAppLocale() {
-    final currentLocale = LocaleSettings.currentLocale;
-    return switch (currentLocale) {
-      AppLocale.zh => 'zh_CN',
-      AppLocale.zhHant => 'zh_TW',
-      AppLocale.en => 'en_short',
-    };
+  static String formatSimpleDate(DateTime dateTime) {
+    final now = DateTime.now();
+    if (dateTime.year == now.year &&
+        dateTime.month == now.month &&
+        dateTime.day == now.day) {
+      return '${dateTime.hour.toString().padLeft(2, '0')}:'
+          '${dateTime.minute.toString().padLeft(2, '0')}';
+    }
+    if (dateTime.year == now.year) {
+      return '${dateTime.month.toString().padLeft(2, '0')}-'
+          '${dateTime.day.toString().padLeft(2, '0')}';
+    }
+    return '${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-'
+        '${dateTime.day.toString().padLeft(2, '0')}';
   }
 
   // Additional formatting utilities
@@ -123,22 +126,15 @@ class FormatUtils {
     }
     return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)}GB';
   }
+}
 
-  static String capitalize(String str) {
-    if (str.isEmpty) return str;
-    return str[0].toUpperCase() + str.substring(1).toLowerCase();
-  }
+// ── Extensions for idiomatic usage ──
 
-  static String truncate(String str, int maxLength, {String suffix = '...'}) {
-    if (str.length <= maxLength) return str;
-    return str.substring(0, maxLength - suffix.length) + suffix;
-  }
+extension FormatIntExtension on int {
+  String get formatNumber => FormatUtils.formatNumber(this);
+  String get formatDuration => FormatUtils.formatDuration(this);
+}
 
-  static String camelCaseToTitle(String camelCase) {
-    final result = camelCase.replaceAllMapped(
-      _camelCaseRegex,
-      (match) => ' ${match.group(0)}',
-    );
-    return capitalize(result.trim());
-  }
+extension FormatDurationExtension on Duration {
+  String get formatDuration => FormatUtils.formatDuration(inSeconds);
 }

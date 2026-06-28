@@ -1,6 +1,6 @@
-import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/features/dynamic/application/models/dynamic_item_extensions.dart';
 import 'package:culcul/features/dynamic/application/models/dynamic_response.dart';
+import 'package:culcul/features/dynamic/presentation/dynamic_share.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_comment_composer.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +26,8 @@ class DynamicDetailBottomBar extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
+    final likeColor = post.isLiked ? colorScheme.primary : colorScheme.onSurfaceVariant;
+    final shareColor = colorScheme.onSurfaceVariant;
 
     return Container(
       decoration: BoxDecoration(
@@ -57,42 +59,40 @@ class DynamicDetailBottomBar extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          _buildActionIcon(
-            context,
-            post.isLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined,
-            post.likeCount,
-            onLike,
-            color: post.isLiked ? colorScheme.primary : null,
+          InkWell(
+            onTap: onLike,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  post.isLiked ? Icons.thumb_up_alt : Icons.thumb_up_alt_outlined,
+                  size: 24,
+                  color: likeColor,
+                ),
+                if (post.likeCount > 0)
+                  Text(
+                    '${post.likeCount}',
+                    style: TextStyle(fontSize: 10, color: likeColor),
+                  ),
+              ],
+            ),
           ),
           const SizedBox(width: 16),
-          _buildActionIcon(
-            context,
-            Icons.reply_rounded,
-            post.forwardCount,
-            () => shareDynamic(post.id, post.contentText ?? ''),
+          InkWell(
+            onTap: () =>
+                shareDynamicItem(dynamicId: post.id, content: post.contentText ?? ''),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.reply_rounded, size: 24, color: shareColor),
+                if (post.forwardCount > 0)
+                  Text(
+                    '${post.forwardCount}',
+                    style: TextStyle(fontSize: 10, color: shareColor),
+                  ),
+              ],
+            ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionIcon(
-    BuildContext context,
-    IconData icon,
-    int count,
-    VoidCallback onTap, {
-    Color? color,
-  }) {
-    final contentColor = color ?? Theme.of(context).colorScheme.onSurfaceVariant;
-
-    return InkWell(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 24, color: contentColor),
-          if (count > 0)
-            Text('$count', style: TextStyle(fontSize: 10, color: contentColor)),
         ],
       ),
     );

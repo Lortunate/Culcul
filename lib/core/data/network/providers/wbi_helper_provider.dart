@@ -5,9 +5,6 @@ import 'package:crypto/crypto.dart';
 import 'package:culcul/core/data/network/resource_api.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-part 'wbi_helper_provider.g.dart';
 
 const _wbiMixinKeyEncTab = [
   46,
@@ -156,7 +153,14 @@ class WbiHelper {
       throw const AppError.data('WBI keys not initialized');
     }
 
-    final mixinKey = _getWbiMixinKey(_imgKey! + _subKey!);
+    final keyMaterial = _imgKey! + _subKey!;
+    final mixinKeyBuffer = StringBuffer();
+    for (final index in _wbiMixinKeyEncTab) {
+      if (index < keyMaterial.length) {
+        mixinKeyBuffer.write(keyMaterial[index]);
+      }
+    }
+    final mixinKey = mixinKeyBuffer.toString().substring(0, 32);
     final currTime = DateTime.now().millisecondsSinceEpoch ~/ 1000;
 
     final newParams = Map<String, dynamic>.from(params)
@@ -182,19 +186,4 @@ class WbiHelper {
     newParams['w_rid'] = wbiSign;
     return newParams;
   }
-}
-
-String _getWbiMixinKey(String orig) {
-  final buffer = StringBuffer();
-  for (final index in _wbiMixinKeyEncTab) {
-    if (index < orig.length) {
-      buffer.write(orig[index]);
-    }
-  }
-  return buffer.toString().substring(0, 32);
-}
-
-@Riverpod(keepAlive: true)
-WbiHelper wbiHelper(Ref ref) {
-  return WbiHelper(ref.watch(basicResourceApiProvider));
 }

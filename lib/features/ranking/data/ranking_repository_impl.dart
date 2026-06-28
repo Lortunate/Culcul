@@ -1,5 +1,5 @@
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/core/models/video_model_contract.dart';
 import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';

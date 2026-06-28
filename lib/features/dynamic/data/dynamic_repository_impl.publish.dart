@@ -48,7 +48,6 @@ mixin _DynamicRepositoryPublishApis on _DynamicRepositoryAccess {
       return concurrencyExecutor.mapConcurrent<PublishMediaAsset, UploadedImage>(
         items: files,
         profile: NetworkConcurrencyProfile.upload,
-        scope: 'dynamic_publish_upload',
         mapper: (asset) async {
           final file = File(asset.path);
           final uploadResult = await _requestExecutor.runApiDirect(

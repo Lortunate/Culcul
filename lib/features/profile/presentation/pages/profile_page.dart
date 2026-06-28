@@ -9,7 +9,7 @@ import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/responsive/app_breakpoints.dart';
 import 'package:culcul/ui/responsive/app_responsive.dart';
 import 'package:culcul/ui/responsive/responsive_container.dart';
-import 'package:culcul/ui/theme/culcul_tokens.dart';
+import 'package:culcul/core/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -89,6 +89,38 @@ class ProfilePage extends HookConsumerWidget {
       );
     }
 
+    final profileActions = <({IconData icon, String label, VoidCallback? onTap})>[
+      (icon: Icons.cloud_download_outlined, label: t.profile.menu.download, onTap: null),
+      (
+        icon: Icons.history_rounded,
+        label: t.profile.menu.history,
+        onTap: navigation.onOpenHistory,
+      ),
+      (
+        icon: Icons.star_outline_rounded,
+        label: t.profile.menu.favorites,
+        onTap: navigation.onOpenFavorites,
+      ),
+      (
+        icon: Icons.play_circle_outline_rounded,
+        label: t.profile.menu.watch_later,
+        onTap: navigation.onOpenToView,
+      ),
+      if (isDesktop) ...[
+        (
+          icon: Icons.palette_outlined,
+          label: t.profile.menu.appearance,
+          onTap: navigation.onOpenSettings,
+        ),
+        (
+          icon: Icons.support_agent_outlined,
+          label: t.profile.menu.support,
+          onTap: () =>
+              context.showAppFeedback(t.common.coming_soon(tab: t.profile.menu.support)),
+        ),
+      ],
+    ];
+
     return Scaffold(
       backgroundColor: colorScheme.surfaceContainerLow,
       body: CustomScrollView(
@@ -122,17 +154,41 @@ class ProfilePage extends HookConsumerWidget {
                               spacing: crossAxisSpacing,
                               runSpacing: 12,
                               children: [
-                                for (final action in _profileActions(
-                                  context,
-                                  t,
-                                  navigation,
-                                  true,
-                                ))
-                                  _ProfileActionGridItem(
-                                    icon: action.icon,
-                                    label: action.label,
-                                    onTap: action.onTap,
-                                    width: itemWidth,
+                                for (final action in profileActions)
+                                  ClipRRect(
+                                    borderRadius: const BorderRadius.all(
+                                      CulculRadius.radiusMd,
+                                    ),
+                                    child: AppClickable(
+                                      onTap: action.onTap ?? () {},
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: CulculSpacing.xs,
+                                        ),
+                                        child: SizedBox(
+                                          width: itemWidth,
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                action.icon,
+                                                color: colorScheme.primary,
+                                                size: 26,
+                                              ),
+                                              const SizedBox(height: CulculSpacing.xs),
+                                              Text(
+                                                action.label,
+                                                style: theme.textTheme.labelMedium
+                                                    ?.copyWith(
+                                                      color: colorScheme.onSurface,
+                                                    ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   ),
                               ],
                             );
@@ -141,17 +197,40 @@ class ProfilePage extends HookConsumerWidget {
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
-                            for (final action in _profileActions(
-                              context,
-                              t,
-                              navigation,
-                              false,
-                            ))
-                              _ProfileActionGridItem(
-                                icon: action.icon,
-                                label: action.label,
-                                onTap: action.onTap,
-                                width: 76,
+                            for (final action in profileActions)
+                              ClipRRect(
+                                borderRadius: const BorderRadius.all(
+                                  CulculRadius.radiusMd,
+                                ),
+                                child: AppClickable(
+                                  onTap: action.onTap ?? () {},
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: CulculSpacing.xs,
+                                    ),
+                                    child: SizedBox(
+                                      width: 76,
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            action.icon,
+                                            color: colorScheme.primary,
+                                            size: 26,
+                                          ),
+                                          const SizedBox(height: CulculSpacing.xs),
+                                          Text(
+                                            action.label,
+                                            style: theme.textTheme.labelMedium?.copyWith(
+                                              color: colorScheme.onSurface,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               ),
                           ],
                         ),
@@ -240,92 +319,6 @@ class ProfilePage extends HookConsumerWidget {
       ),
     );
   }
-
-  List<({IconData icon, String label, VoidCallback? onTap})> _profileActions(
-    BuildContext context,
-    Translations t,
-    ProfileNavigationScope navigation,
-    bool includeDesktopActions,
-  ) {
-    return [
-      (icon: Icons.cloud_download_outlined, label: t.profile.menu.download, onTap: null),
-      (
-        icon: Icons.history_rounded,
-        label: t.profile.menu.history,
-        onTap: navigation.onOpenHistory,
-      ),
-      (
-        icon: Icons.star_outline_rounded,
-        label: t.profile.menu.favorites,
-        onTap: navigation.onOpenFavorites,
-      ),
-      (
-        icon: Icons.play_circle_outline_rounded,
-        label: t.profile.menu.watch_later,
-        onTap: navigation.onOpenToView,
-      ),
-      if (includeDesktopActions) ...[
-        (
-          icon: Icons.palette_outlined,
-          label: t.profile.menu.appearance,
-          onTap: navigation.onOpenSettings,
-        ),
-        (
-          icon: Icons.support_agent_outlined,
-          label: t.profile.menu.support,
-          onTap: () =>
-              context.showAppFeedback(t.common.coming_soon(tab: t.profile.menu.support)),
-        ),
-      ],
-    ];
-  }
-}
-
-class _ProfileActionGridItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback? onTap;
-  final double width;
-
-  const _ProfileActionGridItem({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-    required this.width,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return ClipRRect(
-      borderRadius: const BorderRadius.all(CulculRadius.radiusMd),
-      child: AppClickable(
-        onTap: onTap ?? () {},
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: CulculSpacing.xs),
-          child: SizedBox(
-            width: width,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(icon, color: colorScheme.primary, size: 26),
-                const SizedBox(height: CulculSpacing.xs),
-                Text(
-                  label,
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: colorScheme.onSurface,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 class _ProfileStats extends ConsumerWidget {
@@ -356,6 +349,33 @@ class _ProfileStats extends ConsumerWidget {
       data: (profile) => int.tryParse(profile.id) ?? 0,
       orElse: () => 0,
     );
+    final stats = <({String count, String label, VoidCallback onTap})>[
+      (
+        count: postsCount,
+        label: t.profile.stats.posts,
+        onTap: () {
+          context.showAppFeedback(t.common.coming_soon(tab: t.profile.stats.posts));
+        },
+      ),
+      (
+        count: followingCount,
+        label: t.profile.stats.following,
+        onTap: () {
+          if (vmid != 0) {
+            navigation.onOpenFollowings(vmid);
+          }
+        },
+      ),
+      (
+        count: followersCount,
+        label: t.profile.stats.followers,
+        onTap: () {
+          if (vmid != 0) {
+            navigation.onOpenFollowers(vmid);
+          }
+        },
+      ),
+    ];
 
     return SliverToBoxAdapter(
       child: ResponsiveContentContainer(
@@ -375,84 +395,43 @@ class _ProfileStats extends ConsumerWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _ProfileStatItem(
-                  count: postsCount,
-                  label: t.profile.stats.posts,
-                  onTap: () {
-                    context.showAppFeedback(
-                      t.common.coming_soon(tab: t.profile.stats.posts),
-                    );
-                  },
-                ),
-                Container(height: 14, width: 1, color: statDividerColor),
-                _ProfileStatItem(
-                  count: followingCount,
-                  label: t.profile.stats.following,
-                  onTap: () {
-                    if (vmid != 0) {
-                      navigation.onOpenFollowings(vmid);
-                    }
-                  },
-                ),
-                Container(height: 14, width: 1, color: statDividerColor),
-                _ProfileStatItem(
-                  count: followersCount,
-                  label: t.profile.stats.followers,
-                  onTap: () {
-                    if (vmid != 0) {
-                      navigation.onOpenFollowers(vmid);
-                    }
-                  },
-                ),
+                for (var index = 0; index < stats.length; index++) ...[
+                  if (index > 0) Container(height: 14, width: 1, color: statDividerColor),
+                  ClipRRect(
+                    borderRadius: const BorderRadius.all(CulculRadius.radiusSm),
+                    child: AppClickable(
+                      onTap: stats[index].onTap,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: CulculSpacing.lg,
+                          vertical: CulculSpacing.xs,
+                        ),
+                        child: Column(
+                          children: [
+                            Text(
+                              stats[index].count,
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: colorScheme.onSurface,
+                                fontSize: 18,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              stats[index].label,
+                              style: theme.textTheme.labelMedium?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ],
             ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ProfileStatItem extends StatelessWidget {
-  final String count;
-  final String label;
-  final VoidCallback? onTap;
-
-  const _ProfileStatItem({required this.count, required this.label, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return ClipRRect(
-      borderRadius: const BorderRadius.all(CulculRadius.radiusSm),
-      child: AppClickable(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: CulculSpacing.lg,
-            vertical: CulculSpacing.xs,
-          ),
-          child: Column(
-            children: [
-              Text(
-                count,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onSurface,
-                  fontSize: 18,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                label,
-                style: theme.textTheme.labelMedium?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                  fontSize: 12,
-                ),
-              ),
-            ],
           ),
         ),
       ),

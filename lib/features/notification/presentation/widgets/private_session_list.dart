@@ -2,16 +2,16 @@ import 'dart:async';
 
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
-import 'package:culcul/core/utils/format_extensions.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/notification/data/notification_paging_constants.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';
-import 'package:culcul/features/notification/domain/entities/private_message.dart';
-import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/models/private_message.dart';
+import 'package:culcul/features/notification/models/private_session.dart';
 import 'package:culcul/features/profile/application/profile_session_providers.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
-import 'package:culcul/ui/theme/culcul_tokens.dart';
+import 'package:culcul/core/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/feedback/app_shimmer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
@@ -320,7 +320,9 @@ class _PrivateSessionItem extends ConsumerWidget {
           ),
           const SizedBox(width: CulculSpacing.xs),
           Text(
-            DateTime.fromMicrosecondsSinceEpoch(session.sessionTs).toSimpleDate(),
+            FormatUtils.formatSimpleDate(
+              DateTime.fromMicrosecondsSinceEpoch(session.sessionTs),
+            ),
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),

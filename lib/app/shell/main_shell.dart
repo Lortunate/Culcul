@@ -19,34 +19,9 @@ class MainShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = Translations.of(context);
-    return AdaptiveShellScaffold(
-      body: navigationShell,
-      currentIndex: navigationShell.currentIndex,
-      onDestinationSelected: navigationShell.goBranch,
-      labels: [t.nav.home, t.nav.moments, t.nav.ranking, t.nav.profile],
-      items: _navigationItems,
-    );
-  }
-}
+    final labels = [t.nav.home, t.nav.moments, t.nav.ranking, t.nav.profile];
+    assert(labels.length == _navigationItems.length);
 
-class AdaptiveShellScaffold extends StatelessWidget {
-  const AdaptiveShellScaffold({
-    super.key,
-    required this.body,
-    required this.currentIndex,
-    required this.onDestinationSelected,
-    required this.labels,
-    required this.items,
-  }) : assert(labels.length == items.length);
-
-  final Widget body;
-  final int currentIndex;
-  final ValueChanged<int> onDestinationSelected;
-  final List<String> labels;
-  final List<({IconData icon, IconData selectedIcon})> items;
-
-  @override
-  Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     const iconPadding = EdgeInsets.only(bottom: 4);
 
@@ -66,8 +41,8 @@ class AdaptiveShellScaffold extends StatelessWidget {
                   ),
                 ),
                 child: NavigationRail(
-                  selectedIndex: currentIndex,
-                  onDestinationSelected: onDestinationSelected,
+                  selectedIndex: navigationShell.currentIndex,
+                  onDestinationSelected: navigationShell.goBranch,
                   backgroundColor: Colors.transparent,
                   extended: context.isExtendedRailLayout,
                   minWidth: 72,
@@ -90,7 +65,7 @@ class AdaptiveShellScaffold extends StatelessWidget {
                     fontWeight: FontWeight.w500,
                   ),
                   destinations: [
-                    for (final (index, item) in items.indexed)
+                    for (final (index, item) in _navigationItems.indexed)
                       NavigationRailDestination(
                         icon: Icon(item.icon),
                         selectedIcon: Icon(item.selectedIcon),
@@ -100,14 +75,14 @@ class AdaptiveShellScaffold extends StatelessWidget {
                 ),
               ),
             ),
-            Expanded(child: body),
+            Expanded(child: navigationShell),
           ],
         ),
       );
     }
 
     return Scaffold(
-      body: body,
+      body: navigationShell,
       extendBody: true,
       bottomNavigationBar: AdaptiveBlur(
         child: DecoratedBox(
@@ -121,10 +96,10 @@ class AdaptiveShellScaffold extends StatelessWidget {
             ),
           ),
           child: BottomNavigationBar(
-            currentIndex: currentIndex,
-            onTap: onDestinationSelected,
+            currentIndex: navigationShell.currentIndex,
+            onTap: navigationShell.goBranch,
             items: [
-              for (final (index, item) in items.indexed)
+              for (final (index, item) in _navigationItems.indexed)
                 BottomNavigationBarItem(
                   icon: Padding(padding: iconPadding, child: Icon(item.icon, size: 24)),
                   activeIcon: Padding(

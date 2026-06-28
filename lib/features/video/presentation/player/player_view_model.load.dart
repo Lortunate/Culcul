@@ -14,13 +14,15 @@ mixin _PlayerControllerLoadMixin on _$PlayerController, _PlayerControllerControl
   bool get _controlsInteractionLogged;
   @override
   set _controlsInteractionLogged(bool value);
-  bool _isLoadRequestActive(String sessionId, int requestToken);
-  void _markReadyForRequest(String sessionId, int requestToken);
-  Future<void> _openMediaWithTimeout(
-    Media media, {
-    required bool play,
-    required bool ensureStarted,
-  });
+  bool _isLoadRequestActive(String sessionId, int requestToken) {
+    if (!_mounted) {
+      return false;
+    }
+    return _sessionCoordinator.isLoadRequestCurrent(
+      requestToken: requestToken,
+      sessionId: sessionId,
+    );
+  }
 
   bool isSessionActive(String sessionId) =>
       _sessionCoordinator.isSessionActive(sessionId);
@@ -137,7 +139,7 @@ mixin _PlayerControllerLoadMixin on _$PlayerController, _PlayerControllerControl
 
       try {
         if (isQualitySwitch) {
-          await _openMediaWithTimeout(media, play: false, ensureStarted: false);
+          await player.open(media, play: false).timeout(_candidateOpenTimeout);
           if (!_isLoadRequestActive(sessionId, requestToken)) {
             _loadRequestTimings.remove(requestToken);
             return;
@@ -148,7 +150,15 @@ mixin _PlayerControllerLoadMixin on _$PlayerController, _PlayerControllerControl
             await player.play();
           }
         } else {
-          await _openMediaWithTimeout(media, play: autoPlay, ensureStarted: autoPlay);
+          await player.open(media, play: autoPlay).timeout(_candidateOpenTimeout);
+          if (autoPlay &&
+              player.state.duration <= Duration.zero &&
+              player.state.position <= Duration.zero) {
+            await Future.any([
+              player.stream.duration.firstWhere((duration) => duration > Duration.zero),
+              player.stream.position.firstWhere((position) => position > Duration.zero),
+            ]).timeout(_mediaReadyTimeout);
+          }
           if (!_isLoadRequestActive(sessionId, requestToken)) {
             _loadRequestTimings.remove(requestToken);
             return;
@@ -163,7 +173,17 @@ mixin _PlayerControllerLoadMixin on _$PlayerController, _PlayerControllerControl
             ),
           );
         }
-        _markReadyForRequest(sessionId, requestToken);
+        if (_isLoadRequestActive(sessionId, requestToken)) {
+          final requestTiming = _loadRequestTimings.remove(requestToken);
+          final elapsedMs = requestTiming?.elapsedMilliseconds;
+          DevLogger.log('video', 'first_frame_ready', <String, Object?>{
+            'session': sessionId,
+            'token': requestToken,
+            'elapsedMs': elapsedMs,
+            'positionMs': player.state.position.inMilliseconds,
+          });
+          state = state.copyWith(isMediaReady: true);
+        }
         return;
       } catch (error) {
         if (!_isLoadRequestActive(sessionId, requestToken)) {

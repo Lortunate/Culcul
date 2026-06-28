@@ -17,9 +17,36 @@ extension _DanmakuViewStateRender on _DanmakuViewState {
     final color = item.color.withValues(alpha: item.color.a * _option.opacity);
 
     final strokePainter = _option.borderText
-        ? _buildStrokePainter(item.text, fontSize)
+        ? (TextPainter(
+            text: TextSpan(
+              text: item.text,
+              style: TextStyle(
+                fontSize: fontSize,
+                foreground: Paint()
+                  ..style = PaintingStyle.stroke
+                  ..strokeWidth = _option.strokeWidth
+                  ..color = const Color.fromARGB(255, 0, 0, 0),
+                fontWeight: _option.fontWeight,
+                fontFamily: 'PingFang SC',
+                height: 1.1,
+              ),
+            ),
+            textDirection: TextDirection.ltr,
+          )..layout())
         : null;
-    final textPainter = _buildTextPainter(item.text, fontSize, color);
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: item.text,
+        style: TextStyle(
+          fontSize: fontSize,
+          color: color,
+          fontWeight: _option.fontWeight,
+          fontFamily: 'PingFang SC',
+          height: 1.1,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
     final width = strokePainter?.width ?? textPainter.width;
     final distance = _viewWidth + width;
     final durationMs = _option.duration * 1000;
@@ -36,40 +63,5 @@ extension _DanmakuViewStateRender on _DanmakuViewState {
       ..width = width
       ..height = textPainter.height
       ..velocity = velocity;
-  }
-
-  TextPainter _buildStrokePainter(String text, double fontSize) {
-    return TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(
-          fontSize: fontSize,
-          foreground: Paint()
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = _option.strokeWidth
-            ..color = const Color.fromARGB(255, 0, 0, 0),
-          fontWeight: _option.fontWeight,
-          fontFamily: 'PingFang SC',
-          height: 1.1,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
-  }
-
-  TextPainter _buildTextPainter(String text, double fontSize, Color color) {
-    return TextPainter(
-      text: TextSpan(
-        text: text,
-        style: TextStyle(
-          fontSize: fontSize,
-          color: color,
-          fontWeight: _option.fontWeight,
-          fontFamily: 'PingFang SC',
-          height: 1.1,
-        ),
-      ),
-      textDirection: TextDirection.ltr,
-    )..layout();
   }
 }

@@ -1,7 +1,7 @@
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/presentation/widgets/relation_user_item.dart';
-import 'package:culcul/core/contracts/relation_user_contract.dart';
+import 'package:culcul/core/models/relation_user_contract.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +19,8 @@ class RelationUserList extends StatelessWidget {
     required this.asyncValue,
     required this.onRefresh,
     required this.onLoadMore,
-    this.emptyText = '',
-    this.hasMore = false,
+    required this.emptyText,
+    required this.hasMore,
   });
 
   @override
@@ -32,7 +32,7 @@ class RelationUserList extends StatelessWidget {
       onLoadMore: onLoadMore,
       itemCount: () => asyncValue.value?.length ?? 0,
       hasMore: hasMore,
-      emptyText: emptyText.isEmpty ? t.common.no_data : emptyText,
+      emptyText: emptyText,
       skeleton: const Center(child: CircularProgressIndicator()),
       errorBuilder: (context, error, stack) {
         if (error is AppError && error.code == 22115) {

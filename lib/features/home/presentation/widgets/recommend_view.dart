@@ -1,5 +1,5 @@
 import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/core/models/video_model_contract.dart';
 import 'package:culcul/core/data/network/network_quality_policy.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:culcul/core/hooks/use_managed_easy_refresh_controller.dart';
@@ -14,8 +14,8 @@ import 'package:culcul/features/home/presentation/widgets/home_feed_view_utils.d
 import 'package:culcul/features/home/presentation/widgets/home_layout_spec.dart';
 import 'package:culcul/features/home/presentation/widgets/home_video_actions.dart';
 import 'package:culcul/features/home/state/home_feed_paging_mixin.dart';
-import 'package:culcul/ui/assemblies/feed_cards/video_card.dart';
-import 'package:culcul/ui/assemblies/feed_cards/video_card_skeleton.dart';
+import 'package:culcul/ui/widgets/cards/video_card.dart';
+import 'package:culcul/ui/widgets/cards/video_card_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

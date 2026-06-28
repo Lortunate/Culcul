@@ -20,10 +20,11 @@ mixin DynamicFeedController {
       return;
     }
 
-    final updatedItem = _buildLikedItem(items[index], isLiked);
-    if (updatedItem == null) {
+    final item = items[index];
+    if (item.modules.moduleStat?.like == null) {
       return;
     }
+    final updatedItem = item.copyWithLike(!isLiked);
 
     final nextItems = List<DynamicItem>.from(items);
     nextItems[index] = updatedItem;
@@ -33,12 +34,5 @@ mixin DynamicFeedController {
     if (result.isFailure) {
       state = previousState;
     }
-  }
-
-  DynamicItem? _buildLikedItem(DynamicItem item, bool isLiked) {
-    if (item.modules.moduleStat?.like == null) {
-      return null;
-    }
-    return item.copyWithLike(!isLiked);
   }
 }

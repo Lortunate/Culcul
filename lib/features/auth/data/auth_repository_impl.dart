@@ -10,11 +10,11 @@ import 'package:culcul/core/bootstrap/providers/storage_provider.dart';
 import 'package:culcul/core/storage/storage_keys.dart';
 import 'package:culcul/core/utils/json_utils.dart';
 import 'package:culcul/features/auth/data/auth_api.dart';
-import 'package:culcul/features/auth/domain/entities/country_code.dart';
-import 'package:culcul/features/auth/domain/entities/user_entity.dart';
-import 'package:culcul/features/auth/domain/entities/auth_captcha_challenge.dart';
-import 'package:culcul/features/auth/domain/entities/auth_qr_code.dart';
-import 'package:culcul/features/auth/domain/entities/auth_qr_poll_result.dart';
+import 'package:culcul/features/auth/models/country_code.dart';
+import 'package:culcul/features/auth/models/user_entity.dart';
+import 'package:culcul/features/auth/models/auth_captcha_challenge.dart';
+import 'package:culcul/features/auth/models/auth_qr_code.dart';
+import 'package:culcul/features/auth/models/auth_qr_poll_result.dart';
 import 'package:pointycastle/export.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -64,13 +64,6 @@ class AuthRepositoryImpl extends _AuthRepositoryFlowsDeps with _AuthRepositoryFl
     }
   }
 
-  Future<void> _cacheUser(UserEntity user) async {
-    await _prefs.setString(
-      StorageKeys.authUserCache,
-      jsonEncode(_userEntityToJson(user)),
-    );
-  }
-
   Future<void> clearCache() async {
     await _prefs.remove(StorageKeys.authUserCache);
   }
@@ -94,7 +87,21 @@ class AuthRepositoryImpl extends _AuthRepositoryFlowsDeps with _AuthRepositoryFl
           ...data,
           'created_at': data['created_at'] ?? DateTime.now().toIso8601String(),
         });
-        await _cacheUser(user);
+        await _prefs.setString(
+          StorageKeys.authUserCache,
+          jsonEncode(<String, dynamic>{
+            'mid': user.id,
+            'uname': user.username,
+            'face': user.avatarUrl,
+            'email': user.email,
+            'created_at': user.createdAt.toIso8601String(),
+            'level_info': <String, dynamic>{
+              'current_level': user.level,
+              'current_exp': user.currentExp,
+              'next_exp': user.nextExp,
+            },
+          }),
+        );
         return user;
       }
       await clearCache();
@@ -121,19 +128,4 @@ UserEntity _userEntityFromJson(Map<String, dynamic> json) {
     currentExp: JsonUtils.parseInt(levelInfo?['current_exp']),
     nextExp: JsonUtils.parseInt(levelInfo?['next_exp']),
   );
-}
-
-Map<String, dynamic> _userEntityToJson(UserEntity entity) {
-  return <String, dynamic>{
-    'mid': entity.id,
-    'uname': entity.username,
-    'face': entity.avatarUrl,
-    'email': entity.email,
-    'created_at': entity.createdAt.toIso8601String(),
-    'level_info': <String, dynamic>{
-      'current_level': entity.level,
-      'current_exp': entity.currentExp,
-      'next_exp': entity.nextExp,
-    },
-  };
 }

@@ -96,38 +96,23 @@ class _ParagraphBlockViewState extends State<_ParagraphBlockView> {
       return TextSpan(text: normalizedText, style: style, recognizer: recognizer);
     }).toList();
 
-    return Align(
-      alignment: _alignToAlignment(widget.block.align),
-      child: Text.rich(
-        TextSpan(children: spans),
-        textAlign: _toTextAlign(widget.block.align),
-      ),
-    );
-  }
-
-  Alignment _alignToAlignment(ArticleTextAlign? align) {
-    switch (align) {
-      case ArticleTextAlign.center:
-        return Alignment.center;
-      case ArticleTextAlign.end:
-        return Alignment.centerRight;
-      case ArticleTextAlign.start:
-      case null:
-        return Alignment.centerLeft;
-    }
-  }
-
-  TextAlign _toTextAlign(ArticleTextAlign? align) {
-    return switch (align) {
+    final blockAlign = widget.block.align;
+    final alignment = switch (blockAlign) {
+      ArticleTextAlign.center => Alignment.center,
+      ArticleTextAlign.end => Alignment.centerRight,
+      ArticleTextAlign.start || null => Alignment.centerLeft,
+    };
+    final textAlign = switch (blockAlign) {
       ArticleTextAlign.center => TextAlign.center,
       ArticleTextAlign.end => TextAlign.end,
       ArticleTextAlign.start || null => TextAlign.start,
     };
-  }
-}
 
-bool _hasVisibleText(String value) {
-  return value.replaceAll(RegExp(r'\s+'), '').isNotEmpty;
+    return Align(
+      alignment: alignment,
+      child: Text.rich(TextSpan(children: spans), textAlign: textAlign),
+    );
+  }
 }
 
 Color? _parseColor(String? color) {

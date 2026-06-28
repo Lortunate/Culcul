@@ -61,17 +61,6 @@ class AppNetworkImage extends StatelessWidget {
     );
   }
 
-  int? _resolveCacheSize(int? explicit, double? logicalSize, double pixelRatio) {
-    final explicitSize = _normalizeCacheSize(explicit);
-    if (explicitSize != null) {
-      return explicitSize;
-    }
-    if (logicalSize != null) {
-      return _normalizeCacheSize((logicalSize * pixelRatio).round());
-    }
-    return null;
-  }
-
   static int? _normalizeCacheSize(int? rawSize) {
     if (rawSize == null || rawSize <= 0) {
       return null;
@@ -79,26 +68,42 @@ class AppNetworkImage extends StatelessWidget {
     return rawSize.clamp(1, _maxCacheDimension);
   }
 
-  BoxDecoration _buildDecoration(ColorScheme colorScheme) {
-    return BoxDecoration(
-      color: colorScheme.surfaceContainerHighest,
-      borderRadius: borderRadius,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    late final Widget fallbackErrorWidget =
+        errorWidget ??
+        Container(
+          width: width,
+          height: height,
+          decoration: BoxDecoration(
+            color: colorScheme.surfaceContainerHighest,
+            borderRadius: borderRadius,
+          ),
+          child: Icon(
+            Icons.broken_image_outlined,
+            color: colorScheme.outline,
+            size: (width != null && width! < 40) ? 16 : 24,
+          ),
+        );
 
     if (url.isEmpty) {
-      return _buildErrorWidget(colorScheme);
+      return fallbackErrorWidget;
     }
 
     final finalUrl = resolveUrl(url);
     final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
-    final cacheW = _resolveCacheSize(memCacheWidth, width, devicePixelRatio);
-    final cacheH = _resolveCacheSize(memCacheHeight, height, devicePixelRatio);
+    final explicitCacheWidth = _normalizeCacheSize(memCacheWidth);
+    final cacheW =
+        explicitCacheWidth ??
+        (width != null ? _normalizeCacheSize((width! * devicePixelRatio).round()) : null);
+    final explicitCacheHeight = _normalizeCacheSize(memCacheHeight);
+    final cacheH =
+        explicitCacheHeight ??
+        (height != null
+            ? _normalizeCacheSize((height! * devicePixelRatio).round())
+            : null);
 
     return ExtendedImage.network(
       finalUrl,
@@ -119,30 +124,19 @@ class AppNetworkImage extends StatelessWidget {
             final placeholderChild = Container(
               width: width,
               height: height,
-              decoration: _buildDecoration(colorScheme),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainerHighest,
+                borderRadius: borderRadius,
+              ),
             );
             if (!useShimmer) return placeholderChild;
             return AppShimmer(child: placeholderChild);
           case LoadState.failed:
-            return _buildErrorWidget(colorScheme);
+            return fallbackErrorWidget;
           case LoadState.completed:
             return null;
         }
       },
     );
-  }
-
-  Widget _buildErrorWidget(ColorScheme colorScheme) {
-    return errorWidget ??
-        Container(
-          width: width,
-          height: height,
-          decoration: _buildDecoration(colorScheme),
-          child: Icon(
-            Icons.broken_image_outlined,
-            color: colorScheme.outline,
-            size: (width != null && width! < 40) ? 16 : 24,
-          ),
-        );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/core/models/video_model_contract.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
@@ -92,9 +92,44 @@ class LoadVideoDetailWorkflow {
 
         final playUrl = playResult.dataOrNull;
 
+        final reqUser = detail.reqUser;
+        final detailViewData = VideoDetailViewData(
+          bvid: detail.bvid,
+          aid: detail.aid,
+          title: detail.title,
+          pic: detail.pic,
+          pubDate: detail.pubDate,
+          desc: detail.desc,
+          owner: detail.owner,
+          stat: detail.stat,
+          dimension: detail.dimension,
+          subtitle: detail.subtitle,
+          pages: detail.pages
+              .map(
+                (page) => VideoPartViewData(
+                  cid: page.cid,
+                  page: page.page,
+                  part: page.part,
+                  duration: page.duration,
+                  dimension: page.dimension,
+                ),
+              )
+              .toList(growable: false),
+          tags: detail.tag.map((tag) => tag.tagName).toList(growable: false),
+          reqUser: reqUser == null
+              ? const VideoRequestUserState()
+              : VideoRequestUserState(
+                  attention: reqUser.attention,
+                  guestAttention: reqUser.guestAttention,
+                  like: reqUser.like,
+                  coin: reqUser.coin,
+                  favorite: reqUser.favorite,
+                ),
+        );
+
         return Success(
           VideoInitialData(
-            detail: _videoDetailToViewData(detail),
+            detail: detailViewData,
             currentCid: cid,
             playUrl: playUrl,
             availableQualities: playUrl?.acceptQuality.toList() ?? const [],
@@ -138,7 +173,6 @@ class LoadVideoDetailWorkflow {
         ),
       ],
       profile: NetworkConcurrencyProfile.enrich,
-      scope: 'video_detail_load_auxiliary',
     );
 
     final relatedVideos =
@@ -152,45 +186,4 @@ class LoadVideoDetailWorkflow {
       ),
     );
   }
-}
-
-VideoDetailViewData _videoDetailToViewData(VideoDetail detail, {List<VideoTag>? tags}) {
-  return VideoDetailViewData(
-    bvid: detail.bvid,
-    aid: detail.aid,
-    title: detail.title,
-    pic: detail.pic,
-    pubDate: detail.pubDate,
-    desc: detail.desc,
-    owner: detail.owner,
-    stat: detail.stat,
-    dimension: detail.dimension,
-    subtitle: detail.subtitle,
-    pages: detail.pages.map(_videoPageToViewData).toList(growable: false),
-    tags: (tags ?? detail.tag).map((tag) => tag.tagName).toList(growable: false),
-    reqUser: _reqUserToState(detail.reqUser),
-  );
-}
-
-VideoPartViewData _videoPageToViewData(VideoPage page) {
-  return VideoPartViewData(
-    cid: page.cid,
-    page: page.page,
-    part: page.part,
-    duration: page.duration,
-    dimension: page.dimension,
-  );
-}
-
-VideoRequestUserState _reqUserToState(ReqUser? user) {
-  if (user == null) {
-    return const VideoRequestUserState();
-  }
-  return VideoRequestUserState(
-    attention: user.attention,
-    guestAttention: user.guestAttention,
-    like: user.like,
-    coin: user.coin,
-    favorite: user.favorite,
-  );
 }

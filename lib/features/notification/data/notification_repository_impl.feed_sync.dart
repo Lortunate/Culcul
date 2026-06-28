@@ -9,10 +9,10 @@ import 'package:culcul/features/notification/data/dtos/reply_model.dart';
 import 'package:culcul/features/notification/data/local/notification_local_database.dart';
 import 'package:culcul/features/notification/data/notification_api.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.cleanup_policy.dart';
-import 'package:culcul/features/notification/domain/entities/notification_feed_cursor.dart';
-import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
-import 'package:culcul/features/notification/domain/entities/private_session.dart';
-import 'package:culcul/features/notification/domain/entities/system_notice.dart';
+import 'package:culcul/features/notification/models/notification_feed_cursor.dart';
+import 'package:culcul/features/notification/models/notification_feed_type.dart';
+import 'package:culcul/features/notification/models/private_session.dart';
+import 'package:culcul/features/notification/models/system_notice.dart';
 
 class NotificationFeedSync {
   const NotificationFeedSync({
@@ -178,14 +178,42 @@ class NotificationFeedSync {
     );
     return sessionResult.when(
       success: (sessionRes) async {
-        final talkerId = _resolveSystemTalkerId(sessionRes);
+        int? talkerId;
+        final systemMsgMap = sessionRes.systemMsg;
+        if (systemMsgMap != null && systemMsgMap.isNotEmpty) {
+          var preferred = systemMsgMap['5'] ?? systemMsgMap['7'];
+          if (preferred == null || preferred <= 0) {
+            for (final item in systemMsgMap.values) {
+              if (item > 0) {
+                preferred = item;
+                break;
+              }
+            }
+          }
+          if (preferred != null && preferred > 0) {
+            talkerId = preferred;
+          }
+        }
+
+        if (talkerId == null) {
+          final sessions = sessionRes.sessionList ?? const <PrivateMessageSession>[];
+          for (final session in sessions) {
+            if (session.sessionType == PrivateSessionType.system.value &&
+                session.talkerId > 0) {
+              talkerId = session.talkerId;
+              break;
+            }
+          }
+        }
+
         if (talkerId == null) {
           return const Success(<SystemNotice>[]);
         }
+        final resolvedTalkerId = talkerId;
 
         final msgsResult = await requestExecutor.runApiDirect(
           () => api.getPrivateMessages(
-            talkerId: talkerId,
+            talkerId: resolvedTalkerId,
             sessionType: PrivateSessionType.user.value,
             size: pageSize,
           ),
@@ -217,33 +245,6 @@ class NotificationFeedSync {
       },
       failure: (error) async => Failure(error),
     );
-  }
-
-  int? _resolveSystemTalkerId(PrivateMessageSessionResponse response) {
-    final systemMsgMap = response.systemMsg;
-    if (systemMsgMap != null && systemMsgMap.isNotEmpty) {
-      var preferred = systemMsgMap['5'] ?? systemMsgMap['7'];
-      if (preferred == null || preferred <= 0) {
-        for (final item in systemMsgMap.values) {
-          if (item > 0) {
-            preferred = item;
-            break;
-          }
-        }
-      }
-      if (preferred != null && preferred > 0) {
-        return preferred;
-      }
-    }
-
-    final sessions = response.sessionList ?? const <PrivateMessageSession>[];
-    for (final session in sessions) {
-      if (session.sessionType == PrivateSessionType.system.value &&
-          session.talkerId > 0) {
-        return session.talkerId;
-      }
-    }
-    return null;
   }
 
   String? _extractSystemNoticeText(

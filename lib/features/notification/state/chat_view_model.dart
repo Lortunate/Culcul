@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/network_concurrency_executor.dart';
 import 'package:culcul/core/data/network/network_concurrency_profiles.dart';
@@ -8,12 +9,14 @@ import 'package:culcul/core/data/pagination/page_merge.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';
 import 'package:culcul/features/notification/data/notification_paging_constants.dart';
-import 'package:culcul/features/notification/domain/entities/private_message.dart';
-import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/models/private_message.dart';
+import 'package:culcul/features/notification/models/private_session.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'chat_view_model.g.dart';
+
+const MapEquality<String, String> _chatStateEmojiMapEquality = MapEquality();
 
 final class ChatState {
   ChatState({required this.paging, required Map<String, String> emojiMap})
@@ -39,12 +42,7 @@ final class ChatState {
 
   @override
   int get hashCode {
-    return Object.hash(
-      paging,
-      Object.hashAllUnordered(
-        emojiMap.entries.map((entry) => Object.hash(entry.key, entry.value)),
-      ),
-    );
+    return Object.hash(paging, _chatStateEmojiMapEquality.hash(emojiMap));
   }
 
   @override
@@ -310,7 +308,6 @@ class Chat extends _$Chat {
         ),
       ],
       profile: NetworkConcurrencyProfile.backgroundSync,
-      scope: 'notification_chat_local_snapshot',
     );
 
     final messages =

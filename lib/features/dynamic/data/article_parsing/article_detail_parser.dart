@@ -1,6 +1,6 @@
 import 'package:culcul/core/utils/json_utils.dart';
 import 'package:culcul/core/utils/json_compute.dart';
-import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
+import 'package:culcul/features/dynamic/models/article_detail_data.dart';
 import 'package:html/dom.dart' as html_dom;
 import 'package:html/parser.dart' as html_parser;
 

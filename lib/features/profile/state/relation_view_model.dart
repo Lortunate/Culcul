@@ -1,7 +1,7 @@
 // ignore_for_file: invalid_use_of_internal_member
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
-import 'package:culcul/core/contracts/relation_user_contract.dart';
-import 'package:culcul/core/services/relation_service.dart';
+import 'package:culcul/core/models/relation_user_contract.dart';
+import 'package:culcul/features/profile/relation_api.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'relation_view_model.g.dart';
@@ -29,7 +29,7 @@ class Followings extends _$Followings with OffsetPagedAsyncNotifier<ProfileRelat
 
   @override
   bool hasMoreAfterPage(List<ProfileRelationUser> items) =>
-      items.length >= RelationService.defaultPageSize;
+      items.length >= RelationApi.defaultPageSize;
 
   Future<void> refresh() {
     return refreshPage();
@@ -63,7 +63,7 @@ class Followers extends _$Followers with OffsetPagedAsyncNotifier<ProfileRelatio
 
   @override
   bool hasMoreAfterPage(List<ProfileRelationUser> items) =>
-      items.length >= RelationService.defaultPageSize;
+      items.length >= RelationApi.defaultPageSize;
 
   Future<void> refresh() {
     return refreshPage();

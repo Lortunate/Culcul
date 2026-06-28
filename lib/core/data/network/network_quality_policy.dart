@@ -102,22 +102,8 @@ class NetworkQualityPolicy {
 }
 
 @Riverpod(keepAlive: true)
-Stream<NetworkQualityProfile> networkQualityProfile(Ref ref) {
+Stream<NetworkQualityProfile> networkQualityProfile(Ref ref) async* {
   final connectivity = Connectivity();
-  return _watchConnectivityProfiles(connectivity);
-}
-
-@Riverpod(keepAlive: true)
-NetworkQualityPolicy networkQualityPolicy(Ref ref) {
-  final profile = ref
-      .watch(networkQualityProfileProvider)
-      .maybeWhen(data: (value) => value, orElse: () => NetworkQualityProfile.normal);
-  return NetworkQualityPolicy.forProfile(profile);
-}
-
-Stream<NetworkQualityProfile> _watchConnectivityProfiles(
-  Connectivity connectivity,
-) async* {
   try {
     final initial = await connectivity.checkConnectivity();
     yield _profileFromConnectivityResult(initial);
@@ -130,8 +116,23 @@ Stream<NetworkQualityProfile> _watchConnectivityProfiles(
       .distinct();
 }
 
+@Riverpod(keepAlive: true)
+NetworkQualityPolicy networkQualityPolicy(Ref ref) {
+  final profile = ref
+      .watch(networkQualityProfileProvider)
+      .maybeWhen(data: (value) => value, orElse: () => NetworkQualityProfile.normal);
+  return NetworkQualityPolicy.forProfile(profile);
+}
+
 NetworkQualityProfile _profileFromConnectivityResult(Object value) {
-  final normalized = _normalizeResults(value);
+  final normalized = switch (value) {
+    final ConnectivityResult result => <ConnectivityResult>[result],
+    final List<ConnectivityResult> results => results,
+    final Iterable<Object?> results => results.whereType<ConnectivityResult>().toList(
+      growable: false,
+    ),
+    _ => const <ConnectivityResult>[],
+  };
   if (normalized.isEmpty) {
     return NetworkQualityProfile.constrained;
   }
@@ -146,17 +147,4 @@ NetworkQualityProfile _profileFromConnectivityResult(Object value) {
   }
 
   return NetworkQualityProfile.constrained;
-}
-
-List<ConnectivityResult> _normalizeResults(Object value) {
-  if (value is ConnectivityResult) {
-    return <ConnectivityResult>[value];
-  }
-  if (value is List<ConnectivityResult>) {
-    return value;
-  }
-  if (value is Iterable) {
-    return value.whereType<ConnectivityResult>().toList(growable: false);
-  }
-  return const <ConnectivityResult>[];
 }

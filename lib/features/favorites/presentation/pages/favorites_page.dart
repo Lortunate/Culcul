@@ -1,7 +1,7 @@
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
-import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
+import 'package:culcul/features/favorites/models/favorite_folder.dart';
 import 'package:culcul/features/favorites/state/favorites_view_model.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_dialog.dart';
 import 'package:culcul/features/favorites/presentation/widgets/fav_folder_list.dart';
@@ -40,7 +40,36 @@ class FavoritesPage extends HookConsumerWidget {
           if (isLoggedIn && tabController.index == 0)
             IconButton(
               icon: const Icon(Icons.add),
-              onPressed: () => _handleCreateFolder(context: context, ref: ref),
+              onPressed: () async {
+                final data =
+                    await showDialog<({String title, String? intro, int privacy})>(
+                      context: context,
+                      builder: (_) => const FavFolderDialog(),
+                    );
+                if (data == null) {
+                  return;
+                }
+
+                final result = await ref
+                    .read(favRepositoryProvider)
+                    .createFolder(
+                      title: data.title,
+                      intro: data.intro,
+                      privacy: data.privacy,
+                    );
+                final error = result.errorOrNull;
+                if (error == null) {
+                  ref.invalidate(favCreatedFoldersProvider);
+                  return;
+                }
+
+                if (context.mounted) {
+                  context.showAppFeedback(
+                    '${t.common.error}: ${error.message}',
+                    level: AppFeedbackLevel.error,
+                  );
+                }
+              },
             ),
         ],
         bottom: isLoggedIn
@@ -65,35 +94,4 @@ class FavoritesPage extends HookConsumerWidget {
             ),
     );
   }
-}
-
-Future<bool> _handleCreateFolder({
-  required BuildContext context,
-  required WidgetRef ref,
-}) async {
-  final t = Translations.of(context);
-  final data = await showDialog<({String title, String? intro, int privacy})>(
-    context: context,
-    builder: (_) => const FavFolderDialog(),
-  );
-  if (data == null) {
-    return false;
-  }
-
-  final result = await ref
-      .read(favRepositoryProvider)
-      .createFolder(title: data.title, intro: data.intro, privacy: data.privacy);
-  final error = result.errorOrNull;
-  if (error == null) {
-    ref.invalidate(favCreatedFoldersProvider);
-    return true;
-  }
-
-  if (context.mounted) {
-    context.showAppFeedback(
-      '${t.common.error}: ${error.message}',
-      level: AppFeedbackLevel.error,
-    );
-  }
-  return false;
 }

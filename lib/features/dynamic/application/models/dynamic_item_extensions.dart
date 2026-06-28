@@ -1,5 +1,5 @@
 import 'package:culcul/features/dynamic/application/models/dynamic_response.dart';
-import 'package:culcul/features/dynamic/domain/entities/dynamic_content_entities.dart';
+import 'package:culcul/features/dynamic/models/dynamic_content_entities.dart';
 
 extension DynamicItemIdentityExtension on DynamicItem {
   String get id => idStr;
@@ -70,8 +70,36 @@ extension DynamicItemContentExtension on DynamicItem {
         .toList();
   }
 
-  DynamicVideoContent? get videoContent =>
-      _dynamicMapVideoContent(modules.moduleDynamic.major);
+  DynamicVideoContent? get videoContent {
+    final major = modules.moduleDynamic.major;
+    if (major == null) return null;
+
+    if (major.archive != null) {
+      return DynamicVideoContent(
+        title: major.archive!.title,
+        cover: major.archive!.cover,
+        duration: major.archive!.durationText,
+        playCount: major.archive!.stat.play,
+        danmakuCount: major.archive!.stat.danmaku,
+        aid: major.archive!.aid,
+        bvid: major.archive!.bvid,
+      );
+    }
+
+    if (major.ugcSeason != null) {
+      return DynamicVideoContent(
+        title: major.ugcSeason!.title,
+        cover: major.ugcSeason!.cover,
+        duration: major.ugcSeason!.durationText,
+        playCount: major.ugcSeason!.stat.play,
+        danmakuCount: major.ugcSeason!.stat.danmaku,
+        aid: major.ugcSeason!.aid,
+        bvid: major.ugcSeason!.bvid,
+      );
+    }
+
+    return null;
+  }
 
   String? get topicName => modules.moduleDynamic.topic?.name;
 
@@ -98,36 +126,6 @@ extension DynamicItemContentExtension on DynamicItem {
 
   DynamicAdditional? get additional =>
       _dynamicMapAdditional(modules.moduleDynamic.additional);
-}
-
-DynamicVideoContent? _dynamicMapVideoContent(ModuleMajor? major) {
-  if (major == null) return null;
-
-  if (major.archive != null) {
-    return DynamicVideoContent(
-      title: major.archive!.title,
-      cover: major.archive!.cover,
-      duration: major.archive!.durationText,
-      playCount: major.archive!.stat.play,
-      danmakuCount: major.archive!.stat.danmaku,
-      aid: major.archive!.aid,
-      bvid: major.archive!.bvid,
-    );
-  }
-
-  if (major.ugcSeason != null) {
-    return DynamicVideoContent(
-      title: major.ugcSeason!.title,
-      cover: major.ugcSeason!.cover,
-      duration: major.ugcSeason!.durationText,
-      playCount: major.ugcSeason!.stat.play,
-      danmakuCount: major.ugcSeason!.stat.danmaku,
-      aid: major.ugcSeason!.aid,
-      bvid: major.ugcSeason!.bvid,
-    );
-  }
-
-  return null;
 }
 
 DynamicLinkCard? _dynamicMapLinkCard({

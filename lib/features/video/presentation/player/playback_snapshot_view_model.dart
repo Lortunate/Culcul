@@ -45,33 +45,30 @@ final class PlaybackSnapshot {
   }
 }
 
-class _PlaybackSnapshotQuantizer {
-  static const int _positionStepMs = 250;
-  static const int _bufferStepMs = 500;
-
-  static Duration quantizePosition(Duration value) {
-    final ms = value.inMilliseconds;
-    if (ms <= 0) return Duration.zero;
-    return Duration(milliseconds: (ms ~/ _positionStepMs) * _positionStepMs);
-  }
-
-  static Duration quantizeBuffer(Duration value) {
-    final ms = value.inMilliseconds;
-    if (ms <= 0) return Duration.zero;
-    return Duration(milliseconds: (ms ~/ _bufferStepMs) * _bufferStepMs);
-  }
-}
-
 @riverpod
 Stream<PlaybackSnapshot> playbackSnapshot(Ref ref) {
   final player = ref.watch(playerControllerProvider.notifier).player;
   final controller = StreamController<PlaybackSnapshot>();
   final subscriptions = <StreamSubscription<dynamic>>[];
+  const positionStepMs = 250;
+  const bufferStepMs = 500;
+
+  Duration quantizePosition(Duration value) {
+    final ms = value.inMilliseconds;
+    if (ms <= 0) return Duration.zero;
+    return Duration(milliseconds: (ms ~/ positionStepMs) * positionStepMs);
+  }
+
+  Duration quantizeBuffer(Duration value) {
+    final ms = value.inMilliseconds;
+    if (ms <= 0) return Duration.zero;
+    return Duration(milliseconds: (ms ~/ bufferStepMs) * bufferStepMs);
+  }
 
   var current = PlaybackSnapshot(
-    position: _PlaybackSnapshotQuantizer.quantizePosition(player.state.position),
+    position: quantizePosition(player.state.position),
     duration: player.state.duration,
-    buffer: _PlaybackSnapshotQuantizer.quantizeBuffer(player.state.buffer),
+    buffer: quantizeBuffer(player.state.buffer),
   );
   controller.add(current);
 
@@ -88,13 +85,13 @@ Stream<PlaybackSnapshot> playbackSnapshot(Ref ref) {
 
   subscriptions.addAll([
     player.stream.position.listen((position) {
-      emit(position: _PlaybackSnapshotQuantizer.quantizePosition(position));
+      emit(position: quantizePosition(position));
     }),
     player.stream.duration.listen((duration) {
       emit(duration: duration);
     }),
     player.stream.buffer.listen((buffer) {
-      emit(buffer: _PlaybackSnapshotQuantizer.quantizeBuffer(buffer));
+      emit(buffer: quantizeBuffer(buffer));
     }),
   ]);
 

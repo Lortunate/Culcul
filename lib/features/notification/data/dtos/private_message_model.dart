@@ -1,23 +1,13 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:culcul/core/utils/json_utils.dart';
-import 'package:culcul/features/notification/domain/entities/private_message.dart';
-import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/models/private_message.dart';
+import 'package:culcul/features/notification/models/private_session.dart';
 import 'package:flutter/foundation.dart';
 
-PrivateSessionAccountInfo? _privateSessionAccountInfoFromJson(Object? raw) {
-  final json = JsonUtils.asStringKeyedMap(raw);
-  if (json == null) return null;
-  return PrivateSessionAccountInfo(
-    name: JsonUtils.parseStringWithDefault(json['name']),
-    picUrl: JsonUtils.parseStringWithDefault(json['pic_url']),
-  );
-}
-
-Map<String, dynamic>? _privateSessionAccountInfoToJson(PrivateSessionAccountInfo? value) {
-  if (value == null) return null;
-  return <String, dynamic>{'name': value.name, 'pic_url': value.picUrl};
-}
+const DeepCollectionEquality _privateMessageContentEquality = DeepCollectionEquality();
+const MapEquality<String, int> _privateMessageSystemMsgEquality = MapEquality();
 
 final class PrivateMessageSessionResponse {
   PrivateMessageSessionResponse({
@@ -63,10 +53,7 @@ final class PrivateMessageSessionResponse {
       runtimeType,
       Object.hashAll(_sessionList ?? const <PrivateMessageSession>[]),
       hasMore,
-      Object.hashAllUnordered(
-        _systemMsg?.entries.map((entry) => Object.hash(entry.key, entry.value)) ??
-            const <int>[],
-      ),
+      _privateMessageSystemMsgEquality.hash(_systemMsg ?? const <String, int>{}),
     );
   }
 
@@ -94,6 +81,7 @@ final class PrivateMessageSession {
   });
 
   factory PrivateMessageSession.fromJson(Map<String, dynamic> json) {
+    final accountInfoJson = JsonUtils.asStringKeyedMap(json['account_info']);
     return PrivateMessageSession(
       talkerId: (json['talker_id'] as num).toInt(),
       sessionType: (json['session_type'] as num).toInt(),
@@ -105,7 +93,12 @@ final class PrivateMessageSession {
       groupCover: json['group_cover'] as String?,
       isFollow: (json['is_follow'] as num?)?.toInt() ?? 0,
       sessionTs: (json['session_ts'] as num).toInt(),
-      accountInfo: _privateSessionAccountInfoFromJson(json['account_info']),
+      accountInfo: accountInfoJson == null
+          ? null
+          : PrivateSessionAccountInfo(
+              name: JsonUtils.parseStringWithDefault(accountInfoJson['name']),
+              picUrl: JsonUtils.parseStringWithDefault(accountInfoJson['pic_url']),
+            ),
     );
   }
 
@@ -120,6 +113,7 @@ final class PrivateMessageSession {
   final PrivateSessionAccountInfo? accountInfo;
 
   Map<String, dynamic> toJson() {
+    final accountInfo = this.accountInfo;
     return <String, dynamic>{
       'talker_id': talkerId,
       'session_type': sessionType,
@@ -129,7 +123,9 @@ final class PrivateMessageSession {
       'group_cover': groupCover,
       'is_follow': isFollow,
       'session_ts': sessionTs,
-      'account_info': _privateSessionAccountInfoToJson(accountInfo),
+      'account_info': accountInfo == null
+          ? null
+          : <String, dynamic>{'name': accountInfo.name, 'pic_url': accountInfo.picUrl},
     };
   }
 
@@ -276,7 +272,7 @@ final class PrivateMessageDetail {
             receiverType == other.receiverType &&
             receiverId == other.receiverId &&
             msgType == other.msgType &&
-            _contentEquals(content, other.content) &&
+            _privateMessageContentEquality.equals(content, other.content) &&
             msgSeqno == other.msgSeqno &&
             timestamp == other.timestamp &&
             listEquals(_atUids, other._atUids) &&
@@ -295,7 +291,7 @@ final class PrivateMessageDetail {
       receiverType,
       receiverId,
       msgType,
-      _contentHash(content),
+      _privateMessageContentEquality.hash(content),
       msgSeqno,
       timestamp,
       Object.hashAll(_atUids ?? const <int>[]),
@@ -398,38 +394,4 @@ final class PrivateMessageListResponse {
         'emojiInfos: $_emojiInfos'
         ')';
   }
-}
-
-bool _contentEquals(Object? left, Object? right) {
-  if (identical(left, right)) return true;
-  if (left is Map && right is Map) {
-    if (left.length != right.length) return false;
-    for (final entry in left.entries) {
-      if (!right.containsKey(entry.key)) return false;
-      if (!_contentEquals(entry.value, right[entry.key])) return false;
-    }
-    return true;
-  }
-  if (left is List && right is List) {
-    if (left.length != right.length) return false;
-    for (var i = 0; i < left.length; i += 1) {
-      if (!_contentEquals(left[i], right[i])) return false;
-    }
-    return true;
-  }
-  return left == right;
-}
-
-int _contentHash(Object? value) {
-  if (value is Map) {
-    return Object.hashAllUnordered(
-      value.entries.map(
-        (entry) => Object.hash(_contentHash(entry.key), _contentHash(entry.value)),
-      ),
-    );
-  }
-  if (value is List) {
-    return Object.hashAll(value.map(_contentHash));
-  }
-  return value.hashCode;
 }

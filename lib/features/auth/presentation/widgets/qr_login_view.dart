@@ -56,46 +56,38 @@ class _AuthQrLoginController extends Notifier<_AuthQrLoginState> {
     result.when(
       success: (data) {
         state = _AuthQrLoginState(qrUrl: data.url);
-        _startPolling(data.key);
+        _pollTimer?.cancel();
+        _pollTimer = Timer.periodic(const Duration(seconds: 3), (_) async {
+          final result = await ref.read(authRepositoryProvider).pollQrCode(data.key);
+          result.when(
+            success: (poll) {
+              final status = switch (poll.code) {
+                0 => _AuthQrLoginStatus.success,
+                86101 => _AuthQrLoginStatus.loading,
+                86090 => _AuthQrLoginStatus.scanned,
+                86038 => _AuthQrLoginStatus.expired,
+                _ => _AuthQrLoginStatus.error,
+              };
+
+              state = state.copyWith(status: status, statusCode: poll.code);
+
+              if (poll.code == 0) {
+                _pollTimer?.cancel();
+                unawaited(ref.read(authProvider.notifier).refreshUser());
+              } else if (poll.code == 86038) {
+                _pollTimer?.cancel();
+              }
+            },
+            failure: (_) {
+              state = state.copyWith(status: _AuthQrLoginStatus.error, statusCode: -1);
+            },
+          );
+        });
       },
       failure: (_) {
         state = const _AuthQrLoginState(status: _AuthQrLoginStatus.error, statusCode: -1);
       },
     );
-  }
-
-  void _startPolling(String key) {
-    _pollTimer?.cancel();
-    _pollTimer = Timer.periodic(const Duration(seconds: 3), (_) async {
-      final result = await ref.read(authRepositoryProvider).pollQrCode(key);
-      result.when(
-        success: (poll) {
-          _updateStatus(poll.code);
-        },
-        failure: (_) {
-          state = state.copyWith(status: _AuthQrLoginStatus.error, statusCode: -1);
-        },
-      );
-    });
-  }
-
-  void _updateStatus(int code) {
-    final status = switch (code) {
-      0 => _AuthQrLoginStatus.success,
-      86101 => _AuthQrLoginStatus.loading,
-      86090 => _AuthQrLoginStatus.scanned,
-      86038 => _AuthQrLoginStatus.expired,
-      _ => _AuthQrLoginStatus.error,
-    };
-
-    state = state.copyWith(status: status, statusCode: code);
-
-    if (code == 0) {
-      _pollTimer?.cancel();
-      unawaited(ref.read(authProvider.notifier).refreshUser());
-    } else if (code == 86038) {
-      _pollTimer?.cancel();
-    }
   }
 }
 

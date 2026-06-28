@@ -1,5 +1,5 @@
 import 'package:culcul/features/video/presentation/player/controls/video_overlay_styles.dart';
-import 'package:culcul/ui/theme/culcul_tokens.dart';
+import 'package:culcul/core/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 
 class PlayerPanelScaffold extends StatelessWidget {
@@ -11,7 +11,7 @@ class PlayerPanelScaffold extends StatelessWidget {
   const PlayerPanelScaffold({
     super.key,
     required this.child,
-    this.isBottomSheet = false,
+    required this.isBottomSheet,
     this.panelWidth = 360,
     this.maxHeightFactor = 0.78,
   });
@@ -79,7 +79,6 @@ class PlayerPanelSection extends StatelessWidget {
   final bool dense;
   final bool showBody;
   final Color? backgroundColor;
-  final double surfaceAlpha;
   final double outlineAlpha;
   final double cornerRadius;
 
@@ -92,7 +91,6 @@ class PlayerPanelSection extends StatelessWidget {
     this.dense = false,
     this.showBody = true,
     this.backgroundColor,
-    this.surfaceAlpha = 0.58,
     this.outlineAlpha = 0.12,
     this.cornerRadius = 22,
   });
@@ -111,9 +109,7 @@ class PlayerPanelSection extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(contentPadding),
       decoration: BoxDecoration(
-        color:
-            backgroundColor ??
-            VideoOverlayStyles.panelSurface(colorScheme, alpha: surfaceAlpha),
+        color: backgroundColor ?? VideoOverlayStyles.panelSurface(colorScheme),
         borderRadius: BorderRadius.circular(cornerRadius),
         border: Border.all(
           color: VideoOverlayStyles.panelOutline(colorScheme, alpha: outlineAlpha),

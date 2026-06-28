@@ -9,8 +9,6 @@ enum SearchType {
   const SearchType(this.apiValue);
 
   final String apiValue;
-
-  bool get supportsDuration => this == SearchType.video;
 }
 
 enum SearchOrder {
@@ -40,7 +38,7 @@ enum SearchDuration {
 final class SearchQuery {
   const SearchQuery({
     required this.keyword,
-    this.type = SearchType.all,
+    required this.type,
     this.order = SearchOrder.totalrank,
     this.duration = SearchDuration.all,
     this.page = 1,

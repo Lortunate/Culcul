@@ -1,7 +1,15 @@
 part of 'dynamic_repository_impl.dart';
 
 _DynamicCommentTarget _resolveDynamicCommentTarget(DynamicItem post) {
-  final referer = _getDynamicCommentReferer(post);
+  String? referer;
+  if (post.type == 'DYNAMIC_TYPE_ARTICLE') {
+    referer = _extractDynamicArticleUrl(post);
+  }
+  referer ??= post.linkCard?.url;
+  if (referer == null || referer.isEmpty) {
+    referer = 'https://www.bilibili.com/';
+  }
+
   if (post.commentId != null && post.commentType != null) {
     return _DynamicCommentTarget(
       oid: post.commentId!,
@@ -32,20 +40,6 @@ _DynamicCommentTarget _resolveDynamicCommentTarget(DynamicItem post) {
   }
 
   return _DynamicCommentTarget(oid: post.id, type: 17, referer: referer);
-}
-
-String? _getDynamicCommentReferer(DynamicItem post) {
-  if (post.type == 'DYNAMIC_TYPE_ARTICLE') {
-    final articleUrl = _extractDynamicArticleUrl(post);
-    if (articleUrl != null) return articleUrl;
-  }
-
-  final linkCardUrl = post.linkCard?.url;
-  if (linkCardUrl != null && linkCardUrl.isNotEmpty) {
-    return linkCardUrl;
-  }
-
-  return 'https://www.bilibili.com/';
 }
 
 String? _extractDynamicArticleUrl(DynamicItem post) {

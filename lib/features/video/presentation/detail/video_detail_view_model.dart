@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:developer' as developer;
 
-import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/core/models/video_model_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
-import 'package:culcul/core/services/relation_service.dart';
+import 'package:culcul/features/profile/relation_api.dart';
 import 'package:culcul/features/video/application/models/play_url.dart';
 import 'package:culcul/features/video/application/video_detail_models.dart';
 import 'package:culcul/features/video/data/video_repository_impl.dart';
@@ -185,9 +185,17 @@ class VideoDetailController extends _$VideoDetailController {
     final detail = state.videoDetail;
     if (detail == null) return;
 
-    final nextLiked = detail.reqUser.like != 1;
+    final wasLiked = detail.reqUser.like == 1;
+    final nextLiked = !wasLiked;
     final previousDetail = detail;
-    state = state.copyWith(videoDetail: _applyVideoLikeState(detail, isLiked: nextLiked));
+    final delta = nextLiked == wasLiked ? 0 : (nextLiked ? 1 : -1);
+    final nextLike = (detail.stat.like + delta).clamp(0, 1 << 31);
+    state = state.copyWith(
+      videoDetail: detail.copyWith(
+        reqUser: detail.reqUser.copyWith(like: nextLiked ? 1 : 0),
+        stat: detail.stat.copyWith(like: nextLike),
+      ),
+    );
 
     final result = await ref
         .read(videoRepositoryProvider)
@@ -202,7 +210,12 @@ class VideoDetailController extends _$VideoDetailController {
     if (detail == null) return;
 
     final previousDetail = detail;
-    state = state.copyWith(videoDetail: _applyVideoCoinState(detail));
+    state = state.copyWith(
+      videoDetail: detail.copyWith(
+        reqUser: detail.reqUser.copyWith(coin: detail.reqUser.coin + 1),
+        stat: detail.stat.copyWith(coin: detail.stat.coin + 1),
+      ),
+    );
 
     final result = await ref.read(videoRepositoryProvider).addVideoCoin(aid: detail.aid);
     if (result.isFailure) {
@@ -214,8 +227,14 @@ class VideoDetailController extends _$VideoDetailController {
     final detail = state.videoDetail;
     if (detail == null) return;
 
+    final wasFavorite = detail.reqUser.favorite == 1;
+    final delta = isFavorite == wasFavorite ? 0 : (isFavorite ? 1 : -1);
+    final nextFavorite = (detail.stat.favorite + delta).clamp(0, 1 << 31);
     state = state.copyWith(
-      videoDetail: _applyVideoFavoriteState(detail, isFavorite: isFavorite),
+      videoDetail: detail.copyWith(
+        reqUser: detail.reqUser.copyWith(favorite: isFavorite ? 1 : 0),
+        stat: detail.stat.copyWith(favorite: nextFavorite),
+      ),
     );
   }
 
@@ -249,7 +268,7 @@ class VideoDetailController extends _$VideoDetailController {
     final result = await ref
         .read(videoRepositoryProvider)
         .fetchVideoPlayUrl(aid: aid, cid: cid, quality: qn, cancelToken: cancelToken);
-    if (!ref.mounted || !_isCurrentPlayUrlRequest(requestToken)) {
+    if (!ref.mounted || requestToken != _playUrlRequestToken) {
       return;
     }
 
@@ -317,47 +336,4 @@ class VideoDetailController extends _$VideoDetailController {
   bool _isCurrentLoadRequest(int requestToken) {
     return requestToken == _loadToken;
   }
-
-  bool _isCurrentPlayUrlRequest(int requestToken) {
-    return requestToken == _playUrlRequestToken;
-  }
-}
-
-VideoDetailViewData _applyVideoLikeState(
-  VideoDetailViewData detail, {
-  required bool isLiked,
-}) {
-  final wasLiked = detail.reqUser.like == 1;
-  final delta = isLiked == wasLiked ? 0 : (isLiked ? 1 : -1);
-  final nextLike = (detail.stat.like + delta).clamp(0, 1 << 31);
-
-  return detail.copyWith(
-    reqUser: detail.reqUser.copyWith(like: isLiked ? 1 : 0),
-    stat: detail.stat.copyWith(like: nextLike),
-  );
-}
-
-VideoDetailViewData _applyVideoCoinState(VideoDetailViewData detail, {int count = 1}) {
-  if (count <= 0) {
-    return detail;
-  }
-
-  return detail.copyWith(
-    reqUser: detail.reqUser.copyWith(coin: detail.reqUser.coin + count),
-    stat: detail.stat.copyWith(coin: detail.stat.coin + count),
-  );
-}
-
-VideoDetailViewData _applyVideoFavoriteState(
-  VideoDetailViewData detail, {
-  required bool isFavorite,
-}) {
-  final wasFavorite = detail.reqUser.favorite == 1;
-  final delta = isFavorite == wasFavorite ? 0 : (isFavorite ? 1 : -1);
-  final nextFavorite = (detail.stat.favorite + delta).clamp(0, 1 << 31);
-
-  return detail.copyWith(
-    reqUser: detail.reqUser.copyWith(favorite: isFavorite ? 1 : 0),
-    stat: detail.stat.copyWith(favorite: nextFavorite),
-  );
 }

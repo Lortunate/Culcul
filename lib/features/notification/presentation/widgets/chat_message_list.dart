@@ -3,10 +3,9 @@ import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/paged_list_state.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
-import 'package:culcul/core/utils/format_extensions.dart';
-import 'package:culcul/features/notification/domain/entities/private_message.dart';
+import 'package:culcul/features/notification/models/private_message.dart';
 import 'package:culcul/features/notification/presentation/widgets/chat_message_item.dart';
-import 'package:culcul/ui/theme/culcul_tokens.dart';
+import 'package:culcul/core/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/layout/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
@@ -93,6 +92,27 @@ class ChatMessageList extends HookWidget {
               showTime = true;
             }
           }
+          String? timeText;
+          if (showTime) {
+            final messageTime = DateTime.fromMillisecondsSinceEpoch(
+              message.timestamp * 1000,
+            );
+            final now = DateTime.now();
+            final hourMinute =
+                '${messageTime.hour.toString().padLeft(2, '0')}:'
+                '${messageTime.minute.toString().padLeft(2, '0')}';
+            final monthDay =
+                '${messageTime.month.toString().padLeft(2, '0')}-'
+                '${messageTime.day.toString().padLeft(2, '0')}';
+            timeText =
+                messageTime.year == now.year &&
+                    messageTime.month == now.month &&
+                    messageTime.day == now.day
+                ? hourMinute
+                : messageTime.year == now.year
+                ? '$monthDay $hourMinute'
+                : '${messageTime.year}-$monthDay';
+          }
 
           return KeyedSubtree(
             key: ValueKey(message.msgKey ?? message.msgSeqno),
@@ -102,9 +122,7 @@ class ChatMessageList extends HookWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: CulculSpacing.md),
                     child: Text(
-                      DateTime.fromMillisecondsSinceEpoch(
-                        message.timestamp * 1000,
-                      ).toChatTime(),
+                      timeText!,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),

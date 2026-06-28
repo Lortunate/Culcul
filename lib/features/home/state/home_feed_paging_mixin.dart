@@ -1,12 +1,13 @@
 import 'dart:async';
 
-import 'package:culcul/core/contracts/video_model_contract.dart';
-import 'package:culcul/core/data/network/interceptors/endpoint_cache_options_interceptor.dart';
+import 'package:culcul/core/models/video_model_contract.dart';
+import 'package:culcul/core/data/network/interceptors/request_policy_interceptor.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 mixin HomeFeedPagingMixin on OffsetPagedAsyncNotifier<VideoModel> {
@@ -60,7 +61,7 @@ mixin HomeFeedPagingMixin on OffsetPagedAsyncNotifier<VideoModel> {
     final items = await loadPage(1, forceRefresh: false);
     final hasCachedValue = await ref
         .read(cacheStoreProvider)
-        .exists(EndpointCacheOptionsInterceptor.buildCacheKey(cachePath, cacheQuery));
+        .exists(RequestPolicyInterceptor.buildCacheKey(cachePath, cacheQuery));
 
     DevLogger.log('feature', '$perfChain initial_data', <String, Object?>{
       'items': items.length,
@@ -71,9 +72,15 @@ mixin HomeFeedPagingMixin on OffsetPagedAsyncNotifier<VideoModel> {
     if (hasCachedValue && items.isNotEmpty) {
       unawaited(
         Future<void>.microtask(
-          () => refreshFirstPageSilently(
-            () => _loadFreshFirstPage(perfChain: perfChain, loadPage: loadPage),
-          ),
+          () => refreshFirstPageSilently(() async {
+            final stopwatch = Stopwatch()..start();
+            final freshItems = await loadPage(1, forceRefresh: true);
+            DevLogger.log('feature', '$perfChain silent_refresh_fetch', <String, Object?>{
+              'items': freshItems.length,
+              'ms': stopwatch.elapsedMilliseconds,
+            });
+            return freshItems;
+          }),
         ),
       );
     }
@@ -95,39 +102,12 @@ mixin HomeFeedPagingMixin on OffsetPagedAsyncNotifier<VideoModel> {
       if (state.isLoading || currentPage != 1) {
         return;
       }
-      if (_sameItems(previousItems, items)) {
+      if (listEquals(previousItems, items)) {
         return;
       }
       state = AsyncData(items);
     } catch (_) {
       // Silent refresh must not disrupt already rendered cached content.
     }
-  }
-
-  Future<List<VideoModel>> _loadFreshFirstPage({
-    required String perfChain,
-    required Future<List<VideoModel>> Function(int page, {required bool forceRefresh})
-    loadPage,
-  }) async {
-    final stopwatch = Stopwatch()..start();
-    final items = await loadPage(1, forceRefresh: true);
-    DevLogger.log('feature', '$perfChain silent_refresh_fetch', <String, Object?>{
-      'items': items.length,
-      'ms': stopwatch.elapsedMilliseconds,
-    });
-    return items;
-  }
-
-  bool _sameItems(List<VideoModel> previousItems, List<VideoModel> nextItems) {
-    if (previousItems.length != nextItems.length) {
-      return false;
-    }
-
-    for (var index = 0; index < previousItems.length; index++) {
-      if (previousItems[index] != nextItems[index]) {
-        return false;
-      }
-    }
-    return true;
   }
 }

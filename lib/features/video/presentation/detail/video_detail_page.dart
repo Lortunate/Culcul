@@ -1,4 +1,4 @@
-import 'package:culcul/core/utils/format_extensions.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/video/presentation/detail/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
 import 'package:culcul/features/video/presentation/player/hooks/use_video_orientation.dart';

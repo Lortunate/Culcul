@@ -86,12 +86,8 @@ class LiveSocketPacketCodec {
 
 List<Map<String, dynamic>> _decodeCompressedNotificationEvents(List<int> compressedBody) {
   final uncompressed = zlib.decode(compressedBody);
-  return _decodeNotificationEventsFromMessage(uncompressed);
-}
-
-List<Map<String, dynamic>> _decodeNotificationEventsFromMessage(List<int> message) {
   final events = <Map<String, dynamic>>[];
-  for (final packet in LiveSocketPacketCodec.decode(message)) {
+  for (final packet in LiveSocketPacketCodec.decode(uncompressed)) {
     if (packet.operation != 5) {
       continue;
     }

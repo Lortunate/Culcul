@@ -1,7 +1,7 @@
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/profile/state/profile_view_model.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
-import 'package:culcul/ui/assemblies/users/user_tags.dart';
+import 'package:culcul/ui/widgets/users/user_tags.dart';
 import 'package:culcul/ui/widgets/users/app_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

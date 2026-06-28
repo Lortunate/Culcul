@@ -148,9 +148,9 @@ final class DashStream {
   factory DashStream.fromJson(Map<String, dynamic> json) {
     return DashStream(
       id: (json['id'] as num).toInt(),
-      baseUrl: _readBaseUrl(json) as String,
+      baseUrl: (json['baseUrl'] ?? json['base_url']) as String,
       backupUrl:
-          (_readBackupUrls(json) as List<dynamic>?)
+          ((json['backupUrl'] ?? json['backup_url']) as List<dynamic>?)
               ?.map((e) => e as String)
               .toList(growable: false) ??
           const [],
@@ -318,8 +318,3 @@ final class SupportFormat {
         ')';
   }
 }
-
-Object? _readBaseUrl(Map<dynamic, dynamic> json) => json['baseUrl'] ?? json['base_url'];
-
-Object? _readBackupUrls(Map<dynamic, dynamic> json) =>
-    json['backupUrl'] ?? json['backup_url'];

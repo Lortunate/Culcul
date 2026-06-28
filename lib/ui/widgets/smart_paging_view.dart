@@ -56,15 +56,46 @@ class SmartPagingView<T> extends HookConsumerWidget {
     }
 
     final items = asyncValue.value ?? <T>[];
-    final content = _SmartPagingContent<T>(
-      asyncValue: asyncValue,
-      items: items,
-      builder: builder,
-      onRefresh: onRefresh,
-      errorBuilder: errorBuilder,
-      emptyBuilder: emptyBuilder,
-      emptyText: emptyText,
-    );
+    final Widget content;
+    if (asyncValue.hasError && !asyncValue.hasValue) {
+      content = CustomScrollView(
+        key: const ValueKey('paging_error'),
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          SliverFillRemaining(
+            child: Center(
+              child:
+                  errorBuilder?.call(context, asyncValue.error!, asyncValue.stackTrace) ??
+                  AppErrorWidget(
+                    error: asyncValue.error!,
+                    stackTrace: asyncValue.stackTrace,
+                    onRetry: onRefresh,
+                  ),
+            ),
+          ),
+        ],
+      );
+    } else if (items.isEmpty) {
+      content = CustomScrollView(
+        key: const ValueKey('paging_empty'),
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: [
+          SliverFillRemaining(
+            child: Center(
+              child:
+                  emptyBuilder?.call(context) ??
+                  AppEmptyStateWidget(
+                    message: emptyText ?? t.common.no_content,
+                    onAction: onRefresh,
+                    actionLabel: t.common.retry,
+                  ),
+            ),
+          ),
+        ],
+      );
+    } else {
+      content = builder(context, items);
+    }
 
     return EasyRefresh(
       key: const ValueKey('paging_data'),
@@ -81,113 +112,31 @@ class SmartPagingView<T> extends HookConsumerWidget {
       },
       onLoad: onLoadMore == null || !hasMore
           ? null
-          : () => _handleLoadMore(
-              items: items,
-              onLoadMore: onLoadMore!,
-              loadGate: loadGate,
-              hasMore: hasMore,
-              itemCount: itemCount,
-              hasMoreAfterLoad: hasMoreAfterLoad,
-            ),
+          : () {
+              final previousCount = itemCount?.call() ?? items.length;
+              return ScrollLoadTrigger.runWithGate(
+                gate: loadGate,
+                hasMore: hasMore,
+                task: onLoadMore!,
+                itemCount: itemCount,
+                hasMoreAfter: () {
+                  final currentCount = itemCount?.call();
+                  final hasMoreAfterLoadCallback = hasMoreAfterLoad;
+                  if (hasMoreAfterLoadCallback != null) {
+                    return hasMoreAfterLoadCallback(
+                      previousCount: previousCount,
+                      currentCount: currentCount ?? previousCount,
+                    );
+                  }
+                  if (currentCount == null) {
+                    return true;
+                  }
+                  return currentCount > previousCount;
+                },
+                source: 'ui.smart_paging_view',
+              );
+            },
       child: content,
     );
   }
-}
-
-class _SmartPagingContent<T> extends StatelessWidget {
-  final AsyncValue<List<T>> asyncValue;
-  final List<T> items;
-  final Widget Function(BuildContext context, List<T> items) builder;
-  final Future<void> Function() onRefresh;
-  final Widget Function(BuildContext context, Object error, StackTrace? stackTrace)?
-  errorBuilder;
-  final Widget Function(BuildContext context)? emptyBuilder;
-  final String? emptyText;
-
-  const _SmartPagingContent({
-    required this.asyncValue,
-    required this.items,
-    required this.builder,
-    required this.onRefresh,
-    required this.errorBuilder,
-    required this.emptyBuilder,
-    required this.emptyText,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    if (asyncValue.hasError && !asyncValue.hasValue) {
-      return _PagingStatusView(
-        key: const ValueKey('paging_error'),
-        child:
-            errorBuilder?.call(context, asyncValue.error!, asyncValue.stackTrace) ??
-            AppErrorWidget(
-              error: asyncValue.error!,
-              stackTrace: asyncValue.stackTrace,
-              onRetry: onRefresh,
-            ),
-      );
-    }
-
-    if (items.isEmpty) {
-      return _PagingStatusView(
-        key: const ValueKey('paging_empty'),
-        child:
-            emptyBuilder?.call(context) ??
-            AppEmptyStateWidget(
-              message: emptyText ?? t.common.no_content,
-              onAction: onRefresh,
-              actionLabel: t.common.retry,
-            ),
-      );
-    }
-
-    return builder(context, items);
-  }
-}
-
-class _PagingStatusView extends StatelessWidget {
-  final Widget child;
-
-  const _PagingStatusView({super.key, required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      slivers: [SliverFillRemaining(child: Center(child: child))],
-    );
-  }
-}
-
-Future<IndicatorResult> _handleLoadMore<T>({
-  required List<T> items,
-  required Future<void> Function() onLoadMore,
-  required PaginationLoadGate loadGate,
-  required bool hasMore,
-  required int Function()? itemCount,
-  required bool Function({required int previousCount, required int currentCount})?
-  hasMoreAfterLoad,
-}) async {
-  final previousCount = itemCount?.call() ?? items.length;
-  return ScrollLoadTrigger.runWithGate(
-    gate: loadGate,
-    hasMore: hasMore,
-    task: onLoadMore,
-    itemCount: itemCount,
-    hasMoreAfter: () {
-      final currentCount = itemCount?.call();
-      if (hasMoreAfterLoad != null) {
-        return hasMoreAfterLoad(
-          previousCount: previousCount,
-          currentCount: currentCount ?? previousCount,
-        );
-      }
-      if (currentCount == null) {
-        return true;
-      }
-      return currentCount > previousCount;
-    },
-    source: 'ui.smart_paging_view',
-  );
 }

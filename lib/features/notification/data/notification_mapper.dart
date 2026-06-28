@@ -1,8 +1,8 @@
 import 'package:culcul/features/notification/data/dtos/private_message_model.dart';
 import 'package:culcul/features/notification/data/dtos/reply_model.dart';
-import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
-import 'package:culcul/features/notification/domain/entities/private_message.dart';
-import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/models/notification_entry.dart';
+import 'package:culcul/features/notification/models/private_message.dart';
+import 'package:culcul/features/notification/models/private_session.dart';
 
 extension ReplyItemMapper on ReplyItem {
   NotificationEntry toDomain() {

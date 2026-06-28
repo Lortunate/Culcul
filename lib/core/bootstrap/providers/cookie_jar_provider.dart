@@ -21,16 +21,14 @@ final class _LazyPersistCookieJar implements CookieJar {
   Future<CookieJar> _resolve() {
     final jar = _jar;
     if (jar != null) return Future.value(jar);
-    return _jarFuture ??= _create();
-  }
-
-  Future<CookieJar> _create() async {
-    final documentDirectory = await getApplicationDocumentsDirectory();
-    final jar = PersistCookieJar(
-      storage: FileStorage('${documentDirectory.path}/.cookies/'),
-    );
-    _jar = jar;
-    return jar;
+    return _jarFuture ??= () async {
+      final documentDirectory = await getApplicationDocumentsDirectory();
+      final createdJar = PersistCookieJar(
+        storage: FileStorage('${documentDirectory.path}/.cookies/'),
+      );
+      _jar = createdJar;
+      return createdJar;
+    }();
   }
 
   @override

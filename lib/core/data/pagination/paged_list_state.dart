@@ -74,4 +74,55 @@ final class PagedListState<T> {
         'error: $error'
         ')';
   }
+
+  // ── State transitions ──
+
+  PagedListState<T> beginRefresh({int firstPage = 1, bool clearItems = true}) {
+    return copyWith(
+      isInitialLoading: true,
+      isLoadingMore: false,
+      hasMore: true,
+      nextPage: firstPage,
+      items: clearItems ? <T>[] : items,
+      error: null,
+    );
+  }
+
+  PagedListState<T> beginLoadMore() {
+    return copyWith(isLoadingMore: true, error: null);
+  }
+
+  PagedListState<T> completeRefresh({
+    required List<T> items,
+    required bool hasMore,
+    int nextPage = 2,
+  }) {
+    return copyWith(
+      items: items,
+      hasMore: hasMore,
+      nextPage: nextPage,
+      isInitialLoading: false,
+      isLoadingMore: false,
+      error: null,
+    );
+  }
+
+  PagedListState<T> completeLoadMore({
+    required List<T> items,
+    required bool hasMore,
+    required int nextPage,
+  }) {
+    return copyWith(
+      items: items,
+      hasMore: hasMore,
+      nextPage: nextPage,
+      isInitialLoading: false,
+      isLoadingMore: false,
+      error: null,
+    );
+  }
+
+  PagedListState<T> fail(Object? error) {
+    return copyWith(isInitialLoading: false, isLoadingMore: false, error: error);
+  }
 }

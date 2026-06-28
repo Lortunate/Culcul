@@ -1,12 +1,9 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/data/network/endpoint_policy.dart';
-import 'package:culcul/core/data/network/interceptors/endpoint_cache_options_interceptor.dart';
-import 'package:culcul/core/data/network/interceptors/csrf_interceptor.dart';
+import 'package:culcul/core/data/network/interceptors/auth_interceptor.dart';
 import 'package:culcul/core/data/network/interceptors/in_flight_dedup_interceptor.dart';
-import 'package:culcul/core/data/network/interceptors/network_quality_interceptor.dart';
+import 'package:culcul/core/data/network/interceptors/request_policy_interceptor.dart';
 import 'package:dio_smart_retry/dio_smart_retry.dart';
-import 'package:culcul/core/data/network/interceptors/token_interceptor.dart';
-import 'package:culcul/core/data/network/interceptors/wbi_interceptor.dart';
 import 'package:culcul/core/data/network/network_quality_policy.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/core/bootstrap/providers/cookie_jar_provider.dart';
@@ -67,23 +64,19 @@ void _applyNetworkPolicy(Dio dio, NetworkQualityPolicy networkPolicy) {
   previousAdapter.close(force: true);
 }
 
-List<Duration> _retryDelays(NetworkQualityPolicy networkPolicy) {
-  return List.generate(
-    networkPolicy.retryMaxAttempts,
-    (i) => Duration(
-      milliseconds: (networkPolicy.retryBaseDelayMs * (1 << i)).clamp(
-        0,
-        networkPolicy.retryMaxDelayMs,
-      ),
-    ),
-  );
-}
-
 RetryInterceptor _createRetryInterceptor(Dio dio, NetworkQualityPolicy networkPolicy) {
   return RetryInterceptor(
     dio: dio,
     retries: networkPolicy.retryMaxAttempts,
-    retryDelays: _retryDelays(networkPolicy),
+    retryDelays: List.generate(
+      networkPolicy.retryMaxAttempts,
+      (i) => Duration(
+        milliseconds: (networkPolicy.retryBaseDelayMs * (1 << i)).clamp(
+          0,
+          networkPolicy.retryMaxDelayMs,
+        ),
+      ),
+    ),
     retryEvaluator: (error, attempt) {
       if (error.requestOptions.extra[EndpointPolicy.disableRetryExtra] == true) {
         return false;
@@ -112,16 +105,15 @@ RetryInterceptor _createRetryInterceptor(Dio dio, NetworkQualityPolicy networkPo
   );
 }
 
-void _replaceRetryInterceptor(Dio dio, NetworkQualityPolicy networkPolicy) {
-  final index = dio.interceptors.indexWhere(
-    (interceptor) => interceptor is RetryInterceptor,
-  );
-  final retryInterceptor = _createRetryInterceptor(dio, networkPolicy);
-  if (index == -1) {
-    dio.interceptors.add(retryInterceptor);
-  } else {
-    dio.interceptors[index] = retryInterceptor;
-  }
+void _attachDioLifecycle(
+  Ref ref,
+  Dio dio, {
+  required void Function(NetworkQualityPolicy next) onNetworkPolicyChanged,
+}) {
+  ref.onDispose(() => dio.close(force: true));
+  ref.listen(networkQualityPolicyProvider, (previous, next) {
+    onNetworkPolicyChanged(next);
+  });
 }
 
 void _addLogInterceptor(Dio dio) {
@@ -141,10 +133,13 @@ void _addLogInterceptor(Dio dio) {
 Dio basicDio(Ref ref) {
   final networkPolicy = ref.read(networkQualityPolicyProvider);
   final dio = _createBaseDio(ref, networkPolicy);
-  ref.onDispose(() => dio.close(force: true));
-  ref.listen(networkQualityPolicyProvider, (previous, next) {
-    _applyNetworkPolicy(dio, next);
-  });
+  _attachDioLifecycle(
+    ref,
+    dio,
+    onNetworkPolicyChanged: (next) {
+      _applyNetworkPolicy(dio, next);
+    },
+  );
   _addLogInterceptor(dio);
   return dio;
 }
@@ -153,19 +148,29 @@ Dio basicDio(Ref ref) {
 Dio dioClient(Ref ref) {
   final networkPolicy = ref.read(networkQualityPolicyProvider);
   final dio = _createBaseDio(ref, networkPolicy);
-  ref.onDispose(() => dio.close(force: true));
   final cacheStore = ref.read(cacheStoreProvider);
 
-  final networkQualityInterceptor = NetworkQualityInterceptor(ref);
-  ref.listen(networkQualityPolicyProvider, (previous, next) {
-    networkQualityInterceptor.invalidateCache();
-    _applyNetworkPolicy(dio, next);
-    _replaceRetryInterceptor(dio, next);
-  });
+  final requestPolicyInterceptor = RequestPolicyInterceptor(ref, cacheStore);
+  _attachDioLifecycle(
+    ref,
+    dio,
+    onNetworkPolicyChanged: (next) {
+      requestPolicyInterceptor.invalidatePolicyCache();
+      _applyNetworkPolicy(dio, next);
+      final retryInterceptorIndex = dio.interceptors.indexWhere(
+        (interceptor) => interceptor is RetryInterceptor,
+      );
+      final retryInterceptor = _createRetryInterceptor(dio, next);
+      if (retryInterceptorIndex == -1) {
+        dio.interceptors.add(retryInterceptor);
+      } else {
+        dio.interceptors[retryInterceptorIndex] = retryInterceptor;
+      }
+    },
+  );
 
-  dio.interceptors.add(networkQualityInterceptor);
+  dio.interceptors.add(requestPolicyInterceptor);
   dio.interceptors.add(InFlightDedupInterceptor());
-  dio.interceptors.add(EndpointCacheOptionsInterceptor(cacheStore));
   dio.interceptors.add(
     DioCacheInterceptor(
       options: CacheOptions(
@@ -176,13 +181,10 @@ Dio dioClient(Ref ref) {
     ),
   );
   dio.interceptors.add(_createRetryInterceptor(dio, networkPolicy));
-  final csrfInterceptor = CsrfInterceptor(ref);
-  dio.interceptors.add(csrfInterceptor);
-  dio.interceptors.add(WbiInterceptor(ref));
 
   _addLogInterceptor(dio);
 
-  dio.interceptors.add(TokenInterceptor(ref, csrfInterceptor));
+  dio.interceptors.add(AuthInterceptor(ref));
 
   return dio;
 }

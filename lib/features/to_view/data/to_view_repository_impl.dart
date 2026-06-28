@@ -4,7 +4,7 @@ import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/utils/json_utils.dart';
 import 'package:culcul/features/to_view/data/to_view_api.dart';
-import 'package:culcul/features/to_view/domain/entities/to_view_entry.dart';
+import 'package:culcul/features/to_view/models/to_view_entry.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'to_view_repository_impl.g.dart';

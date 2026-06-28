@@ -1,14 +1,15 @@
 import 'dart:async';
 
 import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/core/data/network/interceptors/endpoint_cache_options_interceptor.dart';
+import 'package:culcul/core/data/network/interceptors/request_policy_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
 import 'package:culcul/features/profile/data/profile_paging_constants.dart';
 import 'package:culcul/features/profile/data/profile_repository_impl.dart';
-import 'package:culcul/features/profile/domain/entities/profile_video.dart';
+import 'package:culcul/features/profile/models/profile_video.dart';
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_space_videos_view_model.g.dart';
@@ -31,7 +32,7 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
     });
     final stopwatch = Stopwatch()..start();
     final items = await buildFirstPage();
-    final cacheKey = EndpointCacheOptionsInterceptor.buildCacheKey(
+    final cacheKey = RequestPolicyInterceptor.buildCacheKey(
       ApiConstants.profileSpaceVideos,
       {'mid': mid, 'pn': 1, 'ps': profileUserSpaceVideoPageSize, 'order': order},
     );
@@ -101,7 +102,7 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
     }
 
     final nextItems = result.dataOrNull;
-    if (nextItems == null || _sameItems(previousItems, nextItems)) {
+    if (nextItems == null || listEquals(previousItems, nextItems)) {
       DevLogger.log(
         'feature',
         'profile.space_videos silent_refresh_skip',
@@ -125,26 +126,5 @@ class UserSpaceVideosNotifier extends _$UserSpaceVideosNotifier
       },
     );
     state = AsyncData(nextItems);
-  }
-
-  bool _sameItems(List<ProfileVideo> previous, List<ProfileVideo> next) {
-    if (previous.length != next.length) {
-      return false;
-    }
-
-    for (var index = 0; index < previous.length; index++) {
-      final a = previous[index];
-      final b = next[index];
-      if (a.bvid != b.bvid ||
-          a.title != b.title ||
-          a.pic != b.pic ||
-          a.owner.name != b.owner.name ||
-          a.stats.view != b.stats.view ||
-          a.stats.danmaku != b.stats.danmaku ||
-          a.reason != b.reason) {
-        return false;
-      }
-    }
-    return true;
   }
 }

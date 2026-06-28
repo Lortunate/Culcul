@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/core/data/network/interceptors/endpoint_cache_options_interceptor.dart';
+import 'package:culcul/core/data/network/interceptors/request_policy_interceptor.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/bootstrap/providers/cache_store_provider.dart';
@@ -10,6 +10,7 @@ import 'package:culcul/features/dynamic/data/dynamic_api.dart';
 import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
 import 'package:culcul/core/data/pagination/paged_async_notifier.dart';
 import 'package:culcul/features/dynamic/application/dynamic_feed_controller.dart';
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'user_dynamic_provider.g.dart';
@@ -31,7 +32,7 @@ class UserDynamicNotifier extends _$UserDynamicNotifier
     final stopwatch = Stopwatch()..start();
     final items = await buildFirstPage();
     final cacheKey =
-        EndpointCacheOptionsInterceptor.buildCacheKey(ApiConstants.dynamicSpaceFeed, {
+        RequestPolicyInterceptor.buildCacheKey(ApiConstants.dynamicSpaceFeed, {
           'host_mid': hostMid,
           'timezone_offset': dynamicWebTimezoneOffset,
           'features': dynamicFeedFeatureFlags,
@@ -101,7 +102,7 @@ class UserDynamicNotifier extends _$UserDynamicNotifier
     }
 
     final nextFeed = result.dataOrNull;
-    if (nextFeed == null || _sameItems(previousItems, nextFeed.items)) {
+    if (nextFeed == null || listEquals(previousItems, nextFeed.items)) {
       DevLogger.log(
         'feature',
         'dynamic.user_space_feed silent_refresh_skip',
@@ -123,18 +124,5 @@ class UserDynamicNotifier extends _$UserDynamicNotifier
       },
     );
     state = AsyncData(nextFeed.items);
-  }
-
-  bool _sameItems(List<DynamicItem> previous, List<DynamicItem> next) {
-    if (previous.length != next.length) {
-      return false;
-    }
-
-    for (var index = 0; index < previous.length; index++) {
-      if (previous[index].idStr != next[index].idStr) {
-        return false;
-      }
-    }
-    return true;
   }
 }

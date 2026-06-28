@@ -80,12 +80,4 @@ class ErrorHandler {
       });
     }
   }
-
-  @visibleForTesting
-  static void resetLoggedErrorsForTest() {
-    _loggedErrorSignatures.clear();
-  }
-
-  @visibleForTesting
-  static int get loggedErrorCountForTest => _loggedErrorSignatures.length;
 }

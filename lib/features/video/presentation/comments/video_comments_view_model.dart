@@ -1,11 +1,10 @@
 import 'dart:async';
 
-import 'package:culcul/core/contracts/comment_contract.dart';
+import 'package:culcul/core/models/comment_contract.dart';
 import 'package:culcul/core/data/pagination/paged_list_state.dart';
-import 'package:culcul/core/data/pagination/paged_list_state_transitions.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/features/video/data/video_repository_impl.dart';
-import 'package:culcul/ui/assemblies/comments/comment_list_state.dart';
+import 'package:culcul/ui/widgets/comments/comment_list_state.dart';
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -92,7 +91,7 @@ class VideoCommentsController extends _$VideoCommentsController {
       return;
     }
 
-    state = state.copyWith(paging: PagedListStateTransitions.beginRefresh(state.paging));
+    state = state.copyWith(paging: state.paging.beginRefresh());
 
     await _loadPage(page: 1, replace: true);
   }
@@ -162,11 +161,11 @@ class VideoCommentsController extends _$VideoCommentsController {
 
     if (replace) {
       state = state.copyWith(
-        paging: PagedListStateTransitions.beginRefresh(state.paging, clearItems: false),
+        paging: state.paging.beginRefresh(clearItems: false),
       );
     } else {
       state = state.copyWith(
-        paging: PagedListStateTransitions.beginLoadMore(state.paging),
+        paging: state.paging.beginLoadMore(),
       );
     }
 
@@ -183,14 +182,12 @@ class VideoCommentsController extends _$VideoCommentsController {
             : [...state.paging.items, ...response.replies];
         state = state.copyWith(
           paging: replace
-              ? PagedListStateTransitions.completeRefresh(
-                  state.paging,
+              ? state.paging.completeRefresh(
                   items: comments,
                   hasMore: response.replies.isNotEmpty,
                   nextPage: page + 1,
                 )
-              : PagedListStateTransitions.completeLoadMore(
-                  state.paging,
+              : state.paging.completeLoadMore(
                   items: comments,
                   hasMore: response.replies.isNotEmpty,
                   nextPage: page + 1,
@@ -202,7 +199,7 @@ class VideoCommentsController extends _$VideoCommentsController {
           return;
         }
         state = state.copyWith(
-          paging: PagedListStateTransitions.fail(state.paging, error),
+          paging: state.paging.fail(error),
         );
       },
     );

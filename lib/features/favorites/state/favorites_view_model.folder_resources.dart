@@ -6,20 +6,8 @@ final class FavFolderDetailState {
     this.paging = const PagedListState<FavoriteResource>(isInitialLoading: false),
   });
 
-  static const Object _unset = Object();
-
   final FavoriteFolder? info;
   final PagedListState<FavoriteResource> paging;
-
-  FavFolderDetailState copyWith({
-    Object? info = _unset,
-    PagedListState<FavoriteResource>? paging,
-  }) {
-    return FavFolderDetailState(
-      info: identical(info, _unset) ? this.info : info as FavoriteFolder?,
-      paging: paging ?? this.paging,
-    );
-  }
 
   @override
   bool operator ==(Object other) {
@@ -45,7 +33,17 @@ class FavFolderResources extends _$FavFolderResources {
   @override
   Future<FavFolderDetailState> build(int mediaId) async {
     final firstInteractiveStopwatch = Stopwatch()..start();
-    final page = await _fetchItems(mediaId, 1);
+    final requestStopwatch = Stopwatch()..start();
+    final result = await ref
+        .read(favRepositoryProvider)
+        .getFolderResources(mediaId: mediaId, page: 1);
+    DevLogger.log('feature', 'favorites.detail request', <String, Object?>{
+      'mediaId': mediaId,
+      'page': 1,
+      'ms': requestStopwatch.elapsedMilliseconds,
+      'success': result.dataOrNull != null,
+    });
+    final page = result.dataOrNull;
     if (page == null) {
       DevLogger.log('feature', 'favorites.detail state_commit', <String, Object?>{
         'mediaId': mediaId,
@@ -76,20 +74,6 @@ class FavFolderResources extends _$FavFolderResources {
     return nextState;
   }
 
-  Future<FavoriteResourcePage?> _fetchItems(int mediaId, int page) async {
-    final requestStopwatch = Stopwatch()..start();
-    final result = await ref
-        .read(favRepositoryProvider)
-        .getFolderResources(mediaId: mediaId, page: page);
-    DevLogger.log('feature', 'favorites.detail request', <String, Object?>{
-      'mediaId': mediaId,
-      'page': page,
-      'ms': requestStopwatch.elapsedMilliseconds,
-      'success': result.dataOrNull != null,
-    });
-    return result.dataOrNull;
-  }
-
   Future<void> loadMore(int mediaId) async {
     final current = state.value;
     if (current == null ||
@@ -100,7 +84,10 @@ class FavFolderResources extends _$FavFolderResources {
     }
 
     state = AsyncData(
-      current.copyWith(paging: current.paging.copyWith(isLoadingMore: true, error: null)),
+      FavFolderDetailState(
+        info: current.info,
+        paging: current.paging.copyWith(isLoadingMore: true, error: null),
+      ),
     );
     try {
       final result = await ref
@@ -112,7 +99,8 @@ class FavFolderResources extends _$FavFolderResources {
             result.errorOrNull ??
             const AppError.data('Failed to load favorite resources');
         state = AsyncData(
-          current.copyWith(
+          FavFolderDetailState(
+            info: current.info,
             paging: current.paging.copyWith(isLoadingMore: false, error: error),
           ),
         );
@@ -120,7 +108,7 @@ class FavFolderResources extends _$FavFolderResources {
       }
 
       state = AsyncValue.data(
-        current.copyWith(
+        FavFolderDetailState(
           info: nextPageData.info,
           paging: current.paging.copyWith(
             items: mergeUnique(
@@ -145,7 +133,10 @@ class FavFolderResources extends _$FavFolderResources {
       final latest = state.value;
       if (latest != null && latest.paging.isLoadingMore) {
         state = AsyncData(
-          latest.copyWith(paging: latest.paging.copyWith(isLoadingMore: false)),
+          FavFolderDetailState(
+            info: latest.info,
+            paging: latest.paging.copyWith(isLoadingMore: false),
+          ),
         );
       }
     }

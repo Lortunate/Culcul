@@ -1,7 +1,6 @@
 import 'package:culcul/core/errors/error_handler.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/theme/culcul_tokens.dart';
-import 'package:culcul/ui/widgets/inputs/app_selectable_text.dart';
+import 'package:culcul/core/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 
 enum AppErrorWidgetVariant { regular, compact }
@@ -11,7 +10,6 @@ class AppErrorWidget extends StatelessWidget {
   final StackTrace? stackTrace;
   final VoidCallback onRetry;
   final IconData? icon;
-  final bool compact;
   final AppErrorWidgetVariant variant;
 
   const AppErrorWidget({
@@ -20,7 +18,6 @@ class AppErrorWidget extends StatelessWidget {
     this.stackTrace,
     required this.onRetry,
     this.icon,
-    this.compact = false,
     this.variant = AppErrorWidgetVariant.regular,
   });
 
@@ -29,7 +26,7 @@ class AppErrorWidget extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
-    final isCompact = compact || variant == AppErrorWidgetVariant.compact;
+    final isCompact = variant == AppErrorWidgetVariant.compact;
     final displayMessage = ErrorHandler.getShortErrorMessage(context, error);
     ErrorHandler.logError(error, stackTrace: stackTrace);
 
@@ -73,9 +70,12 @@ class AppErrorWidget extends StatelessWidget {
                       builder: (dialogContext) => AlertDialog(
                         title: Text(t.error.details),
                         content: SingleChildScrollView(
-                          child: AppSelectableText(
-                            details,
-                            style: const TextStyle(fontSize: 12, fontFamily: 'Courier'),
+                          child: SelectableText.rich(
+                            TextSpan(
+                              text: details,
+                              style: const TextStyle(fontSize: 12, fontFamily: 'Courier'),
+                            ),
+                            scrollPhysics: const NeverScrollableScrollPhysics(),
                           ),
                         ),
                         actions: [

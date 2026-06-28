@@ -1,4 +1,4 @@
-import 'package:culcul/core/utils/format_extensions.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/video/presentation/overlays/danmaku_settings_view_model.dart';
 import 'package:culcul/features/video/presentation/player/playback_snapshot_view_model.dart';
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
@@ -8,16 +8,13 @@ import 'package:culcul/features/video/presentation/player/controls/player_consta
 import 'package:culcul/features/video/presentation/player/controls/player_theme.dart';
 import 'package:culcul/features/video/presentation/player/controls/quick_selection_sheet.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/theme/culcul_tokens.dart';
+import 'package:culcul/core/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-bool isPlayerBottomSheetLayout(BuildContext context) =>
-    MediaQuery.orientationOf(context) == Orientation.portrait;
-
 void showPlayerSidePanel(BuildContext context, Widget child) {
-  final isLandscape = !isPlayerBottomSheetLayout(context);
+  final isLandscape = MediaQuery.orientationOf(context) == Orientation.landscape;
 
   if (isLandscape) {
     showGeneralDialog(
@@ -66,6 +63,7 @@ class VideoControlButtons extends ConsumerWidget {
     final isFullscreen = ref.watch(
       playerControllerProvider.select((s) => s.isFullscreen),
     );
+    final playerController = ref.read(playerControllerProvider.notifier);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -76,204 +74,170 @@ class VideoControlButtons extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          const _PlayPauseControlButton(),
+          Consumer(
+            builder: (context, ref, _) {
+              final isPlaying = ref.watch(
+                playerControllerProvider.select((s) => s.isPlaying),
+              );
+              final playerController = ref.read(playerControllerProvider.notifier);
+              return _ControlButton(
+                onPressed: playerController.playOrPause,
+                icon: isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                size: 28,
+              );
+            },
+          ),
           if (onNext != null) ...[
             const SizedBox(width: CulculSpacing.xxs),
             _ControlButton(onPressed: onNext, icon: Icons.skip_next_rounded, size: 24),
           ],
           const SizedBox(width: CulculSpacing.xs),
-          const _TimeText(),
+          Consumer(
+            builder: (context, ref, _) {
+              final position = ref.watch(playbackPositionProvider);
+              final duration = ref.watch(playbackDurationProvider);
+              return RepaintBoundary(
+                child: Text(
+                  '${position.inSeconds.formatDuration} / ${duration.inSeconds.formatDuration}',
+                  style: PlayerTheme.timeStyle(
+                    Theme.of(context).colorScheme,
+                  ).copyWith(fontSize: 10),
+                ),
+              );
+            },
+          ),
           const Spacer(),
           if (isFullscreen) ...[
-            _PlaybackSpeedButton(bvid: bvid),
+            Consumer(
+              builder: (context, ref, _) {
+                final playbackSpeed = ref.watch(
+                  videoDetailControllerProvider(bvid).select((s) => s.playbackSpeed),
+                );
+                final t = Translations.of(context);
+                return _PlayerCapsuleButton(
+                  text: formatPlaybackSpeedLabel(playbackSpeed),
+                  onTap: () {
+                    showPlayerSidePanel(
+                      context,
+                      QuickSelectionSheet<double>(
+                        items: playbackSpeeds,
+                        selectedItem: playbackSpeed,
+                        labelBuilder: formatPlaybackSpeedLabel,
+                        subtitleBuilder: (s) => getPlaybackSpeedDescription(s, t),
+                        onSelected: (s) {
+                          ref
+                              .read(videoDetailControllerProvider(bvid).notifier)
+                              .setPlaybackSpeed(s);
+                        },
+                        isBottomSheet:
+                            MediaQuery.orientationOf(context) == Orientation.portrait,
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
             const SizedBox(width: CulculSpacing.xs),
-            _PlaybackQualityButton(bvid: bvid),
+            Consumer(
+              builder: (context, ref, _) {
+                final t = Translations.of(context);
+                final qualityState = ref.watch(
+                  videoDetailControllerProvider(bvid).select(
+                    (s) => (
+                      selectedQuality: s.selectedQuality,
+                      availableQualities: s.availableQualities,
+                      playUrl: s.playUrl,
+                    ),
+                  ),
+                );
+                final qualityLabels = buildQualityLabels(qualityState.playUrl, t);
+                return _PlayerCapsuleButton(
+                  text:
+                      qualityLabels[qualityState.selectedQuality] ?? t.video.quality.auto,
+                  onTap: () {
+                    showPlayerSidePanel(
+                      context,
+                      QuickSelectionSheet<int>(
+                        items: qualityState.availableQualities,
+                        selectedItem: qualityState.selectedQuality,
+                        labelBuilder: (q) => qualityLabels[q] ?? t.video.quality.unknown,
+                        emptyText: t.video.player.quality_unavailable,
+                        onSelected: (q) {
+                          ref
+                              .read(videoDetailControllerProvider(bvid).notifier)
+                              .switchQuality(q);
+                        },
+                        isBottomSheet:
+                            MediaQuery.orientationOf(context) == Orientation.portrait,
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
             const SizedBox(width: CulculSpacing.xs),
-            const _DanmakuToggleButton(),
+            Consumer(
+              builder: (context, ref, _) {
+                final colorScheme = Theme.of(context).colorScheme;
+                final danmakuEnabled = ref.watch(
+                  danmakuSettingsControllerProvider.select((s) => s.isEnabled),
+                );
+                return _ControlButton(
+                  onPressed: () {
+                    ref
+                        .read(danmakuSettingsControllerProvider.notifier)
+                        .setEnabled(!danmakuEnabled);
+                  },
+                  icon: danmakuEnabled ? Icons.notes_rounded : Icons.notes_outlined,
+                  color: danmakuEnabled ? colorScheme.primary : colorScheme.onPrimary,
+                  size: 20,
+                );
+              },
+            ),
             const SizedBox(width: CulculSpacing.xxs),
-            _SubtitleToggleButton(bvid: bvid),
+            Consumer(
+              builder: (context, ref, _) {
+                final colorScheme = Theme.of(context).colorScheme;
+                final subtitleState = ref.watch(
+                  subtitleControllerProvider(bvid).select(
+                    (s) => (
+                      isEnabled: s.isEnabled,
+                      hasSubtitles: s.availableSubtitles.isNotEmpty,
+                    ),
+                  ),
+                );
+                if (!subtitleState.hasSubtitles) {
+                  return const SizedBox.shrink();
+                }
+                return Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _ControlButton(
+                      onPressed: () {
+                        ref
+                            .read(subtitleControllerProvider(bvid).notifier)
+                            .toggleSubtitle();
+                      },
+                      icon: subtitleState.isEnabled
+                          ? Icons.closed_caption_rounded
+                          : Icons.closed_caption_off_rounded,
+                      color: subtitleState.isEnabled
+                          ? colorScheme.primary
+                          : colorScheme.onPrimary,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 4),
+                  ],
+                );
+              },
+            ),
           ],
-          _FullscreenToggleButton(onToggleFullscreen: onToggleFullscreen),
+          _ControlButton(
+            onPressed: onToggleFullscreen ?? playerController.toggleFullscreen,
+            icon: isFullscreen ? Icons.fullscreen_exit_rounded : Icons.fullscreen_rounded,
+            size: 26,
+          ),
         ],
-      ),
-    );
-  }
-}
-
-class _PlayPauseControlButton extends ConsumerWidget {
-  const _PlayPauseControlButton();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isPlaying = ref.watch(playerControllerProvider.select((s) => s.isPlaying));
-    final playerController = ref.read(playerControllerProvider.notifier);
-    return _ControlButton(
-      onPressed: playerController.playOrPause,
-      icon: isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-      size: 28,
-    );
-  }
-}
-
-class _PlaybackSpeedButton extends ConsumerWidget {
-  final String bvid;
-
-  const _PlaybackSpeedButton({required this.bvid});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final playbackSpeed = ref.watch(
-      videoDetailControllerProvider(bvid).select((s) => s.playbackSpeed),
-    );
-    final t = Translations.of(context);
-    return _PlayerCapsuleButton(
-      text: formatPlaybackSpeedLabel(playbackSpeed),
-      onTap: () {
-        showPlayerSidePanel(
-          context,
-          QuickSelectionSheet<double>(
-            items: playbackSpeeds,
-            selectedItem: playbackSpeed,
-            labelBuilder: formatPlaybackSpeedLabel,
-            subtitleBuilder: (s) => getPlaybackSpeedDescription(s, t),
-            onSelected: (s) {
-              ref.read(videoDetailControllerProvider(bvid).notifier).setPlaybackSpeed(s);
-            },
-            isBottomSheet: isPlayerBottomSheetLayout(context),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _PlaybackQualityButton extends ConsumerWidget {
-  final String bvid;
-
-  const _PlaybackQualityButton({required this.bvid});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final t = Translations.of(context);
-    final qualityState = ref.watch(
-      videoDetailControllerProvider(bvid).select(
-        (s) => (
-          selectedQuality: s.selectedQuality,
-          availableQualities: s.availableQualities,
-          playUrl: s.playUrl,
-        ),
-      ),
-    );
-    final qualityLabels = buildQualityLabels(qualityState.playUrl, t);
-    return _PlayerCapsuleButton(
-      text: qualityLabels[qualityState.selectedQuality] ?? t.video.quality.auto,
-      onTap: () {
-        showPlayerSidePanel(
-          context,
-          QuickSelectionSheet<int>(
-            items: qualityState.availableQualities,
-            selectedItem: qualityState.selectedQuality,
-            labelBuilder: (q) => qualityLabels[q] ?? t.video.quality.unknown,
-            emptyText: t.video.player.quality_unavailable,
-            onSelected: (q) {
-              ref.read(videoDetailControllerProvider(bvid).notifier).switchQuality(q);
-            },
-            isBottomSheet: isPlayerBottomSheetLayout(context),
-          ),
-        );
-      },
-    );
-  }
-}
-
-class _DanmakuToggleButton extends ConsumerWidget {
-  const _DanmakuToggleButton();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final danmakuEnabled = ref.watch(
-      danmakuSettingsControllerProvider.select((s) => s.isEnabled),
-    );
-    return _ControlButton(
-      onPressed: () {
-        ref.read(danmakuSettingsControllerProvider.notifier).setEnabled(!danmakuEnabled);
-      },
-      icon: danmakuEnabled ? Icons.notes_rounded : Icons.notes_outlined,
-      color: danmakuEnabled ? colorScheme.primary : colorScheme.onPrimary,
-      size: 20,
-    );
-  }
-}
-
-class _SubtitleToggleButton extends ConsumerWidget {
-  final String bvid;
-
-  const _SubtitleToggleButton({required this.bvid});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final subtitleState = ref.watch(
-      subtitleControllerProvider(bvid).select(
-        (s) => (isEnabled: s.isEnabled, hasSubtitles: s.availableSubtitles.isNotEmpty),
-      ),
-    );
-    if (!subtitleState.hasSubtitles) {
-      return const SizedBox.shrink();
-    }
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _ControlButton(
-          onPressed: () {
-            ref.read(subtitleControllerProvider(bvid).notifier).toggleSubtitle();
-          },
-          icon: subtitleState.isEnabled
-              ? Icons.closed_caption_rounded
-              : Icons.closed_caption_off_rounded,
-          color: subtitleState.isEnabled ? colorScheme.primary : colorScheme.onPrimary,
-          size: 20,
-        ),
-        const SizedBox(width: 4),
-      ],
-    );
-  }
-}
-
-class _FullscreenToggleButton extends ConsumerWidget {
-  final VoidCallback? onToggleFullscreen;
-
-  const _FullscreenToggleButton({required this.onToggleFullscreen});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final isFullscreen = ref.watch(
-      playerControllerProvider.select((s) => s.isFullscreen),
-    );
-    final playerController = ref.read(playerControllerProvider.notifier);
-    return _ControlButton(
-      onPressed: onToggleFullscreen ?? playerController.toggleFullscreen,
-      icon: isFullscreen ? Icons.fullscreen_exit_rounded : Icons.fullscreen_rounded,
-      size: 26,
-    );
-  }
-}
-
-class _TimeText extends ConsumerWidget {
-  const _TimeText();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final position = ref.watch(playbackPositionProvider);
-    final duration = ref.watch(playbackDurationProvider);
-
-    return RepaintBoundary(
-      child: Text(
-        '${position.inSeconds.formatDuration} / ${duration.inSeconds.formatDuration}',
-        style: PlayerTheme.timeStyle(
-          Theme.of(context).colorScheme,
-        ).copyWith(fontSize: 10),
       ),
     );
   }

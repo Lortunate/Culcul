@@ -2,15 +2,14 @@ import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/data/pagination/nested_feed_paging_defaults.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
-import 'package:culcul/features/profile/domain/entities/profile_video.dart';
 import 'package:culcul/features/profile/state/user_space_videos_view_model.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
 import 'package:culcul/ui/widgets/media/network_image_prefetch_specs.dart';
-import 'package:culcul/ui/assemblies/feed_cards/video_list_card.dart';
-import 'package:culcul/ui/assemblies/feed_cards/video_list_skeleton.dart';
+import 'package:culcul/ui/widgets/cards/video_list_card.dart';
+import 'package:culcul/ui/widgets/cards/video_list_skeleton.dart';
 import 'package:culcul/ui/widgets/text/icon_text.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -25,10 +24,6 @@ class UserVideoTab extends ConsumerStatefulWidget {
 
 class _UserVideoTabState extends ConsumerState<UserVideoTab>
     with AutomaticKeepAliveClientMixin {
-  static const int _imagePrefetchLimit = 8;
-  static const double _coverLogicalWidth = 160;
-  static const double _coverLogicalHeight = 100;
-
   String _order = 'pubdate'; // pubdate (latest), click (popular), stow (most fav)
   final PaginationLoadGate _loadGate = PaginationLoadGate();
   String? _lastPrefetchKey;
@@ -50,7 +45,13 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
     super.build(context);
     final t = Translations.of(context);
     final videosAsync = ref.watch(userSpaceVideosProvider(widget.mid, order: _order));
-    final colorScheme = Theme.of(context).colorScheme;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final sortOptions = <({String label, String order})>[
+      (label: t.search.filter.sort_newest, order: 'pubdate'),
+      (label: t.search.filter.sort_click, order: 'click'),
+      (label: t.search.filter.sort_favorite, order: 'stow'),
+    ];
 
     return NotificationListener<ScrollNotification>(
       onNotification: (notification) {
@@ -79,42 +80,50 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
           ),
           SliverToBoxAdapter(
             child: Container(
-              color: Theme.of(context).scaffoldBackgroundColor,
+              color: theme.scaffoldBackgroundColor,
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
               child: Row(
                 children: [
-                  _SortChip(
-                    label: t.search.filter.sort_newest,
-                    selected: _order == 'pubdate',
-                    onSelected: (val) {
-                      if (val) {
+                  for (var index = 0; index < sortOptions.length; index++) ...[
+                    if (index > 0) const SizedBox(width: 12),
+                    GestureDetector(
+                      onTap: () {
+                        final order = sortOptions[index].order;
+                        if (_order == order) {
+                          return;
+                        }
                         _loadGate.reset();
-                        setState(() => _order = 'pubdate');
-                      }
-                    },
-                  ),
-                  const SizedBox(width: 12),
-                  _SortChip(
-                    label: t.search.filter.sort_click,
-                    selected: _order == 'click',
-                    onSelected: (val) {
-                      if (val) {
-                        _loadGate.reset();
-                        setState(() => _order = 'click');
-                      }
-                    },
-                  ),
-                  const SizedBox(width: 12),
-                  _SortChip(
-                    label: t.search.filter.sort_favorite,
-                    selected: _order == 'stow',
-                    onSelected: (val) {
-                      if (val) {
-                        _loadGate.reset();
-                        setState(() => _order = 'stow');
-                      }
-                    },
-                  ),
+                        setState(() => _order = order);
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: _order == sortOptions[index].order
+                              ? colorScheme.primary.withValues(alpha: 0.1)
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: _order == sortOptions[index].order
+                                ? Colors.transparent
+                                : colorScheme.outlineVariant.withValues(alpha: 0.5),
+                          ),
+                        ),
+                        child: Text(
+                          sortOptions[index].label,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: _order == sortOptions[index].order
+                                ? colorScheme.primary
+                                : colorScheme.onSurfaceVariant,
+                            fontWeight: _order == sortOptions[index].order
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -126,7 +135,35 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
                   child: Center(child: Text(t.common.no_content)),
                 );
               }
-              _scheduleCoverPrefetch(context, videos);
+              final pixelRatio = MediaQuery.devicePixelRatioOf(context);
+              final specs = buildNetworkImagePrefetchSpecs(
+                videos,
+                count: 8,
+                logicalWidth: 160,
+                logicalHeight: 100,
+                pixelRatio: pixelRatio,
+                imageUrl: (video) => video.pic,
+              );
+              final prefetchKey = [
+                widget.mid,
+                _order,
+                pixelRatio.toStringAsFixed(2),
+                for (final spec in specs) spec.url,
+              ].join('|');
+              if (_lastPrefetchKey != prefetchKey) {
+                _lastPrefetchKey = prefetchKey;
+
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (!mounted || _lastPrefetchKey != prefetchKey) {
+                    return;
+                  }
+                  AppNetworkImagePrefetcher.prefetch(
+                    context,
+                    specs: specs,
+                    limit: specs.length,
+                  );
+                });
+              }
               final showLoadingFooter = videosAsync.isLoading && videos.isNotEmpty;
               return SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
@@ -198,80 +235,6 @@ class _UserVideoTabState extends ConsumerState<UserVideoTab>
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 24)),
         ],
-      ),
-    );
-  }
-
-  void _scheduleCoverPrefetch(BuildContext context, List<ProfileVideo> videos) {
-    final pixelRatio = MediaQuery.devicePixelRatioOf(context);
-    final specs = buildNetworkImagePrefetchSpecs(
-      videos,
-      count: _imagePrefetchLimit,
-      logicalWidth: _coverLogicalWidth,
-      logicalHeight: _coverLogicalHeight,
-      pixelRatio: pixelRatio,
-      imageUrl: (video) => video.pic,
-    );
-    final prefetchKey = [
-      widget.mid,
-      _order,
-      pixelRatio.toStringAsFixed(2),
-      for (final spec in specs) spec.url,
-    ].join('|');
-    if (_lastPrefetchKey == prefetchKey) {
-      return;
-    }
-    _lastPrefetchKey = prefetchKey;
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || _lastPrefetchKey != prefetchKey) {
-        return;
-      }
-      AppNetworkImagePrefetcher.prefetch(context, specs: specs, limit: specs.length);
-    });
-  }
-}
-
-class _SortChip extends StatelessWidget {
-  const _SortChip({
-    required this.label,
-    required this.selected,
-    required this.onSelected,
-  });
-
-  final String label;
-  final bool selected;
-  final ValueChanged<bool> onSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return GestureDetector(
-      onTap: () => onSelected(!selected),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-        decoration: BoxDecoration(
-          color: selected
-              ? colorScheme.primary.withValues(alpha: 0.1)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: selected
-                ? Colors.transparent
-                : colorScheme.outlineVariant.withValues(alpha: 0.5),
-          ),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            color: selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
-          ),
-        ),
       ),
     );
   }

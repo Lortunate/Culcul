@@ -3,7 +3,6 @@ import 'dart:developer' as developer;
 
 import 'package:audio_service/audio_service.dart';
 import 'package:audio_session/audio_session.dart';
-import 'package:culcul/core/runtime/media_runtime_initializer.dart';
 import 'package:culcul/core/services/audio_playback_state_gate.dart';
 import 'package:culcul/core/services/audio_service_initializer.dart';
 import 'package:flutter/foundation.dart';
@@ -14,7 +13,7 @@ part 'audio_handler.g.dart';
 
 @Riverpod(keepAlive: true)
 CilixiliAudioHandler audioHandler(Ref ref) {
-  MediaRuntimeInitializer.instance.ensureInitialized();
+  MediaKit.ensureInitialized();
   final handler = CilixiliAudioHandler.shared;
   unawaited(initializeCulculAudioService(builder: () => handler));
   ref.onDispose(() => unawaited(handler.dispose()));
@@ -120,28 +119,27 @@ class CilixiliAudioHandler extends BaseAudioHandler {
     _isDisposed = true;
     final subscriptions = List<StreamSubscription<dynamic>>.of(_subscriptions);
     _subscriptions.clear();
-    _disposeFuture = _disposeResources(subscriptions);
-    return _disposeFuture!;
-  }
-
-  Future<void> _disposeResources(List<StreamSubscription<dynamic>> subscriptions) async {
-    try {
-      await Future.wait<void>([
-        for (final sub in subscriptions) sub.cancel(),
-        player.dispose(),
-      ]);
-    } catch (error, stackTrace) {
-      developer.log(
-        'audio_handler_dispose_failed',
-        name: _loggerName,
-        error: error,
-        stackTrace: stackTrace,
-      );
-    } finally {
-      if (identical(_shared, this)) {
-        _shared = null;
+    final disposeFuture = () async {
+      try {
+        await Future.wait<void>([
+          for (final sub in subscriptions) sub.cancel(),
+          player.dispose(),
+        ]);
+      } catch (error, stackTrace) {
+        developer.log(
+          'audio_handler_dispose_failed',
+          name: _loggerName,
+          error: error,
+          stackTrace: stackTrace,
+        );
+      } finally {
+        if (identical(_shared, this)) {
+          _shared = null;
+        }
       }
-    }
+    }();
+    _disposeFuture = disposeFuture;
+    return disposeFuture;
   }
 
   Future<void> _initSession() async {

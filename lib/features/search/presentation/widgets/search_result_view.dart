@@ -6,20 +6,12 @@ import 'package:culcul/features/search/application/search_result.dart';
 import 'package:culcul/features/search/data/search_repository_impl.dart';
 import 'package:culcul/features/search/presentation/widgets/search_result_list.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/assemblies/feed_cards/video_list_skeleton.dart';
+import 'package:culcul/ui/widgets/cards/video_list_skeleton.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/layout/app_tab_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-const _searchTypeConfigs = <SearchType>[
-  SearchType.all,
-  SearchType.video,
-  SearchType.mediaBangumi,
-  SearchType.biliUser,
-  SearchType.article,
-];
 
 final _searchResultProvider = AsyncNotifierProvider.autoDispose
     .family<_SearchResult, SearchResultPage?, SearchQuery>(_SearchResult.new);
@@ -95,26 +87,26 @@ class SearchResultView extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final t = Translations.of(context);
-    final searchTabs = [
-      t.search.tabs.all,
-      t.search.tabs.video,
-      t.search.tabs.anime,
-      t.search.tabs.user,
-      t.search.tabs.article,
+    final searchTabConfigs = [
+      (label: t.search.tabs.all, type: SearchType.all),
+      (label: t.search.tabs.video, type: SearchType.video),
+      (label: t.search.tabs.anime, type: SearchType.mediaBangumi),
+      (label: t.search.tabs.user, type: SearchType.biliUser),
+      (label: t.search.tabs.article, type: SearchType.article),
     ];
 
     return DefaultTabController(
-      length: searchTabs.length,
+      length: searchTabConfigs.length,
       child: Column(
         children: [
-          AppTabBar(tabs: searchTabs),
+          AppTabBar(tabs: searchTabConfigs.map((config) => config.label).toList()),
           Expanded(
             child: TabBarView(
               children: [
-                for (final searchType in _searchTypeConfigs)
+                for (final config in searchTabConfigs)
                   _SearchResultTab(
                     keyword: keyword,
-                    searchType: searchType,
+                    searchType: config.type,
                     onOpenVideo: onOpenVideo,
                     onOpenUser: onOpenUser,
                     onOpenTopic: onOpenTopic,
@@ -156,227 +148,163 @@ class _SearchResultTab extends HookConsumerWidget {
       order: order.value,
       duration: duration.value,
     );
-
-    return Column(
-      children: [
-        if (showFilter)
-          _SearchFilterBar(
-            order: order.value,
-            duration: duration.value,
-            onOrderChanged: (v) => order.value = v,
-            onDurationChanged: (v) => duration.value = v,
-            showDuration: searchType.supportsDuration,
-          ),
-        Expanded(
-          child: _SearchResultPane(
-            query: query,
-            onOpenVideo: onOpenVideo,
-            onOpenUser: onOpenUser,
-            onOpenTopic: onOpenTopic,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _SearchResultPane extends ConsumerWidget {
-  final SearchQuery query;
-  final ValueChanged<String> onOpenVideo;
-  final ValueChanged<int> onOpenUser;
-  final void Function(int topicId, String topicName) onOpenTopic;
-
-  const _SearchResultPane({
-    required this.query,
-    required this.onOpenVideo,
-    required this.onOpenUser,
-    required this.onOpenTopic,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
     final provider = _searchResultProvider(query);
     final searchResultAsync = ref.watch(provider);
     final notifier = ref.read(provider.notifier);
 
-    return searchResultAsync.when(
-      data: (data) {
-        final items = data?.items ?? [];
-        final hasMore = data != null && data.page < data.numPages;
+    Widget? filterBar;
+    if (showFilter) {
+      final theme = Theme.of(context);
+      final colorScheme = theme.colorScheme;
+      final t = Translations.of(context);
+      final orderFilters = <({String label, SearchOrder order})>[
+        (label: t.search.filter.sort_default, order: SearchOrder.totalrank),
+        (label: t.search.filter.sort_newest, order: SearchOrder.pubdate),
+        (label: t.search.filter.sort_click, order: SearchOrder.click),
+        (label: t.search.filter.sort_danmaku, order: SearchOrder.dm),
+        (label: t.search.filter.sort_favorite, order: SearchOrder.stow),
+      ];
+      final durationFilters = <({String label, SearchDuration duration})>[
+        (label: t.search.filter.duration_all, duration: SearchDuration.all),
+        (label: t.search.filter.duration_short, duration: SearchDuration.short),
+        (label: t.search.filter.duration_medium, duration: SearchDuration.medium),
+        (label: t.search.filter.duration_long, duration: SearchDuration.long),
+        (label: t.search.filter.duration_extra_long, duration: SearchDuration.extraLong),
+      ];
 
-        return SearchResultList(
-          items: items,
-          hasMore: hasMore,
-          isLoadingMore: searchResultAsync.isLoading && !searchResultAsync.isRefreshing,
-          onLoadMore: notifier.fetchMore,
-          onOpenVideo: onOpenVideo,
-          onOpenUser: onOpenUser,
-          onOpenTopic: onOpenTopic,
-        );
-      },
-      loading: () => ListView.separated(
-        padding: const EdgeInsets.all(12),
-        itemCount: 10,
-        separatorBuilder: (context, index) => const SizedBox(height: 16),
-        itemBuilder: (context, index) {
-          return const VideoListSkeleton(
-            padding: EdgeInsets.zero,
-            thumbnailWidth: 177,
-            aspectRatio: 16 / 9,
-          );
-        },
-      ),
-      error: (error, stack) => AppErrorWidget(
-        error: error,
-        stackTrace: stack,
-        onRetry: () => ref.refresh(provider),
-      ),
-    );
-  }
-}
-
-class _SearchFilterBar extends StatelessWidget {
-  final SearchOrder order;
-  final SearchDuration duration;
-  final ValueChanged<SearchOrder> onOrderChanged;
-  final ValueChanged<SearchDuration> onDurationChanged;
-  final bool showDuration;
-
-  const _SearchFilterBar({
-    required this.order,
-    required this.duration,
-    required this.onOrderChanged,
-    required this.onDurationChanged,
-    this.showDuration = true,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final t = Translations.of(context);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        border: Border(
-          bottom: BorderSide(
-            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
-            width: 0.5,
-          ),
-        ),
-      ),
-      child: Column(
-        children: [
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                _FilterChip(
-                  label: t.search.filter.sort_default,
-                  selected: order == SearchOrder.totalrank,
-                  onSelected: (_) => onOrderChanged(SearchOrder.totalrank),
-                ),
-                _FilterChip(
-                  label: t.search.filter.sort_newest,
-                  selected: order == SearchOrder.pubdate,
-                  onSelected: (_) => onOrderChanged(SearchOrder.pubdate),
-                ),
-                _FilterChip(
-                  label: t.search.filter.sort_click,
-                  selected: order == SearchOrder.click,
-                  onSelected: (_) => onOrderChanged(SearchOrder.click),
-                ),
-                _FilterChip(
-                  label: t.search.filter.sort_danmaku,
-                  selected: order == SearchOrder.dm,
-                  onSelected: (_) => onOrderChanged(SearchOrder.dm),
-                ),
-                _FilterChip(
-                  label: t.search.filter.sort_favorite,
-                  selected: order == SearchOrder.stow,
-                  onSelected: (_) => onOrderChanged(SearchOrder.stow),
-                ),
-              ],
+      filterBar = Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          border: Border(
+            bottom: BorderSide(
+              color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+              width: 0.5,
             ),
           ),
-          if (showDuration) ...[
-            const SizedBox(height: 8),
+        ),
+        child: Column(
+          children: [
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  _FilterChip(
-                    label: t.search.filter.duration_all,
-                    selected: duration == SearchDuration.all,
-                    onSelected: (_) => onDurationChanged(SearchDuration.all),
-                  ),
-                  _FilterChip(
-                    label: t.search.filter.duration_short,
-                    selected: duration == SearchDuration.short,
-                    onSelected: (_) => onDurationChanged(SearchDuration.short),
-                  ),
-                  _FilterChip(
-                    label: t.search.filter.duration_medium,
-                    selected: duration == SearchDuration.medium,
-                    onSelected: (_) => onDurationChanged(SearchDuration.medium),
-                  ),
-                  _FilterChip(
-                    label: t.search.filter.duration_long,
-                    selected: duration == SearchDuration.long,
-                    onSelected: (_) => onDurationChanged(SearchDuration.long),
-                  ),
-                  _FilterChip(
-                    label: t.search.filter.duration_extra_long,
-                    selected: duration == SearchDuration.extraLong,
-                    onSelected: (_) => onDurationChanged(SearchDuration.extraLong),
-                  ),
+                  for (var index = 0; index < orderFilters.length; index++)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ChoiceChip(
+                        label: Text(orderFilters[index].label),
+                        selected: order.value == orderFilters[index].order,
+                        onSelected: (_) => order.value = orderFilters[index].order,
+                        labelStyle: theme.textTheme.labelSmall?.copyWith(
+                          color: order.value == orderFilters[index].order
+                              ? colorScheme.primary
+                              : colorScheme.onSurfaceVariant,
+                          fontSize: 12,
+                          fontWeight: order.value == orderFilters[index].order
+                              ? FontWeight.w600
+                              : FontWeight.normal,
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
+                        backgroundColor: Colors.transparent,
+                        selectedColor: colorScheme.primaryContainer.withValues(
+                          alpha: 0.4,
+                        ),
+                        side: BorderSide.none,
+                        showCheckmark: false,
+                      ),
+                    ),
                 ],
               ),
             ),
+            if (searchType == SearchType.video) ...[
+              const SizedBox(height: 8),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    for (var index = 0; index < durationFilters.length; index++)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: ChoiceChip(
+                          label: Text(durationFilters[index].label),
+                          selected: duration.value == durationFilters[index].duration,
+                          onSelected: (_) =>
+                              duration.value = durationFilters[index].duration,
+                          labelStyle: theme.textTheme.labelSmall?.copyWith(
+                            color: duration.value == durationFilters[index].duration
+                                ? colorScheme.primary
+                                : colorScheme.onSurfaceVariant,
+                            fontSize: 12,
+                            fontWeight: duration.value == durationFilters[index].duration
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: const VisualDensity(
+                            horizontal: -4,
+                            vertical: -4,
+                          ),
+                          backgroundColor: Colors.transparent,
+                          selectedColor: colorScheme.primaryContainer.withValues(
+                            alpha: 0.4,
+                          ),
+                          side: BorderSide.none,
+                          showCheckmark: false,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
           ],
-        ],
-      ),
-    );
-  }
-}
-
-class _FilterChip extends StatelessWidget {
-  final String label;
-  final bool selected;
-  final ValueChanged<bool> onSelected;
-
-  const _FilterChip({
-    required this.label,
-    required this.selected,
-    required this.onSelected,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: ChoiceChip(
-        label: Text(label),
-        selected: selected,
-        onSelected: onSelected,
-        labelStyle: theme.textTheme.labelSmall?.copyWith(
-          color: selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
-          fontSize: 12,
-          fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 4),
-        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        visualDensity: const VisualDensity(horizontal: -4, vertical: -4),
-        backgroundColor: Colors.transparent,
-        selectedColor: colorScheme.primaryContainer.withValues(alpha: 0.4),
-        side: BorderSide.none,
-        showCheckmark: false,
-      ),
+      );
+    }
+
+    return Column(
+      children: [
+        ...(filterBar == null ? const <Widget>[] : [filterBar]),
+        Expanded(
+          child: searchResultAsync.when(
+            data: (data) {
+              final items = data?.items ?? [];
+              final hasMore = data != null && data.page < data.numPages;
+
+              return SearchResultList(
+                items: items,
+                hasMore: hasMore,
+                isLoadingMore:
+                    searchResultAsync.isLoading && !searchResultAsync.isRefreshing,
+                onLoadMore: notifier.fetchMore,
+                onOpenVideo: onOpenVideo,
+                onOpenUser: onOpenUser,
+                onOpenTopic: onOpenTopic,
+              );
+            },
+            loading: () => ListView.separated(
+              padding: const EdgeInsets.all(12),
+              itemCount: 10,
+              separatorBuilder: (context, index) => const SizedBox(height: 16),
+              itemBuilder: (context, index) {
+                return const VideoListSkeleton(
+                  padding: EdgeInsets.zero,
+                  thumbnailWidth: 177,
+                  aspectRatio: 16 / 9,
+                );
+              },
+            ),
+            error: (error, stack) => AppErrorWidget(
+              error: error,
+              stackTrace: stack,
+              onRetry: () => ref.refresh(provider),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

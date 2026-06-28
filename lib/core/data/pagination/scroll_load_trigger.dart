@@ -9,41 +9,6 @@ class ScrollLoadTrigger {
   const ScrollLoadTrigger._();
   static int _sessionSeed = 0;
 
-  static double resolveExtentAfterThreshold(
-    ScrollMetrics metrics, {
-    required double minThreshold,
-    double viewportFactor = 1.0,
-    double maxThreshold = 1200,
-  }) {
-    final viewportBased = metrics.viewportDimension * viewportFactor;
-    final threshold = viewportBased > minThreshold ? viewportBased : minThreshold;
-    return threshold > maxThreshold ? maxThreshold : threshold;
-  }
-
-  static bool shouldTriggerByExtentAfter(
-    ScrollMetrics metrics, {
-    required double threshold,
-  }) {
-    if (metrics.axis != Axis.vertical) {
-      return false;
-    }
-    return metrics.extentAfter <= threshold;
-  }
-
-  static bool shouldTriggerOnScrollNotification(
-    ScrollNotification notification, {
-    required double extentAfterThreshold,
-    bool onlyOnScrollEnd = true,
-  }) {
-    if (onlyOnScrollEnd && notification is! ScrollEndNotification) {
-      return false;
-    }
-    return shouldTriggerByExtentAfter(
-      notification.metrics,
-      threshold: extentAfterThreshold,
-    );
-  }
-
   static bool triggerOnScrollNotificationWithGate({
     required ScrollNotification notification,
     required double extentAfterThreshold,
@@ -58,19 +23,19 @@ class ScrollLoadTrigger {
     double? viewportFactor,
     double maxThreshold = 1200,
   }) {
-    final effectiveThreshold = viewportFactor == null
-        ? extentAfterThreshold
-        : resolveExtentAfterThreshold(
-            notification.metrics,
-            minThreshold: extentAfterThreshold,
-            viewportFactor: viewportFactor,
-            maxThreshold: maxThreshold,
-          );
-    if (!shouldTriggerOnScrollNotification(
-      notification,
-      extentAfterThreshold: effectiveThreshold,
-      onlyOnScrollEnd: onlyOnScrollEnd,
-    )) {
+    var effectiveThreshold = extentAfterThreshold;
+    if (viewportFactor != null) {
+      final viewportBased = notification.metrics.viewportDimension * viewportFactor;
+      final threshold = viewportBased > extentAfterThreshold
+          ? viewportBased
+          : extentAfterThreshold;
+      effectiveThreshold = threshold > maxThreshold ? maxThreshold : threshold;
+    }
+    if (onlyOnScrollEnd && notification is! ScrollEndNotification) {
+      return false;
+    }
+    if (notification.metrics.axis != Axis.vertical ||
+        notification.metrics.extentAfter > effectiveThreshold) {
       return false;
     }
 

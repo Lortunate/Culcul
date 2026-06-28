@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart' show listEquals;
+import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart' show listEquals, mapEquals;
 
 final class LiveHistoryDanmakuModel {
   LiveHistoryDanmakuModel({
@@ -61,6 +62,38 @@ final class LiveDanmakuItem {
   }) : checkInfo = Map<String, dynamic>.unmodifiable(checkInfo);
 
   factory LiveDanmakuItem.fromJson(Map<String, dynamic> json) {
+    final medalRaw = json['medal'];
+    final medal = medalRaw is List && medalRaw.length >= 2
+        ? LiveDanmakuMedal(
+            level: medalRaw.first is num ? (medalRaw.first as num).toInt() : 0,
+            name: medalRaw[1]?.toString() ?? '',
+            anchorRoomId: medalRaw.length > 3 && medalRaw[3] is num
+                ? (medalRaw[3] as num).toInt()
+                : 0,
+            color: medalRaw.length > 4 && medalRaw[4] is num
+                ? (medalRaw[4] as num).toInt()
+                : 0,
+          )
+        : null;
+
+    final titleRaw = json['title'];
+    final title = titleRaw is List && titleRaw.isNotEmpty
+        ? LiveDanmakuTitle(
+            title: titleRaw.first?.toString() ?? '',
+            skin: titleRaw.length > 1 ? titleRaw[1]?.toString() ?? '' : '',
+          )
+        : null;
+
+    final userLevelRaw = json['user_level'];
+    final userLevel = userLevelRaw is List && userLevelRaw.isNotEmpty
+        ? LiveDanmakuUserLevel(
+            level: userLevelRaw.first is num ? (userLevelRaw.first as num).toInt() : 0,
+            rank: userLevelRaw.length > 1 && userLevelRaw[1] is num
+                ? (userLevelRaw[1] as num).toInt()
+                : 0,
+          )
+        : null;
+
     return LiveDanmakuItem(
       text: json['text'] as String,
       nickname: json['nickname'] as String,
@@ -70,9 +103,9 @@ final class LiveDanmakuItem {
       isadmin: (json['isadmin'] as num?)?.toInt() ?? 0,
       vip: (json['vip'] as num?)?.toInt() ?? 0,
       svip: (json['svip'] as num?)?.toInt() ?? 0,
-      medal: _medalFromJson(json['medal']),
-      title: _titleFromJson(json['title']),
-      userLevel: _userLevelFromJson(json['user_level']),
+      medal: medal,
+      title: title,
+      userLevel: userLevel,
       rank: (json['rank'] as num?)?.toInt() ?? 0,
       teamid: (json['teamid'] as num?)?.toInt() ?? 0,
       rnd: json['rnd'] as String? ?? '',
@@ -124,7 +157,7 @@ final class LiveDanmakuItem {
             userTitle == other.userTitle &&
             guardLevel == other.guardLevel &&
             bubble == other.bubble &&
-            _mapEquals(checkInfo, other.checkInfo);
+            mapEquals(checkInfo, other.checkInfo);
   }
 
   @override
@@ -148,7 +181,7 @@ final class LiveDanmakuItem {
       userTitle,
       guardLevel,
       bubble,
-      _mapHash(checkInfo),
+      const MapEquality<String, dynamic>().hash(checkInfo),
     );
   }
 
@@ -257,49 +290,4 @@ final class LiveDanmakuUserLevel {
 
   @override
   String toString() => 'LiveDanmakuUserLevel(level: $level, rank: $rank)';
-}
-
-LiveDanmakuMedal? _medalFromJson(dynamic raw) {
-  if (raw is! List || raw.length < 2) return null;
-  return LiveDanmakuMedal(
-    level: raw.first is num ? (raw.first as num).toInt() : 0,
-    name: raw[1]?.toString() ?? '',
-    anchorRoomId: raw.length > 3 && raw[3] is num ? (raw[3] as num).toInt() : 0,
-    color: raw.length > 4 && raw[4] is num ? (raw[4] as num).toInt() : 0,
-  );
-}
-
-LiveDanmakuTitle? _titleFromJson(dynamic raw) {
-  if (raw is! List || raw.isEmpty) return null;
-  return LiveDanmakuTitle(
-    title: raw.first?.toString() ?? '',
-    skin: raw.length > 1 ? raw[1]?.toString() ?? '' : '',
-  );
-}
-
-LiveDanmakuUserLevel? _userLevelFromJson(dynamic raw) {
-  if (raw is! List || raw.isEmpty) return null;
-  return LiveDanmakuUserLevel(
-    level: raw.first is num ? (raw.first as num).toInt() : 0,
-    rank: raw.length > 1 && raw[1] is num ? (raw[1] as num).toInt() : 0,
-  );
-}
-
-bool _mapEquals<K, V>(Map<K, V> a, Map<K, V> b) {
-  if (identical(a, b)) return true;
-  if (a.length != b.length) return false;
-  for (final entry in a.entries) {
-    if (!b.containsKey(entry.key) || b[entry.key] != entry.value) {
-      return false;
-    }
-  }
-  return true;
-}
-
-int _mapHash<K, V>(Map<K, V> map) {
-  var hash = 0;
-  for (final entry in map.entries) {
-    hash ^= Object.hash(entry.key, entry.value);
-  }
-  return hash;
 }

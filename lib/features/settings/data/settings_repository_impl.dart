@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:culcul/core/bootstrap/providers/storage_provider.dart';
 import 'package:culcul/core/storage/storage_keys.dart';
-import 'package:culcul/features/settings/domain/entities/app_theme_preference.dart';
+import 'package:culcul/features/settings/models/app_theme_preference.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';

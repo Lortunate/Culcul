@@ -20,16 +20,46 @@ VoidCallback useVideoOrientation(
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     } else {
-      final dimensions = _getVideoDimensions(
-        videoDetail,
-        currentCid,
-        playerController.player.state.width,
-        playerController.player.state.height,
-      );
+      var width = 0;
+      var height = 0;
+      var rotate = 0;
 
-      final width = dimensions.width;
-      final height = dimensions.height;
-      final isLandscape = (width == 0 || height == 0) || (width >= height);
+      if (videoDetail != null) {
+        VideoPartViewData? currentPage;
+        for (final page in videoDetail.pages) {
+          if (page.cid == currentCid) {
+            currentPage = page;
+            break;
+          }
+        }
+
+        if (currentPage != null &&
+            currentPage.dimension.width > 0 &&
+            currentPage.dimension.height > 0) {
+          width = currentPage.dimension.width;
+          height = currentPage.dimension.height;
+          rotate = currentPage.dimension.rotate;
+        } else if (videoDetail.dimension.width > 0 && videoDetail.dimension.height > 0) {
+          width = videoDetail.dimension.width;
+          height = videoDetail.dimension.height;
+          rotate = videoDetail.dimension.rotate;
+        }
+      }
+
+      if (width == 0 || height == 0) {
+        width = playerController.player.state.width ?? 0;
+        height = playerController.player.state.height ?? 0;
+        rotate = 0;
+      }
+
+      final dimensions = normalizeVideoDimension(
+        width: width,
+        height: height,
+        rotate: rotate,
+      );
+      final isLandscape =
+          (dimensions.width == 0 || dimensions.height == 0) ||
+          (dimensions.width >= dimensions.height);
 
       SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
@@ -57,50 +87,4 @@ VoidCallback useVideoOrientation(
   }, const []);
 
   return toggleFullscreen;
-}
-
-({int width, int height}) _getVideoDimensions(
-  VideoDetailViewData? videoDetail,
-  int currentCid,
-  int? playerWidth,
-  int? playerHeight,
-) {
-  int width = 0;
-  int height = 0;
-  int rotate = 0;
-
-  if (videoDetail != null) {
-    VideoPartViewData? currentPage;
-    for (final page in videoDetail.pages) {
-      if (page.cid == currentCid) {
-        currentPage = page;
-        break;
-      }
-    }
-
-    if (currentPage != null &&
-        currentPage.dimension.width > 0 &&
-        currentPage.dimension.height > 0) {
-      width = currentPage.dimension.width;
-      height = currentPage.dimension.height;
-      rotate = currentPage.dimension.rotate;
-    } else if (videoDetail.dimension.width > 0 && videoDetail.dimension.height > 0) {
-      width = videoDetail.dimension.width;
-      height = videoDetail.dimension.height;
-      rotate = videoDetail.dimension.rotate;
-    }
-  }
-
-  if (width == 0 || height == 0) {
-    width = playerWidth ?? 0;
-    height = playerHeight ?? 0;
-    rotate = 0;
-  }
-
-  final normalized = normalizeVideoDimension(
-    width: width,
-    height: height,
-    rotate: rotate,
-  );
-  return (width: normalized.width, height: normalized.height);
 }

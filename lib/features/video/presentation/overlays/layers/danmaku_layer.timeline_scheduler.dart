@@ -58,8 +58,17 @@ void useDanmakuPlaybackScheduler({
               return DanmakuItem(
                 e.content,
                 time: e.progress,
-                color: _toOpaqueDanmakuColor(e.color),
-                type: _toDanmakuItemType(e.mode),
+                color: Color.fromARGB(
+                  255,
+                  (e.color >> 16) & 0xFF,
+                  (e.color >> 8) & 0xFF,
+                  e.color & 0xFF,
+                ),
+                type: switch (e.mode) {
+                  4 => DanmakuItemType.bottom,
+                  5 => DanmakuItemType.top,
+                  _ => DanmakuItemType.scroll,
+                },
               );
             }).toList();
             timeline.appendItems(newItems, currentPosMs);
@@ -118,11 +127,10 @@ void useDanmakuPlaybackScheduler({
             nextMaskPath = cachedMaskPath;
           } else {
             lastMaskBucket = maskBucket;
-            nextMaskPath = _resolveMaskPath(
-              settings: activeSettings,
-              maskResultProvider: activeMaskResult,
-              currentPosMs: currentPosMs,
-            );
+            final masks = activeMaskResult.hasValue
+                ? activeMaskResult.value?.dataOrNull
+                : null;
+            nextMaskPath = masks?.getPath(currentPosMs);
             cachedMaskPath = nextMaskPath;
           }
         } else {

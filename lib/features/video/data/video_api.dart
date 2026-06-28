@@ -1,5 +1,5 @@
 import 'package:culcul/core/constants/api_constants.dart';
-import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/core/models/video_model_contract.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/features/video/application/models/play_url.dart';
 import 'package:culcul/features/video/data/dtos/video_detail_dto.dart';

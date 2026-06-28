@@ -120,7 +120,13 @@ class NotificationOutbox extends Table {
 )
 class NotificationLocalDatabase extends _$NotificationLocalDatabase {
   NotificationLocalDatabase({QueryExecutor? executor})
-    : super(executor ?? _openConnection());
+    : super(
+        executor ??
+            driftDatabase(
+              name: 'notification.sqlite',
+              native: const DriftNativeOptions(),
+            ),
+      );
 
   @override
   int get schemaVersion => 2;
@@ -184,10 +190,6 @@ class NotificationLocalDatabase extends _$NotificationLocalDatabase {
       );
     },
   );
-}
-
-QueryExecutor _openConnection() {
-  return driftDatabase(name: 'notification.sqlite', native: const DriftNativeOptions());
 }
 
 @Riverpod(keepAlive: true)

@@ -1,6 +1,6 @@
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/core/contracts/live_room_summary_contract.dart';
-import 'package:culcul/ui/theme/culcul_colors.dart';
+import 'package:culcul/core/models/live_room_summary_contract.dart';
+import 'package:culcul/core/theme/culcul_colors.dart';
 import 'package:culcul/ui/widgets/users/app_avatar.dart';
 import 'package:culcul/ui/widgets/cards/app_card_container.dart';
 import 'package:culcul/ui/widgets/media/app_network_image.dart';

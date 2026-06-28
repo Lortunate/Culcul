@@ -1,11 +1,11 @@
 import 'package:culcul/core/feedback/app_feedback.dart';
-import 'package:culcul/core/utils/share_utils.dart';
-import 'package:culcul/features/profile/domain/entities/profile_user.dart';
+import 'package:culcul/core/theme/culcul_tokens.dart';
+import 'package:culcul/features/profile/models/profile_user.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/widgets/overlays/app_bottom_sheet.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 
 class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
   final ProfileUser? profile;
@@ -43,6 +43,9 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
         final Color iconBackgroundColor = isScrolled
             ? Colors.transparent
             : colorScheme.scrim.withValues(alpha: 0.3);
+        final iconButtonStyle = IconButton.styleFrom(
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        );
 
         final SystemUiOverlayStyle overlayStyle = isScrolled
             ? (theme.brightness == Brightness.dark
@@ -69,12 +72,18 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
             child: Row(
               children: [
                 const SizedBox(width: 4),
-                _buildIconButton(
-                  context,
-                  icon: Icons.arrow_back,
-                  color: contentColor,
-                  backgroundColor: iconBackgroundColor,
-                  onPressed: () => Navigator.of(context).pop(),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: iconBackgroundColor,
+                  ),
+                  child: IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: Icon(Icons.arrow_back, color: contentColor, size: 22),
+                    constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                    style: iconButtonStyle,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -88,61 +97,85 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                _buildIconButton(
-                  context,
-                  icon: Icons.search,
-                  color: contentColor,
-                  backgroundColor: iconBackgroundColor,
-                  onPressed: () {
-                    context.showAppFeedback(t.profile.space_search_coming_soon);
-                  },
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: iconBackgroundColor,
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      context.showAppFeedback(t.profile.space_search_coming_soon);
+                    },
+                    icon: Icon(Icons.search, color: contentColor, size: 22),
+                    constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                    style: iconButtonStyle,
+                  ),
                 ),
-                _buildIconButton(
-                  context,
-                  icon: Icons.more_vert,
-                  color: contentColor,
-                  backgroundColor: iconBackgroundColor,
-                  onPressed: () {
-                    showAppModalBottomSheet(
-                      context: context,
-                      builder: (context) => Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ListTile(
-                            leading: const Icon(Icons.share_outlined),
-                            title: Text(t.actions.share),
-                            onTap: () {
-                              Navigator.pop(context);
-                              if (profile != null) {
-                                shareUser(profile!.id, profile!.username);
-                              }
-                            },
-                          ),
-                          ListTile(
-                            leading: const Icon(Icons.block_outlined),
-                            title: Text(t.profile.menu.blacklist),
-                            onTap: () {
-                              Navigator.pop(context);
-                              context.showAppFeedback(
-                                t.common.coming_soon(tab: t.profile.menu.blacklist),
-                              );
-                            },
-                          ),
-                          ListTile(
-                            leading: const Icon(Icons.report_gmailerrorred_outlined),
-                            title: Text(t.profile.menu.report),
-                            onTap: () {
-                              Navigator.pop(context);
-                              context.showAppFeedback(
-                                t.common.coming_soon(tab: t.profile.menu.report),
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-                      ),
-                    );
-                  },
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: iconBackgroundColor,
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      showModalBottomSheet<void>(
+                        context: context,
+                        backgroundColor: colorScheme.surface,
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(top: CulculRadius.radiusLg),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        builder: (context) => Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ListTile(
+                              leading: const Icon(Icons.share_outlined),
+                              title: Text(t.actions.share),
+                              onTap: () {
+                                Navigator.pop(context);
+                                if (profile != null) {
+                                  final url = 'https://space.bilibili.com/${profile!.id}';
+                                  SharePlus.instance.share(
+                                    ShareParams(
+                                      text:
+                                          'Check out ${profile!.username} on Bilibili!\n$url',
+                                      subject: profile!.username,
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                            ListTile(
+                              leading: const Icon(Icons.block_outlined),
+                              title: Text(t.profile.menu.blacklist),
+                              onTap: () {
+                                Navigator.pop(context);
+                                context.showAppFeedback(
+                                  t.common.coming_soon(tab: t.profile.menu.blacklist),
+                                );
+                              },
+                            ),
+                            ListTile(
+                              leading: const Icon(Icons.report_gmailerrorred_outlined),
+                              title: Text(t.profile.menu.report),
+                              onTap: () {
+                                Navigator.pop(context);
+                                context.showAppFeedback(
+                                  t.common.coming_soon(tab: t.profile.menu.report),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 16),
+                          ],
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.more_vert, color: contentColor, size: 22),
+                    constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                    style: iconButtonStyle,
+                  ),
                 ),
                 const SizedBox(width: 4),
               ],
@@ -150,25 +183,6 @@ class UserProfileAppBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildIconButton(
-    BuildContext context, {
-    required IconData icon,
-    required Color color,
-    required Color backgroundColor,
-    required VoidCallback onPressed,
-  }) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      decoration: BoxDecoration(shape: BoxShape.circle, color: backgroundColor),
-      child: IconButton(
-        onPressed: onPressed,
-        icon: Icon(icon, color: color, size: 22),
-        constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
-        style: IconButton.styleFrom(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-      ),
     );
   }
 }

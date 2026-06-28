@@ -1,7 +1,7 @@
 import 'package:culcul/core/feedback/app_feedback.dart';
-import 'package:culcul/core/utils/share_utils.dart';
 import 'package:culcul/features/dynamic/application/models/dynamic_item_extensions.dart';
 import 'package:culcul/features/dynamic/application/models/dynamic_response.dart';
+import 'package:culcul/features/dynamic/presentation/dynamic_share.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_navigation.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_navigation_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
@@ -25,14 +25,18 @@ class DynamicPostHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    void openUserProfile() {
+      DynamicNavigationScope.of(context).onOpenUser(post.authorMid);
+    }
+
+    final authorColor = switch (post.authorName) {
+      '哔哩哔哩番剧' || '哔哩哔哩漫画' => colorScheme.primary,
+      _ => colorScheme.onSurface,
+    };
 
     return Row(
       children: [
-        AppAvatar(
-          url: post.authorAvatar,
-          size: avatarSize,
-          onTap: () => _openUserProfile(context),
-        ),
+        AppAvatar(url: post.authorAvatar, size: avatarSize, onTap: openUserProfile),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -40,7 +44,7 @@ class DynamicPostHeader extends StatelessWidget {
             children: [
               AppClickable(
                 haptic: true,
-                onTap: () => _openUserProfile(context),
+                onTap: openUserProfile,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Text(
@@ -48,7 +52,7 @@ class DynamicPostHeader extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 15,
-                      color: _authorColor(colorScheme, post.authorName),
+                      color: authorColor,
                     ),
                   ),
                 ),
@@ -63,7 +67,55 @@ class DynamicPostHeader extends StatelessWidget {
         ),
         IconButton(
           icon: Icon(moreIcon, size: 20, color: colorScheme.onSurfaceVariant),
-          onPressed: () => _showDynamicPostActions(context, post),
+          onPressed: () async {
+            final t = Translations.of(context);
+            final link = 'https://t.bilibili.com/${post.id}';
+
+            final action = await showModalBottomSheet<_DynamicPostAction>(
+              context: context,
+              showDragHandle: true,
+              builder: (context) => SafeArea(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListTile(
+                      leading: const Icon(Icons.share_outlined),
+                      title: Text(t.actions.share),
+                      onTap: () => Navigator.pop(context, _DynamicPostAction.share),
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.copy_all_rounded),
+                      title: Text(t.moments.copy_link),
+                      onTap: () => Navigator.pop(context, _DynamicPostAction.copyLink),
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.open_in_browser_rounded),
+                      title: Text(t.moments.open_in_browser),
+                      onTap: () =>
+                          Navigator.pop(context, _DynamicPostAction.openInBrowser),
+                    ),
+                  ],
+                ),
+              ),
+            );
+
+            if (!context.mounted || action == null) return;
+
+            switch (action) {
+              case _DynamicPostAction.share:
+                await shareDynamicItem(
+                  dynamicId: post.id,
+                  content: post.contentText ?? '',
+                );
+              case _DynamicPostAction.copyLink:
+                await Clipboard.setData(ClipboardData(text: link));
+                if (context.mounted) {
+                  context.showAppFeedback(t.moments.copied_link);
+                }
+              case _DynamicPostAction.openInBrowser:
+                await DynamicNavigation.open(context, url: link);
+            }
+          },
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
           style: const ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
@@ -71,63 +123,6 @@ class DynamicPostHeader extends StatelessWidget {
       ],
     );
   }
-
-  void _openUserProfile(BuildContext context) {
-    DynamicNavigationScope.of(context).onOpenUser(post.authorMid);
-  }
-}
-
-Color _authorColor(ColorScheme colorScheme, String authorName) {
-  return switch (authorName) {
-    '哔哩哔哩番剧' || '哔哩哔哩漫画' => colorScheme.primary,
-    _ => colorScheme.onSurface,
-  };
 }
 
 enum _DynamicPostAction { share, copyLink, openInBrowser }
-
-Future<void> _showDynamicPostActions(BuildContext context, DynamicItem post) async {
-  final t = Translations.of(context);
-  final link = 'https://t.bilibili.com/${post.id}';
-
-  final action = await showModalBottomSheet<_DynamicPostAction>(
-    context: context,
-    showDragHandle: true,
-    builder: (context) => SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.share_outlined),
-            title: Text(t.actions.share),
-            onTap: () => Navigator.pop(context, _DynamicPostAction.share),
-          ),
-          ListTile(
-            leading: const Icon(Icons.copy_all_rounded),
-            title: Text(t.moments.copy_link),
-            onTap: () => Navigator.pop(context, _DynamicPostAction.copyLink),
-          ),
-          ListTile(
-            leading: const Icon(Icons.open_in_browser_rounded),
-            title: Text(t.moments.open_in_browser),
-            onTap: () => Navigator.pop(context, _DynamicPostAction.openInBrowser),
-          ),
-        ],
-      ),
-    ),
-  );
-
-  if (!context.mounted || action == null) return;
-
-  switch (action) {
-    case _DynamicPostAction.share:
-      await shareDynamic(post.id, post.contentText ?? '');
-    case _DynamicPostAction.copyLink:
-      await Clipboard.setData(ClipboardData(text: link));
-      if (context.mounted) {
-        context.showAppFeedback(t.moments.copied_link);
-      }
-    case _DynamicPostAction.openInBrowser:
-      await DynamicNavigation.open(context, url: link);
-  }
-}

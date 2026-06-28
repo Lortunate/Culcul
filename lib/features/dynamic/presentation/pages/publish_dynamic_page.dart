@@ -9,10 +9,10 @@ import 'package:culcul/features/dynamic/application/dynamic_feed_provider.dart';
 import 'package:culcul/features/dynamic/application/models/emote_catalog.dart';
 import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
 import 'package:culcul/features/dynamic/data/emote_repository_impl.dart';
-import 'package:culcul/features/dynamic/domain/entities/dynamic_publish_command.dart';
+import 'package:culcul/features/dynamic/models/dynamic_publish_command.dart';
 import 'package:culcul/features/search/application/search_application_providers.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/theme/culcul_tokens.dart';
+import 'package:culcul/core/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/media/app_network_image.dart';
 import 'package:extended_image/extended_image.dart';
@@ -54,32 +54,21 @@ class _PublishDynamicController extends Notifier<bool> {
     required List<PublishMediaAsset> images,
   }) async {
     final repository = ref.read(dynamicRepositoryProvider);
-    return (await _resolveCsrf(repository)).when(
-      success: (csrfToken) async {
-        final uploadedImagesResult = await repository.uploadImagesWithCsrf(
-          files: images,
-          csrf: csrfToken,
-        );
-        return uploadedImagesResult.when(
-          success: (images) => repository.publishDynamic(
-            content: content,
-            csrf: csrfToken,
-            images: images,
-          ),
-          failure: (error) async => Failure(error),
-        );
-      },
-      failure: (error) async => Failure(error),
-    );
-  }
-
-  Future<Result<String, AppError>> _resolveCsrf(DynamicRepositoryImpl repository) async {
     final csrfResult = await repository.getPublishCsrf();
-    final csrf = csrfResult.dataOrNull;
-    if (csrf == null || csrf.isEmpty) {
+    final csrfToken = csrfResult.dataOrNull;
+    if (csrfToken == null || csrfToken.isEmpty) {
       return Failure(csrfResult.errorOrNull ?? const AppError.auth('Missing csrf token'));
     }
-    return Success(csrf);
+
+    final uploadedImagesResult = await repository.uploadImagesWithCsrf(
+      files: images,
+      csrf: csrfToken,
+    );
+    return uploadedImagesResult.when(
+      success: (images) =>
+          repository.publishDynamic(content: content, csrf: csrfToken, images: images),
+      failure: (error) async => Failure(error),
+    );
   }
 }
 
@@ -154,21 +143,6 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
     }
   }
 
-  void _showEmojiPicker() {
-    _showPublishDynamicEmojiPicker(context: context, onEmojiSelected: _insertText);
-  }
-
-  void _showTopicPicker() {
-    _showPublishDynamicTopicPicker(
-      context: context,
-      onTopicSelected: (topic) => _insertText('#$topic# '),
-    );
-  }
-
-  Future<bool> _onWillPop() {
-    return _confirmDiscardDynamicDraft(context: context, hasDraft: _hasDraft);
-  }
-
   Future<void> _publish() async {
     if (_controller.text.trim().isEmpty && _images.isEmpty) return;
     final t = Translations.of(context);
@@ -196,69 +170,289 @@ class _PublishDynamicPageState extends ConsumerState<PublishDynamicPage> {
     final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
     final isPublishing = ref.watch(_publishDynamicControllerProvider);
+    final canAddMoreImages = _images.length < _maxImages;
+    final selectedImageGridItemCount = _images.length + (canAddMoreImages ? 1 : 0);
 
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
-        final shouldPop = await _onWillPop();
+        final shouldPop = await _confirmDiscardDynamicDraft(
+          context: context,
+          hasDraft: _hasDraft,
+        );
         if (shouldPop && context.mounted) {
           Navigator.pop(context);
         }
       },
-      child: _PublishDynamicScaffold(
-        theme: theme,
-        colorScheme: colorScheme,
-        t: t,
-        isPublishing: isPublishing,
-        hasDraftNotifier: _hasDraftNotifier,
-        onClose: () async {
-          if (await _onWillPop() && context.mounted) {
-            Navigator.pop(context);
-          }
-        },
-        onPublish: _publish,
-        controller: _controller,
-        focusNode: _focusNode,
-        images: _images,
-        maxImages: _maxImages,
-        onPickImage: _pickImage,
-        onRemoveImageAt: (index) {
-          setState(() => _images.removeAt(index));
-          _onTextChanged();
-        },
-        onInsertMention: () => _insertText('@'),
-        onPickTopic: _showTopicPicker,
-        onPickEmoji: _showEmojiPicker,
+      child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        appBar: AppBar(
+          backgroundColor: theme.scaffoldBackgroundColor,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () async {
+              final shouldPop = await _confirmDiscardDynamicDraft(
+                context: context,
+                hasDraft: _hasDraft,
+              );
+              if (shouldPop && context.mounted) {
+                Navigator.pop(context);
+              }
+            },
+          ),
+          title: Text(
+            t.moments.publish_title,
+            style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          centerTitle: true,
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: ValueListenableBuilder<bool>(
+                valueListenable: _hasDraftNotifier,
+                builder: (context, isPostable, _) {
+                  final enabled = !isPublishing && isPostable;
+                  return TextButton(
+                    onPressed: enabled ? _publish : null,
+                    style: TextButton.styleFrom(
+                      backgroundColor: enabled
+                          ? colorScheme.primary
+                          : colorScheme.surfaceContainerHighest,
+                      foregroundColor: enabled
+                          ? colorScheme.onPrimary
+                          : colorScheme.onSurfaceVariant,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: isPublishing
+                        ? SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          )
+                        : Text(
+                            t.moments.publish_action,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                children: [
+                  TextField(
+                    controller: _controller,
+                    focusNode: _focusNode,
+                    maxLines: null,
+                    minLines: 5,
+                    style: theme.textTheme.bodyLarge?.copyWith(fontSize: 16),
+                    decoration: InputDecoration(
+                      hintText: t.moments.publish_hint,
+                      border: InputBorder.none,
+                      isDense: true,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  if (_images.isNotEmpty)
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                      ),
+                      itemCount: selectedImageGridItemCount,
+                      itemBuilder: (context, index) {
+                        if (canAddMoreImages && index == _images.length) {
+                          return InkWell(
+                            onTap: _pickImage,
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: colorScheme.surfaceContainerHighest.withValues(
+                                  alpha: 0.5,
+                                ),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(
+                                Icons.add,
+                                size: 32,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          );
+                        }
+
+                        return Stack(
+                          children: [
+                            Positioned.fill(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Image.file(_images[index], fit: BoxFit.cover),
+                              ),
+                            ),
+                            Positioned(
+                              top: 4,
+                              right: 4,
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() => _images.removeAt(index));
+                                  _onTextChanged();
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: colorScheme.scrim.withValues(alpha: 0.5),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.close,
+                                    size: 16,
+                                    color: colorScheme.onPrimary,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 12,
+                bottom: MediaQuery.paddingOf(context).bottom + 12,
+              ),
+              decoration: BoxDecoration(
+                color: theme.scaffoldBackgroundColor,
+                border: Border(
+                  top: BorderSide(
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+                  ),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      InkWell(
+                        onTap: _pickImage,
+                        borderRadius: BorderRadius.circular(8),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Icon(
+                            Icons.image_outlined,
+                            size: 26,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 24),
+                      InkWell(
+                        onTap: () => _insertText('@'),
+                        borderRadius: BorderRadius.circular(8),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Icon(
+                            Icons.alternate_email,
+                            size: 26,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 24),
+                      InkWell(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            backgroundColor: Colors.transparent,
+                            builder: (sheetContext) {
+                              return _PublishTopicPicker(
+                                onTopicSelected: (topic) {
+                                  _insertText('#$topic# ');
+                                  Navigator.pop(sheetContext);
+                                },
+                              );
+                            },
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(8),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Icon(Icons.tag, size: 26, color: colorScheme.onSurface),
+                        ),
+                      ),
+                      const SizedBox(width: 24),
+                      InkWell(
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            backgroundColor: Colors.transparent,
+                            builder: (sheetContext) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  color: Theme.of(sheetContext).colorScheme.surface,
+                                  borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(16),
+                                  ),
+                                ),
+                                child: _PublishEmojiPicker(
+                                  onEmojiSelected: (text) {
+                                    _insertText(text);
+                                    Navigator.pop(sheetContext);
+                                  },
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(8),
+                        child: Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: Icon(
+                            Icons.sentiment_satisfied_alt,
+                            size: 26,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Text(
+                    '${_controller.text.length}',
+                    style: TextStyle(color: colorScheme.outline, fontSize: 12),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   bool get _hasDraft => _controller.text.trim().isNotEmpty || _images.isNotEmpty;
-}
-
-void _showPublishDynamicEmojiPicker({
-  required BuildContext context,
-  required ValueChanged<String> onEmojiSelected,
-}) {
-  showModalBottomSheet(
-    context: context,
-    backgroundColor: Colors.transparent,
-    builder: (context) {
-      return Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-        ),
-        child: _PublishEmojiPicker(
-          onEmojiSelected: (text) {
-            onEmojiSelected(text);
-            Navigator.pop(context);
-          },
-        ),
-      );
-    },
-  );
 }
 
 class _PublishEmojiPicker extends ConsumerStatefulWidget {
@@ -278,7 +472,13 @@ class _PublishEmojiPickerState extends ConsumerState<_PublishEmojiPicker>
   @override
   void initState() {
     super.initState();
-    _emotePackagesFuture = _loadEmotePackages();
+    _emotePackagesFuture = ref
+        .read(emoteRepositoryProvider)
+        .getUserEmotePackages()
+        .then(
+          (response) =>
+              response.when(success: (data) => data, failure: (error) => throw error),
+        );
   }
 
   @override
@@ -306,7 +506,19 @@ class _PublishEmojiPickerState extends ConsumerState<_PublishEmojiPicker>
             return AppErrorWidget(
               error: snapshot.error!,
               stackTrace: snapshot.stackTrace,
-              onRetry: _retryLoadEmotes,
+              onRetry: () {
+                setState(() {
+                  _emotePackagesFuture = ref
+                      .read(emoteRepositoryProvider)
+                      .getUserEmotePackages()
+                      .then(
+                        (response) => response.when(
+                          success: (data) => data,
+                          failure: (error) => throw error,
+                        ),
+                      );
+                });
+              },
               variant: AppErrorWidgetVariant.compact,
             );
           }
@@ -329,7 +541,31 @@ class _PublishEmojiPickerState extends ConsumerState<_PublishEmojiPicker>
               Expanded(
                 child: TabBarView(
                   controller: _tabController,
-                  children: packages.map(_buildEmojiGrid).toList(),
+                  children: packages
+                      .map(
+                        (package) => GridView.builder(
+                          padding: const EdgeInsets.all(8),
+                          gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 48,
+                            crossAxisSpacing: 8,
+                            mainAxisSpacing: 8,
+                          ),
+                          itemCount: package.emotes.length,
+                          itemBuilder: (context, index) {
+                            final emote = package.emotes[index];
+                            return InkWell(
+                              onTap: () => widget.onEmojiSelected(emote.text),
+                              child: ExtendedImage.network(
+                                emote.url,
+                                fit: BoxFit.contain,
+                                cacheWidth: 96,
+                                cacheHeight: 96,
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                      .toList(),
                 ),
               ),
               TabBar(
@@ -357,60 +593,6 @@ class _PublishEmojiPickerState extends ConsumerState<_PublishEmojiPicker>
       ),
     );
   }
-
-  Future<List<EmoteCatalogPackage>> _loadEmotePackages() async {
-    final response = await ref.read(emoteRepositoryProvider).getUserEmotePackages();
-    return response.when(success: (data) => data, failure: (error) => throw error);
-  }
-
-  void _retryLoadEmotes() {
-    setState(() {
-      _emotePackagesFuture = _loadEmotePackages();
-    });
-  }
-
-  Widget _buildEmojiGrid(EmoteCatalogPackage package) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(8),
-      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 48,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-      ),
-      itemCount: package.emotes.length,
-      itemBuilder: (context, index) {
-        final emote = package.emotes[index];
-        return InkWell(
-          onTap: () => widget.onEmojiSelected(emote.text),
-          child: ExtendedImage.network(
-            emote.url,
-            fit: BoxFit.contain,
-            cacheWidth: 96,
-            cacheHeight: 96,
-          ),
-        );
-      },
-    );
-  }
-}
-
-void _showPublishDynamicTopicPicker({
-  required BuildContext context,
-  required ValueChanged<String> onTopicSelected,
-}) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (context) {
-      return _PublishTopicPicker(
-        onTopicSelected: (topic) {
-          onTopicSelected(topic);
-          Navigator.pop(context);
-        },
-      );
-    },
-  );
 }
 
 class _PublishTopicPicker extends HookConsumerWidget {
@@ -571,383 +753,4 @@ Future<bool> _confirmDiscardDynamicDraft({
     ),
   );
   return result == true;
-}
-
-class _PublishDynamicScaffold extends StatelessWidget {
-  final ThemeData theme;
-  final ColorScheme colorScheme;
-  final Translations t;
-  final bool isPublishing;
-  final ValueNotifier<bool> hasDraftNotifier;
-  final Future<void> Function() onClose;
-  final Future<void> Function() onPublish;
-  final TextEditingController controller;
-  final FocusNode focusNode;
-  final List<File> images;
-  final int maxImages;
-  final Future<void> Function() onPickImage;
-  final ValueChanged<int> onRemoveImageAt;
-  final VoidCallback onInsertMention;
-  final VoidCallback onPickTopic;
-  final VoidCallback onPickEmoji;
-
-  const _PublishDynamicScaffold({
-    required this.theme,
-    required this.colorScheme,
-    required this.t,
-    required this.isPublishing,
-    required this.hasDraftNotifier,
-    required this.onClose,
-    required this.onPublish,
-    required this.controller,
-    required this.focusNode,
-    required this.images,
-    required this.maxImages,
-    required this.onPickImage,
-    required this.onRemoveImageAt,
-    required this.onInsertMention,
-    required this.onPickTopic,
-    required this.onPickEmoji,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: _PublishDynamicAppBar(
-        theme: theme,
-        colorScheme: colorScheme,
-        t: t,
-        isPublishing: isPublishing,
-        hasDraftNotifier: hasDraftNotifier,
-        onClose: onClose,
-        onPublish: onPublish,
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: _PublishDynamicEditor(
-              theme: theme,
-              t: t,
-              controller: controller,
-              focusNode: focusNode,
-              images: images,
-              maxImages: maxImages,
-              onPickImage: onPickImage,
-              onRemoveImageAt: onRemoveImageAt,
-            ),
-          ),
-          _PublishDynamicBottomToolbar(
-            charCount: controller.text.length,
-            onPickImage: onPickImage,
-            onInsertMention: onInsertMention,
-            onPickTopic: onPickTopic,
-            onPickEmoji: onPickEmoji,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PublishDynamicAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final ThemeData theme;
-  final ColorScheme colorScheme;
-  final Translations t;
-  final bool isPublishing;
-  final ValueNotifier<bool> hasDraftNotifier;
-  final Future<void> Function() onClose;
-  final Future<void> Function() onPublish;
-
-  const _PublishDynamicAppBar({
-    required this.theme,
-    required this.colorScheme,
-    required this.t,
-    required this.isPublishing,
-    required this.hasDraftNotifier,
-    required this.onClose,
-    required this.onPublish,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      scrolledUnderElevation: 0,
-      leading: IconButton(icon: const Icon(Icons.close), onPressed: onClose),
-      title: Text(
-        t.moments.publish_title,
-        style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-      ),
-      centerTitle: true,
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: 16),
-          child: ValueListenableBuilder<bool>(
-            valueListenable: hasDraftNotifier,
-            builder: (context, isPostable, _) {
-              final enabled = !isPublishing && isPostable;
-              return TextButton(
-                onPressed: enabled ? onPublish : null,
-                style: TextButton.styleFrom(
-                  backgroundColor: enabled
-                      ? colorScheme.primary
-                      : colorScheme.surfaceContainerHighest,
-                  foregroundColor: enabled
-                      ? colorScheme.onPrimary
-                      : colorScheme.onSurfaceVariant,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                ),
-                child: isPublishing
-                    ? SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      )
-                    : Text(
-                        t.moments.publish_action,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
-}
-
-class _PublishDynamicEditor extends StatelessWidget {
-  const _PublishDynamicEditor({
-    required this.theme,
-    required this.t,
-    required this.controller,
-    required this.focusNode,
-    required this.images,
-    required this.maxImages,
-    required this.onPickImage,
-    required this.onRemoveImageAt,
-  });
-
-  final ThemeData theme;
-  final Translations t;
-  final TextEditingController controller;
-  final FocusNode focusNode;
-  final List<File> images;
-  final int maxImages;
-  final Future<void> Function() onPickImage;
-  final ValueChanged<int> onRemoveImageAt;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      children: [
-        TextField(
-          controller: controller,
-          focusNode: focusNode,
-          maxLines: null,
-          minLines: 5,
-          style: theme.textTheme.bodyLarge?.copyWith(fontSize: 16),
-          decoration: InputDecoration(
-            hintText: t.moments.publish_hint,
-            border: InputBorder.none,
-            isDense: true,
-            contentPadding: EdgeInsets.zero,
-          ),
-        ),
-        const SizedBox(height: 12),
-        _PublishDynamicImageGrid(
-          images: images,
-          maxImages: maxImages,
-          onAddTap: onPickImage,
-          onRemoveAt: onRemoveImageAt,
-        ),
-      ],
-    );
-  }
-}
-
-class _PublishDynamicBottomToolbar extends StatelessWidget {
-  const _PublishDynamicBottomToolbar({
-    required this.charCount,
-    required this.onPickImage,
-    required this.onInsertMention,
-    required this.onPickTopic,
-    required this.onPickEmoji,
-  });
-
-  final int charCount;
-  final VoidCallback onPickImage;
-  final VoidCallback onInsertMention;
-  final VoidCallback onPickTopic;
-  final VoidCallback onPickEmoji;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Container(
-      padding: EdgeInsets.only(
-        left: 20,
-        right: 20,
-        top: 12,
-        bottom: MediaQuery.paddingOf(context).bottom + 12,
-      ),
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        border: Border(
-          top: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.2)),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              _PublishToolbarAction(icon: Icons.image_outlined, onTap: onPickImage),
-              const SizedBox(width: 24),
-              _PublishToolbarAction(icon: Icons.alternate_email, onTap: onInsertMention),
-              const SizedBox(width: 24),
-              _PublishToolbarAction(icon: Icons.tag, onTap: onPickTopic),
-              const SizedBox(width: 24),
-              _PublishToolbarAction(
-                icon: Icons.sentiment_satisfied_alt,
-                onTap: onPickEmoji,
-              ),
-            ],
-          ),
-          Text('$charCount', style: TextStyle(color: colorScheme.outline, fontSize: 12)),
-        ],
-      ),
-    );
-  }
-}
-
-class _PublishToolbarAction extends StatelessWidget {
-  const _PublishToolbarAction({required this.icon, required this.onTap});
-
-  final IconData icon;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: const EdgeInsets.all(4),
-        child: Icon(icon, size: 26, color: Theme.of(context).colorScheme.onSurface),
-      ),
-    );
-  }
-}
-
-class _PublishDynamicImageGrid extends StatelessWidget {
-  const _PublishDynamicImageGrid({
-    required this.images,
-    required this.maxImages,
-    required this.onAddTap,
-    required this.onRemoveAt,
-  });
-
-  final List<File> images;
-  final int maxImages;
-  final VoidCallback onAddTap;
-  final ValueChanged<int> onRemoveAt;
-
-  @override
-  Widget build(BuildContext context) {
-    if (images.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    final colorScheme = Theme.of(context).colorScheme;
-    final canAddMore = images.length < maxImages;
-    final itemCount = images.length + (canAddMore ? 1 : 0);
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-      ),
-      itemCount: itemCount,
-      itemBuilder: (context, index) {
-        if (canAddMore && index == images.length) {
-          return _PublishAddImageButton(onTap: onAddTap, colorScheme: colorScheme);
-        }
-
-        return _PublishImageItem(image: images[index], onRemove: () => onRemoveAt(index));
-      },
-    );
-  }
-}
-
-class _PublishImageItem extends StatelessWidget {
-  const _PublishImageItem({required this.image, required this.onRemove});
-
-  final File image;
-  final VoidCallback onRemove;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.file(image, fit: BoxFit.cover),
-          ),
-        ),
-        Positioned(
-          top: 4,
-          right: 4,
-          child: GestureDetector(
-            onTap: onRemove,
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: colorScheme.scrim.withValues(alpha: 0.5),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.close, size: 16, color: colorScheme.onPrimary),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _PublishAddImageButton extends StatelessWidget {
-  const _PublishAddImageButton({required this.onTap, required this.colorScheme});
-
-  final VoidCallback onTap;
-  final ColorScheme colorScheme;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Icon(Icons.add, size: 32, color: colorScheme.onSurfaceVariant),
-      ),
-    );
-  }
 }

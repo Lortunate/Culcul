@@ -14,6 +14,9 @@ Widget _buildArticleDetailScaffold({
   required Future<void> Function(CommentItem item, String message) onSubmitReply,
   required Future<void> Function(CommentItem item) onToggleCommentLike,
 }) {
+  final theme = Theme.of(context);
+  final colorScheme = theme.colorScheme;
+
   return Scaffold(
     appBar: AppBar(
       title: Text(
@@ -56,7 +59,46 @@ Widget _buildArticleDetailScaffold({
                   ),
                 ),
                 const SizedBox(height: 10),
-                _AuthorHeader(data: data),
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 20,
+                      backgroundColor: colorScheme.surfaceContainerHighest,
+                      backgroundImage: data.authorAvatar.isNotEmpty
+                          ? AppNetworkImage.providerFor(url: data.authorAvatar)
+                          : null,
+                      child: data.authorAvatar.isEmpty
+                          ? Icon(
+                              Icons.person_rounded,
+                              color: colorScheme.onSurfaceVariant,
+                            )
+                          : null,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            data.authorName.isNotEmpty ? data.authorName : 'Bilibili',
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            data.publishTime > 0
+                                ? FormatUtils.formatTimeAgo(data.publishTime)
+                                : Translations.of(context).moments.detail_title,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
                 if (data.blocks.isNotEmpty) ...[
                   const SizedBox(height: 14),
                   ..._buildArticleBlocks(context, data.blocks),
@@ -67,7 +109,68 @@ Widget _buildArticleDetailScaffold({
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
-              child: _StatsRow(data: data),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                decoration: BoxDecoration(
+                  color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.star_border_rounded,
+                              size: 22,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              FormatUtils.formatAnyNumber(data.stats.favorite),
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: 1,
+                      height: 24,
+                      color: colorScheme.outlineVariant.withValues(alpha: 0.35),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.thumb_up_outlined,
+                              size: 22,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              FormatUtils.formatAnyNumber(data.stats.like),
+                              style: theme.textTheme.titleSmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
           SliverToBoxAdapter(
@@ -105,10 +208,28 @@ Widget _buildArticleDetailScaffold({
       ),
     ),
     bottomNavigationBar: state.commentsEnabled
-        ? _ArticleCommentBar(
-            controller: commentController,
-            isSending: state.isSendingComment,
-            onSend: onSubmitComment,
+        ? Container(
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
+              border: Border(
+                top: BorderSide(
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+                  width: 0.5,
+                ),
+              ),
+            ),
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 8,
+              bottom: 8 + MediaQuery.paddingOf(context).bottom,
+            ),
+            child: DynamicCommentComposer(
+              controller: commentController,
+              isSending: state.isSendingComment,
+              onSend: onSubmitComment,
+              hintText: t.video.comment.hint,
+            ),
           )
         : null,
   );
@@ -116,6 +237,7 @@ Widget _buildArticleDetailScaffold({
 
 List<Widget> _buildArticleBlocks(BuildContext context, List<ArticleBlock> blocks) {
   final contentWidgets = <Widget>[];
+  final invisibleTextPattern = RegExp(r'\s+');
 
   void addWithSpacing(Widget widget) {
     if (contentWidgets.isNotEmpty) {
@@ -127,7 +249,9 @@ List<Widget> _buildArticleBlocks(BuildContext context, List<ArticleBlock> blocks
   for (final block in blocks) {
     switch (block) {
       case ArticleBlockParagraph():
-        final hasText = block.nodes.any((node) => _hasVisibleText(node.text));
+        final hasText = block.nodes.any(
+          (node) => node.text.replaceAll(invisibleTextPattern, '').isNotEmpty,
+        );
         if (!hasText) break;
         addWithSpacing(_ParagraphBlockView(block: block));
       case ArticleBlockImage():
@@ -290,130 +414,8 @@ Future<void> _handleArticleMenuAction(
         context.showAppFeedback(Translations.of(context).moments.copied_link);
       }
     case 'share':
-      await shareUri(Uri.parse(data.url));
+      await SharePlus.instance.share(ShareParams(uri: Uri.parse(data.url)));
     case 'open':
       await launchUrl(Uri.parse(data.url), mode: LaunchMode.externalApplication);
-  }
-}
-
-class _AuthorHeader extends StatelessWidget {
-  final ArticleDetailData data;
-
-  const _AuthorHeader({required this.data});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return Row(
-      children: [
-        CircleAvatar(
-          radius: 20,
-          backgroundColor: colorScheme.surfaceContainerHighest,
-          backgroundImage: data.authorAvatar.isNotEmpty
-              ? AppNetworkImage.providerFor(url: data.authorAvatar)
-              : null,
-          child: data.authorAvatar.isEmpty
-              ? Icon(Icons.person_rounded, color: colorScheme.onSurfaceVariant)
-              : null,
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                data.authorName.isNotEmpty ? data.authorName : 'Bilibili',
-                style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 3),
-              Text(
-                data.publishTime > 0
-                    ? FormatUtils.formatTimeAgo(data.publishTime)
-                    : Translations.of(context).moments.detail_title,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _StatsRow extends StatelessWidget {
-  final ArticleDetailData data;
-
-  const _StatsRow({required this.data});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-      decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.star_border_rounded,
-                    size: 22,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    FormatUtils.formatAnyNumber(data.stats.favorite),
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            width: 1,
-            height: 24,
-            color: colorScheme.outlineVariant.withValues(alpha: 0.35),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.thumb_up_outlined,
-                    size: 22,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    FormatUtils.formatAnyNumber(data.stats.like),
-                    style: theme.textTheme.titleSmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

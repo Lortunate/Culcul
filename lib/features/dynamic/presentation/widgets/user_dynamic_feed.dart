@@ -120,73 +120,64 @@ class _UserDynamicFeedState extends ConsumerState<UserDynamicFeed>
                     if (index.isOdd) {
                       return const SizedBox(height: 16);
                     }
-                    return const _DynamicSkeleton();
+                    return Card(
+                      elevation: 0,
+                      color: Theme.of(context).colorScheme.surface,
+                      margin: EdgeInsets.zero,
+                      shape: const RoundedRectangleBorder(),
+                      child: const AppShimmer(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  AppShimmerBox(width: 40, height: 40, borderRadius: 20),
+                                  SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        AppShimmerBox(height: 14, width: 100),
+                                        SizedBox(height: 6),
+                                        AppShimmerBox(height: 12, width: 60),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 12),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  AppShimmerBox(height: 14, width: double.infinity),
+                                  SizedBox(height: 8),
+                                  AppShimmerBox(height: 14, width: double.infinity),
+                                  SizedBox(height: 8),
+                                  AppShimmerBox(height: 14, width: 200),
+                                ],
+                              ),
+                              SizedBox(height: 12),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  AppShimmerBox(height: 20, width: 60),
+                                  AppShimmerBox(height: 20, width: 60),
+                                  AppShimmerBox(height: 20, width: 60),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
                   }, childCount: childCount),
                 ),
               );
             },
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _DynamicSkeleton extends StatelessWidget {
-  const _DynamicSkeleton();
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 0,
-      color: Theme.of(context).colorScheme.surface,
-      margin: EdgeInsets.zero,
-      shape: const RoundedRectangleBorder(),
-      child: const AppShimmer(
-        child: Padding(
-          padding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  AppShimmerBox(width: 40, height: 40, borderRadius: 20),
-                  SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AppShimmerBox(height: 14, width: 100),
-                        SizedBox(height: 6),
-                        AppShimmerBox(height: 12, width: 60),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AppShimmerBox(height: 14, width: double.infinity),
-                  SizedBox(height: 8),
-                  AppShimmerBox(height: 14, width: double.infinity),
-                  SizedBox(height: 8),
-                  AppShimmerBox(height: 14, width: 200),
-                ],
-              ),
-              SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  AppShimmerBox(height: 20, width: 60),
-                  AppShimmerBox(height: 20, width: 60),
-                  AppShimmerBox(height: 20, width: 60),
-                ],
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

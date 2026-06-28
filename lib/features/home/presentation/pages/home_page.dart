@@ -55,7 +55,17 @@ class HomePage extends HookConsumerWidget {
     useEffect(() {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         DevLogger.log('startup', 'home_ready');
-        unawaited(_loadHintText(context: context, ref: ref, hintText: hintText));
+        unawaited(() async {
+          try {
+            final hint = await ref.read(defaultSearchProvider.future);
+            if (!context.mounted) {
+              return;
+            }
+            hintText.value = hint;
+          } catch (_) {
+            // Keep default fallback hint when preload fails.
+          }
+        }());
       });
       return null;
     }, const []);
@@ -96,22 +106,6 @@ class HomePage extends HookConsumerWidget {
         ],
       ),
     );
-  }
-
-  static Future<void> _loadHintText({
-    required BuildContext context,
-    required WidgetRef ref,
-    required ValueNotifier<String?> hintText,
-  }) async {
-    try {
-      final hint = await ref.read(defaultSearchProvider.future);
-      if (!context.mounted) {
-        return;
-      }
-      hintText.value = hint;
-    } catch (_) {
-      // Keep default fallback hint when preload fails.
-    }
   }
 }
 
@@ -159,12 +153,13 @@ class _HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
         child: Center(
           child: AppAvatar(
             url: authState.avatarUrl,
-            onTap: () => _handleProtectedTap(
-              context: context,
-              ref: ref,
-              isLoggedIn: authState.isLoggedIn,
-              onAuthenticated: onAvatarTap,
-            ),
+            onTap: () {
+              if (authState.isLoggedIn) {
+                onAvatarTap();
+                return;
+              }
+              showLoginDialog(context);
+            },
           ),
         ),
       ),
@@ -185,12 +180,13 @@ class _HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
             size: 24,
             color: colorScheme.onSurfaceVariant.withValues(alpha: 0.9),
           ),
-          onPressed: () => _handleProtectedTap(
-            context: context,
-            ref: ref,
-            isLoggedIn: authState.isLoggedIn,
-            onAuthenticated: onMessageTap,
-          ),
+          onPressed: () {
+            if (authState.isLoggedIn) {
+              onMessageTap();
+              return;
+            }
+            showLoginDialog(context);
+          },
           visualDensity: VisualDensity.compact,
           style: IconButton.styleFrom(
             padding: EdgeInsets.zero,
@@ -223,19 +219,6 @@ class _HomeAppBar extends ConsumerWidget implements PreferredSizeWidget {
         ),
       ),
     );
-  }
-
-  void _handleProtectedTap({
-    required BuildContext context,
-    required WidgetRef ref,
-    required bool isLoggedIn,
-    required VoidCallback onAuthenticated,
-  }) {
-    if (isLoggedIn) {
-      onAuthenticated();
-      return;
-    }
-    showLoginDialog(context);
   }
 
   @override

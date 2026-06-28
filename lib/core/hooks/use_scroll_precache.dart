@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:culcul/core/data/network/network_quality_policy.dart';
 import 'package:culcul/core/perf/performance_policy.dart';
 import 'package:culcul/core/runtime/runtime_performance_policy.dart';
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
@@ -34,11 +35,11 @@ void useScrollPrecache({
       debounceTimer.value = Timer(debounce, () {
         if (!context.mounted) return;
 
-        final policy =
-            runtimePolicy ??
-            RuntimePerformancePolicy.fromRenderPolicy(
-              PerformancePolicyController.notifier.value,
-            );
+        final policy = runtimePolicy ?? RuntimePerformancePolicy.resolve(
+          networkProfile: NetworkQualityProfile.normal,
+          lifecycleState: AppLifecycleState.resumed,
+          renderPolicy: PerformancePolicyController.notifier.value,
+        );
         if (!policy.allowImagePrefetch || !policy.allowsNonCriticalPrefetch) {
           return;
         }

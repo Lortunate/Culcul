@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:culcul/ui/theme/culcul_tokens.dart';
+import 'package:culcul/core/theme/culcul_tokens.dart';
 
 class AppEmptyStateWidget extends StatelessWidget {
   final String message;

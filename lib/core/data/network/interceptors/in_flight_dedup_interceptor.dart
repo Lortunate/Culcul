@@ -11,17 +11,57 @@ class InFlightDedupInterceptor extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    if (!_shouldDeduplicate(options)) {
+    final endpointPolicy = EndpointPolicy.fromOptions(options);
+    final shouldDeduplicate =
+        options.method.toUpperCase() == 'GET' &&
+        endpointPolicy?.dedupEnabled != false &&
+        options.extra[disableDedupExtra] != true;
+    if (!shouldDeduplicate) {
       handler.next(options);
       return;
     }
 
-    final dedupKey = _buildDedupKey(options);
+    final queryParams = options.queryParameters;
+    final path = options.uri.path;
+    late final String dedupKey;
+    if (queryParams.isEmpty) {
+      dedupKey = '${options.uri.host}$path';
+    } else if (queryParams.length == 1) {
+      final entry = queryParams.entries.first;
+      dedupKey = '${options.uri.host}$path|${entry.key}=${entry.value}';
+    } else {
+      final sortedEntries = queryParams.entries.toList()
+        ..sort((a, b) => a.key.compareTo(b.key));
+      final sb = StringBuffer()
+        ..write(options.uri.host)
+        ..write(path)
+        ..write('|');
+      for (var i = 0; i < sortedEntries.length; i++) {
+        if (i > 0) sb.write('&');
+        final e = sortedEntries[i];
+        sb
+          ..write(e.key)
+          ..write('=')
+          ..write(e.value);
+      }
+      dedupKey = sb.toString();
+    }
     final existing = _inFlightByKey[dedupKey];
     if (existing != null) {
       existing.future
           .then((response) {
-            handler.resolve(_cloneResponseForRequest(response, options));
+            handler.resolve(
+              Response<dynamic>(
+                data: response.data,
+                headers: response.headers,
+                requestOptions: options,
+                statusCode: response.statusCode,
+                statusMessage: response.statusMessage,
+                isRedirect: response.isRedirect,
+                redirects: response.redirects,
+                extra: Map<String, dynamic>.from(response.extra),
+              ),
+            );
           })
           .catchError((Object error) {
             if (error is DioException) {
@@ -40,94 +80,25 @@ class InFlightDedupInterceptor extends Interceptor {
 
   @override
   void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) {
-    _completePendingSuccess(response.requestOptions, response);
+    final dedupKey = response.requestOptions.extra[_dedupKeyExtra];
+    if (dedupKey is String) {
+      final completer = _inFlightByKey.remove(dedupKey);
+      if (completer != null && !completer.isCompleted) {
+        completer.complete(response);
+      }
+    }
     handler.next(response);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-    _completePendingFailure(err.requestOptions, err);
+    final dedupKey = err.requestOptions.extra[_dedupKeyExtra];
+    if (dedupKey is String) {
+      final completer = _inFlightByKey.remove(dedupKey);
+      if (completer != null && !completer.isCompleted) {
+        completer.completeError(err, err.stackTrace);
+      }
+    }
     handler.next(err);
-  }
-
-  bool _shouldDeduplicate(RequestOptions options) {
-    final endpointPolicy = EndpointPolicy.fromOptions(options);
-    return options.method.toUpperCase() == 'GET' &&
-        endpointPolicy?.dedupEnabled != false &&
-        options.extra[disableDedupExtra] != true;
-  }
-
-  String _buildDedupKey(RequestOptions options) {
-    final queryParams = options.queryParameters;
-    final path = options.uri.path;
-
-    // Fast path: no query params — most common for simple GET endpoints
-    if (queryParams.isEmpty) {
-      return '${options.uri.host}$path';
-    }
-
-    // Fast path: single query param — avoid sort overhead
-    if (queryParams.length == 1) {
-      final entry = queryParams.entries.first;
-      return '${options.uri.host}$path|${entry.key}=${entry.value}';
-    }
-
-    // General case: sort params for consistent key
-    final sortedEntries = queryParams.entries.toList()
-      ..sort((a, b) => a.key.compareTo(b.key));
-    final sb = StringBuffer()
-      ..write(options.uri.host)
-      ..write(path)
-      ..write('|');
-    for (var i = 0; i < sortedEntries.length; i++) {
-      if (i > 0) sb.write('&');
-      final e = sortedEntries[i];
-      sb
-        ..write(e.key)
-        ..write('=')
-        ..write(e.value);
-    }
-    return sb.toString();
-  }
-
-  void _completePendingSuccess(
-    RequestOptions requestOptions,
-    Response<dynamic> response,
-  ) {
-    final dedupKey = requestOptions.extra[_dedupKeyExtra];
-    if (dedupKey is! String) {
-      return;
-    }
-    final completer = _inFlightByKey.remove(dedupKey);
-    if (completer != null && !completer.isCompleted) {
-      completer.complete(response);
-    }
-  }
-
-  void _completePendingFailure(RequestOptions requestOptions, DioException err) {
-    final dedupKey = requestOptions.extra[_dedupKeyExtra];
-    if (dedupKey is! String) {
-      return;
-    }
-    final completer = _inFlightByKey.remove(dedupKey);
-    if (completer != null && !completer.isCompleted) {
-      completer.completeError(err, err.stackTrace);
-    }
-  }
-
-  Response<dynamic> _cloneResponseForRequest(
-    Response<dynamic> response,
-    RequestOptions requestOptions,
-  ) {
-    return Response<dynamic>(
-      data: response.data,
-      headers: response.headers,
-      requestOptions: requestOptions,
-      statusCode: response.statusCode,
-      statusMessage: response.statusMessage,
-      isRedirect: response.isRedirect,
-      redirects: response.redirects,
-      extra: Map<String, dynamic>.from(response.extra),
-    );
   }
 }

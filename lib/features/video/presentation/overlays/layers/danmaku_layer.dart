@@ -53,7 +53,17 @@ class DanmakuLayer extends HookConsumerWidget {
     settingsRef.value = settings;
     final maskResultRef = useRef(maskResultProvider);
     maskResultRef.value = maskResultProvider;
-    final danmakuOption = _buildDanmakuOption(settings);
+    final danmakuOption = DanmakuOption(
+      opacity: settings.opacity,
+      area: settings.area,
+      fontSize: 15 * settings.fontSizeScale,
+      duration: 10 / settings.speed,
+      hideTop: !settings.showTop,
+      hideBottom: !settings.showBottom,
+      hideScroll: !settings.showScroll,
+      strokeWidth: settings.strokeWidth == 0 ? 1.5 : settings.strokeWidth,
+      fontWeight: FontWeight.w500,
+    );
 
     final player = canRunDanmaku
         ? ref.read(playerControllerProvider.notifier).player
@@ -120,52 +130,6 @@ class DanmakuLayer extends HookConsumerWidget {
       ),
     );
   }
-}
-
-DanmakuOption _buildDanmakuOption(DanmakuSettings settings) {
-  return DanmakuOption(
-    opacity: settings.opacity,
-    area: settings.area,
-    fontSize: 15 * settings.fontSizeScale,
-    duration: 10 / settings.speed,
-    hideTop: !settings.showTop,
-    hideBottom: !settings.showBottom,
-    hideScroll: !settings.showScroll,
-    strokeWidth: settings.strokeWidth == 0 ? 1.5 : settings.strokeWidth,
-    fontWeight: FontWeight.w500,
-  );
-}
-
-DanmakuItemType _toDanmakuItemType(int mode) {
-  return switch (mode) {
-    4 => DanmakuItemType.bottom,
-    5 => DanmakuItemType.top,
-    _ => DanmakuItemType.scroll,
-  };
-}
-
-Color _toOpaqueDanmakuColor(int colorValue) {
-  return Color.fromARGB(
-    255,
-    (colorValue >> 16) & 0xFF,
-    (colorValue >> 8) & 0xFF,
-    colorValue & 0xFF,
-  );
-}
-
-Path? _resolveMaskPath({
-  required DanmakuSettings settings,
-  required AsyncValue<Result<DanmakuMasks?, dynamic>> maskResultProvider,
-  required int currentPosMs,
-}) {
-  if (!settings.enableAiMask || !maskResultProvider.hasValue) {
-    return null;
-  }
-  final masks = maskResultProvider.value?.dataOrNull;
-  if (masks == null) {
-    return null;
-  }
-  return masks.getPath(currentPosMs);
 }
 
 class DanmakuMaskClipper extends CustomClipper<Path> {

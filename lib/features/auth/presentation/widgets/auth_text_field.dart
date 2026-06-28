@@ -31,7 +31,6 @@ class AuthTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
 
     return TextField(
       controller: controller,
@@ -51,9 +50,7 @@ class AuthTextField extends StatelessWidget {
           fontWeight: FontWeight.normal,
         ),
         filled: true,
-        fillColor: isDark
-            ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.4)
-            : colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+        fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
         prefixIcon:
             leading ??
             (prefixIcon != null

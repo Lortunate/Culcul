@@ -1,4 +1,4 @@
-import 'package:culcul/core/contracts/user_session_contract.dart';
+import 'package:culcul/core/models/user_session_contract.dart';
 import 'package:culcul/core/session/session_lifecycle_providers.dart';
 import 'package:culcul/features/auth/application/auth_controller.dart';
 import 'package:culcul/features/auth/data/auth_repository_impl.dart';

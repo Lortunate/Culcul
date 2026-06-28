@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:culcul/core/perf/performance_policy.dart';
-import 'package:culcul/core/utils/format_extensions.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/video/presentation/detail/video_detail_view_model.dart';
 import 'package:culcul/features/video/presentation/player/controls/player_constants.dart';
 import 'package:culcul/features/video/presentation/player/player_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/theme/culcul_tokens.dart';
+import 'package:culcul/core/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

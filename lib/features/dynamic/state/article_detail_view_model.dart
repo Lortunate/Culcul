@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:culcul/core/contracts/comment_contract.dart';
+import 'package:culcul/core/models/comment_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/features/dynamic/application/article_detail_workflows.dart';
 import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
-import 'package:culcul/features/dynamic/domain/entities/article_detail_data.dart';
+import 'package:culcul/features/dynamic/models/article_detail_data.dart';
 import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -189,14 +189,22 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
         );
     result.when(
       success: (response) {
-        final mergedComments = refresh
-            ? response.replies
-            : _appendUniqueComments(previousComments, response.replies);
+        late final List<CommentItem> mergedComments;
+        if (refresh) {
+          mergedComments = response.replies;
+        } else if (response.replies.isEmpty) {
+          mergedComments = previousComments;
+        } else {
+          mergedComments = <int, CommentItem>{
+            for (final item in previousComments) item.rpid: item,
+            for (final item in response.replies) item.rpid: item,
+          }.values.toList();
+        }
 
         state = state.copyWith(
           comments: mergedComments,
           commentsNext: response.cursor?.next,
-          commentsHasMore: _resolveHasMore(response),
+          commentsHasMore: !(response.cursor?.isEnd ?? true),
           commentsLoading: false,
           commentsError: null,
         );
@@ -295,20 +303,4 @@ class ArticleDetailViewModel extends _$ArticleDetailViewModel {
       state = state.copyWith(comments: previous);
     }
   }
-}
-
-bool _resolveHasMore(CommentResponse data) {
-  return !(data.cursor?.isEnd ?? true);
-}
-
-List<CommentItem> _appendUniqueComments(
-  List<CommentItem> current,
-  List<CommentItem> incoming,
-) {
-  if (incoming.isEmpty) return current;
-  final merged = <int, CommentItem>{for (final item in current) item.rpid: item};
-  for (final item in incoming) {
-    merged[item.rpid] = item;
-  }
-  return merged.values.toList();
 }

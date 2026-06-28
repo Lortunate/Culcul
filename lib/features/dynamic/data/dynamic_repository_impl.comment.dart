@@ -59,7 +59,7 @@ mixin _DynamicRepositoryCommentApis on _DynamicRepositoryAccess {
     String? referer,
   }) {
     return _requestExecutor.runApiDirect(
-      () => sharedCommentService.fetchComments(
+      () => sharedCommentApi.fetchComments(
         oid: oid,
         type: type,
         sort: sort,
@@ -110,7 +110,7 @@ mixin _DynamicRepositoryCommentApis on _DynamicRepositoryAccess {
     String? referer,
   }) {
     return _requestExecutor.runApiDirect(
-      () => sharedCommentService.addReply(
+      () => sharedCommentApi.addReply(
         oid: oid,
         root: root,
         parent: parent,
@@ -144,7 +144,7 @@ mixin _DynamicRepositoryCommentApis on _DynamicRepositoryAccess {
     String? referer,
   }) {
     return _requestExecutor.runUnit(
-      () => sharedCommentService.actionComment(
+      () => sharedCommentApi.actionComment(
         oid: oid,
         rpid: rpid,
         action: isLiked ? 1 : 0,

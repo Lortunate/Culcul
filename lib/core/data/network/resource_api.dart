@@ -9,10 +9,6 @@ final basicResourceApiProvider = Provider<ResourceApi>(
   (ref) => ResourceApi(ref.watch(basicDioProvider)),
 );
 
-final resourceApiProvider = Provider<ResourceApi>(
-  (ref) => ResourceApi(ref.watch(dioClientProvider)),
-);
-
 @RestApi()
 abstract class ResourceApi {
   factory ResourceApi(Dio dio, {String baseUrl}) = _ResourceApi;

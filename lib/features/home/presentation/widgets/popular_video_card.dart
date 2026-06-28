@@ -1,20 +1,19 @@
-import 'package:culcul/core/contracts/video_model_contract.dart';
-import 'package:culcul/ui/widgets/buttons/app_tag.dart';
-import 'package:culcul/ui/assemblies/feed_cards/video_list_card.dart';
+import 'package:culcul/core/models/video_model_contract.dart';
+import 'package:culcul/ui/widgets/cards/video_list_card.dart';
 import 'package:flutter/material.dart';
 
 class PopularVideoCard extends StatelessWidget {
   final VideoModel video;
-  final VoidCallback? onTap;
-  final VoidCallback? onLongPress;
+  final VoidCallback onTap;
+  final VoidCallback onLongPress;
   final double cardHeight;
   final double thumbnailWidth;
 
   const PopularVideoCard({
     super.key,
     required this.video,
-    this.onTap,
-    this.onLongPress,
+    required this.onTap,
+    required this.onLongPress,
     this.cardHeight = 100,
     this.thumbnailWidth = 160,
   });
@@ -39,14 +38,22 @@ class PopularVideoCard extends StatelessWidget {
         viewCount: video.stat.view,
         danmakuCount: video.stat.danmaku,
         badge: rcmdReason.isNotEmpty
-            ? AppTag(
-                text: rcmdReason,
-                color: isMillion
-                    ? colorScheme.primary.withValues(alpha: 0.1)
-                    : colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-                textColor: isMillion ? colorScheme.primary : colorScheme.onSurfaceVariant,
+            ? Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                borderRadius: 6,
+                decoration: BoxDecoration(
+                  color: isMillion
+                      ? colorScheme.primary.withValues(alpha: 0.1)
+                      : colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  rcmdReason,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: isMillion ? colorScheme.primary : colorScheme.onSurfaceVariant,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               )
             : null,
         author: Row(

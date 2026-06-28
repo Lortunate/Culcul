@@ -22,7 +22,6 @@ class NetworkConcurrencyExecutor {
   Future<List<R>> mapConcurrent<T, R>({
     required List<T> items,
     required NetworkConcurrencyProfile profile,
-    required String scope,
     required Future<R> Function(T item) mapper,
   }) async {
     if (items.isEmpty) return <R>[];
@@ -49,7 +48,6 @@ class NetworkConcurrencyExecutor {
   Future<Map<String, dynamic>> runConcurrent({
     required List<ConcurrentTask<dynamic>> tasks,
     required NetworkConcurrencyProfile profile,
-    required String scope,
   }) async {
     if (tasks.isEmpty) return const <String, dynamic>{};
 

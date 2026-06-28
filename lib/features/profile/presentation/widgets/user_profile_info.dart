@@ -1,13 +1,13 @@
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/core/utils/format_utils.dart';
-import 'package:culcul/features/profile/domain/entities/profile_user.dart';
+import 'package:culcul/features/profile/models/profile_user.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_buttons.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/users/app_avatar.dart';
 import 'package:culcul/ui/widgets/media/app_network_image.dart';
 import 'package:culcul/ui/widgets/media/app_image_preview.dart';
-import 'package:culcul/ui/assemblies/users/user_tags.dart';
+import 'package:culcul/ui/widgets/users/user_tags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -17,7 +17,6 @@ class UserProfileHeader extends HookConsumerWidget {
 
   static const double _bannerHeight = 160.0;
   static const double _avatarSize = 88.0;
-  static const double _borderRadius = 20.0;
 
   const UserProfileHeader({super.key, required this.profile});
 
@@ -35,6 +34,20 @@ class UserProfileHeader extends HookConsumerWidget {
     final isExpanded = useState(false);
     final session = ref.watch(currentUserProvider);
     final isSelf = (session?.isLoggedIn ?? false) && session?.uid == user.id;
+    final navigation = ProfileNavigationScope.of(context);
+    final profileStats = <({int count, String label, VoidCallback? onTap})>[
+      (
+        count: user.followingCount,
+        label: t.profile.stats.following,
+        onTap: () => navigation.onOpenFollowings(int.parse(user.id)),
+      ),
+      (
+        count: user.followersCount,
+        label: t.profile.stats.followers,
+        onTap: () => navigation.onOpenFollowers(int.parse(user.id)),
+      ),
+      (count: user.likesCount, label: t.profile.stats.likes, onTap: null),
+    ];
 
     return Column(
       children: [
@@ -81,15 +94,70 @@ class UserProfileHeader extends HookConsumerWidget {
               child: Container(
                 decoration: BoxDecoration(
                   color: theme.scaffoldBackgroundColor,
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(_borderRadius),
-                  ),
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(20.0)),
                 ),
                 padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _StatsRow(user: user, isSelf: isSelf, avatarSize: _avatarSize),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        children: [
+                          const SizedBox(width: _avatarSize + 12),
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    for (final stat in profileStats)
+                                      InkWell(
+                                        onTap: stat.onTap,
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 8,
+                                          ),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                FormatUtils.formatNumber(stat.count),
+                                                style: theme.textTheme.titleMedium
+                                                    ?.copyWith(
+                                                      fontWeight: FontWeight.w700,
+                                                      fontSize: 16,
+                                                      color: theme.colorScheme.onSurface,
+                                                    ),
+                                              ),
+                                              const SizedBox(height: 2),
+                                              Text(
+                                                stat.label,
+                                                style: theme.textTheme.labelSmall
+                                                    ?.copyWith(
+                                                      color: theme
+                                                          .colorScheme
+                                                          .onSurfaceVariant,
+                                                      fontSize: 11,
+                                                      fontWeight: FontWeight.w500,
+                                                    ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                UserProfileButtons(profile: user, isSelf: isSelf),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     Row(
                       children: [
                         Flexible(
@@ -219,97 +287,6 @@ class UserProfileHeader extends HookConsumerWidget {
           ],
         ),
       ],
-    );
-  }
-}
-
-class _StatsRow extends StatelessWidget {
-  final ProfileUser user;
-  final bool isSelf;
-  final double avatarSize;
-
-  const _StatsRow({required this.user, required this.isSelf, required this.avatarSize});
-
-  @override
-  Widget build(BuildContext context) {
-    final navigation = ProfileNavigationScope.of(context);
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          SizedBox(width: avatarSize + 12),
-          Expanded(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _ProfileStatItem(
-                      count: user.followingCount,
-                      label: t.profile.stats.following,
-                      onTap: () => navigation.onOpenFollowings(int.parse(user.id)),
-                    ),
-                    _ProfileStatItem(
-                      count: user.followersCount,
-                      label: t.profile.stats.followers,
-                      onTap: () => navigation.onOpenFollowers(int.parse(user.id)),
-                    ),
-                    _ProfileStatItem(
-                      count: user.likesCount,
-                      label: t.profile.stats.likes,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                UserProfileButtons(profile: user, isSelf: isSelf),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ProfileStatItem extends StatelessWidget {
-  final int count;
-  final String label;
-  final VoidCallback? onTap;
-
-  const _ProfileStatItem({required this.count, required this.label, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              FormatUtils.formatNumber(count),
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-                color: theme.colorScheme.onSurface,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

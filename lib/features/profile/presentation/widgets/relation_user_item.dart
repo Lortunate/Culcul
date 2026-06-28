@@ -1,7 +1,7 @@
 import 'package:culcul/core/feedback/app_feedback.dart';
-import 'package:culcul/core/services/relation_service.dart';
+import 'package:culcul/features/profile/relation_api.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
-import 'package:culcul/core/contracts/relation_user_contract.dart';
+import 'package:culcul/core/models/relation_user_contract.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/buttons/follow_button.dart';
@@ -11,9 +11,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class RelationUserItem extends ConsumerStatefulWidget {
   final ProfileRelationUser user;
-  final VoidCallback? onTap;
 
-  const RelationUserItem({super.key, required this.user, this.onTap});
+  const RelationUserItem({super.key, required this.user});
 
   @override
   ConsumerState<RelationUserItem> createState() => _RelationUserItemState();
@@ -38,51 +37,43 @@ class _RelationUserItemState extends ConsumerState<RelationUserItem> {
 
   @override
   Widget build(BuildContext context) {
-    return UserListTile(
-      onTap:
-          widget.onTap ??
-          () {
-            ProfileNavigationScope.of(context).onOpenUser(widget.user.mid);
-          },
-      avatarUrl: widget.user.face,
-      name: widget.user.uname,
-      subtitle: widget.user.sign,
-      trailing: _buildFollowButton(context),
-    );
-  }
-
-  Widget _buildFollowButton(BuildContext context) {
     final t = Translations.of(context);
     // 0: not following, 2: following, 6: mutual, 128: blocked
-    String text = t.actions.follow;
+    String followText = t.actions.follow;
     bool isFollowed = false;
 
     if (_attribute == 2) {
-      text = t.actions.followed;
+      followText = t.actions.followed;
       isFollowed = true;
     } else if (_attribute == 6) {
-      text = t.profile.relation.mutual;
+      followText = t.profile.relation.mutual;
       isFollowed = true;
     } else if (_attribute == 128) {
-      text = t.profile.relation.blacklisted;
+      followText = t.profile.relation.blacklisted;
       isFollowed = true;
     }
 
-    return FollowButton(
-      isFollowed: isFollowed,
-      text: text,
-      onTap: _handleFollowPressed,
-      height: 32,
+    return UserListTile(
+      onTap: () {
+        ProfileNavigationScope.of(context).onOpenUser(widget.user.mid);
+      },
+      avatarUrl: widget.user.face,
+      name: widget.user.uname,
+      subtitle: widget.user.sign,
+      trailing: FollowButton(
+        isFollowed: isFollowed,
+        text: followText,
+        onTap: () {
+          final session = ref.read(currentUserProvider);
+          if (!(session?.isLoggedIn ?? false)) {
+            ProfileNavigationScope.of(context).onLogin();
+            return;
+          }
+          _handleFollow();
+        },
+        height: 32,
+      ),
     );
-  }
-
-  void _handleFollowPressed() {
-    final session = ref.read(currentUserProvider);
-    if (!(session?.isLoggedIn ?? false)) {
-      ProfileNavigationScope.of(context).onLogin();
-      return;
-    }
-    _handleFollow();
   }
 
   Future<void> _handleFollow() async {

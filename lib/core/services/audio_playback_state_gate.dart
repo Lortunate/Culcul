@@ -52,13 +52,7 @@ final class AudioPlaybackSnapshot {
 }
 
 class AudioPlaybackStateGate {
-  AudioPlaybackStateGate({
-    this.positionStep = const Duration(milliseconds: 250),
-    this.minEmitInterval = const Duration(milliseconds: 250),
-  });
-
-  final Duration positionStep;
-  final Duration minEmitInterval;
+  static const _emitStep = Duration(milliseconds: 250);
 
   AudioPlaybackSnapshot? _lastSnapshot;
   DateTime? _lastEmitAt;
@@ -75,8 +69,8 @@ class AudioPlaybackStateGate {
     final normalized = AudioPlaybackSnapshot(
       playing: playing,
       processingState: processingState,
-      position: _quantizeDuration(position, positionStep),
-      bufferedPosition: _quantizeDuration(bufferedPosition, positionStep),
+      position: _quantizeDuration(position, _emitStep),
+      bufferedPosition: _quantizeDuration(bufferedPosition, _emitStep),
       speed: speed,
     );
 
@@ -87,7 +81,7 @@ class AudioPlaybackStateGate {
     final currentTime = now ?? DateTime.now();
     if (!isCriticalEvent && _lastEmitAt != null) {
       final elapsed = currentTime.difference(_lastEmitAt!);
-      if (elapsed < minEmitInterval) {
+      if (elapsed < _emitStep) {
         return null;
       }
     }
@@ -96,8 +90,6 @@ class AudioPlaybackStateGate {
     _lastEmitAt = currentTime;
     return normalized;
   }
-
-  Duration quantizePosition(Duration value) => _quantizeDuration(value, positionStep);
 
   Duration _quantizeDuration(Duration value, Duration step) {
     final millis = value.inMilliseconds;

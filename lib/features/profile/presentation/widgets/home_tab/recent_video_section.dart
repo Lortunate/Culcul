@@ -6,21 +6,20 @@ import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
 import 'package:culcul/ui/widgets/media/network_image_prefetch_specs.dart';
-import 'package:culcul/ui/assemblies/feed_cards/video_card.dart';
-import 'package:culcul/ui/assemblies/feed_cards/video_card_skeleton.dart';
+import 'package:culcul/ui/widgets/cards/video_card.dart';
+import 'package:culcul/ui/widgets/cards/video_card_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class RecentVideoSection extends ConsumerWidget {
   final int mid;
-  final ValueChanged<int>? onSwitchToTab;
+  final ValueChanged<int> onSwitchToTab;
 
   static const int _maxDisplayCount = 6;
   static const double _gridSpacing = 8.0;
   static const int _crossAxisCount = 2;
-  static const double _coverAspectRatio = 16 / 10;
 
-  const RecentVideoSection({super.key, required this.mid, this.onSwitchToTab});
+  const RecentVideoSection({super.key, required this.mid, required this.onSwitchToTab});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -49,7 +48,7 @@ class RecentVideoSection extends ConsumerWidget {
             videos,
             count: _maxDisplayCount,
             logicalWidth: itemWidth,
-            aspectRatio: _coverAspectRatio,
+            aspectRatio: 16 / 10,
             pixelRatio: pixelRatio,
             imageUrl: (video) => video.pic,
           ),
@@ -60,7 +59,7 @@ class RecentVideoSection extends ConsumerWidget {
               child: SectionHeader(
                 title: t.profile.home_tab.recent_videos(count: videoCount.toString()),
                 trailing: GestureDetector(
-                  onTap: () => onSwitchToTab?.call(2),
+                  onTap: () => onSwitchToTab(2),
                   behavior: HitTestBehavior.opaque,
                   child: Row(
                     children: [

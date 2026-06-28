@@ -1,6 +1,6 @@
-import 'package:culcul/core/contracts/bilibili_link_contract.dart';
-import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
-import 'package:culcul/features/notification/domain/entities/system_notice.dart';
+import 'package:culcul/core/models/bilibili_link_contract.dart';
+import 'package:culcul/features/notification/models/notification_entry.dart';
+import 'package:culcul/features/notification/models/system_notice.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -101,8 +101,10 @@ class NotificationNavigationParser {
         case BilibiliLinkKind.dynamicDetail:
           return NotificationNavigationTarget.dynamic(target.dynamicId!);
         case BilibiliLinkKind.article:
-          final opusId = _extractOpusId(target.uri!);
-          if (opusId != null) return NotificationNavigationTarget.dynamic(opusId);
+          final segments = target.uri!.pathSegments;
+          if (segments.length >= 2 && segments.first.toLowerCase() == 'opus') {
+            return NotificationNavigationTarget.dynamic(segments[1]);
+          }
           continue;
         case BilibiliLinkKind.liveRoom:
         case BilibiliLinkKind.external:
@@ -126,31 +128,16 @@ class NotificationNavigationParser {
     }
 
     for (final candidate in candidates) {
-      final externalUri = _tryExternalUri(candidate);
-      if (externalUri != null) {
-        return NotificationNavigationTarget.external(externalUri);
+      final externalUri = Uri.tryParse(candidate);
+      if (externalUri != null && externalUri.scheme.isNotEmpty) {
+        final scheme = externalUri.scheme.toLowerCase();
+        if (scheme == 'http' || scheme == 'https' || scheme == 'bilibili') {
+          return NotificationNavigationTarget.external(externalUri);
+        }
       }
     }
 
     return const NotificationNavigationTarget.none();
-  }
-
-  Uri? _tryExternalUri(String raw) {
-    final parsed = Uri.tryParse(raw);
-    if (parsed == null || parsed.scheme.isEmpty) return null;
-    final scheme = parsed.scheme.toLowerCase();
-    if (scheme == 'http' || scheme == 'https' || scheme == 'bilibili') {
-      return parsed;
-    }
-    return null;
-  }
-
-  String? _extractOpusId(Uri uri) {
-    final segments = uri.pathSegments;
-    if (segments.length >= 2 && segments.first.toLowerCase() == 'opus') {
-      return segments[1];
-    }
-    return null;
   }
 
   static bool _hasText(String? value) => value != null && value.trim().isNotEmpty;

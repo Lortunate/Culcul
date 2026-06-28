@@ -1,5 +1,5 @@
 import 'package:culcul/core/feedback/app_feedback.dart';
-import 'package:culcul/core/utils/format_extensions.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/features/settings/data/settings_repository_impl.dart';
 import 'package:culcul/features/settings/settings.dart';
 import 'package:culcul/i18n/strings.g.dart';
@@ -7,11 +7,6 @@ import 'package:culcul/ui/widgets/buttons/app_clickable.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-final _cacheSizeProvider = FutureProvider.autoDispose<String>((ref) async {
-  final totalSize = await ref.read(settingsRepositoryProvider).getCacheSizeInBytes();
-  return totalSize.formatFileSize;
-});
 
 class SettingsPage extends ConsumerStatefulWidget {
   final VoidCallback onOpenAbout;
@@ -24,6 +19,13 @@ class SettingsPage extends ConsumerStatefulWidget {
 
 class _SettingsPageState extends ConsumerState<SettingsPage> {
   bool _isClearingCache = false;
+  String _cacheSize = '...';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCacheSize();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +34,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final colorScheme = theme.colorScheme;
 
     final themeMode = ref.watch(appThemeModeProvider);
-    final cacheState = ref.watch(_cacheSizeProvider);
-    final cacheSize = cacheState.when(
-      data: (value) => value,
-      loading: () => '...',
-      error: (error, stackTrace) => '0 B',
-    );
 
     return Scaffold(
       backgroundColor: colorScheme.surfaceContainerLowest,
@@ -63,19 +59,57 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 key: const ValueKey('appearance'),
                 title: t.settings.appearance,
                 icon: Icons.palette_outlined,
-                value: _getThemeName(t, themeMode),
+                value: switch (themeMode) {
+                  ThemeMode.system => t.settings.theme_mode.system,
+                  ThemeMode.light => t.settings.theme_mode.light,
+                  ThemeMode.dark => t.settings.theme_mode.dark,
+                },
                 onTap: () {
                   _showSelectionSheet(
                     context,
                     title: t.settings.sections.appearance,
                     children: ThemeMode.values.map((mode) {
-                      return _SettingsSelectionItem(
-                        title: _getThemeName(t, mode),
-                        isSelected: themeMode == mode,
+                      final optionTitle = switch (mode) {
+                        ThemeMode.system => t.settings.theme_mode.system,
+                        ThemeMode.light => t.settings.theme_mode.light,
+                        ThemeMode.dark => t.settings.theme_mode.dark,
+                      };
+                      final isSelected = themeMode == mode;
+
+                      return AppClickable(
                         onTap: () {
                           ref.read(appThemeModeProvider.notifier).setTheme(mode);
                           context.pop();
                         },
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 16,
+                            horizontal: 20,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                optionTitle,
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: isSelected
+                                      ? colorScheme.primary
+                                      : colorScheme.onSurface,
+                                  fontWeight: isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                ),
+                              ),
+                              if (isSelected)
+                                Icon(
+                                  Icons.check_rounded,
+                                  color: colorScheme.primary,
+                                  size: 20,
+                                ),
+                            ],
+                          ),
+                        ),
                       );
                     }).toList(),
                   );
@@ -85,19 +119,57 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 key: const ValueKey('language'),
                 title: t.settings.language,
                 icon: Icons.language_outlined,
-                value: _getLanguageName(t, LocaleSettings.currentLocale),
+                value: switch (LocaleSettings.currentLocale) {
+                  AppLocale.zh => t.settings.chinese,
+                  AppLocale.zhHant => t.settings.traditional_chinese,
+                  AppLocale.en => t.settings.english,
+                },
                 onTap: () {
                   _showSelectionSheet(
                     context,
                     title: t.settings.language,
                     children: AppLocale.values.map((locale) {
-                      return _SettingsSelectionItem(
-                        title: _getLanguageName(t, locale),
-                        isSelected: LocaleSettings.currentLocale == locale,
+                      final optionTitle = switch (locale) {
+                        AppLocale.zh => t.settings.chinese,
+                        AppLocale.zhHant => t.settings.traditional_chinese,
+                        AppLocale.en => t.settings.english,
+                      };
+                      final isSelected = LocaleSettings.currentLocale == locale;
+
+                      return AppClickable(
                         onTap: () {
                           LocaleSettings.setLocale(locale);
                           context.pop();
                         },
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 16,
+                            horizontal: 20,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                optionTitle,
+                                style: theme.textTheme.bodyLarge?.copyWith(
+                                  color: isSelected
+                                      ? colorScheme.primary
+                                      : colorScheme.onSurface,
+                                  fontWeight: isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                ),
+                              ),
+                              if (isSelected)
+                                Icon(
+                                  Icons.check_rounded,
+                                  color: colorScheme.primary,
+                                  size: 20,
+                                ),
+                            ],
+                          ),
+                        ),
                       );
                     }).toList(),
                   );
@@ -112,13 +184,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 key: const ValueKey('clear_cache'),
                 title: t.settings.clear_cache,
                 icon: Icons.cleaning_services_outlined,
-                value: _isClearingCache ? '...' : cacheSize,
+                value: _isClearingCache ? '...' : _cacheSize,
                 onTap: () async {
                   if (_isClearingCache) return;
                   setState(() => _isClearingCache = true);
                   try {
                     await ref.read(settingsRepositoryProvider).clearCache();
-                    ref.invalidate(_cacheSizeProvider);
+                    await _loadCacheSize();
                   } catch (_) {
                     // Keep prior behavior: clear errors are intentionally not surfaced.
                   } finally {
@@ -150,17 +222,17 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     );
   }
 
-  String _getLanguageName(Translations t, AppLocale locale) => switch (locale) {
-    AppLocale.zh => t.settings.chinese,
-    AppLocale.zhHant => t.settings.traditional_chinese,
-    AppLocale.en => t.settings.english,
-  };
-
-  String _getThemeName(Translations t, ThemeMode mode) => switch (mode) {
-    ThemeMode.system => t.settings.theme_mode.system,
-    ThemeMode.light => t.settings.theme_mode.light,
-    ThemeMode.dark => t.settings.theme_mode.dark,
-  };
+  Future<void> _loadCacheSize() async {
+    late final String cacheSize;
+    try {
+      final totalSize = await ref.read(settingsRepositoryProvider).getCacheSizeInBytes();
+      cacheSize = FormatUtils.formatFileSize(totalSize);
+    } catch (_) {
+      cacheSize = '0 B';
+    }
+    if (!mounted) return;
+    setState(() => _cacheSize = cacheSize);
+  }
 
   void _showSelectionSheet(
     BuildContext context, {
@@ -251,15 +323,15 @@ class _SettingsGroup extends StatelessWidget {
 class _SettingsTile extends StatelessWidget {
   final String title;
   final String? value;
-  final IconData? icon;
-  final VoidCallback? onTap;
+  final IconData icon;
+  final VoidCallback onTap;
 
   const _SettingsTile({
     super.key,
     required this.title,
+    required this.icon,
+    required this.onTap,
     this.value,
-    this.icon,
-    this.onTap,
   });
 
   @override
@@ -272,10 +344,8 @@ class _SettingsTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
         children: [
-          if (icon != null) ...[
-            Icon(icon, size: 24, color: colorScheme.onSurfaceVariant),
-            const SizedBox(width: 16),
-          ],
+          Icon(icon, size: 24, color: colorScheme.onSurfaceVariant),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,62 +366,16 @@ class _SettingsTile extends StatelessWidget {
                 ),
               ),
             ),
-          if (onTap != null) ...[
-            const SizedBox(width: 8),
-            Icon(
-              Icons.chevron_right_rounded,
-              size: 20,
-              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
-            ),
-          ],
+          const SizedBox(width: 8),
+          Icon(
+            Icons.chevron_right_rounded,
+            size: 20,
+            color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+          ),
         ],
       ),
     );
 
-    if (onTap == null) {
-      return child;
-    }
-
     return AppClickable(onTap: onTap, child: child);
-  }
-}
-
-class _SettingsSelectionItem extends StatelessWidget {
-  final String title;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _SettingsSelectionItem({
-    required this.title,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
-    return AppClickable(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: isSelected ? colorScheme.primary : colorScheme.onSurface,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
-            if (isSelected)
-              Icon(Icons.check_rounded, color: colorScheme.primary, size: 20),
-          ],
-        ),
-      ),
-    );
   }
 }

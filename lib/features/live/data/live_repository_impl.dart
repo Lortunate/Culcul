@@ -4,7 +4,7 @@ import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/utils/json_utils.dart';
 import 'package:culcul/features/live/data/live_api.dart';
-import 'package:culcul/core/contracts/live_room_summary_contract.dart';
+import 'package:culcul/core/models/live_room_summary_contract.dart';
 import 'package:culcul/features/live/application/models/live_danmu_info_model.dart';
 import 'package:culcul/features/live/application/models/live_gold_rank_model.dart';
 import 'package:culcul/features/live/application/models/live_guard_list_model.dart';

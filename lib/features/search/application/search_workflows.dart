@@ -24,11 +24,3 @@ List<String> addSearchHistoryEntry(
   }
   return nextHistory;
 }
-
-List<String> removeSearchHistoryEntry(List<String> currentHistory, String rawTerm) {
-  final normalizedTerm = rawTerm.trim();
-  if (normalizedTerm.isEmpty) {
-    return List<String>.from(currentHistory);
-  }
-  return currentHistory.where((term) => term != normalizedTerm).toList();
-}

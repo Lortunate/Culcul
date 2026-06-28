@@ -8,9 +8,9 @@ import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/utils/json_utils.dart';
 import 'package:culcul/features/profile/data/profile_api.dart';
-import 'package:culcul/core/contracts/user_card_contract.dart';
-import 'package:culcul/features/profile/domain/entities/profile_user.dart';
-import 'package:culcul/features/profile/domain/entities/profile_video.dart';
+import 'package:culcul/core/models/user_card_contract.dart';
+import 'package:culcul/features/profile/models/profile_user.dart';
+import 'package:culcul/features/profile/models/profile_video.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'profile_repository_impl.g.dart';
@@ -34,10 +34,6 @@ class ProfileRepositoryImpl {
     NetworkConcurrencyExecutor? concurrencyExecutor,
   }) : _requestExecutor = requestExecutor ?? const RequestExecutor(),
        _concurrencyExecutor = concurrencyExecutor ?? const NetworkConcurrencyExecutor();
-
-  Object? _ignoreOptionalProfileResponse(Object _) {
-    return null;
-  }
 
   Future<Result<UserCardModel, AppError>> getUserCard(int mid) async {
     final result = await _requestExecutor.runApiDirect(() => api.getCard(mid));
@@ -72,30 +68,29 @@ class ProfileRepositoryImpl {
           ConcurrentTask<dynamic>(
             label: 'relation',
             critical: false,
-            fallback: _ignoreOptionalProfileResponse,
+            fallback: (_) => null,
             task: () => api.getRelationStat(userId),
           ),
           ConcurrentTask<dynamic>(
             label: 'upStat',
             critical: false,
-            fallback: _ignoreOptionalProfileResponse,
+            fallback: (_) => null,
             task: () => api.getUpStat(userId),
           ),
           ConcurrentTask<dynamic>(
             label: 'navNum',
             critical: false,
-            fallback: _ignoreOptionalProfileResponse,
+            fallback: (_) => null,
             task: () => api.getNavNum(userId),
           ),
           ConcurrentTask<dynamic>(
             label: 'card',
             critical: false,
-            fallback: _ignoreOptionalProfileResponse,
+            fallback: (_) => null,
             task: () => api.getCard(userId),
           ),
         ],
         profile: NetworkConcurrencyProfile.enrich,
-        scope: 'profile_get_profile_model',
       );
       final infoResponse = responses['info'] as ApiResponse<dynamic>;
 
@@ -116,14 +111,27 @@ class ProfileRepositoryImpl {
       final navNumData = _optionalResponseDataMap(navNumResponse);
       final likes = JsonUtils.parseIntWithDefault(upStatData?['likes']);
       final videoCount = JsonUtils.parseIntWithDefault(navNumData?['video']);
-      final topPhoto = _resolveBanner(infoData, cardResponse);
+      final topPhoto = infoData['top_photo'] as String?;
+      final cardData = _optionalResponseDataMap(cardResponse);
+      final space = JsonUtils.asStringKeyedMap(cardData?['space']);
+      var bannerUrl = topPhoto;
+      final largeBanner = space?['l_img'] as String?;
+      if (largeBanner != null && largeBanner.isNotEmpty) {
+        bannerUrl = largeBanner;
+      } else {
+        final smallBanner = space?['s_img'] as String?;
+        if (smallBanner != null && smallBanner.isNotEmpty) {
+          bannerUrl = smallBanner;
+        }
+      }
       final vipInfo = JsonUtils.asStringKeyedMap(infoData['vip']);
+      final officialInfo = JsonUtils.asStringKeyedMap(infoData['official']);
 
       return ProfileUser(
         id: userId.toString(),
         username: infoData['name'] as String? ?? '',
         avatarUrl: infoData['face'] as String? ?? '',
-        bannerUrl: topPhoto,
+        bannerUrl: bannerUrl,
         bio: infoData['sign'] as String?,
         followersCount: followers,
         followingCount: following,
@@ -133,7 +141,7 @@ class ProfileRepositoryImpl {
         vipType: JsonUtils.parseIntWithDefault(vipInfo?['type']),
         vipStatus: JsonUtils.parseIntWithDefault(vipInfo?['status']),
         isFollowing: infoData['is_followed'] as bool? ?? false,
-        isVerified: _isVerified(infoData),
+        isVerified: JsonUtils.parseIntWithDefault(officialInfo?['role']) != 0,
       );
     });
   }
@@ -192,40 +200,5 @@ class ProfileRepositoryImpl {
       return null;
     }
     return response.data as Map<String, dynamic>;
-  }
-
-  bool _isVerified(Map<String, dynamic> infoData) {
-    final official = infoData['official'];
-    if (official is! Map<String, dynamic>) {
-      return false;
-    }
-    return (official['role'] as int? ?? 0) != 0;
-  }
-
-  String? _resolveBanner(Map<String, dynamic> infoData, dynamic cardResponse) {
-    final topPhoto = infoData['top_photo'] as String?;
-    if (cardResponse == null ||
-        cardResponse.code != 0 ||
-        cardResponse.data is! Map<String, dynamic>) {
-      return topPhoto;
-    }
-
-    final data = cardResponse.data as Map<String, dynamic>;
-    final space = data['space'];
-    if (space is! Map<String, dynamic>) {
-      return topPhoto;
-    }
-
-    final large = space['l_img'] as String?;
-    if (large != null && large.isNotEmpty) {
-      return large;
-    }
-
-    final small = space['s_img'] as String?;
-    if (small != null && small.isNotEmpty) {
-      return small;
-    }
-
-    return topPhoto;
   }
 }

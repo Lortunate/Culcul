@@ -1,4 +1,4 @@
-import 'package:culcul/features/auth/domain/entities/country_code.dart';
+import 'package:culcul/features/auth/models/country_code.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/auth/application/auth_controller.dart';
 import 'package:culcul/ui/widgets/inputs/app_search_bar.dart';

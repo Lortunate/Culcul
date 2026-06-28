@@ -5,8 +5,8 @@ import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/notification/application/notification_navigation.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';
-import 'package:culcul/features/notification/domain/entities/system_notice.dart';
-import 'package:culcul/core/utils/format_extensions.dart';
+import 'package:culcul/features/notification/models/system_notice.dart';
+import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -125,7 +125,7 @@ class SystemNotificationPage extends ConsumerWidget {
                               Row(
                                 children: [
                                   Text(
-                                    item.time.formatTimestamp(),
+                                    FormatUtils.formatTimeAgo(item.time),
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: colorScheme.outline,
                                     ),

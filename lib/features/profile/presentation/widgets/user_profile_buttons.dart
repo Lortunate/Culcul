@@ -1,5 +1,5 @@
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
-import 'package:culcul/features/profile/domain/entities/profile_user.dart';
+import 'package:culcul/features/profile/models/profile_user.dart';
 import 'package:culcul/features/profile/state/user_space_view_model.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';
@@ -10,16 +10,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class UserProfileButtons extends ConsumerWidget {
   final ProfileUser profile;
   final bool isSelf;
-  final double height;
-  final double borderRadius;
 
-  const UserProfileButtons({
-    super.key,
-    required this.profile,
-    required this.isSelf,
-    this.height = 36,
-    this.borderRadius = 8,
-  });
+  const UserProfileButtons({super.key, required this.profile, required this.isSelf});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,12 +27,10 @@ class UserProfileButtons extends ConsumerWidget {
               onPressed: navigation.onOpenSettings,
               style: OutlinedButton.styleFrom(
                 padding: EdgeInsets.zero,
-                minimumSize: Size(double.infinity, height),
-                fixedSize: Size.fromHeight(height),
+                minimumSize: const Size(double.infinity, 36),
+                fixedSize: const Size.fromHeight(36),
                 side: BorderSide(color: colorScheme.outline.withValues(alpha: 0.3)),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(borderRadius),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 backgroundColor: colorScheme.surface,
                 foregroundColor: colorScheme.onSurface,
                 elevation: 0,
@@ -68,10 +58,8 @@ class UserProfileButtons extends ConsumerWidget {
               }
               ref.read(userSpaceProvider(profile.id).notifier).toggleFollow();
             },
-            height: height,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
-            ),
+            height: 36,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
         ),
         OutlinedButton(
@@ -84,15 +72,15 @@ class UserProfileButtons extends ConsumerWidget {
           },
           style: OutlinedButton.styleFrom(
             padding: EdgeInsets.zero,
-            minimumSize: Size(height, height),
-            fixedSize: Size(height, height),
+            minimumSize: const Size(36, 36),
+            fixedSize: const Size(36, 36),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             side: BorderSide(color: colorScheme.outline.withValues(alpha: 0.2)),
             backgroundColor: colorScheme.surface,
           ),
           child: Icon(
             Icons.mail_outline_rounded,
-            size: height * 0.45,
+            size: 36 * 0.45,
             color: colorScheme.onSurfaceVariant,
           ),
         ),

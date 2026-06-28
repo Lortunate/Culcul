@@ -5,8 +5,8 @@ import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/utils/json_utils.dart';
 import 'package:culcul/features/favorites/data/fav_api.dart';
 import 'package:culcul/features/favorites/data/favorite_paging_constants.dart';
-import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
-import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
+import 'package:culcul/features/favorites/models/favorite_folder.dart';
+import 'package:culcul/features/favorites/models/favorite_resource.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'fav_repository_impl.g.dart';
@@ -151,8 +151,10 @@ class FavRepositoryImpl {
     required Iterable<int> addMediaIds,
     required Iterable<int> delMediaIds,
   }) {
-    final addIds = _joinMediaIds(addMediaIds);
-    final delIds = _joinMediaIds(delMediaIds);
+    final normalizedAddIds = addMediaIds.where((id) => id > 0).toSet().toList()..sort();
+    final normalizedDelIds = delMediaIds.where((id) => id > 0).toSet().toList()..sort();
+    final addIds = normalizedAddIds.isEmpty ? null : normalizedAddIds.join(',');
+    final delIds = normalizedDelIds.isEmpty ? null : normalizedDelIds.join(',');
     if (addIds == null && delIds == null) {
       return Future.value(const Success(null));
     }
@@ -160,14 +162,6 @@ class FavRepositoryImpl {
     return _requestExecutor.runUnit(
       () => _api.dealResource(aid, 2, addMediaIds: addIds, delMediaIds: delIds),
     );
-  }
-
-  String? _joinMediaIds(Iterable<int> ids) {
-    final normalized = ids.where((id) => id > 0).toSet().toList()..sort();
-    if (normalized.isEmpty) {
-      return null;
-    }
-    return normalized.join(',');
   }
 }
 

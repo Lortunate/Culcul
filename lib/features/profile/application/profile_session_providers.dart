@@ -1,4 +1,4 @@
-import 'package:culcul/core/contracts/user_card_contract.dart';
+import 'package:culcul/core/models/user_card_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/profile/data/profile_repository_impl.dart';

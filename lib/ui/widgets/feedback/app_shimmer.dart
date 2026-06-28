@@ -52,7 +52,11 @@ class _AppShimmerState extends State<AppShimmer> with SingleTickerProviderStateM
         final shouldAnimate =
             widget.enabled && !disableAnimations && policy.shimmerEnabled;
 
-        _syncAnimation(shouldAnimate);
+        if (shouldAnimate && !_controller.isAnimating) {
+          _controller.repeat();
+        } else if (!shouldAnimate && _controller.isAnimating) {
+          _controller.stop();
+        }
         if (!shouldAnimate) {
           return widget.child;
         }
@@ -83,16 +87,6 @@ class _AppShimmerState extends State<AppShimmer> with SingleTickerProviderStateM
         );
       },
     );
-  }
-
-  void _syncAnimation(bool shouldAnimate) {
-    if (shouldAnimate && !_controller.isAnimating) {
-      _controller.repeat();
-      return;
-    }
-    if (!shouldAnimate && _controller.isAnimating) {
-      _controller.stop();
-    }
   }
 }
 

@@ -86,6 +86,53 @@ class SearchSuggestionView extends HookConsumerWidget {
                   fontWeight: FontWeight.w600,
                   letterSpacing: 0.2,
                 );
+                final effectiveNormalStyle = normalStyle ?? const TextStyle();
+                final effectiveHighlightStyle = highlightStyle ?? const TextStyle();
+                final highlightedSpans = <TextSpan>[];
+                if (term.isEmpty) {
+                  highlightedSpans.add(
+                    TextSpan(text: displayValue, style: effectiveNormalStyle),
+                  );
+                } else {
+                  final lowerText = displayValue.toLowerCase();
+                  final lowerSearchTerm = term.toLowerCase();
+                  var currentIndex = 0;
+
+                  while (currentIndex < displayValue.length) {
+                    final matchIndex = lowerText.indexOf(lowerSearchTerm, currentIndex);
+
+                    if (matchIndex == -1) {
+                      highlightedSpans.add(
+                        TextSpan(
+                          text: displayValue.substring(currentIndex),
+                          style: effectiveNormalStyle,
+                        ),
+                      );
+                      break;
+                    }
+
+                    if (matchIndex > currentIndex) {
+                      highlightedSpans.add(
+                        TextSpan(
+                          text: displayValue.substring(currentIndex, matchIndex),
+                          style: effectiveNormalStyle,
+                        ),
+                      );
+                    }
+
+                    highlightedSpans.add(
+                      TextSpan(
+                        text: displayValue.substring(
+                          matchIndex,
+                          matchIndex + term.length,
+                        ),
+                        style: effectiveHighlightStyle,
+                      ),
+                    );
+
+                    currentIndex = matchIndex + term.length;
+                  }
+                }
 
                 return InkWell(
                   key: ValueKey('search_suggestion_${displayValue}_$index'),
@@ -98,14 +145,7 @@ class SearchSuggestionView extends HookConsumerWidget {
                       children: [
                         Expanded(
                           child: RichText(
-                            text: TextSpan(
-                              children: _buildHighlightedSpans(
-                                displayValue,
-                                term,
-                                normalStyle ?? const TextStyle(),
-                                highlightStyle ?? const TextStyle(),
-                              ),
-                            ),
+                            text: TextSpan(children: highlightedSpans),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -151,47 +191,5 @@ class SearchSuggestionView extends HookConsumerWidget {
         ),
       ),
     );
-  }
-
-  static List<TextSpan> _buildHighlightedSpans(
-    String text,
-    String searchTerm,
-    TextStyle normalStyle,
-    TextStyle highlightStyle,
-  ) {
-    if (searchTerm.isEmpty) {
-      return [TextSpan(text: text, style: normalStyle)];
-    }
-
-    final spans = <TextSpan>[];
-    final lowerText = text.toLowerCase();
-    final lowerSearchTerm = searchTerm.toLowerCase();
-    int currentIndex = 0;
-
-    while (currentIndex < text.length) {
-      final matchIndex = lowerText.indexOf(lowerSearchTerm, currentIndex);
-
-      if (matchIndex == -1) {
-        spans.add(TextSpan(text: text.substring(currentIndex), style: normalStyle));
-        break;
-      }
-
-      if (matchIndex > currentIndex) {
-        spans.add(
-          TextSpan(text: text.substring(currentIndex, matchIndex), style: normalStyle),
-        );
-      }
-
-      spans.add(
-        TextSpan(
-          text: text.substring(matchIndex, matchIndex + searchTerm.length),
-          style: highlightStyle,
-        ),
-      );
-
-      currentIndex = matchIndex + searchTerm.length;
-    }
-
-    return spans;
   }
 }

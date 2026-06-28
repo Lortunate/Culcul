@@ -8,6 +8,7 @@ import 'package:culcul/features/search/application/search_result.dart';
 import 'package:culcul/features/search/application/search_trending_item.dart';
 import 'package:culcul/features/search/data/search_repository_impl.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_application_providers.g.dart';
@@ -115,7 +116,7 @@ class TrendingRanking extends _$TrendingRanking {
     }
 
     final next = result.when(success: (data) => data, failure: (_) => previous);
-    if (_sameTrendingItems(previous, next)) {
+    if (listEquals(previous, next)) {
       DevLogger.log(
         'feature',
         'search.hot_ranking silent_refresh_skip',
@@ -128,26 +129,6 @@ class TrendingRanking extends _$TrendingRanking {
       'ms': stopwatch.elapsedMilliseconds,
     });
     state = AsyncData(next);
-  }
-
-  bool _sameTrendingItems(
-    List<SearchTrendingItem> previous,
-    List<SearchTrendingItem> next,
-  ) {
-    if (previous.length != next.length) {
-      return false;
-    }
-
-    for (var index = 0; index < previous.length; index++) {
-      final previousItem = previous[index];
-      final nextItem = next[index];
-      if (previousItem.keyword != nextItem.keyword ||
-          previousItem.label != nextItem.label ||
-          previousItem.position != nextItem.position) {
-        return false;
-      }
-    }
-    return true;
   }
 }
 

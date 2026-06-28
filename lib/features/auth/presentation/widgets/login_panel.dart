@@ -3,7 +3,7 @@ import 'package:culcul/features/auth/application/auth_controller.dart';
 import 'package:culcul/features/auth/presentation/widgets/password_login_view.dart';
 import 'package:culcul/features/auth/presentation/widgets/qr_login_view.dart';
 import 'package:culcul/features/auth/presentation/widgets/sms_login_view.dart';
-import 'package:culcul/ui/theme/culcul_tokens.dart';
+import 'package:culcul/core/theme/culcul_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -31,9 +31,9 @@ Future<void> showLoginDialog(BuildContext context) {
 }
 
 class LoginPanel extends HookConsumerWidget {
-  const LoginPanel({super.key, this.onClose});
+  const LoginPanel({super.key, required this.onClose});
 
-  final VoidCallback? onClose;
+  final VoidCallback onClose;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -43,24 +43,11 @@ class LoginPanel extends HookConsumerWidget {
     final feedback = useState<({String message, bool isSuccess})?>(null);
     final feedbackVersion = useState(0);
     final visibleFeedback = feedback.value;
-    final feedbackBackgroundColor = visibleFeedback == null
-        ? null
-        : visibleFeedback.isSuccess
-        ? theme.colorScheme.primaryContainer.withValues(alpha: 0.9)
-        : theme.colorScheme.errorContainer.withValues(alpha: 0.9);
     final feedbackForegroundColor = visibleFeedback == null
         ? null
         : visibleFeedback.isSuccess
         ? theme.colorScheme.onPrimaryContainer
         : theme.colorScheme.onErrorContainer;
-
-    void closePanel() {
-      if (onClose != null) {
-        onClose!();
-      } else {
-        Navigator.of(context).pop();
-      }
-    }
 
     void showFeedback(String message, {bool isSuccess = false}) {
       feedback.value = (message: message, isSuccess: isSuccess);
@@ -76,7 +63,7 @@ class LoginPanel extends HookConsumerWidget {
 
     ref.listen(authProvider, (previous, next) {
       if (next.isLoggedIn && !next.isLoading) {
-        closePanel();
+        onClose();
       }
       if (next.error != null) {
         showFeedback(next.error!);
@@ -140,7 +127,7 @@ class LoginPanel extends HookConsumerWidget {
                   ),
                 ),
                 IconButton(
-                  onPressed: closePanel,
+                  onPressed: onClose,
                   icon: const Icon(Icons.close_rounded),
                   style: IconButton.styleFrom(
                     backgroundColor: theme.colorScheme.surfaceContainerHighest.withValues(
@@ -220,7 +207,13 @@ class LoginPanel extends HookConsumerWidget {
                                 vertical: 10,
                               ),
                               decoration: BoxDecoration(
-                                color: feedbackBackgroundColor,
+                                color: visibleFeedback.isSuccess
+                                    ? theme.colorScheme.primaryContainer.withValues(
+                                        alpha: 0.9,
+                                      )
+                                    : theme.colorScheme.errorContainer.withValues(
+                                        alpha: 0.9,
+                                      ),
                                 borderRadius: BorderRadius.circular(14),
                                 border: Border.all(
                                   color: visibleFeedback.isSuccess

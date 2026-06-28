@@ -2,7 +2,7 @@ import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/features/profile/data/profile_repository_impl.dart';
 import 'package:culcul/features/profile/presentation/widgets/home_tab/section_header.dart';
 import 'package:culcul/features/profile/presentation/widgets/profile_navigation_scope.dart';
-import 'package:culcul/ui/assemblies/feed_cards/video_thumbnail.dart';
+import 'package:culcul/ui/widgets/cards/video_thumbnail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';

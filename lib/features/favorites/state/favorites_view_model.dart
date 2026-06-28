@@ -8,8 +8,8 @@ import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/favorites/data/favorite_paging_constants.dart';
 import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
-import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
-import 'package:culcul/features/favorites/domain/entities/favorite_resource.dart';
+import 'package:culcul/features/favorites/models/favorite_folder.dart';
+import 'package:culcul/features/favorites/models/favorite_resource.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'favorites_view_model.g.dart';
@@ -38,7 +38,6 @@ class FavCreatedFolders extends _$FavCreatedFolders {
         .mapConcurrent<FavoriteFolder, FavoriteFolder>(
           items: folders,
           profile: NetworkConcurrencyProfile.enrich,
-          scope: 'favorites_cover_enrich',
           mapper: (folder) async {
             if (folder.cover case final cover? when cover.isNotEmpty) {
               return folder;

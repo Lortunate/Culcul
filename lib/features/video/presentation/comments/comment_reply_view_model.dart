@@ -1,8 +1,7 @@
 import 'dart:async';
 
-import 'package:culcul/core/contracts/comment_contract.dart';
+import 'package:culcul/core/models/comment_contract.dart';
 import 'package:culcul/core/data/pagination/paged_list_state.dart';
-import 'package:culcul/core/data/pagination/paged_list_state_transitions.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/features/video/data/video_repository_impl.dart';
 import 'package:dio/dio.dart';
@@ -72,7 +71,7 @@ class CommentReplyController extends _$CommentReplyController {
   }
 
   Future<void> refresh() async {
-    state = state.copyWith(paging: PagedListStateTransitions.beginRefresh(state.paging));
+    state = state.copyWith(paging: state.paging.beginRefresh());
     final requestToken = ++_loadRequestToken;
     _activeLoadCancelToken?.cancel('comment_reply_refresh_replaced');
     final cancelToken = CancelToken();
@@ -86,8 +85,7 @@ class CommentReplyController extends _$CommentReplyController {
     }
     state = result.when(
       success: (response) => state.copyWith(
-        paging: PagedListStateTransitions.completeRefresh(
-          state.paging,
+        paging: state.paging.completeRefresh(
           items: response.replies,
           hasMore: response.replies.isNotEmpty,
         ),
@@ -97,7 +95,7 @@ class CommentReplyController extends _$CommentReplyController {
           return state;
         }
         return state.copyWith(
-          paging: PagedListStateTransitions.fail(state.paging, error),
+          paging: state.paging.fail(error),
         );
       },
     );
@@ -110,7 +108,7 @@ class CommentReplyController extends _$CommentReplyController {
       return;
     }
 
-    state = state.copyWith(paging: PagedListStateTransitions.beginLoadMore(state.paging));
+    state = state.copyWith(paging: state.paging.beginLoadMore());
     final requestToken = ++_loadRequestToken;
     _activeLoadCancelToken?.cancel('comment_reply_load_more_replaced');
     final cancelToken = CancelToken();
@@ -129,8 +127,7 @@ class CommentReplyController extends _$CommentReplyController {
     }
     state = result.when(
       success: (response) => state.copyWith(
-        paging: PagedListStateTransitions.completeLoadMore(
-          state.paging,
+        paging: state.paging.completeLoadMore(
           items: [...state.paging.items, ...response.replies],
           nextPage: state.paging.nextPage + 1,
           hasMore: response.replies.isNotEmpty,
@@ -141,7 +138,7 @@ class CommentReplyController extends _$CommentReplyController {
           return state;
         }
         return state.copyWith(
-          paging: PagedListStateTransitions.fail(state.paging, error),
+          paging: state.paging.fail(error),
         );
       },
     );

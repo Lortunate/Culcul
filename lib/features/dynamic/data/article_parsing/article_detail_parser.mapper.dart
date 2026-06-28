@@ -33,13 +33,6 @@ String? _string(dynamic value) {
   return str;
 }
 
-double? _double(dynamic value) {
-  if (value == null) return null;
-  if (value is double) return value;
-  if (value is int) return value.toDouble();
-  return double.tryParse(value.toString());
-}
-
 String _firstNonEmptyString(List<String?> values) {
   for (final value in values) {
     if (value != null && value.trim().isNotEmpty) return value;

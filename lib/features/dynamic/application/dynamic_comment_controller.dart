@@ -1,11 +1,9 @@
 import 'dart:async';
 
-import 'package:culcul/core/contracts/comment_contract.dart';
-import 'package:culcul/core/data/pagination/paged_list_state_transitions.dart';
-import 'package:culcul/core/services/comment_service.dart';
+import 'package:culcul/features/video/comment_api.dart';
 import 'package:culcul/features/dynamic/application/models/dynamic_response.dart';
 import 'package:culcul/features/dynamic/data/dynamic_repository_impl.dart';
-import 'package:culcul/ui/assemblies/comments/comment_list_state.dart';
+import 'package:culcul/ui/widgets/comments/comment_list_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'dynamic_comment_controller.g.dart';
@@ -19,20 +17,26 @@ class DynamicCommentController extends _$DynamicCommentController {
   }
 
   Future<void> refresh() async {
-    state = state.copyWith(paging: PagedListStateTransitions.beginRefresh(state.paging));
+    state = state.copyWith(paging: state.paging.beginRefresh());
     final result = await ref
         .read(dynamicRepositoryProvider)
         .getComments(post, sort: state.sort);
     state = result.when(
-      success: (data) => state.copyWith(
-        paging: PagedListStateTransitions.completeRefresh(
-          state.paging,
-          items: data.replies,
-          hasMore: _resolveHasMore(data, currentPage: 1),
-        ),
-      ),
-      failure: (error) =>
-          state.copyWith(paging: PagedListStateTransitions.fail(state.paging, error)),
+      success: (data) {
+        final cursor = data.cursor;
+        final page = data.page;
+        var hasMore = data.replies.length >= CommentApi.defaultPageSize;
+        if (page != null && page.size > 0 && page.count > 0) {
+          hasMore = page.size < page.count;
+        }
+        if (cursor != null) {
+          hasMore = !cursor.isEnd;
+        }
+        return state.copyWith(
+          paging: state.paging.completeRefresh(items: data.replies, hasMore: hasMore),
+        );
+      },
+      failure: (error) => state.copyWith(paging: state.paging.fail(error)),
     );
   }
 
@@ -44,25 +48,31 @@ class DynamicCommentController extends _$DynamicCommentController {
     }
 
     final nextPage = state.paging.nextPage;
-    state = state.copyWith(paging: PagedListStateTransitions.beginLoadMore(state.paging));
+    state = state.copyWith(paging: state.paging.beginLoadMore());
     final result = await ref
         .read(dynamicRepositoryProvider)
         .getComments(post, sort: state.sort, page: nextPage);
     result.when(
       success: (data) {
+        final cursor = data.cursor;
+        final page = data.page;
+        var hasMore = data.replies.length >= CommentApi.defaultPageSize;
+        if (page != null && page.size > 0 && page.count > 0) {
+          hasMore = nextPage * page.size < page.count;
+        }
+        if (cursor != null) {
+          hasMore = !cursor.isEnd;
+        }
         state = state.copyWith(
-          paging: PagedListStateTransitions.completeLoadMore(
-            state.paging,
+          paging: state.paging.completeLoadMore(
             items: [...state.paging.items, ...data.replies],
-            hasMore: _resolveHasMore(data, currentPage: nextPage),
+            hasMore: hasMore,
             nextPage: nextPage + 1,
           ),
         );
       },
       failure: (error) {
-        state = state.copyWith(
-          paging: PagedListStateTransitions.fail(state.paging, error),
-        );
+        state = state.copyWith(paging: state.paging.fail(error));
       },
     );
   }
@@ -98,20 +108,5 @@ class DynamicCommentController extends _$DynamicCommentController {
     if (result.isSuccess) {
       await refresh();
     }
-  }
-
-  bool _resolveHasMore(CommentResponse data, {required int currentPage}) {
-    final cursor = data.cursor;
-    if (cursor != null) {
-      return !cursor.isEnd;
-    }
-
-    final page = data.page;
-    if (page != null && page.size > 0 && page.count > 0) {
-      return currentPage * page.size < page.count;
-    }
-
-    // Fallback: if no pagination metadata, treat short page as end.
-    return data.replies.length >= CommentService.defaultPageSize;
   }
 }

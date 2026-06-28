@@ -20,28 +20,25 @@ Future<void> initializeCulculAudioService({
     return;
   }
 
-  _audioServiceInitFuture = _initializeCulculAudioService(builder: builder);
-  await _audioServiceInitFuture;
-}
-
-Future<void> _initializeCulculAudioService({
-  required AudioHandler Function() builder,
-}) async {
-  try {
-    await AudioService.init(
-      builder: builder,
-      config: const AudioServiceConfig(
-        androidNotificationChannelId: _audioNotificationChannelId,
-        androidNotificationChannelName: _audioNotificationChannelName,
-        androidNotificationOngoing: true,
-      ),
-    );
-    _audioServiceInitialized = true;
-  } catch (error) {
-    DevLogger.log('startup', 'audio_service.init_failed', <String, Object?>{
-      'error': error,
-    });
-  } finally {
-    _audioServiceInitFuture = null;
-  }
+  final initFuture = () async {
+    try {
+      await AudioService.init(
+        builder: builder,
+        config: const AudioServiceConfig(
+          androidNotificationChannelId: _audioNotificationChannelId,
+          androidNotificationChannelName: _audioNotificationChannelName,
+          androidNotificationOngoing: true,
+        ),
+      );
+      _audioServiceInitialized = true;
+    } catch (error) {
+      DevLogger.log('startup', 'audio_service.init_failed', <String, Object?>{
+        'error': error,
+      });
+    } finally {
+      _audioServiceInitFuture = null;
+    }
+  }();
+  _audioServiceInitFuture = initFuture;
+  await initFuture;
 }

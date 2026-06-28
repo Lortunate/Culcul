@@ -10,7 +10,16 @@ part 'cache_store_provider.g.dart';
 
 @Riverpod(keepAlive: true)
 CacheStore cacheStore(Ref ref) {
-  return _LazyFileCacheStore(_resolveCacheDirectory);
+  return _LazyFileCacheStore(() async {
+    try {
+      return await getTemporaryDirectory();
+    } catch (error) {
+      DevLogger.log('network', 'cache_store.temp_dir_fallback', <String, Object?>{
+        'error': error,
+      });
+      return getApplicationDocumentsDirectory();
+    }
+  });
 }
 
 final class _LazyFileCacheStore extends CacheStore {
@@ -77,16 +86,5 @@ final class _LazyFileCacheStore extends CacheStore {
   @override
   Future<void> set(CacheResponse response) async {
     return (await _store()).set(response);
-  }
-}
-
-Future<Directory> _resolveCacheDirectory() async {
-  try {
-    return await getTemporaryDirectory();
-  } catch (error) {
-    DevLogger.log('network', 'cache_store.temp_dir_fallback', <String, Object?>{
-      'error': error,
-    });
-    return getApplicationDocumentsDirectory();
   }
 }

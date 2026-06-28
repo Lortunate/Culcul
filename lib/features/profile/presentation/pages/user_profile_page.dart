@@ -6,7 +6,6 @@ import 'package:culcul/features/profile/presentation/widgets/home_tab/sticky_vid
 import 'package:culcul/features/profile/presentation/widgets/user_video_tab.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_app_bar.dart';
 import 'package:culcul/features/profile/presentation/widgets/user_profile_info.dart';
-import 'package:culcul/features/profile/domain/entities/profile_user.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:flutter/material.dart';
@@ -41,16 +40,77 @@ class UserProfilePage extends HookConsumerWidget {
       body: Stack(
         children: [
           profileAsync.when(
-            data: (profile) => _UserProfileContent(
-              profile: profile,
-              mid: mid,
-              theme: theme,
-              colorScheme: colorScheme,
-              tabController: tabController,
-              tabs: userProfileTabs,
-              topPadding: topPadding,
-              scrollOffsetNotifier: scrollOffsetNotifier,
-              onRefresh: () => ref.refresh(provider.future),
+            data: (profile) => NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                if (notification case ScrollUpdateNotification(
+                  metrics: final metrics,
+                  depth: 0,
+                ) when metrics.axis == Axis.vertical) {
+                  scrollOffsetNotifier.value = metrics.pixels;
+                }
+                return false;
+              },
+              child: RefreshIndicator(
+                edgeOffset: topPadding,
+                onRefresh: () => ref.refresh(provider.future),
+                child: NestedScrollView(
+                  headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                    SliverToBoxAdapter(child: UserProfileHeader(profile: profile)),
+                    SliverToBoxAdapter(
+                      child: Container(
+                        height: 8,
+                        color: theme.colorScheme.surfaceContainerHighest.withValues(
+                          alpha: 0.3,
+                        ),
+                      ),
+                    ),
+                    SliverOverlapAbsorber(
+                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                      sliver: SliverPersistentHeader(
+                        delegate: _UserProfileTabBarDelegate(
+                          TabBar(
+                            controller: tabController,
+                            tabs: userProfileTabs,
+                            labelColor: colorScheme.primary,
+                            labelStyle: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              letterSpacing: 0.5,
+                            ),
+                            unselectedLabelColor: colorScheme.onSurfaceVariant,
+                            unselectedLabelStyle: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            indicator: UnderlineTabIndicator(
+                              borderSide: BorderSide(
+                                width: 3,
+                                color: colorScheme.primary,
+                              ),
+                              borderRadius: BorderRadius.circular(2),
+                              insets: const EdgeInsets.symmetric(horizontal: 20),
+                            ),
+                            indicatorSize: TabBarIndicatorSize.label,
+                            dividerColor: Colors.transparent,
+                            splashFactory: NoSplash.splashFactory,
+                            overlayColor: WidgetStateProperty.all(Colors.transparent),
+                          ),
+                          topPadding: topPadding,
+                        ),
+                        pinned: true,
+                      ),
+                    ),
+                  ],
+                  body: TabBarView(
+                    controller: tabController,
+                    children: [
+                      _UserHomeTab(mid: mid, onSwitchToTab: tabController.animateTo),
+                      UserDynamicFeed(mid: mid),
+                      UserVideoTab(mid: mid),
+                    ],
+                  ),
+                ),
+              ),
             ),
             error: (err, stack) => Center(
               child: AppErrorWidget(
@@ -76,106 +136,11 @@ class UserProfilePage extends HookConsumerWidget {
   }
 }
 
-class _UserProfileContent extends StatelessWidget {
-  const _UserProfileContent({
-    required this.profile,
-    required this.mid,
-    required this.theme,
-    required this.colorScheme,
-    required this.tabController,
-    required this.tabs,
-    required this.topPadding,
-    required this.scrollOffsetNotifier,
-    required this.onRefresh,
-  });
-
-  final ProfileUser profile;
-  final int mid;
-  final ThemeData theme;
-  final ColorScheme colorScheme;
-  final TabController tabController;
-  final List<Tab> tabs;
-  final double topPadding;
-  final ValueNotifier<double> scrollOffsetNotifier;
-  final RefreshCallback onRefresh;
-
-  @override
-  Widget build(BuildContext context) {
-    return NotificationListener<ScrollNotification>(
-      onNotification: (notification) {
-        if (notification case ScrollUpdateNotification(
-          metrics: final metrics,
-          depth: 0,
-        ) when metrics.axis == Axis.vertical) {
-          scrollOffsetNotifier.value = metrics.pixels;
-        }
-        return false;
-      },
-      child: RefreshIndicator(
-        edgeOffset: topPadding,
-        onRefresh: onRefresh,
-        child: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            SliverToBoxAdapter(child: UserProfileHeader(profile: profile)),
-            SliverToBoxAdapter(
-              child: Container(
-                height: 8,
-                color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
-              ),
-            ),
-            SliverOverlapAbsorber(
-              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-              sliver: SliverPersistentHeader(
-                delegate: _UserProfileTabBarDelegate(
-                  TabBar(
-                    controller: tabController,
-                    tabs: tabs,
-                    labelColor: colorScheme.primary,
-                    labelStyle: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15,
-                      letterSpacing: 0.5,
-                    ),
-                    unselectedLabelColor: colorScheme.onSurfaceVariant,
-                    unselectedLabelStyle: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    indicator: UnderlineTabIndicator(
-                      borderSide: BorderSide(width: 3, color: colorScheme.primary),
-                      borderRadius: BorderRadius.circular(2),
-                      insets: const EdgeInsets.symmetric(horizontal: 20),
-                    ),
-                    indicatorSize: TabBarIndicatorSize.label,
-                    dividerColor: Colors.transparent,
-                    splashFactory: NoSplash.splashFactory,
-                    overlayColor: WidgetStateProperty.all(Colors.transparent),
-                  ),
-                  topPadding: topPadding,
-                ),
-                pinned: true,
-              ),
-            ),
-          ],
-          body: TabBarView(
-            controller: tabController,
-            children: [
-              _UserHomeTab(mid: mid, onSwitchToTab: tabController.animateTo),
-              UserDynamicFeed(mid: mid),
-              UserVideoTab(mid: mid),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _UserHomeTab extends ConsumerStatefulWidget {
   final int mid;
-  final ValueChanged<int>? onSwitchToTab;
+  final ValueChanged<int> onSwitchToTab;
 
-  const _UserHomeTab({required this.mid, this.onSwitchToTab});
+  const _UserHomeTab({required this.mid, required this.onSwitchToTab});
 
   @override
   ConsumerState<_UserHomeTab> createState() => _UserHomeTabState();
@@ -213,7 +178,7 @@ class _UserProfileTabBarDelegate extends SliverPersistentHeaderDelegate {
   final TabBar tabBar;
   final double topPadding;
 
-  _UserProfileTabBarDelegate(this.tabBar, {this.topPadding = 0});
+  _UserProfileTabBarDelegate(this.tabBar, {required this.topPadding});
 
   double get _extent => tabBar.preferredSize.height + topPadding;
 

@@ -1,6 +1,5 @@
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/favorites/data/fav_repository_impl.dart';
-import 'package:culcul/features/favorites/domain/entities/favorite_folder.dart';
 import 'package:culcul/features/favorites/state/favorites_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
@@ -27,38 +26,6 @@ Future<bool?> showVideoFavoritePicker({
   );
 }
 
-class _VideoFavoriteFolderDelta {
-  const _VideoFavoriteFolderDelta({
-    required this.addMediaIds,
-    required this.delMediaIds,
-    required this.isFavorite,
-  });
-
-  final Set<int> addMediaIds;
-  final Set<int> delMediaIds;
-  final bool isFavorite;
-
-  bool get hasChanges => addMediaIds.isNotEmpty || delMediaIds.isNotEmpty;
-}
-
-Set<int> _selectedVideoFavoriteFolderIds(Iterable<FavoriteFolder> folders) {
-  return folders
-      .where((folder) => folder.favState == 1)
-      .map((folder) => folder.id)
-      .toSet();
-}
-
-_VideoFavoriteFolderDelta _buildVideoFavoriteFolderDelta({
-  required Set<int> initialIds,
-  required Set<int> selectedIds,
-}) {
-  return _VideoFavoriteFolderDelta(
-    addMediaIds: selectedIds.difference(initialIds),
-    delMediaIds: initialIds.difference(selectedIds),
-    isFavorite: selectedIds.isNotEmpty,
-  );
-}
-
 class _VideoFavoritePickerSheet extends ConsumerStatefulWidget {
   const _VideoFavoritePickerSheet({required this.aid});
 
@@ -76,45 +43,13 @@ class _VideoFavoritePickerSheetState extends ConsumerState<_VideoFavoritePickerS
   bool _selectionInitialized = false;
   bool _isSaving = false;
 
-  void _retry() {
-    setState(() {
-      _selectionInitialized = false;
-      _initialSelectedIds = <int>{};
-      _selectedIds = <int>{};
-      _submitError = null;
-    });
-    ref.invalidate(videoFavoriteFoldersProvider(widget.aid));
-  }
-
-  void _initializeSelection(List<FavoriteFolder> folders) {
-    if (_selectionInitialized) {
-      return;
-    }
-    _initialSelectedIds = _selectedVideoFavoriteFolderIds(folders);
-    _selectedIds = Set<int>.of(_initialSelectedIds);
-    _selectionInitialized = true;
-  }
-
-  void _toggleFolder(int mediaId, bool selected) {
-    setState(() {
-      final next = Set<int>.of(_selectedIds);
-      if (selected) {
-        next.add(mediaId);
-      } else {
-        next.remove(mediaId);
-      }
-      _selectedIds = next;
-      _submitError = null;
-    });
-  }
-
   Future<void> _submit() async {
-    final delta = _buildVideoFavoriteFolderDelta(
-      initialIds: _initialSelectedIds,
-      selectedIds: _selectedIds,
-    );
-    if (!delta.hasChanges) {
-      Navigator.of(context).pop(delta.isFavorite);
+    final addMediaIds = _selectedIds.difference(_initialSelectedIds);
+    final delMediaIds = _initialSelectedIds.difference(_selectedIds);
+    final isFavorite = _selectedIds.isNotEmpty;
+    final hasChanges = addMediaIds.isNotEmpty || delMediaIds.isNotEmpty;
+    if (!hasChanges) {
+      Navigator.of(context).pop(isFavorite);
       return;
     }
 
@@ -127,8 +62,8 @@ class _VideoFavoritePickerSheetState extends ConsumerState<_VideoFavoritePickerS
         .read(favRepositoryProvider)
         .dealVideoFavorite(
           aid: widget.aid,
-          addMediaIds: delta.addMediaIds,
-          delMediaIds: delta.delMediaIds,
+          addMediaIds: addMediaIds,
+          delMediaIds: delMediaIds,
         );
 
     if (!mounted) {
@@ -136,7 +71,7 @@ class _VideoFavoritePickerSheetState extends ConsumerState<_VideoFavoritePickerS
     }
 
     result.when(
-      success: (_) => Navigator.of(context).pop(delta.isFavorite),
+      success: (_) => Navigator.of(context).pop(isFavorite),
       failure: (error) {
         setState(() {
           _isSaving = false;
@@ -166,10 +101,28 @@ class _VideoFavoritePickerSheetState extends ConsumerState<_VideoFavoritePickerS
           ),
           child: foldersAsync.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (error, _) =>
-                AppErrorWidget(error: error, onRetry: _retry, compact: true),
+            error: (error, _) => AppErrorWidget(
+              error: error,
+              onRetry: () {
+                setState(() {
+                  _selectionInitialized = false;
+                  _initialSelectedIds = <int>{};
+                  _selectedIds = <int>{};
+                  _submitError = null;
+                });
+                ref.invalidate(videoFavoriteFoldersProvider(widget.aid));
+              },
+              variant: AppErrorWidgetVariant.compact,
+            ),
             data: (folders) {
-              _initializeSelection(folders);
+              if (!_selectionInitialized) {
+                _initialSelectedIds = folders
+                    .where((folder) => folder.favState == 1)
+                    .map((folder) => folder.id)
+                    .toSet();
+                _selectedIds = Set<int>.of(_initialSelectedIds);
+                _selectionInitialized = true;
+              }
 
               return Column(
                 mainAxisSize: MainAxisSize.min,
@@ -207,8 +160,18 @@ class _VideoFavoritePickerSheetState extends ConsumerState<_VideoFavoritePickerS
                                 value: _selectedIds.contains(folder.id),
                                 onChanged: _isSaving
                                     ? null
-                                    : (selected) =>
-                                          _toggleFolder(folder.id, selected ?? false),
+                                    : (selected) {
+                                        setState(() {
+                                          final next = Set<int>.of(_selectedIds);
+                                          if (selected ?? false) {
+                                            next.add(folder.id);
+                                          } else {
+                                            next.remove(folder.id);
+                                          }
+                                          _selectedIds = next;
+                                          _submitError = null;
+                                        });
+                                      },
                                 title: Text(
                                   folder.title,
                                   maxLines: 1,

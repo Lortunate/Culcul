@@ -1,4 +1,4 @@
-import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
+import 'package:culcul/features/notification/models/notification_entry.dart';
 import 'package:flutter/foundation.dart';
 
 final class ReplyResponse {

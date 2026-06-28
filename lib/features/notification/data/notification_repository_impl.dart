@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:culcul/core/contracts/uploaded_image_contract.dart';
+import 'package:culcul/core/models/uploaded_image_contract.dart';
 import 'package:culcul/core/errors/app_error.dart';
 import 'package:culcul/core/data/network/models/api_response.dart';
 import 'package:culcul/core/utils/json_compute.dart';
@@ -23,14 +23,14 @@ import 'package:culcul/features/notification/data/notification_repository_impl.c
 import 'package:culcul/features/notification/data/notification_repository_impl.feed_sync.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.message_sync.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.session_sync.dart';
-import 'package:culcul/features/notification/domain/entities/notification_entry.dart';
-import 'package:culcul/features/notification/domain/entities/notification_feed_cursor.dart';
-import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
-import 'package:culcul/features/notification/domain/entities/notification_summary.dart';
-import 'package:culcul/features/notification/domain/entities/private_message.dart';
-import 'package:culcul/features/notification/domain/entities/private_session.dart';
-import 'package:culcul/features/notification/domain/entities/send_message_result.dart';
-import 'package:culcul/features/notification/domain/entities/system_notice.dart';
+import 'package:culcul/features/notification/models/notification_entry.dart';
+import 'package:culcul/features/notification/models/notification_feed_cursor.dart';
+import 'package:culcul/features/notification/models/notification_feed_type.dart';
+import 'package:culcul/features/notification/models/notification_summary.dart';
+import 'package:culcul/features/notification/models/private_message.dart';
+import 'package:culcul/features/notification/models/private_session.dart';
+import 'package:culcul/features/notification/models/send_message_result.dart';
+import 'package:culcul/features/notification/models/system_notice.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'notification_repository_impl.g.dart';
@@ -387,17 +387,12 @@ class NotificationRepositoryImpl {
     final devId = _generateUuidV4();
 
     SendMessageResult parseSendMessageResult(Map<String, dynamic> json) {
-      String? readNullableString(Object? value) {
-        if (value == null) {
-          return null;
-        }
-        final stringValue = value.toString();
-        return stringValue.isEmpty ? null : stringValue;
-      }
+      final msgContentRaw = json['msg_content'];
+      final msgContent = msgContentRaw?.toString();
 
       return SendMessageResult(
         msgKey: JsonUtils.parseIntWithDefault(json['msg_key']),
-        msgContent: readNullableString(json['msg_content']),
+        msgContent: msgContent == null || msgContent.isEmpty ? null : msgContent,
         keyHitInfos: JsonUtils.asStringKeyedMap(json['key_hit_infos']),
       );
     }

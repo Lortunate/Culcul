@@ -3,8 +3,6 @@ import 'package:easy_refresh/easy_refresh.dart';
 class PaginationLoadGate {
   bool _inFlight = false;
 
-  bool get isInFlight => _inFlight;
-
   void reset() {
     _inFlight = false;
   }

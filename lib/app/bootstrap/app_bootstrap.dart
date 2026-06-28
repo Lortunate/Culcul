@@ -14,15 +14,15 @@ class AppBootstrap {
     final prefsFuture = SharedPreferences.getInstance();
 
     LocaleSettings.useDeviceLocale();
-    SystemChrome.setSystemUIOverlayStyle(_systemUiOverlayStyle);
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+    );
 
     final prefs = await prefsFuture;
 
     return [sharedPreferencesProvider.overrideWithValue(prefs)];
   }
-
-  static const _systemUiOverlayStyle = SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.dark,
-  );
 }

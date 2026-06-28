@@ -7,7 +7,7 @@ import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.dart';
-import 'package:culcul/features/notification/domain/entities/notification_feed_type.dart';
+import 'package:culcul/features/notification/models/notification_feed_type.dart';
 import 'package:flutter/widgets.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -103,7 +103,6 @@ class NotificationLifecycleSync extends _$NotificationLifecycleSync
         ),
       ],
       profile: NetworkConcurrencyProfile.backgroundSync,
-      scope: 'notification_resume_sync',
     );
   }
 

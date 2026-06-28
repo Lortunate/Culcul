@@ -1,6 +1,7 @@
 import 'package:culcul/core/constants/api_constants.dart';
 import 'package:culcul/core/runtime/runtime_performance_policy.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show setEquals;
 
 enum EndpointRequestClass {
   interactiveRead,
@@ -97,7 +98,7 @@ final class EndpointPolicy {
             other.cacheTtl == cacheTtl &&
             other.allowStaleCache == allowStaleCache &&
             other.retryMaxAttempts == retryMaxAttempts &&
-            _setEquals(other.retryableStatuses, retryableStatuses) &&
+            setEquals(other.retryableStatuses, retryableStatuses) &&
             other.dedupEnabled == dedupEnabled &&
             other.retryUnsafeMethods == retryUnsafeMethods &&
             other.allowPrefetch == allowPrefetch;
@@ -130,21 +131,6 @@ final class EndpointPolicy {
         'allowPrefetch: $allowPrefetch'
         ')';
   }
-
-  static bool _setEquals(Set<int> left, Set<int> right) {
-    if (identical(left, right)) {
-      return true;
-    }
-    if (left.length != right.length) {
-      return false;
-    }
-    for (final value in left) {
-      if (!right.contains(value)) {
-        return false;
-      }
-    }
-    return true;
-  }
 }
 
 class EndpointPolicyResolver {
@@ -162,7 +148,14 @@ class EndpointPolicyResolver {
     EndpointRequestClass requestClass,
     RequestOptions options,
   ) {
-    final cacheTtl = _cacheTtlFor(options);
+    final explicitCacheTtl = options.extra[EndpointPolicy.cacheTtlOverrideExtra];
+    final configuredCacheTtlSeconds = ApiConstants.cacheConfig[options.path];
+    final cacheTtl = explicitCacheTtl is Duration
+        ? explicitCacheTtl
+        : configuredCacheTtlSeconds == null
+        ? null
+        : Duration(seconds: configuredCacheTtlSeconds);
+
     return switch (requestClass) {
       EndpointRequestClass.interactiveRead => EndpointPolicy(
         requestClass: requestClass,
@@ -238,15 +231,8 @@ class EndpointPolicyResolver {
   }
 
   EndpointPolicy _applyRuntimePolicy(EndpointPolicy policy) {
-    if (runtimePolicy.profile == PerformanceProfile.background) {
-      return policy.copyWith(
-        retryMaxAttempts: policy.retryMaxAttempts.clamp(0, 1),
-        allowPrefetch: false,
-        allowStaleCache: true,
-      );
-    }
-
-    if (runtimePolicy.profile == PerformanceProfile.constrained) {
+    if (runtimePolicy.profile == PerformanceProfile.background ||
+        !runtimePolicy.allowImagePrefetch) {
       return policy.copyWith(
         retryMaxAttempts: policy.retryMaxAttempts.clamp(0, 1),
         allowPrefetch: false,
@@ -282,14 +268,5 @@ class EndpointPolicyResolver {
       return EndpointRequestClass.download;
     }
     return EndpointRequestClass.interactiveRead;
-  }
-
-  Duration? _cacheTtlFor(RequestOptions options) {
-    final override = options.extra[EndpointPolicy.cacheTtlOverrideExtra];
-    if (override is Duration) {
-      return override;
-    }
-    final seconds = ApiConstants.cacheConfig[options.path];
-    return seconds == null ? null : Duration(seconds: seconds);
   }
 }

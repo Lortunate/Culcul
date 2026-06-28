@@ -37,7 +37,7 @@ Widget _wrapDynamicNavigation(BuildContext context, {required Widget child}) {
 void _pushArticleDetail(BuildContext context, {required String url, String? title}) {
   Navigator.of(context, rootNavigator: true).push(
     MaterialPageRoute(
-      builder: (context) => buildArticleDetailRoutePage(url: url, title: title),
+      builder: (context) => ArticleDetailPage(url: url, title: title),
     ),
   );
 }
@@ -49,9 +49,7 @@ void _pushTopicDetail(
 }) {
   Navigator.of(context).push(
     MaterialPageRoute(
-      builder: (context) => buildTopicDetailRoutePage(
-        topicId: topicId,
-        topicName: topicName,
+      builder: (context) => buildDynamicNavigationScope(
         onOpenUser: (mid) => UserProfileRoute(mid: mid).push(context),
         onOpenVideo: (bvid) => VideoDetailRoute(bvid: bvid).push(context),
         onOpenLiveRoom: (roomId) => LiveRoomRoute(roomId: roomId).push(context),
@@ -60,6 +58,7 @@ void _pushTopicDetail(
             _pushArticleDetail(context, url: url, title: title),
         onOpenTopic: (topicId, topicName) =>
             _pushTopicDetail(context, topicId: topicId, topicName: topicName),
+        child: TopicDetailPage(topicId: topicId, topicName: topicName),
       ),
     ),
   );

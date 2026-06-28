@@ -2,10 +2,10 @@ import 'package:culcul/core/utils/format_utils.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/history/data/history_repository_impl.dart';
-import 'package:culcul/features/history/domain/entities/history_entry.dart';
+import 'package:culcul/features/history/models/history_entry.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/assemblies/feed_cards/video_list_card.dart';
-import 'package:culcul/ui/assemblies/feed_cards/video_list_card_dimensions.dart';
+import 'package:culcul/ui/widgets/cards/video_list_card.dart';
+import 'package:culcul/ui/widgets/cards/video_list_card_dimensions.dart';
 import 'package:culcul/ui/widgets/feedback/app_error_widget.dart';
 import 'package:culcul/ui/widgets/text/icon_text.dart';
 import 'package:culcul/ui/widgets/users/guest_view.dart';
@@ -35,159 +35,139 @@ class HistoryPage extends ConsumerWidget {
     final isLoggedIn = ref.watch(
       currentUserProvider.select((s) => s?.isLoggedIn ?? false),
     );
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final t = Translations.of(context);
 
     return Scaffold(
       appBar: AppBar(title: Text(t.profile.menu.history), centerTitle: true),
       body: isLoggedIn
-          ? _HistoryContent(historyListAsync: historyListAsync, onOpenVideo: onOpenVideo)
+          ? switch (historyListAsync) {
+              AsyncData(:final value) when value.isEmpty => Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.history_rounded, size: 40, color: colorScheme.outline),
+                      const SizedBox(height: 12),
+                      Text(
+                        t.history.empty,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              AsyncData(:final value) => RefreshIndicator(
+                onRefresh: () => ref.refresh(_historyListProvider.future),
+                child: ListView.separated(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  itemCount: value.length,
+                  separatorBuilder: (_, _) =>
+                      const Divider(height: 1, indent: 16, endIndent: 16),
+                  itemBuilder: (context, index) {
+                    final item = value[index];
+                    final progressColor = colorScheme.primary;
+                    return KeyedSubtree(
+                      key: ValueKey(item.bvid),
+                      child: DefaultTextStyle.merge(
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          height: 1.2,
+                        ),
+                        child: VideoListCard(
+                          onTap: () {
+                            final bvid = item.bvid;
+                            if (item.business == 'archive' && bvid.isNotEmpty) {
+                              onOpenVideo(bvid);
+                            }
+                          },
+                          coverUrl: item.coverUrl,
+                          title: item.title,
+                          duration: item.progress > 0 ? 0 : item.duration,
+                          aspectRatio: wideVideoListCardThumbnailAspectRatio,
+                          height: wideVideoListCardThumbnailHeight,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: 16,
+                          ),
+                          overlay: item.progress > 0 && item.duration > 0
+                              ? Positioned(
+                                  bottom: 0,
+                                  left: 0,
+                                  right: 0,
+                                  child: LinearProgressIndicator(
+                                    value: item.progress / item.duration,
+                                    minHeight: 3,
+                                    backgroundColor: Colors.transparent,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      progressColor,
+                                    ),
+                                  ),
+                                )
+                              : null,
+                          middleContent: Text(
+                            item.authorName,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                              fontSize: 12,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          stats: [
+                            if (item.badge.isNotEmpty)
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 4,
+                                  vertical: 1,
+                                ),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: colorScheme.primary,
+                                    width: 0.5,
+                                  ),
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
+                                child: Text(
+                                  item.badge,
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: colorScheme.primary,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ),
+                            IconText(
+                              icon: Icons.access_time_rounded,
+                              text: FormatUtils.formatTimeAgo(item.viewedAt),
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              AsyncError(:final error, :final stackTrace) => AppErrorWidget(
+                error: error,
+                stackTrace: stackTrace,
+                onRetry: () => ref.invalidate(_historyListProvider),
+              ),
+              _ => const Center(child: CircularProgressIndicator()),
+            }
           : GuestView(
               title: t.profile.not_logged_in,
               message: t.profile.login_hint,
               onLogin: onLogin,
             ),
-    );
-  }
-}
-
-class _HistoryContent extends ConsumerWidget {
-  final AsyncValue<List<HistoryEntry>> historyListAsync;
-  final ValueChanged<String> onOpenVideo;
-
-  const _HistoryContent({required this.historyListAsync, required this.onOpenVideo});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final t = Translations.of(context);
-
-    return switch (historyListAsync) {
-      AsyncData(:final value) when value.isEmpty => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.history_rounded, size: 40, color: colorScheme.outline),
-              const SizedBox(height: 12),
-              Text(
-                t.history.empty,
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-      AsyncData(:final value) => RefreshIndicator(
-        onRefresh: () => ref.refresh(_historyListProvider.future),
-        child: ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          itemCount: value.length,
-          separatorBuilder: (_, _) => const Divider(height: 1, indent: 16, endIndent: 16),
-          itemBuilder: (context, index) {
-            final item = value[index];
-            return KeyedSubtree(
-              key: ValueKey(item.bvid),
-              child: _HistoryItemWidget(
-                item: item,
-                onTap: () {
-                  final bvid = item.bvid;
-                  if (item.business == 'archive' && bvid.isNotEmpty) {
-                    onOpenVideo(bvid);
-                  }
-                },
-              ),
-            );
-          },
-        ),
-      ),
-      AsyncError(:final error, :final stackTrace) => AppErrorWidget(
-        error: error,
-        stackTrace: stackTrace,
-        onRetry: () => ref.invalidate(_historyListProvider),
-      ),
-      _ => const Center(child: CircularProgressIndicator()),
-    };
-  }
-}
-
-class _HistoryItemWidget extends StatelessWidget {
-  const _HistoryItemWidget({required this.item, this.onTap});
-
-  final HistoryEntry item;
-  final VoidCallback? onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final progressColor = colorScheme.primary;
-
-    return DefaultTextStyle.merge(
-      style: theme.textTheme.titleMedium?.copyWith(
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        height: 1.2,
-      ),
-      child: VideoListCard(
-        onTap: onTap,
-        coverUrl: item.coverUrl,
-        title: item.title,
-        duration: item.progress > 0 ? 0 : item.duration,
-        aspectRatio: wideVideoListCardThumbnailAspectRatio,
-        height: wideVideoListCardThumbnailHeight,
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        overlay: item.progress > 0 && item.duration > 0
-            ? Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: LinearProgressIndicator(
-                  value: item.progress / item.duration,
-                  minHeight: 3,
-                  backgroundColor: Colors.transparent,
-                  valueColor: AlwaysStoppedAnimation<Color>(progressColor),
-                ),
-              )
-            : null,
-        middleContent: Text(
-          item.authorName,
-          style: theme.textTheme.bodySmall?.copyWith(
-            color: colorScheme.onSurfaceVariant,
-            fontSize: 12,
-          ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        stats: [
-          if (item.badge.isNotEmpty)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-              decoration: BoxDecoration(
-                border: Border.all(color: colorScheme.primary, width: 0.5),
-                borderRadius: BorderRadius.circular(2),
-              ),
-              child: Text(
-                item.badge,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: colorScheme.primary,
-                  fontSize: 10,
-                ),
-              ),
-            ),
-          IconText(
-            icon: Icons.access_time_rounded,
-            text: FormatUtils.formatTimeAgo(item.viewedAt),
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-              fontSize: 11,
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

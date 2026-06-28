@@ -1,4 +1,4 @@
-import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/core/models/video_model_contract.dart';
 import 'package:culcul/core/perf/dev_logger.dart';
 import 'package:culcul/features/ranking/data/ranking_repository_impl.dart';
 import 'package:culcul/ui/widgets/layout/app_tab_bar.dart';

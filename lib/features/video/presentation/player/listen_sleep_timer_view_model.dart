@@ -48,12 +48,11 @@ class ListenSleepTimerController extends _$ListenSleepTimerController {
 
   @override
   ListenSleepTimerState build() {
-    ref.onDispose(_dispose);
+    ref.onDispose(() {
+      _ticker?.cancel();
+      _ticker = null;
+    });
     return const ListenSleepTimerState();
-  }
-
-  void setPresetMinutes(int minutes) {
-    setCustomMinutes(minutes);
   }
 
   void setCustomMinutes(int minutes) {
@@ -94,20 +93,11 @@ class ListenSleepTimerController extends _$ListenSleepTimerController {
 
     final remaining = deadline.difference(DateTime.now());
     if (remaining <= Duration.zero) {
-      _expire();
+      clearTimer();
+      unawaited(ref.read(listenSleepTimerOnExpireProvider)());
       return;
     }
 
     state = ListenSleepTimerState(remaining: remaining, total: total);
-  }
-
-  void _expire() {
-    clearTimer();
-    unawaited(ref.read(listenSleepTimerOnExpireProvider)());
-  }
-
-  void _dispose() {
-    _ticker?.cancel();
-    _ticker = null;
   }
 }

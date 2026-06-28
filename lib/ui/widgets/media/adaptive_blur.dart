@@ -24,7 +24,16 @@ class AdaptiveBlur extends StatelessWidget {
     final disableAnimations = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
 
     if (!adaptToPerformancePolicy) {
-      return _buildBlur(disableAnimations: disableAnimations, child: child);
+      if (disableAnimations) {
+        return child;
+      }
+
+      return ClipRect(
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: sigmaX, sigmaY: sigmaY),
+          child: child,
+        ),
+      );
     }
 
     return ValueListenableBuilder<PerformancePolicy>(
@@ -38,22 +47,14 @@ class AdaptiveBlur extends StatelessWidget {
         if (shouldDegrade) {
           return child!;
         }
-        return _buildBlur(disableAnimations: false, child: child!);
+        return ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: sigmaX, sigmaY: sigmaY),
+            child: child!,
+          ),
+        );
       },
       child: child,
-    );
-  }
-
-  Widget _buildBlur({required bool disableAnimations, required Widget child}) {
-    if (disableAnimations) {
-      return child;
-    }
-
-    return ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: sigmaX, sigmaY: sigmaY),
-        child: child,
-      ),
     );
   }
 }

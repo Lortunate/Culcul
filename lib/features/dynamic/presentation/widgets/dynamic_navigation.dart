@@ -1,4 +1,4 @@
-import 'package:culcul/core/contracts/bilibili_link_contract.dart';
+import 'package:culcul/core/models/bilibili_link_contract.dart';
 import 'package:culcul/core/feedback/app_feedback.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_navigation_scope.dart';
 import 'package:culcul/i18n/strings.g.dart';

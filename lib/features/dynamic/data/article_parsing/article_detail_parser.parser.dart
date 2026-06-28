@@ -60,10 +60,19 @@ List<ArticleInlineNode> _parseOpusInlineNodes(List<Map<String, dynamic>> nodes) 
         final word = _asMap(node['word']);
         final text = _string(word['words']) ?? '';
         if (text.isEmpty) continue;
+        final fontSizeValue = word['font_size'];
+        double? fontSize;
+        if (fontSizeValue is double) {
+          fontSize = fontSizeValue;
+        } else if (fontSizeValue is int) {
+          fontSize = fontSizeValue.toDouble();
+        } else if (fontSizeValue != null) {
+          fontSize = double.tryParse(fontSizeValue.toString());
+        }
         spans.add(
           ArticleInlineNode(
             text: text,
-            fontSize: _double(word['font_size']),
+            fontSize: fontSize,
             color: _string(word['color']),
           ),
         );

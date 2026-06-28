@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart' show listEquals, mapEquals;
 
 final class LiveRoomDetailModel {
@@ -202,18 +203,14 @@ final class LiveRoomDetailModel {
       Object.hashAll(hotWords),
       hotWordsStatus,
       verify,
-      Object.hashAllUnordered(
-        newPendants.entries.map((entry) => Object.hash(entry.key, entry.value)),
-      ),
+      const MapEquality<String, dynamic>().hash(newPendants),
       upSession,
       pkStatus,
       pkId,
       battleId,
       allowChangeAreaTime,
       allowUploadCoverTime,
-      Object.hashAllUnordered(
-        studioInfo.entries.map((entry) => Object.hash(entry.key, entry.value)),
-      ),
+      const MapEquality<String, dynamic>().hash(studioInfo),
     ]);
   }
 

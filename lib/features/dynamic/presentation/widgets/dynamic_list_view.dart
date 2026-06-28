@@ -1,13 +1,13 @@
-import 'package:culcul/core/contracts/relation_user_contract.dart';
+import 'package:culcul/core/models/relation_user_contract.dart';
 import 'package:culcul/features/dynamic/application/dynamic_feed_provider.dart';
 import 'package:culcul/features/dynamic/application/models/dynamic_item_extensions.dart';
-import 'package:culcul/core/services/relation_service.dart';
+import 'package:culcul/features/profile/relation_api.dart';
 import 'package:culcul/features/auth/application/auth_session_providers.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/detail/dynamic_post_header.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_content_widget.dart';
 import 'package:culcul/features/dynamic/presentation/widgets/dynamic_post_card.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/assemblies/feed_cards/video_list_skeleton.dart';
+import 'package:culcul/ui/widgets/cards/video_list_skeleton.dart';
 import 'package:culcul/ui/widgets/media/app_network_image.dart';
 import 'package:culcul/ui/widgets/smart_paging_view.dart';
 import 'package:culcul/ui/responsive/app_breakpoints.dart';

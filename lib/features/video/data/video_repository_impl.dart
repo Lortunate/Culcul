@@ -3,10 +3,10 @@ import 'package:culcul/core/data/network/dio_client.dart';
 import 'package:dio/dio.dart';
 import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/data/network/resource_api.dart';
-import 'package:culcul/core/contracts/comment_contract.dart';
-import 'package:culcul/core/contracts/video_model_contract.dart';
+import 'package:culcul/core/models/comment_contract.dart';
+import 'package:culcul/core/models/video_model_contract.dart';
 import 'package:culcul/core/result/result.dart';
-import 'package:culcul/core/services/comment_service.dart';
+import 'package:culcul/features/video/comment_api.dart';
 import 'package:culcul/core/utils/json_utils.dart';
 import 'package:culcul/features/video/data/video_api.dart';
 import 'package:culcul/features/video/application/models/play_url.dart';
@@ -23,7 +23,7 @@ VideoRepositoryImpl videoRepository(Ref ref) {
   return VideoRepositoryImpl(
     api: VideoApi(ref.watch(dioClientProvider)),
     commentService: ref.watch(commentServiceProvider),
-    resourceApi: ref.watch(resourceApiProvider),
+    resourceApi: ResourceApi(ref.watch(dioClientProvider)),
   );
 }
 
@@ -31,7 +31,7 @@ class VideoRepositoryImpl {
   static const _videoCommentType = 1;
 
   final VideoApi api;
-  final CommentService commentService;
+  final CommentApi commentService;
   final ResourceApi resourceApi;
   final RequestExecutor _requestExecutor;
 

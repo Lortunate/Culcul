@@ -9,9 +9,5 @@ Future<dynamic> jsonDecodeCompute(String text) async {
   if (text.length <= _isolateDecodeThresholdChars) {
     return jsonDecode(text);
   }
-  return compute(_parseAndDecode, text);
-}
-
-dynamic _parseAndDecode(String encoded) {
-  return jsonDecode(encoded);
+  return compute(jsonDecode, text);
 }

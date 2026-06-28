@@ -155,16 +155,20 @@ class AppNetworkImagePrefetcher {
   Future<void> _runTask(_PrefetchTask task, int maxConcurrency) async {
     try {
       if (_disposed) {
-        _forget(task.cacheKey);
+        _prefetchedAtByKey.remove(task.cacheKey);
         return;
       }
 
       await _precacheImage(task.provider, task.imageConfiguration);
       if (!_disposed) {
-        _rememberPrefetched(task.cacheKey, task.lruCapacity);
+        _prefetchedAtByKey.remove(task.cacheKey);
+        _prefetchedAtByKey[task.cacheKey] = _now();
+        while (_prefetchedAtByKey.length > task.lruCapacity) {
+          _prefetchedAtByKey.remove(_prefetchedAtByKey.keys.first);
+        }
       }
     } catch (_) {
-      _forget(task.cacheKey);
+      _prefetchedAtByKey.remove(task.cacheKey);
     } finally {
       _inFlightKeys.remove(task.cacheKey);
       _activeTasks = math.max(0, _activeTasks - 1);
@@ -179,7 +183,7 @@ class AppNetworkImagePrefetcher {
   ) {
     final completer = Completer<void>();
     final stream = provider.resolve(imageConfiguration);
-    ImageStreamListener? listener;
+    late final ImageStreamListener listener;
     listener = ImageStreamListener(
       (image, synchronousCall) {
         if (!completer.isCompleted) {
@@ -187,14 +191,14 @@ class AppNetworkImagePrefetcher {
         }
         SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
           image.dispose();
-          stream.removeListener(listener!);
+          stream.removeListener(listener);
         }, debugLabel: 'AppNetworkImagePrefetcher.removeListener');
       },
       onError: (exception, stackTrace) {
         if (!completer.isCompleted) {
           completer.complete();
         }
-        stream.removeListener(listener!);
+        stream.removeListener(listener);
       },
     );
     stream.addListener(listener);
@@ -220,14 +224,6 @@ class AppNetworkImagePrefetcher {
     return true;
   }
 
-  void _rememberPrefetched(String key, int capacity) {
-    _prefetchedAtByKey.remove(key);
-    _prefetchedAtByKey[key] = _now();
-    while (_prefetchedAtByKey.length > capacity) {
-      _prefetchedAtByKey.remove(_prefetchedAtByKey.keys.first);
-    }
-  }
-
   void _evictExpired(Duration ttl) {
     if (_prefetchedAtByKey.isEmpty) {
       return;
@@ -243,10 +239,6 @@ class AppNetworkImagePrefetcher {
     for (final key in expired) {
       _prefetchedAtByKey.remove(key);
     }
-  }
-
-  void _forget(String key) {
-    _prefetchedAtByKey.remove(key);
   }
 }
 

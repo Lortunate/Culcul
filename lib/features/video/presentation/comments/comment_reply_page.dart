@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:culcul/core/contracts/comment_contract.dart';
+import 'package:culcul/core/models/comment_contract.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/features/video/presentation/comments/comment_reply_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
-import 'package:culcul/ui/assemblies/comments/comment_item.dart';
-import 'package:culcul/ui/assemblies/comments/comment_reply_sheet.dart';
+import 'package:culcul/ui/widgets/comments/comment_item.dart';
+import 'package:culcul/ui/widgets/comments/comment_reply_sheet.dart';
 import 'package:culcul/ui/widgets/layout/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';

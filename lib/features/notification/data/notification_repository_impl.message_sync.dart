@@ -8,8 +8,8 @@ import 'package:culcul/features/notification/data/local/notification_local_datab
 import 'package:culcul/features/notification/data/notification_api.dart';
 import 'package:culcul/features/notification/data/notification_message_persistence.dart';
 import 'package:culcul/features/notification/data/notification_repository_impl.cleanup_policy.dart';
-import 'package:culcul/features/notification/domain/entities/private_message.dart';
-import 'package:culcul/features/notification/domain/entities/private_session.dart';
+import 'package:culcul/features/notification/models/private_message.dart';
+import 'package:culcul/features/notification/models/private_session.dart';
 
 class NotificationMessageSync {
   const NotificationMessageSync({

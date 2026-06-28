@@ -43,23 +43,15 @@ class DanmakuPainter extends CustomPainter {
   DanmakuPainter({required this.items, required this.opacity, this.repaintSignal})
     : super(repaint: repaintSignal);
 
-  bool _isVisible(RenderDanmakuItem item, Size size) {
-    return !(item.x > size.width || item.x + item.width < 0);
-  }
-
-  void _paintItem(Canvas canvas, RenderDanmakuItem item) {
-    final offset = Offset(item.x, item.y);
-    item.strokePainter?.paint(canvas, offset);
-    item.textPainter.paint(canvas, offset);
-  }
-
   @override
   void paint(Canvas canvas, Size size) {
     if (items.isEmpty) return;
 
     for (var item in items) {
-      if (!_isVisible(item, size)) continue;
-      _paintItem(canvas, item);
+      if (item.x > size.width || item.x + item.width < 0) continue;
+      final offset = Offset(item.x, item.y);
+      item.strokePainter?.paint(canvas, offset);
+      item.textPainter.paint(canvas, offset);
     }
   }
 

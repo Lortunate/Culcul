@@ -37,8 +37,7 @@ sealed class PlayerUiState with _$PlayerUiState {
 class PlayerController extends _$PlayerController
     with
         _PlayerControllerControlsMixin,
-        _PlayerControllerLoadMixin,
-        _PlayerControllerLoadHelpersMixin {
+        _PlayerControllerLoadMixin {
   @override
   Player get player {
     final current = _player;
@@ -83,6 +82,16 @@ class PlayerController extends _$PlayerController
   @override
   PlayerUiState build() {
     _mounted = true;
+    if (!_disposeRegistered) {
+      _disposeRegistered = true;
+      ref.onDispose(() {
+        _mounted = false;
+        if (_player != null) {
+          unawaited(_stopPlaybackSilently());
+        }
+        _releasePlayerLifecycle();
+      });
+    }
     final audioHandler = ref.watch(audioHandlerProvider);
     _ensurePlayerLifecycle(audioHandler.player);
 
@@ -96,11 +105,6 @@ class PlayerController extends _$PlayerController
   }
 
   void _ensurePlayerLifecycle(Player nextPlayer) {
-    if (!_disposeRegistered) {
-      _disposeRegistered = true;
-      ref.onDispose(_disposePlayerLifecycle);
-    }
-
     if (identical(_player, nextPlayer) && _videoController != null) {
       return;
     }
@@ -123,14 +127,6 @@ class PlayerController extends _$PlayerController
     ]);
   }
 
-  void _disposePlayerLifecycle() {
-    _mounted = false;
-    if (_player != null) {
-      unawaited(_stopPlaybackSilently());
-    }
-    _releasePlayerLifecycle();
-  }
-
   void _releasePlayerLifecycle() {
     _controlsTimer?.cancel();
     _controlsTimer = null;
@@ -141,57 +137,5 @@ class PlayerController extends _$PlayerController
     for (final subscription in subscriptions) {
       unawaited(subscription.cancel());
     }
-  }
-}
-
-mixin _PlayerControllerLoadHelpersMixin
-    on _$PlayerController, _PlayerControllerLoadMixin {
-  @override
-  bool _isLoadRequestActive(String sessionId, int requestToken) {
-    if (!_mounted) {
-      return false;
-    }
-    return _sessionCoordinator.isLoadRequestCurrent(
-      requestToken: requestToken,
-      sessionId: sessionId,
-    );
-  }
-
-  @override
-  void _markReadyForRequest(String sessionId, int requestToken) {
-    if (!_isLoadRequestActive(sessionId, requestToken)) {
-      return;
-    }
-    final requestTiming = _loadRequestTimings.remove(requestToken);
-    final elapsedMs = requestTiming?.elapsedMilliseconds;
-    DevLogger.log('video', 'first_frame_ready', <String, Object?>{
-      'session': sessionId,
-      'token': requestToken,
-      'elapsedMs': elapsedMs,
-      'positionMs': player.state.position.inMilliseconds,
-    });
-    state = state.copyWith(isMediaReady: true);
-  }
-
-  @override
-  Future<void> _openMediaWithTimeout(
-    Media media, {
-    required bool play,
-    required bool ensureStarted,
-  }) async {
-    await player.open(media, play: play).timeout(_candidateOpenTimeout);
-
-    if (!ensureStarted) {
-      return;
-    }
-
-    if (player.state.duration > Duration.zero || player.state.position > Duration.zero) {
-      return;
-    }
-
-    await Future.any([
-      player.stream.duration.firstWhere((duration) => duration > Duration.zero),
-      player.stream.position.firstWhere((position) => position > Duration.zero),
-    ]).timeout(_mediaReadyTimeout);
   }
 }

@@ -18,19 +18,13 @@ ApiResponse<T> decodeObjectApiResponse<T>(
   T Function(Map<String, dynamic> json) fromJson, {
   Map<String, dynamic>? nullBody,
 }) {
-  return decodeApiResponse<T>(
-    response,
-    (json) => fromJson(_requireJsonObject(json)),
-    nullBody: nullBody,
-  );
-}
-
-Map<String, dynamic> _requireJsonObject(Object? value) {
-  if (value is Map<String, dynamic>) {
-    return value;
-  }
-  if (value is Map) {
-    return Map<String, dynamic>.from(value);
-  }
-  throw StateError('ApiResponse data is not a JSON object');
+  return decodeApiResponse<T>(response, (json) {
+    if (json is Map<String, dynamic>) {
+      return fromJson(json);
+    }
+    if (json is Map) {
+      return fromJson(Map<String, dynamic>.from(json));
+    }
+    throw StateError('ApiResponse data is not a JSON object');
+  }, nullBody: nullBody);
 }

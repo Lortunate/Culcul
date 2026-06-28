@@ -30,29 +30,17 @@ class SearchRepositoryImpl {
     RequestExecutor requestExecutor = const RequestExecutor(),
   }) : _requestExecutor = requestExecutor;
 
-  RequestExecutionOptions _requestOptions({
-    required EndpointRequestClass requestClass,
-    CancelToken? cancelToken,
-  }) {
-    return RequestExecutionOptions(requestClass: requestClass, cancelToken: cancelToken);
-  }
-
   Future<Result<List<String>, AppError>> getSuggestions(
     String term, {
     CancelToken? cancelToken,
   }) async {
     if (term.isEmpty) return const Success(<String>[]);
-    final options = _requestOptions(
-      requestClass: EndpointRequestClass.search,
-      cancelToken: cancelToken,
-    );
     final result = await _requestExecutor.run(
       () => api.fetchSearchSuggestions(
         term,
-        extras: options.toDioExtras(),
+        extras: {EndpointPolicy.requestClassExtra: EndpointRequestClass.search},
         cancelToken: cancelToken,
       ),
-      options: options,
     );
     return result.map((responseStr) {
       try {
@@ -77,13 +65,11 @@ class SearchRepositoryImpl {
   }
 
   Future<Result<String?, AppError>> getDefaultSearch({bool forceRefresh = false}) async {
-    final options = _requestOptions(requestClass: EndpointRequestClass.search);
     final result = await _requestExecutor.runApiDirect(
       () => api.fetchDefaultSearch(
         forceRefresh: forceRefresh ? true : null,
-        extras: options.toDioExtras(),
+        extras: {EndpointPolicy.requestClassExtra: EndpointRequestClass.search},
       ),
-      options: options,
     );
     return result.map(
       (data) => JsonUtils.asStringKeyedMap(data)?['show_name'] as String?,
@@ -93,18 +79,16 @@ class SearchRepositoryImpl {
   Future<Result<List<SearchTrendingItem>, AppError>> getTrendingRanking({
     bool forceRefresh = false,
   }) async {
-    final options = _requestOptions(requestClass: EndpointRequestClass.search);
     return _requestExecutor.runApi<List<SearchTrendingItem>, Object>(
       () => api.fetchTrendingRanking(
         forceRefresh: forceRefresh ? true : null,
-        extras: options.toDioExtras(),
+        extras: {EndpointPolicy.requestClassExtra: EndpointRequestClass.search},
       ),
       transform: (data) {
         final map = JsonUtils.asStringKeyedMap(data);
         final list = map?['list'];
         return JsonUtils.parseObjectList(list).map(SearchTrendingItem.fromJson).toList();
       },
-      options: options,
     );
   }
 
@@ -112,10 +96,6 @@ class SearchRepositoryImpl {
     required SearchQuery query,
     CancelToken? cancelToken,
   }) async {
-    final options = _requestOptions(
-      requestClass: EndpointRequestClass.search,
-      cancelToken: cancelToken,
-    );
     return _requestExecutor.runApi<SearchResultPage, Object>(
       () => query.type == SearchType.all
           ? api.fetchSearchAll(
@@ -124,7 +104,7 @@ class SearchRepositoryImpl {
               searchType: query.type.apiValue,
               order: query.order.apiValue,
               duration: query.duration.apiValue,
-              extras: options.toDioExtras(),
+              extras: {EndpointPolicy.requestClassExtra: EndpointRequestClass.search},
               cancelToken: cancelToken,
             )
           : api.fetchSearchByType(
@@ -133,11 +113,10 @@ class SearchRepositoryImpl {
               searchType: query.type.apiValue,
               order: query.order.apiValue,
               duration: query.duration.apiValue,
-              extras: options.toDioExtras(),
+              extras: {EndpointPolicy.requestClassExtra: EndpointRequestClass.search},
               cancelToken: cancelToken,
             ),
       transform: _parseSearchResultPage,
-      options: options,
     );
   }
 }

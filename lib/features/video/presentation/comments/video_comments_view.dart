@@ -1,14 +1,14 @@
 import 'dart:async';
 
-import 'package:culcul/core/contracts/comment_contract.dart';
+import 'package:culcul/core/models/comment_contract.dart';
 import 'package:culcul/features/video/presentation/comments/video_comments_view_model.dart';
-import 'package:culcul/ui/assemblies/comments/comment_item.dart';
-import 'package:culcul/ui/assemblies/comments/comment_reply_sheet.dart';
+import 'package:culcul/ui/widgets/comments/comment_item.dart';
+import 'package:culcul/ui/widgets/comments/comment_reply_sheet.dart';
 import 'package:culcul/features/video/presentation/detail/video_detail_view_model.dart';
 import 'package:culcul/i18n/strings.g.dart';
 import 'package:culcul/core/data/pagination/pagination_load_gate.dart';
 import 'package:culcul/core/data/pagination/scroll_load_trigger.dart';
-import 'package:culcul/ui/theme/culcul_tokens.dart';
+import 'package:culcul/core/theme/culcul_tokens.dart';
 import 'package:culcul/ui/widgets/media/app_network_image_prefetcher.dart';
 import 'package:culcul/ui/widgets/layout/refresh_header_footer.dart';
 import 'package:easy_refresh/easy_refresh.dart';
@@ -161,75 +161,44 @@ class VideoCommentsView extends HookConsumerWidget {
         },
         itemBuilder: (context, index) {
           final comment = paging.items[index];
-          return _VideoCommentListItem(
+          return CommentItemWidget(
             key: ValueKey('video_comment_${comment.rpid}_$index'),
-            aid: aid,
             upperMid: upperMid,
-            comment: comment,
-            notifier: notifier,
-            onOpenUser: onOpenUser,
-            onOpenCommentReplies: onOpenCommentReplies,
+            item: comment,
+            onTapUser: onOpenUser,
+            onLike: () {
+              notifier.toggleCommentLike(comment.oid, comment.rpid, comment.action == 1);
+            },
+            onDislike: () {
+              notifier.toggleCommentDislike(comment.oid, comment.rpid);
+            },
+            onReply: () {
+              CommentReplySheet.show(
+                context,
+                comment: comment,
+                onSend: (text) {
+                  notifier.addReply(
+                    comment.oid,
+                    comment.root == 0 ? comment.rpid : comment.root,
+                    comment.rpid,
+                    text,
+                  );
+                },
+              );
+            },
+            onTapReplies: () {
+              if (aid != null) {
+                onOpenCommentReplies(
+                  oid: aid,
+                  rootId: comment.rpid,
+                  comment: comment,
+                  upperMid: upperMid,
+                );
+              }
+            },
           );
         },
       ),
-    );
-  }
-}
-
-class _VideoCommentListItem extends StatelessWidget {
-  final int? aid;
-  final int? upperMid;
-  final CommentItem comment;
-  final VideoCommentsController notifier;
-  final ValueChanged<int> onOpenUser;
-  final OpenVideoCommentReplies onOpenCommentReplies;
-
-  const _VideoCommentListItem({
-    super.key,
-    required this.aid,
-    required this.upperMid,
-    required this.comment,
-    required this.notifier,
-    required this.onOpenUser,
-    required this.onOpenCommentReplies,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return CommentItemWidget(
-      item: comment,
-      upperMid: upperMid,
-      onTapUser: onOpenUser,
-      onLike: () {
-        notifier.toggleCommentLike(comment.oid, comment.rpid, comment.action == 1);
-      },
-      onDislike: () {
-        notifier.toggleCommentDislike(comment.oid, comment.rpid);
-      },
-      onReply: () {
-        CommentReplySheet.show(
-          context,
-          comment: comment,
-          onSend: (text) {
-            notifier.addReply(
-              comment.oid,
-              comment.root == 0 ? comment.rpid : comment.root,
-              comment.rpid,
-              text,
-            );
-          },
-        );
-      },
-      onTapReplies: () {
-        if (aid != null) {
-          onOpenCommentReplies(
-            oid: aid!,
-            rootId: comment.rpid,
-            comment: comment,
-            upperMid: upperMid,
-          );
-        }
-      },
     );
   }
 }

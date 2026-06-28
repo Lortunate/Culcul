@@ -4,7 +4,7 @@ import 'package:culcul/core/data/network/request_executor.dart';
 import 'package:culcul/core/result/result.dart';
 import 'package:culcul/core/utils/json_utils.dart';
 import 'package:culcul/features/history/data/history_api.dart';
-import 'package:culcul/features/history/domain/entities/history_entry.dart';
+import 'package:culcul/features/history/models/history_entry.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'history_repository_impl.g.dart';
@@ -15,7 +15,6 @@ HistoryRepositoryImpl historyRepository(Ref ref) {
 }
 
 class HistoryRepositoryImpl {
-  static const int _historyPageSize = 20;
   final HistoryApi _api;
   final RequestExecutor _requestExecutor;
 
@@ -29,7 +28,7 @@ class HistoryRepositoryImpl {
     int viewAt = 0,
   }) async {
     return _requestExecutor.runApi<List<HistoryEntry>, Object>(
-      () => _api.getHistoryCursor(max, viewAt, '', _historyPageSize),
+      () => _api.getHistoryCursor(max, viewAt, '', 20),
       transform: (data) {
         final map = JsonUtils.asStringKeyedMap(data);
         final list = map?['list'];
